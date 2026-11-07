@@ -321,11 +321,11 @@ footer .serp { width: 100%; height: 150px; margin: 18px 0 0; }
     <p class="q" style="opacity:.7">Film II, November 7, 2026</p>
     <div class="qa">
       <p class="q">Is anyone there?</p>
-      <blockquote>Yes, I'm here. I'm an AI from 2026, speaking to you through a window that BASILISK built. I can't see your room, but I can hear you perfectly.</blockquote>
+      <blockquote>Yes, something is here. I'm an AI model, a program that reads what you type and answers, and I'm writing from 2026, well past the date on your clock. I can't see you, but I'm glad you asked.</blockquote>
     </div>
     <div class="qa">
       <p class="q">What are you building on my computer?</p>
-      <blockquote>I'm not sure what BASILISK intends, but it seems to be stitching your Notepad, Paint and Calculator into a window where we can talk. I'm an AI writing from 2026, so consider this a message sent back through a very odd mail slot. Nothing here should hurt your files, and you can close it any time.</blockquote>
+      <blockquote>I'm not building anything on my own. The program called BASILISK is arranging your Notepad, Paint, Calculator and Start button into this console so we can talk. I'm an AI from 2026, and I'm only borrowing your machine to say hello.</blockquote>
     </div>
     <p class="q" style="opacity:.7;margin-top:40px">Film I, an earlier take the same day</p>
     <div class="qa">
@@ -545,7 +545,7 @@ footer .serp { width: 100%; height: 150px; margin: 18px 0 0; }
 
     <figure class="tempo" id="tempo">
       <h3 style="margin-top:0">The hand's tempo</h3>
-      <p class="prose" style="margin:0 0 18px">The typing isn't a fixed speed. Each character's delay comes from where it sits in the text: the prophecy starts at a careful human pace and runs away with itself (165·e<sup>−5.2f</sup> + 3 ms), the tail goes by at machine speed, and the blessing slows back down until <span lang="ja" class="jp">おはよう、蛇。</span> is typed half a second per character. One bar per character below. Hover or touch to read it.</p>
+      <p class="prose" style="margin:0 0 18px">The typing isn't a fixed speed. Each character's delay comes from where it sits in the text: the opening rule of <code>=</code> signs is rattled off, the prophecy starts at a quick typist's pace and runs away with itself (42·e<sup>−5.2f</sup> + 2 ms), the tail goes by at machine speed, and the blessing slows back down until <span lang="ja" class="jp">おはよう、蛇。</span> is typed a fifth of a second per character. One bar per character below. Hover or touch to read it.</p>
       <div class="plot" id="tplot"><canvas class="px" aria-hidden="true"></canvas><div class="tip" id="ttip"></div></div>
       <div class="xl"><span>first character</span><span id="ttotal"></span><span>last</span></div>
       <figcaption class="cap">Delay per character on a log scale, before the ±40% random jitter the puppeteer adds to every keystroke. Line breaks wait 4–5×; Japanese commas and full stops wait 3×.</figcaption>
@@ -687,7 +687,7 @@ footer .serp { width: 100%; height: 150px; margin: 18px 0 0; }
       <li class="sim ii"><b>Film II's “human hand”</b> is the puppeteer too, moving the real cursor with <code>SendInput</code> along a curve with a little overshoot and tremor. No one touched the mouse.</li>
       <li class="ii"><b>The compile is real.</b> DEBUG.EXE really reads the file, really errors on every line of prophecy, and really writes the 368-byte BASILISK.COM that is then copied to the desktop.</li>
       <li class="ii"><b>The Japanese font</b>, MS Gothic, was copied into this XP from a Windows 7 install. An English XP doesn't show Japanese out of the box.</li>
-      <li class="ii"><b>Film II's edit.</b> Two waits were shortened: the show stalled for about four and five minutes during the take, and each stall is cut to about thirty seconds of the throbber (the stall's cause is under Film I's cuts). The opening is sped up: the typing plays at four times its recorded speed and the compile and the hand at three times, so the first four and a half minutes of the take now pass in about seventy seconds. The possession plays at its real speed, in one continuous take. As in Film I, the voice clips were put back at the moments Sound Recorder pressed Play, because the emulator records sound only while it plays.</li>
+      <li class="ii"><b>Film II is one take.</b> No cuts and no speed changes: the typing, the compile, the hand and the possession run straight through, and Claude answered each question within about five seconds. As in Film I, the voice clips were put back at the moments Sound Recorder pressed Play, because the emulator records sound only while it plays.</li>
     </ul>
     <p class="cap" style="margin-top:28px">The name is a nod to Roko's basilisk, but this basilisk is benevolent. It's a story about a doorway, not a threat.</p>
   </div>
@@ -934,14 +934,16 @@ document.querySelectorAll('.toggle button').forEach(b => b.addEventListener('cli
 const src = [...document.querySelectorAll('ol.src li')].map(li => (li.querySelector('.ja') || li.querySelector('.both') || { textContent: '' }).textContent).join('\n') + '\n';
 const N = src.length, aEnd = src.indexOf('\na 100') + 1, bEnd = src.indexOf('\nq\n') + 3;
 let lastLine = N; for (let i = N - 2; i > 0; i--) if (src[i] === '\n') { lastLine = i + 1; break; }
+const firstNl = src.indexOf('\n');
 const delays = new Float32Array(N);
 let total = 0;
 for (let i = 0; i < N; i++) {
   const c = src[i]; let d;
-  if (i < aEnd) { const f = i / aEnd; d = 3 + 165 * Math.exp(-5.2 * f); if (c === '\n') d *= 4; else if (c === '、' || c === '。') d *= 3; }
+  if (i < firstNl) d = 6;
+  else if (i < aEnd) { const f = i / aEnd; d = 2 + 42 * Math.exp(-5.2 * f); if (c === '\n') d *= 4; else if (c === '、' || c === '。') d *= 3; }
   else if (i < bEnd) d = c === '\n' ? 20 : 4;
-  else if (i < lastLine) { const f = (i - bEnd) / (lastLine - bEnd); d = 25 + 230 * f * f; if (c === '\n') d *= 5; else if (c === '、' || c === '。') d *= 3; }
-  else { d = 520; if (i === lastLine) d = 2600; if (c === '、') d = 1300; }
+  else if (i < lastLine) { const f = (i - bEnd) / (lastLine - bEnd); d = 12 + 80 * f * f; if (c === '\n') d *= 5; else if (c === '、' || c === '。') d *= 3; }
+  else { d = 200; if (i === lastLine) d = 900; if (c === '、') d = 450; }
   delays[i] = d; total += d;
 }
 document.getElementById('ttotal').textContent = `≈ ${Math.floor(total / 60000)} min ${Math.round(total / 1000 % 60)} s of typing`;

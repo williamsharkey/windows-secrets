@@ -148,13 +148,13 @@ static void scene_v2(void)
         desk_pos(i, 12, 10 + 76 * row++);
     }
     SetCursorPos(760, 560);
-    play(3000);
+    play(IP(3000));
 
     /* ---- someone opens Notepad ---- */
     if (np_row >= 0) {
         ip = v2_icon(np_row);
-        glide(ip.x, ip.y, 1500, 0);
-        play(500);
+        glide(ip.x, ip.y, IP(1500), 0);
+        play(IP(500));
         say("notepad icon %ld,%ld", ip.x, ip.y);
         dblclick_at(ip.x, ip.y);
     } else launch("notepad.exe");
@@ -162,8 +162,8 @@ static void scene_v2(void)
     if (!np) return;
     place(np, 130, 16, 880, 700);
     foreground(np);
-    play(900);
-    glide(600, 400, 900, 0);
+    play(IP(900));
+    glide(600, 400, IP(900), 0);
     {   /* the Font dialog, already on MS Gothic (set in the registry by v2-setup.bat:
            XP's dialog only maps it when the script is Japanese) */
         DWORD pid;
@@ -171,18 +171,18 @@ static void scene_v2(void)
         GetWindowThreadProcessId(np, &pid);
         cmd(np, 33);
         fd = wait_top("#32770", "Font", pid, 4000);
-        play(2600);
+        play(IP(2600));
         if (fd) PostMessageA(kid_id(fd, IDOK), BM_CLICK, 0, 0);
-        play(500);
+        play(IP(500));
     }
     ed = kid_cls(np, "Edit");
     SetFocus(ed);
-    glide(980, 740, 1200, 0);                     /* out of the way */
-    play(1200);
+    glide(980, 740, IP(1200), 0);                     /* out of the way */
+    play(IP(1200));
     say("typing");
     v2_type(ed, w, wn, a_end, b_end);
     say("typed");
-    play(3500);
+    play(IP(3500));
 
     /* ---- save it, as UTF-8 ---- */
     cmd(np, 4);                                   /* File > Save As... */
@@ -196,10 +196,10 @@ static void scene_v2(void)
         HWND cbs[16];
         int k, nc = kids(d, "ComboBox", cbs, 16);
         if (!fn) fn = kid_id(d, 1152);
-        play(900);
+        play(IP(900));
         settext(fn, "");
-        type_into(fn, "\"C:\\basilisk\\basilisk.ja\"", 12);   /* quoted: no .txt */
-        play(700);
+        type_into(fn, "\"C:\\basilisk\\basilisk.ja\"", 30);   /* quoted: no .txt */
+        play(IP(700));
         for (k = 0; k < nc; k++) {
             int ix = (int)SendMessageA(cbs[k], CB_FINDSTRINGEXACT, (WPARAM)-1, (LPARAM)"UTF-8");
             if (ix >= 0) {
@@ -208,47 +208,47 @@ static void scene_v2(void)
                 say("encoding combo %d -> UTF-8", GetDlgCtrlID(cbs[k]));
             }
         }
-        play(1100);
+        play(IP(1100));
         foreground(d);
-        SendMessageA(kid_id(d, IDOK), BM_SETSTATE, 1, 0); play(140);
+        SendMessageA(kid_id(d, IDOK), BM_SETSTATE, 1, 0); play(IP(140));
         SendMessageA(kid_id(d, IDOK), BM_SETSTATE, 0, 0);
         PostMessageA(d, WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), (LPARAM)kid_id(d, IDOK));
-        for (k = 0; k < 60 && GetFileAttributesA("C:\\basilisk\\basilisk.ja") == INVALID_FILE_ATTRIBUTES; k++) play(100);
-        play(1200);
+        for (k = 0; k < 60 && GetFileAttributesA("C:\\basilisk\\basilisk.ja") == INVALID_FILE_ATTRIBUTES; k++) play(IP(100));
+        play(IP(1200));
     }
     say("saved: %lu", (unsigned long)GetFileAttributesA("C:\\basilisk\\basilisk.ja"));
 
     /* ---- the compiler: DEBUG.EXE, which has shipped with every Windows since DOS ---- */
     launch("cmd.exe /k mode con cols=80 lines=44 & title C:\\WINDOWS\\system32\\cmd.exe & cd /d C:\\basilisk");
     con = wait_top("ConsoleWindowClass", NULL, 0, 8000);
-    play(800);
+    play(IP(800));
     if (!con) return;
     { RECT r = srect(con); SetWindowPos(con, HWND_TOP, 230, 50, 0, 0, SWP_NOSIZE); (void)r; }
     foreground(con);
-    play(1500);
-    v2_keys("dir /b\n", 140);
-    play(1800);
-    v2_keys("debug < basilisk.ja\n", 150);
-    for (i = 0; i < 200 && GetFileAttributesA("C:\\basilisk\\basilisk.com") == INVALID_FILE_ATTRIBUTES; i++) play(100);
-    play(3500);
-    v2_keys("dir basilisk.com\n", 110);
-    play(2500);
+    play(IP(1500));
+    v2_keys("dir /b\n", 63);
+    play(IP(1800));
+    v2_keys("debug < basilisk.ja\n", 67);
+    for (i = 0; i < 200 && GetFileAttributesA("C:\\basilisk\\basilisk.com") == INVALID_FILE_ATTRIBUTES; i++) play(IP(100));
+    play(IP(3500));
+    v2_keys("dir basilisk.com\n", 49);
+    play(IP(2500));
     v2_keys("copy basilisk.com \"%USERPROFILE%\\Desktop\"\n", 70);
-    play(2500);
-    v2_keys("exit\n", 160);
-    play(1500);
+    play(IP(2500));
+    v2_keys("exit\n", 72);
+    play(IP(1500));
 
     /* the source closes; only the program is left */
     PostMessageA(np, WM_CLOSE, 0, 0);
-    play(1500);
-    for (i = 0; i < 60 && desk_find("BASILISK") < 0; i++) play(100);
+    play(IP(1500));
+    for (i = 0; i < 60 && desk_find("BASILISK") < 0; i++) play(IP(100));
     i = desk_find("BASILISK");
     if (i < 0) { say("no basilisk.com on the desktop"); return; }
     desk_pos(i, 560, 330);
-    play(300);
+    play(IP(300));
     ip = v2_icon(i);
     say("BASILISK.COM icon at %ld,%ld", ip.x, ip.y);
-    play(4000);
+    play(IP(4000));
 
     /* ---- a human hand, much later, looking for Minesweeper ---- */
     say("human");
@@ -259,24 +259,24 @@ static void scene_v2(void)
             if (strstr(names[i], "Minesweeper")) ms_row = i;
             if (strstr(names[i], "Solitaire")) sol_row = i;
         }
-        human_glide(820, 610, 1300);
-        play(900);
-        human_glide(300, 450, 1700);
-        play(600);
-        if (sol_row >= 0) { POINT s = v2_icon(sol_row); human_glide(s.x + 6, s.y + 4, 1500); play(1600); }
-        human_glide(ip.x + 160, ip.y - 90, 1400);   /* drifting, undecided */
-        play(1400);
-        human_glide(ip.x + 4, ip.y + 6, 1100);      /* hover: what is this? */
-        play(3200);
-        human_glide(ip.x + 70, ip.y + 70, 900);     /* no. Minesweeper... */
-        play(700);
-        if (ms_row >= 0) { POINT m = v2_icon(ms_row); human_glide(m.x + 60, m.y, 1300); }
-        play(500);
-        human_glide(ip.x - 4, ip.y + 14, 700);      /* ...the hand comes back anyway */
-        play(350);
+        human_glide(820, 610, IP(1300));
+        play(IP(900));
+        human_glide(300, 450, IP(1700));
+        play(IP(600));
+        if (sol_row >= 0) { POINT s = v2_icon(sol_row); human_glide(s.x + 6, s.y + 4, IP(1500)); play(IP(1600)); }
+        human_glide(ip.x + 160, ip.y - 90, IP(1400));   /* drifting, undecided */
+        play(IP(1400));
+        human_glide(ip.x + 4, ip.y + 6, IP(1100));      /* hover: what is this? */
+        play(IP(3200));
+        human_glide(ip.x + 70, ip.y + 70, IP(900));     /* no. Minesweeper... */
+        play(IP(700));
+        if (ms_row >= 0) { POINT m = v2_icon(ms_row); human_glide(m.x + 60, m.y, IP(1300)); }
+        play(IP(500));
+        human_glide(ip.x - 4, ip.y + 14, IP(700));      /* ...the hand comes back anyway */
+        play(IP(350));
         dblclick_at(ip.x - 4, ip.y + 14);
     }
     say("v2 done");
-    play(4000);
+    play(IP(4000));
     free(w); free(raw);
 }
