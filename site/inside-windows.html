@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Inside Windows</title>
+<meta name="description" content="Hidden accelerators, secret command-line switches, registry switches, test hooks, debug menus and XOR-encoded credits found inside the binaries of Windows 3.11 and Windows 7, each shown with its file, offset and exact bytes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+/* Layout: a listing printout. Single 860px column; sticky filter strip; each finding is a
+   ledger entry with a monospace header line, prose, then the real bytes in a scrolling dump. */
+:root {
+  color-scheme: light;
+  --bg: #eef1e8;          /* green-bar listing paper */
+  --paper: #f8faf4;
+  --bar: #e1e9d9;         /* the green bar */
+  --ink: #1b221d;
+  --dim: #56635a;
+  --rule: #c3cdbd;
+  --accent: #a3361f;      /* red pencil */
+  --hl-bg: #ffe27a;
+  --hl-fg: #1b221d;
+  --dump: #24302a;
+  --addr: #7b8a7e;
+  --cap: #ffffff;
+  --cap-edge: #a9b4a6;
+  --dead: #8b8f88;
+  --ok: #2d6a3e;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --font-dump: "JetBrains Mono", "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --font-prose: "IBM Plex Sans", -apple-system, "Segoe UI", Tahoma, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0b0a07; --paper: #12100b; --bar: #1a160d; --ink: #eadfc6; --dim: #9a8b6d;
+    --rule: #3a3220; --accent: #ffb000; --hl-bg: #6b4a00; --hl-fg: #ffe3a0; --dump: #ffbe4d;
+    --addr: #8c7340; --cap: #1d1910; --cap-edge: #5b4b2a; --dead: #6f6553; --ok: #b7d36b;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0a07; --paper: #12100b; --bar: #1a160d; --ink: #eadfc6; --dim: #9a8b6d;
+  --rule: #3a3220; --accent: #ffb000; --hl-bg: #6b4a00; --hl-fg: #ffe3a0; --dump: #ffbe4d;
+  --addr: #8c7340; --cap: #1d1910; --cap-edge: #5b4b2a; --dead: #6f6553; --ok: #b7d36b;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.6 var(--font-prose);
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 860px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code, kbd { font-family: var(--font-mono); font-size: .9em; }
+code { background: var(--bar); padding: 0 4px; border-radius: 2px; overflow-wrap: anywhere; }
+p { margin: 0; max-width: 68ch; }
+h1, h2, h3 { font-family: var(--font-mono); text-wrap: balance; margin: 0; }
+
+/* ---------- masthead ---------- */
+header.mast { padding-block: 40px 20px; }
+.runline { font: 500 12px/1.4 var(--font-mono); color: var(--dim); letter-spacing: .06em; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.runline span:first-child { color: var(--accent); }
+h1 { font-size: clamp(40px, 9vw, 76px); line-height: .95; font-weight: 700; letter-spacing: -.035em; margin: 18px 0 14px; }
+h1 .off { color: var(--accent); font-weight: 400; font-size: .32em; letter-spacing: 0; vertical-align: .9em; margin-left: .3em; white-space: nowrap; }
+.dek { font-size: 19px; line-height: 1.5; max-width: 60ch; }
+.dek + .dek { margin-top: 10px; font-size: 16px; color: var(--dim); }
+.legend { margin-top: 22px; display: grid; gap: 8px; font-size: 14px; color: var(--dim); max-width: 68ch; }
+.legend div { display: flex; gap: 10px; align-items: baseline; }
+.legend .tag { flex: none; }
+
+/* ---------- tags ---------- */
+.tag { display: inline-block; font: 500 11px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; padding: 4px 6px 3px; border: 1px solid currentColor; white-space: nowrap; }
+.tag.static { color: var(--accent); }
+.tag.runtime { color: var(--ok); background: transparent; border-style: double; border-width: 3px; padding: 2px 4px 1px; }
+.tag.untested { color: var(--dim); border-style: dashed; }
+.chip { font: 500 11px/1 var(--font-mono); letter-spacing: .04em; color: var(--dim); white-space: nowrap; }
+.chip.os { color: var(--ink); background: var(--bar); padding: 4px 6px 3px; }
+
+/* ---------- decoder ---------- */
+section.decoder { border: 1px solid var(--rule); background: var(--paper); margin-block: 8px 28px; }
+.dec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; padding: 12px 14px; border-bottom: 1px solid var(--rule); }
+.dec-head h2 { font-size: 15px; font-weight: 700; }
+.dec-head .chip { color: var(--dim); white-space: normal; overflow-wrap: anywhere; min-width: 0; }
+.dec-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.dec-grid > div { min-width: 0; }
+.pane-label { font: 500 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); padding: 10px 14px 6px; display: flex; justify-content: space-between; gap: 8px; }
+.rawpane, .outpane { height: 300px; overflow: auto; font: 12px/1.55 var(--font-dump); padding: 0 14px 12px; color: var(--dump); }
+.rawpane { border-right: 1px solid var(--rule); white-space: pre; }
+.rawpane .row { display: block; }
+.rawpane .row:nth-child(6n+1), .rawpane .row:nth-child(6n+2), .rawpane .row:nth-child(6n+3) { background: var(--bar); }
+.rawpane .a { color: var(--addr); }
+.rawpane .mk { color: var(--dim); }
+.rawpane .cur { background: var(--hl-bg); color: var(--hl-fg); outline: 1px solid var(--accent); }
+.rawpane .done { color: var(--dim); }
+.outpane { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink); font-family: var(--font-mono); font-size: 13px; }
+.outpane .rec { color: var(--accent); font-size: 11px; }
+.outpane .caret { display: inline-block; width: .6em; background: var(--accent); animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.dec-ctl { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding: 12px 14px; border-top: 1px solid var(--rule); font: 13px/1.3 var(--font-mono); }
+.dec-ctl label { display: inline-flex; gap: 6px; align-items: center; color: var(--dim); }
+.dec-ctl input[type="text"] { width: 4.2em; font: 600 14px var(--font-dump); background: var(--bg); color: var(--ink); border: 1px solid var(--rule); padding: 4px 6px; text-transform: lowercase; }
+.dec-ctl input[type="range"] { width: 110px; accent-color: var(--accent); }
+.status { color: var(--dim); font-size: 12px; flex: 1 1 200px; text-align: right; }
+button.btn { font: 600 13px/1 var(--font-mono); padding: 8px 12px; background: var(--ink); color: var(--bg); border: 1px solid var(--ink); cursor: pointer; }
+button.btn.alt { background: transparent; color: var(--ink); border-color: var(--rule); }
+button.btn:hover { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+details.paste { border-top: 1px solid var(--rule); padding: 10px 14px; font: 13px/1.5 var(--font-mono); }
+details.paste summary { cursor: pointer; color: var(--dim); }
+details.paste textarea { display: block; width: 100%; margin-top: 8px; min-height: 70px; font: 12px/1.5 var(--font-dump); background: var(--bg); color: var(--ink); border: 1px solid var(--rule); padding: 8px; resize: vertical; }
+details.paste .row2 { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; align-items: center; }
+.dec-figs { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: flex-end; padding: 12px 14px 14px; border-top: 1px solid var(--rule); }
+.dec-figs figure { margin: 0; display: grid; gap: 6px; }
+.dec-figs img { image-rendering: pixelated; display: block; max-width: 100%; height: auto; background: #c0c0c0; }
+.dec-figs figcaption { font: 11px/1.4 var(--font-mono); color: var(--dim); max-width: 34ch; }
+
+/* ---------- filters ---------- */
+.filters { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-block: 1px solid var(--rule); }
+.filters .wrap { padding-block: 10px; display: grid; gap: 8px; }
+.fgroup { display: flex; gap: 6px; align-items: center; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.fgroup::-webkit-scrollbar { display: none; }
+.fgroup .flabel { font: 500 11px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); flex: none; width: 3.6em; }
+.fgroup button { flex: none; font: 500 12.5px/1 var(--font-mono); padding: 6px 9px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; }
+.fgroup button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.fgroup button .n { color: var(--dim); margin-left: 4px; font-size: 11px; }
+.fgroup button[aria-pressed="true"] .n { color: var(--bg); opacity: .7; }
+.count { font: 12px/1 var(--font-mono); color: var(--dim); }
+
+/* ---------- findings ---------- */
+main { padding-block: 8px 48px; }
+.group-h { font-size: 13px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); margin: 36px 0 12px; display: flex; gap: 10px; align-items: center; }
+.group-h::after { content: ""; flex: 1; border-top: 1px dashed var(--rule); }
+.group-h[hidden] { display: none; }
+article.f { background: var(--paper); border: 1px solid var(--rule); padding: 18px 18px 20px; margin-bottom: 14px; display: grid; gap: 12px; min-width: 0; scroll-margin-top: 110px; }
+.f-top { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.f-top .no { font: 700 13px/1 var(--font-mono); color: var(--accent); margin-right: 2px; }
+.f-top .tag { margin-left: auto; }
+.f h3 { font-size: 19px; line-height: 1.3; font-weight: 700; letter-spacing: -.01em; }
+.where { font: 12.5px/1.5 var(--font-mono); color: var(--dim); overflow-wrap: anywhere; }
+.where b { color: var(--ink); font-weight: 500; }
+.f ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; max-width: 68ch; }
+.f li { overflow-wrap: anywhere; }
+.f p { overflow-wrap: anywhere; }
+.spec { border: 1px dashed var(--dim); padding: 8px 12px; font-size: 14.5px; color: var(--dim); font-style: italic; max-width: 68ch; }
+.spec::before { content: "SPECULATION "; font: normal 500 10.5px/1 var(--font-mono); letter-spacing: .1em; color: var(--ink); }
+.tryit { font: 13px/1.5 var(--font-mono); max-width: 68ch; }
+.tryit::before { content: "TRY "; color: var(--accent); font-weight: 700; letter-spacing: .06em; }
+.wordlist { display: flex; flex-wrap: wrap; gap: 6px; }
+.wordlist code { background: var(--bar); padding: 2px 6px; font-size: 12.5px; }
+
+/* chords */
+.chords { display: grid; gap: 10px; }
+.chord { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.chord .plus { color: var(--dim); font: 12px var(--font-mono); }
+.chord .arrow { color: var(--dim); font: 12px var(--font-mono); margin-left: 4px; }
+.chord .eff { font: 13px/1.4 var(--font-mono); }
+kbd.k { display: inline-block; min-width: 2.2em; text-align: center; padding: 5px 7px 4px; font: 600 12.5px/1 var(--font-mono); color: var(--ink); background: var(--cap); border: 1px solid var(--cap-edge); border-bottom-width: 3px; border-radius: 4px; }
+.chord.dead kbd.k { color: var(--dead); border-style: dashed; border-bottom-width: 1px; }
+.chord.dead .eff { color: var(--dead); text-decoration: line-through; text-decoration-thickness: 1px; }
+.gate { font: 12px/1.3 var(--font-mono); padding: 4px 7px; border: 1px solid var(--accent); color: var(--accent); }
+.state { font: 500 10.5px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dim); }
+
+/* dumps */
+.x { display: grid; gap: 10px; min-width: 0; }
+.dump { border: 1px solid var(--rule); background: var(--bg); min-width: 0; }
+.dump .cap { font: 11.5px/1.4 var(--font-mono); color: var(--dim); padding: 7px 10px; border-bottom: 1px solid var(--rule); overflow-wrap: anywhere; }
+.dump pre { margin: 0; padding: 6px 0; overflow: auto; max-height: 22.5em; font: 12px/1.5 var(--font-dump); color: var(--dump); }
+.dump pre .r { display: block; padding: 0 10px; width: max-content; min-width: 100%; }
+.dump pre .r:nth-child(6n+1), .dump pre .r:nth-child(6n+2), .dump pre .r:nth-child(6n+3) { background: var(--bar); }
+.dump .a { color: var(--addr); }
+.dump .h { background: var(--hl-bg); color: var(--hl-fg); }
+.dump .c { color: var(--dim); }
+.dump .api { color: var(--accent); }
+
+/* classic menus (a depiction of Windows UI, same in both themes) */
+.wm { overflow-x: auto; padding: 4px 0 2px; }
+.wm-stage { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 0; padding: 12px 14px 16px; background: #008080; width: max-content; }
+.wm-stage.w311 { background: #c0c0c0; }
+.wm-bar { display: flex; background: #c0c0c0; font: 12px/1 Tahoma, "Microsoft Sans Serif", "MS Sans Serif", Arial, sans-serif; color: #000; padding: 2px 2px; border: 1px solid; border-color: #fff #808080 #808080 #fff; }
+.w311 .wm-bar { background: #fff; border: 1px solid #000; }
+.wm-bar span { padding: 3px 7px 4px; }
+.wm-bar span.on { background: #000080; color: #fff; }
+.wm-row { display: flex; align-items: flex-start; }
+.wm-pop { position: relative; background: #c0c0c0; color: #000; font: 12px/1 Tahoma, "Microsoft Sans Serif", "MS Sans Serif", Arial, sans-serif; padding: 2px; border: 2px solid; border-color: #dfdfdf #000 #000 #dfdfdf; box-shadow: inset 1px 1px #fff, inset -1px -1px #808080; min-width: 120px; }
+.w311 .wm-pop { background: #fff; border: 1px solid #000; box-shadow: 2px 2px 0 #000; }
+.wm-it { display: grid; grid-template-columns: 18px auto minmax(16px, auto) 16px; align-items: center; padding: 3px 0 4px; white-space: pre; }
+.wm-it .acc { padding-left: 18px; text-align: right; }
+.wm-it.gray { color: #808080; text-shadow: 1px 1px #fff; }
+.w311 .wm-it.gray { text-shadow: none; }
+.wm-it.hot { background: #000080; color: #fff; }
+.wm-it .ar { font-size: 9px; text-align: center; }
+.wm-sep { height: 2px; margin: 3px 1px; border-top: 1px solid #808080; border-bottom: 1px solid #fff; }
+.w311 .wm-sep { border-bottom: 0; border-top-color: #000; height: 1px; }
+.wm-dot { position: absolute; right: -16px; width: 8px; height: 8px; border-radius: 50%; background: #c80000; }
+.wm-empty { color: #808080; padding: 4px 18px; font-style: italic; }
+.wm-cas { margin-top: var(--cas-top, 0px); margin-left: -3px; }
+.wm-note { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; font: 12.5px/1.45 var(--font-mono); }
+.wm-note li::before { content: "● "; color: #c80000; }
+.wm-cap { font: 11.5px/1.4 var(--font-mono); color: var(--dim); margin-top: 6px; }
+.tbl { overflow-x: auto; }
+.tbl table { border-collapse: collapse; font: 13px/1.4 var(--font-mono); min-width: 100%; }
+.tbl th, .tbl td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.tbl code { white-space: nowrap; }
+.tbl thead th { color: var(--dim); font-weight: 500; }
+.menus-intro { font-size: 14.5px; color: var(--dim); margin-bottom: 14px; }
+
+/* xp leads */
+.leads { counter-reset: lead; display: grid; gap: 8px; padding: 0; list-style: none; }
+.leads li { background: var(--paper); border: 1px dashed var(--rule); padding: 10px 12px; display: grid; gap: 6px; }
+.leads .lt { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.empty { border: 1px dashed var(--rule); padding: 18px; color: var(--dim); font: 14px/1.5 var(--font-mono); }
+.empty[hidden] { display: none; }
+
+/* method + footer */
+.method { display: grid; gap: 12px; }
+.method pre { margin: 0; background: var(--paper); border: 1px solid var(--rule); padding: 12px; overflow-x: auto; font: 12.5px/1.55 var(--font-dump); color: var(--dump); }
+.method ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; max-width: 68ch; }
+footer { border-top: 1px solid var(--rule); padding-block: 24px 48px; font: 13px/1.6 var(--font-mono); color: var(--dim); }
+footer .links { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-bottom: 10px; }
+.theme-toggle { font: 12px var(--font-mono); background: none; border: 1px solid var(--rule); color: var(--dim); padding: 4px 8px; cursor: pointer; }
+
+@media (max-width: 640px) {
+  .dec-grid { grid-template-columns: minmax(0, 1fr); }
+  .rawpane { border-right: 0; border-bottom: 1px solid var(--rule); height: 170px; }
+  .outpane { height: 240px; }
+  article.f { padding: 14px 12px 16px; }
+  .f-top .tag { margin-left: 0; }
+  .status { text-align: left; }
+  .dek { font-size: 17px; }
+  .legend div { flex-direction: column; gap: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .outpane .caret { animation: none; }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<header class="mast wrap">
+  <div class="runline"><span>CODEHUNT LISTING</span><span>WFW 3.11 · 451 files</span><span>WIN 7 SP1 x86 · 85 binaries + .mui</span><span>19,155 candidate records</span></div>
+  <h1>Inside Windows<span class="off">@ 0x99</span></h1>
+  <p class="dek">Hidden keys, secret switches, test hooks and buried credits, found by reading the binaries of Windows 3.11 and Windows 7 instead of their windows.</p>
+  <p class="dek">This is the companion to <a href="windows-secrets.html">Windows Secrets</a>, which found hidden controls by resizing dialogs. Here a scanner (<a href="https://github.com/williamsharkey/windows-secrets/blob/main/tools/codehunt.py">tools/codehunt.py</a>) reads string tables, accelerator tables, version resources and the literals that code passes to registry, INI, compare, message, DDE and pipe APIs. Every card shows the file, the offset or resource, and the real bytes.</p>
+  <div class="legend">
+    <div><span class="tag static">verified statically</span><span>The bytes were read from the file and, where a code location is given, the code that uses them was disassembled. Every finding below has at least this.</span></div>
+    <div><span class="tag runtime">verified at runtime</span><span>Observed on the running Windows 7 box: the program was started, its real menu or window style read back, then killed. Only five checks reached this level (Notepad <code>/.SETUP</code> style, Paint, Private Character Editor, Calculator, Phone Dialer). Nothing was run on 3.11 or XP.</span></div>
+    <div><span class="tag untested">not yet checked</span><span>An open question for the XP binaries.</span></div>
+    <div><span class="spec" style="padding:2px 8px">a guess about intent or effect</span></div>
+  </div>
+</header>
+
+<div class="wrap">
+<section class="decoder" id="decoder" aria-labelledby="dec-title">
+  <div class="dec-head">
+    <h2 id="dec-title">Decoder: SHELL.DLL RCDATA 9999 ⊕ 0x99</h2>
+    <span class="chip">WFW 3.11 · C:\WINDOWS\SYSTEM\SHELL.DLL · 2,064 bytes at file 0x<span id="dec-off">94b0</span> · finding 19</span>
+  </div>
+  <div class="dec-grid">
+    <div>
+      <div class="pane-label"><span>stored bytes</span><span id="raw-note">00 nn = record marker</span></div>
+      <div class="rawpane" id="rawpane" tabindex="0" aria-label="Encoded bytes"></div>
+    </div>
+    <div>
+      <div class="pane-label"><span>byte ⊕ key</span><span>/ = line break</span></div>
+      <div class="outpane" id="outpane" tabindex="0" aria-live="off" aria-label="Decoded text"></div>
+    </div>
+  </div>
+  <div class="dec-ctl">
+    <button class="btn" id="dec-play" type="button">▶ Replay decode</button>
+    <label for="dec-key">key 0x<input type="text" id="dec-key" value="99" maxlength="2" spellcheck="false" autocomplete="off"></label>
+    <label for="dec-speed">speed <input type="range" id="dec-speed" min="1" max="60" value="18"></label>
+    <span class="status" id="dec-status"></span>
+  </div>
+  <details class="paste">
+    <summary>Decode your own hex bytes</summary>
+    <textarea id="dec-in" spellcheck="false" placeholder="00 01 dd fc fd f0 fa f8 ed fc fd …"></textarea>
+    <div class="row2"><button class="btn alt" id="dec-use" type="button">Decode pasted bytes</button><button class="btn alt" id="dec-reset" type="button">Back to SHELL.DLL bytes</button><span class="status" id="dec-perr" style="text-align:left"></span></div>
+  </details>
+  <div class="dec-figs">
+    <figure><img src="inside-windows/shell-9998.png" width="181" height="75" alt="SHELL.DLL bitmap 9998: a figure in a yellow suit gestures toward four small portrait heads"><figcaption>SHELL.DLL BITMAP 9998, 181×75, rendered from the resource</figcaption></figure>
+    <figure><img src="inside-windows/shell-9997.png" width="129" height="33" alt="SHELL.DLL bitmap 9997: four frames of the waving Windows flag"><figcaption>BITMAP 9997, 129×33: four flag frames. No dialog or menu references either bitmap.</figcaption></figure>
+  </div>
+</section>
+</div>
+
+<nav class="filters" aria-label="Filter findings">
+  <div class="wrap">
+    <div class="fgroup" id="f-class" role="group" aria-label="Class">
+      <span class="flabel">Class</span>
+      <button type="button" data-v="all" aria-pressed="true">all</button>
+      <button type="button" data-v="accel" aria-pressed="false">accelerators</button>
+      <button type="button" data-v="switch" aria-pressed="false">switches</button>
+      <button type="button" data-v="registry" aria-pressed="false">registry/INI</button>
+      <button type="button" data-v="hook" aria-pressed="false">test hooks</button>
+      <button type="button" data-v="menu" aria-pressed="false">menus</button>
+      <button type="button" data-v="trivia" aria-pressed="false">trivia</button>
+      <button type="button" data-v="auto" aria-pressed="false">automation</button>
+    </div>
+    <div class="fgroup" id="f-os" role="group" aria-label="Windows version">
+      <span class="flabel">OS</span>
+      <button type="button" data-v="all" aria-pressed="true">all</button>
+      <button type="button" data-v="311" aria-pressed="false">3.11</button>
+      <button type="button" data-v="xp" aria-pressed="false">XP</button>
+      <button type="button" data-v="7" aria-pressed="false">7</button>
+    </div>
+    <div class="count" id="count" aria-live="polite"></div>
+  </div>
+</nav>
+
+<main class="wrap" id="list">
+
+<h2 class="group-h" data-g="keys">Hidden modes and keys</h2>
+
+<article class="f" id="f1" data-cls="accel registry" data-os="311">
+  <div class="f-top"><span class="no">01</span><span class="chip os">3.11</span><span class="chip">accelerator · INI gate</span><span class="tag static">verified statically</span></div>
+  <h3>Hearts: a Ctrl+Alt+Shift+F12 toggle that only works when WIN.INI says ZB=42</h3>
+  <div class="where"><b>C:\WINDOWS\MSHEARTS.EXE</b> · ACCELERATOR HEARTSACCEL → command 121 · handler seg1:0454</div>
+  <div class="chords">
+    <div class="chord"><span class="gate">WIN.INI [Hearts] ZB=42</span><span class="plus">then</span><kbd class="k">Ctrl</kbd><span class="plus">+</span><kbd class="k">Alt</kbd><span class="plus">+</span><kbd class="k">Shift</kbd><span class="plus">+</span><kbd class="k">F12</kbd><span class="arrow">→</span><span class="eff">toggles a drawing flag</span></div>
+  </div>
+  <p>The accelerator maps the chord (flags 0x9d) to command 121. No menu item has that ID: the menu runs 101–127 and skips 121. The handler calls <code>GetProfileInt("Hearts", "ZB", 0)</code>, compares the result with 0x2a, and only then toggles <code>word [si+0x12]</code>, invalidates the window and updates a menu check mark. The toggled word is passed to the card-drawing routine at seg1:3ca0 from at least four call sites.</p>
+  <p class="spec">It switches to drawing every hand face up, which matches the folklore "ZB cheat".</p>
+  <div class="x" data-x="hearts"></div>
+  <p class="tryit">Add <code>[Hearts]</code> / <code>ZB=42</code> to WIN.INI, start Hearts, press Ctrl+Alt+Shift+F12.</p>
+</article>
+
+<article class="f" id="f2" data-cls="accel registry" data-os="311">
+  <div class="f-top"><span class="no">02</span><span class="chip os">3.11</span><span class="chip">key handler · INI gate</span><span class="tag static">verified statically</span></div>
+  <h3>Minesweeper 3.1: three undocumented function keys and a boss key</h3>
+  <div class="where"><b>C:\WINDOWS\WINMINE.EXE</b> ("Minesweeper v3.0a") · WM_KEYDOWN handler seg1:063a · "XYZZY" at data seg2:0036</div>
+  <div class="chords">
+    <div class="chord"><span class="gate">winmine.ini Sound=2+</span><kbd class="k">F4</kbd><span class="arrow">→</span><span class="eff">toggle sound (SOUND.OPENSOUND …)</span></div>
+    <div class="chord"><span class="gate">winmine.ini Menu=1|2</span><kbd class="k">F5</kbd><span class="arrow">→</span><span class="eff">hide menu bar</span><span class="plus">·</span><kbd class="k">F6</kbd><span class="arrow">→</span><span class="eff">show it</span></div>
+    <div class="chord"><kbd class="k">Esc</kbd><span class="arrow">→</span><span class="eff">WM_SYSCOMMAND SC_MINIMIZE (boss key)</span></div>
+    <div class="chord"><kbd class="k">X</kbd><kbd class="k">Y</kbd><kbd class="k">Z</kbd><kbd class="k">Z</kbd><kbd class="k">Y</kbd><span class="plus">then</span><kbd class="k">Shift</kbd><span class="arrow">→</span><span class="eff">xor [0x34], 0x14 (the known cheat)</span></div>
+  </div>
+  <p><code>Sound=</code> is read with default 0, min 0, max 3; F4 does nothing below 2. The sound path calls <code>SOUND.OPENSOUND</code>, <code>SETVOICEACCENT</code>, <code>STOPSOUND</code> and <code>CLOSESOUND</code>, the Windows 3.x speaker-music driver. F5 and F6 call <code>SetMenu(hwnd, NULL)</code> or restore the saved menu, and need <code>Menu=1</code> or <code>2</code> (default 0 disables them). The switch below dispatches on the key code by repeated subtraction, so each <code>sub al</code> is one key.</p>
+  <div class="x" data-x="winmine"></div>
+  <p class="tryit">Put <code>Menu=1</code> under <code>[Minesweeper]</code> in winmine.ini, then press F5 and F6.</p>
+</article>
+
+<article class="f" id="f3" data-cls="switch accel" data-os="311 7">
+  <div class="f-top"><span class="no">03</span><span class="chip os">3.11</span><span class="chip os">7</span><span class="chip">command-line switch · accelerator</span><span class="tag static">verified statically</span><span class="tag runtime" style="margin-left:0">window style verified at runtime</span></div>
+  <h3>Notepad's <code>/.SETUP</code> mode, spelled out one byte at a time in 3.11</h3>
+  <div class="where"><b>NOTEPAD.EXE</b> (3.11) seg2:00e1 · <b>notepad.exe</b> 6.1.7601.18917 (7) code 0x01002758, string at file 0x1b78 · ACCELERATOR SlipUpAcc</div>
+  <div class="chords">
+    <div class="chord"><span class="gate">notepad /.SETUP file.txt</span><kbd class="k">Esc</kbd><span class="plus">or</span><kbd class="k">Ctrl</kbd><span class="plus">+</span><kbd class="k">D</kbd><span class="arrow">→</span><span class="eff">Exit (cmd 28 in 3.11, 7 in Windows 7)</span></div>
+  </div>
+  <p>Notepad has a second accelerator table, <code>SlipUpAcc</code>, that normal runs never load. In <b>3.11</b> there is no <code>/.SETUP</code> string anywhere: the code compares the argument with <code>'/' '.' 'S' 'E' 'T' 'U' 'P'</code> one immediate at a time, then loads SlipUpAcc. String scanners cannot see a switch like this. In <b>Windows 7</b> the command line is compared with <code>L"/.SETUP"</code>; a match sets a flag, loads SlipUpAcc, calls <code>SetWindowLongW(GWL_STYLE, 0x00FD0000)</code> (no minimize box), opens the named file read-only and changes <code>WM_SYSCOMMAND</code> handling.</p>
+  <p>The table also maps Ctrl+C and Ctrl+Z to Exit, but those entries come after Copy and Undo in the same table, so <code>TranslateAccelerator</code> never reaches them.</p>
+  <p>The window style was later checked live on Windows 7 (<a href="#h7">H7</a>): <code>/.SETUP</code> gives an invisible, non-minimisable Notepad. Esc was not sent, so the exit keys are still static only.</p>
+  <div class="x" data-x="notepad"></div>
+  <p class="tryit"><code>notepad /.SETUP file.txt</code>, then press Esc.</p>
+</article>
+
+<article class="f" id="f4" data-cls="registry" data-os="7">
+  <div class="f-top"><span class="no">04</span><span class="chip os">7</span><span class="chip">registry switch</span><span class="tag static">verified statically</span></div>
+  <h3>Notepad reads <code>fMLE_is_broken</code></h3>
+  <div class="where"><b>notepad.exe</b> (7) · HKCU\Software\Microsoft\Notepad · read at 0x01002f9e into global 0x0100c040 · used at 0x01007ba8, 0x01007c00</div>
+  <p>A DWORD with default 0. When it is nonzero, Word Wrap rebuilds the edit control (style 0x50200104) instead of reformatting the existing one with <code>EM_FMTLINES</code>.</p>
+  <p class="spec">A workaround switch for a buggy multi-line edit (MLE) control.</p>
+  <div class="x" data-x="fmle"></div>
+</article>
+
+<article class="f" id="f5" data-cls="accel" data-os="7">
+  <div class="f-top"><span class="no">05</span><span class="chip os">7</span><span class="chip">dead accelerator table</span><span class="tag static">verified statically</span></div>
+  <h3>Character Map has an accelerator table it can never load</h3>
+  <div class="where"><b>charmap.exe.mui</b> · ACCELERATOR UCE → commands 121–128</div>
+  <div class="chords">
+    <div class="chord dead"><kbd class="k">Ctrl</kbd><span class="plus">+</span><kbd class="k">Home</kbd><kbd class="k">End</kbd><kbd class="k">←</kbd><kbd class="k">→</kbd><kbd class="k">↑</kbd><kbd class="k">↓</kbd><kbd class="k">PgUp</kbd><kbd class="k">PgDn</kbd><span class="arrow">→</span><span class="eff">121–128</span><span class="state">no loader</span></div>
+  </div>
+  <p><code>charmap.exe</code> imports neither <code>LoadAccelerators*</code> nor <code>TranslateAccelerator*</code>, and the name "UCE" does not appear in its code. The keys are dead.</p>
+  <p class="spec"><code>*.uce</code> is the old "Unicode subrange" file filter, so these belonged to a removed UCE-file feature.</p>
+  <div class="x" data-x="charmap"></div>
+</article>
+
+<article class="f" id="f6" data-cls="accel" data-os="7">
+  <div class="f-top"><span class="no">06</span><span class="chip os">7</span><span class="chip">orphan accelerator</span><span class="tag static">verified statically</span></div>
+  <h3>MMC binds Ctrl+Alt+Shift+F7, and nothing handles it</h3>
+  <div class="where"><b>mmc.exe.mui</b> · ACCELERATOR 128 → command 13235 (0x33b3) · searched <b>mmc.exe</b>, <b>mmcndmgr.dll</b></div>
+  <div class="chords">
+    <div class="chord dead"><kbd class="k">Ctrl</kbd><span class="plus">+</span><kbd class="k">Alt</kbd><span class="plus">+</span><kbd class="k">Shift</kbd><span class="plus">+</span><kbd class="k">F7</kbd><span class="arrow">→</span><span class="eff">13235</span><span class="state">no handler</span></div>
+  </div>
+  <p>A full disassembly of both binaries finds no immediate 0x33B3, and the MFC message maps (<code>11 01 00 00 … b3 33 00 00</code>) have no entry for it. The neighbouring IDs 13231 and 13238 are handled.</p>
+  <p class="spec">A debug-build command whose handler was compiled out. XP's MMC 2.0 is the next place to look.</p>
+  <div class="x" data-x="mmc"></div>
+</article>
+
+<article class="f" id="f7" data-cls="switch" data-os="7">
+  <div class="f-top"><span class="no">07</span><span class="chip os">7</span><span class="chip">command-line words</span><span class="tag static">verified statically</span></div>
+  <h3>Magnifier takes four undocumented command-line words</h3>
+  <div class="where"><b>magnify.exe</b> · parser at 0x010038d3 · <code>wcstok</code> + <code>CompareStringW</code></div>
+  <div class="wordlist"><code>wait</code><code>noutilman</code><code>fullscreen</code><code>lens</code><code>docked</code><code>hilight</code><code>globalhotkey</code></div>
+  <p>The tokens are compared in this order. <code>fullscreen</code>, <code>lens</code> and <code>docked</code> are the documented modes. <code>wait</code> sleeps 5 seconds. <code>hilight</code> creates three objects and gives two of them the colours 0x00FF00FF (magenta) and 0x00FFFF00 (cyan).</p>
+  <p class="spec">The hilight colours are debug overlays that outline the focus or caret rectangles being tracked.</p>
+  <div class="x" data-x="magnify"></div>
+</article>
+
+<article class="f" id="f8" data-cls="hook switch" data-os="7">
+  <div class="f-top"><span class="no">08</span><span class="chip os">7</span><span class="chip">test hook · switch</span><span class="tag static">verified statically</span></div>
+  <h3>LogonUI accepts <code>/testclientprocessid:</code></h3>
+  <div class="where"><b>logonui.exe</b> 6.1.7601.17514 · parsed at 0x01001152</div>
+  <p>The binary contains only two UTF-16 strings of its own: <code>/flags:</code> and <code>/testclientprocessid:</code>. Both are parsed here and passed to a COM method (vtable +0x0C) of the logon UI host. It is a test-client hook in the logon screen process. The effect was not traced.</p>
+  <div class="x" data-x="logonui"></div>
+</article>
+
+<article class="f" id="f9" data-cls="hook auto" data-os="7">
+  <div class="f-top"><span class="no">09</span><span class="chip os">7</span><span class="chip">test hook · registered message</span><span class="tag static">verified statically</span></div>
+  <h3>Power Options listens for a <code>PowerCplTest</code> window message</h3>
+  <div class="where"><b>powercfg.cpl</b> · RegisterWindowMessageW at 0x07b141bf · handler 0x07b139bd → 0x07b15e05</div>
+  <p>When the message arrives with wParam=1, the handler finds an item in the Advanced settings tree (control 0x451) and sends it <code>TVM_ENSUREVISIBLE</code> (0x1114) and <code>TVM_EXPAND</code> (0x1102, <code>TVE_EXPAND</code>). Another process can drive the dialog to a setting by posting one registered message. It is a test-automation hook in a shipping control panel.</p>
+  <div class="x" data-x="powercpl"></div>
+</article>
+
+<article class="f" id="f10" data-cls="registry hook" data-os="7">
+  <div class="f-top"><span class="no">10</span><span class="chip os">7</span><span class="chip">registry · stress mode</span><span class="tag static">verified statically</span></div>
+  <h3>dxdiag has a hidden stress-test mode</h3>
+  <div class="where"><b>dxdiag.exe</b> · HKCU\Software\Microsoft\DirectX Diagnostic Tool opened at 0x01012a63</div>
+  <div class="wordlist"><code>Never Skip</code><code>Allow WHQL Checks</code><code>Stress Scan</code><code>Stress Skip Stage</code><code>Stress Page Change</code><code>Stress Save File</code><code>Stress Cancel Gather</code><code>… Freq</code></div>
+  <p>Each <code>Stress</code> value has a <code>… Freq</code> companion. The globals they fill are tested in code: <code>Stress Page Change</code> gates a <code>SetTimer</code> call at 0x01016765; <code>Stress Skip Stage</code> gates special handling of stage messages 0x2bc and 0x2bd at 0x01014faf; <code>Stress Scan</code> gates a call back into the settings reader and the scan objects at 0x01017e2f.</p>
+  <p class="spec">Together these make an automated page-flipping and cancel/save stress loop.</p>
+  <div class="x" data-x="dxdiag"></div>
+  <p class="tryit">Set the DWORDs to 1 under that key and start dxdiag.</p>
+</article>
+
+<h2 class="group-h" data-g="residue">Debug and test residue</h2>
+
+<article class="f" id="f11" data-cls="menu hook" data-os="7">
+  <div class="f-top"><span class="no">11</span><span class="chip os">7</span><span class="chip">hidden menu</span><span class="tag static">verified statically</span></div>
+  <h3>MSHTML's Debug context menu ships in retail Windows 7</h3>
+  <div class="where"><b>ieframe.dll.mui</b> · MENU 24640, 24641 · command IDs 6004–6017, 7103, 7104</div>
+  <div class="wordlist"><code>Trace tags</code><code>Resource failures</code><code>Dump tracking info</code><code>Debug break</code><code>Debug view</code><code>Dump tree</code><code>Dump parser statistics</code><code>Dump splay tree</code><code>Dump lines</code><code>Dump DisplayTree</code><code>Dump FormatCaches</code><code>Dump LayoutRects</code><code>Memory monitor</code><code>Performance meters</code><code>Save HTML</code><code>&amp;Browse view</code><code>&amp;Edit view</code></div>
+  <p>MENU 24642, the newer touch-style menu set, has an empty <code>Debug</code> slot. The XP copy of these menus lives in <code>shdoclc.dll</code>.</p>
+  <p class="spec">Only debug builds of MSHTML pick this popup.</p>
+  <div class="x" data-x="iedebug"></div>
+</article>
+
+<article class="f" id="f12" data-cls="trivia" data-os="7">
+  <div class="f-top"><span class="no">12</span><span class="chip os">7</span><span class="chip">build paths</span><span class="tag static">verified statically</span></div>
+  <h3>Build-tree paths leak through assert and trace strings</h3>
+  <div class="where"><b>msra.exe</b> (27 paths) · <b>xpsrchvw.exe</b> (about 38) · <b>dwm.exe</b>, <b>themeui.dll</b></div>
+  <ul>
+    <li><code>d:\w7rtm\base\diagnosis\ra\ui\wizard.cpp</code> and 26 more in msra.exe</li>
+    <li><code>d:\w7rtm\printscan\dox\dcx\viewer\automation\automation.cpp</code> and about 37 more in xpsrchvw.exe: a whole <code>viewer\automation</code> directory</li>
+    <li><code>d:\w7rtm\windows\dwm\shared\util\utillib\debugbreak.cpp</code> in dwm.exe and themeui.dll</li>
+  </ul>
+  <p>They show the RTM branch name (<code>w7rtm</code>) and the source-tree layout (<code>base</code>, <code>printscan</code>, <code>windows\dwm</code>). Every Windows 7 CodeView record in the sample, by contrast, holds only a bare <code>name.pdb</code>.</p>
+  <div class="x" data-x="buildpaths"></div>
+</article>
+
+<article class="f" id="f13" data-cls="trivia registry" data-os="7">
+  <div class="f-top"><span class="no">13</span><span class="chip os">7</span><span class="chip">placeholder · debug values</span><span class="tag static">verified statically</span></div>
+  <h3>XPS Viewer carries a placeholder e-mail address and debug switches</h3>
+  <div class="where"><b>xpsrchvw.exe</b> · Software\Microsoft\XPSViewer, Software\Microsoft\Direct3D · string id 12396</div>
+  <p>It contains <code>not.a.real.address@example.com</code> and reads the registry values <code>DebugOutputFlags</code>, <code>EnableLiveID</code> and <code>DisableMMX</code>. Its string table has id 12396: "XPS Viewer has detected that it is being debugged."</p>
+  <div class="x" data-x="xps"></div>
+</article>
+
+<article class="f" id="f14" data-cls="trivia" data-os="7">
+  <div class="f-top"><span class="no">14</span><span class="chip os">7</span><span class="chip">version resource</span><span class="tag static">verified statically</span></div>
+  <h3>Windows 7's Character Map says it is a Server 2003-era private build</h3>
+  <div class="where"><b>charmap.exe</b> and <b>charmap.exe.mui</b> · VS_FIXEDFILEINFO</div>
+  <p>The version resource reads <code>5.2.3668.0</code> with <code>FileFlags = 8</code> (<code>VS_FF_PRIVATEBUILD</code>) and no <code>PrivateBuild</code> string. The servicing manifest calls the same file <code>6.1.7601.18648</code>, and the link date is 2014-10-30. The 5.2 line is Windows XP x64 / Server 2003, and 3668 is lower than its 3790 RTM build.</p>
+  <p class="spec">The version resource was never updated after a pre-RTM .NET Server build.</p>
+  <div class="x" data-x="charmapver"></div>
+</article>
+
+<article class="f" id="f15" data-cls="trivia" data-os="7">
+  <div class="f-top"><span class="no">15</span><span class="chip os">7</span><span class="chip">build machine</span><span class="tag static">verified statically</span></div>
+  <h3>The CardSpace control panel names its build machine</h3>
+  <div class="where"><b>infocardcpl.cpl</b> · version resource</div>
+  <p><code>PrivateBuild = "DDBLD145"</code>, <code>Comments = "Flavor=Retail"</code>, <code>FileFlags = PRIVATEBUILD</code>.</p>
+  <p class="spec">"DDBLD" means a Developer Division build machine, since CardSpace shipped with .NET 3.0.</p>
+  <div class="x" data-x="cardspace"></div>
+</article>
+
+<article class="f" id="f16" data-cls="trivia" data-os="7">
+  <div class="f-top"><span class="no">16</span><span class="chip os">7</span><span class="chip">placeholder text · typo</span><span class="tag static">verified statically</span></div>
+  <h3>Placeholder strings left in Action Center</h3>
+  <div class="where"><b>wscui.cpl.mui</b> · STRINGTABLE 2100–2105</div>
+  <div class="wordlist"><code>Check Description</code><code>Notifcation Description</code><code>Show Me More Information about foo</code><code>Balloon Title</code><code>Balloon Description</code><code>State Description</code></div>
+  <p>"Notifcation" is spelled that way in the file. None of the IDs 2100–2105 appears as an immediate in <code>wscui.cpl</code>.</p>
+  <p class="spec">These are template or default strings.</p>
+  <div class="x" data-x="wscui"></div>
+</article>
+
+<article class="f" id="f17" data-cls="trivia" data-os="7">
+  <div class="f-top"><span class="no">17</span><span class="chip os">7</span><span class="chip">typos · diagnostics</span><span class="tag static">verified statically</span></div>
+  <h3>Calculator misspells its own saved-state names</h3>
+  <div class="where"><b>calc.exe</b> · registry names under Software\Microsoft\Calc</div>
+  <ul>
+    <li><code>Unit_Converion_history</code> next to the correctly spelled <code>Unit_Conversion_data</code></li>
+    <li><code>datettime_datestart</code> next to <code>datetime_*</code></li>
+    <li>the resource-name constant <code>IDS_TEMPALTE_XML</code></li>
+    <li>leftover diagnostics: <code>Duplicate Formula: </code>, <code>Undefined unit or arg: </code>, <code>Setting Data on Unit in Combobox failed</code>, <code>ErrorCode: %d, Line: %d Column: %d; Error: %s</code></li>
+  </ul>
+  <div class="x" data-x="calc"></div>
+</article>
+
+<article class="f" id="f18" data-cls="trivia" data-os="7">
+  <div class="f-top"><span class="no">18</span><span class="chip os">7</span><span class="chip">codename</span><span class="tag static">verified statically</span></div>
+  <h3>On-Screen Keyboard calls its default skin "Longhorn"</h3>
+  <div class="where"><b>osk.exe</b> · six compares, e.g. 0x01019342 · also <b>authui.dll</b></div>
+  <p>The skin name is compared with <code>L"Longhorn"</code> in six places; the alternative is <code>L"Classic"</code>. <code>authui.dll</code> also has a <code>Longhorn</code> string next to <code>InsideWindow</code>/<code>True</code>/<code>False</code>. Vista's codename survives in Windows 7.</p>
+  <div class="x" data-x="osk"></div>
+</article>
+
+<article class="f" id="f19" data-cls="trivia" data-os="311">
+  <div class="f-top"><span class="no">19</span><span class="chip os">3.11</span><span class="chip">encoded credits</span><span class="tag static">verified statically</span></div>
+  <h3>The Windows 3.1 credits, XOR 0x99, in SHELL.DLL</h3>
+  <div class="where"><b>C:\WINDOWS\SYSTEM\SHELL.DLL</b> · RCDATA 9999 (2,064 bytes) · BITMAP 9997, 9998</div>
+  <p>XOR-ing the RCDATA with 0x99 gives the whole roll for the well-known 3.1 About-box easter egg. It opens with "Dedicated to all the hard-working people of the Microsoft Windows 3.10 Team!", then <code>Lead by/BRADSI</code>, Development (<code>KARLST</code>, <code>PHILBA</code>, …), Program Management, Testing, Multimedia, OLE, WinHelp, Fonts, Beta, Marketing, Documentation, Graphic Artists, and <code>Special Thanks/to billg/mikehal/steveb/t-bear</code>. The easter egg itself is well known; the decoding here comes straight from the bytes. <a href="#decoder">Run the decoder above.</a></p>
+  <p>In the stored bytes, each record starts with <code>00</code> and a one-byte running count (01, 02, 03 …), which XOR to <code>99 98</code>, <code>99 9b</code>, <code>99 9a</code>. The decoder shows them as ‹01›, ‹02›.</p>
+  <div class="x" data-x="credits"></div>
+</article>
+
+<article class="f" id="f20" data-cls="trivia" data-os="311">
+  <div class="f-top"><span class="no">20</span><span class="chip os">3.11</span><span class="chip">module descriptions · codenames</span><span class="tag static">verified statically</span></div>
+  <h3>Win16 module descriptions credit authors and keep codenames</h3>
+  <div class="where">NE non-resident name #0 of each module, never shown in the UI</div>
+  <ul>
+    <li><code>CALC.EXE</code>: "Microsoft Calculator: Developed by Kraig Brockschmidt"</li>
+    <li><code>PBRUSH.EXE</code>: "PC Paintbrush+" (ZSoft heritage)</li>
+    <li><code>WINMINE.EXE</code>: "Minesweeper v3.0a"; its string table also has "by Robert Donner and Curt Johnson"</li>
+    <li><code>STORE.DLL</code> / <code>VFORMS.DLL</code>: "Bullet Store DLL" / "Bullet VFORMS DLL"; <code>MSMAIL.EXE</code> and <code>STORE.DLL</code> also contain the INI-style name <code>HiddenBullet</code></li>
+    <li><code>MSSFS.DLL</code>: "Network Courier service provider DLL", from Courier, the product MS Mail grew out of</li>
+    <li><code>RASSTART.EXE</code>: "retail\RASSTART.exe", a build-tree path</li>
+  </ul>
+  <p class="spec">Bullet was the codename of the Mail 3.x client.</p>
+  <div class="x" data-x="nedesc"></div>
+</article>
+
+<article class="f" id="f21" data-cls="trivia" data-os="311">
+  <div class="f-top"><span class="no">21</span><span class="chip os">3.11</span><span class="chip">beta residue</span><span class="tag static">verified statically</span></div>
+  <h3>Beta time-bomb text ships in retail Schedule+</h3>
+  <div class="where"><b>SCHDPLUS.EXE</b>, <b>MSSCHED.DLL</b>, <b>MSREMIND.EXE</b> · also <b>MSMAIL.EXE</b></div>
+  <p>"Sorry, this Beta copy has expired." is in all three Schedule+ binaries. <code>MSMAIL.EXE</code> credits its spell checker with "1984-1993, Trade Secret, Soft-Art, Inc.". These are static strings; whether the expiry code is still reachable was not traced.</p>
+  <div class="x" data-x="beta"></div>
+  <div class="dec-figs" style="border:0;padding:0">
+    <figure><img src="inside-windows/schdplus-1147.png" width="64" height="64" alt="SCHDPLUS.EXE bitmap 1147: a pixel-art cowboy"><figcaption>SCHDPLUS.EXE BITMAP 1147</figcaption></figure>
+    <figure><img src="inside-windows/schdplus-1149.png" width="64" height="64" alt="SCHDPLUS.EXE bitmap 1149"><figcaption>BITMAP 1149. Neither has a direct reference in code; not traced further.</figcaption></figure>
+  </div>
+</article>
+
+<article class="f" id="f22" data-cls="hook trivia" data-os="311">
+  <div class="f-top"><span class="no">22</span><span class="chip os">3.11</span><span class="chip">export names</span><span class="tag static">verified statically</span></div>
+  <h3>Exported names with "hack", "debug" and "test" in them</h3>
+  <div class="where">NE entry and name tables</div>
+  <ul>
+    <li><code>COMMDLG.DLL</code> exports <code>DWUPARROWHACK</code> (ordinal 30)</li>
+    <li><code>DLLSCHED.DLL</code> exports <code>_DEBUGPRINTF</code></li>
+    <li><code>MSSCHED.DLL</code> exports <code>ECTESTSCHEDFILE</code></li>
+    <li><code>FRAMEWRK.DLL</code> exports <code>PANEAUX_EVRDUMPSTATE</code></li>
+    <li><code>KRNL386.EXE</code> reads <code>EnableEMSDebug</code>; <code>WINTUTOR.EXE</code> has a "Test mode" string</li>
+  </ul>
+</article>
+
+<article class="f" id="f23" data-cls="registry" data-os="311">
+  <div class="f-top"><span class="no">23</span><span class="chip os">3.11</span><span class="chip">INI switches</span><span class="tag static">verified statically</span></div>
+  <h3>Undocumented INI switches that the code really reads</h3>
+  <div class="where">literals passed straight to <code>GetProfileInt</code> / <code>GetPrivateProfileInt</code> / <code>…String</code></div>
+  <ul>
+    <li><code>USER.EXE</code> reads <code>[Windows] Edsun=</code> at seg3:2288 into a global. Edsun made the CEG anti-aliasing RAMDAC.</li>
+    <li><code>PBRUSH.EXE</code>: <code>OmitPictureFormat</code></li>
+    <li><code>CARDFILE.EXE</code>: <code>ValidateFileWrite</code></li>
+    <li><code>CLOCK.EXE</code>: <code>NoShadow</code></li>
+    <li><code>CONTROL.EXE</code>: <code>[MMCPL] NumApps</code> and <code>"don't load"</code></li>
+    <li><code>DDEML.DLL</code>: <code>ShutdownTimeout</code>, <code>ShutdownRetryTimeout</code>; it also adds a <code>Progman</code> atom</li>
+    <li><code>STORE.DLL</code>: <code>No_Compress</code>, <code>Secs_Till_Fast_Compress</code></li>
+  </ul>
+  <p>What these values do beyond being read was not traced, except for Edsun.</p>
+  <div class="x" data-x="ini"></div>
+</article>
+
+<h2 class="group-h" data-g="drive">Ways to drive a program from outside</h2>
+
+<article class="f" id="f24" data-cls="auto" data-os="311 7">
+  <div class="f-top"><span class="no">24</span><span class="chip os">3.11</span><span class="chip os">7</span><span class="chip">registered messages · DDE · pipes · COM</span><span class="tag static">verified statically</span></div>
+  <h3>Registered messages, DDE names and pipes other programs can use</h3>
+  <div class="where">each string is the literal pushed right before the API call</div>
+  <ul>
+    <li>WordPad (7) registers <code>WordPadOpenMessage</code> and <code>WordPadPrinterChanged</code></li>
+    <li>Explorer registers <code>SHELLHOOK</code>, <code>Logoff User</code>, <code>HardError</code>, <code>SysFrostedWindow</code>, <code>Enable Balloon Tip</code>, <code>ShowOnlyQuickLaunchDeskBand</code></li>
+    <li>Defrag registers <code>WindowsDefrag{DD9F21BA-…}</code></li>
+    <li>MMC registers <code>CAMCView::JiggleListViewFocus</code> and <code>CAMCView::ShowWebContextMenu</code></li>
+    <li>ieframe uses the Netscape DDE topics <code>WWW_OpenURL</code> / <code>WWW_URLEcho</code> and registers <code>CMBAutomation</code> and <code>GetAutomationObject</code></li>
+    <li><code>mstsc.exe</code> holds the RPC endpoint <code>\pipe\SessEnvPublicRpc</code> (an <code>ncacn_np</code> client binding)</li>
+    <li>Program Manager 3.1 registers <code>OTHERWINDOWCREATED</code> and <code>ACTIVATESHELLWINDOW</code></li>
+    <li>ClipBook (<code>CLIPSRV.EXE</code>, 3.11) is a DDEML server named <code>ClipSrv</code> with topics <code>System</code>, <code>Topics</code>, <code>FormatList</code> and <code>CLPBK$</code> shares</li>
+    <li>The 3.11 screen savers register <code>PWM_NEWSPEED</code> and <code>PWM_NEWPOSITION</code>; NetDDE registers <code>NetddeSessionEnum</code> and <code>NetddeGetClientInfo</code></li>
+    <li><code>SoundRecorder.exe</code>, <code>mmc.exe</code>, <code>mstsc.exe</code> and <code>xpsrchvw.exe</code> call <code>CoRegisterClassObject</code>, so they run as COM local servers; <code>mstsc</code>, <code>mmc</code>, <code>wscui</code> and <code>appwiz</code> embed a TYPELIB</li>
+  </ul>
+  <div class="x" data-x="wordpad"></div>
+</article>
+
+<article class="f" id="f25" data-cls="switch" data-os="7">
+  <div class="f-top"><span class="no">25</span><span class="chip os">7</span><span class="chip">command-line switches</span><span class="tag static">verified statically</span></div>
+  <h3>Command-line switches found by the compare-and-parse scan</h3>
+  <div class="where">string literals passed to compare functions, plus string-table switch lists · perfmon <code>/comp</code> pairs with the Compare menu in <a href="#h5">H5</a></div>
+  <ul>
+    <li><code>mstsc.exe /ADMIN</code> (documented), with <code>REGSERVER</code>, <code>UNREGSERVER</code>, <code>EMBEDDING</code></li>
+    <li><code>fxscover.exe /COMMON /CONVERT /SSESS_ID</code></li>
+    <li><code>msra.exe -RecoverDesktop</code></li>
+    <li><code>explorer.exe /FACTORY</code> and <code>/globalhotkey</code></li>
+    <li><code>regedit.exe regserver</code> / <code>unregserver</code>; <code>tabcal.exe Quiet</code></li>
+    <li><code>/restart</code>, used by Restart Manager, in <code>calc.exe</code>, <code>mspaint.exe</code>, <code>wordpad.exe</code>, <code>StikyNot.exe</code></li>
+    <li><code>perfmon.exe</code> keeps a switch table in its string table: <code>sys</code>, <code>res</code>, <code>rel</code>, <code>report</code>, <code>noelev</code>, <code>load</code>, <code>open</code>, <code>comp</code>, and <code>debug`d`level`Debug</code> at id 15100. <code>/comp</code> ("Enable compare") and <code>/debug</code> are not in the usual documentation; their handling was not traced.</li>
+  </ul>
+</article>
+
+<h2 class="group-h" data-g="menus" id="menus">Hidden menus</h2>
+
+<p class="menus-intro" data-intro="menus">Menus below are drawn live from the parsed MENU resource, in classic style; they are not screenshots. A red dot marks an item the code deletes or hides at runtime. "Verified at runtime" means the program was started on the Windows 7 box, its real menu or window style was read back, and it was killed with <code>taskkill /f</code> so it never saved settings.</p>
+
+<article class="f" id="h1" data-cls="menu hook" data-os="7">
+  <div class="f-top"><span class="no">H1</span><span class="chip os">7</span><span class="chip">context menu · debug</span><span class="tag static">verified statically</span></div>
+  <h3>MSHTML's Debug context submenu</h3>
+  <div class="where"><b>ieframe.dll.mui</b> · MENU 24640 (also 24641) at file 0x<span data-moff="h1"></span> · popup "Debug"</div>
+  <p>The 17-item popup (finding <a href="#f11">11</a>) sits in the same menu resource as the normal page context menus: "Default", "Image", "Control", "Table", the scroll bars, "Media". MENU 24642, the newer set, keeps a <code>Debug</code> slot that is empty.</p>
+  <div class="wm" data-menu="h1" data-style="w7" data-mode="popup"><noscript><img src="inside-windows/menus/w7-ieframe-debug.png" alt="Mock-up of the Debug popup drawn from the resource"></noscript></div>
+</article>
+
+<article class="f" id="h2" data-cls="menu accel" data-os="7">
+  <div class="f-top"><span class="no">H2</span><span class="chip os">7</span><span class="chip">taskbar menu · key-gated</span><span class="tag static">verified statically</span></div>
+  <h3>Explorer's "Exit Explorer", confirmed from the code</h3>
+  <div class="where"><b>explorer.exe</b> · MENU 211 = Properties, Exit Explorer · code 0x0108aba2</div>
+  <div class="chords">
+    <div class="chord"><kbd class="k">Ctrl</kbd><span class="plus">+</span><kbd class="k">Shift</kbd><span class="plus">+</span><kbd class="k">right-click</kbd><span class="plus">taskbar</span><span class="arrow">→</span><span class="eff">menu keeps "Exit Explorer"</span></div>
+  </div>
+  <p>After loading menu 0xD3 (211), Explorer calls <code>GetAsyncKeyState(VK_SHIFT)</code> and <code>GetAsyncKeyState(VK_CONTROL)</code>. Unless both are held it calls <code>DeleteMenu(0x7ff4 = 32756)</code>. It also deletes the item when the <code>DisableTaskMgr</code> policy is set. This is folklore; the code confirms it.</p>
+  <div class="wm" data-menu="h2" data-style="w7" data-mode="popup" data-marks='{"32756":"deleted unless Ctrl+Shift are held, or when DisableTaskMgr is set"}'><noscript><img src="inside-windows/menus/w7-explorer-exit.png" alt="Mock-up of MENU 211"></noscript></div>
+  <div class="x" data-x="h2"></div>
+</article>
+
+<article class="f" id="h3" data-cls="menu" data-os="311">
+  <div class="f-top"><span class="no">H3</span><span class="chip os">3.11</span><span class="chip">removed menu item</span><span class="tag static">verified statically</span></div>
+  <h3>Mail always removes Help ▸ Demos</h3>
+  <div class="where"><b>MSMAIL.EXE</b> · MENU 2000 · code seg40:06f6</div>
+  <p>The code takes <code>GetSubMenu(GetMenu(), 5)</code> and deletes 0xA8F "&amp;Demos". If that works it also deletes the separator at position 3; if it fails it greys the item. "&amp;Index" (0xA8E) is deleted only when a global flag (<code>es:[0xdc0]</code>) is set. The WfW 3.11 build never shows Demos.</p>
+  <div class="wm" data-menu="h3" data-style="w311" data-mode="bar" data-open="&amp;Help" data-marks='{"2703":"always deleted (with the separator above it)","2702":"deleted when es:[0xdc0] is set"}'><noscript><img src="inside-windows/menus/w311-msmail-help.png" alt="Mock-up of the Help menu"></noscript></div>
+  <div class="x" data-x="h3"></div>
+</article>
+
+<article class="f" id="h4" data-cls="menu" data-os="7">
+  <div class="f-top"><span class="no">H4</span><span class="chip os">7</span><span class="chip">locale-gated items</span><span class="tag static">verified statically</span><span class="tag runtime" style="margin-left:0">first-open menu verified at runtime</span></div>
+  <h3>Private Character Editor hides its Chinese and Japanese import items</h3>
+  <div class="where"><b>eudcedit.exe</b> · eudcedit.exe.mui MENU 2 · routine 0x01019070</div>
+  <p>If the editor's language global is not 0x404 (zh-TW) or 0x804 (zh-CN), the routine deletes "IME &amp;Link…" (32791, in Edit) and "I&amp;mport IME Table…" (32802). If it is not 0x411 (ja-JP), it also deletes "&amp;Import Bitmap Font…" (32798). Then it calls <code>DrawMenuBar</code>.</p>
+  <p><b>Live:</b> when the editor is first opened on this English Windows 7, all three items are still there (File: Import Bitmap Font, Import IME Table; Edit: IME Link). The removal happens later, on an event that was not traced.</p>
+  <div class="wm" data-menu="h4" data-style="w7" data-mode="bar" data-open="&amp;File" data-marks='{"32798":"deleted unless the language is ja-JP","32802":"deleted unless zh-TW or zh-CN"}'><noscript><img src="inside-windows/menus/w7-eudcedit-file.png" alt="Mock-up of the File menu"></noscript></div>
+  <div class="x" data-x="h4"></div>
+</article>
+
+<article class="f" id="h5" data-cls="menu switch" data-os="7">
+  <div class="f-top"><span class="no">H5</span><span class="chip os">7</span><span class="chip">unreached menu bar</span><span class="tag static">verified statically</span></div>
+  <h3>Perfmon's Compare menu</h3>
+  <div class="where"><b>perfmon.exe.mui</b> · MENU 114 · string-table entry <code>comp`comp`*`Enable compare</code></div>
+  <p>The menu bar is File / Compare / Help, and Compare holds Set Transparency (70%, 40%, No transparency) and Snap to Compare. It pairs with the <code>/comp</code> command-line entry (finding <a href="#f25">25</a>). <code>perfmon.exe</code> never loads menus by immediate ID; <code>wdc.dll</code> imports <code>LoadMenuW</code>, so the ID probably comes from data. Static only: perfmon asks to run elevated (<code>highestAvailable</code>), and no UAC prompt was triggered.</p>
+  <p class="spec"><code>perfmon /sys /comp</code> shows it.</p>
+  <div class="wm" data-menu="h5" data-style="w7" data-mode="bar" data-open="&amp;Compare" data-cascade="Set &amp;Transparency"><noscript><img src="inside-windows/menus/w7-perfmon-compare.png" alt="Mock-up of the Compare menu"></noscript></div>
+</article>
+
+<article class="f" id="h6" data-cls="menu trivia" data-os="7">
+  <div class="f-top"><span class="no">H6</span><span class="chip os">7</span><span class="chip">vestigial menu</span><span class="tag static">verified statically</span><span class="tag runtime" style="margin-left:0">verified at runtime</span></div>
+  <h3>Paint keeps a vestigial menu bar</h3>
+  <div class="where"><b>mspaint.exe.mui</b> · MENU 2 (24 bytes)</div>
+  <p>A single <code>&amp;Help</code> popup whose only content is an empty end item. Windows 7 Paint uses a ribbon and has no menu bar. <b>Live:</b> <code>winprobe menu class:MSPaintApp</code> printed <code>(no menu bar)</code>.</p>
+  <div class="wm" data-menu="h6" data-style="w7" data-mode="bar" data-open="&amp;Help"><noscript><img src="inside-windows/menus/w7-mspaint-help.png" alt="Mock-up of MENU 2"></noscript></div>
+</article>
+
+<article class="f" id="h7" data-cls="switch" data-os="7">
+  <div class="f-top"><span class="no">H7</span><span class="chip os">7</span><span class="chip">switch · window style</span><span class="tag runtime">verified at runtime</span></div>
+  <h3>Notepad <code>/.SETUP</code>, checked live</h3>
+  <div class="where"><b>notepad.exe</b> (7) · <code>cat.txt</code> opened once normally, once with <code>/.SETUP</code> · follows finding <a href="#f3">3</a></div>
+  <p>The menu is unchanged; the frame changes. Setup gets an invisible, non-minimisable Notepad. Only the style was checked live; Esc was not sent, so the SlipUpAcc exit keys are still static only.</p>
+  <div class="tbl"><table>
+    <thead><tr><th></th><th>normal</th><th><code>/.SETUP</code></th></tr></thead>
+    <tbody>
+      <tr><th>style</th><td><code>0x14CF0000</code></td><td><code>0x04FD0000</code></td></tr>
+      <tr><th>visible</th><td>yes</td><td>no (<code>WS_VISIBLE</code> off)</td></tr>
+      <tr><th>minimize box</th><td>yes</td><td>no</td></tr>
+      <tr><th>scroll-bar bits</th><td>not set</td><td>set</td></tr>
+    </tbody>
+  </table></div>
+</article>
+
+<article class="f" id="h8" data-cls="menu switch" data-os="311">
+  <div class="f-top"><span class="no">H8</span><span class="chip os">3.11</span><span class="chip">switch-gated menu</span><span class="tag static">verified statically</span></div>
+  <h3>Registration Editor's advanced menus behind <code>regedit /v</code></h3>
+  <div class="where"><b>REGEDIT.EXE</b> (3.11) · MENU 4098 / 4099 · code seg1:0744</div>
+  <p>4098 is the normal File-type editor. 4099 adds Save Changes, Restore To Last Save, Save Registration File, a <b>Search</b> menu (Find Key, Find Next) and Add/Copy/Delete Key. The window class menu is set to 0x1003 (4099) only when a command-line flag bit (<code>[0x2d2] &amp; 4</code>, the documented <code>regedit /v</code>) is set. The scanner flagged both menus as unloaded because the ID reaches <code>WNDCLASS</code> through <code>mov [bp-8], 0x1003</code>; that is a known limit.</p>
+  <div class="wm" data-menu="h8" data-style="w311" data-mode="bar" data-open="&amp;Search"><noscript><img src="inside-windows/menus/w311-regedit-v-search.png" alt="Mock-up of the Search menu"></noscript></div>
+  <div class="x" data-x="h8"></div>
+</article>
+
+<article class="f" id="h9" data-cls="menu" data-os="311 7">
+  <div class="f-top"><span class="no">H9</span><span class="chip os">3.11</span><span class="chip os">7</span><span class="chip">removed at runtime</span><span class="tag static">verified statically</span></div>
+  <h3>Other menu items removed at runtime</h3>
+  <div class="where">immediate IDs pushed before <code>DeleteMenu</code> / <code>RemoveMenu</code> / <code>ModifyMenu</code> / <code>EnableMenuItem</code>; conditions partly traced</div>
+  <ul>
+    <li><code>taskmgr.exe</code> deletes "Set &amp;Affinity…" (40055), "&amp;New Task (Run…)" (40001) and "&amp;Restore" (40064)</li>
+    <li><code>regedit.exe</code> deletes "Select &amp;All", "&amp;Connect Network Registry…", "&amp;Disconnect Network Registry…"</li>
+    <li><code>explorer.exe</code> removes "&amp;Peek at desktop" (6702) and "&amp;Undo" (416)</li>
+    <li><code>calc.exe</code> removes "&amp;Date calculation" (979). <span class="tag runtime">verified at runtime</span> it was present in the menu when checked.</li>
+    <li><code>mmc.exe</code> deletes "He&amp;lp on Snap-in" and "A&amp;bout Snap-in"; <code>bthprops.cpl</code> deletes the "Turn Adapter On/Off" items</li>
+    <li>3.11: <code>PRINTMAN.EXE</code> deletes the network-printer items, <code>SOUNDREC.EXE</code> deletes "Paste Insert" and "Paste Mix", and <code>CMC</code>/<code>MAPI</code>/<code>VFORMS</code> delete "Spe&amp;lling F7"</li>
+  </ul>
+</article>
+
+<article class="f" id="h10" data-cls="menu" data-os="7">
+  <div class="f-top"><span class="no">H·</span><span class="chip os">7</span><span class="chip">false positives</span><span class="tag static">verified statically</span></div>
+  <h3>Menus that looked hidden and were not</h3>
+  <ul>
+    <li><code>dialer.exe</code> MENU 118 looked unloaded, but <span class="tag runtime">verified at runtime</span> it has a menu bar, set through the window class.</li>
+    <li><code>mmsys.cpl</code> MENU 603 ("Show Disabled Devices", "Show Disconnected Devices") is the familiar right-click menu, loaded by an ID the scan did not catch.</li>
+    <li>The <code>menu_nohandler</code> class is mostly MFC or ATL command routing that immediates can't see. Treat it as weak evidence.</li>
+  </ul>
+</article>
+
+
+<h2 class="group-h" data-g="xp">XP: questions not yet checked</h2>
+<ol class="leads" id="leads">
+  <li data-cls="menu hook" data-os="xp"><div class="lt"><span class="chip os">XP</span><span class="tag untested">not yet checked</span></div><span><code>shdoclc.dll</code>: is the MSHTML Debug context submenu (finding 11) there, and does any registry switch enable it?</span></li>
+  <li data-cls="accel" data-os="xp"><div class="lt"><span class="chip os">XP</span><span class="tag untested">not yet checked</span></div><span><code>mmc.exe</code> (MMC 2.0): is Ctrl+Alt+Shift+F7 / 13235 handled in this older version?</span></li>
+  <li data-cls="switch registry accel" data-os="xp"><div class="lt"><span class="chip os">XP</span><span class="tag untested">not yet checked</span></div><span>Notepad 5.1: <code>/.SETUP</code>, <code>SlipUpAcc</code> and <code>fMLE_is_broken</code>, completing the 1992 → 2001 → 2009 line.</span></li>
+  <li data-cls="accel registry" data-os="xp"><div class="lt"><span class="chip os">XP</span><span class="tag untested">not yet checked</span></div><span><code>winmine.exe</code>: <code>Sound</code>/<code>Menu</code> values now in <code>HKCU\Software\Microsoft\winmine</code>; F4/F5/F6 and the XYZZY handler.</span></li>
+  <li data-cls="menu" data-os="xp"><div class="lt"><span class="chip os">XP</span><span class="tag untested">not yet checked</span></div><span>XP Explorer: is there a taskbar "Exit Explorer"? Windows 7 has it behind Ctrl+Shift (<a href="#h2">H2</a>). Also compare XP <code>shdoclc.dll</code> MENU 24641 with H1.</span></li>
+  <li data-cls="accel registry" data-os="xp"><div class="lt"><span class="chip os">XP</span><span class="tag untested">not yet checked</span></div><span><code>mshearts.exe</code>: <code>ZB=42</code>, now in <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Applets\Hearts</code>.</span></li>
+  <li data-cls="accel trivia" data-os="xp"><div class="lt"><span class="chip os">XP</span><span class="tag untested">not yet checked</span></div><span><code>freecell.exe</code>, <code>sol.exe</code>, <code>pinball.exe</code>: run the accelerator and key-handler analysis, and look at the Space Cadet cheat strings.</span></li>
+  <li data-cls="registry hook" data-os="xp"><div class="lt"><span class="chip os">XP</span><span class="tag untested">not yet checked</span></div><span><code>dxdiag.exe</code> (DirectX 9c): are the <code>Stress *</code> values already there?</span></li>
+  <li data-cls="switch trivia" data-os="xp"><div class="lt"><span class="chip os">XP</span><span class="tag untested">not yet checked</span></div><span><code>magnify.exe</code>, <code>osk.exe</code>: command words and skin names.</span></li>
+  <li data-cls="trivia" data-os="xp"><div class="lt"><span class="chip os">XP</span><span class="tag untested">not yet checked</span></div><span><code>charmap.exe</code>: what does its version resource say, against the 5.2.3668 seen in Windows 7?</span></li>
+  <li data-cls="trivia" data-os="xp"><div class="lt"><span class="chip os">XP</span><span class="tag untested">not yet checked</span></div><span>SP3 CodeView records often keep full <code>d:\xpsp\…</code> or <code>\\</code>-style paths. Run the <code>pdb</code> class across <code>system32</code>.</span></li>
+  <li data-cls="trivia" data-os="xp"><div class="lt"><span class="chip os">XP</span><span class="tag untested">not yet checked</span></div><span>Run <code>codehunt --icons-dir</code> on <code>shell32.dll</code> and <code>moricons.dll</code> for icons no longer in any index table.</span></li>
+</ol>
+<div class="empty" id="empty" hidden>Nothing matches this pair of filters. Try “all” on one of them.</div>
+
+<h2 class="group-h" data-g="method">Method and limits</h2>
+<section class="method">
+  <p>The scanner uses only the Python standard library (Pillow is optional, for rendering icons). Disassembly was done with capstone: x86-32 for Windows 7 and 16-bit for 3.11, with Win16 imports resolved through the NE relocation tables. The excerpts on this page were re-extracted from the same files; addresses in the left column are virtual addresses (PE) or segment offsets (NE), and the second column is the file offset.</p>
+<pre>python3 tools/codehunt.py --mui w7/en-US --icons-dir icons  w7/System32  &gt; codehunt-w7.jsonl
+python3 tools/codehunt.py --icons-dir icons  wfw311/              &gt; codehunt-w311.jsonl</pre>
+  <ul>
+    <li>Unreferenced-resource checks only catch direct immediates. Windows 7 regedit's "Binary Data" DIALOG 2021 looked orphaned, but it is loaded as <code>DialogBoxParamW(…, 0x7e4 + (arg != 0), …)</code> at 0x01017dcd. Card faces, toolbar strips and ribbon images are referenced as base+n.</li>
+    <li>Codename hits need context. <code>OLE2CONV.DLL</code>'s "Chicago" and "Cairo" are Macintosh QuickDraw font names (next to "New York", "Geneva", "Los Angeles"), not the Windows 95/NT codenames.</li>
+    <li>API-argument records collect every string pushed shortly before a call, so neighbouring calls can bleed into one record.</li>
+    <li>Inline character compares, like 3.11 Notepad's <code>/.SETUP</code>, are invisible to any string-based scan.</li>
+  </ul>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="links">
+      <a href="windows-secrets.html">← Windows Secrets (hidden UI by resizing)</a>
+      <a href="https://github.com/williamsharkey/windows-secrets">github.com/williamsharkey/windows-secrets</a>
+      <a href="https://github.com/williamsharkey/windows-secrets/blob/main/tools/codehunt.py">tools/codehunt.py</a>
+    </div>
+    <p>Raw scanner output: <code>data/codehunt-w7.jsonl.gz</code>, <code>data/codehunt-w311.jsonl.gz</code>. Write-up: <code>data/codehunt-findings.md</code>. <button class="theme-toggle" id="theme" type="button">toggle theme</button></p>
+      <nav class="sib" aria-label="Related pages"><span>C:\WILLIAMSHARKEY.COM&gt; dir /b *.htm</span><ul><li><a href="windows-secrets.html">  WINDOWS_SECRETS.HTM</a></li><li class="cur">&gt; INSIDE_WINDOWS.HTM</li><li><a href="tribute.html">  TRIBUTE.HTM</a></li><li><a href="basilisk.html">  BASILISK.HTM</a></li><li><a href="puppetry.html">  WINDOW_PUPPETRY.HTM</a></li></ul></nav>
+    <style>.sib{margin-top:22px;font:12px/1.7 var(--font-dump,monospace);color:var(--dim);opacity:.75}
+    .sib ul{list-style:none;margin:4px 0 0;padding:0;white-space:pre}.sib a{color:inherit;text-decoration:none}.sib a:hover{color:var(--accent)}
+    .sib .cur{color:var(--accent)}</style>
+</div>
+</footer>
+
+<script>
+const DATA = {"x": {"hearts": [{"k": "hex", "label": "MSHEARTS.EXE \u00b7 ACCELERATOR HEARTSACCEL (entry 7 highlighted: flags 9d, key 7b = VK_F12, cmd 0079 = 121)", "base": 65552, "bytes": "710066000177007c000178007d009d7b00790000000000000000000000000000", "hl": [65566, 65571]}, {"k": "dis", "label": "MSHEARTS.EXE \u00b7 seg1:0454 handler for command 121", "rows": [["0454", "000a54", "8c d0", "mov ax, ss"], ["0456", "000a56", "55", "push bp"], ["0457", "000a57", "8b ec", "mov bp, sp"], ["0459", "000a59", "57", "push di"], ["045a", "000a5a", "56", "push si"], ["045b", "000a5b", "1e", "push ds"], ["045c", "000a5c", "8e d8", "mov ds, ax"], ["045e", "000a5e", "1e", "push ds"], ["045f", "000a5f", "ff 36 10 00", "push word ptr [0x10] ; \"Hearts\""], ["0463", "000a63", "1e", "push ds"], ["0464", "000a64", "68 97 00", "push 0x97 ; \"ZB\""], ["0467", "000a67", "6a 00", "push 0"], ["0469", "000a69", "9a ff 06 00 00", "lcall 0, 0x6ff ; KERNEL.GETPROFILEINT"], ["046e", "000a6e", "3d 2a 00", "cmp ax, 0x2a ; 42 decimal"], ["0471", "000a71", "75 42", "jne 0x4b5"], ["0473", "000a73", "8b 76 06", "mov si, word ptr [bp + 6]"], ["0476", "000a76", "83 7c 12 01", "cmp word ptr [si + 0x12], 1"], ["047a", "000a7a", "1b c0", "sbb ax, ax"], ["047c", "000a7c", "f7 d8", "neg ax"], ["047e", "000a7e", "89 44 12", "mov word ptr [si + 0x12], ax ; toggle the flag"], ["0481", "000a81", "ff 74 04", "push word ptr [si + 4]"], ["0484", "000a84", "6a 00", "push 0"], ["0486", "000a86", "6a 00", "push 0"], ["0488", "000a88", "6a 01", "push 1"], ["048a", "000a8a", "9a ff ff 00 00", "lcall 0, 0xffff ; USER.INVALIDATERECT"], ["048f", "000a8f", "ff 74 04", "push word ptr [si + 4]"], ["0492", "000a92", "9a 0e 07 00 00", "lcall 0, 0x70e ; USER.GETMENU"]]}], "winmine": [{"k": "dis", "label": "WINMINE.EXE \u00b7 seg1:063a WM_KEYDOWN switch", "rows": [["063a", "000c5a", "8b 46 0a", "mov ax, word ptr [bp + 0xa]"], ["063d", "000c5d", "3d 75 00", "cmp ax, 0x75 ; VK_F6"], ["0640", "000c60", "75 03", "jne 0x645"], ["0642", "000c62", "e9 83 00", "jmp 0x6c8"], ["0645", "000c65", "77 13", "ja 0x65a"], ["0647", "000c67", "2c 10", "sub al, 0x10 ; -0x10 \u2192 VK_SHIFT"], ["0649", "000c69", "75 03", "jne 0x64e"], ["064b", "000c6b", "e9 85 00", "jmp 0x6d3"], ["064e", "000c6e", "2c 0b", "sub al, 0xb ; -0x0b \u2192 VK_ESCAPE (0x1b)"], ["0650", "000c70", "74 26", "je 0x678"], ["0652", "000c72", "2c 58", "sub al, 0x58 ; -0x58 \u2192 VK_F4 (0x73)"], ["0654", "000c74", "74 3d", "je 0x693"], ["0656", "000c76", "fe c8", "dec al ; -1 \u2192 VK_F5 (0x74)"], ["0658", "000c78", "74 5f", "je 0x6b9"], ["065a", "000c7a", "83 3e 34 00 05", "cmp word ptr [0x34], 5"], ["065f", "000c7f", "7c 03", "jl 0x664"], ["0661", "000c81", "e9 ce 02", "jmp 0x932"], ["0664", "000c84", "8a 46 0a", "mov al, byte ptr [bp + 0xa]"], ["0667", "000c87", "8b 1e 34 00", "mov bx, word ptr [0x34]"], ["066b", "000c8b", "38 87 36 00", "cmp byte ptr [bx + 0x36], al ; compare with \"XYZZY\"[n]"], ["066f", "000c8f", "75 71", "jne 0x6e2"], ["0671", "000c91", "ff 06 34 00", "inc word ptr [0x34]"], ["0675", "000c95", "e9 ba 02", "jmp 0x932"], ["0678", "000c98", "80 0e 16 00 04", "or byte ptr [0x16], 4"], ["067d", "000c9d", "ff 36 ce 03", "push word ptr [0x3ce]"], ["0681", "000ca1", "68 12 01", "push 0x112"], ["0684", "000ca4", "68 20 f0", "push 0xf020 ; SC_MINIMIZE"], ["0687", "000ca7", "6a 00", "push 0"], ["0689", "000ca9", "6a 00", "push 0"], ["068b", "000cab", "9a ff ff 00 00", "lcall 0, 0xffff ; USER.POSTMESSAGE"], ["0690", "000cb0", "e9 9f 02", "jmp 0x932"], ["0693", "000cb3", "83 3e 64 02 01", "cmp word ptr [0x264], 1 ; Sound= setting"], ["0698", "000cb8", "7f 03", "jg 0x69d"], ["069a", "000cba", "e9 95 02", "jmp 0x932"], ["069d", "000cbd", "83 3e 64 02 03", "cmp word ptr [0x264], 3"], ["06a2", "000cc2", "75 0c", "jne 0x6b0"], ["06a4", "000cc4", "e8 93 1a", "call 0x213a"], ["06a7", "000cc7", "c7 06 64 02 02 00", "mov word ptr [0x264], 2"], ["06ad", "000ccd", "e9 82 02", "jmp 0x932"], ["06b0", "000cd0", "e8 4b 1a", "call 0x20fe"], ["06b3", "000cd3", "a3 64 02", "mov word ptr [0x264], ax"], ["06b6", "000cd6", "e9 79 02", "jmp 0x932"], ["06b9", "000cd9", "83 3e 6a 02 00", "cmp word ptr [0x26a], 0 ; Menu= setting"], ["06be", "000cde", "74 50", "je 0x710"], ["06c0", "000ce0", "6a 01", "push 1"], ["06c2", "000ce2", "e8 cd 11", "call 0x1892"], ["06c5", "000ce5", "e9 ea 00", "jmp 0x7b2"], ["06c8", "000ce8", "83 3e 6a 02 00", "cmp word ptr [0x26a], 0"], ["06cd", "000ced", "74 41", "je 0x710"], ["06cf", "000cef", "6a 02", "push 2"], ["06d1", "000cf1", "eb ef", "jmp 0x6c2"], ["06d3", "000cf3", "83 3e 34 00 05", "cmp word ptr [0x34], 5"], ["06d8", "000cf8", "7c 36", "jl 0x710"], ["06da", "000cfa", "80 36 34 00 14", "xor byte ptr [0x34], 0x14 ; Shift after all 5 letters"], ["06df", "000cff", "e9 50 02", "jmp 0x932"], ["06e2", "000d02", "c7 06 34 00 00 00", "mov word ptr [0x34], 0"], ["06e8", "000d08", "e9 47 02", "jmp 0x932"]]}, {"k": "hex", "label": "WINMINE.EXE \u00b7 data seg2:0036 \"XYZZY\"", "base": 13696, "bytes": "8e000a0008000800280010001000630010001e00000058595a5a590000000000ffffffff000000000000000044696666", "hl": [13718, 13723]}], "notepad": [{"k": "dis", "label": "NOTEPAD.EXE (3.11) \u00b7 seg2:00e1, the switch compared one byte at a time", "rows": [["00e1", "003da1", "26 80 3f 2f", "cmp byte ptr es:[bx], 0x2f ; '/'"], ["00e5", "003da5", "75 66", "jne 0x14d"], ["00e7", "003da7", "26 80 7f 01 2e", "cmp byte ptr es:[bx + 1], 0x2e ; '.'"], ["00ec", "003dac", "75 5f", "jne 0x14d"], ["00ee", "003dae", "26 80 7f 02 53", "cmp byte ptr es:[bx + 2], 0x53 ; 'S'"], ["00f3", "003db3", "75 58", "jne 0x14d"], ["00f5", "003db5", "26 80 7f 03 45", "cmp byte ptr es:[bx + 3], 0x45 ; 'E'"], ["00fa", "003dba", "75 51", "jne 0x14d"], ["00fc", "003dbc", "26 80 7f 04 54", "cmp byte ptr es:[bx + 4], 0x54 ; 'T'"], ["0101", "003dc1", "75 4a", "jne 0x14d"], ["0103", "003dc3", "26 80 7f 05 55", "cmp byte ptr es:[bx + 5], 0x55 ; 'U'"], ["0108", "003dc8", "75 43", "jne 0x14d"], ["010a", "003dca", "26 80 7f 06 50", "cmp byte ptr es:[bx + 6], 0x50 ; 'P'"], ["010f", "003dcf", "75 3c", "jne 0x14d"], ["0111", "003dd1", "c7 06 1c 00 01 00", "mov word ptr [0x1c], 1"], ["0117", "003dd7", "ff 36 10 00", "push word ptr [0x10]"], ["011b", "003ddb", "6a 00", "push 0"], ["011d", "003ddd", "9a ff ff 00 00", "lcall 0, 0xffff ; USER.GETSYSTEMMENU"], ["0122", "003de2", "a3 a4 0a", "mov word ptr [0xaa4], ax"], ["0125", "003de5", "ff 36 a0 0a", "push word ptr [0xaa0]"], ["0129", "003de9", "1e", "push ds"], ["012a", "003dea", "68 e5 01", "push 0x1e5 ; \"SlipUpAcc\""], ["012d", "003ded", "9a e7 02 00 00", "lcall 0, 0x2e7 ; USER.LOADACCELERATORS"]]}, {"k": "dis", "label": "notepad.exe (7, 6.1.7601.18917) \u00b7 0x01002758", "rows": [["1002758", "001b58", "b8 78 27 00 01", "mov eax, 0x1002778 ; L\"/.SETUP\""], ["100275d", "001b5d", "89 7d fc", "mov dword ptr [ebp - 4], edi"], ["1002760", "001b60", "e8 80 00 00 00", "call 0x10027e5"], ["1002765", "001b65", "85 c0", "test eax, eax"], ["1002767", "001b67", "0f 84 af 2d 00 00", "je 0x100551c"]]}, {"k": "hex", "label": "notepad.exe.mui (7) \u00b7 ACCELERATOR SlipUpAcc, the four extra entries: Esc, Ctrl+C, Ctrl+D, Ctrl+Z \u2192 cmd 7 (Exit)", "base": 10912, "bytes": "090041001900000001001b00070000000900430007000000090044000700000089005a00070000007403340000005600", "hl": [10920, 10952]}, {"k": "hex", "label": "notepad.exe (7) \u00b7 UTF-16 L\"/.SETUP\" at file 0x1b78", "base": 7024, "bytes": "5e5bc9c2040090902f002e0053004500540055005000000090909090908bff55", "hl": [7032, 7046]}], "fmle": [{"k": "dis", "label": "notepad.exe (7) \u00b7 0x01002f9e, settings loader", "rows": [["1002f9d", "00239d", "53", "push ebx"], ["1002f9e", "00239e", "68 dc 2f 00 01", "push 0x1002fdc ; L\"fMLE_is_broken\""], ["1002fa3", "0023a3", "ff b5 58 ff ff ff", "push dword ptr [ebp - 0xa8]"], ["1002fa9", "0023a9", "a3 4c c0 00 01", "mov dword ptr [0x100c04c], eax"], ["1002fae", "0023ae", "e8 e8 00 00 00", "call 0x100309b"], ["1002fb3", "0023b3", "39 9d 58 ff ff ff", "cmp dword ptr [ebp - 0xa8], ebx"], ["1002fb9", "0023b9", "5f", "pop edi"], ["1002fba", "0023ba", "5e", "pop esi"], ["1002fbb", "0023bb", "a3 40 c0 00 01", "mov dword ptr [0x100c040], eax ; global 0x0100c040"]]}, {"k": "hex", "label": "notepad.exe (7) \u00b7 L\"fMLE_is_broken\"", "base": 9168, "bytes": "4dfc33cde88fe5ffffc9c39066004d004c0045005f00690073005f00620072006f006b0065006e000000909066005300", "hl": [9180, 9208]}], "charmap": [{"k": "hex", "label": "charmap.exe.mui \u00b7 ACCELERATOR UCE", "base": 7488, "bytes": "00000000000000000b002400790000000b0023007a0000000b0025007b0000000b0027007c0000000b0026007d0000000b0028007e0000000b0021007f0000008b002200800000004c03340000005600", "hl": [7496, 7560]}], "mmc": [{"k": "hex", "label": "mmc.exe.mui \u00b7 ACCELERATOR 128, the Ctrl+Alt+Shift+F7 entry (fVirt 001f, key 0076 = VK_F7, cmd 33b3 = 13235)", "base": 11696, "bytes": "9d330000070075009e3300001f007600b3330000030009009d33000087000900", "hl": [11708, 11716]}], "magnify": [{"k": "dis", "label": "magnify.exe \u00b7 0x010038d3 command-word parser (first three of seven compares)", "rows": [["10038d3", "002cd3", "8b 35 5c 12 00 01", "mov esi, dword ptr [0x100125c]"], ["10038d9", "002cd9", "6a ff", "push -1"], ["10038db", "002cdb", "68 f4 19 00 01", "push 0x10019f4 ; L\"wait\""], ["10038e0", "002ce0", "6a ff", "push -1"], ["10038e2", "002ce2", "ff b5 28 ff ff ff", "push dword ptr [ebp - 0xd8]"], ["10038e8", "002ce8", "57", "push edi"], ["10038e9", "002ce9", "6a 7f", "push 0x7f"], ["10038eb", "002ceb", "ff d6", "call esi ; CompareStringW"], ["10038ed", "002ced", "83 f8 02", "cmp eax, 2 ; CSTR_EQUAL"], ["10038f0", "002cf0", "75 0b", "jne 0x10038fd"], ["10038f2", "002cf2", "68 88 13 00 00", "push 0x1388 ; 5000 ms"], ["10038f7", "002cf7", "ff 15 60 12 00 01", "call dword ptr [0x1001260] ; Sleep"], ["10038fd", "002cfd", "6a ff", "push -1"], ["10038ff", "002cff", "68 e0 19 00 01", "push 0x10019e0 ; L\"noutilman\""], ["1003904", "002d04", "6a ff", "push -1"], ["1003906", "002d06", "ff b5 28 ff ff ff", "push dword ptr [ebp - 0xd8]"], ["100390c", "002d0c", "57", "push edi"], ["100390d", "002d0d", "6a 7f", "push 0x7f"], ["100390f", "002d0f", "ff d6", "call esi"], ["1003911", "002d11", "83 f8 02", "cmp eax, 2"], ["1003914", "002d14", "75 06", "jne 0x100391c"], ["1003916", "002d16", "89 9d 10 ff ff ff", "mov dword ptr [ebp - 0xf0], ebx"], ["100391c", "002d1c", "6a ff", "push -1"]]}], "logonui": [{"k": "dis", "label": "logonui.exe \u00b7 0x01001152", "rows": [["100114e", "00054e", "8d 45 f8", "lea eax, [ebp - 8]"], ["1001151", "000551", "50", "push eax"], ["1001152", "000552", "68 bc 11 00 01", "push 0x10011bc ; L\"/testclientprocessid:\""], ["1001157", "000557", "ff 75 fc", "push dword ptr [ebp - 4]"], ["100115a", "00055a", "ff 75 10", "push dword ptr [ebp + 0x10]"], ["100115d", "00055d", "e8 2b 04 00 00", "call 0x100158d"], ["1001162", "000562", "8d 45 f4", "lea eax, [ebp - 0xc]"], ["1001165", "000565", "50", "push eax"], ["1001166", "000566", "68 ac 11 00 01", "push 0x10011ac ; L\"/flags:\""], ["100116b", "00056b", "ff 75 fc", "push dword ptr [ebp - 4]"], ["100116e", "00056e", "ff 75 10", "push dword ptr [ebp + 0x10]"], ["1001171", "000571", "e8 17 04 00 00", "call 0x100158d"]]}], "powercpl": [{"k": "dis", "label": "powercfg.cpl \u00b7 0x07b141bf", "rows": [["7b141bf", "0035bf", "68 40 43 b1 07", "push 0x7b14340 ; L\"PowerCplTest\""], ["7b141c4", "0035c4", "ff 15 dc 10 b1 07", "call dword ptr [0x7b110dc] ; RegisterWindowMessageW"], ["7b141ca", "0035ca", "68 30 43 b1 07", "push 0x7b14330"], ["7b141cf", "0035cf", "a3 a0 c3 b1 07", "mov dword ptr [0x7b1c3a0], eax ; save the message id"]]}, {"k": "hex", "label": "powercfg.cpl \u00b7 L\"PowerCplTest\"", "base": 14128, "bytes": "6600001004026500000001000000008050006f00770065007200430070006c005400650073007400000090909090908b", "hl": [14144, 14168]}], "dxdiag": [{"k": "hex", "label": "dxdiag.exe \u00b7 registry value names", "base": 15024, "bytes": "7000200053007400610067006500000053007400720065007300730020005300630061006e0000004e00650076006500", "hl": [15040, 15062]}, {"k": "dis", "label": "dxdiag.exe \u00b7 0x01016765, Stress Page Change gate", "rows": [["1016765", "015b65", "39 35 2c 78 03 01", "cmp dword ptr [0x103782c], esi"], ["101676b", "015b6b", "74 0b", "je 0x1016778"], ["101676d", "015b6d", "56", "push esi"], ["101676e", "015b6e", "ff 35 c8 60 03 01", "push dword ptr [0x10360c8]"], ["1016774", "015b74", "56", "push esi"], ["1016775", "015b75", "57", "push edi"]]}], "iedebug": [{"k": "hex", "label": "ieframe.dll.mui \u00b7 MENU 24640, start of the Debug popup", "base": 75344, "bytes": "62007500670000000000741754007200610063006500200074006100670073000000000075175200650073006f007500", "hl": [75356, 75376]}], "buildpaths": [{"k": "hex", "label": "msra.exe \u00b7 assert path", "base": 21632, "bytes": "000000000000000064003a005c0077003700720074006d005c0062006100730065005c0064006900610067006e006f007300690073005c00720061005c00750069005c00770069007a006100720064002e006300700070000000000043005700", "hl": [21640, 21720]}], "xps": [{"k": "hex", "label": "xpsrchvw.exe \u00b7 placeholder address", "base": 41200, "bytes": "695c64726d6c6963656e73652e637070000000006e006f0074002e0061002e007200650061006c002e00610064006400720065007300730040006500780061006d0070006c0065002e0063006f006d0000000000450055004c002d0000000000", "hl": [41220, 41280]}], "charmapver": [{"k": "hex", "label": "charmap.exe \u00b7 VS_FIXEDFILEINFO (signature bd 04 ef fe, FileVersion 5.2:3668.0, FileFlags 8)", "base": 148400, "bytes": "bd04effe00000100020005000000540e020005000000540e3f000000080000000400040001000000000000000000000000000000a20200000100530074007200", "hl": [148400, 148452]}], "cardspace": [{"k": "hex", "label": "infocardcpl.cpl \u00b7 PrivateBuild", "base": 24608, "bytes": "4200750069006c00640000004400440042004c0044003100340035000000000044000000010056006100720046006900", "hl": [24620, 24636]}], "wscui": [{"k": "hex", "label": "wscui.cpl.mui \u00b7 string 2101", "base": 33280, "bytes": "69007000740069006f006e0017004e006f0074006900660063006100740069006f006e0020004400650073006300720069007000740069006f006e002200530068006f00770020004d00650020004d00", "hl": [33294, 33340]}], "calc": [{"k": "hex", "label": "calc.exe \u00b7 state name", "base": 193472, "bytes": "69006f006e005f0064006100740061000000909055006e00690074005f0043006f006e0076006500720069006f006e005f0068006900730074006f0072007900000090903b0000000f7af8b7a595aa38", "hl": [193492, 193536]}], "osk": [{"k": "dis", "label": "osk.exe \u00b7 0x01019342", "rows": [["1019342", "018742", "68 b8 33 00 01", "push 0x10033b8 ; L\"Longhorn\""], ["1019347", "018747", "ff 75 08", "push dword ptr [ebp + 8]"], ["101934a", "01874a", "ff 15 b0 14 00 01", "call dword ptr [0x10014b0] ; _wcsicmp"]]}], "credits": [{"k": "hex", "label": "SHELL.DLL \u00b7 RCDATA 9999 (2,064 bytes at file 0x94b0), first bytes", "base": 38064, "bytes": "0001ddfcfdf0faf8edfcfdb9edf6b9f8f5f5b9edf1fcb9f1f8ebfdb4eef6ebf2", "hl": [38064, 38096]}], "nedesc": [{"k": "hex", "label": "CALC.EXE \u00b7 NE non-resident name #0", "base": 2016, "bytes": "00cd3f04362300354d6963726f736f66742043616c63756c61746f723a20446576656c6f706564206279204b726169672042726f636b7363686d69647400000b43414c43574e4450524f4301000e5f53", "hl": [2024, 2077]}], "beta": [{"k": "hex", "label": "SCHDPLUS.EXE \u00b7 string", "base": 466544, "bytes": "6f737369626c79207669727475616c2066696c6500536f7272792c2074686973204265746120636f70792068617320657870697265642e005363686564756c65", "hl": [466565, 466599]}], "ini": [{"k": "dis", "label": "USER.EXE \u00b7 seg3:227e", "rows": [["227e", "011d1e", "1e", "push ds"], ["227f", "011d1f", "68 3c 00", "push 0x3c ; \"Windows\""], ["2282", "011d22", "1e", "push ds"], ["2283", "011d23", "68 36 00", "push 0x36 ; \"Edsun\""], ["2286", "011d26", "6a 00", "push 0"], ["2288", "011d28", "9a 2b 1d 00 00", "lcall 0, 0x1d2b ; KERNEL.GETPROFILEINT"], ["228d", "011d2d", "a3 ee 00", "mov word ptr [0xee], ax ; store in a global"]]}], "wordpad": [{"k": "hex", "label": "wordpad.exe \u00b7 registered message name", "base": 243008, "bytes": "ccb00a01c390909057006f00720064005000610064004f00700065006e004d00650073007300610067006500000090909090906884c10301ff155c130001a3d0", "hl": [243016, 243052]}], "h2": [{"k": "dis", "label": "explorer.exe \u00b7 0x0108aba2, after LoadMenu(211)", "rows": [["108aba2", "089fa2", "8b 35 28 16 00 01", "mov esi, dword ptr [0x1001628]"], ["108aba8", "089fa8", "6a 10", "push 0x10"], ["108abaa", "089faa", "ff d6", "call esi ; GetAsyncKeyState(VK_SHIFT)"], ["108abac", "089fac", "8b 1d 60 15 00 01", "mov ebx, dword ptr [0x1001560]"], ["108abb2", "089fb2", "66 85 c0", "test ax, ax"], ["108abb5", "089fb5", "7d 45", "jge 0x108abfc ; Shift not held \u2192 skip the policy check"], ["108abb7", "089fb7", "6a 11", "push 0x11"], ["108abb9", "089fb9", "ff d6", "call esi ; GetAsyncKeyState(VK_CONTROL)"], ["108abbb", "089fbb", "66 85 c0", "test ax, ax"], ["108abbe", "089fbe", "7d 3c", "jge 0x108abfc ; Ctrl not held \u2192 skip the policy check"], ["108abc0", "089fc0", "8d 45 f8", "lea eax, [ebp - 8]"], ["108abc3", "089fc3", "50", "push eax"], ["108abc4", "089fc4", "8d 45 f4", "lea eax, [ebp - 0xc]"], ["108abc7", "089fc7", "50", "push eax"], ["108abc8", "089fc8", "6a 00", "push 0"], ["108abca", "089fca", "6a 10", "push 0x10"], ["108abcc", "089fcc", "68 24 82 04 01", "push 0x1048224 ; L\"DisableTaskMgr\""], ["108abd1", "089fd1", "68 58 85 04 01", "push 0x1048558 ; L\"Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\""], ["108abd6", "089fd6", "68 01 00 00 80", "push 0x80000001"], ["108abdb", "089fdb", "c7 45 f8 04 00 00 00", "mov dword ptr [ebp - 8], 4"], ["108abe2", "089fe2", "ff 15 38 19 00 01", "call dword ptr [0x1001938] ; SHRegGetValueW"], ["108abe8", "089fe8", "85 c0", "test eax, eax"], ["108abea", "089fea", "75 10", "jne 0x108abfc"], ["108abec", "089fec", "39 45 f4", "cmp dword ptr [ebp - 0xc], eax"], ["108abef", "089fef", "74 0b", "je 0x108abfc"], ["108abf1", "089ff1", "50", "push eax"], ["108abf2", "089ff2", "68 f4 7f 00 00", "push 0x7ff4"], ["108abf7", "089ff7", "ff 75 fc", "push dword ptr [ebp - 4]"], ["108abfa", "089ffa", "ff d3", "call ebx ; DeleteMenu(32756) when DisableTaskMgr is set"]]}, {"k": "dis", "label": "explorer.exe \u00b7 0x0108abfc, the second check", "rows": [["108abfc", "089ffc", "6a 10", "push 0x10"], ["108abfe", "089ffe", "ff d6", "call esi ; GetAsyncKeyState(VK_SHIFT)"], ["108ac00", "08a000", "66 85 c0", "test ax, ax"], ["108ac03", "08a003", "7d 09", "jge 0x108ac0e ; Shift not held \u2192 delete"], ["108ac05", "08a005", "6a 11", "push 0x11"], ["108ac07", "08a007", "ff d6", "call esi ; GetAsyncKeyState(VK_CONTROL)"], ["108ac09", "08a009", "66 85 c0", "test ax, ax"], ["108ac0c", "08a00c", "7c 0f", "jl 0x108ac1d ; Ctrl held too \u2192 keep the item"], ["108ac0e", "08a00e", "33 f6", "xor esi, esi"], ["108ac10", "08a010", "56", "push esi"], ["108ac11", "08a011", "68 f4 7f 00 00", "push 0x7ff4 ; 32756 \u2192 DeleteMenu"], ["108ac16", "08a016", "ff 75 fc", "push dword ptr [ebp - 4]"], ["108ac19", "08a019", "ff d3", "call ebx ; DeleteMenu (ebx)"]]}], "h3": [{"k": "dis", "label": "MSMAIL.EXE \u00b7 seg40:06f6", "rows": [["06f6", "038616", "9a ff ff 00 00", "lcall 0, 0xffff ; USER.GETMENU"], ["06fb", "03861b", "50", "push ax"], ["06fc", "03861c", "6a 05", "push 5 ; Help is popup 5"], ["06fe", "03861e", "9a ff ff 00 00", "lcall 0, 0xffff ; USER.GETSUBMENU"], ["0703", "038623", "89 86 e0 fe", "mov word ptr [bp - 0x120], ax"], ["0707", "038627", "50", "push ax"], ["0708", "038628", "68 8f 0a", "push 0xa8f ; 0xa8f = 2703 \"&Demos\""], ["070b", "03862b", "6a 00", "push 0"], ["070d", "03862d", "9a 20 07 00 00", "lcall 0, 0x720 ; USER.DELETEMENU"], ["0712", "038632", "0b c0", "or ax, ax"], ["0714", "038634", "74 10", "je 0x726"], ["0716", "038636", "ff b6 e0 fe", "push word ptr [bp - 0x120]"], ["071a", "03863a", "6a 03", "push 3 ; position 3 = the separator"], ["071c", "03863c", "68 00 04", "push 0x400 ; MF_BYPOSITION"], ["071f", "03863f", "9a 4a 07 00 00", "lcall 0, 0x74a ; USER.DELETEMENU"], ["0724", "038644", "eb 0e", "jmp 0x734"], ["0726", "038646", "ff b6 e0 fe", "push word ptr [bp - 0x120]"], ["072a", "03864a", "68 8f 0a", "push 0xa8f"], ["072d", "03864d", "6a 03", "push 3"], ["072f", "03864f", "9a 5c 07 00 00", "lcall 0, 0x75c ; USER.ENABLEMENUITEM"], ["0734", "038654", "8e 06 98 10", "mov es, word ptr [0x1098]"], ["0738", "038658", "26 83 3e c0 0d 00", "cmp word ptr es:[0xdc0], 0 ; global flag"], ["073e", "03865e", "74 20", "je 0x760"], ["0740", "038660", "ff b6 e0 fe", "push word ptr [bp - 0x120]"], ["0744", "038664", "68 8e 0a", "push 0xa8e ; 0xa8e = 2702 \"&Index\""], ["0747", "038667", "6a 00", "push 0"], ["0749", "038669", "9a ff ff 00 00", "lcall 0, 0xffff ; USER.DELETEMENU"], ["074e", "03866e", "0b c0", "or ax, ax"]]}], "h4": [{"k": "dis", "label": "eudcedit.exe \u00b7 0x01019070", "rows": [["1019070", "018470", "8b ec", "mov ebp, esp"], ["1019072", "018472", "51", "push ecx"], ["1019073", "018473", "57", "push edi"], ["1019074", "018474", "8b 7d 08", "mov edi, dword ptr [ebp + 8]"], ["1019077", "018477", "89 4d fc", "mov dword ptr [ebp - 4], ecx"], ["101907a", "01847a", "85 ff", "test edi, edi"], ["101907c", "01847c", "74 5d", "je 0x10190db"], ["101907e", "01847e", "57", "push edi"], ["101907f", "01847f", "e8 22 d8 00 00", "call 0x10268a6"], ["1019084", "018484", "a1 e8 dc 02 01", "mov eax, dword ptr [0x102dce8]"], ["1019089", "018489", "3d 04 04 00 00", "cmp eax, 0x404 ; zh-TW"], ["101908e", "01848e", "74 4b", "je 0x10190db"], ["1019090", "018490", "3d 04 08 00 00", "cmp eax, 0x804 ; zh-CN"], ["1019095", "018495", "74 44", "je 0x10190db"], ["1019097", "018497", "56", "push esi"], ["1019098", "018498", "8b 35 b0 16 00 01", "mov esi, dword ptr [0x10016b0] ; DeleteMenu"], ["101909e", "01849e", "6a 00", "push 0"], ["10190a0", "0184a0", "68 17 80 00 00", "push 0x8017 ; 32791 \"IME &Link...\""], ["10190a5", "0184a5", "ff 77 04", "push dword ptr [edi + 4]"], ["10190a8", "0184a8", "ff d6", "call esi"], ["10190aa", "0184aa", "6a 00", "push 0"], ["10190ac", "0184ac", "68 22 80 00 00", "push 0x8022 ; 32802 \"I&mport IME Table...\""], ["10190b1", "0184b1", "ff 77 04", "push dword ptr [edi + 4]"], ["10190b4", "0184b4", "ff d6", "call esi"], ["10190b6", "0184b6", "81 3d e8 dc 02 01 11 04 00 00", "cmp dword ptr [0x102dce8], 0x411 ; ja-JP"], ["10190c0", "0184c0", "74 0c", "je 0x10190ce"], ["10190c2", "0184c2", "6a 00", "push 0"], ["10190c4", "0184c4", "68 1e 80 00 00", "push 0x801e ; 32798 \"&Import Bitmap Font...\""], ["10190c9", "0184c9", "ff 77 04", "push dword ptr [edi + 4]"], ["10190cc", "0184cc", "ff d6", "call esi"], ["10190ce", "0184ce", "8b 45 fc", "mov eax, dword ptr [ebp - 4]"], ["10190d1", "0184d1", "ff 70 20", "push dword ptr [eax + 0x20]"], ["10190d4", "0184d4", "ff 15 ac 16 00 01", "call dword ptr [0x10016ac] ; DrawMenuBar"]]}], "h8": [{"k": "dis", "label": "REGEDIT.EXE (3.11) \u00b7 seg1:0744, WNDCLASS setup", "rows": [["0744", "000ea4", "f6 06 d2 02 04", "test byte ptr [0x2d2], 4 ; command-line flag bit (regedit /v)"], ["0749", "000ea9", "74 2a", "je 0x775"], ["074b", "000eab", "c7 46 f8 03 10", "mov word ptr [bp - 8], 0x1003 ; lpszMenuName = MAKEINTRESOURCE(4099)"], ["0750", "000eb0", "c7 46 fa 00 00", "mov word ptr [bp - 6], 0"]]}]}, "credits": {"off": 38064, "b64": "AAHd/P3w+vjt/P257fa5+PX1ue3x/Lnx+Ov9tO726/Lw9/656fz26fX8AAL2/7nt8fy51PD66/bq9v/tuc7w9/327uq5qreoqbnN/Pj0uAADuQAE1PD66/bq9v/tts7w9/327uq5qreoAAXV/Pj9ufvgttvL2N3K0AAG3fzv/PX26fT89+0AB9X8+P25++C20tjL1crNtsnR0NXb2La5tvj46/b367b49PDt+rb79vv+7Lb6+PTq7bb68evw6v62+vHs+vLq7bb69fjr8vq2+uv48P76tv347/D9/fC2/fjv8P396rb9+O/w/e62/fb3+rb99uz+8vy2/Pjr9fzxtvz98bb86/D6+/C2/vz26/786bb/+Pvr8Pr887b+7Pft/OvjtvH46/Dq8fe28Pj3/PW28/jg7vj37bbz/Pj36bbz/P//+/b+tvP8///p+Ou28/D09PjttvP29+228vz36uC29fj18O3x+Ou29fD36rb0+Ov67rb08PL8+vb1/Lb08PL89bb08PL86vrxtvTw8vzq7bb07Ovr+ODqtvf88PXytun47PXy/Lbp/Ov64O226fzt/Ovu9rbr+PXp8fW26/jg/Pe26/jg6fjttuvw+vHptuv29/626/bg8fi26vj3/fz86eq26vj3//br/eq26vj38vjrtur69u3t6Lbt/Ovr4Ovstu329+D+tu/47er49+m27/X4/eq24/H49+4ACMnr9v7r+PS21Pj3+P789Pz37QAJ1fz4/bn74Lbd2M/Q3drW1ba5tvj3/eDx8Lb9/Pf38Or4/bb+/Ov46/3jtv7r/P719rbz+Pfw9/zxtvL88O3x9fi29fDq+PrrtvT46/Lu+Lb39vX4/eu27fD0++u27fD09Pr6AArN/Ort8Pf+ufj3/bba9vTp+O3w+/D18O3gAAvV/Pj9ufvgttPW0dfc17a5tvj39/z0+Lb79vv39rb76/z37fK2+vHr8Orq8bb9+Pf/67b9+O/w/e3r4Lb+/Pbr/vi2/vzr+Ov99vu28fjw7ez49+/stvP49/zt7vC28/z///X2tvP8///q7bbz/P//6fy28/b94P628/bx9+D2tvL87/D34Lby9uvg6rb1+Pf89bb1+O7r/Pe29fD39v229Pjr8vL89Lb0+Ovy6bb08PL8/vC29PDy/PXwtvf49/71tuv49/3g/rbr8Prx6vi26/D68vz0tur46/j2turt+Pf/turt/O/88/i27fj1+PX7tu386+vw+7bt/Orq+Lbt8PT+AAzU7PXt8PT8/fD4AA376/z3/fj3+7b76/D49+62++vg+Pft67b67Ovt8Orptv7q8fjutvH29fXg6rby/Pf2tunr/Ort9vf7tuv87Pz167br8Pry+7br9vvu8Lbr9urq7rbr7Orq/PX187bq+Pfz+OD4turs/PW27fb9/fX4tu/w+u326/oADtbV3AAP+vX46/628fzw8vLw8rbr+Pbrtur49/P44PK26uvw9/Dytu329+DuABDO8PfR/PXpABH7/O3x/7b9+Pf3tv347/z7+Lb9+O/w/f/8tvz7+/z4tvP48eD89/q28/bx9+r6tvX46+vg6fa29fz297b0+O3t9Oz1tvTw8vzy+Lb3/Pz19Pjxtuv2+/zr7fvstuvs6urp87bt9vTq9wAS3/b37eoAE/z18PK2/vz26/789Lb+6/z+8QAU2/zt+LnJ6/b97Prttsv89fz46vwAFfj3/eDt8bb79vv77Lb76+D3+Lb69fjr8vG2/fjr8Pf+tvP2/PX29/628/bx9/P8tvP29/u28+7w+vK28vj1+PK28vjt8fT2tvL87/D347b1/Pf49fu29Pjr/vbqtvT46+D49Oq29Pjt7erytun87fzr+/C26fzt/Ovq7fi26vH49/z7turt/O/8//jwtu329Ovwtu3r+Prg6wAW1Pjr8vzt8Pf+ABfV/Pj9ufvgtsvQ2tHY27bL0NrRzba5tvj9+PTttvj1/OH3tvv2+/+28/j3/PX1/PK28/z//+228/b36/a28/bq/Onx8rbt8PT76/y27fb0+Lbt9vTz+Lbt4Pr46wAY3fb67PT89+347fD29wAZ1fz4/bn74Lbby9jd0ba5tvv2+/vrtvvr7Pr88fi2+vjr9vXqtvrx6/Dq7va2/fjv8P38/bb9/Pv4tv329/f09rb99uv27fHg6rb8/fDt8e62/+v49/L0tv744PX86bb+6/z+6/a28/D0+/a28/b49+q28/bx9/r4tvL47fHw/P+28vD06fjrtvLr8Ort8bb1+Ozr+PK29fjs6/jp8Lb1+Ozr+O74tvX86vXw/O629Pjr8PXg9/G29Pjr4PG29PDy/PT4tvfw8vX46vu26fz+/uD/tun87fzr/fy26fzt6/jxtunx4PX18Or1tuv49enx7rbq/Pj3+/wAGt7r+Onx8Pq22Ovt8Ort6gAb+PXw/rb49/fw/Pu2++z68v62+vjt8eDp/7b9+O/w/fS2/vjr4Pu28fjr6/DutvXw6vj67PW29fDq+P229Pjr+vD4/vW29Pjr8ur0tun47PXwtu329P38/Pe27/j1/bbv8Ov+8Pfw+AAc2P308Pfw6u3r+O3w7/y22Orq8Ort+Pft6gAd/fb3/PW29fbr8OrwtvT46/D4tun47PX49Pq26vH46/b38bbq7Pzt8AAeyun8+vD49bnN8fj38uq27fYAH/vw9fX+tvTw8vzx+PW26u387/z7tu20+/z46wAAAAAA"}, "menus": {"h1": {"t": [[null, "Debug", 16, [[6004, "Trace tags", 0, 0], [6005, "Resource failures", 0, 0], [6006, "Dump tracking info", 0, 0], [6007, "Debug break", 0, 0], [6008, "Debug view", 0, 0], [6009, "Dump tree", 0, 0], [7103, "Dump parser statistics", 0, 0], [7104, "Dump splay tree", 0, 0], [6010, "Dump lines", 0, 0], [6015, "Dump DisplayTree", 0, 0], [6016, "Dump FormatCaches", 0, 0], [6017, "Dump LayoutRects", 0, 0], [6013, "Memory monitor", 0, 0], [6014, "Performance meters", 0, 0], [6012, "Save HTML", 0, 0], [0, "", 0, 0], [2126, "&Browse view", 0, 0], [2127, "&Edit view", 128, 0]]]], "off": 74100, "len": 2474}, "h2": {"t": [[null, "", 65552, [[32755, "P&roperties", 0, 0], [32756, "E&xit Explorer", 0, 0]]]], "off": 3532, "len": 112}, "h3": {"t": [[null, "&File", 16, [[2101, "&Open", 0, 0], [2102, "&Move...\tCtrl+M", 0, 0], [2103, "&Copy...", 0, 0], [2104, "&Delete\tCtrl+D", 0, 0], [2105, "&Save As...", 0, 0], [2106, "Save &Attachment...", 0, 0], [2107, "Messa&ge Finder", 0, 0], [0, "", 0, 0], [2108, "&New Folder...", 0, 0], [2109, "&Folder Properties...\tAlt+Enter", 0, 0], [0, "", 0, 0], [2110, "&Print...\tCtrl+P", 0, 0], [2111, "P&rint Setup...", 0, 0], [0, "", 0, 0], [2112, "E&xit", 0, 0], [2113, "Exi&t and Sign Out", 128, 0]]], [null, "&Edit", 16, [[2201, "&Undo\tCtrl+Z", 0, 0], [0, "", 0, 0], [2202, "Cu&t\tCtrl+X", 0, 0], [2203, "&Copy\tCtrl+C", 0, 0], [2204, "&Paste\tCtrl+V", 0, 0], [2205, "Paste &Special...", 0, 0], [2206, "&Delete\tDel", 0, 0], [2207, "Select &All", 0, 0], [0, "", 0, 0], [2208, "Spe&lling\tF7", 0, 0], [0, "", 0, 0], [2211, "&Object", 1, 0], [2209, "&Insert Object...", 0, 0], [2210, "Insert from &File...", 128, 0]]], [null, "&View", 16, [[2401, "&Tool Bar\tCtrl+T", 0, 0], [2402, "Status &Bar", 128, 0]]], [null, "&Mail", 16, [[2301, "Compose &Note\tCtrl+N", 0, 0], [0, "", 0, 0], [2303, "&Reply\tCtrl+R", 0, 0], [2304, "Reply to &All\tCtrl+A", 0, 0], [2305, "&Forward\tCtrl+F", 0, 0], [0, "", 0, 0], [2308, "A&ddress Book...", 0, 0], [2309, "Personal &Groups...", 0, 0], [0, "", 0, 0], [2306, "&Options...", 0, 0], [2307, "&Change Password...", 0, 0], [2310, "&Backup...", 128, 0]]], [null, "&Window", 16, [[1001, "&New Window", 0, 0], [1002, "&Cascade", 0, 0], [1003, "&Tile", 0, 0], [1004, "&Arrange Icons", 128, 0]]], [null, "&Help", 144, [[2701, "&Contents", 0, 0], [2702, "&Index", 0, 0], [0, "", 0, 0], [2703, "&Demos", 0, 0], [0, "", 0, 0], [2704, "&About...", 128, 0]]]], "off": 278608, "len": 896}, "h4": {"t": [[null, "&File", 16, [[32784, "&Font Links...", 0, 0], [32798, "&Import Bitmap Font...", 0, 0], [32802, "I&mport IME Table...", 0, 0], [0, "", 0, 0], [57665, "E&xit", 128, 0]]], [null, "&Edit", 16, [[32782, "&Undo\tCtrl+Z", 0, 0], [0, "", 0, 0], [32778, "&Cut\tCtrl+X", 0, 0], [32777, "C&opy\tCtrl+C", 0, 0], [32779, "&Paste\tCtrl+V", 0, 0], [32790, "&Delete\tDel", 0, 0], [32797, "Cop&y Character...", 0, 0], [0, "", 0, 0], [32776, "&Select Code...\tCtrl+O", 0, 0], [32781, "Sa&ve Character\tCtrl+S", 0, 0], [32780, "Save Character &As...", 0, 0], [32791, "IME &Link...", 0, 0], [32804, "&TextService Link...", 128, 0]]], [null, "&View", 16, [[32771, "&Guidebar", 0, 0], [32772, "&Toolbar", 0, 0], [32789, "G&rid\tCtrl+G", 0, 0], [0, "", 0, 0], [32795, "&Next Code\tCtrl+N", 0, 0], [32796, "&Prev Code\tCtrl+P", 0, 0], [0, "", 0, 0], [32783, "&Show Outline", 128, 0]]], [null, "&Tools", 16, [[null, "&Item", 16, [[103, "&Pencil", 0, 0], [32785, "&Brush", 0, 0], [104, "Straight &Line", 0, 0], [105, "Hollow &Rectangle", 0, 0], [106, "&Filled Rectangle", 0, 0], [107, "Hollow &Ellipse", 0, 0], [108, "F&illed Ellipse", 0, 0], [109, "Rectangular &Selection", 0, 0], [32794, "Freef&orm Selection", 0, 0], [32803, "Er&aser", 128, 0]]], [32799, "&Flip/Rotate...", 128, 0]]], [null, "&Window", 16, [[32775, "&Reference...", 0, 0], [32788, "&Close Reference", 128, 0]]], [null, "&Help", 144, [[57670, "&Help Topics", 0, 0], [0, "", 0, 0], [57664, "&About", 128, 0]]]], "off": 1968, "len": 1384}, "h5": {"t": [[null, "&File", 16, [[123, "&Save Settings As...", 0, 0], [143, "&Load Settings...", 0, 0], [0, "", 0, 0], [104, "E&xit", 128, 0]]], [null, "&Compare", 16, [[null, "Set &Transparency", 16, [[118, "&70% Transparency", 0, 0], [119, "&40% Transparency", 0, 0], [120, "&No Transparency", 128, 0]]], [0, "", 0, 0], [121, "Snap to Compare", 128, 0]]], [null, "&Help", 144, [[133, "Performance Monitor &Help ...", 0, 0], [103, "&About ...", 128, 0]]]], "off": 1828, "len": 448}, "h6": {"t": [[null, "&Help", 144, [[0, "", 128, 0]]]], "off": 6160, "len": 24}, "h8": {"t": [[null, "&File", 16, [[1536, "&Save Changes", 0, 0], [1537, "&Restore To Last Save", 0, 0], [0, "", 0, 0], [1040, "&Merge Registration File...", 0, 0], [1538, "Save Registration &File...", 0, 0], [0, "", 0, 0], [1041, "E&xit", 128, 0]]], [null, "&Edit", 16, [[1056, "&Add Key...", 0, 0], [1057, "&Copy Key...", 0, 0], [1059, "&Delete Key...", 128, 0]]], [null, "&Search", 16, [[1552, "&Find Key...", 0, 0], [1553, "Find &Next", 128, 0]]], [null, "&Help", 144, [[1792, "&Contents", 0, 0], [1793, "&Search for Help On...", 0, 0], [1794, "&How to Use Help", 0, 0], [0, "", 0, 0], [1795, "&About Registration Editor...", 128, 0]]]], "off": 29008, "len": 352}}};
+(function () {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const h2 = n => n.toString(16).padStart(2, "0");
+  const hexToBytes = hx => { const a = new Uint8Array(hx.length / 2); for (let i = 0; i < a.length; i++) a[i] = parseInt(hx.substr(i * 2, 2), 16); return a; };
+
+  /* ---- excerpts ---- */
+  function renderHex(e) {
+    const b = hexToBytes(e.bytes), base = e.base, [h0, h1] = e.hl;
+    let out = "";
+    for (let r = 0; r < b.length; r += 16) {
+      let hx = "", asc = "";
+      for (let i = 0; i < 16; i++) {
+        const o = base + r + i, v = b[r + i];
+        const sep = i === 8 ? " " : "";
+        if (v === undefined) { hx += sep + "   "; asc += " "; continue; }
+        const inH = o >= h0 && o < h1;
+        const ch = v >= 32 && v < 127 ? esc(String.fromCharCode(v)) : ".";
+        hx += sep + (inH ? '<span class="h">' + h2(v) + "</span> " : h2(v) + " ");
+        asc += inH ? '<span class="h">' + ch + "</span>" : ch;
+      }
+      out += '<span class="r"><span class="a">' + (base + r).toString(16).padStart(8, "0") + "</span>  " + hx + " <span class=\"c\">|</span>" + asc + '<span class="c">|</span></span>';
+    }
+    return out;
+  }
+  function renderDis(e) {
+    const w = Math.max(...e.rows.map(r => r[2].length));
+    const aw = Math.max(...e.rows.map(r => r[0].length));
+    return e.rows.map(([va, fo, by, txt]) => {
+      const semi = txt.indexOf(" ; ");
+      let ins = semi < 0 ? txt : txt.slice(0, semi), com = semi < 0 ? "" : txt.slice(semi);
+      ins = esc(ins);
+      com = com ? ' <span class="api">' + esc(com) + "</span>" : "";
+      return '<span class="r"><span class="a">' + va.padStart(aw, " ") + "  " + fo + "</span>  " + by.padEnd(w, " ") + "  " + ins + com + "</span>";
+    }).join("");
+  }
+  $$(".x[data-x]").forEach(box => {
+    const list = DATA.x[box.dataset.x] || [];
+    box.innerHTML = list.map(e => '<div class="dump"><div class="cap">' + esc(e.label) + (e.k === "dis" ? " · address · file offset · bytes · instruction" : "") + '</div><pre tabindex="0">' + (e.k === "hex" ? renderHex(e) : renderDis(e)) + "</pre></div>").join("");
+  });
+
+  /* ---- classic menus ---- */
+  const mn = t => esc(t).replace(/&amp;&amp;/g, "\u0001").replace(/&amp;(.)/g, "<u>$1</u>").replace(/\u0001/g, "&amp;");
+  function pop(nodes, marks, cascade) {
+    const el = document.createElement("div"); el.className = "wm-pop";
+    let hotIdx = -1;
+    if (!nodes.some(n => !(n[0] === 0 && !n[1]))) { el.innerHTML = '<div class="wm-empty">(empty end item only)</div>'; return { el, hotIdx }; }
+    nodes.forEach((n, i) => {
+      const [id, text, fl] = n;
+      if ((id === 0 && !text) || (fl & 0x800)) { const s = document.createElement("div"); s.className = "wm-sep"; el.appendChild(s); return; }
+      const parts = text.split("\t");
+      const it = document.createElement("div");
+      const hot = id === null && cascade && text === cascade;
+      if (hot) hotIdx = i;
+      it.className = "wm-it" + (fl & 3 ? " gray" : "") + (hot ? " hot" : "");
+      it.innerHTML = '<span>' + (fl & 8 ? "✓" : "") + '</span><span>' + mn(parts[0]) + '</span><span class="acc">' + esc(parts[1] || "") + '</span><span class="ar">' + (id === null ? "▶" : "") + "</span>";
+      if (id !== null && marks[id]) { const d = document.createElement("span"); d.className = "wm-dot"; d.title = marks[id]; it.style.position = "relative"; it.appendChild(d); }
+      el.appendChild(it);
+    });
+    return { el, hotIdx };
+  }
+  $$(".wm[data-menu]").forEach(box => {
+    const M = DATA.menus[box.dataset.menu]; if (!M) return;
+    const marks = box.dataset.marks ? JSON.parse(box.dataset.marks) : {};
+    const stage = document.createElement("div"); stage.className = "wm-stage " + box.dataset.style;
+    let nodes = M.t;
+    if (box.dataset.mode === "bar") {
+      const bar = document.createElement("div"); bar.className = "wm-bar";
+      nodes.forEach(n => { const s = document.createElement("span"); s.innerHTML = mn(n[1]); if (n[1] === box.dataset.open) s.className = "on"; bar.appendChild(s); });
+      stage.appendChild(bar);
+      const open = nodes.find(n => n[1] === box.dataset.open);
+      nodes = open ? open[3] : [];
+    } else if (nodes.length === 1 && nodes[0][0] === null) nodes = nodes[0][3];
+    const row = document.createElement("div"); row.className = "wm-row";
+    const p1 = pop(nodes, marks, box.dataset.cascade);
+    row.appendChild(p1.el);
+    if (p1.hotIdx >= 0) {
+      const sub = nodes[p1.hotIdx][3];
+      const p2 = pop(sub, marks, null); p2.el.classList.add("wm-cas");
+      row.appendChild(p2.el);
+      requestAnimationFrame(() => { const hot = p1.el.querySelector(".hot"); if (hot) p2.el.style.setProperty("--cas-top", (hot.offsetTop - 4) + "px"); });
+    }
+    stage.appendChild(row);
+    if (box.dataset.mode === "bar") requestAnimationFrame(() => { const on = stage.querySelector(".wm-bar .on"); if (on) row.style.paddingLeft = (on.offsetLeft - stage.querySelector(".wm-bar").offsetLeft) + "px"; });
+    box.innerHTML = ""; box.appendChild(stage);
+    const ids = Object.keys(marks);
+    if (ids.length) {
+      const ul = document.createElement("ul"); ul.className = "wm-note";
+      const all = []; (function walk(ns) { ns.forEach(n => { if (n[0] === null) walk(n[3]); else all.push(n); }); })(M.t);
+      ids.forEach(id => { const n = all.find(x => String(x[0]) === id); const li = document.createElement("li"); li.innerHTML = "<code>" + id + "</code> " + esc((n ? n[1] : "").replace(/&(?!&)/g, "")) + ": " + esc(marks[id]); ul.appendChild(li); });
+      box.appendChild(ul);
+    }
+    const cap = document.createElement("div"); cap.className = "wm-cap";
+    cap.textContent = "Drawn from the MENU resource (" + M.len + " bytes at file 0x" + M.off.toString(16) + "), not a screenshot.";
+    box.appendChild(cap);
+  });
+  $$("[data-moff]").forEach(e => { const M = DATA.menus[e.dataset.moff]; if (M) e.textContent = M.off.toString(16); });
+
+  /* ---- filters ---- */
+  const state = { cls: "all", os: "all" };
+  const items = $$("article.f, #leads li");
+  function matches(el, cls, os) {
+    const c = (el.dataset.cls || "").split(" "), o = (el.dataset.os || "").split(" ");
+    return (cls === "all" || c.includes(cls)) && (os === "all" || o.includes(os));
+  }
+  function counts() {
+    $$("#f-class button").forEach(b => { const v = b.dataset.v; const n = items.filter(el => matches(el, v, state.os)).length; setN(b, n); });
+    $$("#f-os button").forEach(b => { const v = b.dataset.v; const n = items.filter(el => matches(el, state.cls, v)).length; setN(b, n); });
+  }
+  function setN(b, n) { let s = b.querySelector(".n"); if (!s) { s = document.createElement("span"); s.className = "n"; b.appendChild(s); } s.textContent = n; }
+  function apply() {
+    let shown = 0, findings = 0, leads = 0;
+    items.forEach(el => { const m = matches(el, state.cls, state.os); el.hidden = !m; if (m) { shown++; if (el.matches("article.f")) findings++; else if (el.matches("#leads li")) leads++; } });
+    $$(".group-h").forEach(hd => {
+      if (hd.dataset.g === "method") return;
+      let n = hd.nextElementSibling, any = false;
+      while (n && !n.classList.contains("group-h")) {
+        if (n.matches("article.f") && !n.hidden) any = true;
+        if (n.id === "leads" && n.querySelector("li:not([hidden])")) any = true;
+        n = n.nextElementSibling;
+      }
+      hd.hidden = !any;
+    });
+    $(".menus-intro").hidden = $('.group-h[data-g="menus"]').hidden;
+    $("#leads").hidden = !$("#leads li:not([hidden])");
+    $("#empty").hidden = shown > 0;
+    $("#count").textContent = findings + " finding" + (findings === 1 ? "" : "s") + (leads ? " · " + leads + " open" : "");
+    counts();
+  }
+  function bind(id, key) {
+    $$("#" + id + " button").forEach(b => b.addEventListener("click", () => {
+      state[key] = b.dataset.v;
+      $$("#" + id + " button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+      apply();
+      try { localStorage.setItem("iw-filter", JSON.stringify(state)); } catch (e) {}
+    }));
+  }
+  bind("f-class", "cls"); bind("f-os", "os");
+  try { const s = JSON.parse(localStorage.getItem("iw-filter") || "null"); if (s) { ["cls", "os"].forEach(k => { const g = k === "cls" ? "f-class" : "f-os"; const b = $("#" + g + ' button[data-v="' + s[k] + '"]'); if (b) b.click(); }); } } catch (e) {}
+  apply();
+
+  /* ---- decoder ---- */
+  const SRC = Uint8Array.from(atob(DATA.credits.b64), c => c.charCodeAt(0));
+  let bytes = SRC, key = 0x99, timer = null, pos = 0;
+  const raw = $("#rawpane"), out = $("#outpane"), st = $("#dec-status");
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  $("#dec-off").textContent = DATA.credits.off.toString(16);
+  function buildRaw(base) {
+    let s = "";
+    for (let r = 0; r < bytes.length; r += 8) {
+      s += '<span class="row"><span class="a">' + (base + r).toString(16).padStart(5, "0") + "</span> ";
+      for (let i = r; i < Math.min(r + 8, bytes.length); i++) {
+        const mk = bytes[i] === 0 || (i > 0 && bytes[i - 1] === 0 && (i < 2 || bytes[i - 2] !== 0));
+        s += '<span id="b' + i + '"' + (mk ? ' class="mk"' : "") + ">" + h2(bytes[i]) + "</span> ";
+      }
+      s += "</span>";
+    }
+    raw.innerHTML = s;
+  }
+  function decodeTo(n) {
+    let s = "", i = 0;
+    while (i < n && i < bytes.length) {
+      const v = bytes[i];
+      if (v === 0 && i + 1 < bytes.length) {
+        const rec = bytes[i + 1];
+        if (rec === 0) { i += 2; continue; }
+        s += (s ? "\n\n" : "") + '<span class="rec">‹' + h2(rec) + "›</span> ";
+        i += 2; continue;
+      }
+      const c = v ^ key;
+      if (c === 0x2f) s += "\n";
+      else if (c >= 32 && c < 127) s += esc(String.fromCharCode(c));
+      else if (c === 0) s += "";
+      else s += "·";
+      i++;
+    }
+    return s;
+  }
+  function paint(n, done) {
+    out.innerHTML = decodeTo(n) + (done ? "" : '<span class="caret">&nbsp;</span>');
+    out.scrollTop = done ? 0 : out.scrollHeight;
+  }
+  let prev = -1;
+  function mark(i) {
+    if (prev >= 0) { const p = document.getElementById("b" + prev); if (p) { p.classList.remove("cur"); p.classList.add("done"); } }
+    const c = document.getElementById("b" + i);
+    if (c) { c.classList.add("cur"); const rowEl = c.parentElement; raw.scrollTop = rowEl.offsetTop - raw.clientHeight / 2; }
+    prev = i;
+  }
+  function stop() { if (timer) cancelAnimationFrame(timer); timer = null; $("#dec-play").textContent = "▶ Replay decode"; }
+  function status() {
+    const k = "0x" + h2(key);
+    st.textContent = bytes.length + " bytes · key " + k + (bytes === SRC ? (key === 0x99 ? " · plain text" : " · wrong key, try 99") : " · pasted bytes");
+  }
+  function full() { stop(); pos = bytes.length; $$(".cur,.done", raw).forEach(e => e.classList.remove("cur", "done")); prev = -1; paint(bytes.length, true); status(); }
+  function play() {
+    if (timer) { stop(); paint(pos, true); return; }
+    if (reduce) { full(); return; }
+    $$(".cur,.done", raw).forEach(e => e.classList.remove("cur", "done")); prev = -1;
+    pos = 0; $("#dec-play").textContent = "■ Stop";
+    const step = () => {
+      const sp = +$("#dec-speed").value;
+      pos = Math.min(bytes.length, pos + Math.max(1, Math.round(sp * sp / 40)));
+      paint(pos, false); mark(pos - 1);
+      st.textContent = "byte " + pos + " / " + bytes.length + " · key 0x" + h2(key);
+      if (pos >= bytes.length) { stop(); paint(pos, true); status(); return; }
+      timer = requestAnimationFrame(step);
+    };
+    timer = requestAnimationFrame(step);
+  }
+  $("#dec-play").addEventListener("click", play);
+  $("#dec-key").addEventListener("input", e => {
+    const v = e.target.value.trim().replace(/^0x/i, "");
+    if (/^[0-9a-f]{1,2}$/i.test(v)) { key = parseInt(v, 16); if (!timer) { paint(bytes.length, true); status(); } }
+  });
+  $("#dec-use").addEventListener("click", () => {
+    const t = $("#dec-in").value.replace(/0x/gi, "").replace(/[^0-9a-f]/gi, "");
+    if (t.length < 2 || t.length % 2) { $("#dec-perr").textContent = t.length ? "Odd number of hex digits; each byte needs two." : "Paste some hex bytes first, like 00 01 dd fc."; return; }
+    $("#dec-perr").textContent = "";
+    bytes = hexToBytes(t); buildRaw(0); full();
+  });
+  $("#dec-reset").addEventListener("click", () => { bytes = SRC; key = 0x99; $("#dec-key").value = "99"; $("#dec-perr").textContent = ""; buildRaw(DATA.credits.off); full(); });
+  buildRaw(DATA.credits.off); full();
+
+  /* ---- theme ---- */
+  $("#theme").addEventListener("click", () => {
+    const r = document.documentElement, cur = r.getAttribute("data-theme");
+    const dark = cur ? cur === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    r.setAttribute("data-theme", dark ? "light" : "dark");
+  });
+})();
+</script>
+</body>
+</html>

@@ -533,6 +533,7 @@ static void notepad_font(HWND np, const char *face, const char *size, int show_m
 }
 
 #include "scenes.h"
+#include "scene_v2.h"
 
 int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cl, int show)
 {
@@ -552,6 +553,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cl, int show)
     if (!*scene || !strncmp(scene, "basilisk", 8)) scene_basilisk();
     else if (!strncmp(scene, "tribute", 7)) { fast_letter = strstr(scene, "fast") != NULL; scene_tribute(); }
     else if (!strncmp(scene, "intro", 5)) scene_intro();
+    else if (!strncmp(scene, "v2", 2)) { if (strstr(scene, "fast")) v2_speed = 0.05; scene_v2(); }
     else if (!strncmp(scene, "test", 4)) scene_test(scene + 4);
     say("puppet end");
     return 0;

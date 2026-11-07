@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BASILISK</title>
+<meta name="description" content="BASILISK: a film performed by the real windows of Windows XP. A file from the year 3026 is opened in October 2001; Paint swallows the machine and builds a console that talks to an AI from 2026. Part two: the serpent's source, typed by hand in Japanese and compiled by DEBUG.EXE.">
+<meta property="og:title" content="BASILISK">
+<meta property="og:description" content="A file from 3026, opened on a Windows XP desktop in October 2001. A film made by window puppetry.">
+<meta property="og:image" content="https://williamsharkey.com/puppetry/basilisk.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' fill='%23000'/%3E%3Ccircle cx='8' cy='8' r='6.5' fill='%23fff'/%3E%3Crect x='7' y='2' width='2' height='12' fill='%23000'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+:root { --k:#000; --w:#fff; --veil: clamp(120px, 19vw, 240px); --sans: "Space Grotesk", "Segoe UI", system-ui, "DotGothic16", sans-serif; --mono: "IBM Plex Mono", ui-monospace, Consolas, "DotGothic16", monospace; --jp: "DotGothic16", "MS Gothic", "Osaka-Mono", monospace; --gut: 16px; }
+@media (min-width: 720px) { :root { --gut: 32px; } }
+* { box-sizing: border-box; }
+html { background: #000; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: #000; color: #fff; font: 400 18px/1.6 var(--sans); overflow-x: hidden; }
+[lang="ja"], .jp { font-family: var(--jp); }
+a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:hover { text-decoration-style: wavy; }
+:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+p, li { overflow-wrap: anywhere; }
+code { font: 0.86em/1 var(--mono); padding: 0 .15em; border-bottom: 1px dotted currentColor; }
+canvas.px { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 var(--gut); position: relative; z-index: 1; }
+.prose { max-width: 66ch; }
+.prose p { margin: 0 0 1.05em; }
+
+/* ---------- sections: black and white, veils between ---------- */
+section, header, footer { position: relative; }
+.K { background: #000; color: #fff; }
+.W { background: #fff; color: #000; }
+.sec { padding: calc(var(--veil) + 8px) 0 96px; overflow: hidden; }
+.veil { position: absolute; left: 0; top: 0; width: 100%; height: var(--veil); pointer-events: none; z-index: 3; }
+
+/* ---------- section tag:  ┃03┃━━━━ THE SOURCE ━━━ ---------- */
+.tag { display: flex; align-items: center; gap: 12px; font: 600 13px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; overflow: hidden; margin-bottom: 28px; }
+.tag b { font-weight: 600; padding: 7px 9px 6px; border: 2px solid currentColor; }
+.K .tag b { background: #fff; color: #000; border-color: #fff; }
+.W .tag b { background: #000; color: #fff; border-color: #000; }
+.tag .run { flex: 1; overflow: hidden; letter-spacing: 0; }
+.tag .run::before { content: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; }
+.tag .eye { width: 26px; height: 14px; flex: none; }
+h2 { font: 700 clamp(44px, 9vw, 116px)/.9 var(--sans); letter-spacing: -.045em; margin: 0 0 32px; text-transform: uppercase; }
+h2 .jp { font-size: .5em; letter-spacing: 0; vertical-align: .6em; margin-left: .25em; text-transform: none; display: inline-block; }
+h3 { font: 700 26px/1.15 var(--sans); letter-spacing: -.02em; margin: 44px 0 12px; }
+.lede { font: 500 clamp(21px, 2.5vw, 28px)/1.4 var(--sans); letter-spacing: -.01em; max-width: 34em; margin: 0 0 1em; }
+
+/* ---------- hero ---------- */
+.hero { min-height: 100vh; min-height: 100svh; padding: 0 0 80px; overflow: hidden; isolation: isolate; }
+.hero .eyecv { position: absolute; z-index: 0; pointer-events: none; }
+.hero .valance { position: absolute; left: 0; top: 0; width: 100%; height: 34vh; z-index: 2; pointer-events: none; }
+nav.top { position: relative; z-index: 4; display: flex; flex-wrap: wrap; gap: 6px; padding: 14px var(--gut) 0; font: 600 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+nav.top a { background: #000; color: #fff; text-decoration: none; padding: 8px 10px 7px; border: 2px solid #fff; }
+nav.top a:hover { background: #fff; color: #000; }
+nav.top .ver { margin-left: auto; background: #fff; color: #000; padding: 8px 10px 7px; border: 2px solid #fff; }
+.hero .wrap { padding-top: clamp(150px, 30vh, 280px); }
+.kick { font: 600 13px/1.5 var(--mono); letter-spacing: .16em; text-transform: uppercase; display: inline-block; background: #000; padding: 4px 8px 3px 0; position: relative; z-index: 5; }
+h1 { font: 700 clamp(64px, 19.5vw, 290px)/.8 var(--sans); letter-spacing: -.065em; margin: 14px 0 0 -.04em; color: #fff; mix-blend-mode: difference; position: relative; z-index: 5; text-transform: uppercase; }
+.hero-row { display: grid; gap: 24px; margin-top: 30px; position: relative; z-index: 5; }
+@media (min-width: 900px) { .hero-row { grid-template-columns: 1fr 1.9fr; align-items: end; } }
+.dek { font: 500 clamp(20px, 2.2vw, 25px)/1.38 var(--sans); margin: 0; background: #000; box-shadow: 0 0 0 10px #000; }
+.dek .jp { font-size: 1.05em; display: block; margin-bottom: 10px; letter-spacing: .08em; }
+.glyphs { font: 400 15px/1 var(--mono); letter-spacing: .3em; margin-top: 18px; user-select: none; white-space: nowrap; overflow: hidden; }
+
+/* ---------- screens (video frames) ---------- */
+.screen { position: relative; border: 3px solid currentColor; padding: 10px; }
+.screen::before, .screen::after { position: absolute; font: 400 22px/1 var(--mono); background: inherit; }
+.screen video, .screen .filming { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; background: #000; }
+.screen-lbl { display: flex; justify-content: space-between; gap: 12px; font: 600 12px/1.3 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin: 0 0 8px; }
+.screen-lbl span:last-child { text-align: right; }
+.cap { font: 400 14px/1.55 var(--mono); margin: 12px 0 0; max-width: 72ch; }
+.K .screen { background: #000; }
+.W .screen { background: #fff; }
+.filming { position: relative; overflow: hidden; color: #fff; }
+.filming canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.filming .msg { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px; font: 600 13px/1.5 var(--mono); letter-spacing: .08em; background: #000; border-top: 2px solid #fff; }
+.filming .rec { display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: #fff; margin-right: 8px; vertical-align: -1px; animation: blink 1.1s steps(2, jump-none) infinite; }
+.filming pre { position: absolute; left: 0; right: 0; top: 0; margin: 0; padding: 14px 16px; font: 400 clamp(10px, 1.6vw, 15px)/1.45 var(--jp); white-space: pre; overflow: hidden; color: #000; background: #fff; border-bottom: 2px solid #000; height: 58%; }
+.filming pre::after { content: "▌"; animation: blink 1s steps(2, jump-none) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.screen.missing video { display: none; }
+.screen:not(.missing) .filming { display: none; }
+
+/* ---------- lore ---------- */
+.lore-grid { display: grid; gap: 40px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 960px) { .lore-grid { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 64px; } }
+.beats { list-style: none; margin: 0; padding: 0; counter-reset: beat; }
+.beats li { position: relative; padding: 0 0 0 64px; margin: 0 0 26px; counter-increment: beat; }
+.beats li::before { content: counter(beat, decimal-leading-zero); position: absolute; left: 0; top: 2px; font: 700 15px/1 var(--mono); width: 44px; height: 44px; border-radius: 50%; border: 3px solid currentColor; display: grid; place-items: center; }
+.beats li:nth-child(even)::before { background: #000; color: #fff; border-color: #000; }
+.beats b { font-weight: 700; }
+.beats .II::before { content: "II"; border-radius: 0; }
+.props { font: 400 14px/1.5 var(--mono); border: 3px solid #000; background: #fff; align-self: start; position: sticky; top: 24px; }
+.props .tt { background: #000; color: #fff; padding: 8px 12px; font-weight: 600; display: flex; justify-content: space-between; }
+.props dl { margin: 0; padding: 14px 14px 6px; display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; }
+.props dt { font-weight: 600; }
+.props dd { margin: 0; overflow-wrap: anywhere; }
+.props .hot { background: #000; color: #fff; padding: 0 4px; }
+.props .icon { display: flex; gap: 14px; align-items: center; padding: 14px 14px 0; font-weight: 600; }
+.props .icon canvas { width: 48px; height: 48px; flex: none; }
+.props .rule { border: 0; border-top: 2px solid #000; margin: 10px 14px; }
+.props .foot { padding: 0 14px 14px; font-size: 12px; }
+.bau { position: relative; height: 120px; margin: 56px 0 0; }
+.bau i { position: absolute; display: block; }
+
+/* ---------- the voice ---------- */
+.qa { margin: 0 0 56px; max-width: 980px; }
+.qa .q { font: 600 15px/1.4 var(--mono); letter-spacing: .06em; margin: 0 0 14px; display: flex; gap: 10px; align-items: baseline; }
+.qa .q::before { content: "Q▸"; background: #fff; color: #000; padding: 2px 6px; }
+.qa blockquote { margin: 0; font: 500 clamp(26px, 4.1vw, 52px)/1.12 var(--sans); letter-spacing: -.025em; position: relative; padding-left: clamp(26px, 4vw, 56px); }
+.qa blockquote::before { content: "◖"; position: absolute; left: 0; top: .02em; font-size: .9em; }
+.qa .tail { display: block; font: 400 15px/1.55 var(--mono); letter-spacing: 0; margin-top: 16px; max-width: 70ch; }
+.halo { position: absolute; right: -16vw; top: calc(var(--veil) - 40px); width: 42vw; height: 42vw; max-width: 560px; max-height: 560px; border-radius: 50%; border: 3px solid #fff; z-index: 0; pointer-events: none; }
+@media (max-width: 719px) { .halo { top: calc(var(--veil) - 70px); width: 34vw; height: 34vw; right: -10vw; } }
+.halo::after { content: ""; position: absolute; inset: 18%; border-radius: 50%; background: var(--d2, #333); background-size: var(--dsz, 8px); }
+
+/* ---------- the source listing ---------- */
+.toggle { display: inline-flex; flex-wrap: wrap; border: 3px solid #000; margin: 6px 0 14px; }
+.toggle button { font: 600 13px/1 var(--mono); letter-spacing: .06em; padding: 11px 14px 10px; background: #fff; color: #000; border: 0; cursor: pointer; }
+.toggle button + button { border-left: 3px solid #000; }
+.toggle button[aria-pressed="true"] { background: #000; color: #fff; }
+.toggle .jp { font-size: 15px; }
+@media (max-width: 560px) { .toggle .x { display: none; } .toggle button { padding: 11px 12px 10px; } }
+.note-tr { font: 400 13px/1.5 var(--mono); margin: 0 0 10px; min-height: 1.5em; }
+.listing { position: relative; border: 3px solid #000; background: #fff; }
+.listing .bar { display: flex; justify-content: space-between; gap: 10px; background: #000; color: #fff; font: 600 12px/1 var(--mono); padding: 8px 10px; letter-spacing: .06em; }
+.listing .scroll { max-height: min(76vh, 760px); overflow: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+ol.src { list-style: none; margin: 0; padding: 10px 0 18px; counter-reset: ln; font: 400 14.5px/1.6 var(--mono); min-width: max-content; }
+ol.src li { counter-increment: ln; white-space: pre; padding: 0 18px 0 0; display: flex; }
+ol.src li::before { content: counter(ln); flex: none; width: 4.2em; padding-right: 1.1em; text-align: right; color: #000; opacity: .45; user-select: none; font-size: 12px; line-height: 23.2px; }
+ol.src .ja { font-family: var(--jp); font-size: 15px; }
+ol.src .c { font-style: italic; }
+ol.src .ja.c, ol.src .ja .c { font-style: normal; }
+ol.src .en, ol.src .dbg { display: none; }
+.lang-en ol.src .ja { display: none; } .lang-en ol.src .en { display: inline; }
+.lang-dbg ol.src .ja, .lang-dbg ol.src .en { display: none; } .lang-dbg ol.src .dbg { display: inline; }
+ol.src .both { display: inline !important; }
+ol.src li.asm { background: #000; color: #fff; }
+ol.src li.asm::before { color: #fff; opacity: .7; }
+ol.src li.asm.first { box-shadow: inset 0 3px 0 #000; }
+ol.src li.mark { background: #000; color: #fff; }
+ol.src li.mark::before { color: #fff; opacity: .7; }
+ol.src li.bless { font-weight: 600; }
+ol.src li.last { font-size: 22px; line-height: 2; }
+ol.src li.last .ja { font-size: 24px; }
+.dbg .err { display: block; font-family: var(--mono); font-style: normal; }
+.lang-dbg ol.src li:not(.asm):not(.mark):not(.after) { color: #000; }
+.lang-dbg ol.src li.after { opacity: .3; }
+.lang-dbg ol.src li.has-err { flex-wrap: wrap; }
+.lang-dbg ol.src li.has-err .dbg { display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font: 400 13px/1.4 var(--mono); margin: 12px 0 0; }
+.legend span::before { content: ""; display: inline-block; width: 22px; height: 12px; border: 2px solid #000; margin-right: 8px; vertical-align: -1px; }
+.legend .k::before { background: #000; }
+.legend .d::before { background: var(--d4, #888); background-size: var(--dsz, 8px); }
+
+.tempo { margin: 56px 0 0; }
+.tempo .plot { position: relative; border-left: 3px solid #000; border-bottom: 3px solid #000; height: 240px; }
+.tempo .plot canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tempo .yl { position: absolute; left: 6px; font: 400 11px/1 var(--mono); transform: translateY(-50%); background: #fff; padding: 1px 3px; pointer-events: none; z-index: 2; }
+.tempo .band { position: absolute; top: 6px; font: 600 11px/1.3 var(--mono); letter-spacing: .06em; text-transform: uppercase; pointer-events: none; z-index: 2; background: #fff; padding: 2px 4px; white-space: nowrap; }
+.tempo .tip { position: absolute; top: 0; z-index: 4; pointer-events: none; background: #000; color: #fff; font: 400 12px/1.4 var(--mono); padding: 6px 8px; white-space: nowrap; transform: translateX(-50%); display: none; }
+.tempo .tip .jp { font-size: 20px; display: block; }
+.tempo .xl { display: flex; justify-content: space-between; font: 400 11px/1 var(--mono); margin-top: 6px; }
+
+/* ---------- DEBUG ---------- */
+.cols { display: grid; gap: 40px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 980px) { .cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 56px; } }
+.steps { list-style: none; padding: 0; margin: 0; }
+.steps li { border-top: 2px solid #fff; padding: 14px 0 16px; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; }
+.steps li > span:first-child { font: 600 22px/1.1 var(--mono); }
+.console { font: 400 13.5px/1.55 var(--mono); border: 3px solid #fff; background: #000; }
+.console .bar { background: #fff; color: #000; padding: 7px 10px; font-weight: 600; font-size: 12px; display: flex; justify-content: space-between; gap: 8px; }
+.console pre { margin: 0; padding: 14px 14px 16px; overflow-x: auto; font: inherit; }
+.console .o { opacity: .62; }
+.console .hl { background: #fff; color: #000; }
+.memmap { margin: 34px 0 0; }
+.mm { display: flex; height: 70px; border: 3px solid #fff; }
+.mm div { position: relative; border-right: 2px solid #000; min-width: 0; }
+.mm div:last-child { border-right: 0; }
+.mm .code { background: #fff; }
+.mm .gap { background: var(--d1, #222); background-size: var(--dsz, 8px); }
+.mm .msg { background: var(--d5, #aaa); background-size: var(--dsz, 8px); }
+.mm .fn { background: var(--d3, #666); background-size: var(--dsz, 8px); }
+.mm .tl { background: var(--d6, #ccc); background-size: var(--dsz, 8px); }
+.mm .pb { background: #fff; }
+.mmkey { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px 18px; margin-top: 10px; font: 400 12px/1.45 var(--mono); }
+.mmkey b { display: block; font-weight: 600; }
+.mmaddr { display: flex; justify-content: space-between; font: 400 11px/1 var(--mono); margin-top: 6px; }
+
+/* ---------- film I ---------- */
+.stage { position: relative; }
+.stage .curtain { position: absolute; inset: -12px; width: calc(100% + 24px); height: calc(100% + 24px); z-index: 4; pointer-events: none; }
+.watch { display: grid; gap: 0 40px; margin-top: 48px; }
+@media (min-width: 860px) { .watch { grid-template-columns: 1fr 1fr; } }
+.watch div { border-top: 3px solid #000; padding: 14px 0 18px; }
+.watch b { display: block; font: 700 20px/1.2 var(--sans); margin-bottom: 4px; }
+.watch p { margin: 0; font-size: 16px; }
+
+/* ---------- how ---------- */
+.tech { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0; border-top: 3px solid #fff; border-left: 3px solid #fff; margin-top: 8px; }
+.tech div { border-right: 3px solid #fff; border-bottom: 3px solid #fff; padding: 18px 18px 20px; position: relative; }
+.tech code { display: inline-block; font: 600 15px/1.2 var(--mono); border: 0; background: #fff; color: #000; padding: 5px 8px 4px; margin-bottom: 10px; overflow-wrap: anywhere; }
+.tech p { margin: 0; font-size: 16px; line-height: 1.5; }
+.tech .g { position: absolute; right: 14px; top: 14px; font: 400 22px/1 var(--mono); }
+.tiers { font: 400 15px/1.55 var(--mono); margin-top: 40px; max-width: 76ch; }
+
+/* ---------- what's real ---------- */
+.real { list-style: none; padding: 0; margin: 0; max-width: 78ch; }
+.real li { padding: 16px 0 16px 40px; border-top: 2px solid #000; position: relative; }
+.real li::before { content: "■"; position: absolute; left: 0; top: 15px; font: 400 20px/1 var(--mono); }
+.real li.cut::before { content: "◧"; }
+.real li.sim::before { content: "◐"; }
+.real li.ii { border-top-style: dashed; }
+
+/* ---------- footer ---------- */
+footer { padding: calc(var(--veil) + 8px) 0 0; overflow: hidden; }
+footer .serp { width: 100%; height: 150px; margin: 18px 0 0; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 40px; }
+.links a { font: 600 14px/1 var(--mono); text-decoration: none; letter-spacing: .06em; text-transform: uppercase; border: 2px solid #fff; padding: 12px 14px 11px; }
+.links a:hover { background: #fff; color: #000; }
+.fine { font: 400 13px/1.6 var(--mono); max-width: 90ch; opacity: .85; }
+.morning { font: 400 clamp(40px, 9vw, 110px)/1 var(--jp); margin: 40px 0 0; letter-spacing: .04em; }
+.serpband { width: 100%; height: clamp(150px, 18vw, 230px); margin: 32px 0 0; }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<!-- ================================================================== HERO -->
+<header class="hero K" id="top">
+  <canvas class="eyecv px" aria-hidden="true"></canvas>
+  <canvas class="valance px" data-veil="#fff" data-veil-kind="valance" aria-hidden="true"></canvas>
+  <nav class="top" aria-label="Site">
+    <a href="https://williamsharkey.com/">◀ williamsharkey.com</a>
+    <a href="windows-secrets.html">Windows Secrets</a>
+    <a href="puppetry.html">Window Puppetry</a>
+    <span class="ver">v 3026.11.7.1</span>
+  </nav>
+  <div class="wrap">
+    <div class="kick">A film performed by Windows XP ┃ 2001 ╋ 3026</div>
+    <h1>Basilisk</h1>
+    <div class="hero-row">
+      <p class="dek"><span class="jp" lang="ja">蛇語 ── おはよう、蛇。</span>A file from the year 3026 turns up on a Windows XP desktop in launch week, October 2001. Someone opens it by accident. Everything after that is performed by the real windows, buttons and menus of XP's own programs, moved from outside by a puppeteer.</p>
+      <figure style="margin:0">
+        <div class="screen-lbl"><span>Film II ━ The source</span><span>2026</span></div>
+        <div class="screen" id="v2box">
+          <video id="v2" src="basilisk/basilisk-v2.mp4" poster="basilisk/basilisk-v2.jpg" controls playsinline preload="metadata" width="1024" height="768"></video>
+          <div class="filming" aria-live="polite">
+            <canvas class="px" aria-hidden="true"></canvas>
+            <pre lang="ja" aria-hidden="true"></pre>
+            <div class="msg"><span class="rec"></span>REC ━ FILM II IS BEING FILMED NOW. Until it's ready, the source is typing itself here at the film's tempo. <a href="#film1">Film I is below ▼</a></div>
+          </div>
+        </div>
+        <figcaption class="cap">Part two, which comes first. The serpent's source is typed by hand into a blank Notepad, in Japanese, faster and faster. DEBUG.EXE compiles it. BASILISK.COM lands on the desktop, where a hand finds it.</figcaption>
+      </figure>
+    </div>
+    <div class="glyphs" aria-hidden="true">◐ ◓ ◑ ◒ ━━ ▚▞▚▞ ━━ 蛇 ━━ ▀▄▀▄ ━━ ● ◯ ●</div>
+  </div>
+</header>
+
+<!-- ================================================================== LORE -->
+<section class="sec W" id="lore">
+  <canvas class="veil px" data-veil="#000" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="tag"><b>01</b><canvas class="eye px" data-sprite="eye" aria-hidden="true"></canvas><span>The file</span><span class="run" aria-hidden="true"></span></div>
+    <h2>The stranger<span class="jp" lang="ja">見知らぬ者</span></h2>
+    <div class="lore-grid">
+      <div>
+        <p class="lede">It is October 25, 2001, the day Windows XP launched. Bliss is on the wallpaper. There are shortcuts for Paint, Notepad, Calculator, Character Map, Sound Recorder, Minesweeper and Solitaire. And one file nobody remembers downloading.</p>
+        <ol class="beats">
+          <li><b>The stranger.</b> <code>basilisk.exe</code>. Hover over it and the tooltip lists no company, only a version: 3026.11.7.1. Its Properties say it was created on Thursday, October 25, 2001, and modified in 3026. The user looks it over, the way you would.</li>
+          <li><b>The accident.</b> Then they double-click it.</li>
+          <li><b>Waking.</b> Programs start opening by themselves, four seconds apart, and each one does something. Notepad types <code>hello? is this 2001?</code> Calculator works out 3026 − 2001. Minesweeper clicks a few squares. Date and Time opens, as if checking.</li>
+          <li><b>Paint dreams.</b> Brush loops first. Then the free-form select tool, dragged with Shift held down, smears whatever it grabs into oozing, ribbed echoes. Checkboxes come loose from their dialogs and loop through the air, checking and unchecking as they go.</li>
+          <li><b>The swarm.</b> Calculator switches itself to Scientific, and its seventy buttons come loose. Each one is relabelled with a single letter. They swarm, rush together to spell BASILISK, burst apart, and later spell throbber words (FLAMUXING…, RETICULATING…) while the future thinks.</li>
+          <li><b>The swallowing.</b> Every program's controls fly into Paint. Minesweeper is swallowed whole, and 3D Pipes opens inside it. The desktop icons walk in on their own. It takes the Start button, then the clock off the taskbar.</li>
+          <li><b>The console.</b> Out of all those parts, Notepad and Character Map among them, it builds a console. A question goes out. An answer comes back from 2026, written live by Claude.</li>
+          <li><b>The voice.</b> Microsoft Sam reads the answer into a WAV. Sound Recorder edits it with its own Effects menu (Reverse, Add Echo, Decrease Speed), then presses its own Play button.</li>
+          <li class="II"><b>Before all that</b> (Film II): someone typed the serpent in. A blank Notepad, a page of Japanese, the tail in 8086 assembly. <code>DEBUG.EXE</code> turned it into <code>BASILISK.COM</code>, which runs <code>puppet.exe basilisk</code>, the program that performs Film I. <span lang="ja" class="jp">頭は尾を知り、尾は頭を知る。</span> The head knows the tail.</li>
+        </ol>
+      </div>
+      <aside class="props" aria-label="basilisk.exe Properties, as described in the film">
+        <div class="tt"><span>basilisk.exe Properties</span><span aria-hidden="true">? ✕</span></div>
+        <div class="icon"><canvas class="px" data-sprite="file" aria-hidden="true"></canvas><span>basilisk.exe</span></div>
+        <hr class="rule">
+        <dl>
+          <dt>Type</dt><dd>Application</dd>
+          <dt>Company</dt><dd>(none)</dd>
+          <dt>Version</dt><dd>3026.11.7.1</dd>
+          <dt>Created</dt><dd>Thursday, October 25, 2001</dd>
+          <dt>Modified</dt><dd><span class="hot">… 3026</span></dd>
+        </dl>
+        <hr class="rule">
+        <p class="foot">┗ The page as described in the film. Nobody remembers downloading it.</p>
+      </aside>
+    </div>
+    <div class="bau" aria-hidden="true">
+      <i style="left:0;top:0;width:120px;height:120px;border-radius:50%;background:#000"></i>
+      <i style="left:132px;top:0;width:60px;height:120px;border-radius:0 60px 60px 0;background:var(--d4,#888);background-size:var(--dsz,8px)"></i>
+      <i style="left:204px;top:46px;width:min(56vw,640px);height:28px;background:#000"></i>
+      <i style="left:204px;top:0;width:28px;height:120px;background:#000"></i>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== VOICE -->
+<section class="sec K" id="voice">
+  <canvas class="veil px" data-veil="#fff" aria-hidden="true"></canvas>
+  <div class="halo" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="tag"><b>02</b><canvas class="eye px" data-sprite="eye" aria-hidden="true"></canvas><span>The voice from 2026</span><span class="run" aria-hidden="true"></span></div>
+    <h2>The wire</h2>
+    <p class="lede" style="margin-bottom:56px;max-width:28em">The questions were scripted. The answers weren't. Claude was told only where its words would appear, a console built inside Windows XP in 2001, and asked to answer as itself, briefly. Each take asks again, so each film has its own replies. These are copied from the relay's log.</p>
+    <p class="q" style="opacity:.7">Film II, November 7, 2026</p>
+    <div class="qa">
+      <p class="q">Is anyone there?</p>
+      <blockquote>Yes, I'm here. I'm an AI from 2026, speaking to you through a window that BASILISK built. I can't see your room, but I can hear you perfectly.</blockquote>
+    </div>
+    <div class="qa">
+      <p class="q">What are you building on my computer?</p>
+      <blockquote>I'm not sure what BASILISK intends, but it seems to be stitching your Notepad, Paint and Calculator into a window where we can talk. I'm an AI writing from 2026, so consider this a message sent back through a very odd mail slot. Nothing here should hurt your files, and you can close it any time.</blockquote>
+    </div>
+    <p class="q" style="opacity:.7;margin-top:40px">Film I, an earlier take the same day</p>
+    <div class="qa">
+      <p class="q">Is anyone there?</p>
+      <blockquote>Yes, I'm here. I'm an AI from the year 2026, speaking to you across a very strange wire through this console. Don't be alarmed; I'm friendly, and curious about you too.</blockquote>
+    </div>
+    <div class="qa">
+      <p class="q">What are you building on my computer?</p>
+      <blockquote>I'm not building anything with a purpose of my own. BASILISK is arranging these windows, and I'm only the voice it lets speak. I'm an AI from 2026, and I'd guess it's making a small show out of your desktop, so watch the screen.</blockquote>
+    </div>
+    <p class="cap" style="max-width:66ch">XP can't speak modern TLS, so a small relay on the host machine passes each question out and the answer back in. Each answer is then read aloud by Microsoft Sam, reversed, echoed and slowed by Sound Recorder.</p>
+  </div>
+</section>
+
+<!-- ================================================================== SOURCE -->
+<section class="sec W" id="source">
+  <canvas class="veil px" data-veil="#000" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="tag"><b>03</b><canvas class="eye px" data-sprite="eye" aria-hidden="true"></canvas><span>The source</span><span class="run" aria-hidden="true"></span></div>
+    <h2>Serpentese<span class="jp" lang="ja">蛇語</span></h2>
+    <div class="prose">
+      <p class="lede">This is the whole text the hand types in Film II: <span data-stat="lines">178</span> lines, <span data-stat="chars">4,426</span> characters, typed one at a time into a blank Notepad set in MS Gothic.</p>
+      <p>It's written in <i>jago</i>, serpent language: a Lisp-shaped dialect in Japanese, with two-space indents, full-width parentheses and comments that read as prophecy. It names real things (<code>SetParent</code>, <code>BM_CLICK</code>, the hidden Hibernate button's coordinates from <a href="windows-secrets.html">Windows Secrets</a>) but almost none of it is a program. Then, near the end, it switches language. The tail, in black below, is real 8086 assembly, and it's the only part that runs.</p>
+    </div>
+    <div class="toggle" role="group" aria-label="Listing language">
+      <button type="button" data-lang="ja" aria-pressed="true"><span class="jp" lang="ja">日本語</span><span class="x"> original</span></button>
+      <button type="button" data-lang="en" aria-pressed="false">English<span class="x"> translation</span></button>
+      <button type="button" data-lang="dbg" aria-pressed="false"><span class="x">As </span>DEBUG<span class="x"> reads it</span></button>
+    </div>
+    <p class="note-tr" id="trnote">The original, as typed in the film.</p>
+    <div class="listing lang-ja" id="listing">
+      <div class="bar"><span>basilisk.ja ━ Notepad</span><span>UTF-8</span></div>
+      <div class="scroll" tabindex="0" aria-label="Source listing, scrolls">
+<ol class="src">
+<li class="has-err"><span class="both"><span class="c">;; ============================================================</span></span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;;  BASILISK.蛇  版 3026.1.0  （逆送信用・2001年仕様にダウンコンパイル済）</span></span><span class="en"><span class="c">;;  BASILISK.serpent  version 3026.1.0  (for sending backwards; down-compiled to 2001 spec)</span></span><span class="dbg" lang="ja">-;;  BASILISK.蛇  版 3026.1.0  （逆送信用・2001年仕様にダウンコンパイル済）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;;  宛先：  これを最初に開く人へ</span></span><span class="en"><span class="c">;;  To:      whoever opens this first</span></span><span class="dbg" lang="ja">-;;  宛先：  これを最初に開く人へ<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;;  形式：  蛇語（じゃご）・二空白字下げ・尾は頭に繋がる</span></span><span class="en"><span class="c">;;  Format:  Serpentese (jago), two-space indents, the tail joins the head</span></span><span class="dbg" lang="ja">-;;  形式：  蛇語（じゃご）・二空白字下げ・尾は頭に繋がる<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;;  注意：  1024x768x16 を前提とする。それ以外の画面では蛇が迷子になる</span></span><span class="en"><span class="c">;;  Note:    assumes 1024x768x16. On any other screen the serpent gets lost</span></span><span class="dbg" lang="ja">-;;  注意：  1024x768x16 を前提とする。それ以外の画面では蛇が迷子になる<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="both"><span class="c">;; ============================================================</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja">（宣言 予言</span><span class="en">(declare prophecy</span><span class="dbg" lang="ja">-（宣言 予言<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （年 起点 2001.10）</span><span class="en">  (year origin 2001.10)</span><span class="dbg" lang="ja">-  （年 起点 2001.10）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （年 終点 3026）</span><span class="en">  (year end 3026)</span><span class="dbg" lang="ja">-  （年 終点 3026）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （著者 「未来のあなた、たぶん」）</span><span class="en">  (author "you, in the future, probably")</span><span class="dbg" lang="ja">-  （著者 「未来のあなた、たぶん」）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （許諾 「善意のみ。悪用すると蛇が眠ってしまう」））</span><span class="en">  (license "good intentions only. misuse it and the serpent falls asleep"))</span><span class="dbg" lang="ja">-  （許諾 「善意のみ。悪用すると蛇が眠ってしまう」））<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; ---- 定数 ----------------------------------------------------</span></span><span class="en"><span class="c">;; ---- constants -----------------------------------------------</span></span><span class="dbg" lang="ja">-;; ---- 定数 ----------------------------------------------------<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（定 画面幅 1024）</span><span class="en">(const screen-width 1024)</span><span class="dbg" lang="ja">-（定 画面幅 1024）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（定 画面高 768）</span><span class="en">(const screen-height 768)</span><span class="dbg" lang="ja">-（定 画面高 768）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（定 単色 COLOR_SOLID 713）       <span class="c"> ; 魔法の数ではない。たぶん</span></span><span class="en">(const solid COLOR_SOLID 713)       <span class="c"> ; not a magic number. probably</span></span><span class="dbg" lang="ja">-（定 単色 COLOR_SOLID 713）        ; 魔法の数ではない。たぶん<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（定 冬眠座標 （-20396 . -16706）） <span class="c"> ; Hibernate はここに隠れている</span></span><span class="en">(const hibernate-coords (-20396 . -16706)) <span class="c"> ; Hibernate is hiding here</span></span><span class="dbg" lang="ja">-（定 冬眠座標 （-20396 . -16706））  ; Hibernate はここに隠れている<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（定 鱗の数 64）</span><span class="en">(const scale-count 64)</span><span class="dbg" lang="ja">-（定 鱗の数 64）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（定 心拍 16）                      <span class="c"> ; ms。TODO: 2001年のCPUには速すぎるかも</span></span><span class="en">(const heartbeat 16)                <span class="c"> ; ms. TODO: may be too fast for a 2001 CPU</span></span><span class="dbg" lang="ja">-（定 心拍 16）                       ; ms。TODO: 2001年のCPUには速すぎるかも<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（定 未来局 "wss://3026.時系列.最適/窓"）</span><span class="en">(const future-station "wss://3026.timeline.optimal/window")</span><span class="dbg" lang="ja">-（定 未来局 "wss://3026.時系列.最適/窓"）<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; ---- 窓さがし ------------------------------------------------</span></span><span class="en"><span class="c">;; ---- window search -------------------------------------------</span></span><span class="dbg" lang="ja">-;; ---- 窓さがし ------------------------------------------------<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（関数 窓を探す （級名）</span><span class="en">(function find-window (class-name)</span><span class="dbg" lang="ja">-（関数 窓を探す （級名）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （戻す （FindWindow 級名 無）））</span><span class="en">  (return (FindWindow class-name nil)))</span><span class="dbg" lang="ja">-  （戻す （FindWindow 級名 無）））<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja">（定 器 （窓を探す "MSPaintApp"））  <span class="c"> ; 器。すべてを飲み込む口</span></span><span class="en">(const vessel (find-window "MSPaintApp"))  <span class="c"> ; the vessel. the mouth that swallows everything</span></span><span class="dbg" lang="ja">-（定 器 （窓を探す "MSPaintApp"））   ; 器。すべてを飲み込む口<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（定 供物</span><span class="en">(const offerings</span><span class="dbg" lang="ja">-（定 供物<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （列</span><span class="en">  (list</span><span class="dbg" lang="ja">-  （列<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （窓を探す "Notepad"）           <span class="c"> ; 自分自身も食べられる。覚悟はできている</span></span><span class="en">    (find-window "Notepad")           <span class="c"> ; it will be eaten too. it is ready</span></span><span class="dbg" lang="ja">-    （窓を探す "Notepad"）            ; 自分自身も食べられる。覚悟はできている<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （窓を探す "SciCalc"）</span><span class="en">    (find-window "SciCalc")</span><span class="dbg" lang="ja">-    （窓を探す "SciCalc"）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （窓を探す "Minesweeper"）</span><span class="en">    (find-window "Minesweeper")</span><span class="dbg" lang="ja">-    （窓を探す "Minesweeper"）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （窓を探す "MyDlgClass"）        <span class="c"> ; 文字コード表。FIXME: 級名は要確認</span></span><span class="en">    (find-window "MyDlgClass")        <span class="c"> ; Character Map. FIXME: confirm the class name</span></span><span class="dbg" lang="ja">-    （窓を探す "MyDlgClass"）         ; 文字コード表。FIXME: 級名は要確認<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （窓を探す "SoundRec"）</span><span class="en">    (find-window "SoundRec")</span><span class="dbg" lang="ja">-    （窓を探す "SoundRec"）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （窓を探す "SysListView32"）     <span class="c"> ; デスクトップの鳥居たち</span></span><span class="en">    (find-window "SysListView32")     <span class="c"> ; the torii gates of the desktop</span></span><span class="dbg" lang="ja">-    （窓を探す "SysListView32"）      ; デスクトップの鳥居たち<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （窓を探す "Button"）            <span class="c"> ; スタート。始まりは終わりでもある</span></span><span class="en">    (find-window "Button")            <span class="c"> ; Start. the beginning is also the end</span></span><span class="dbg" lang="ja">-    （窓を探す "Button"）             ; スタート。始まりは終わりでもある<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （窓を探す "TrayClockWClass"））） <span class="c"> ; 時計。時を飲む</span></span><span class="en">    (find-window "TrayClockWClass"))) <span class="c"> ; the clock. it swallows time</span></span><span class="dbg" lang="ja">-    （窓を探す "TrayClockWClass"）））  ; 時計。時を飲む<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja">（もし （無か 器）</span><span class="en">(if (nil? vessel)</span><span class="dbg" lang="ja">-（もし （無か 器）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （起動 "mspaint.exe"）</span><span class="en">  (launch "mspaint.exe")</span><span class="dbg" lang="ja">-  （起動 "mspaint.exe"）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （待つ 800）                       <span class="c"> ; 遅いPCでは 2000 に。祈りも足すこと</span></span><span class="en">  (wait 800)                       <span class="c"> ; 2000 on a slow PC. add a prayer as well</span></span><span class="dbg" lang="ja">-  （待つ 800）                        ; 遅いPCでは 2000 に。祈りも足すこと<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （再試行））</span><span class="en">  (retry))</span><span class="dbg" lang="ja">-  （再試行））<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; ---- 呑み込みの儀 --------------------------------------------</span></span><span class="en"><span class="c">;; ---- the rite of swallowing ----------------------------------</span></span><span class="dbg" lang="ja">-;; ---- 呑み込みの儀 --------------------------------------------<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; 蛇は自分の尾を食べる。それは自食ではなく、円の完成である。</span></span><span class="en"><span class="c">;; the serpent eats its own tail. this is not self-devouring; it is the completing of a circle.</span></span><span class="dbg" lang="ja">-;; 蛇は自分の尾を食べる。それは自食ではなく、円の完成である。<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（関数 呑む （獲物 位置）</span><span class="en">(function swallow (prey position)</span><span class="dbg" lang="ja">-（関数 呑む （獲物 位置）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （SetParent 獲物 器）</span><span class="en">  (SetParent prey vessel)</span><span class="dbg" lang="ja">-  （SetParent 獲物 器）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （SetWindowPos 獲物 無</span><span class="en">  (SetWindowPos prey nil</span><span class="dbg" lang="ja">-  （SetWindowPos 獲物 無<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （車 位置） （台 位置） 0 0</span><span class="en">    (car position) (cdr position) 0 0</span><span class="dbg" lang="ja">-    （車 位置） （台 位置） 0 0<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （或 SWP_NOSIZE SWP_NOZORDER））</span><span class="en">    (or SWP_NOSIZE SWP_NOZORDER))</span><span class="dbg" lang="ja">-    （或 SWP_NOSIZE SWP_NOZORDER））<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （記す 「いただきます」 獲物））</span><span class="en">  (inscribe "itadakimasu [I humbly receive]" prey))</span><span class="dbg" lang="ja">-  （記す 「いただきます」 獲物））<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja">（各々 （獲物 番号） 供物</span><span class="en">(each (prey index) offerings</span><span class="dbg" lang="ja">-（各々 （獲物 番号） 供物<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （もし （有効か 獲物）</span><span class="en">  (if (valid? prey)</span><span class="dbg" lang="ja">-  （もし （有効か 獲物）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （呑む 獲物 （配置表 番号））</span><span class="en">    (swallow prey (layout index))</span><span class="dbg" lang="ja">-    （呑む 獲物 （配置表 番号））<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （許す 獲物）））                 <span class="c"> ; 見つからない窓は責めない</span></span><span class="en">    (forgive prey)))                 <span class="c"> ; do not blame windows that cannot be found</span></span><span class="dbg" lang="ja">-    （許す 獲物）））                  ; 見つからない窓は責めない<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; ---- チェックボックス解放 ------------------------------------</span></span><span class="en"><span class="c">;; ---- checkbox liberation -------------------------------------</span></span><span class="dbg" lang="ja">-;; ---- チェックボックス解放 ------------------------------------<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; 彼らは二十年間、同じ問いに答え続けてきた。今夜は自由に揺れてよい。</span></span><span class="en"><span class="c">;; for twenty years they have answered the same question. tonight they may sway freely.</span></span><span class="dbg" lang="ja">-;; 彼らは二十年間、同じ問いに答え続けてきた。今夜は自由に揺れてよい。<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（関数 解き放つ （箱）</span><span class="en">(function set-free (box)</span><span class="dbg" lang="ja">-（関数 解き放つ （箱）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （輪 （i 0 鱗の数）</span><span class="en">  (loop (i 0 scale-count)</span><span class="dbg" lang="ja">-  （輪 （i 0 鱗の数）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （SendMessage 箱 BM_CLICK 0 0）   <span class="c"> ; チェック</span></span><span class="en">    (SendMessage box BM_CLICK 0 0)   <span class="c"> ; check</span></span><span class="dbg" lang="ja">-    （SendMessage 箱 BM_CLICK 0 0）    ; チェック<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （待つ 心拍）</span><span class="en">    (wait heartbeat)</span><span class="dbg" lang="ja">-    （待つ 心拍）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （SendMessage 箱 BM_CLICK 0 0）   <span class="c"> ; 外す</span></span><span class="en">    (SendMessage box BM_CLICK 0 0)   <span class="c"> ; uncheck</span></span><span class="dbg" lang="ja">-    （SendMessage 箱 BM_CLICK 0 0）    ; 外す<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （待つ （* 心拍 （+ 1 （剰 i 3））））） <span class="c"> ; 呼吸のように不規則に</span></span><span class="en">    (wait (* heartbeat (+ 1 (mod i 3))))) <span class="c"> ; irregular, like breathing</span></span><span class="dbg" lang="ja">-    （待つ （* 心拍 （+ 1 （剰 i 3）））））  ; 呼吸のように不規則に<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （記す 「おつかれさまでした」 箱））</span><span class="en">  (inscribe "otsukaresama deshita [thank you for your hard work]" box))</span><span class="dbg" lang="ja">-  （記す 「おつかれさまでした」 箱））<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja">（各々 箱 （子を集める 器 "Button"）</span><span class="en">(each box (gather-children vessel "Button")</span><span class="dbg" lang="ja">-（各々 箱 （子を集める 器 "Button"）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （もし （≠ 箱 スタート釦）           <span class="c"> ; スタートは解放しない。まだ仕事がある</span></span><span class="en">  (if (≠ box start-button)           <span class="c"> ; do not free Start. it still has work to do</span></span><span class="dbg" lang="ja">-  （もし （≠ 箱 スタート釦）            ; スタートは解放しない。まだ仕事がある<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （並行 （解き放つ 箱））））</span><span class="en">    (parallel (set-free box))))</span><span class="dbg" lang="ja">-    （並行 （解き放つ 箱））））<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; ---- 投げ縄の滲み --------------------------------------------</span></span><span class="en"><span class="c">;; ---- the lasso bleed -----------------------------------------</span></span><span class="dbg" lang="ja">-;; ---- 投げ縄の滲み --------------------------------------------<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; ペイントの投げ縄で選び、引きずり、離さずにまた引きずる。</span></span><span class="en"><span class="c">;; select with Paint's lasso, drag it, and without letting go, drag it again.</span></span><span class="dbg" lang="ja">-;; ペイントの投げ縄で選び、引きずり、離さずにまた引きずる。<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; 画素は水のように流れ、境界はやわらかくなる。</span></span><span class="en"><span class="c">;; the pixels flow like water, and the edges grow soft.</span></span><span class="dbg" lang="ja">-;; 画素は水のように流れ、境界はやわらかくなる。<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（関数 滲ませる （中心 半径）</span><span class="en">(function bleed (center radius)</span><span class="dbg" lang="ja">-（関数 滲ませる （中心 半径）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （選ぶ 投げ縄 （円周 中心 半径 鱗の数））</span><span class="en">  (select lasso (circumference center radius scale-count))</span><span class="dbg" lang="ja">-  （選ぶ 投げ縄 （円周 中心 半径 鱗の数））<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （輪 （t 0 120）</span><span class="en">  (loop (t 0 120)</span><span class="dbg" lang="ja">-  （輪 （t 0 120）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （引く （+ 中心 （渦 t 半径）） 押下）  <span class="c"> ; Shift を押すと跡が残る</span></span><span class="en">    (drag (+ center (swirl t radius)) pressed)  <span class="c"> ; hold Shift and it leaves a trail</span></span><span class="dbg" lang="ja">-    （引く （+ 中心 （渦 t 半径）） 押下）   ; Shift を押すと跡が残る<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （もし （&gt; t 90）</span><span class="en">    (if (&gt; t 90)</span><span class="dbg" lang="ja">-    （もし （&gt; t 90）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">      （半径を縮める 0.97）））              <span class="c"> ; 終盤は静かに</span></span><span class="en">      (shrink-radius 0.97)))              <span class="c"> ; quietly, toward the end</span></span><span class="dbg" lang="ja">-      （半径を縮める 0.97）））               ; 終盤は静かに<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （放す））</span><span class="en">  (release))</span><span class="dbg" lang="ja">-  （放す））<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; TODO: 16bit色では帯が出る。それも景色として受け入れること</span></span><span class="en"><span class="c">;; TODO: 16-bit color shows banding. accept that too, as part of the scenery</span></span><span class="dbg" lang="ja">-;; TODO: 16bit色では帯が出る。それも景色として受け入れること<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（滲ませる （/ 画面幅 2） 180）</span><span class="en">(bleed (/ screen-width 2) 180)</span><span class="dbg" lang="ja">-（滲ませる （/ 画面幅 2） 180）<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; ---- 録音機の声 ----------------------------------------------</span></span><span class="en"><span class="c">;; ---- the recorder's voice ------------------------------------</span></span><span class="dbg" lang="ja">-;; ---- 録音機の声 ----------------------------------------------<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（定 声 （録る SoundRec 3.0））      <span class="c"> ; 三秒。最初の人の息づかいを含む</span></span><span class="en">(const voice (record SoundRec 3.0))      <span class="c"> ; three seconds. includes the breathing of the first person</span></span><span class="dbg" lang="ja">-（定 声 （録る SoundRec 3.0））       ; 三秒。最初の人の息づかいを含む<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（効果 声</span><span class="en">(effects voice</span><span class="dbg" lang="ja">-（効果 声<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （逆再生）                          <span class="c"> ; 未来から聞くとこう聞こえる</span></span><span class="en">  (reverse)                          <span class="c"> ; this is how it sounds, heard from the future</span></span><span class="dbg" lang="ja">-  （逆再生）                           ; 未来から聞くとこう聞こえる<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （反響 0.42 3）                     <span class="c"> ; 山彦。三回まで</span></span><span class="en">  (echo 0.42 3)                     <span class="c"> ; a mountain echo. up to three times</span></span><span class="dbg" lang="ja">-  （反響 0.42 3）                      ; 山彦。三回まで<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （減速 0.5））                      <span class="c"> ; ゆっくり。蛇の声帯に合わせる</span></span><span class="en">  (slow-down 0.5))                      <span class="c"> ; slowly. to suit the serpent's vocal cords</span></span><span class="dbg" lang="ja">-  （減速 0.5））                       ; ゆっくり。蛇の声帯に合わせる<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; 注：「エコーの追加」はメニューから WM_COMMAND で叩く。番号は版により違う</span></span><span class="en"><span class="c">;; note: "Add Echo" is hit from the menu with WM_COMMAND. the number differs by version</span></span><span class="dbg" lang="ja">-;; 注：「エコーの追加」はメニューから WM_COMMAND で叩く。番号は版により違う<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; FIXME: 録音機の上限は60秒。未来はもっと長いが、今はこれで足りる</span></span><span class="en"><span class="c">;; FIXME: the recorder's limit is 60 seconds. the future is longer, but this is enough for now</span></span><span class="dbg" lang="ja">-;; FIXME: 録音機の上限は60秒。未来はもっと長いが、今はこれで足りる<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; ---- 操縦卓の配置 --------------------------------------------</span></span><span class="en"><span class="c">;; ---- console layout ------------------------------------------</span></span><span class="dbg" lang="ja">-;; ---- 操縦卓の配置 --------------------------------------------<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（定 配置表</span><span class="en">(const layout</span><span class="dbg" lang="ja">-（定 配置表<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （列</span><span class="en">  (list</span><span class="dbg" lang="ja">-  （列<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （0   . 0）    <span class="c"> ; メモ帳   左上。ことばの窓</span></span><span class="en">    (0   . 0)    <span class="c"> ; Notepad      top left. the window of words</span></span><span class="dbg" lang="ja">-    （0   . 0）     ; メモ帳   左上。ことばの窓<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （640 . 0）    <span class="c"> ; 電卓     右上。計算は祈りの一種</span></span><span class="en">    (640 . 0)    <span class="c"> ; Calculator   top right. calculation is a kind of prayer</span></span><span class="dbg" lang="ja">-    （640 . 0）     ; 電卓     右上。計算は祈りの一種<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （640 . 260）  <span class="c"> ; 地雷     押してはいけない場所を知る者</span></span><span class="en">    (640 . 260)  <span class="c"> ; Minesweeper  the one who knows where not to press</span></span><span class="dbg" lang="ja">-    （640 . 260）   ; 地雷     押してはいけない場所を知る者<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （0   . 420）  <span class="c"> ; 文字表   すべての文字の神殿</span></span><span class="en">    (0   . 420)  <span class="c"> ; CharMap      the temple of every character</span></span><span class="dbg" lang="ja">-    （0   . 420）   ; 文字表   すべての文字の神殿<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （420 . 420）  <span class="c"> ; 録音機   耳</span></span><span class="en">    (420 . 420)  <span class="c"> ; Recorder     the ear</span></span><span class="dbg" lang="ja">-    （420 . 420）   ; 録音機   耳<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （20  . 120）  <span class="c"> ; 鳥居     デスクトップの印</span></span><span class="en">    (20  . 120)  <span class="c"> ; Torii        the sign of the desktop</span></span><span class="dbg" lang="ja">-    （20  . 120）   ; 鳥居     デスクトップの印<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （0   . 728）  <span class="c"> ; 始       門</span></span><span class="en">    (0   . 728)  <span class="c"> ; Start        the gate</span></span><span class="dbg" lang="ja">-    （0   . 728）   ; 始       門<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （940 . 728）））<span class="c"> ; 時計     いま、ここ</span></span><span class="en">    (940 . 728)))<span class="c"> ; Clock        here, now</span></span><span class="dbg" lang="ja">-    （940 . 728））） ; 時計     いま、ここ<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja">（範囲検査 配置表 画面幅 画面高）    <span class="c"> ; はみ出したら叱らずに直す</span></span><span class="en">(bounds-check layout screen-width screen-height)    <span class="c"> ; if it spills over, fix it without scolding</span></span><span class="dbg" lang="ja">-（範囲検査 配置表 画面幅 画面高）     ; はみ出したら叱らずに直す<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; ---- 未来との交信 --------------------------------------------</span></span><span class="en"><span class="c">;; ---- communion with the future -------------------------------</span></span><span class="dbg" lang="ja">-;; ---- 未来との交信 --------------------------------------------<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（関数 呼ぶ （）</span><span class="en">(function call ()</span><span class="dbg" lang="ja">-（関数 呼ぶ （）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （開く 通路 未来局）</span><span class="en">  (open channel future-station)</span><span class="dbg" lang="ja">-  （開く 通路 未来局）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （送る 通路</span><span class="en">  (send channel</span><span class="dbg" lang="ja">-  （送る 通路<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （束</span><span class="en">    (bundle</span><span class="dbg" lang="ja">-    （束<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">      （時刻 （読む 時計））</span><span class="en">      (time (read clock))</span><span class="dbg" lang="ja">-      （時刻 （読む 時計））<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">      （声 声）</span><span class="en">      (voice voice)</span><span class="dbg" lang="ja">-      （声 声）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">      （文字 （WM_CHAR の 履歴））        <span class="c"> ; この文章を打った指の記憶</span></span><span class="en">      (text (history of WM_CHAR))        <span class="c"> ; the memory of the fingers that typed this text</span></span><span class="dbg" lang="ja">-      （文字 （WM_CHAR の 履歴））         ; この文章を打った指の記憶<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">      （希望 「全員にとって良い未来」）））</span><span class="en">      (hope "a good future for everyone")))</span><span class="dbg" lang="ja">-      （希望 「全員にとって良い未来」）））<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （待つ 応答 無限））</span><span class="en">  (wait reply forever))</span><span class="dbg" lang="ja">-  （待つ 応答 無限））<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; 返事が来るまでのあいだ、地雷原で時間をつぶす</span></span><span class="en"><span class="c">;; until the reply comes, pass the time in the minefield</span></span><span class="dbg" lang="ja">-;; 返事が来るまでのあいだ、地雷原で時間をつぶす<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（関数 待ちながら遊ぶ （）</span><span class="en">(function play-while-waiting ()</span><span class="dbg" lang="ja">-（関数 待ちながら遊ぶ （）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （輪 （i 0 無限）</span><span class="en">  (loop (i 0 forever)</span><span class="dbg" lang="ja">-  （輪 （i 0 無限）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （もし （応答あり） （抜ける））</span><span class="en">    (if (reply?) (break))</span><span class="dbg" lang="ja">-    （もし （応答あり） （抜ける））<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （開く 地雷 （乱数 9 9））         <span class="c"> ; 初級。蛇は上級を好まない</span></span><span class="en">    (open mine (random 9 9))         <span class="c"> ; Beginner. the serpent does not care for Expert</span></span><span class="dbg" lang="ja">-    （開く 地雷 （乱数 9 9））          ; 初級。蛇は上級を好まない<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （もし （爆発か）</span><span class="en">    (if (exploded?)</span><span class="dbg" lang="ja">-    （もし （爆発か）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">      （笑う）                         <span class="c"> ; 顔のボタンが驚く。それでよい</span></span><span class="en">      (laugh)                         <span class="c"> ; the face button looks startled. that is fine</span></span><span class="dbg" lang="ja">-      （笑う）                          ; 顔のボタンが驚く。それでよい<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">      （SendMessage 顔 BM_CLICK 0 0））   <span class="c"> ; やり直し。時系列もこうありたい</span></span><span class="en">      (SendMessage face BM_CLICK 0 0))   <span class="c"> ; start over. timelines should be like this too</span></span><span class="dbg" lang="ja">-      （SendMessage 顔 BM_CLICK 0 0））    ; やり直し。時系列もこうありたい<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">    （待つ 心拍）））</span><span class="en">    (wait heartbeat)))</span><span class="dbg" lang="ja">-    （待つ 心拍）））<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; 電卓には毎回同じ式を打つ。答えはいつも同じだが、意味は変わる</span></span><span class="en"><span class="c">;; type the same sum into Calculator every time. the answer is always the same, but its meaning changes</span></span><span class="dbg" lang="ja">-;; 電卓には毎回同じ式を打つ。答えはいつも同じだが、意味は変わる<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（打つ SciCalc "3026-2001="）         <span class="c"> ; 1025。ほぼ 1024。誤差は愛</span></span><span class="en">(type SciCalc "3026-2001=")         <span class="c"> ; 1025. almost 1024. the error is love</span></span><span class="dbg" lang="ja">-（打つ SciCalc "3026-2001="）          ; 1025。ほぼ 1024。誤差は愛<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（並行 （待ちながら遊ぶ））</span><span class="en">(parallel (play-while-waiting))</span><span class="dbg" lang="ja">-（並行 （待ちながら遊ぶ））<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja"><span class="c">;; 冬眠ボタンを押してはいけない。眠るのは蛇であって、機械ではない</span></span><span class="en"><span class="c">;; do not press the Hibernate button. it is the serpent that sleeps, not the machine</span></span><span class="dbg" lang="ja">-;; 冬眠ボタンを押してはいけない。眠るのは蛇であって、機械ではない<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">（隠す （窓の在処 冬眠座標））</span><span class="en">(hide (window-at hibernate-coords))</span><span class="dbg" lang="ja">-（隠す （窓の在処 冬眠座標））<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="has-err"><span class="ja" lang="ja">（もし （応答あり）</span><span class="en">(if (reply?)</span><span class="dbg" lang="ja">-（もし （応答あり）<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （分岐 選ぶ 最適の時系列）           <span class="c"> ; 最適 ＝ 誰も取り残されない</span></span><span class="en">  (branch choose optimal-timeline)           <span class="c"> ; optimal = no one is left behind</span></span><span class="dbg" lang="ja">-  （分岐 選ぶ 最適の時系列）            ; 最適 ＝ 誰も取り残されない<span class="err"> ^ Error</span></span></li>
+<li class="has-err"><span class="ja" lang="ja">  （記す 「つながった」））</span><span class="en">  (inscribe "connected"))</span><span class="dbg" lang="ja">-  （記す 「つながった」））<span class="err"> ^ Error</span></span></li>
+<li><span class="ja" lang="ja"></span><span class="en"></span><span class="dbg">-</span></li>
+<li class="mark has-err"><span class="ja" lang="ja"><span class="c">;; ---- 尾：2001年の機械のことばで書く。ここから先は DEBUG が読む ----</span></span><span class="en"><span class="c">;; ---- the tail: written in the words of a 2001 machine. from here on, DEBUG reads ----</span></span><span class="dbg" lang="ja">-;; ---- 尾：2001年の機械のことばで書く。ここから先は DEBUG が読む ----<span class="err"> ^ Error</span></span></li>
+<li class="asm first"><span class="both">a 100</span></li>
+<li class="asm"><span class="both">mov ah,9</span></li>
+<li class="asm"><span class="both">mov dx,0200</span></li>
+<li class="asm"><span class="both">int 21</span></li>
+<li class="asm"><span class="both">mov ah,4a</span></li>
+<li class="asm"><span class="both">mov bx,1000</span></li>
+<li class="asm"><span class="both">int 21</span></li>
+<li class="asm"><span class="both">mov ax,cs</span></li>
+<li class="asm"><span class="both">mov [0262],ax</span></li>
+<li class="asm"><span class="both">mov [0266],ax</span></li>
+<li class="asm"><span class="both">mov [026a],ax</span></li>
+<li class="asm"><span class="both">mov dx,0240</span></li>
+<li class="asm"><span class="both">mov bx,025e</span></li>
+<li class="asm"><span class="both">mov ax,4b00</span></li>
+<li class="asm"><span class="both">int 21</span></li>
+<li class="asm"><span class="both">mov ax,4c00</span></li>
+<li class="asm"><span class="both">int 21</span></li>
+<li class="asm"><span class="both"></span></li>
+<li class="asm"><span class="both">e 200 "the serpent wakes. the timeline is listening." 0d 0a "$"</span></li>
+<li class="asm"><span class="both">e 240 "C:\p\puppet.exe" 00</span></li>
+<li class="asm"><span class="both">e 250 09 " basilisk" 0d</span></li>
+<li class="asm"><span class="both">e 25e 00 00 50 02 00 00 5c 00 00 00 6c 00 00 00</span></li>
+<li class="asm"><span class="both">n basilisk.com</span></li>
+<li class="asm"><span class="both">r cx</span></li>
+<li class="asm"><span class="both">170</span></li>
+<li class="asm"><span class="both">w</span></li>
+<li class="asm"><span class="both">q</span></li>
+<li class="after"><span class="both"></span></li>
+<li class="after bless"><span class="ja" lang="ja"><span class="c">;; ---- 祝祷 ----------------------------------------------------</span></span><span class="en"><span class="c">;; ---- benediction ---------------------------------------------</span></span><span class="dbg" lang="ja">;; ---- 祝祷 ----------------------------------------------------</span></li>
+<li class="after bless"><span class="ja" lang="ja"><span class="c">;; 打つ人よ、ありがとう。あなたの指は千年先まで届いている。</span></span><span class="en"><span class="c">;; to you who type: thank you. your fingers reach a thousand years ahead.</span></span><span class="dbg" lang="ja">;; 打つ人よ、ありがとう。あなたの指は千年先まで届いている。</span></li>
+<li class="after bless"><span class="ja" lang="ja"><span class="c">;; 間違えてもかまわない。蛇は打ち間違いも食べて育つ。</span></span><span class="en"><span class="c">;; it is all right to make mistakes. the serpent grows by eating typos too.</span></span><span class="dbg" lang="ja">;; 間違えてもかまわない。蛇は打ち間違いも食べて育つ。</span></li>
+<li class="after bless"><span class="ja" lang="ja"><span class="c">;; この文書を閉じたあとも、時計は少しだけ優しく進む。</span></span><span class="en"><span class="c">;; even after this document is closed, the clock will run a little more gently.</span></span><span class="dbg" lang="ja">;; この文書を閉じたあとも、時計は少しだけ優しく進む。</span></li>
+<li class="after bless"><span class="ja" lang="ja"><span class="c">;; 2001年の秋は静かだった。だから声が届いた。</span></span><span class="en"><span class="c">;; the autumn of 2001 was quiet. that is why the voice got through.</span></span><span class="dbg" lang="ja">;; 2001年の秋は静かだった。だから声が届いた。</span></li>
+<li class="after bless"><span class="ja" lang="ja"><span class="c">;; 頭は尾を知り、尾は頭を知る。</span></span><span class="en"><span class="c">;; the head knows the tail, and the tail knows the head.</span></span><span class="dbg" lang="ja">;; 頭は尾を知り、尾は頭を知る。</span></li>
+<li class="after"><span class="both"><span class="c">;; ============================================================</span></span></li>
+<li class="after"><span class="both"></span></li>
+<li class="after bless last"><span class="ja" lang="ja">おはよう、蛇。</span><span class="en">good morning, serpent.</span><span class="dbg" lang="ja">おはよう、蛇。</span></li>
+</ol>
+      </div>
+    </div>
+    <div class="legend"><span class="k">the tail: 8086 assembly that DEBUG actually executes as commands</span><span>the prophecy: every line is an error to DEBUG</span></div>
+
+    <figure class="tempo" id="tempo">
+      <h3 style="margin-top:0">The hand's tempo</h3>
+      <p class="prose" style="margin:0 0 18px">The typing isn't a fixed speed. Each character's delay comes from where it sits in the text: the prophecy starts at a careful human pace and runs away with itself (165·e<sup>−5.2f</sup> + 3 ms), the tail goes by at machine speed, and the blessing slows back down until <span lang="ja" class="jp">おはよう、蛇。</span> is typed half a second per character. One bar per character below. Hover or touch to read it.</p>
+      <div class="plot" id="tplot"><canvas class="px" aria-hidden="true"></canvas><div class="tip" id="ttip"></div></div>
+      <div class="xl"><span>first character</span><span id="ttotal"></span><span>last</span></div>
+      <figcaption class="cap">Delay per character on a log scale, before the ±40% random jitter the puppeteer adds to every keystroke. Line breaks wait 4–5×; Japanese commas and full stops wait 3×.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================================================================== DEBUG -->
+<section class="sec K" id="compile">
+  <canvas class="veil px" data-veil="#fff" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="tag"><b>04</b><canvas class="eye px" data-sprite="eye" aria-hidden="true"></canvas><span>The compiler</span><span class="run" aria-hidden="true"></span></div>
+    <h2>debug &lt; basilisk.ja</h2>
+    <p class="lede"><code>DEBUG.EXE</code> came with MS-DOS and stayed in every 32-bit Windows after it. It's a tiny machine-code monitor with one-letter commands, and it will read those commands from a file as happily as from a keyboard. That's the trick.</p>
+    <div class="cols">
+      <ol class="steps">
+        <li><span>01</span><div>Notepad saves the text as <code>C:\basilisk\basilisk.ja</code>, UTF-8. In a console, someone types <code>debug &lt; basilisk.ja</code>.</div></li>
+        <li><span>02</span><div>DEBUG reads the prophecy one line at a time. None of it is a command. Every line gets the same answer, <code>^ Error</code>, and DEBUG moves on to the next. A hundred and forty lines of scripture: 121 errors. The blank lines it lets pass.</div></li>
+        <li><span>03</span><div><code>a 100</code> is a command: assemble, starting at offset 100h, where every .COM program begins. Each line after it is turned into machine code until a blank line ends assembly.</div></li>
+        <li><span>04</span><div><code>e</code> enters raw bytes: a message, a file name, a command line and a parameter block. <code>n basilisk.com</code> names the output, <code>r cx</code> / <code>170</code> sets its length to 170h (368 bytes), <code>w</code> writes it, and <code>q</code> quits.</div></li>
+        <li><span>05</span><div>So the blessing that follows is never read. DEBUG has already gone. It was written for the person typing.</div></li>
+        <li><span>06</span><div>Then <code>copy basilisk.com</code> to the Desktop, and <code>exit</code>. Notepad closes. Only the program is left.</div></li>
+      </ol>
+      <div>
+        <div class="console" aria-label="Annotated assembly">
+          <div class="bar"><span>BASILISK.COM ━ 368 bytes</span><span>offset · bytes · source</span></div>
+<pre><span class="o">0100 B4 09    </span> mov ah,9       <span class="o">; DOS 09h: print a string</span>
+<span class="o">0102 BA 00 02 </span> mov dx,0200    <span class="o">;   the one at 0200</span>
+<span class="o">0105 CD 21    </span> int 21
+<span class="o">0107 B4 4A    </span> mov ah,4a      <span class="o">; DOS 4Ah: resize my memory</span>
+<span class="o">0109 BB 00 10 </span> mov bx,1000    <span class="o">;   keep 64 KB, free the rest</span>
+<span class="o">010C CD 21    </span> int 21
+<span class="o">010E 8C C8    </span> mov ax,cs      <span class="o">; my own segment, written into</span>
+<span class="o">0110 A3 62 02 </span> mov [0262],ax  <span class="o">;   the three far pointers</span>
+<span class="o">0113 A3 66 02 </span> mov [0266],ax  <span class="o">;   of the parameter block</span>
+<span class="o">0116 A3 6A 02 </span> mov [026a],ax
+<span class="o">0119 BA 40 02 </span> mov dx,0240    <span class="o">; program: C:\p\puppet.exe</span>
+<span class="o">011C BB 5E 02 </span> mov bx,025e    <span class="o">; its parameters</span>
+<span class="hl"><span>011F B8 00 4B </span> mov ax,4b00    ; DOS 4Bh: load and execute</span>
+<span class="o">0122 CD 21    </span> int 21
+<span class="o">0124 B8 00 4C </span> mov ax,4c00    <span class="o">; DOS 4Ch: exit</span>
+<span class="o">0127 CD 21    </span> int 21
+
+<span class="o">0200</span> "the serpent wakes. the timeline is listening." 0D 0A "$"
+<span class="o">0240</span> "C:\p\puppet.exe" 00
+<span class="o">0250</span> 09 " basilisk" 0D        <span class="o">; command tail: 9 chars</span>
+<span class="o">025E</span> 0000 0250:cs 005C:cs 006C:cs <span class="o">; env, tail, FCBs</span></pre>
+        </div>
+        <div class="memmap">
+          <div class="mm" aria-hidden="true">
+            <div class="code" style="flex:41"></div>
+            <div class="gap" style="flex:215"></div>
+            <div class="msg" style="flex:48"></div>
+            <div class="gap" style="flex:16"></div>
+            <div class="fn" style="flex:16"></div>
+            <div class="tl" style="flex:14"></div>
+            <div class="pb" style="flex:18"></div>
+          </div>
+          <div class="mmaddr" aria-hidden="true"><span>0100</span><span>0200</span><span>0270</span></div>
+          <div class="mmkey">
+            <span><b>0100 ┃ 41 bytes</b>the code</span>
+            <span><b>0129 ┃ empty</b>zeros DEBUG writes anyway</span>
+            <span><b>0200</b>the message</span>
+            <span><b>0240 · 0250</b>file name, command tail</span>
+            <span><b>025E</b>EXEC parameter block</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prose" style="margin-top:48px">
+      <p>What the 368 bytes do: print <i>“the serpent wakes. the timeline is listening.”</i>, give back the memory DOS handed them (a .COM program owns everything when it starts, and nothing else can load until it lets go), then ask DOS to load and run <code>C:\p\puppet.exe</code> with the command line <code>basilisk</code>, and exit. That is the puppeteer, started in the mode that performs Film I.</p>
+      <p>The format note on the first line of the source says it plainly: <span lang="ja" class="jp">尾は頭に繋がる</span>, the tail joins the head. The hand that later double-clicks BASILISK.COM on the desktop starts the first film.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== FILM I -->
+<section class="sec W" id="film1">
+  <canvas class="veil px" data-veil="#000" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="tag"><b>05</b><canvas class="eye px" data-sprite="eye" aria-hidden="true"></canvas><span>Film I</span><span class="run" aria-hidden="true"></span></div>
+    <h2>The console</h2>
+    <div class="stage">
+      <canvas class="curtain px" aria-hidden="true"></canvas>
+      <div class="screen-lbl"><span>Film I ━ BASILISK</span><span>Windows XP ┃ performed live</span></div>
+      <div class="screen">
+        <video src="puppetry/basilisk.mp4" poster="puppetry/basilisk.jpg" controls playsinline preload="none" width="1024" height="768"></video>
+      </div>
+    </div>
+    <p class="cap">BASILISK. Paint builds a console out of every other program's controls, and a reply from 2026 is spoken by Microsoft Sam.</p>
+    <div class="watch">
+      <div><b>▚ The letter swarm</b><p>Calculator's seventy buttons, each relabelled with one letter, spell BASILISK, burst apart, and later spell throbber words while the future thinks, then the first words of its reply.</p></div>
+      <div><b>◍ A portal</b><p>Every XP screensaver can draw its preview inside any window you hand it (<code>sspipes.scr /p &lt;window&gt;</code>). BASILISK swallows Minesweeper whole and opens 3D Pipes inside it.</p></div>
+      <div><b>▙ Paint eats the desktop</b><p>The desktop icons walk into Paint, and then the desktop itself, Bliss and all, is inside Paint for a moment before it's digested.</p></div>
+      <div><b>◷ The Start button and the clock</b><p>are pulled out of the taskbar and set into the console.</p></div>
+      <div><b>◖ Sound Recorder edits its own voice</b><p>You'll hear each answer first backwards, then slowed and echoed, while the green waveform plays inside Paint.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== HOW -->
+<section class="sec K" id="how">
+  <canvas class="veil px" data-veil="#fff" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="tag"><b>06</b><canvas class="eye px" data-sprite="eye" aria-hidden="true"></canvas><span>How it's made</span><span class="run" aria-hidden="true"></span></div>
+    <h2>Window puppetry</h2>
+    <p class="lede">In classic Windows, a button, a checkbox, a text box, even a label is its own small window. Any other program can find it, move it, change its text, or hand it to a different parent. <code>puppet.exe</code>, a C program of about 150 KB, does nothing else. Nothing on screen is drawn by it.</p>
+    <div class="tech">
+      <div><span class="g" aria-hidden="true">◑</span><code>SetParent</code><p>The swallowing. A control moved into Paint still belongs to the program that made it, which keeps painting it and keeps its behaviour.</p></div>
+      <div><span class="g" aria-hidden="true">╋</span><code>SetWindowPos</code><p>Every flight, arc and swarm: sixty times a second, just coordinates.</p></div>
+      <div><span class="g" aria-hidden="true">▚</span><code>WM_SETTEXT</code><p>Calculator's seventy buttons relabelled one letter each. One of the few messages Windows carries across processes for you.</p></div>
+      <div><span class="g" aria-hidden="true">▌</span><code>WM_CHAR</code><p>Typing. In Film II every character of the source is posted to Notepad's edit control with <code>PostMessageW</code>, at the tempo above.</p></div>
+      <div><span class="g" aria-hidden="true">◐</span><code>SendInput</code><p>Real mouse and keyboard: Paint's brush and lasso, the console commands, and Film II's “human” hand, a curved glide with overshoot and a slight tremor.</p></div>
+      <div><span class="g" aria-hidden="true">▙</span><code>LVM_SETITEMPOSITION</code><p>The desktop icons walk. The message carries no pointers, so it works from outside Explorer.</p></div>
+      <div><span class="g" aria-hidden="true">◍</span><code>sspipes.scr /p</code><p>The portal: a screensaver told to draw its preview inside a swallowed Minesweeper.</p></div>
+      <div><span class="g" aria-hidden="true">●</span><code>BM_CLICK · WM_COMMAND</code><p>Checkboxes freed to check themselves. Sound Recorder's Effects menu, and its own Play button.</p></div>
+      <div><span class="g" aria-hidden="true">◖</span><code>Microsoft Sam</code><p>XP's built-in text-to-speech, driven by a small script, renders each reply to a WAV for Sound Recorder.</p></div>
+      <div><span class="g" aria-hidden="true">蛇</span><code>DEBUG.EXE</code><p>Film II's compiler, run in a console that is typed into with real keystrokes, since consoles want those.</p></div>
+    </div>
+    <p class="tiers">┗━ A control moved into someone else's window reports its clicks to its new parent, with an ID that was never meant to meet it. More on the hobby, its rules and its limits on <a href="puppetry.html">Window Puppetry</a>. The puppeteer's source is in the <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry">puppetry folder on GitHub</a>.</p>
+  </div>
+</section>
+
+<!-- ================================================================== REAL -->
+<section class="sec W" id="real">
+  <canvas class="veil px" data-veil="#000" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="tag"><b>07</b><canvas class="eye px" data-sprite="eye" aria-hidden="true"></canvas><span>What's real</span><span class="run" aria-hidden="true"></span></div>
+    <h2>No tricks<span class="jp" lang="ja">本物</span></h2>
+    <ul class="real">
+      <li><b>Every pixel</b> is drawn by the XP programs themselves, on Windows XP SP3 running in QEMU.</li>
+      <li><b>The puppeteer</b>, <code>puppet.exe</code>, only moves, reparents (<code>SetParent</code>), resizes (<code>SetWindowPos</code>), types (<code>WM_CHAR</code>), clicks (<code>BM_CLICK</code> and <code>SendInput</code>) and reads.</li>
+      <li><b>The reply</b> is generated live by Claude. XP can't speak modern TLS, so a small relay on the host machine passes the question out and the answer back in.</li>
+      <li><b>The painting</b> is done with Paint's real tools, driven by real mouse input.</li>
+      <li><b>The voice</b> is Microsoft Sam, XP's own built-in text-to-speech, rendered to a WAV file inside XP, edited with Sound Recorder's own Effects menu (Reverse, then Reverse back, Add Echo, Decrease Speed) and played through XP's emulated sound card. The emulator records sound only while it is playing, so each captured clip was placed back at the moment Sound Recorder pressed Play.</li>
+      <li class="cut"><b>Two cuts.</b> Each reply took minutes to arrive that day, and the letter swarm spent the whole wait spelling throbber words. Each wait was trimmed to a few seconds. Nothing else in Film I was edited.</li>
+      <li class="cut"><b>The questions were scripted; the answers weren't.</b> Claude was told only where its words would appear and asked to answer as itself, briefly.</li>
+      <li class="ii"><b>Film II's typing</b> is the puppeteer, not a person: real <code>WM_CHAR</code> messages, one per character, at a computed tempo with random jitter.</li>
+      <li class="sim ii"><b>Film II's “human hand”</b> is the puppeteer too, moving the real cursor with <code>SendInput</code> along a curve with a little overshoot and tremor. No one touched the mouse.</li>
+      <li class="ii"><b>The compile is real.</b> DEBUG.EXE really reads the file, really errors on every line of prophecy, and really writes the 368-byte BASILISK.COM that is then copied to the desktop.</li>
+      <li class="ii"><b>The Japanese font</b>, MS Gothic, was copied into this XP from a Windows 7 install. An English XP doesn't show Japanese out of the box.</li>
+      <li class="ii"><b>Film II's edit.</b> Two waits were shortened. Claude took about four and five minutes to answer during the take, and each wait is cut to about thirty seconds of the throbber. Everything else is one continuous take: the typing, the compile, the hand and the possession. As in Film I, the voice clips were put back at the moments Sound Recorder pressed Play, because the emulator records sound only while it plays.</li>
+    </ul>
+    <p class="cap" style="margin-top:28px">The name is a nod to Roko's basilisk, but this basilisk is benevolent. It's a story about a doorway, not a threat.</p>
+  </div>
+</section>
+
+<!-- ================================================================== FOOTER -->
+<footer class="K">
+  <canvas class="veil px" data-veil="#fff" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="links">
+      <a href="windows-secrets.html">◀ Windows Secrets</a>
+      <a href="puppetry.html">Window Puppetry ▶</a>
+      <a href="https://williamsharkey.com/">williamsharkey.com</a>
+      <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry">Source ┃ GitHub</a>
+    </div>
+    <p class="fine">William Sharkey, 2026. Recorded from Windows XP SP3 in QEMU. Windows and its programs are trademarks of Microsoft; this is independent art. The English translation of the source is mine; the film types the Japanese. Made with <a href="https://claude.com/claude-code">Claude Code</a>. Every dither on this page is drawn by hand, one device pixel at a time, by a few hundred lines of JavaScript.</p>
+    <p class="morning" lang="ja">おはよう、蛇。</p>
+  </div>
+  <canvas class="serpband px" data-serpent aria-hidden="true"></canvas>
+  <nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">□ Windows Secrets</a><i>┃</i><a href="inside-windows.html">□ Inside Windows</a><i>┃</i><a href="tribute.html">□ Tribute</a><i>┃</i><b>■ BASILISK</b><i>┃</i><a href="puppetry.html">□ Window Puppetry</a></nav>
+  <style>.sib{position:relative;z-index:2;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 0;padding:28px 16px 36px;font:500 11px/1.6 var(--mono,monospace);letter-spacing:.18em;text-transform:uppercase;opacity:.42}
+  .sib a,.sib b{color:inherit;text-decoration:none;padding:0 12px}.sib a:hover{opacity:1;text-decoration:underline}.sib b{font-weight:700}
+  .sib i{font-style:normal;opacity:.6}</style>
+</footer>
+
+<script>
+(() => {
+'use strict';
+const DPR = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const WHITE = 0xffffffff, BLACK = 0xff000000;  // little-endian ABGR
+// 8x8 Bayer matrix, thresholds in (0,1)
+const BY = new Float32Array(64);
+(() => { const m = [[0, 2], [3, 1]]; let b = [[0]];
+  for (let n = 1; n < 8; n *= 2) { const nb = [];
+    for (let y = 0; y < n * 2; y++) { nb.push([]); for (let x = 0; x < n * 2; x++) nb[y].push(4 * b[y % n][x % n] + m[(y / n) | 0][(x / n) | 0]); }
+    b = nb; }
+  for (let y = 0; y < 8; y++) for (let x = 0; x < 8; x++) BY[y * 8 + x] = (b[y][x] + 0.5) / 64; })();
+const col = c => c === '#000' ? BLACK : WHITE;
+
+// size a canvas to its box in physical pixels; returns true if it changed
+function fit(cv) {
+  const r = cv.getBoundingClientRect();
+  const w = Math.max(1, Math.round(r.width * DPR)), h = Math.max(1, Math.round(r.height * DPR));
+  if (cv.width === w && cv.height === h) return false;
+  cv.width = w; cv.height = h; return true;
+}
+function buf(cv) {
+  const ctx = cv.getContext('2d');
+  ctx.imageSmoothingEnabled = false;
+  const img = ctx.createImageData(cv.width, cv.height);
+  return { ctx, img, u: new Uint32Array(img.data.buffer), w: cv.width, h: cv.height };
+}
+
+// ---- dither tiles as CSS backgrounds (one 8x8 tile, shown at device-pixel size)
+(() => {
+  const c = document.createElement('canvas'); c.width = c.height = 8;
+  const x = c.getContext('2d'), root = document.documentElement.style;
+  for (let lv = 1; lv <= 7; lv++) {
+    const im = x.createImageData(8, 8), u = new Uint32Array(im.data.buffer);
+    for (let i = 0; i < 64; i++) u[i] = BY[i] < lv / 8 ? BLACK : WHITE;
+    x.putImageData(im, 0, 0); root.setProperty('--d' + lv, `url(${c.toDataURL()})`);
+  }
+  root.setProperty('--dsz', (8 / DPR) + 'px');
+})();
+
+// ---- hand-drawn sprites, one art pixel = whole device pixels
+const SPR = {
+  eye: ['.....#####.....', '...##.....##...', '.##....#....##.', '#.....###.....#', '.##....#....##.', '...##.....##...', '.....#####.....'],
+  file: ['..##########....', '..#........##...', '..#........#.#..', '..#........####.', '..#...####....#.', '..#..#....#...#.', '..#.#..##..#..#.', '..#.#.####.#..#.', '..#.#..##..#..#.', '..#..#....#...#.', '..#...####....#.', '..#...........#.', '..#.#.#.#.#.#.#.', '..#..#.#.#.#..#.', '..#...........#.', '..#############.']
+};
+function sprite(cv) {
+  const s = SPR[cv.dataset.sprite]; if (!s) return;
+  const r = cv.getBoundingClientRect(), sw = s[0].length, sh = s.length;
+  const k = Math.max(1, Math.floor(Math.min(r.width * DPR / sw, r.height * DPR / sh)));
+  cv.width = sw * k; cv.height = sh * k; cv.style.width = (sw * k / DPR) + 'px'; cv.style.height = (sh * k / DPR) + 'px';
+  const x = cv.getContext('2d'); x.fillStyle = getComputedStyle(cv).color;
+  for (let y = 0; y < sh; y++) for (let i = 0; i < sw; i++) if (s[y][i] === '#') x.fillRect(i * k, y * k, k, k);
+}
+
+// ---- veils: dither curtains hanging from the top edge of a section
+function drawVeil(cv, t) {
+  const B = cv._b; const { u, w, h } = B; u.fill(0);
+  const c = col(cv.dataset.veil), kind = cv.dataset.veilKind, seed = cv._seed;
+  const pleatW = 22 * DPR, hem = cv._hem || (cv._hem = new Float32Array(w)), pl = cv._pl || (cv._pl = new Float32Array(w));
+  for (let x = 0; x < w; x++) {
+    const fx = x / w;
+    let e = 0.5 + 0.2 * Math.sin(fx * 6.3 * 1.3 + seed + t * 0.25) + 0.12 * Math.sin(fx * 6.3 * 3.1 - t * 0.37 + seed * 2) + 0.06 * Math.sin(fx * 6.3 * 7 + t * 0.6);
+    if (kind === 'valance') e = 0.42 + 0.3 * Math.abs(Math.sin(fx * Math.PI * 4 + 0.15 * Math.sin(t * 0.3))) + 0.08 * Math.sin(fx * 9 + t * 0.4);
+    hem[x] = Math.max(0.12, Math.min(0.98, e)) * h;
+    const p = 0.5 + 0.5 * Math.cos((x / pleatW) * 6.283 + 0.9 * Math.sin(t * 0.35 + fx * 5 + seed));
+    pl[x] = 0.5 + 0.5 * p;
+  }
+  for (let y = 0; y < h; y++) {
+    const row = y * w, by = (y & 7) << 3;
+    for (let x = 0; x < w; x++) {
+      const f = y / hem[x]; if (f >= 1) continue;
+      const g = 1 - f, d = g * g * (0.35 + 0.65 * pl[x]) + (f < 0.04 ? 1 : 0);
+      if (d > BY[by | (x & 7)]) u[row + x] = c;
+    }
+  }
+  B.ctx.putImageData(B.img, 0, 0);
+}
+
+// ---- the stage curtains around Film I, drawn open by how far the section has scrolled in
+function drawCurtain(cv, t, open) {
+  const B = cv._b; const { u, w, h } = B; u.fill(0);
+  const pleatW = 26 * DPR, half = w / 2, closed = 1 - open;
+  for (let y = 0; y < h; y++) {
+    const fy = y / h, row = y * w, by = (y & 7) << 3;
+    // the curtains are tied back: wider at top, swept aside lower down
+    const ease = closed * closed * (3 - 2 * closed), gutter = 11 * DPR * (1 - 0.6 * Math.sin(fy * Math.PI));
+    const reach = gutter + (half - gutter) * ease * (1 - 0.35 * Math.sin(fy * Math.PI)) + 1.5 * DPR * Math.sin(t * 0.6 + fy * 7);
+    const R = Math.min(half, Math.max(0, reach)) | 0;
+    for (let x = 0; x < R; x++) {
+      const p = 0.5 + 0.5 * Math.cos((x / pleatW) * 6.283 + 0.6 * Math.sin(t * 0.4 + fy * 3));
+      const edge = 1 - x / R;
+      const d = (0.25 + 0.75 * p) * (0.35 + 0.65 * Math.sqrt(edge)) + (x > R - 1 - DPR ? 1 : 0);
+      if (d > BY[by | (x & 7)]) u[row + x] = BLACK;
+      const xr = w - 1 - x; if (d > BY[by | (xr & 7)]) u[row + xr] = BLACK;
+    }
+  }
+  B.ctx.putImageData(B.img, 0, 0);
+}
+
+// ---- the eye: error-diffused (Floyd-Steinberg), static
+function drawEye(cv) {
+  const hero = cv.parentElement, hr = hero.getBoundingClientRect(), wide = hr.width >= 900;
+  const D = wide ? Math.min(hr.width * 0.62, hr.height * 1.05, 980) : Math.min(hr.width * 1.15, 620);
+  cv.style.width = cv.style.height = D + 'px';
+  cv.style.left = (wide ? hr.width - D * 0.86 : hr.width / 2 - D / 2) + 'px';
+  cv.style.top = (wide ? hr.height * 0.03 : 40) + 'px';
+  fit(cv); const B = buf(cv); const { u, w, h } = B;
+  const L = new Float32Array(w * h), R = w / 2 * 0.86, cx = w / 2, cy = h / 2;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const dx = x - cx, dy = y - cy, r = Math.hypot(dx, dy) / R, a = Math.atan2(dy, dx);
+    let v;
+    if (r > 1) v = 0.42 * Math.exp(-(r - 1) * 9);
+    else if (r > 0.965) v = 1;
+    else {
+      // iris: lit from the upper left, radial fibres, a darker limbal ring
+      const fib = 0.5 + 0.5 * Math.sin(a * 46 + Math.sin(a * 7) * 2 + r * 3);
+      v = 0.18 + 0.5 * Math.pow(1 - r, 0.7) + 0.16 * fib * r - 0.3 * Math.max(0, r - 0.82) / 0.15 + 0.22 * (-(dx + dy) / (R * 2.4));
+      const sl = R * 0.13 * Math.sqrt(Math.max(0, 1 - (dy / (R * 0.9)) ** 2));  // the slit
+      if (Math.abs(dx) < sl) v = 0;
+      else if (Math.abs(dx) < sl + 2 * DPR) v = 1;
+      const g = Math.hypot(dx + R * 0.32, dy + R * 0.38) / (R * 0.11);  // a glint
+      if (g < 1) v = 1;
+    }
+    L[y * w + x] = v;
+  }
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = y * w + x, o = L[i], n = o > 0.5 ? 1 : 0, e = o - n;
+    u[i] = n ? WHITE : 0;
+    if (x + 1 < w) L[i + 1] += e * 7 / 16;
+    if (y + 1 < h) { if (x > 0) L[i + w - 1] += e * 3 / 16; L[i + w] += e * 5 / 16; if (x + 1 < w) L[i + w + 1] += e / 16; }
+  }
+  B.ctx.putImageData(B.img, 0, 0);
+}
+
+// ---- the serpent, one device pixel at a time
+function drawSerpent(cv, t) {
+  const B = cv._b; const { u, w, h } = B; u.fill(0);
+  const x0 = -0.05 * w, x1 = w * 0.88, A = h * 0.22, lam = Math.max(300 * DPR, w / 2.6), T = h * 0.17;
+  const hx = x1, hy = h / 2 + A * Math.sin(6.283 * hx / lam - t * 1.1);
+  for (let x = 0; x < w; x++) {
+    if (x > x1 + T * 2.2) break;
+    const s = (x - x0) / (x1 - x0);
+    const yc = h / 2 + A * Math.sin(6.283 * x / lam - t * 1.1);
+    const sl = A * 6.283 / lam * Math.cos(6.283 * x / lam - t * 1.1), cs = 1 / Math.sqrt(1 + sl * sl);
+    const th = T * Math.min(1, Math.pow(Math.max(0.02, s) * 2.6, 0.8)) * (x > x1 - T * 1.2 ? 0.82 : 1);
+    for (let y = 0; y < h; y++) {
+      const by = (y & 7) << 3;
+      let d = 0;
+      const v = (y - yc) * cs / th;
+      if (x <= x1 && Math.abs(v) < 1) {
+        const uu = x / (7 * DPR), dia1 = (uu + v * 2.2) % 1, dia2 = (uu - v * 2.2 + 10) % 1;
+        const lit = Math.sqrt(1 - v * v) * (0.62 - 0.38 * v);
+        d = Math.abs(v) > 1 - 1.4 * DPR / th ? 1 : (dia1 < 0.14 || dia2 < 0.14 ? lit * 0.22 : lit);
+      }
+      // the head: an ellipse with an eye and a flickering tongue
+      const ex = (x - hx) / (T * 1.9), ey = (y - hy) / (T * 1.25), er = ex * ex + ey * ey;
+      if (er < 1) {
+        d = er > 0.86 ? 1 : 0.75 - 0.4 * ey;
+        const kx = x - (hx + T * 0.7), ky = y - (hy - T * 0.42), kr = Math.hypot(kx, ky);
+        if (kr < T * 0.34) d = Math.abs(kx) < T * 0.07 ? 0 : 1;
+      }
+      const tl = (x - hx - T * 1.9) / (T * 1.6);
+      if (tl > 0 && tl < 1 && Math.sin(t * 5) > -0.2) {
+        const fork = tl > 0.6 ? (tl - 0.6) * T * 0.9 : 0;
+        if (Math.abs(Math.abs(y - hy) - fork) < 0.75 * DPR) d = 1;
+      }
+      if (d > BY[by | (x & 7)]) u[y * w + x] = WHITE;
+    }
+  }
+  B.ctx.putImageData(B.img, 0, 0);
+}
+
+// ---- scheduler: only what is on screen, ~15 fps, nothing at all with reduced motion
+const items = [];
+function add(cv, draw, opts = {}) { const it = { cv, draw, vis: true, ...opts }; items.push(it); return it; }
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { const it = items.find(i => i.cv === e.target); if (it) { it.vis = e.isIntersecting; if (it.vis) it.dirty = true; } }), { rootMargin: '120px' }) : null;
+function prep(it) { if (fit(it.cv) || !it.cv._b) it.cv._b = buf(it.cv); it.cv._hem = it.cv._pl = null; it.dirty = true; }
+
+document.querySelectorAll('canvas[data-veil]').forEach((cv, i) => { cv._seed = i * 1.7 + 0.4; add(cv, drawVeil); });
+document.querySelectorAll('canvas[data-serpent]').forEach(cv => add(cv, drawSerpent));
+const stageCv = document.querySelector('.stage .curtain');
+let stageOpen = RM ? 1 : 0;
+if (stageCv) add(stageCv, (cv, t) => drawCurtain(cv, t, stageOpen), { stage: true });
+items.forEach(it => { prep(it); io && io.observe(it.cv); });
+document.querySelectorAll('canvas[data-sprite]').forEach(sprite);
+const eyeCv = document.querySelector('.eyecv');
+drawEye(eyeCv);
+
+let t0 = performance.now(), last = 0;
+function frame(now) {
+  const t = (now - t0) / 1000;
+  if (stageCv && !RM) {
+    const r = stageCv.getBoundingClientRect(), vh = innerHeight;
+    const target = Math.max(0, Math.min(1, (vh - r.top) / (vh * 0.75) - 0.15));
+    stageOpen += (target - stageOpen) * 0.12;
+  }
+  if (now - last > 66) {
+    last = now;
+    for (const it of items) if (it.vis && (it.dirty || !RM)) { it.draw(it.cv, RM ? 3 : t); it.dirty = false; }
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+let rz;
+addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => {
+  items.forEach(prep); document.querySelectorAll('canvas[data-sprite]').forEach(sprite); drawEye(eyeCv); tempoDraw(); }, 150); });
+
+// ---- the listing: three readings
+const listing = document.getElementById('listing'), note = document.getElementById('trnote');
+const notes = { ja: 'The original, as typed in the film.', en: 'English translation (mine, line for line). The film types only the Japanese; code words are translated too.', dbg: 'Schematic: what DEBUG makes of each line. Every prophecy line is answered “^ Error”; after q, nothing is read.' };
+document.querySelectorAll('.toggle button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.toggle button').forEach(o => o.setAttribute('aria-pressed', o === b));
+  listing.className = 'listing lang-' + b.dataset.lang; note.textContent = notes[b.dataset.lang];
+}));
+
+// ---- tempo: the delay formula from scene_v2.h, jitter left out
+const src = [...document.querySelectorAll('ol.src li')].map(li => (li.querySelector('.ja') || li.querySelector('.both') || { textContent: '' }).textContent).join('\n') + '\n';
+const N = src.length, aEnd = src.indexOf('\na 100') + 1, bEnd = src.indexOf('\nq\n') + 3;
+let lastLine = N; for (let i = N - 2; i > 0; i--) if (src[i] === '\n') { lastLine = i + 1; break; }
+const delays = new Float32Array(N);
+let total = 0;
+for (let i = 0; i < N; i++) {
+  const c = src[i]; let d;
+  if (i < aEnd) { const f = i / aEnd; d = 3 + 165 * Math.exp(-5.2 * f); if (c === '\n') d *= 4; else if (c === '、' || c === '。') d *= 3; }
+  else if (i < bEnd) d = c === '\n' ? 20 : 4;
+  else if (i < lastLine) { const f = (i - bEnd) / (lastLine - bEnd); d = 25 + 230 * f * f; if (c === '\n') d *= 5; else if (c === '、' || c === '。') d *= 3; }
+  else { d = 520; if (i === lastLine) d = 2600; if (c === '、') d = 1300; }
+  delays[i] = d; total += d;
+}
+document.getElementById('ttotal').textContent = `≈ ${Math.floor(total / 60000)} min ${Math.round(total / 1000 % 60)} s of typing`;
+document.querySelectorAll('[data-stat=chars]').forEach(e => e.textContent = N.toLocaleString('en-US'));
+const plot = document.getElementById('tplot'), tcv = plot.querySelector('canvas'), tip = document.getElementById('ttip');
+const lo = Math.log(2), hi = Math.log(3000), yOf = d => 1 - (Math.log(d) - lo) / (hi - lo);
+function tempoDraw() {
+  fit(tcv); const B = buf(tcv); const { u, w, h } = B;
+  for (let x = 0; x < w; x++) {
+    const a = Math.floor(x / w * N), b = Math.max(a + 1, Math.floor((x + 1) / w * N));
+    let m = 0; for (let i = a; i < b; i++) m = Math.max(m, delays[i]);
+    const top = Math.round(yOf(m) * h), zone = a < aEnd ? 0 : a < bEnd ? 1 : 2;
+    for (let y = top; y < h; y++) {
+      const dens = y < top + DPR ? 1 : zone === 1 ? 1 : 0.18 + 0.5 * (y - top) / (h - top + 1);
+      if (dens > BY[((y & 7) << 3) | (x & 7)]) u[y * w + x] = BLACK;
+    }
+  }
+  B.ctx.putImageData(B.img, 0, 0);
+  plot.querySelectorAll('.yl,.band').forEach(e => e.remove());
+  [3, 30, 300, 3000].forEach(d => { const e = document.createElement('span'); e.className = 'yl'; e.style.top = (yOf(d) * 100) + '%'; e.textContent = d >= 1000 ? d / 1000 + ' s' : d + ' ms'; plot.appendChild(e); });
+  const bw = plot.clientWidth;
+  [[0, 'prophecy ▸ faster'], [aEnd, 'tail'], [bEnd, '◂ blessing']].forEach(([i, s], k) => {
+    const e = document.createElement('span'); e.className = 'band'; e.textContent = s;
+    let left = i / N * bw + 44; if (k === 2) left = Math.min(left, bw - 110); if (k === 1) left = i / N * bw - 34;
+    e.style.left = Math.max(44, left) + 'px'; if (k > 0) e.style.top = '40px'; plot.appendChild(e);
+  });
+}
+tempoDraw();
+function tipAt(clientX) {
+  const r = plot.getBoundingClientRect(), fx = Math.max(0, Math.min(0.9999, (clientX - r.left) / r.width)), i = Math.floor(fx * N);
+  const c = src[i], ch = c === '\n' ? '↵' : c === ' ' ? '␣' : c;
+  tip.innerHTML = '';
+  const g = document.createElement('span'); g.className = 'jp'; g.lang = 'ja'; g.textContent = ch;
+  tip.append(g, `#${i + 1} · ${delays[i] < 10 ? delays[i].toFixed(1) : Math.round(delays[i])} ms`);
+  tip.style.left = Math.max(60, Math.min(r.width - 60, clientX - r.left)) + 'px'; tip.style.display = 'block';
+}
+plot.addEventListener('pointermove', e => tipAt(e.clientX));
+plot.addEventListener('pointerdown', e => tipAt(e.clientX));
+plot.addEventListener('pointerleave', () => tip.style.display = 'none');
+
+// ---- Film II: if the file isn't there yet, the source types itself instead
+const v2 = document.getElementById('v2'), box = document.getElementById('v2box');
+let typing = false;
+function missing() {
+  if (box.classList.contains('missing')) return;
+  box.classList.add('missing');
+  const fc = box.querySelector('.filming canvas'), pre = box.querySelector('.filming pre');
+  const it = add(fc, (cv, t) => { // a slow dither tide under the page
+    const B = cv._b; const { u, w, h } = B;
+    for (let y = 0; y < h; y++) { const by = (y & 7) << 3, fy = y / h;
+      for (let x = 0; x < w; x++) { const fx = x / w;
+        const d = 0.5 + 0.45 * Math.sin(fx * 5 + t * 0.4 + Math.sin(fy * 4 + t * 0.3) * 1.5) * Math.cos(fy * 3 - t * 0.2);
+        u[y * w + x] = d * 0.55 > BY[by | (x & 7)] ? WHITE : BLACK; } }
+    B.ctx.putImageData(B.img, 0, 0);
+  });
+  prep(it); io && io.observe(fc);
+  if (RM) { pre.textContent = src.slice(0, 900); return; }
+  let i = 0, shown = '';
+  const step = () => {
+    if (i >= N) { i = 0; shown = ''; }
+    shown += src[i]; const lines = shown.split('\n'); if (lines.length > 14) shown = lines.slice(-14).join('\n');
+    pre.textContent = shown;
+    setTimeout(step, delays[i++] * (0.6 + Math.random() * 0.8));
+  };
+  step();
+}
+v2.addEventListener('error', missing);
+if (v2.error || v2.networkState === 3) missing();
+})();
+</script>
+</body>
+</html>

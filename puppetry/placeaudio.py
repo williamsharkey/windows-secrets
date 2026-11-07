@@ -6,15 +6,16 @@ puppet.exe logs every Play press; the answer WAV sizes give each clip's length
 (reversed preview = L, final slowed playback = 2L).  This cuts the capture at
 those lengths and places each clip at its press time.
 
-  placeaudio.py puppet.log capture.wav "size0 size1 ..." out.wav [lead_seconds]
+  placeaudio.py puppet.log capture.wav "size0 size1 ..." out.wav [lead_seconds] [first_scene]
 """
 import sys, wave, re, struct
 
 log, cap, sizes, out = sys.argv[1], sys.argv[2], [int(x) for x in sys.argv[3].split()], sys.argv[4]
-lead = float(sys.argv[5]) if len(sys.argv) > 5 else 1.5   # recording starts this long before the intro
+lead = float(sys.argv[5]) if len(sys.argv) > 5 else 1.5   # recording starts this long before the first scene
+first = sys.argv[6] if len(sys.argv) > 6 else 'intro'      # the scene the recording starts with
 
 lines = open(log, encoding='latin-1').read().splitlines()
-t_intro = next(float(l.split()[0]) for l in lines if "puppet start: 'intro'" in l)
+t_intro = next(float(l.split()[0]) for l in lines if "puppet start: '%s'" % first in l)
 plays = [float(l.split()[0]) - t_intro + lead for l in lines if l.strip().endswith('PLAY')]
 
 w = wave.open(cap)

@@ -3,3 +3,4 @@ data/*-crawl-raw/
 data/*.jsonl
 *.bmp
 puppetry/*.res
+__pycache__/

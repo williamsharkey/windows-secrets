@@ -1073,6 +1073,10 @@ static void scene_basilisk(void)
     int i;
     SetCursorPos(SW - 40, SH - 80);
     play(1500);
+    {   /* V2: basilisk.com's DOS window has had its say; tuck it away */
+        HWND con = top("ConsoleWindowClass", NULL);
+        if (con) { play(2500); ShowWindow(con, SW_MINIMIZE); play(600); }
+    }
 
     /* ---- it wakes: programs open themselves, four seconds apart ---- */
     b_note = open_app("notepad.exe", "Notepad", NULL);
