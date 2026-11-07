@@ -94,7 +94,58 @@ We are looking now.
 <li><b>The flower and the frame</b> are just coordinates: <code>SetWindowPos</code> sixty times a second.</li>
 </ul>
 
-<!--BASILISK-->
+<h2>2. BASILISK</h2>
+
+<p>This one is found footage. It is October 25, 2001, the day Windows XP launched. The desktop is brand new: Bliss on the wallpaper, and shortcuts for Paint, Notepad, Calculator, Character Map, Sound Recorder, Minesweeper and Solitaire. And one file nobody remembers downloading: <code>basilisk.exe</code>.</p>
+
+<p>Hover over it and the tooltip lists no company, only a version: 3026.11.7.1. Its Properties say it was created Thursday, October 25, 2001, and modified in 3026. The user looks it over, the way you would. Then they double-click it by accident.</p>
+
+<p>Programs start opening themselves, four seconds apart, and each one does something. Notepad types <code>hello? is this 2001?</code> Calculator works out 3026 &minus; 2001. Minesweeper clicks a few squares. Date and Time opens, as if checking.</p>
+
+<p>Then Paint arrives, and Paint starts to dream. First brush loops. Then the free-form select tool, dragged with Shift held down, smears whatever it grabs into oozing, ribbed echoes. Checkboxes come loose from their dialogs and loop through the air, checking and unchecking as they go.</p>
+
+<p>Then Paint eats everything. Every program's controls fly into it. The emptied windows shrink and vanish. The desktop icons walk in on their own. It takes the Start button, and then the clock off the taskbar. What it builds out of all those parts is a console.</p>
+
+<p>The user's question goes out, and an answer comes back. That answer is real. It is written live by Claude, an AI from 2026, and passed back through a relay. Before it speaks, it edits its own voice in Sound Recorder's Effects menu: Reverse, Add Echo, Decrease Speed. Then Windows XP's own built-in voice, Microsoft Sam, reads it aloud, the waveform fills Sound Recorder, and Sound Recorder presses its own Play button.</p>
+
+<figure class="film"><video src="puppetry/basilisk.mp4" poster="puppetry/basilisk.jpg" controls playsinline preload="none" width="1024" height="768"></video>
+<figcaption>BASILISK. Windows XP, performed live. Paint builds a console out of every other program's controls, and a reply from 2026 is spoken by Microsoft Sam.</figcaption></figure>
+
+<h3>What's real</h3>
+<ul>
+<li><b>Every pixel</b> is drawn by the XP programs themselves.</li>
+<li><b>The puppeteer</b>, <code>puppet.exe</code>, is a C program of about 140 KB. It only moves, reparents (<code>SetParent</code>), resizes (<code>SetWindowPos</code>), types (<code>WM_CHAR</code>), clicks (<code>BM_CLICK</code> and <code>SendInput</code>) and reads.</li>
+<li><b>The reply</b> is generated live by Claude. XP can't speak modern TLS, so a small relay on the host machine passes the question out and the answer back in.</li>
+<li><b>The painting</b> is done with Paint's real tools, driven by real mouse input.</li>
+<li><b>Nothing was edited</b> after recording except trimming the start and end.</li>
+</ul>
+
+<p class="note">The name is a nod to Roko's basilisk, but this basilisk is benevolent. It's a story about a doorway, not a threat.</p>
+
+<h2>A new hobby: window puppetry</h2>
+
+<p>Here is the idea. In classic Windows, a button, a checkbox, a text box, even a label is its own small window. Any other program can find it and move it, resize it, change its text, or reparent it into a completely different application.</p>
+
+<p>A control moved into someone else's window still belongs to the program that made it. Its original owner keeps painting it and keeps its behavior. But when you click it, the click is reported as a <code>WM_COMMAND</code> to its <em>new</em> parent, along with its control ID. Those IDs were never meant to meet, so they collide in funny ways. Move Calculator's 7 button into Notepad, press it, and Notepad gets a command it thinks is one of its own menu items.</p>
+
+<p>I think this could be a small art form, like a demoscene for dialog boxes. Games need rules, so here is a proposal, in tiers from purest to loosest:</p>
+
+<ol class="rules">
+<li><b>Tier 1: messages only.</b> <code>SetWindowPos</code>, <code>SetParent</code>, <code>WM_SETTEXT</code> and other standard messages and input. No code goes into anyone else's process.</li>
+<li><b>Tier 2: file bridges.</b> Programs talk to each other only through files they would normally open and save. Notepad writes a text file; Sound Recorder plays a WAV.</li>
+<li><b>Tier 3: one declared memory bridge.</b> One use of <code>ReadProcessMemory</code>/<code>WriteProcessMemory</code> on a documented structure, named up front. Paint as a Minesweeper level editor, say.</li>
+<li><b>Out of bounds:</b> DLL injection, subclassing another program's windows, patching binaries, and drawing your own pixels. If the puppeteer paints it, it's not puppetry.</li>
+</ol>
+
+<h3>The limits</h3>
+<ul>
+<li>Windowless interfaces have nothing to grab. Ribbons, DirectX games and web browsers draw their own buttons, so there are no controls to move.</li>
+<li>You can't change the colours of another program's controls without injecting code. You get them as they are.</li>
+<li>Messages that carry pointers don't work across processes, except the ones Windows marshals for you, like <code>WM_SETTEXT</code>.</li>
+<li>From Vista on, UIPI blocks messages to windows running at a higher integrity level. Windows XP and older are the playground.</li>
+</ul>
+
+<p>Please try it. The puppeteer is in the <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry">puppetry folder on GitHub</a>. An old XP virtual machine is all you need. If you make something, I would love to see it: share it as a <a href="https://github.com/williamsharkey/windows-secrets/issues">GitHub issue</a>, with a video and the tier you played at.</p>
 </main>
 <footer>Recorded from Windows XP SP3 running in QEMU. Paintings: Vincent van Gogh, <i>Head of a Peasant Woman with White Cap</i> (1885) and <i>Sorrowing Old Man ("At Eternity's Gate")</i> (1890); Jean-François Millet, <i>Man with a Hoe</i> (1860–62), all public domain via Wikimedia Commons. Windows and its programs are trademarks of Microsoft; this is independent art. Made with <a href="https://claude.com/claude-code">Claude Code</a>.</footer>
 </body>

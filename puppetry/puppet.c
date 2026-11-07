@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
 
 #define PI 3.14159265358979
 static int SW = 1024, SH = 768;
@@ -148,14 +149,26 @@ static void liberate(HWND h)
     RECT r = srect(h);
     LONG st = GetWindowLongA(h, GWL_STYLE);
     SetWindowLongA(h, GWL_STYLE, (st & ~WS_CHILD) | WS_POPUP);
+    SetWindowLongA(h, GWL_EXSTYLE, GetWindowLongA(h, GWL_EXSTYLE) | WS_EX_TOOLWINDOW);   /* no taskbar button */
     SetParent(h, NULL);
     SetWindowPos(h, HWND_TOPMOST, r.left, r.top, r.right - r.left, r.bottom - r.top,
                  SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_FRAMECHANGED);
 }
 
+/* adopted controls are kept on top of their new parent's own children */
+static HWND adopted[256];
+static int nadopted;
+static void raise_adopted(void)
+{
+    int i;
+    for (i = 0; i < nadopted; i++)
+        if (IsWindow(adopted[i])) SetWindowPos(adopted[i], HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+}
+
 /* move a control (or a liberated one) into another window, keeping its screen spot */
 static void adopt(HWND h, HWND np)
 {
+    if (nadopted < 256) adopted[nadopted++] = h;
     RECT r = srect(h);
     LONG st = GetWindowLongA(h, GWL_STYLE);
     SetWindowLongA(h, GWL_STYLE, (st & ~WS_POPUP) | WS_CHILD);
@@ -251,7 +264,9 @@ static void stop_ticks(void) { nticks = 0; }
 static void frame(void)
 {
     DWORD now = GetTickCount();
+    static DWORD last_raise;
     int i;
+    if (now - last_raise > 400) { raise_adopted(); last_raise = now; }
     for (i = 0; i < nticks; i++) if (ticks[i].on) ticks[i].fn(ticks[i].ctx, now);
     for (i = 0; i < ntw; i++) {
         Tween *t = &tw[i];

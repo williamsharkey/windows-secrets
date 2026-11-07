@@ -3,7 +3,7 @@ mov ah,9
 mov dx,0200
 int 21
 mov ah,4a
-mov bx,0040
+mov bx,1000
 int 21
 mov ax,cs
 mov [0262],ax

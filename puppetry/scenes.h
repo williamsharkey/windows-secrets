@@ -288,6 +288,10 @@ static void collect(HWND h, int w, int hh)
     POINT p;
     int cw, ch;
     if (!h || nsec >= MAXS) return;
+    if (is_class(h, "Button") && (GetWindowLongA(h, GWL_STYLE) & 0xF) == BS_GROUPBOX) {   /* frames don't paint their middle */
+        ShowWindow(h, SW_HIDE);
+        return;
+    }
     reveal(h);
     liberate(h);
     r = srect(h);
@@ -356,8 +360,8 @@ static void arrange_flower(int t0, int dur)
         double lx = D + a * cos(s), ly = b * sin(s);
         double x = SW / 2 + lx * cos(th) - ly * sin(th), y = SH / 2 - 16 + lx * sin(th) + ly * cos(th);
         RECT r = srect(secrets[i]);
-        int w = r.right - r.left, h = r.bottom - r.top;
-        tween(secrets[i], (int)x - w / 2, (int)y - h / 2, -1, -1, t0 + i * 35, dur, EASE_IO);
+        int w = min(r.right - r.left, 110), h = min(r.bottom - r.top, 22);
+        tween(secrets[i], (int)x - w / 2, (int)y - h / 2, w, h, t0 + i * 35, dur, EASE_IO);
     }
 }
 
@@ -367,12 +371,12 @@ static void arrange_frame(int fx, int fy, int fw, int fh, int shift, int t0, int
     for (i = 0; i < nsec; i++) {
         int d = (int)((double)((i + shift) % nsec) / nsec * per), x, y;
         RECT r = srect(secrets[i]);
-        int w = r.right - r.left, h = r.bottom - r.top;
+        int w = min(r.right - r.left, 110), h = min(r.bottom - r.top, 22);
         if (d < fw) { x = fx + d; y = fy; }
         else if (d < fw + fh) { x = fx + fw; y = fy + d - fw; }
         else if (d < 2 * fw + fh) { x = fx + fw - (d - fw - fh); y = fy + fh; }
         else { x = fx; y = fy + fh - (d - 2 * fw - fh); }
-        tween(secrets[i], x - w / 2, y - h / 2, -1, -1, t0 + i * 25, dur, EASE_IO);
+        tween(secrets[i], x - w / 2, y - h / 2, w, h, t0 + i * 25, dur, EASE_IO);
     }
 }
 
@@ -383,7 +387,7 @@ static void arrange_peace(int t0, int dur)
     for (i = 0; i < nsec; i++) {
         double x, y;
         RECT r = srect(secrets[i]);
-        int w = r.right - r.left, h = r.bottom - r.top;
+        int w = min(r.right - r.left, 76), h = min(r.bottom - r.top, 20);
         if (i < ring) { double a = -PI / 2 + 2 * PI * i / ring; x = cx + R * cos(a); y = cy + R * sin(a); }
         else if (i < ring + line) { double f = (double)(i - ring + .5) / line; x = cx; y = cy - R + 2 * R * f; }
         else {
@@ -391,7 +395,7 @@ static void arrange_peace(int t0, int dur)
             double f = (double)(k / 2 + 1) / (diag / 2 + 1), a = side ? PI / 4 : 3 * PI / 4;
             x = cx + R * f * cos(a); y = cy + R * f * sin(a);
         }
-        tween(secrets[i], (int)x - w / 2, (int)y - h / 2, -1, -1, t0 + i * 30, dur, EASE_IO);
+        tween(secrets[i], (int)x - w / 2, (int)y - h / 2, w, h, t0 + i * 30, dur, EASE_IO);
     }
 }
 
@@ -717,9 +721,9 @@ static void scene_intro(void)
         RECT tr;
         if (tab) {
             tr = srect(tab);
-            glide(tr.left + 120, tr.top + 10, 1200, 0);   /* Version tab */
+            glide(tr.left + 64, tr.top + 10, 1200, 0);   /* Version tab */
             play(400);
-            click_at(tr.left + 120, tr.top + 10, 0);
+            click_at(tr.left + 64, tr.top + 10, 0);
             play(2500);
             {   /* hover down the item list */
                 HWND lb = kid_cls(props, "ListBox");
@@ -752,11 +756,112 @@ static void scene_intro(void)
     play(1500);
 }
 
+
+/* ======================================================================= */
+/* menus by text (IDs differ between builds; the words don't)              */
+/* ======================================================================= */
+
+static UINT menu_find(HMENU m, const char *want)
+{
+    int i, n = GetMenuItemCount(m);
+    for (i = 0; i < n; i++) {
+        char t[128], c[128];
+        int j, k = 0;
+        HMENU sub = GetSubMenu(m, i);
+        if (sub) { UINT r = menu_find(sub, want); if (r) return r; continue; }
+        GetMenuStringA(m, i, t, sizeof t, MF_BYPOSITION);
+        for (j = 0; t[j] && t[j] != '\t'; j++) if (t[j] != '&') c[k++] = t[j];
+        c[k] = 0;
+        if (strstr(c, want)) return GetMenuItemID(m, i);
+    }
+    return 0;
+}
+static int menu_cmd(HWND w, const char *want)
+{
+    UINT id = menu_find(GetMenu(w), want);
+    say("menu '%s' -> %u", want, id);
+    if (id) PostMessageA(w, WM_COMMAND, id, 0);
+    return id != 0;
+}
+
+/* ======================================================================= */
+/* the swarm: Calculator's buttons, relabelled one letter each              */
+/* ======================================================================= */
+
+#define MAXTILE 80
+static HWND tile[MAXTILE];
+static int ntile, swarm_mode;          /* 0 off, 1 swarming */
+static double swarm_cx = 512, swarm_cy = 250, swarm_rx = 330, swarm_ry = 150;
+static DWORD swarm_t0;
+static void swarm_tick(void *ctx, DWORD now)
+{
+    int i;
+    double t = (now - swarm_t0) / 1000.0;
+    (void)ctx;
+    if (swarm_mode != 1) return;
+    for (i = 0; i < ntile; i++) {
+        double p = i * 2.399, a = t * (0.7 + 0.13 * (i % 5)) + p;
+        double x = swarm_cx + swarm_rx * (0.65 * sin(a) + 0.35 * sin(2.3 * a + p * 3));
+        double y = swarm_cy + swarm_ry * (0.6 * cos(1.3 * a + p) + 0.4 * sin(3.1 * a));
+        SetWindowPos(tile[i], NULL, (int)x - 14, (int)y - 13, 28, 26, SWP_NOZORDER | SWP_NOACTIVATE);
+    }
+}
+static void swarm_go(void) { swarm_t0 = GetTickCount(); swarm_mode = 1; }
+
+/* rush together and spell a phrase (wrapping at 18 letters a line) */
+static void swarm_spell(const char *phrase, int hold)
+{
+    int i, n = 0, line = 0, col = 0, lines = 1, maxc = 18, len = (int)strlen(phrase);
+    char buf[2] = {0, 0};
+    for (i = 0; i < len; i++) if (phrase[i] == '\n' || ++col > maxc) { lines++; col = 0; }
+    swarm_mode = 0;
+    col = 0;
+    for (i = 0; i < len && n < ntile; i++) {
+        char c = phrase[i];
+        if (c == '\n' || col >= maxc) { line++; col = 0; if (c == '\n') continue; }
+        if (c == ' ') { col++; continue; }
+        buf[0] = c;
+        settext(tile[n], buf);
+        tween(tile[n], (int)swarm_cx - maxc * 15 + col * 30, (int)swarm_cy - lines * 17 + line * 34, 28, 30,
+              (n * 13) % 220, 650, EASE_OUT);
+        n++; col++;
+    }
+    for (; n < ntile; n++) {   /* spare letters hover at the edges */
+        settext(tile[n], "");
+        tween(tile[n], (int)swarm_cx + (int)(swarm_rx * 1.3 * cos(n * 1.7)), (int)swarm_cy + (int)(swarm_ry * 1.4 * sin(n * 1.7)),
+              10, 10, 0, 700, EASE_OUT);
+    }
+    play(900 + hold);
+}
+/* scatter in every direction, then swarm again */
+static void swarm_burst(void)
+{
+    int i;
+    for (i = 0; i < ntile; i++) {
+        double a = i * 2.399;
+        tween(tile[i], (int)(swarm_cx + 700 * cos(a)), (int)(swarm_cy + 500 * sin(a)), 28, 26, 0, 380, EASE_IN);
+    }
+    play(420);
+    swarm_go();
+}
+
+/* ======================================================================= */
+/* a screensaver preview, rendered inside any window                        */
+/* ======================================================================= */
+
+static void portal(HWND host, const char *scr)
+{
+    char c[256];
+    sprintf(c, "C:\\WINDOWS\\system32\\%s /p %lu", scr, (unsigned long)(UINT_PTR)host);
+    launch(c);
+    say("portal %s", c);
+}
+
 /* ======================================================================= */
 /* BASILISK                                                                 */
 /* ======================================================================= */
 
-static HWND b_note, b_calc, b_char, b_mine, b_time, b_paint;
+static HWND b_note, b_calc, b_char, b_mine, b_time, b_paint, b_paint_frame;
 static HWND transcript, inputbox, sendbtn;
 
 static void calc_press(HWND c, const char *seq, int ms)
@@ -771,8 +876,6 @@ static void calc_press(HWND c, const char *seq, int ms)
     }
 }
 
-#define SNDREC_WAVE_ID 0  /* filled in after probing sndrec32 */
-#define SNDREC_PLAY_ID 0
 static HWND rec_wave, rec_play;   /* the current mouth */
 
 static void run_wait(const char *cmdline, int ms)
@@ -788,6 +891,15 @@ static void run_wait(const char *cmdline, int ms)
         while (WaitForSingleObject(pi.hProcess, 0) == WAIT_TIMEOUT && (LONG)(GetTickCount() - end) < 0) play(50);
         CloseHandle(pi.hThread); CloseHandle(pi.hProcess);
     }
+}
+
+/* a button moved into Paint reports to Paint; so tell Sound Recorder directly */
+static void press_play(HWND sr)
+{
+    if (rec_play) SendMessageA(rec_play, BM_SETSTATE, TRUE, 0);
+    PostMessageA(sr, WM_COMMAND, MAKEWPARAM(207, BN_CLICKED), (LPARAM)rec_play);
+    play(180);
+    if (rec_play) SendMessageA(rec_play, BM_SETSTATE, FALSE, 0);
 }
 
 /* the future answers out loud: Microsoft Sam -> WAV -> Sound Recorder, swallowed */
@@ -815,9 +927,19 @@ static void speak_reply(HWND pa, const char *text, int k)
     n = kids(sr, NULL, list, 64);
     rec_wave = NULL; rec_play = NULL;
     for (i = 0; i < n; i++) {
+        char cls[64];
+        RECT r = srect(list[i]);
+        GetClassNameA(list[i], cls, sizeof cls);
+        say("sndrec child id=%d %s %ldx%ld", GetDlgCtrlID(list[i]), cls, r.right - r.left, r.bottom - r.top);
         if (GetParent(list[i]) != sr) continue;
-        if (GetDlgCtrlID(list[i]) == SNDREC_WAVE_ID) rec_wave = list[i];
-        if (GetDlgCtrlID(list[i]) == SNDREC_PLAY_ID) rec_play = list[i];
+        if (!rec_wave && (r.right - r.left) > 100 && (r.bottom - r.top) > 30 && strcmp(cls, "Button")) rec_wave = list[i];
+    }
+    {   /* Play is the third of the five transport buttons, left to right */
+        HWND b[8];
+        int nb = 0, x, y;
+        for (i = 0; i < n && nb < 8; i++) if (GetParent(list[i]) == sr && is_class(list[i], "Button")) b[nb++] = list[i];
+        for (x = 0; x < nb; x++) for (y = x + 1; y < nb; y++) if (srect(b[y]).left < srect(b[x]).left) { HWND t = b[x]; b[x] = b[y]; b[y] = t; }
+        if (nb >= 3) rec_play = b[2];
     }
     if (rec_wave) { adopt(rec_wave, pa); tween_arc(rec_wave, 800, 470, 190, 80, 0, 1300, EASE_IO, 70); }
     if (rec_play) { adopt(rec_play, pa); tween_arc(rec_play, 870, 560, 48, 30, 200, 1300, EASE_BACK, -60); }
@@ -825,10 +947,23 @@ static void speak_reply(HWND pa, const char *text, int k)
     tween(sr, 1000, 700, 20, 20, 0, 700, EASE_IN);
     play(750);
     ShowWindow(sr, SW_MINIMIZE);
-    if (rec_play) {   /* it presses its own Play button */
-        RECT r = srect(rec_play);
-        glide((r.left + r.right) / 2, (r.top + r.bottom) / 2, 600, 0);
-        PostMessageA(rec_play, BM_CLICK, 0, 0);
+    {   /* it edits its own voice before you may hear it */
+        HANDLE f = CreateFileA(wav, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+        DWORD sz = f != INVALID_HANDLE_VALUE ? GetFileSize(f, NULL) : 0;
+        int ms = sz > 44 ? (int)((sz - 44) / 44.1) : 3000;   /* 22 kHz 16-bit mono */
+        if (f != INVALID_HANDLE_VALUE) CloseHandle(f);
+        if (ms > 9000) ms = 9000;
+        menu_cmd(sr, "Reverse"); play(900);
+        press_play(sr);
+        play(ms + 400);
+        menu_cmd(sr, "Reverse"); play(700);
+        menu_cmd(sr, "Add Echo"); play(900);
+        menu_cmd(sr, "Decrease Speed"); play(900);
+        if (rec_play) {   /* and presses its own Play button */
+            RECT r = srect(rec_play);
+            glide((r.left + r.right) / 2, (r.top + r.bottom) / 2, 600, 0);
+        }
+        press_play(sr);
     }
 }
 
@@ -836,6 +971,30 @@ static char *ask_future(const char *q)
 {
     char *a = http("POST", "/claude", q, NULL);
     return a ? a : strdup("(no answer)");
+}
+
+struct askjob { const char *q; char *a; volatile int done; };
+static DWORD WINAPI ask_thread(LPVOID p)
+{
+    struct askjob *j = (struct askjob *)p;
+    j->a = ask_future(j->q);
+    j->done = 1;
+    return 0;
+}
+
+/* ask, and let the swarm think out loud until the answer arrives */
+static char *ask_with_throbber(const char *q)
+{
+    static const char *words[] = {"FLAMUXING...", "RETICULATING...", "COMBOBULATING...", "LISTENING ACROSS\nTHE YEARS...", "NOODLING...", "UNSPOOLING TIME..."};
+    struct askjob j;
+    int k = 0;
+    j.q = q; j.a = NULL; j.done = 0;
+    CloseHandle(CreateThread(NULL, 0, ask_thread, &j, 0, NULL));
+    while (!j.done) {
+        if (ntile) { swarm_spell(words[k++ % 6], 1100); swarm_burst(); play(700); }
+        else play(200);
+    }
+    return j.a;
 }
 
 /* swallow every visible child control of w into Paint, then fold w away */
@@ -886,7 +1045,11 @@ static void scene_basilisk(void)
     { RECT r = srect(b_calc); place(b_calc, 400, 30, r.right - r.left, r.bottom - r.top); }
     play(600);
     calc_press(b_calc, "3026-2001=", 330);
-    play(1800);
+    play(1200);
+    menu_cmd(b_calc, "Scientific");
+    play(1200);
+    b_calc = wait_top("SciCalc", NULL, 0, 3000);   /* XP rebuilds the whole window */
+    { RECT r = srect(b_calc); place(b_calc, 400, 30, r.right - r.left, r.bottom - r.top); }
     b_char = open_app("charmap.exe", "MyDlgClass", "Character Map");
     { RECT r = srect(b_char); place(b_char, 40, 260, r.right - r.left, r.bottom - r.top); }
     play(4000);
@@ -945,9 +1108,40 @@ static void scene_basilisk(void)
     /* ---- Paint consumes the others ---- */
     tween(b_paint, 0, 0, SW, SH - 30, 0, 1600, EASE_IO);
     play(1800);
+    {
+        HWND view = kid_id(b_paint, 59648);
+        HWND keep = b_paint;
+        b_paint = view ? view : b_paint;   /* swallowed things live in the view, above the canvas */
+        b_paint_frame = keep;
+    }
     swallow(b_note, b_paint, 70, 380, 0.9, 40);
-    swallow(b_calc, b_paint, 780, 420, 0.8, 25);
-    swallow(b_mine, b_paint, 880, 160, 1.0, 40);
+    {   /* Calculator's buttons come loose and become a swarm of letters */
+        HWND list[128];
+        int n = kids(b_calc, "Button", list, 128), k;
+        ntile = 0;
+        for (k = 0; k < n && ntile < MAXTILE; k++) {
+            if (!IsWindowVisible(list[k])) continue;
+            liberate(list[k]);
+            tile[ntile++] = list[k];
+        }
+        say("tiles %d", ntile);
+        swarm_go();
+        add_tick(swarm_tick, NULL);
+        play(1500);
+        { RECT r = srect(b_calc); tween(b_calc, (r.left + r.right) / 2 - 20, (r.top + r.bottom) / 2 - 12, 40, 24, 0, 900, EASE_IN); }
+        play(950);
+        ShowWindow(b_calc, SW_MINIMIZE);
+        swarm_spell("BASILISK", 2200);
+        swarm_burst();
+        play(1500);
+    }
+    {   /* Minesweeper is taken whole, and a screensaver opens inside it */
+        adopt(b_mine, b_paint);
+        tween(b_mine, 790, 150, 210, 200, 0, 1300, EASE_IO);
+        play(1500);
+        portal(b_mine, "sspipes.scr");
+        play(2500);
+    }
     swallow(b_char, b_paint, 70, 120, 0.75, 20);
     if (b_time) swallow(b_time, b_paint, 520, 90, 0.7, 20);
     {   /* the desktop icons walk into Paint, then the whole icon layer is eaten */
@@ -983,6 +1177,8 @@ static void scene_basilisk(void)
         int n = kids(b_paint, "Edit", edits, 16), k;
         for (k = 0; k < n; k++) if (edits[k] != transcript && (GetWindowLongA(edits[k], GWL_STYLE) & ES_MULTILINE) == 0) { inputbox = edits[k]; }
     }
+    if (kid_id(b_paint, 104)) inputbox = kid_id(b_paint, 104);   /* Character Map's "Characters to copy" */
+    say("console transcript=%p input=%p", (void *)transcript, (void *)inputbox);
     if (transcript) { tween(transcript, 230, 370, 560, 210, 0, 1500, EASE_IO); settext(transcript, ""); }
     if (inputbox) tween(inputbox, 230, 592, 470, 26, 200, 1500, EASE_IO);
     sendbtn = kid_text(b_paint, "=");
@@ -1003,8 +1199,17 @@ static void scene_basilisk(void)
             fol_speed = 1.6;
             snprintf(line, sizeof line, "> %s\n", qs[k]);
             type_into(te, line, 40);
-            ans = ask_future(qs[k]);
+            ans = ask_with_throbber(qs[k]);
             fol_speed = 0.45;
+            {   /* the swarm says the first words of the answer */
+                char head[40];
+                int m;
+                snprintf(head, sizeof head, "%s", ans);
+                for (m = 0; head[m]; m++) head[m] = (char)toupper((unsigned char)head[m]);
+                if (strlen(ans) > 34) { char *sp = strrchr(head, ' '); if (sp) strcpy(sp, "..."); }
+                swarm_spell(head, 2600);
+                swarm_burst();
+            }
             speak_reply(b_paint, ans, k);
             type_into(te, ans, 26);
             type_into(te, "\n\n", 40);
