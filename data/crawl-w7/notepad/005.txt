@@ -1,0 +1,19 @@
+VIA	menu [&Replace... Ctrl+H]
+WINDOW	0x031e0274	#32770	window=361x191 client=345x153	"Replace"
+ok	  0xe0d9022e	id=65535	Static	@6,15 72x13	visible	"Fi&nd what:"
+ok	  0x4e2002ca	id=1152	Edit	@81,11 171x20	visible,tabstop	""
+ok	  0x002b0284	id=65535	Static	@6,42 72x13	visible	"Re&place with:"
+ok	  0x002302d0	id=1153	Edit	@81,39 171x20	visible,tabstop	""
+GHOST	  0xe3580392	id=1040	Button:checkbox	@8,75 156x20	hidden,disabled,tabstop	"Match &whole word only"
+ok	  0x323c01b4	id=1041	Button:checkbox	@8,101 89x20	visible,tabstop	"Match &case"
+ok	  0x1f8001ee	id=1	Button:pushbutton	@261,7 75x23	visible,disabled,tabstop	"&Find Next"
+ok	  0x75e5031c	id=1024	Button:pushbutton	@261,34 75x23	visible,disabled,tabstop	"&Replace"
+ok	  0x62870112	id=1025	Button:pushbutton	@261,62 75x23	visible,disabled,tabstop	"Replace &All"
+ok	  0x00510270	id=2	Button:pushbutton	@261,89 75x23	visible,tabstop	"Cancel"
+GHOST	  0x01140282	id=1038	Button:pushbutton	@261,122 75x23	hidden,disabled,tabstop	"&Help"
+SUMMARY	outside=0 ghost=2 covered=0 disabled=3
+TAB   1	0x4e2002ca	id=1152	Edit	onscreen	""
+TAB   2	0x002302d0	id=1153	Edit	onscreen	""
+TAB   3	0x323c01b4	id=1041	Button	onscreen	"Match &case"
+TAB   4	0x00510270	id=2	Button	onscreen	"Cancel"
+SHOT	C:\winsecrets\crawl\notepad\005.bmp 361x191

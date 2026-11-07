@@ -1,0 +1,15 @@
+VIA	main window
+WINDOW	0x0019010c	#32770	window=467x277 client=461x245	"File Signature Verification"
+ok	  0x00150110	id=1001	Static	@179,11 269x54	visible	"To help maintain the integrity of your system, critical files have been digitally signed so that any changes to these files can be quickly detected."
+GHOST	  0x0018014a	id=1008	progress	@179,174 267x23	hidden,tabstop	""
+ok	  0x00140132	id=1006	Button:pushbutton	@210,210 75x23	visible,tabstop	"&Start"
+ok	  0x000c012c	id=2	Button:pushbutton	@291,210 75x23	visible,tabstop	"&Close"
+ok	  0x00160138	id=1011	Button:pushbutton	@372,210 75x23	visible,tabstop	"&Advanced"
+ok	  0x00140116	id=1025	Static	@179,78 269x55	visible	"Click Advanced to customize verification options. Click Start to check for any system files that are not digitally signed."
+GHOST	  0x00190148	id=1024	Static	@179,153 269x13	hidden	""
+ok	  0x00150152	id=1000	Static	@9,11 155x187	visible	""
+SUMMARY	outside=0 ghost=2 covered=0 disabled=0
+TAB   1	0x00140132	id=1006	Button	onscreen	"&Start"
+TAB   2	0x000c012c	id=2	Button	onscreen	"&Close"
+TAB   3	0x00160138	id=1011	Button	onscreen	"&Advanced"
+SHOT	e:\crawl\sigverif\001.bmp 467x277

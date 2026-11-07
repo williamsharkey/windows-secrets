@@ -1,0 +1,20 @@
+VIA	main window
+WINDOW	0x000f0148	#32770	window=302x209 client=296x177	"Difficulty"
+ok	  0x000e010e	id=65535	Static	@11,11 275x31	visible	"Select the game difficulty level that you want:"
+ok	  0x000e014a	id=65535	Static	@26,101 32x32	visible	""
+ok	  0x000b0110	id=65535	Static	@39,101 32x32	visible	""
+ok	  0x000c0108	id=65535	Static	@53,75 32x32	visible	""
+ok	  0x000b0152	id=65535	Static	@53,101 32x32	visible	""
+ok	  0x000c00f0	id=65535	Static	@66,49 32x32	visible	""
+ok	  0x000e0134	id=65535	Static	@66,75 32x32	visible	""
+ok	  0x000f011c	id=65535	Static	@66,101 32x32	visible	""
+ok	  0x0009013c	id=1008	Button:radio	@78,47 207x16	visible,tabstop	"&Easy: One Suit"
+ok	  0x000a0154	id=1009	Button:radio	@78,73 207x16	visible	"&Medium: Two Suits"
+ok	  0x000b0136	id=1010	Button:radio	@78,99 207x16	visible	"&Difficult: Four Suits"
+ok	  0x000d010a	id=1	Button:pushbutton	@60,143 75x23	visible,tabstop	"OK"
+ok	  0x000d013a	id=2	Button:pushbutton	@159,143 75x23	visible,tabstop	"Cancel"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x0009013c	id=1008	Button	onscreen	"&Easy: One Suit"
+TAB   2	0x000d010a	id=1	Button	onscreen	"OK"
+TAB   3	0x000d013a	id=2	Button	onscreen	"Cancel"
+SHOT	e:\crawl\spider\001.bmp 302x209

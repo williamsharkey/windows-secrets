@@ -1,0 +1,11 @@
+VIA	menu [S&tatistics... F4]
+WINDOW	0x00090112	#32770	window=231x251 client=225x219	"FreeCell Statistics"
+ok	  0x000b010c	id=212	Static	@17,16 195x49	visible	"This session   0%  won:  0   lost:  0  "
+ok	  0x000a011c	id=213	Static	@17,68 195x49	visible	"Total    0%  won:  0   lost:  0  "
+ok	  0x0006011a	id=214	Static	@17,120 195x65	visible	"Streaks  wins:  0   losses:  0   current:  0"
+ok	  0x00060110	id=1	Button:pushbutton	@30,187 60x23	visible,tabstop	"OK"
+ok	  0x00070108	id=207	Button:pushbutton	@135,187 60x23	visible,tabstop	"&Clear"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x00060110	id=1	Button	onscreen	"OK"
+TAB   2	0x00070108	id=207	Button	onscreen	"&Clear"
+SHOT	e:\crawl\freecell\002.bmp 231x251

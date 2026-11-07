@@ -1,0 +1,6 @@
+001	outside=0	ghost=0	covered=0	disabled=0	main window	"Chat"
+002	outside=0	ghost=0	covered=0	disabled=0	menu [&Preferences...]	"Preferences"
+003	outside=0	ghost=3	covered=0	disabled=0	menu [&Font...]	"Font"
+004	outside=19	ghost=1	covered=0	disabled=16	menu [Background &Color...]	"Color"
+005	outside=0	ghost=0	covered=0	disabled=0	menu [&About Chat...]	"About Chat"
+END	5 windows recorded

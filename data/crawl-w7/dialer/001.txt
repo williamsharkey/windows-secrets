@@ -1,0 +1,17 @@
+VIA	main window
+WINDOW	0x04d403a8	#32770	window=406x209 client=390x171	"Connect Using"
+ok	  0x009402c8	id=504	Static	@11,26 119x16	visible	"&Line:"
+ok	  0x05a703da	id=501	ComboBox	@11,44 260x21	visible,tabstop	"AgileVPN"
+ok	  0x0302038c	id=506	Button:pushbutton	@285,42 95x23	visible,tabstop	"Line &Properties..."
+ok	  0x048a0470	id=505	Static	@11,70 119x16	visible	"&Address:"
+ok	  0x05270376	id=502	ComboBox	@11,86 260x21	visible,tabstop	"Address 0"
+ok	  0x05ad03e2	id=503	Button:checkbox	@11,117 345x16	visible,disabled,tabstop	"Use Phone Dialer to handle &voice call requests from other programs"
+ok	  0x29140212	id=1	Button:pushbutton	@219,137 75x23	visible,tabstop	"OK"
+ok	  0x002902ae	id=2	Button:pushbutton	@305,137 75x23	visible,tabstop	"Cancel"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=1
+TAB   1	0x05a703da	id=501	ComboBox	onscreen	"AgileVPN"
+TAB   2	0x0302038c	id=506	Button	onscreen	"Line &Properties..."
+TAB   3	0x05270376	id=502	ComboBox	onscreen	"Address 0"
+TAB   4	0x29140212	id=1	Button	onscreen	"OK"
+TAB   5	0x002902ae	id=2	Button	onscreen	"Cancel"
+SHOT	C:\winsecrets\crawl\dialer\001.bmp 406x209

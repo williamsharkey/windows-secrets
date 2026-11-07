@@ -1,0 +1,21 @@
+VIA	menu [&Typing Mode ...]
+WINDOW	0x0005024a	#32770	window=341x242 client=335x210	"Typing Mode"
+ok	  0x0006022a	id=1	Button:pushbutton	@155,176 75x23	visible,tabstop	"&OK"
+ok	  0x00040256	id=2	Button:pushbutton	@248,176 75x23	visible,tabstop	"&Cancel"
+ok	  0x00050254	id=1005	Button:radio	@24,13 126x16	visible,tabstop	"Clic&k to select"
+ok	  0x00050250	id=14	Button:radio	@24,41 95x16	visible	"&Hover to select"
+ok	  0x0005024e	id=15	Button:radio	@24,102 135x16	visible	"&Joystick or key to select "
+ok	  0x0005024c	id=1063	Static	@24,127 69x13	visible,disabled	"Scan interval:"
+ok	  0x0006022c	id=1069	ComboBox	@101,124 116x21	visible,disabled,tabstop	""
+ok	    0x00070246	id=1001	Edit	@3,3 93x15	visible,disabled	""
+ok	  0x00060238	id=1062	Static	@24,65 117x13	visible,disabled	"Minimum time to hover:"
+ok	  0x0006022e	id=1068	ComboBox	@143,62 116x21	visible,disabled,tabstop	""
+ok	    0x00070232	id=1001	Edit	@3,3 93x15	visible,disabled	""
+ok	  0x0007023a	id=1040	Button:pushbutton	@239,124 75x23	visible,disabled,tabstop	"&Advanced..."
+ok	  0x0007023e	id=-1	Button:groupbox	@11,41 311x52	visible	""
+ok	  0x0007023c	id=-1	Button:groupbox	@11,102 311x52	visible	""
+SUMMARY	outside=0 ghost=0 covered=0 disabled=7
+TAB   1	0x0006022a	id=1	Button	onscreen	"&OK"
+TAB   2	0x00040256	id=2	Button	onscreen	"&Cancel"
+TAB   3	0x00050254	id=1005	Button	onscreen	"Clic&k to select"
+SHOT	e:\crawl\osk\002.bmp 341x242

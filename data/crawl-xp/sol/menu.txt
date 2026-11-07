@@ -1,0 +1,14 @@
+MENU	&Game	id=655691
+MENU	  &Deal  F2	id=1000
+MENU	  -----	id=0 GRAYED
+MENU	  &Undo	id=1001
+MENU	  De&ck...	id=1002
+MENU	  &Options...	id=1003
+MENU	  -----	id=0 GRAYED
+MENU	  E&xit	id=1004
+MENU	&Help	id=393543
+MENU	  &Contents  F1	id=65506
+MENU	  &Search for Help on...	id=65507
+MENU	  &How to Use Help	id=65508
+MENU	  -----	id=0 GRAYED
+MENU	  &About Solitaire	id=2000

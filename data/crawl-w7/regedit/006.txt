@@ -1,0 +1,19 @@
+VIA	menu [&Find... Ctrl+F]
+WINDOW	0x4b0702b2	#32770	window=412x194 client=396x156	"Find"
+ok	  0x368500be	id=65535	Static	@9,13 60x13	visible	"Fi&nd what:"
+ok	  0x36fd0240	id=1150	Edit	@75,10 225x23	visible,tabstop	""
+ok	  0x008402c8	id=1152	Button:checkbox	@18,62 53x16	visible,tabstop	"&Keys"
+ok	  0x2ffa01f6	id=1153	Button:checkbox	@18,81 53x16	visible,tabstop	"&Values"
+ok	  0x4412024c	id=1154	Button:checkbox	@18,101 53x16	visible,tabstop	"&Data"
+ok	  0x005c0270	id=1151	Button:checkbox	@9,130 164x16	visible,tabstop	"Match &whole string only"
+ok	  0x0027029a	id=1	Button:pushbutton	@312,10 75x23	visible,disabled,tabstop	"&Find Next"
+ok	  0x00240290	id=2	Button:pushbutton	@312,39 75x23	visible,tabstop	"Cancel"
+ok	  0x0c170244	id=1160	Button:groupbox	@9,42 291x81	visible	"Look at"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=1
+TAB   1	0x36fd0240	id=1150	Edit	onscreen	""
+TAB   2	0x008402c8	id=1152	Button	onscreen	"&Keys"
+TAB   3	0x2ffa01f6	id=1153	Button	onscreen	"&Values"
+TAB   4	0x4412024c	id=1154	Button	onscreen	"&Data"
+TAB   5	0x005c0270	id=1151	Button	onscreen	"Match &whole string only"
+TAB   6	0x00240290	id=2	Button	onscreen	"Cancel"
+SHOT	C:\winsecrets\crawl\regedit\006.bmp 412x194

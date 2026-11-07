@@ -1,0 +1,18 @@
+VIA	menu [&Find... Ctrl+F]
+WINDOW	0x0002015c	#32770	window=360x133 client=354x101	"Find"
+ok	  0x00010160	id=65535	Static	@6,13 63x13	visible	"Fi&nd what:"
+ok	  0x00010162	id=1152	Edit	@71,11 192x20	visible,tabstop	""
+GHOST	  0x00010164	id=1040	Button:checkbox	@6,42 150x20	hidden,disabled,tabstop	"Match &whole word only"
+ok	  0x00010166	id=1041	Button:checkbox	@6,68 96x20	visible,tabstop	"Match &case"
+ok	  0x00010168	id=1072	Button:groupbox	@161,42 102x46	visible	"Direction"
+ok	  0x0001016a	id=1056	Button:radio	@167,62 38x20	visible	"&Up"
+ok	  0x0001016c	id=1057	Button:radio	@207,62 53x20	visible,tabstop	"&Down"
+ok	  0x0001016e	id=1	Button:pushbutton	@273,8 75x23	visible,disabled,tabstop	"&Find Next"
+ok	  0x00010170	id=2	Button:pushbutton	@273,37 75x23	visible,tabstop	"Cancel"
+GHOST	  0x00010172	id=1038	Button:pushbutton	@273,73 75x23	hidden,disabled,tabstop	"&Help"
+SUMMARY	outside=0 ghost=2 covered=0 disabled=1
+TAB   1	0x00010162	id=1152	Edit	onscreen	""
+TAB   2	0x00010166	id=1041	Button	onscreen	"Match &case"
+TAB   3	0x0001016c	id=1057	Button	onscreen	"&Down"
+TAB   4	0x00010170	id=2	Button	onscreen	"Cancel"
+SHOT	e:\crawl\notepad\004.bmp 360x133

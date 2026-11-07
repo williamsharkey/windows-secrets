@@ -1,0 +1,47 @@
+VIA	main window
+WINDOW	0x00030108	SciCalc	window=260x260 client=254x208	"Calculator"
+ok	  0x000300ec	id=403	Edit	@8,2 239x23	visible,tabstop	"0. "
+ok	  0x000300ee	id=113	Button:pushbutton	@8,73 36x29	visible	"MC"
+ok	  0x00030100	id=114	Button:pushbutton	@8,106 36x29	visible	"MR"
+ok	  0x000300f8	id=115	Button:pushbutton	@8,138 36x29	visible	"MS"
+ok	  0x000300f6	id=116	Button:pushbutton	@8,171 36x29	visible	"M+"
+ok	  0x000300fc	id=131	Button:pushbutton	@54,73 36x29	visible	"7"
+ok	  0x000300fe	id=128	Button:pushbutton	@54,106 36x29	visible	"4"
+ok	  0x000400fa	id=125	Button:pushbutton	@54,138 36x29	visible	"1"
+ok	  0x00030132	id=124	Button:pushbutton	@54,171 36x29	visible	"0"
+ok	  0x00030134	id=132	Button:pushbutton	@93,73 36x29	visible	"8"
+ok	  0x00030136	id=129	Button:pushbutton	@93,106 36x29	visible	"5"
+ok	  0x00030138	id=126	Button:pushbutton	@93,138 36x29	visible	"2"
+ok	  0x0003013a	id=80	Button:pushbutton	@93,171 36x29	visible	"+/-"
+ok	  0x00030130	id=133	Button:pushbutton	@132,73 36x29	visible	"9"
+ok	  0x000400f0	id=130	Button:pushbutton	@132,106 36x29	visible	"6"
+ok	  0x00020150	id=127	Button:pushbutton	@132,138 36x29	visible	"3"
+ok	  0x0002014e	id=85	Button:pushbutton	@132,171 36x29	visible	"."
+ok	  0x0002014c	id=90	Button:pushbutton	@171,73 36x29	visible	"/"
+ok	  0x0002014a	id=91	Button:pushbutton	@171,106 36x29	visible	"*"
+ok	  0x00020148	id=93	Button:pushbutton	@171,138 36x29	visible	"-"
+ok	  0x00020146	id=92	Button:pushbutton	@171,171 36x29	visible	"+"
+ok	  0x00020144	id=112	Button:pushbutton	@210,171 36x29	visible	"="
+ok	  0x00020142	id=83	Button:pushbutton	@54,37 63x29	visible	"Backspace"
+ok	  0x00020140	id=82	Button:pushbutton	@120,37 62x29	visible	"CE"
+ok	  0x0002013e	id=81	Button:pushbutton	@185,37 62x29	visible	"C"
+ok	  0x0002013c	id=401	Static	@12,39 27x26	visible	""
+ok	  0x000400f4	id=107	Button:pushbutton	@210,138 36x29	visible	"1/x"
+ok	  0x000400f2	id=103	Button:pushbutton	@210,73 36x29	visible	"sqt"
+ok	  0x00040104	id=109	Button:pushbutton	@210,106 36x29	visible	"%"
+ok	  0x00030118	id=1000	Static	@0,206 2x2	visible	""
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x000300ec	id=403	Edit	onscreen	"0. "
+MENU	&Edit	id=131317
+MENU	  &Copy Ctrl+C	id=300
+MENU	  &Paste Ctrl+V	id=301
+MENU	&View	id=131315
+MENU	  S&tandard	id=305 CHECKED
+MENU	  &Scientific	id=304
+MENU	  -----	id=0 GRAYED
+MENU	  D&igit grouping	id=303
+MENU	&Help	id=131313
+MENU	  &Help Topics 	id=317
+MENU	  -----	id=0 GRAYED
+MENU	  &About Calculator	id=302
+SHOT	e:\crawl\calc\001.bmp 260x260

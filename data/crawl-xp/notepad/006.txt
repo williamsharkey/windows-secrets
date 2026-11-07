@@ -1,0 +1,11 @@
+VIA	menu [&Go To... Ctrl+G]
+WINDOW	0x0004015c	#32770	window=276x125 client=270x93	"Goto line"
+ok	  0x00020174	id=1200	Static	@11,15 75x16	visible	"&Line Number:"
+ok	  0x00030160	id=258	Edit	@83,11 86x20	visible,tabstop	"1"
+ok	  0x00030162	id=1	Button:pushbutton	@11,55 75x23	visible,tabstop	"OK"
+ok	  0x00030164	id=2	Button:pushbutton	@117,55 75x23	visible,tabstop	"Cancel"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x00030160	id=258	Edit	onscreen	"1"
+TAB   2	0x00030162	id=1	Button	onscreen	"OK"
+TAB   3	0x00030164	id=2	Button	onscreen	"Cancel"
+SHOT	e:\crawl\notepad\006.bmp 276x125

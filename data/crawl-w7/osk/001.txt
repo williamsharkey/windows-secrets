@@ -1,0 +1,6 @@
+VIA	main window
+WINDOW	0x048f0470	OSKMainClass	window=801x225 client=785x187	"On-Screen Keyboard"
+ok	  0x053e03d4	id=0	DirectUIHWND	@0,0 785x187	visible	""
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x053e03d4	id=0	DirectUIHWND	onscreen	""
+SHOT	C:\winsecrets\crawl\osk\001.bmp 801x225

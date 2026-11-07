@@ -1,0 +1,41 @@
+VIA	main window
+WINDOW	0x000200ec	Notepad	window=600x404 client=592x350	"Untitled - Notepad"
+ok	  0x000200ee	id=15	Edit	@0,0 592x350	visible	""
+GHOST	  0x00020102	id=1025	msctls_statusbar32	@0,327 592x23	hidden	""
+SUMMARY	outside=0 ghost=1 covered=0 disabled=0
+TAB   1	0x000200ee	id=15	Edit	onscreen	""
+MENU	&File	id=65749
+MENU	  &New Ctrl+N	id=1
+MENU	  &Open... Ctrl+O	id=2
+MENU	  &Save Ctrl+S	id=3
+MENU	  Save &As...	id=4
+MENU	  -----	id=0 GRAYED
+MENU	  Page Set&up...	id=5
+MENU	  &Print... Ctrl+P	id=6
+MENU	  -----	id=0 GRAYED
+MENU	  E&xit	id=7
+MENU	&Edit	id=65751
+MENU	  &Undo Ctrl+Z	id=16
+MENU	  -----	id=0 GRAYED
+MENU	  Cu&t Ctrl+X	id=768 GRAYED
+MENU	  &Copy Ctrl+C	id=769 GRAYED
+MENU	  &Paste Ctrl+V	id=770 GRAYED
+MENU	  De&lete Del	id=771 GRAYED
+MENU	  -----	id=0 GRAYED
+MENU	  &Find... Ctrl+F	id=21
+MENU	  Find &Next F3	id=22
+MENU	  &Replace... Ctrl+H	id=23
+MENU	  &Go To... Ctrl+G	id=24
+MENU	  -----	id=0 GRAYED
+MENU	  Select &All Ctrl+A	id=25
+MENU	  Time/&Date F5	id=26
+MENU	F&ormat	id=65753
+MENU	  &Word Wrap	id=32
+MENU	  &Font...	id=33
+MENU	&View	id=65755
+MENU	  &Status Bar	id=27
+MENU	&Help	id=65757
+MENU	  &Help Topics	id=64
+MENU	  -----	id=0 GRAYED
+MENU	  &About Notepad	id=65
+SHOT	e:\crawl\notepad\001.bmp 600x404

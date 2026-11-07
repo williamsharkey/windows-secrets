@@ -1,0 +1,20 @@
+VIA	menu [&Preferences...]
+WINDOW	0x0019014a	#32770	window=222x193 client=216x161	"Preferences"
+ok	  0x00160110	id=65535	Button:groupbox	@6,3 134x80	visible	"Window Style:"
+ok	  0x00170136	id=65535	Button:groupbox	@6,86 134x67	visible	"Partner's Message:"
+ok	  0x0016013a	id=203	Button:radio	@14,26 93x16	visible,tabstop	"&Top and Bottom"
+ok	  0x00180134	id=201	Button:radio	@14,54 77x16	visible	"&Side by Side"
+ok	  0x000f014c	id=65535	Button:groupbox	@113,47 8x24	visible	""
+ok	  0x00150130	id=65535	Button:groupbox	@122,47 8x24	visible	""
+ok	  0x00140120	id=65535	Button:groupbox	@113,31 18x15	visible	""
+ok	  0x00110128	id=65535	Button:groupbox	@113,21 18x15	visible	""
+ok	  0x0018011a	id=204	Button:radio	@14,104 123x16	visible,tabstop	"Use &Partner's Font"
+ok	  0x001e0112	id=205	Button:radio	@14,127 101x16	visible	"Use &Own Font"
+ok	  0x001a010e	id=1	Button:pushbutton	@150,8 60x23	visible,tabstop	"OK"
+ok	  0x001a011c	id=2	Button:pushbutton	@150,36 60x23	visible,tabstop	"Cancel"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x0016013a	id=203	Button	onscreen	"&Top and Bottom"
+TAB   2	0x0018011a	id=204	Button	onscreen	"Use &Partner's Font"
+TAB   3	0x001a010e	id=1	Button	onscreen	"OK"
+TAB   4	0x001a011c	id=2	Button	onscreen	"Cancel"
+SHOT	e:\crawl\winchat\002.bmp 222x193

@@ -1,0 +1,8 @@
+VIA	main window
+WINDOW	0x002e02ce	#32770	window=254x184 client=238x146	"Network Connections"
+ok	  0x8b1f02ac	id=2	Button:pushbutton	@142,109 88x26	visible,tabstop	"OK"
+ok	  0x03d00458	id=20	Static	@25,26 32x32	visible	""
+ok	  0xb23102c6	id=65535	Static	@65,26 137x47	visible	"The phonebook is empty.    To add an entry, click OK."
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x8b1f02ac	id=2	Button	onscreen	"OK"
+SHOT	C:\winsecrets\crawl\rasphone\001.bmp 254x184

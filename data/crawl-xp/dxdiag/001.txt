@@ -1,0 +1,9 @@
+VIA	main window
+WINDOW	0x0016012e	#32770	window=500x146 client=494x114	"DirectX Diagnostic Tool"
+ok	  0x000f0136	id=6	Button:pushbutton	@168,80 75x23	visible,tabstop	"&Yes"
+ok	  0x0010011a	id=7	Button:pushbutton	@249,80 75x23	visible,tabstop	"&No"
+ok	  0x000800ec	id=65535	Static	@15,11 473x54	visible	"Do you want to allow DxDiag to check if your drivers are digitally signed as logo'd by Microsoft's Windows Hardware Quality Labs (WHQL)?  This may cause Windows to connect to the Internet to download new WHQL certificates.  No information is retrieved from your system.  We recommend answering  Yes  so that DxDiag has more complete information about your system."
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x000f0136	id=6	Button	onscreen	"&Yes"
+TAB   2	0x0010011a	id=7	Button	onscreen	"&No"
+SHOT	e:\crawl\dxdiag\001.bmp 500x146

@@ -1,0 +1,7 @@
+001	outside=0	ghost=0	covered=0	disabled=4	main window	"Cover Page - Fax Cover Page Editor"
+002	outside=0	ghost=5	covered=0	disabled=5	menu [&Print... Ctrl+P]	"Print"
+003	outside=0	ghost=0	covered=0	disabled=8	menu [Page Set&up...]	"Page Setup"
+---	no dialog	menu [F&ont...]
+---	no dialog	menu [&Line, Fill and Color...]
+004	outside=0	ghost=0	covered=0	disabled=0	menu [&About Cover Page Editor]	"About Cover Page Editor"
+END	4 windows recorded

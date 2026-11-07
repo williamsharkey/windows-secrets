@@ -1,0 +1,4 @@
+001	outside=0	ghost=1	covered=0	disabled=0	main window	"Windows Firewall"
+002	outside=0	ghost=1	covered=0	disabled=1	main window > tab 1	"Windows Firewall"
+003	outside=0	ghost=9	covered=0	disabled=0	main window > tab 2	"Windows Firewall"
+END	3 windows recorded

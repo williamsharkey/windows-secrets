@@ -1,0 +1,19 @@
+VIA	menu [Cover &Pages...]
+WINDOW	0x05cf03b8	#32770	window=432x379 client=416x341	"Fax Cover Pages"
+ok	  0x005b0258	id=1253	Static	@12,11 375x333	visible	"Choose the types of information to display on cover pages and customize the layout of each page."
+ok	  0x4b1502b6	id=61337	SysLink	@12,49 300x16	visible,tabstop	"<A>Create or edit a fax cover page </A>"
+ok	  0x056b03b4	id=1212	SysListView32	@11,65 312x242	visible,tabstop	"ListCp"
+ok	    0x041903aa	id=0	SysHeader32	@0,0 308x24	visible	""
+ok	  0x001a0272	id=1239	Button:pushbutton	@332,65 75x23	visible,tabstop	"&New..."
+ok	  0x0c1f0244	id=1238	Button:pushbutton	@332,98 75x23	visible,disabled,tabstop	"&Open..."
+ok	  0x0069024e	id=1244	Button:pushbutton	@332,130 75x23	visible,tabstop	"&Copy..."
+ok	  0x29090212	id=1240	Button:pushbutton	@332,163 75x23	visible,disabled,tabstop	"&Rename"
+ok	  0x001d0254	id=1241	Button:pushbutton	@332,195 75x23	visible,disabled,tabstop	"&Delete"
+ok	  0x003002a8	id=2	Button:pushbutton	@332,294 75x23	visible,tabstop	"Clo&se"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=3
+TAB   1	0x4b1502b6	id=61337	SysLink	onscreen	"<A>Create or edit a fax cover page </A>"
+TAB   2	0x056b03b4	id=1212	SysListView32	onscreen	"ListCp"
+TAB   3	0x001a0272	id=1239	Button	onscreen	"&New..."
+TAB   4	0x0069024e	id=1244	Button	onscreen	"&Copy..."
+TAB   5	0x003002a8	id=2	Button	onscreen	"Clo&se"
+SHOT	C:\winsecrets\crawl\wfs\006.bmp 432x379

@@ -1,0 +1,8 @@
+VIA	main window
+WINDOW	0x00340112	HTML Application Host Window Class	window=730x530 client=722x496	"User Accounts"
+ok	  0x002300fc	id=0	Internet Explorer_Server	@0,0 722x496	visible	""
+ok	    0x002e010a	id=1627972	UserAccounts.Toolbar	@0,0 722x34	visible	""
+ok	      0x002100f6	id=1628048	ATL:ToolbarWindow32	@0,0 722x34	visible	""
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x002300fc	id=0	Internet Explorer_Server	onscreen	""
+SHOT	e:\crawl\cpl-nusrmgr\001.bmp 730x530

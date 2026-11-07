@@ -1,0 +1,4 @@
+001	outside=0	ghost=0	covered=6	disabled=3	main window	"Date and Time Properties"
+002	outside=0	ghost=1	covered=0	disabled=1	main window > tab 1	"Date and Time Properties"
+003	outside=0	ghost=2	covered=0	disabled=7	main window > tab 2	"Date and Time Properties"
+END	3 windows recorded

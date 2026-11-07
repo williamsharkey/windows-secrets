@@ -1,0 +1,8 @@
+VIA	main window
+WINDOW	0x000f010e	#32770	window=497x133 client=491x101	"Sound Recorder"
+ok	  0x000a0150	id=2	Button:pushbutton	@209,67 75x23	visible,tabstop	"OK"
+ok	  0x000c011e	id=20	Static	@11,11 32x32	visible	""
+ok	  0x000d0138	id=65535	Static	@62,11 423x41	visible	"Sound Recorder cannot record or play back because a sound device is not installed. To install a sound device, go to Control Panel, click Printers and Other Hardware, and then click Add Hardware."
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x000a0150	id=2	Button	onscreen	"OK"
+SHOT	e:\crawl\sndrec32\001.bmp 497x133

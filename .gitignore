@@ -1,0 +1,4 @@
+# raw crawl output (bitmaps) stays local; redacted text logs live in data/crawl-*
+data/*-crawl-raw/
+data/*.jsonl
+*.bmp

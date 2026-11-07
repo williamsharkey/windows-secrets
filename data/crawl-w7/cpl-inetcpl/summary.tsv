@@ -1,0 +1,8 @@
+001	outside=0	ghost=3	covered=0	disabled=2	main window	"Internet Properties"
+002	outside=0	ghost=7	covered=0	disabled=4	main window > tab 1	"Internet Properties"
+003	outside=0	ghost=7	covered=0	disabled=2	main window > tab 2	"Internet Properties"
+004	outside=0	ghost=11	covered=0	disabled=1	main window > tab 3	"Internet Properties"
+005	outside=0	ghost=13	covered=0	disabled=3	main window > tab 4	"Internet Properties"
+006	outside=0	ghost=8	covered=0	disabled=1	main window > tab 5	"Internet Properties"
+007	outside=0	ghost=9	covered=0	disabled=1	main window > tab 6	"Internet Properties"
+END	7 windows recorded

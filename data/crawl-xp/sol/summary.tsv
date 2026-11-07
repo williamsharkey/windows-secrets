@@ -1,0 +1,6 @@
+001	outside=0	ghost=0	covered=0	disabled=0	main window	"Solitaire"
+002	outside=0	ghost=0	covered=0	disabled=0	menu [De&ck...]	"Select Card Back"
+003	outside=0	ghost=0	covered=0	disabled=2	menu [&Options...]	"Options"
+004	outside=0	ghost=1	covered=4	disabled=0	menu [&Search for Help on...]	"Solitaire"
+005	outside=0	ghost=0	covered=0	disabled=0	menu [&About Solitaire]	"About Solitaire"
+END	5 windows recorded

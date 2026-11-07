@@ -1,0 +1,11 @@
+VIA	menu [&About System Info...]
+WINDOW	0x00c102cc	#32770	window=361x160 client=345x122	"About"
+ok	  0x002702a6	id=65535	Static	@11,11 32x32	visible	""
+ok	  0x060103d0	id=65535	Static	@56,11 300x13	visible	"System Information"
+ok	  0x8b2c02ac	id=65535	Static	@56,28 300x13	visible	"Microsoft® Windows® Operating System"
+ok	  0x05ae039a	id=401	Static	@56,44 300x13	visible	"Version 6.1.7601"
+ok	  0x003a02a8	id=65535	Static	@56,60 300x13	visible	"© Microsoft Corporation. All rights reserved."
+ok	  0x051d03ca	id=1	Button:pushbutton	@260,91 75x23	visible,tabstop	"OK"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x051d03ca	id=1	Button	onscreen	"OK"
+SHOT	C:\winsecrets\crawl\msinfo32\004.bmp 361x160

@@ -1,0 +1,21 @@
+VIA	menu [S&end...]
+WINDOW	0x000201a6	#32770	window=503x414 client=497x382	"Internet Connection Wizard"
+ok	  0x000101ba	id=0	#32770	@11,69 476x254	visible,tabstop	"Internet Connection Wizard"
+ok	    0x000101bc	id=65535	Static	@32,2 413x26	visible	"When you send e-mail, your name will appear in the From field of the outgoing message. Type your name as you would like it to appear."
+ok	    0x000101be	id=65535	Static	@62,67 90x16	visible	"&Display name:"
+ok	    0x000101c0	id=2186	Edit	@162,65 267x20	visible,tabstop	""
+ok	    0x000101c2	id=65535	Static	@162,91 255x13	visible	"For example: John Smith"
+ZEROSIZE	    0x000101c4	id=65535	NativeFontCtl	@0,0 0x0	visible	""
+COVERED	  0x000101a8	id=12320	SysTabControl32	@11,69 414x5	visible,disabled	""
+ok	    0x000101b8	id=1	msctls_updown32	@380,1 34x17	visible	""
+ok	  0x000101aa	id=12326	Static	@0,335 497x2	visible	""
+ok	  0x000101ac	id=12323	Button:pushbutton	@252,349 75x23	visible,disabled,tabstop	"< &Back"
+ok	  0x000101ae	id=12324	Button:pushbutton	@327,349 75x23	visible,disabled,tabstop	"&Next >"
+GHOST	  0x000101b0	id=12325	Button:pushbutton	@327,349 75x23	hidden,tabstop	"Finish"
+ok	  0x000101b2	id=2	Button:pushbutton	@412,349 75x23	visible,tabstop	"Cancel"
+OUTSIDE	  0x000101b4	id=9	Button:pushbutton	@498,349 75x23	hidden,tabstop	"Help"
+ok	  0x000101b6	id=12327	Static	@0,58 497x2	visible	""
+SUMMARY	outside=0 ghost=1 covered=1 disabled=3
+TAB   1	0x000101c0	id=2186	Edit	onscreen	""
+TAB   2	0x000101b2	id=2	Button	onscreen	"Cancel"
+SHOT	e:\crawl\mspaint\004.bmp 503x414

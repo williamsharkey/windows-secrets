@@ -1,0 +1,16 @@
+VIA	main window
+WINDOW	0x049a0470	#32770	window=459x288 client=443x250	"Create a system repair disc"
+ok	  0x324b01b4	id=-1	Static	@11,122 56x13	visible	"&Drive:"
+ok	  0x1e9801de	id=100	ComboBoxEx32	@66,117 225x22	visible,tabstop	""
+ok	    0x002802a4	id=100	ComboBox	@0,0 225x22	visible	"緐 rive:"
+ok	  0x00350292	id=102	Button:pushbutton	@266,216 84x23	visible,tabstop	"C&reate disc"
+ok	  0x0e5401c4	id=104	Button:pushbutton	@357,216 75x23	visible,tabstop	"Cancel"
+ok	  0x003e02d0	id=-1	Static	@11,49 420x41	visible	"A system repair disc can be used to boot your computer. It also contains Windows system recovery tools that can help you recover Windows from a serious error or restore your computer from a system image."
+ok	  0x04e20374	id=-1	Static	@11,16 437x29	visible	"Select a CD/DVD drive and insert a blank disc into the drive"
+ok	  0x0554035c	id=103	Static	@12,163 375x13	visible	""
+GHOST	  0x002c02a6	id=101	msctls_progress32	@11,180 420x16	hidden	""
+SUMMARY	outside=0 ghost=1 covered=0 disabled=0
+TAB   1	0x1e9801de	id=100	ComboBoxEx32	onscreen	""
+TAB   2	0x00350292	id=102	Button	onscreen	"C&reate disc"
+TAB   3	0x0e5401c4	id=104	Button	onscreen	"Cancel"
+SHOT	C:\winsecrets\crawl\recdisc\001.bmp 459x288

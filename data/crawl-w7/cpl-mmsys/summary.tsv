@@ -1,0 +1,5 @@
+001	outside=0	ghost=0	covered=0	disabled=4	main window	"Sound"
+002	outside=0	ghost=1	covered=0	disabled=4	main window > tab 1	"Sound"
+003	outside=0	ghost=2	covered=0	disabled=6	main window > tab 2	"Sound"
+004	outside=0	ghost=3	covered=0	disabled=1	main window > tab 3	"Sound"
+END	4 windows recorded

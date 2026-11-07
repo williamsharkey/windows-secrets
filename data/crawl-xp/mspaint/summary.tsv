@@ -1,0 +1,19 @@
+001	outside=0	ghost=0	covered=0	disabled=0	main window	"untitled - Paint"
+---	no dialog	menu [From Scanner or &Camera...]
+002	outside=0	ghost=0	covered=0	disabled=0	menu [Page Set&up...]	"untitled - Paint"
+003	outside=0	ghost=0	covered=0	disabled=0	menu [&Print... Ctrl+P]	"Print"
+004	outside=0	ghost=1	covered=1	disabled=3	menu [S&end...]	"Internet Connection Wizard"
+005	outside=0	ghost=5	covered=1	disabled=2	menu [S&end...] > tab 1	"Internet Connection Wizard"
+006	outside=0	ghost=5	covered=1	disabled=2	menu [S&end...] > tab 2	"Internet Connection Wizard"
+007	outside=0	ghost=5	covered=1	disabled=2	menu [S&end...] > tab 3	"Internet Connection Wizard"
+008	outside=0	ghost=5	covered=1	disabled=1	menu [S&end...] > tab 4	"Internet Connection Wizard"
+---	no dialog	menu [C&opy To...]
+009	outside=0	ghost=3	covered=0	disabled=0	menu [Paste &From...]	"Paste From"
+010	outside=0	ghost=0	covered=0	disabled=0	menu [C&ustom...]	"Custom Zoom"
+011	outside=0	ghost=0	covered=0	disabled=3	menu [&Flip/Rotate... Ctrl+R]	"Flip and Rotate"
+012	outside=0	ghost=0	covered=0	disabled=0	menu [&Stretch/Skew... Ctrl+W]	"Stretch and Skew"
+013	outside=4	ghost=0	covered=0	disabled=2	menu [&Attributes... Ctrl+E]	"Attributes"
+014	outside=19	ghost=1	covered=0	disabled=15	menu [&Edit Colors...]	"Edit Colors"
+015	outside=1	ghost=1	covered=0	disabled=1	menu [&Edit Colors...] > pressed [&Define Custom Colors >>]	"Edit Colors"
+016	outside=0	ghost=0	covered=0	disabled=0	menu [&About Paint]	"About Paint"
+END	16 windows recorded

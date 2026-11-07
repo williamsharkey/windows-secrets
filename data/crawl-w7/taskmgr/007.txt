@@ -1,0 +1,12 @@
+VIA	menu [&Select Columns...]
+WINDOW	0x368c00be	#32770	window=394x392 client=378x354	"Select Process Page Columns"
+ok	  0x2c5a00c0	id=1	Button:pushbutton	@210,320 75x23	visible,tabstop	"OK"
+ok	  0xdfea02bc	id=2	Button:pushbutton	@293,320 75x23	visible,tabstop	"Cancel"
+ok	  0x05080308	id=-1	Static	@11,11 357x31	visible	"Select the columns that will appear on the Process page of Task Manager."
+ok	  0x04be04ce	id=245	SysListView32	@11,46 357x260	visible,tabstop	"Columns"
+ZEROSIZE	    0x04940452	id=0	SysHeader32	@0,0 336x0	visible	""
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x2c5a00c0	id=1	Button	onscreen	"OK"
+TAB   2	0xdfea02bc	id=2	Button	onscreen	"Cancel"
+TAB   3	0x04be04ce	id=245	SysListView32	onscreen	"Columns"
+SHOT	C:\winsecrets\crawl\taskmgr\007.bmp 394x392

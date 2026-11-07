@@ -1,0 +1,4 @@
+VIA	main window > tab 12
+WINDOW	0x000f00c4		window=75x23 client=2089881608x2089881702	""
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+SHOT	e:\crawl\cpl-hdwwiz\013.bmp 569x392

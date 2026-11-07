@@ -1,0 +1,55 @@
+VIA	main window
+WINDOW	0x000a0128	ClipBookWClass	window=600x404 client=592x350	"ClipBook Viewer"
+ok	  0x0011011a	id=401	ToolbarWindow32	@-1,-1 594x30	visible	""
+ok	  0x000900ec	id=7	msctls_statusbar32	@0,330 592x20	visible	"Clipboard"
+ok	  0x000800ee	id=3244	MDIClient	@-1,28 594x302	visible	""
+ok	    0x000800f6	id=4100	CVchild	@0,269 160x31	visible,tabstop	"Clipboard"
+OUTSIDE	      0x000800f8	id=200	ListBox	@-1,-1 2x2	hidden	""
+ZEROSIZE	      0x000800fa	id=201	ScrollBar	@-16,-1 17x0	visible	""
+ZEROSIZE	      0x000800fc	id=201	ScrollBar	@-1,-16 0x17	visible	""
+OUTSIDE	      0x000800fe	id=203	ScrollBar	@-16,-16 17x17	visible	""
+ZEROSIZE	      0x00080100	id=204	Button:ownerdraw	@0,0 0x0	hidden	""
+ZEROSIZE	      0x000f0102	id=205	Button:ownerdraw	@0,0 0x0	hidden	""
+ZEROSIZE	  0x001100f0	id=0	CVdummy	@0,0 0x0	hidden	""
+SUMMARY	outside=1 ghost=0 covered=0 disabled=0
+TAB   1	0x0011011a	id=401	ToolbarWindow32	onscreen	""
+MENU	&File	id=1245419
+MENU	  &Open...	id=27
+MENU	  Save &As...	id=28 GRAYED
+MENU	  -----	id=0 GRAYED
+MENU	  &Share...	id=24 GRAYED
+MENU	  S&top Sharing	id=36 GRAYED
+MENU	  -----	id=0 GRAYED
+MENU	  &Connect...	id=30 GRAYED
+MENU	  &Disconnect	id=31 GRAYED
+MENU	  -----	id=0 GRAYED
+MENU	  E&xit	id=21
+MENU	&Edit	id=2162919
+MENU	  &Copy Ctrl+C	id=22 GRAYED
+MENU	  &Paste... Ctrl+V	id=35 GRAYED
+MENU	  Paste to Pa&ge Ctrl+G	id=52 GRAYED
+MENU	  &Delete Del	id=23 GRAYED
+MENU	&Security	id=1245411
+MENU	  &Permissions...	id=49 GRAYED
+MENU	  &Auditing...	id=50 GRAYED
+MENU	  &Owner...	id=51 GRAYED
+MENU	&View	id=1507541
+MENU	  T&oolbar	id=37 CHECKED
+MENU	  &Status Bar	id=38 CHECKED
+MENU	  -----	id=0 GRAYED
+MENU	  Table of &Contents	id=45 GRAYED
+MENU	  Thumb&nails	id=46 GRAYED
+MENU	  Full Pa&ge	id=47 CHECKED
+MENU	&Window	id=655575
+MENU	  &Cascade Shift+F5	id=40
+MENU	  Tile &Horizontally	id=48
+MENU	  &Tile Vertically Shift+F4	id=39
+MENU	  &Arrange Icons	id=41
+MENU	  &Refresh F5	id=44
+MENU	  -----	id=0 GRAYED
+MENU	  &1 Clipboard	id=4100 CHECKED
+MENU	&Help	id=590031
+MENU	  &Contents	id=32
+MENU	  -----	id=0 GRAYED
+MENU	  &About ClipBook Viewer...	id=20
+SHOT	e:\crawl\clipbrd\001.bmp 600x404

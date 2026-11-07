@@ -1,0 +1,11 @@
+VIA	menu [&Add to Favorites...]
+WINDOW	0x4b0902b2	#32770	window=303x144 client=287x106	"Add to Favorites"
+ok	  0x0c190244	id=65535	Static	@11,24 113x13	visible	"&Favorite name:"
+ok	  0x54d802c2	id=1190	Edit	@11,44 180x20	visible,tabstop	"App Paths"
+ok	  0x00180254	id=1	Button:pushbutton	@200,11 75x23	visible,tabstop	"OK"
+ok	  0x00160256	id=2	Button:pushbutton	@200,39 75x23	visible,tabstop	"Cancel"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x54d802c2	id=1190	Edit	onscreen	"App Paths"
+TAB   2	0x00180254	id=1	Button	onscreen	"OK"
+TAB   3	0x00160256	id=2	Button	onscreen	"Cancel"
+SHOT	C:\winsecrets\crawl\regedit\008.bmp 303x144

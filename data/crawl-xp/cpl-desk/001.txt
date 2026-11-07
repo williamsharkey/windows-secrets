@@ -1,0 +1,22 @@
+VIA	main window
+WINDOW	0x000500c4	#32770	window=404x455 client=398x423	"Display Properties"
+ok	  0x000500c6	id=0	#32770	@10,29 378x354	visible,tabstop	"Themes"
+ok	    0x000400d6	id=1104	Static	@11,8 342x39	visible	"A theme is a background plus a set of sounds, icons, and other elements to help you personalize your computer with one click."
+ok	    0x000400d4	id=1105	Static	@11,50 150x15	visible	"&Theme:"
+ok	    0x000400d2	id=1101	ComboBox	@11,68 192x21	visible,tabstop	"Windows XP (Modified)"
+ok	    0x000400ce	id=1107	Button:pushbutton	@210,65 75x23	visible,tabstop	"&Save As..."
+ok	    0x000400cc	id=1108	Button:pushbutton	@291,65 75x23	visible,disabled,tabstop	"&Delete"
+ok	    0x000400ca	id=1106	Static	@11,99 150x15	visible	"Sample:"
+ok	    0x000400d8	id=1103	ThemePreview	@13,116 353x225	visible	"Preview"
+ok	  0x000400bc	id=1	Button:pushbutton	@155,393 75x23	visible,tabstop	"OK"
+ok	  0x000400ba	id=2	Button:pushbutton	@236,393 75x23	visible,tabstop	"Cancel"
+ok	  0x000400b8	id=12321	Button:pushbutton	@317,393 75x23	visible,disabled,tabstop	"&Apply"
+OUTSIDE	  0x000400b6	id=9	Button:pushbutton	@398,393 75x23	hidden,tabstop	"Help"
+ok	  0x000400e0	id=12320	SysTabControl32	@6,7 386x380	visible,tabstop	""
+SUMMARY	outside=0 ghost=0 covered=0 disabled=2
+TAB   1	0x000400d2	id=1101	ComboBox	onscreen	"Windows XP (Modified)"
+TAB   2	0x000400ce	id=1107	Button	onscreen	"&Save As..."
+TAB   3	0x000400bc	id=1	Button	onscreen	"OK"
+TAB   4	0x000400ba	id=2	Button	onscreen	"Cancel"
+TAB   5	0x000400e0	id=12320	SysTabControl32	onscreen	""
+SHOT	e:\crawl\cpl-desk\001.bmp 404x455

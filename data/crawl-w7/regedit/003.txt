@@ -1,0 +1,22 @@
+VIA	menu [&Unload Hive...]
+WINDOW	0xe8cf02c0	#32770	window=449x131 client=433x93	"Confirm Unload Hive"
+ok	  0x00130272	id=0	DirectUIHWND	@0,0 433x93	visible	""
+ZEROSIZE	    0x0d0701fc	id=0	CtrlNotifySink	@0,0 0x0	hidden	""
+ZEROSIZE	      0x00af02cc	id=0	ScrollBar	@0,0 0x0	hidden	""
+ZEROSIZE	    0x4e8801e4	id=0	CtrlNotifySink	@0,0 0x0	hidden	""
+ZEROSIZE	      0x002702ce	id=0	ScrollBar	@0,0 0x0	hidden	""
+ZEROSIZE	    0x75eb031c	id=0	CtrlNotifySink	@52,15 0x0	hidden	""
+ZEROSIZE	      0x7cae01f2	id=0	ScrollBar	@0,0 0x0	hidden	""
+ZEROSIZE	    0xc7c701ec	id=0	CtrlNotifySink	@52,15 0x0	hidden	""
+ZEROSIZE	      0x4e2502ca	id=0	ScrollBar	@0,0 0x0	hidden	""
+ZEROSIZE	    0xcce200fe	id=0	CtrlNotifySink	@52,15 0x0	hidden	""
+ZEROSIZE	      0x2c5500c0	id=0	SysLink	@0,0 0x0	hidden	""
+ZEROSIZE	    0x05030308	id=0	CtrlNotifySink	@52,25 0x0	hidden	""
+ZEROSIZE	      0x1ea20232	id=0	SysLink	@0,0 0x0	hidden	""
+ok	    0x03250274	id=0	CtrlNotifySink	@281,61 68x23	visible	""
+ok	      0xdfe502bc	id=0	Button:pushbutton	@0,0 68x23	visible	"&Yes"
+ok	    0x8927019c	id=0	CtrlNotifySink	@355,61 68x23	visible	""
+ok	      0x3cf901fa	id=0	Button:pushbutton	@0,0 68x23	visible	"&No"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x00130272	id=0	DirectUIHWND	onscreen	""
+SHOT	C:\winsecrets\crawl\regedit\003.bmp 449x131

@@ -1,0 +1,17 @@
+VIA	menu [Fax &Accounts...]
+WINDOW	0x290f0212	#32770	window=466x314 client=450x276	"Fax Accounts"
+ok	  0xc56901ca	id=4102	Static	@8,8 435x33	visible	"To send or receive a fax, you need to have an account. If you add more than one (for example, if you connect to a fax server and a modem), choose one to use by default."
+ok	  0x8ac301d2	id=4101	SysListView32	@8,49 338x179	visible,tabstop	""
+ok	    0x83ee01d6	id=0	SysHeader32	@0,0 334x24	visible	""
+ok	  0x1e8a01de	id=4106	Button:pushbutton	@353,49 90x24	visible,tabstop	"&Add..."
+ok	  0x0e4801c4	id=4108	Button:pushbutton	@353,81 90x24	visible,disabled,tabstop	"&Remove"
+ok	  0x892b019c	id=4109	Button:pushbutton	@353,114 90x24	visible,disabled,tabstop	"Set as &Default"
+ok	  0x001b02a4	id=4110	Static	@8,236 435x2	visible	""
+ok	  0xcce600fe	id=2	Button:pushbutton	@353,244 90x24	visible,tabstop	"Close"
+ok	  0x62910112	id=4200	SysLink	@8,250 270x13	visible,tabstop	"<A>Set up your computer to send or receive faxes </A>"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=2
+TAB   1	0x8ac301d2	id=4101	SysListView32	onscreen	""
+TAB   2	0x1e8a01de	id=4106	Button	onscreen	"&Add..."
+TAB   3	0xcce600fe	id=2	Button	onscreen	"Close"
+TAB   4	0x62910112	id=4200	SysLink	onscreen	"<A>Set up your computer to send or receive faxes </A>"
+SHOT	C:\winsecrets\crawl\wfs\011.bmp 466x314

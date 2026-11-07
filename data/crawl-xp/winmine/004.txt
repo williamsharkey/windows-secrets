@@ -1,0 +1,17 @@
+VIA	menu [&Search for Help on...]
+WINDOW	0x0009014e	HH Parent	window=550x450 client=542x416	"Minesweeper"
+ok	  0x000b010e	id=1006	ToolbarWindow32	@0,0 550x40	visible	""
+ok	  0x000c011a	id=0	HH Child	@254,40 288x376	visible	""
+ok	    0x000c0132	id=0	Shell Embedding	@0,0 288x376	visible,tabstop	""
+ok	      0x000b0120	id=0	Shell DocObject View	@0,0 288x376	visible,tabstop	""
+ok	  0x000b010a	id=0	HH SizeBar	@250,40 4x376	visible	""
+ok	  0x000b0116	id=0	HH Child	@0,40 250x376	visible	""
+ok	    0x000b0102	id=1007	SysTabControl32	@0,8 246x368	visible	""
+GHOST	      0x000c0134	id=0	SysTreeView32	@8,26 230x334	hidden	""
+COVERED	    0x00090136	id=3018	Static	@8,34 230x13	visible	"Type in the key&word to find:"
+COVERED	    0x00080154	id=3003	Edit	@8,57 230x21	visible,tabstop	""
+COVERED	    0x0007013c	id=3006	Button:pushbutton	@160,337 78x23	visible,tabstop	"&Display"
+COVERED	    0x000d011c	id=222	hh_kwd_vlist	@8,86 230x243	visible,tabstop	""
+SUMMARY	outside=0 ghost=1 covered=4 disabled=0
+TAB   1	0x000b010e	id=1006	ToolbarWindow32	onscreen	""
+SHOT	e:\crawl\winmine\004.bmp 550x450

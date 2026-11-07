@@ -1,0 +1,4 @@
+001	outside=0	ghost=0	covered=0	disabled=1	main window	"Regional and Language Options"
+002	outside=0	ghost=3	covered=0	disabled=1	main window > tab 1	"Regional and Language Options"
+003	outside=0	ghost=2	covered=0	disabled=1	main window > tab 2	"Regional and Language Options"
+END	3 windows recorded

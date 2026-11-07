@@ -1,0 +1,9 @@
+001	outside=0	ghost=6	covered=0	disabled=0	main window	"Windows Task Manager"
+002	outside=0	ghost=6	covered=0	disabled=0	main window > tab 1	"Windows Task Manager"
+003	outside=0	ghost=6	covered=0	disabled=0	main window > tab 2	"Windows Task Manager"
+004	outside=0	ghost=6	covered=0	disabled=0	main window > tab 3	"Windows Task Manager"
+005	outside=0	ghost=6	covered=0	disabled=0	main window > tab 4	"Windows Task Manager"
+006	outside=0	ghost=6	covered=0	disabled=0	main window > tab 5	"Windows Task Manager"
+007	outside=0	ghost=0	covered=0	disabled=0	menu [&Select Columns...]	"Select Process Page Columns"
+008	outside=0	ghost=0	covered=0	disabled=0	menu [&About Task Manager]	"About Windows Task Manager"
+END	8 windows recorded

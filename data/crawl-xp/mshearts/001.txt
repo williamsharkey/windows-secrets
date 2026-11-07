@@ -1,0 +1,12 @@
+VIA	main window
+WINDOW	0x000c012e	#32770	window=359x113 client=353x81	"The Microsoft Hearts Network"
+ok	  0x000b00f0	id=65535	Static	@23,20 248x13	visible	"Welcome to the Microsoft Hearts Network."
+ok	  0x000a0152	id=65535	Static	@23,44 105x13	visible	"What is your name?"
+ok	  0x000b0108	id=201	Edit	@143,41 98x20	visible,tabstop	""
+ok	  0x000a0110	id=1	Button:pushbutton	@264,11 75x23	visible,tabstop	"OK"
+ok	  0x000d014a	id=2	Button:pushbutton	@264,39 75x23	visible,tabstop	"Quit"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x000b0108	id=201	Edit	onscreen	""
+TAB   2	0x000a0110	id=1	Button	onscreen	"OK"
+TAB   3	0x000d014a	id=2	Button	onscreen	"Quit"
+SHOT	e:\crawl\mshearts\001.bmp 359x113

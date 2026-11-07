@@ -1,0 +1,4 @@
+001	outside=0	ghost=0	covered=0	disabled=1	main window	"Date and Time"
+002	outside=0	ghost=1	covered=0	disabled=9	main window > tab 1	"Date and Time"
+003	outside=0	ghost=2	covered=0	disabled=1	main window > tab 2	"Date and Time"
+END	3 windows recorded

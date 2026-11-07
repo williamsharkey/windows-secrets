@@ -1,0 +1,16 @@
+VIA	menu [&Flip/Rotate... Ctrl+R]
+WINDOW	0x00030220	#32770	window=306x206 client=300x174	"Flip and Rotate"
+ok	  0x00030236	id=65535	Button:groupbox	@11,11 191x153	visible	"Flip or rotate"
+ok	  0x00030234	id=1087	Button:radio	@20,33 116x15	visible,tabstop	"&Flip horizontal"
+ok	  0x00030232	id=1088	Button:radio	@20,54 108x15	visible	"Flip &vertical"
+ok	  0x0003023a	id=1089	Button:radio	@20,75 108x15	visible	"&Rotate by angle"
+ok	  0x0003023e	id=1090	Button:radio	@74,98 45x16	visible,disabled,tabstop	"&90°"
+ok	  0x0003023c	id=1091	Button:radio	@74,119 47x16	visible,disabled	"&180°"
+ok	  0x00030240	id=1092	Button:radio	@74,140 50x16	visible,disabled	"&270°"
+ok	  0x00030242	id=1	Button:pushbutton	@213,11 75x23	visible,tabstop	"OK"
+ok	  0x00030244	id=2	Button:pushbutton	@213,39 75x23	visible,tabstop	"Cancel"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=3
+TAB   1	0x00030234	id=1087	Button	onscreen	"&Flip horizontal"
+TAB   2	0x00030242	id=1	Button	onscreen	"OK"
+TAB   3	0x00030244	id=2	Button	onscreen	"Cancel"
+SHOT	e:\crawl\mspaint\011.bmp 306x206

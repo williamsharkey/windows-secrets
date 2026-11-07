@@ -1,0 +1,21 @@
+VIA	menu [De&ck...]
+WINDOW	0x00050148	#32770	window=273x214 client=267x182	"Select Card Back"
+ok	  0x00060120	id=54	Button:ownerdraw	@12,7 39x68	visible,tabstop	""
+ok	  0x0006012e	id=55	Button:ownerdraw	@54,7 39x68	visible	""
+ok	  0x0006011c	id=60	Button:ownerdraw	@96,7 39x68	visible	""
+ok	  0x00050116	id=61	Button:ownerdraw	@138,7 39x68	visible	""
+ok	  0x0005010a	id=58	Button:ownerdraw	@180,7 39x68	visible	""
+ok	  0x0005010e	id=59	Button:ownerdraw	@222,7 39x68	visible	""
+ok	  0x00040152	id=56	Button:ownerdraw	@12,78 39x68	visible	""
+ok	  0x00040154	id=57	Button:ownerdraw	@54,78 39x68	visible	""
+ok	  0x00050102	id=62	Button:ownerdraw	@96,78 39x68	visible	""
+ok	  0x0006011e	id=63	Button:ownerdraw	@138,78 39x68	visible	""
+ok	  0x00060130	id=64	Button:ownerdraw	@180,78 39x68	visible	""
+ok	  0x00060132	id=65	Button:ownerdraw	@222,78 39x68	visible	""
+ok	  0x0006013a	id=1	Button:pushbutton	@66,153 60x23	visible,tabstop	"OK"
+ok	  0x00060138	id=2	Button:pushbutton	@141,153 60x23	visible,tabstop	"Cancel"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x00060120	id=54	Button	onscreen	""
+TAB   2	0x0006013a	id=1	Button	onscreen	"OK"
+TAB   3	0x00060138	id=2	Button	onscreen	"Cancel"
+SHOT	e:\crawl\sol\002.bmp 273x214

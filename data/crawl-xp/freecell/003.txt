@@ -1,0 +1,14 @@
+VIA	menu [&Options... F5]
+WINDOW	0x000a0112	#32770	window=311x134 client=305x102	"FreeCell Options"
+ok	  0x00080108	id=1	Button:pushbutton	@222,15 75x23	visible,tabstop	"OK"
+ok	  0x00070110	id=2	Button:pushbutton	@222,42 75x23	visible,tabstop	"Cancel"
+ok	  0x0007011a	id=209	Button:checkbox	@9,15 204x16	visible,tabstop	"Display &messages on illegal moves"
+ok	  0x000b011c	id=210	Button:checkbox	@9,42 204x16	visible,tabstop	"&Quick play (no animation)"
+ok	  0x000c010c	id=211	Button:checkbox	@9,70 204x16	visible,tabstop	"&Double click moves card to free cell"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x00080108	id=1	Button	onscreen	"OK"
+TAB   2	0x00070110	id=2	Button	onscreen	"Cancel"
+TAB   3	0x0007011a	id=209	Button	onscreen	"Display &messages on illegal moves"
+TAB   4	0x000b011c	id=210	Button	onscreen	"&Quick play (no animation)"
+TAB   5	0x000c010c	id=211	Button	onscreen	"&Double click moves card to free cell"
+SHOT	e:\crawl\freecell\003.bmp 311x134

@@ -1,0 +1,43 @@
+VIA	main window
+WINDOW	0x03e30458	#32770	window=924x628 client=908x570	"System Information"
+ok	  0x053c0420	id=201	SysTreeView32	@3,4 296x506	visible,tabstop	"Tree1"
+ok	  0x055703c4	id=202	SysListView32	@302,4 603x506	visible,tabstop	"List1"
+ok	    0x059d0404	id=0	SysHeader32	@0,0 582x24	visible	""
+ok	  0x629b0112	id=208	Static	@25,519 91x17	visible	"Find &what:"
+ok	  0x0632040e	id=203	Edit	@121,515 500x26	visible,tabstop	""
+ok	  0x040a038e	id=209	Button:pushbutton	@626,515 126x30	visible,disabled,tabstop	"Fin&d"
+GHOST	  0xe3750392	id=5	Button:pushbutton	@626,515 126x30	hidden,disabled,tabstop	"Find &Next"
+ok	  0x054103d4	id=3	Button:pushbutton	@757,515 126x30	visible,tabstop	"&Close Find"
+GHOST	  0xc57401ca	id=4	Button:pushbutton	@757,515 126x30	hidden,disabled,tabstop	"&Cancel Find"
+ok	  0x050102e4	id=204	Button:checkbox	@25,546 245x19	visible,tabstop	"&Search selected category only"
+ok	  0x003f02ce	id=205	Button:checkbox	@275,546 245x19	visible,tabstop	"Sea&rch category names only"
+SUMMARY	outside=0 ghost=2 covered=0 disabled=1
+TAB   1	0x053c0420	id=201	SysTreeView32	onscreen	"Tree1"
+TAB   2	0x055703c4	id=202	SysListView32	onscreen	"List1"
+TAB   3	0x0632040e	id=203	Edit	onscreen	""
+TAB   4	0x054103d4	id=3	Button	onscreen	"&Close Find"
+TAB   5	0x050102e4	id=204	Button	onscreen	"&Search selected category only"
+TAB   6	0x003f02ce	id=205	Button	onscreen	"Sea&rch category names only"
+MENU	&File	id=2830696505
+MENU	  &Open... Ctrl+O	id=32768
+MENU	  &Close	id=57602 GRAYED
+MENU	  &Save... Ctrl+S	id=32769
+MENU	  -----	id=0 GRAYED
+MENU	  &Export...	id=32774
+MENU	  -----	id=0 GRAYED
+MENU	  &Print... Ctrl+P	id=57607
+MENU	  -----	id=0 GRAYED
+MENU	  E&xit	id=32770
+MENU	&Edit	id=3119514237
+MENU	  &Copy Ctrl+C	id=57634
+MENU	  &Select All Ctrl+A	id=32784
+MENU	  -----	id=0 GRAYED
+MENU	  Hide &Find Ctrl+F	id=57636
+MENU	&View	id=379716945
+MENU	  &Refresh	id=32778
+MENU	  -----	id=0 GRAYED
+MENU	  Remote &Computer... Ctrl+R	id=32785
+MENU	&Help	id=127336813
+MENU	  &Contents	id=32788
+MENU	  &About System Info...	id=32781
+SHOT	C:\winsecrets\crawl\msinfo32\001.bmp 924x628

@@ -1,0 +1,12 @@
+MENU	&Edit	id=131317
+MENU	  &Copy Ctrl+C	id=300
+MENU	  &Paste Ctrl+V	id=301
+MENU	&View	id=131315
+MENU	  S&tandard	id=305 CHECKED
+MENU	  &Scientific	id=304
+MENU	  -----	id=0 GRAYED
+MENU	  D&igit grouping	id=303
+MENU	&Help	id=131313
+MENU	  &Help Topics 	id=317
+MENU	  -----	id=0 GRAYED
+MENU	  &About Calculator	id=302

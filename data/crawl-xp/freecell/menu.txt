@@ -1,0 +1,17 @@
+MENU	&Game	id=262451
+MENU	  &New Game F2	id=102
+MENU	  &Select Game F3	id=103
+MENU	  &Restart Game	id=107 GRAYED
+MENU	  -----	id=0 GRAYED
+MENU	  S&tatistics... F4	id=105
+MENU	  &Options... F5	id=109
+MENU	  -----	id=0 GRAYED
+MENU	  &Undo F10	id=115 GRAYED
+MENU	  -----	id=0 GRAYED
+MENU	  E&xit	id=108
+MENU	&Help	id=327983
+MENU	  &Contents  F1	id=106
+MENU	  &Search for Help on...	id=110
+MENU	  &How to Use Help	id=111
+MENU	  -----	id=0 GRAYED
+MENU	  &About FreeCell...	id=101

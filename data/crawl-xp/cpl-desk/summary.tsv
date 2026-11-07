@@ -1,0 +1,7 @@
+001	outside=0	ghost=0	covered=0	disabled=2	main window	"Display Properties"
+002	outside=0	ghost=1	covered=0	disabled=1	main window > tab 1	"Display Properties"
+003	outside=0	ghost=2	covered=0	disabled=8	main window > tab 2	"Display Properties"
+004	outside=0	ghost=3	covered=0	disabled=1	main window > tab 3	"Display Properties"
+005	outside=0	ghost=7	covered=0	disabled=1	main window > tab 4	"Display Properties"
+006	outside=0	ghost=7	covered=0	disabled=1	main window > tab 5	"Display Properties"
+END	6 windows recorded

@@ -1,0 +1,16 @@
+VIA	menu [&Options...]
+WINDOW	0x29100212	#32770	window=411x302 client=395x264	"Fax Options"
+ok	  0x1e8b01de	id=0	#32770	@10,29 375x195	visible,tabstop	"General"
+ok	    0x8ac401d2	id=3422	Button:groupbox	@8,8 360x171	visible	"Send/Receive Fax Messages"
+ok	    0x83ef01d6	id=3423	Button:checkbox	@23,33 300x16	visible,tabstop	"&Play sound when new messages arrive"
+ok	  0x62920112	id=1	Button:pushbutton	@152,234 75x23	visible,tabstop	"OK"
+ok	  0xcce700fe	id=2	Button:pushbutton	@233,234 75x23	visible,tabstop	"Cancel"
+ok	  0x001c02a4	id=12321	Button:pushbutton	@314,234 75x23	visible,disabled,tabstop	"&Apply"
+OUTSIDE	  0x892c019c	id=9	Button:pushbutton	@395,234 75x23	hidden,tabstop	"Help"
+ok	  0x0e4901c4	id=12320	SysTabControl32	@6,7 383x221	visible,tabstop	""
+SUMMARY	outside=0 ghost=0 covered=0 disabled=1
+TAB   1	0x83ef01d6	id=3423	Button	onscreen	"&Play sound when new messages arrive"
+TAB   2	0x62920112	id=1	Button	onscreen	"OK"
+TAB   3	0xcce700fe	id=2	Button	onscreen	"Cancel"
+TAB   4	0x0e4901c4	id=12320	SysTabControl32	onscreen	""
+SHOT	C:\winsecrets\crawl\wfs\012.bmp 411x302

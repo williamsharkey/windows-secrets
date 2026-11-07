@@ -1,0 +1,38 @@
+VIA	main window
+WINDOW	0x0020012e	AppClass	window=501x179 client=493x125	"Object Packager - Package"
+ok	  0x0015011a	id=0	PaneClass	@196,24 299x102	visible	""
+ok	  0x00140136	id=0	SubTitleClass	@197,0 297x24	visible	"--Content--"
+ok	    0x00120130	id=0	Static	@110,0 38x22	visible	"View:"
+ok	    0x000c014c	id=527	Button:radio	@148,2 87x20	visible,tabstop	"&Description"
+ok	    0x00150134	id=526	Button:radio	@235,2 120x20	visible,disabled	"&Picture"
+ok	  0x00120152	id=0	SubTitleClass	@0,0 191x24	visible	"--Appearance--"
+ok	    0x0013013a	id=521	Button:pushbutton	@96,2 93x20	visible	"Insert &Icon..."
+ok	  0x00100154	id=0	PaneClass	@-1,24 193x102	visible	""
+SUMMARY	outside=0 ghost=0 covered=0 disabled=1
+TAB   1	0x0015011a	id=0	PaneClass	onscreen	""
+MENU	&File	id=1245469
+MENU	  &New	id=262
+MENU	  &Update	id=257 GRAYED
+MENU	  &Import...	id=258
+MENU	  &Save Contents...	id=259
+MENU	  -----	id=0 GRAYED
+MENU	  E&xit	id=260
+MENU	&Edit	id=1900785
+MENU	  &Undo Ctrl+Z	id=512
+MENU	  -----	id=0 GRAYED
+MENU	  Cu&t Ctrl+X	id=513
+MENU	  &Copy Ctrl+C	id=514
+MENU	  &Delete Del	id=518
+MENU	  &Paste Ctrl+V	id=515
+MENU	  Paste &Link	id=516
+MENU	  Copy Pac&kage	id=525
+MENU	  -----	id=0 GRAYED
+MENU	  Li&nks...	id=520
+MENU	  La&bel...	id=522
+MENU	  Co&mmand Line...	id=523
+MENU	  &Object	id=545
+MENU	&Help	id=2293987
+MENU	  &Help Topics	id=640
+MENU	  -----	id=0 GRAYED
+MENU	  &About Object Packager...	id=643
+SHOT	e:\crawl\packager\001.bmp 501x179

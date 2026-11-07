@@ -1,0 +1,12 @@
+VIA	main window
+WINDOW	0x04900470	AudioRecorderMainFrameTraits	window=406x68 client=390x30	"Sound Recorder"
+ok	  0xcf0303b0	id=0	#32770	@0,0 390x30	visible	""
+ok	    0xe3720392	id=0	ReBarWindow32	@0,0 390x30	visible	""
+ok	      0x0408038e	id=0	ToolbarWindow32	@341,0 49x30	visible	""
+ok	      0x8acd01d2	id=0	msctls_progress32	@188,0 147x30	visible	""
+ZEROSIZE	      0x009d02c8	id=0	ToolbarWindow32	@0,0 0x0	visible	""
+ZEROSIZE	      0x059b0404	id=0	ToolbarWindow32	@0,0 0x0	visible	""
+ok	      0x062e040e	id=0	ToolbarWindow32	@2,0 130x30	visible	""
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0xcf0303b0	id=0	#32770	onscreen	""
+SHOT	C:\winsecrets\crawl\soundrecorder\001.bmp 406x68

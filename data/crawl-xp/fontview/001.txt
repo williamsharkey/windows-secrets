@@ -1,0 +1,8 @@
+VIA	main window
+WINDOW	0x00190138	#32770	window=287x126 client=281x94	"Error"
+ok	  0x00170116	id=2	Button:pushbutton	@104,60 75x23	visible,tabstop	"OK"
+ok	  0x00170132	id=20	Static	@11,11 32x32	visible	""
+ok	  0x000f012c	id=65535	Static	@62,20 213x15	visible	"The requested file  was not a valid font file. "
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x00170116	id=2	Button	onscreen	"OK"
+SHOT	e:\crawl\fontview\001.bmp 287x126

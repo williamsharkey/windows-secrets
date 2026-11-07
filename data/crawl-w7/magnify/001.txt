@@ -1,0 +1,6 @@
+VIA	main window
+WINDOW	0x05990404	MagUIClass	window=219x68 client=203x30	"Magnifier"
+ok	  0xcf0103b0	id=0	DirectUIHWND	@0,0 203x30	visible	""
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0xcf0103b0	id=0	DirectUIHWND	onscreen	""
+SHOT	C:\winsecrets\crawl\magnify\001.bmp 219x68

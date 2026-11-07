@@ -1,0 +1,6 @@
+001	outside=0	ghost=1	covered=0	disabled=1	main window	"Media Player"
+002	outside=0	ghost=0	covered=0	disabled=0	menu [&Selection...]	"Set Selection - Track Mode"
+003	outside=0	ghost=4	covered=0	disabled=0	menu [&1 Video for Windows...]	"Open"
+004	outside=0	ghost=4	covered=0	disabled=0	menu [&3 DirectShow...]	"Open"
+005	outside=0	ghost=0	covered=0	disabled=0	menu [&About Media Player]	"About Media Player"
+END	5 windows recorded

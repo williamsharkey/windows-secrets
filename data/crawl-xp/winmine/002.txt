@@ -1,0 +1,17 @@
+VIA	menu [&Custom...]
+WINDOW	0x000a0148	#32770	window=201x170 client=195x138	"Custom Field"
+ok	  0x000a011a	id=1	Button:pushbutton	@120,33 60x26	visible,tabstop	"OK"
+ok	  0x000a0132	id=2	Button:pushbutton	@120,75 60x26	visible,tabstop	"Cancel"
+ok	  0x000a0138	id=112	Static	@15,36 38x16	visible	"&Height:"
+ok	  0x0009010a	id=141	Edit	@60,33 38x20	visible,tabstop	"9"
+ok	  0x00090116	id=113	Static	@15,60 38x16	visible	"&Width:"
+ok	  0x00090102	id=142	Edit	@60,57 38x20	visible,tabstop	"9"
+ok	  0x000a0134	id=111	Static	@15,85 38x16	visible	"&Mines:"
+ok	  0x0009014a	id=143	Edit	@60,81 38x20	visible,tabstop	"10"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x000a011a	id=1	Button	onscreen	"OK"
+TAB   2	0x000a0132	id=2	Button	onscreen	"Cancel"
+TAB   3	0x0009010a	id=141	Edit	onscreen	"9"
+TAB   4	0x00090102	id=142	Edit	onscreen	"9"
+TAB   5	0x0009014a	id=143	Edit	onscreen	"10"
+SHOT	e:\crawl\winmine\002.bmp 201x170

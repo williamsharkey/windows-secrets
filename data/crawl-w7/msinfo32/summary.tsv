@@ -1,0 +1,5 @@
+001	outside=0	ghost=2	covered=0	disabled=1	main window	"System Information"
+002	outside=0	ghost=6	covered=0	disabled=4	menu [&Print... Ctrl+P]	"Print"
+003	outside=0	ghost=0	covered=0	disabled=2	menu [Remote &Computer... Ctrl+R]	"Remote Computer"
+004	outside=0	ghost=0	covered=0	disabled=0	menu [&About System Info...]	"About"
+END	4 windows recorded

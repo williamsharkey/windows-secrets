@@ -1,0 +1,17 @@
+VIA	menu [Best &Times...]
+WINDOW	0x000b0148	#32770	window=261x154 client=255x122	"Fastest Mine Sweepers"
+ok	  0x000a014a	id=1	Button:pushbutton	@173,89 45x20	visible,tabstop	"OK"
+ok	  0x000b0134	id=707	Button:pushbutton	@38,89 75x20	visible,tabstop	"&Reset Scores"
+ok	  0x000a0102	id=708	Static	@15,24 72x13	visible	"Beginner:"
+ok	  0x000a0116	id=701	Static	@90,24 66x13	visible	"999 seconds"
+ok	  0x000a010a	id=702	Static	@173,24 90x13	visible	"Anonymous"
+ok	  0x000b0138	id=709	Static	@15,41 72x13	visible	"Intermediate:"
+ok	  0x000b0132	id=703	Static	@90,41 66x13	visible	"999 seconds"
+ok	  0x000b011a	id=704	Static	@173,41 90x13	visible	"Anonymous"
+ok	  0x000a010e	id=710	Static	@15,57 72x13	visible	"Expert:"
+ok	  0x0008014e	id=705	Static	@90,57 66x13	visible	"999 seconds"
+ok	  0x000b013a	id=706	Static	@173,57 90x13	visible	"Anonymous"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x000a014a	id=1	Button	onscreen	"OK"
+TAB   2	0x000b0134	id=707	Button	onscreen	"&Reset Scores"
+SHOT	e:\crawl\winmine\003.bmp 261x154

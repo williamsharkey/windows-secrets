@@ -1,0 +1,17 @@
+VIA	menu [C&ustom...]
+WINDOW	0x00020220	#32770	window=306x167 client=300x135	"Custom Zoom"
+ok	  0x00020246	id=1065	Static	@20,11 71x11	visible	"Current zoom:"
+ok	  0x00020244	id=1081	Static	@92,11 74x15	visible	"100%"
+ok	  0x00020242	id=65535	Button:groupbox	@11,33 191x93	visible	"Zoom to"
+ok	  0x00020240	id=1082	Button:radio	@20,62 50x16	visible,tabstop	"&100%"
+ok	  0x0002023c	id=1083	Button:radio	@20,93 50x16	visible	"&200%"
+ok	  0x0002023e	id=1084	Button:radio	@84,62 50x16	visible	"&400%"
+ok	  0x0002023a	id=1085	Button:radio	@84,93 50x16	visible	"&600%"
+ok	  0x00020232	id=1086	Button:radio	@141,62 50x16	visible	"&800%"
+ok	  0x00020234	id=1	Button:pushbutton	@213,11 75x23	visible,tabstop	"OK"
+ok	  0x00020236	id=2	Button:pushbutton	@213,39 75x23	visible,tabstop	"Cancel"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x00020240	id=1082	Button	onscreen	"&100%"
+TAB   2	0x00020234	id=1	Button	onscreen	"OK"
+TAB   3	0x00020236	id=2	Button	onscreen	"Cancel"
+SHOT	e:\crawl\mspaint\010.bmp 306x167

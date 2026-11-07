@@ -1,0 +1,15 @@
+VIA	main window
+WINDOW	0x04e403a8	#32770	window=394x331 client=378x293	"Game Controllers"
+ok	  0x0030029e	id=1164	Static	@47,11 321x33	visible	"These settings help you configure the game controllers installed on your computer."
+ok	  0x00460292	id=1166	Static	@11,11 32x32	visible	""
+ok	  0x033d0274	id=-1	Button:groupbox	@11,55 357x192	visible	"I&nstalled game controllers"
+ok	  0x0459043e	id=1020	SysListView32	@21,72 336x130	visible,tabstop	"List1"
+ok	    0x05a50404	id=0	SysHeader32	@0,0 332x24	visible	""
+ok	  0x05c7034c	id=1002	Button:pushbutton	@260,213 98x23	visible,disabled,tabstop	"&Properties"
+ok	  0x893e019c	id=1311	Button:pushbutton	@156,213 98x23	visible,tabstop	"A&dvanced..."
+ok	  0x369300be	id=1	Button:pushbutton	@293,258 75x23	visible,tabstop	"OK"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=1
+TAB   1	0x0459043e	id=1020	SysListView32	onscreen	"List1"
+TAB   2	0x893e019c	id=1311	Button	onscreen	"A&dvanced..."
+TAB   3	0x369300be	id=1	Button	onscreen	"OK"
+SHOT	C:\winsecrets\crawl\cpl-joy\001.bmp 394x331

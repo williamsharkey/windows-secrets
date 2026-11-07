@@ -1,0 +1,8 @@
+001	outside=0	ghost=0	covered=0	disabled=0	main window	"Registry Editor"
+002	outside=0	ghost=4	covered=0	disabled=0	menu [&Load Hive...]	"Load Hive"
+003	outside=0	ghost=0	covered=0	disabled=0	menu [&Unload Hive...]	"Confirm Unload Hive"
+004	outside=0	ghost=0	covered=0	disabled=0	menu [&Print... Ctrl+P]	"Print"
+---	no dialog	menu [&Permissions...]
+---	no dialog	menu [&Find... Ctrl+F]
+---	no dialog	menu [&About Registry Editor]
+END	4 windows recorded

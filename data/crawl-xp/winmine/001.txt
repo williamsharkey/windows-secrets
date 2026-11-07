@@ -1,0 +1,26 @@
+VIA	main window
+WINDOW	0x000d0112	Minesweeper	window=170x259 client=164x207	"Minesweeper"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x000d0112	id=-1134254304	Minesweeper	onscreen	"Minesweeper"
+MENU	&Game	id=786763
+MENU	  &New F2	id=510
+MENU	  -----	id=0 GRAYED
+MENU	  &Beginner	id=521 CHECKED
+MENU	  &Intermediate	id=522
+MENU	  &Expert	id=523
+MENU	  &Custom...	id=524
+MENU	  -----	id=0 GRAYED
+MENU	  &Marks (?)	id=527 CHECKED
+MENU	  Co&lor	id=529 CHECKED
+MENU	  &Sound	id=526
+MENU	  -----	id=0 GRAYED
+MENU	  Best &Times...	id=528
+MENU	  -----	id=0 GRAYED
+MENU	  E&xit	id=512
+MENU	&Help	id=327997
+MENU	  &Contents F1	id=590
+MENU	  &Search for Help on...	id=591
+MENU	  Using &Help	id=592
+MENU	  -----	id=0 GRAYED
+MENU	  &About Minesweeper...	id=593
+SHOT	e:\crawl\winmine\001.bmp 170x259

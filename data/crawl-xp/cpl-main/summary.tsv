@@ -1,0 +1,6 @@
+001	outside=0	ghost=0	covered=0	disabled=2	main window	"Mouse Properties"
+002	outside=0	ghost=1	covered=0	disabled=3	main window > tab 1	"Mouse Properties"
+003	outside=0	ghost=2	covered=0	disabled=4	main window > tab 2	"Mouse Properties"
+004	outside=0	ghost=3	covered=0	disabled=1	main window > tab 3	"Mouse Properties"
+005	outside=0	ghost=4	covered=0	disabled=1	main window > tab 4	"Mouse Properties"
+END	5 windows recorded

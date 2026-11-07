@@ -1,0 +1,6 @@
+001	outside=0	ghost=0	covered=0	disabled=1	main window	"Accessibility Options"
+002	outside=0	ghost=1	covered=0	disabled=3	main window > tab 1	"Accessibility Options"
+003	outside=0	ghost=2	covered=0	disabled=1	main window > tab 2	"Accessibility Options"
+004	outside=0	ghost=3	covered=0	disabled=1	main window > tab 3	"Accessibility Options"
+005	outside=0	ghost=5	covered=0	disabled=2	main window > tab 4	"Accessibility Options"
+END	5 windows recorded

@@ -1,0 +1,4 @@
+001	outside=0	ghost=4	covered=0	disabled=1	main window	"Power Options Properties"
+002	outside=0	ghost=7	covered=0	disabled=1	main window > tab 1	"Power Options Properties"
+003	outside=0	ghost=7	covered=0	disabled=10	main window > tab 2	"Power Options Properties"
+END	3 windows recorded

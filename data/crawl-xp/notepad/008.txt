@@ -1,0 +1,17 @@
+VIA	menu [&About Notepad]
+WINDOW	0x0006015c	#32770	window=419x354 client=413x322	"About Notepad"
+ok	  0x00020196	id=12297	Static	@11,89 32x33	visible	""
+ok	  0x00020194	id=13568	Static	@53,89 300x16	visible	"Microsoft ® Notepad"
+ok	  0x00020192	id=13579	Static	@53,106 353x16	visible	"Version 5.1 (Build 2600.xpsp.080413-2111 : Service Pack 3)"
+ok	  0x00020190	id=13578	Static	@53,122 315x16	visible	"Copyright © 2007 Microsoft Corporation"
+ok	  0x0002018c	id=13581	Static	@53,138 270x33	visible	""
+ok	  0x0002018e	id=13586	SysLink	@53,171 270x33	visible	"This product is licensed under the terms of the <A>End-User License Agreement</A> to:"
+ok	  0x0002018a	id=13575	Static	@68,203 270x16	visible	"QEMU"
+ok	  0x00020188	id=13576	Static	@68,219 270x16	visible	""
+ok	  0x00020186	id=13095	Static	@53,239 351x2	visible	""
+ok	  0x00020184	id=13570	Static	@53,247 195x16	visible	"Physical memory available to Windows:"
+ok	  0x00020180	id=13571	Static	@251,247 132x16	visible	"523,692 KB"
+ok	  0x00020182	id=1	Button:pushbutton	@330,289 75x23	visible,tabstop	"OK"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x00020182	id=1	Button	onscreen	"OK"
+SHOT	e:\crawl\notepad\008.bmp 419x354

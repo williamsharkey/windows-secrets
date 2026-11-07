@@ -1,0 +1,20 @@
+VIA	main window
+WINDOW	0x00220116	#32770	window=384x370 client=378x338	"Game Controllers"
+ok	  0x000900d8	id=1164	Static	@47,11 321x33	visible	"These settings help you configure the game controllers installed on your computer."
+ok	  0x000900b6	id=1166	Static	@11,11 32x32	visible	""
+ok	  0x000900b8	id=-1	Button:groupbox	@11,55 357x192	visible	"I&nstalled game controllers"
+ok	  0x000900ba	id=1020	SysListView32	@21,72 336x130	visible,tabstop	"List1"
+ok	    0x000c00c8	id=0	SysHeader32	@0,0 332x20	visible	""
+ok	  0x000a00be	id=1011	Button:pushbutton	@53,213 98x23	visible,tabstop	"&Add..."
+ok	  0x000e0068	id=1028	Button:pushbutton	@156,213 98x23	visible,disabled,tabstop	"&Remove"
+ok	  0x000900ca	id=1002	Button:pushbutton	@260,213 98x23	visible,disabled,tabstop	"&Properties"
+ok	  0x000900ce	id=1311	Button:pushbutton	@167,258 98x23	visible,tabstop	"A&dvanced..."
+ok	  0x000900cc	id=1007	Button:pushbutton	@270,258 98x23	visible,tabstop	"&Troubleshoot..."
+ok	  0x000900d0	id=1	Button:pushbutton	@293,304 75x23	visible,tabstop	"OK"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=2
+TAB   1	0x000900ba	id=1020	SysListView32	onscreen	"List1"
+TAB   2	0x000a00be	id=1011	Button	onscreen	"&Add..."
+TAB   3	0x000900ce	id=1311	Button	onscreen	"A&dvanced..."
+TAB   4	0x000900cc	id=1007	Button	onscreen	"&Troubleshoot..."
+TAB   5	0x000900d0	id=1	Button	onscreen	"OK"
+SHOT	e:\crawl\cpl-joy\001.bmp 384x370

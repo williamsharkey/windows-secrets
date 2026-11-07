@@ -1,0 +1,41 @@
+VIA	main window
+WINDOW	0xe7e5020a	Notepad	window=1005x776 client=989x718	"Untitled - Notepad"
+ok	  0x04fe0308	id=15	Edit	@0,0 989x718	visible	""
+GHOST	  0x04e902e4	id=1025	msctls_statusbar32	@0,695 989x23	hidden	""
+SUMMARY	outside=0 ghost=1 covered=0 disabled=0
+TAB   1	0x04fe0308	id=15	Edit	onscreen	""
+MENU	&File	id=236389627
+MENU	  &New Ctrl+N	id=1
+MENU	  &Open... Ctrl+O	id=2
+MENU	  &Save Ctrl+S	id=3
+MENU	  Save &As...	id=4
+MENU	  -----	id=0 GRAYED
+MENU	  Page Set&up...	id=5
+MENU	  &Print... Ctrl+P	id=6
+MENU	  -----	id=0 GRAYED
+MENU	  E&xit	id=7
+MENU	&Edit	id=850396355
+MENU	  &Undo Ctrl+Z	id=16
+MENU	  -----	id=0 GRAYED
+MENU	  Cu&t Ctrl+X	id=768 GRAYED
+MENU	  &Copy Ctrl+C	id=769 GRAYED
+MENU	  &Paste Ctrl+V	id=770 GRAYED
+MENU	  De&lete Del	id=771 GRAYED
+MENU	  -----	id=0 GRAYED
+MENU	  &Find... Ctrl+F	id=21
+MENU	  Find &Next F3	id=22
+MENU	  &Replace... Ctrl+H	id=23
+MENU	  &Go To... Ctrl+G	id=24
+MENU	  -----	id=0 GRAYED
+MENU	  Select &All Ctrl+A	id=25
+MENU	  Time/&Date F5	id=26
+MENU	F&ormat	id=228066517
+MENU	  &Word Wrap	id=32
+MENU	  &Font...	id=33
+MENU	&View	id=2709521547
+MENU	  &Status Bar	id=27 GRAYED
+MENU	&Help	id=260310007
+MENU	  View &Help	id=64
+MENU	  -----	id=0 GRAYED
+MENU	  &About Notepad	id=65
+SHOT	C:\winsecrets\crawl\notepad\001.bmp 1005x776

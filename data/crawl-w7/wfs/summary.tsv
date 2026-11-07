@@ -1,0 +1,20 @@
+001	outside=0	ghost=5	covered=0	disabled=0	main window	"Windows Fax and Scan"
+002	outside=0	ghost=1	covered=0	disabled=0	menu [&Fax...]	"Fax Setup"
+003	outside=0	ghost=0	covered=0	disabled=0	menu [&Scan...]	"Windows Fax and Scan"
+004	outside=0	ghost=0	covered=0	disabled=0	menu [Fax from Sca&nner...]	"Windows Fax and Scan"
+005	outside=0	ghost=5	covered=0	disabled=5	menu [&Print...]	"Print"
+006	outside=0	ghost=0	covered=0	disabled=3	menu [Cover &Pages...]	"Fax Cover Pages"
+---	no dialog	menu [&Contacts...]
+---	no dialog	menu [Fax Status &Monitor...]
+---	no dialog	menu [&Receive a Fax Now...]
+007	outside=0	ghost=0	covered=0	disabled=10	menu [&Fax Settings...]	"Fax Settings"
+008	outside=0	ghost=1	covered=0	disabled=1	menu [&Fax Settings...] > tab 1	"Fax Settings"
+009	outside=0	ghost=3	covered=0	disabled=1	menu [&Fax Settings...] > tab 2	"Fax Settings"
+010	outside=0	ghost=11	covered=0	disabled=3	menu [&Fax Settings...] > tab 3	"Fax Settings"
+011	outside=0	ghost=0	covered=0	disabled=2	menu [Fax &Accounts...]	"Fax Accounts"
+012	outside=0	ghost=0	covered=0	disabled=1	menu [&Options...]	"Fax Options"
+013	outside=0	ghost=1	covered=0	disabled=5	menu [&Options...] > tab 1	"Fax Options"
+014	outside=0	ghost=2	covered=0	disabled=1	menu [&Options...] > tab 2	"Fax Options"
+015	outside=0	ghost=3	covered=0	disabled=1	menu [&Options...] > tab 3	"Fax Options"
+016	outside=0	ghost=0	covered=0	disabled=0	menu [&About Windows Fax and Scan]	"About Windows Fax and Scan"
+END	16 windows recorded

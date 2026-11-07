@@ -1,0 +1,17 @@
+VIA	menu [&About Task Manager]
+WINDOW	0x368d00be	#32770	window=474x412 client=458x374	"About Windows Task Manager"
+ok	  0x04bf04ce	id=13095	Static	@15,83 426x2	visible	""
+ok	  0x04950452	id=12297	Static	@11,100 32x33	visible	""
+ok	  0x05090308	id=13568	Static	@53,100 345x16	visible	"Microsoft Windows"
+ok	  0xdfeb02bc	id=13579	Static	@53,116 398x16	visible	"Version 6.1 (Build 7601: Service Pack 1)"
+ok	  0x2c5b00c0	id=13578	Static	@53,132 360x16	visible	"Copyright © 2009 Microsoft Corporation.  All rights reserved."
+ok	  0x0484049a	id=13587	Static	@53,148 360x65	visible	"The Windows 7 Professional operating system and its user interface are protected by trademark and other pending or existing intellectual property rights in the United States and other countries."
+ok	  0x04df04b8	id=13581	Static	@53,213 315x33	visible	""
+ok	  0x047704ee	id=13586	SysLink	@53,246 315x33	visible,tabstop	"This product is licensed under the <A>Microsoft Software License Terms</A> to:"
+ok	  0x03a0047e	id=13575	Static	@68,278 315x16	visible	"wm"
+ok	  0x03ea04ca	id=13576	Static	@68,295 315x16	visible	""
+ok	  0x031604ec	id=1	Button:pushbutton	@375,342 75x23	visible,tabstop	"OK"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x047704ee	id=13586	SysLink	onscreen	"This product is licensed under the <A>Microsoft Software License Terms</A> to:"
+TAB   2	0x031604ec	id=1	Button	onscreen	"OK"
+SHOT	C:\winsecrets\crawl\taskmgr\008.bmp 474x412

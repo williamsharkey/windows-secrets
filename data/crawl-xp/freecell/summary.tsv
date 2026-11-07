@@ -1,0 +1,6 @@
+001	outside=0	ghost=0	covered=0	disabled=0	main window	"FreeCell"
+002	outside=0	ghost=0	covered=0	disabled=0	menu [S&tatistics... F4]	"FreeCell Statistics"
+003	outside=0	ghost=0	covered=0	disabled=0	menu [&Options... F5]	"FreeCell Options"
+004	outside=0	ghost=1	covered=4	disabled=0	menu [&Search for Help on...]	"FreeCell"
+005	outside=0	ghost=0	covered=0	disabled=0	menu [&About FreeCell...]	"About FreeCell"
+END	5 windows recorded

@@ -1,0 +1,17 @@
+VIA	main window
+WINDOW	0x0e5801c4	NativeHWNDHost	window=523x485 client=507x447	"Stored User Names and Passwords"
+ok	  0x1e9d01de	id=0	DirectUIHWND	@0,0 507x447	visible	""
+ok	    0x004302d0	id=0	CtrlNotifySink	@354,415 68x23	visible	""
+ok	      0x05bd034c	id=0	Button:pushbutton	@0,0 68x23	visible	"&Next"
+ZEROSIZE	    0x052503ce	id=0	CtrlNotifySink	@0,0 0x0	hidden	""
+ZEROSIZE	      0x0558035c	id=0	Button:pushbutton	@0,0 0x0	hidden,disabled	"&Finish"
+ok	    0x06120336	id=0	CtrlNotifySink	@429,415 68x23	visible	""
+ok	      0x003002a6	id=0	Button:pushbutton	@0,0 68x23	visible	"Cancel"
+ok	    0x04e60374	id=0	CtrlNotifySink	@38,93 450x294	visible	""
+ok	      0x03340274	id=0	#32770	@0,0 450x294	visible,tabstop	""
+ok	        0x04fe032a	id=1002	Button:radio	@15,0 420x16	visible,tabstop	"Back up your stored user names and passwords"
+ok	        0x83ff01d6	id=1003	Button:radio	@15,89 420x16	visible	"Restore your stored user names and passwords"
+ok	        0xc7ce01ec	id=-1	Static	@30,20 405x65	visible	"If your user names and passwords are lost, damaged, or destroyed then you can use this backup to restore them. You can also use this backup to transfer your user names and passwords to other computers."
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x1e9d01de	id=0	DirectUIHWND	onscreen	""
+SHOT	C:\winsecrets\crawl\credwiz\001.bmp 523x485

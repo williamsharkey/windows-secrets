@@ -1,0 +1,10 @@
+VIA	menu [&Print... Ctrl+P]
+WINDOW	0x00010152	#32770	window=450x126 client=444x94	"Print"
+ok	  0x00010154	id=6	Button:pushbutton	@144,60 75x23	visible,tabstop	"&Yes"
+ok	  0x00010156	id=7	Button:pushbutton	@225,60 75x23	visible,tabstop	"&No"
+ok	  0x00010158	id=20	Static	@11,11 32x32	visible	""
+ok	  0x0001015a	id=65535	Static	@62,15 377x28	visible	"Before you can perform printer-related tasks such as page setup or printing a document, you need to install a printer. Do you want to install a printer now?"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x00010154	id=6	Button	onscreen	"&Yes"
+TAB   2	0x00010156	id=7	Button	onscreen	"&No"
+SHOT	e:\crawl\notepad\003.bmp 450x126

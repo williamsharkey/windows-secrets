@@ -1,0 +1,17 @@
+VIA	menu [&About Windows Fax and Scan]
+WINDOW	0x29110212	#32770	window=474x412 client=458x374	"About Windows Fax and Scan"
+ok	  0x0e4a01c4	id=13095	Static	@15,83 426x2	visible	""
+ok	  0x892d019c	id=12297	Static	@11,100 32x33	visible	""
+ok	  0x001d02a4	id=13568	Static	@53,100 345x16	visible	"Microsoft Windows"
+ok	  0xcce800fe	id=13579	Static	@53,116 398x16	visible	"Version 6.1 (Build 7601: Service Pack 1)"
+ok	  0x62930112	id=13578	Static	@53,132 360x16	visible	"Copyright © 2009 Microsoft Corporation.  All rights reserved."
+ok	  0x1e8c01de	id=13587	Static	@53,148 360x65	visible	"The Windows 7 Professional operating system and its user interface are protected by trademark and other pending or existing intellectual property rights in the United States and other countries."
+ok	  0x83f001d6	id=13581	Static	@53,213 315x33	visible	""
+ok	  0x8ac501d2	id=13586	SysLink	@53,246 315x33	visible,tabstop	"This product is licensed under the <A>Microsoft Software License Terms</A> to:"
+ok	  0xc56b01ca	id=13575	Static	@68,278 315x16	visible	"wm"
+ok	  0x002602ae	id=13576	Static	@68,295 315x16	visible	""
+ok	  0x08d6023c	id=1	Button:pushbutton	@375,342 75x23	visible,tabstop	"OK"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x8ac501d2	id=13586	SysLink	onscreen	"This product is licensed under the <A>Microsoft Software License Terms</A> to:"
+TAB   2	0x08d6023c	id=1	Button	onscreen	"OK"
+SHOT	C:\winsecrets\crawl\wfs\016.bmp 474x412

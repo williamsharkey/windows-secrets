@@ -1,0 +1,5 @@
+001	outside=0	ghost=1	covered=0	disabled=1	main window	"Region and Language"
+002	outside=0	ghost=1	covered=0	disabled=1	main window > tab 1	"Region and Language"
+003	outside=0	ghost=15	covered=0	disabled=1	main window > tab 2	"Region and Language"
+004	outside=0	ghost=3	covered=0	disabled=1	main window > tab 3	"Region and Language"
+END	4 windows recorded

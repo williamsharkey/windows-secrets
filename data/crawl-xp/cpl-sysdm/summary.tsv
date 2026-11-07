@@ -1,0 +1,8 @@
+001	outside=0	ghost=2	covered=0	disabled=1	main window	"System Properties"
+002	outside=0	ghost=3	covered=0	disabled=1	main window > tab 1	"System Properties"
+003	outside=0	ghost=2	covered=0	disabled=1	main window > tab 2	"System Properties"
+004	outside=0	ghost=3	covered=0	disabled=1	main window > tab 3	"System Properties"
+005	outside=0	ghost=4	covered=0	disabled=6	main window > tab 4	"System Properties"
+006	outside=0	ghost=7	covered=0	disabled=4	main window > tab 5	"System Properties"
+007	outside=0	ghost=6	covered=0	disabled=2	main window > tab 6	"System Properties"
+END	7 windows recorded

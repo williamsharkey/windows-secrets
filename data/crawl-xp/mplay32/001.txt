@@ -1,0 +1,37 @@
+VIA	main window
+WINDOW	0x001d010c	MPlayer	window=400x127 client=392x73	"Media Player"
+ok	  0x00170152	id=0	msctls_trackbar32	@4,2 348x30	visible,tabstop	""
+ok	  0x001b0148	id=301	ToolbarWindow32	@2,48 172x27	visible	""
+ok	  0x000e012c	id=303	ToolbarWindow32	@352,4 39x21	visible	""
+ok	  0x00160132	id=302	ToolbarWindow32	@180,48 52x27	visible	""
+ok	  0x00160116	id=0	MPlayerTrackMap	@4,32 388x14	visible,disabled	""
+GHOST	  0x00180138	id=304	msctls_statusbar32	@240,50 149x21	hidden	""
+SUMMARY	outside=0 ghost=1 covered=0 disabled=1
+TAB   1	0x00170152	id=0	msctls_trackbar32	onscreen	""
+MENU	&File	id=3211557
+MENU	  &Open...	id=100
+MENU	  &Close	id=101
+MENU	  -----	id=0 GRAYED
+MENU	  E&xit	id=102
+MENU	&Edit	id=2228465
+MENU	  &Copy Object  Ctrl+C	id=110
+MENU	  -----	id=0 GRAYED
+MENU	  &Options  Ctrl+O	id=111
+MENU	  &Selection...	id=112
+MENU	&Device	id=3408163
+MENU	  &1 Video for Windows...	id=401
+MENU	  &2 CD Audio	id=402
+MENU	  &3 DirectShow...	id=403
+MENU	  -----	id=0 GRAYED
+MENU	  &Properties	id=120
+MENU	  -----	id=0 GRAYED
+MENU	  &Volume Control	id=121
+MENU	&Scale	id=1769757
+MENU	  &Time	id=133
+MENU	  &Frames	id=132
+MENU	  T&racks	id=134
+MENU	&Help	id=1048779
+MENU	  &Help Topics	id=140
+MENU	  -----	id=0 GRAYED
+MENU	  &About Media Player	id=143
+SHOT	e:\crawl\mplay32\001.bmp 400x127

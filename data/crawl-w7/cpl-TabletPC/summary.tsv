@@ -1,0 +1,4 @@
+001	outside=0	ghost=0	covered=0	disabled=2	main window	"Pen and Touch"
+002	outside=0	ghost=8	covered=0	disabled=2	main window > tab 1	"Pen and Touch"
+003	outside=0	ghost=4	covered=0	disabled=3	main window > tab 2	"Pen and Touch"
+END	3 windows recorded

@@ -1,0 +1,14 @@
+VIA	menu [Remote &Computer... Ctrl+R]
+WINDOW	0x00c002cc	#32770	window=445x149 client=429x111	"Remote Computer"
+ok	  0x046304a8	id=211	Button:groupbox	@11,5 324x93	visible	"System Information Source"
+ok	  0x051c03ca	id=212	Button:radio	@21,26 150x13	visible,tabstop	"&Local Computer"
+ok	  0x003902a8	id=213	Button:radio	@21,47 191x13	visible	"&Remote Computer on the Network:"
+ok	  0x05ad039a	id=214	Static	@39,68 120x13	visible,disabled	"&Network Machine Name:"
+ok	  0x8b2b02ac	id=215	Edit	@162,65 162x20	visible,disabled,tabstop	""
+ok	  0x060003d0	id=1	Button:pushbutton	@344,11 75x23	visible,tabstop	"OK"
+ok	  0x002602a6	id=2	Button:pushbutton	@344,39 75x23	visible,tabstop	"Cancel"
+SUMMARY	outside=0 ghost=0 covered=0 disabled=2
+TAB   1	0x051c03ca	id=212	Button	onscreen	"&Local Computer"
+TAB   2	0x060003d0	id=1	Button	onscreen	"OK"
+TAB   3	0x002602a6	id=2	Button	onscreen	"Cancel"
+SHOT	C:\winsecrets\crawl\msinfo32\003.bmp 445x149

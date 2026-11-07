@@ -1,0 +1,20 @@
+VIA	main window
+WINDOW	0x04dc03a8	#32770	window=414x461 client=398x423	"Sound"
+ok	  0x0451043e	id=0	#32770	@10,29 378x354	visible,tabstop	"Playback"
+ok	    0x05f9044a	id=-1	Static	@11,11 368x20	visible	"Select a playback device below to modify its settings:"
+ok	    0x325001b4	id=1000	SysListView32	@11,34 357x278	visible,tabstop	""
+ZEROSIZE	      0x002e02a4	id=0	SysHeader32	@0,0 0x0	hidden	""
+ok	    0x004302b0	id=1001	Button:pushbutton	@11,323 75x23	visible,disabled,tabstop	"&Configure"
+ok	    0x05450420	id=1002	Button:button	@197,323 90x23	visible,disabled,tabstop	"&Set Default"
+ok	    0x05cd02fe	id=1003	Button:pushbutton	@293,323 75x23	visible,disabled,tabstop	"&Properties"
+ok	  0x04a20470	id=1	Button:pushbutton	@155,393 75x23	visible,tabstop	"OK"
+ok	  0x05bf034c	id=2	Button:pushbutton	@236,393 75x23	visible,tabstop	"Cancel"
+ok	  0x004502d0	id=12321	Button:pushbutton	@317,393 75x23	visible,disabled,tabstop	"&Apply"
+OUTSIDE	  0x055a035c	id=9	Button:pushbutton	@398,393 75x23	hidden,tabstop	"Help"
+ok	  0x04e80374	id=12320	SysTabControl32	@6,7 386x380	visible,tabstop	""
+SUMMARY	outside=0 ghost=0 covered=0 disabled=4
+TAB   1	0x325001b4	id=1000	SysListView32	onscreen	""
+TAB   2	0x04a20470	id=1	Button	onscreen	"OK"
+TAB   3	0x05bf034c	id=2	Button	onscreen	"Cancel"
+TAB   4	0x04e80374	id=12320	SysTabControl32	onscreen	""
+SHOT	C:\winsecrets\crawl\cpl-mmsys\001.bmp 414x461

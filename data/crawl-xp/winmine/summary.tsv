@@ -1,0 +1,6 @@
+001	outside=0	ghost=0	covered=0	disabled=0	main window	"Minesweeper"
+002	outside=0	ghost=0	covered=0	disabled=0	menu [&Custom...]	"Custom Field"
+003	outside=0	ghost=0	covered=0	disabled=0	menu [Best &Times...]	"Fastest Mine Sweepers"
+004	outside=0	ghost=1	covered=4	disabled=0	menu [&Search for Help on...]	"Minesweeper"
+005	outside=0	ghost=0	covered=0	disabled=0	menu [&About Minesweeper...]	"About Minesweeper"
+END	5 windows recorded

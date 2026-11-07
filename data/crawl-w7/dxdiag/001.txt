@@ -1,0 +1,9 @@
+VIA	main window
+WINDOW	0x8b1d02ac	#32770	window=490x184 client=474x146	"DirectX Diagnostic Tool"
+ok	  0x00340284	id=6	Button:pushbutton	@282,109 88x26	visible,tabstop	"&Yes"
+ok	  0x002b02d0	id=7	Button:pushbutton	@378,109 88x26	visible,tabstop	"&No"
+ok	  0x002b02ce	id=65535	Static	@12,26 425x47	visible	"Do you want to check if your drivers are digitally signed? To check your drivers, Windows might connect to the Internet, but doesn't send personal information about your computer."
+SUMMARY	outside=0 ghost=0 covered=0 disabled=0
+TAB   1	0x00340284	id=6	Button	onscreen	"&Yes"
+TAB   2	0x002b02d0	id=7	Button	onscreen	"&No"
+SHOT	C:\winsecrets\crawl\dxdiag\001.bmp 490x184
