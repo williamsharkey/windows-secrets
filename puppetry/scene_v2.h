@@ -17,29 +17,32 @@ static double v2_speed = 1.0;   /* "v2 fast" rehearses at 20x */
 static void v2_type(HWND edit, const WCHAR *w, int n, int a_end, int b_end)
 {
     double due = GetTickCount();
-    int i, last_line = n;
+    int i, last_line = n, first_nl = 0;
+    while (first_nl < n && w[first_nl] != L'\n') first_nl++;
     for (i = n - 2; i > 0; i--) if (w[i] == L'\n') { last_line = i + 1; break; }
     for (i = 0; i < n; i++) {
         WCHAR c = w[i];
         double d, f, jit = 0.6 + (rand() % 80) / 100.0;
         LONG now;
         if (c == L'\r') continue;
-        if (i < a_end) {                         /* the prophecy: a human pace that runs away */
+        if (i < first_nl) {                      /* the ===== rule: rattled off */
+            d = 6;
+        } else if (i < a_end) {                  /* the prophecy: a brisk pace that runs away */
             f = (double)i / a_end;
-            d = 3 + 165 * exp(-5.2 * f);
+            d = 2 + 42 * exp(-5.2 * f);
             if (c == L'\n') d *= 4;
             else if (c == L'、' || c == L'。') d *= 3;
         } else if (i < b_end) {                  /* the tail: the machine's own tongue */
             d = (c == L'\n') ? 20 : 4;
         } else if (i < last_line) {              /* the blessing: slowing back down */
             f = (double)(i - b_end) / (last_line - b_end);
-            d = 25 + 230 * f * f;
+            d = 12 + 80 * f * f;
             if (c == L'\n') d *= 5;
             else if (c == L'、' || c == L'。') d *= 3;
         } else {                                 /* おはよう、蛇。 */
-            d = 520;
-            if (i == last_line) d = 2600;
-            if (c == L'、') d = 1300;
+            d = 200;
+            if (i == last_line) d = 900;
+            if (c == L'、') d = 450;
         }
         due += d * jit * v2_speed;
         PostMessageW(edit, WM_CHAR, c == L'\n' ? L'\r' : c, 0);

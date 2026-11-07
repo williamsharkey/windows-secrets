@@ -712,6 +712,11 @@ static void scene_tribute(void)
 /* INTRO: somebody in 2001 finds a file on their desktop                    */
 /* ======================================================================= */
 
+/* the curious user's inspection runs at a quarter of its original length
+   (the films were recorded at INTRO_PACE 1.0; the live show and new takes use 0.25) */
+static double intro_pace = 0.25;
+#define IP(ms) ((int)((ms) * intro_pace) < 90 ? 90 : (int)((ms) * intro_pace))
+
 static void scene_intro(void)
 {
     int i = desk_find("basilisk");
@@ -729,33 +734,33 @@ static void scene_intro(void)
         if (pos) { sscanf(pos, "%ld %ld", &ip.x, &ip.y); free(pos); }
     }
     SetCursorPos(700, 520);
-    play(2500);
-    glide(ip.x + 30, ip.y + 70, 1800, 0);           /* wander */
-    play(700);
-    glide(ip.x, ip.y + 20, 1100, 0);                 /* hover: the tooltip */
-    play(3800);
+    play(IP(2500));
+    glide(ip.x + 30, ip.y + 70, IP(1800), 0);           /* wander */
+    play(IP(700));
+    glide(ip.x, ip.y + 20, IP(1100), 0);                 /* hover: the tooltip */
+    play(IP(3800));
     click_at(ip.x, ip.y + 20, 1);                    /* right-click */
-    play(1200);
+    play(IP(1200));
     {   /* Properties is the last item of the context menu */
         HWND menu = FindWindowA("#32768", NULL);
         if (menu) {
             RECT mr = srect(menu);
-            glide(mr.left + 40, mr.bottom - 12, 1000, 0);
-            play(500);
+            glide(mr.left + 40, mr.bottom - 12, IP(1000), 0);
+            play(IP(500));
             click_at(mr.left + 40, mr.bottom - 12, 0);
         }
     }
     props = wait_top("#32770", "basilisk", 0, 5000);
-    play(4500);
+    play(IP(4500));
     if (props) {
         HWND tab = kid_cls(props, "SysTabControl32");
         RECT tr;
         if (tab) {
             tr = srect(tab);
-            glide(tr.left + 64, tr.top + 10, 1200, 0);   /* Version tab */
-            play(400);
+            glide(tr.left + 64, tr.top + 10, IP(1200), 0);   /* Version tab */
+            play(IP(400));
             click_at(tr.left + 64, tr.top + 10, 0);
-            play(2500);
+            play(IP(2500));
             {   /* hover down the item list */
                 HWND lb = kid_cls(props, "ListBox");
                 if (lb) {
@@ -763,28 +768,28 @@ static void scene_intro(void)
                     int k;
                     for (k = 0; k < 7; k++) {
                         int y = b.top + 8 + 14 * k;
-                        glide(b.left + 40, y, 380, 0);
+                        glide(b.left + 40, y, IP(380), 0);
                         click_at(b.left + 40, y, 0);
-                        play(900);
+                        play(IP(900));
                     }
                 }
             }
         }
-        play(1500);
+        play(IP(1500));
         {   /* close with Cancel */
             HWND c = kid_id(props, IDCANCEL);
             RECT cr = srect(c);
-            glide((cr.left + cr.right) / 2, (cr.top + cr.bottom) / 2, 900, 0);
-            play(300);
+            glide((cr.left + cr.right) / 2, (cr.top + cr.bottom) / 2, IP(900), 0);
+            play(IP(300));
             click_at((cr.left + cr.right) / 2, (cr.top + cr.bottom) / 2, 0);
         }
     }
-    play(1600);
-    glide(ip.x - 6, ip.y + 4, 1200, 0);              /* reaching for something else... */
-    play(250);
-    glide(ip.x + 2, ip.y + 18, 160, 0);              /* ...and the hand slips */
+    play(IP(1600));
+    glide(ip.x - 6, ip.y + 4, IP(1200), 0);              /* reaching for something else... */
+    play(IP(250));
+    glide(ip.x + 2, ip.y + 18, IP(160), 0);              /* ...and the hand slips */
     dblclick_at(ip.x + 2, ip.y + 18);
-    play(1500);
+    play(IP(1500));
 }
 
 
@@ -1188,7 +1193,7 @@ static void scene_basilisk(void)
     place(b_note, 40, 30, 330, 200);
     foreground(b_note);
     play(800);
-    type_into(kid_cls(b_note, "Edit"), "hello?\n\nis this 2001?\n", 9);
+    type_into(kid_cls(b_note, "Edit"), "hello?\n\nis this 2001?\n", 26);
     play(1800);
     b_calc = open_app("calc.exe", "SciCalc", NULL);
     { RECT r = srect(b_calc); place(b_calc, 400, 30, r.right - r.left, r.bottom - r.top); }
