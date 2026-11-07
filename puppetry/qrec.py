@@ -1,22 +1,26 @@
 #!/usr/bin/env python3
 """Record a QEMU guest's real framebuffer through the HMP monitor.
-   qrec.py start NAME [fps]   - begin grabbing frames to /dev/shm/qrec-NAME
-   qrec.py stop NAME          - stop and encode /root/rec-NAME.mp4 (true timing)
-SDL/VNC front ends can miss dirty regions; screendump always renders the
-whole surface, so this is slower but exact."""
-import socket, sys, os, time, signal, subprocess, glob
+   qrec.py start NAME [fps]   - begin grabbing frames, streamed into ffmpeg
+   qrec.py stop NAME          - stop; /root/rec-NAME.mp4 is ready when this returns
+SDL/VNC front ends can miss dirty regions; screendump always renders the whole
+surface.  Frames are piped straight to the encoder at a constant frame rate
+(the latest frame is repeated when a screendump runs slow), so nothing piles
+up in memory.  Monitor commands written to /tmp/qrec-cmd are injected between
+frames, e.g. "sendkey shift 2000" or "wavcapture /root/a.wav snd0"."""
+import socket, sys, os, time, signal, subprocess
 
 MON = '/tmp/studio-mon.sock'
 
 
 def grab(name, fps):
-    d = '/dev/shm/qrec-' + name
-    os.makedirs(d, exist_ok=True)
-    for f in glob.glob(d + '/*'):
-        os.remove(f)
+    tmp = '/dev/shm/qrec-%s.ppm' % name
+    out = '/root/rec-%s.mp4' % name
+    enc = subprocess.Popen(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'image2pipe', '-framerate', str(fps),
+                            '-c:v', 'ppm', '-i', '-', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '16',
+                            '-pix_fmt', 'yuv420p', out], stdin=subprocess.PIPE)
     s = socket.socket(socket.AF_UNIX)
     s.connect(MON)
-    s.settimeout(5)
+    s.settimeout(60)
     buf = b''
 
     def wait_prompt():
@@ -28,60 +32,56 @@ def grab(name, fps):
     wait_prompt()
     stop = {'v': False}
     signal.signal(signal.SIGTERM, lambda *a: stop.update(v=True))
-    times = open(d + '/times.txt', 'w')
-    i, t0 = 0, time.time()
+    t0, written, last = time.time(), 0, None
     while not stop['v']:
-        t = time.time()
-        f = '%s/%06d.ppm' % (d, i)
         try:
             if os.path.exists('/tmp/qrec-cmd'):
-                # monitor commands injected while recording (e.g. sendkey)
                 for c in open('/tmp/qrec-cmd').read().splitlines():
                     s.sendall((c + '\n').encode())
                     wait_prompt()
                 os.remove('/tmp/qrec-cmd')
-            s.sendall(('screendump %s\n' % f).encode())
+            s.sendall(('screendump %s\n' % tmp).encode())
             wait_prompt()
+            last = open(tmp, 'rb').read()
+        except socket.timeout:
+            pass
         except Exception:
             break  # the VM went away (e.g. it hibernated)
-        times.write('%06d %.4f\n' % (i, t - t0))
-        times.flush()
-        i += 1
-        nxt = t0 + i / fps
+        due = int((time.time() - t0) * fps) + 1
+        while last and written < due:
+            enc.stdin.write(last)
+            written += 1
+        nxt = t0 + written / fps
         while time.time() < nxt and not stop['v']:
             time.sleep(0.002)
-    times.close()
-
-
-def encode(name):
-    d = '/dev/shm/qrec-' + name
-    rows = [l.split() for l in open(d + '/times.txt') if l.strip()]
-    with open(d + '/list.txt', 'w') as L:
-        for k, (idx, t) in enumerate(rows):
-            nxt = float(rows[k + 1][1]) if k + 1 < len(rows) else float(t) + 0.04
-            if not os.path.exists('%s/%s.ppm' % (d, idx)):
-                continue
-            L.write("file '%s/%s.ppm'\nduration %.4f\n" % (d, idx, nxt - float(t)))
-        L.write("file '%s/%s.ppm'\n" % (d, rows[-1][0]))
-    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', d + '/list.txt',
-                    '-vf', 'fps=30', '-c:v', 'libx264', '-preset', 'medium', '-crf', '16', '-pix_fmt', 'yuv420p',
-                    '/root/rec-%s.mp4' % name], check=True)
-    print('frames', len(rows), 'duration %.1fs' % float(rows[-1][1]))
+    enc.stdin.close()
+    enc.wait()
+    open('/tmp/qrec-%s.done' % name, 'w').write('%d frames, %.1fs\n' % (written, written / fps))
+    try:
+        os.remove(tmp)
+    except OSError:
+        pass
 
 
 if __name__ == '__main__':
     cmd, name = sys.argv[1], sys.argv[2]
     if cmd == 'start':
+        try:
+            os.remove('/tmp/qrec-%s.done' % name)
+        except OSError:
+            pass
         if os.fork() == 0:
             os.setsid()
             open('/tmp/qrec-%s.pid' % name, 'w').write(str(os.getpid()))
             grab(name, float(sys.argv[3]) if len(sys.argv) > 3 else 25)
             os._exit(0)
     elif cmd == 'stop':
-        pid = int(open('/tmp/qrec-%s.pid' % name).read())
         try:
-            os.kill(pid, signal.SIGTERM)
-        except ProcessLookupError:
+            os.kill(int(open('/tmp/qrec-%s.pid' % name).read()), signal.SIGTERM)
+        except (ProcessLookupError, FileNotFoundError):
             pass
-        time.sleep(1)
-        encode(name)
+        for _ in range(600):
+            if os.path.exists('/tmp/qrec-%s.done' % name):
+                break
+            time.sleep(0.5)
+        print(open('/tmp/qrec-%s.done' % name).read().strip() if os.path.exists('/tmp/qrec-%s.done' % name) else 'no recording')

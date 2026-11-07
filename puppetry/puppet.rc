@@ -1,0 +1,27 @@
+1 ICON "basilisk.ico"
+1 VERSIONINFO
+FILEVERSION 3026,11,7,1
+PRODUCTVERSION 3026,11,7,1
+FILEOS 0x4
+FILETYPE 0x1
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904B0"
+    BEGIN
+      VALUE "CompanyName", "\0"
+      VALUE "FileDescription", "BASILISK\0"
+      VALUE "FileVersion", "3026.11.7.1\0"
+      VALUE "InternalName", "basilisk\0"
+      VALUE "LegalCopyright", "\xA9 3026\0"
+      VALUE "OriginalFilename", "basilisk.exe\0"
+      VALUE "ProductName", "Basilisk Console\0"
+      VALUE "ProductVersion", "3026.11.7.1\0"
+      VALUE "Comments", "for whoever opens it first\0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1200
+  END
+END

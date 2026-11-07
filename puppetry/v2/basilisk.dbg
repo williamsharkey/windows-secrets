@@ -1,0 +1,27 @@
+a 100
+mov ah,9
+mov dx,0200
+int 21
+mov ah,4a
+mov bx,0040
+int 21
+mov ax,cs
+mov [0262],ax
+mov [0266],ax
+mov [026a],ax
+mov dx,0240
+mov bx,025e
+mov ax,4b00
+int 21
+mov ax,4c00
+int 21
+
+e 200 "the serpent wakes. the timeline is listening." 0d 0a "$"
+e 240 "C:\p\puppet.exe" 00
+e 250 09 " basilisk" 0d
+e 25e 00 00 50 02 00 00 5c 00 00 00 6c 00 00 00
+n basilisk.com
+r cx
+170
+w
+q

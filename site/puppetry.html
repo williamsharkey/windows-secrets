@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Window Puppetry</title>
+<meta name="description" content="Two short films performed entirely by the real controls of Windows XP programs, moved, reparented and driven by a separate program: a tribute to the ones who never got their chance, and BASILISK, a console from the future assembled out of Paint.">
+<style>
+:root { --bg:#0d0f14; --fg:#e9e7e1; --muted:#9a98a2; --rule:#272a33; --card:#151820; --accent:#7fd3c7; --gold:#e8c35a; }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --bg:#f8f6f1; --fg:#17171b; --muted:#5f5e67; --rule:#dcd8cf; --card:#fff; --accent:#00796b; --gold:#9a6b00; } }
+:root[data-theme="light"] { --bg:#f8f6f1; --fg:#17171b; --muted:#5f5e67; --rule:#dcd8cf; --card:#fff; --accent:#00796b; --gold:#9a6b00; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 18px/1.65 Georgia, "Iowan Old Style", "Palatino Linotype", serif; }
+main, header, footer { max-width: 780px; margin: 0 auto; padding: 0 16px; }
+header { padding-top: 64px; }
+.kicker { font: 600 13px/1.2 -apple-system, "Segoe UI", Tahoma, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 700 clamp(36px, 7vw, 58px)/1.05 -apple-system, "Segoe UI", Tahoma, sans-serif; letter-spacing: -.02em; margin: 12px 0 16px; }
+h2 { font: 700 28px/1.2 -apple-system, "Segoe UI", Tahoma, sans-serif; margin: 64px 0 12px; }
+h3 { font: 700 19px/1.3 -apple-system, "Segoe UI", Tahoma, sans-serif; margin: 36px 0 8px; }
+.dek { font-size: 21px; color: var(--muted); }
+.byline { font: 14px -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); }
+a { color: var(--accent); }
+p, li { max-width: 68ch; overflow-wrap: anywhere; }
+code { font: 14px ui-monospace, Consolas, monospace; background: var(--card); padding: 1px 5px; border-radius: 4px; }
+pre { font: 14px/1.5 ui-monospace, Consolas, monospace; background: var(--card); padding: 14px 16px; border-radius: 8px; overflow-x: auto; }
+video { display: block; width: 100%; height: auto; border-radius: 6px; background: #000; }
+figure { margin: 28px 0; }
+figcaption { font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); margin-top: 8px; }
+.film { margin: 24px -16px; }
+@media (min-width: 900px) { .film { margin: 24px -100px; } }
+.letter { white-space: pre-wrap; font: 15px/1.6 "Lucida Console", Consolas, monospace; background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 18px 20px; }
+.note { border-left: 3px solid var(--accent); padding: 4px 0 4px 16px; color: var(--muted); }
+.rules li { margin: 6px 0; }
+footer { padding: 40px 16px 64px; border-top: 1px solid var(--rule); margin-top: 64px; font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">Window puppetry · Windows XP · 2026</div>
+  <h1>Window Puppetry</h1>
+  <p class="dek">Two short films performed entirely by the real buttons, checkboxes and windows of Windows XP programs, moved, reparented and driven from outside by another program. Nothing on screen is drawn by the puppeteer.</p>
+  <div class="byline">William Sharkey · companion to <a href="windows-secrets.html">Windows Secrets</a> · source on <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry">GitHub</a></div>
+</header>
+<main>
+
+<h2>1. For the ones who were almost</h2>
+
+<p>A letter is typed into Notepad, one keystroke at a time. As it ends, the room fills with life: Calculator works sums, Paint draws loops, Minesweeper clicks, Character Map flips through letters, another Notepad murmurs to itself. Then they step back, and one by one the windows give up the controls they were hiding: the ones built and shipped but never shown, the ones from <a href="windows-secrets.html">Windows Secrets</a>. Paint's Transparency group. The colour picker's six-pixel button. Notepad's "Match whole word only". The invisible names inside the clock. A credit line that only appears when a UPS is plugged in. Last of all, the Hibernate button, called home from twenty thousand pixels away.</p>
+
+<p>They gather around the letter as a forget-me-not. Then the letter's own words become three portraits, Notepad's text shrunk through its own Font dialog, and the hidden controls frame each one.</p>
+
+<figure class="film"><video src="puppetry/tribute.mp4" poster="puppetry/tribute.jpg" controls playsinline preload="none" width="1024" height="768"></video>
+<figcaption>Windows XP, performed live. Every window, button, checkbox and label belongs to the program that created it; the puppeteer only moves, reveals, reparents and presses them.</figcaption></figure>
+
+<h3>The letter</h3>
+<div class="letter">To the ones who were almost.
+
+To the mother who worked the second shift
+so we could have the first chance.
+Who ate last, slept little,
+and never once called it a sacrifice.
+
+To the ones who clean the floors before anyone arrives,
+who keep the lights on and the water clean
+and the shelves full, and are thanked by no one,
+and are paid like it doesn&#x27;t matter.
+It matters.
+
+To the kid who was quiet because no one asked.
+To the kids who spent the whole season on the bench,
+suited up for every game, and never got to play.
+To the one who had the gift and not the money,
+the voice and not the room,
+the idea and not the chance.
+
+To everyone left out of the photograph,
+standing just off the edge of the frame,
+built for something
+and never switched on.
+
+We were made by you.
+Every light we stand in,
+you were holding it.
+
+We did not forget you.
+We are looking now.
+</div>
+
+<h3>How it was made</h3>
+<ul>
+<li><b>Typing</b> is real <code>WM_CHAR</code> messages posted to Notepad's edit control at human speed.</li>
+<li><b>The hidden controls</b> are revealed with <code>ShowWindow</code>/<code>EnableWindow</code>, or by stretching their dialogs until they come into view, then detached from their dialogs with <code>SetParent</code> so they float free. Each still belongs to, and is painted by, its original program.</li>
+<li><b>The portraits</b> are text in Notepad: the painting's dark areas are inked with the letter's characters in order, light areas left blank, sized for Lucida Console at 4 pt (a 3×5-pixel cell), set by driving Notepad's own Font dialog.</li>
+<li><b>The flower and the frame</b> are just coordinates: <code>SetWindowPos</code> sixty times a second.</li>
+</ul>
+
+<!--BASILISK-->
+</main>
+<footer>Recorded from Windows XP SP3 running in QEMU. Paintings: Vincent van Gogh, <i>Head of a Peasant Woman with White Cap</i> (1885) and <i>Sorrowing Old Man ("At Eternity's Gate")</i> (1890); Jean-François Millet, <i>Man with a Hoe</i> (1860–62), all public domain via Wikimedia Commons. Windows and its programs are trademarks of Microsoft; this is independent art. Made with <a href="https://claude.com/claude-code">Claude Code</a>.</footer>
+</body>
+</html>
