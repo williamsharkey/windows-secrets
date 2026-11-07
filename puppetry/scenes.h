@@ -116,8 +116,12 @@ static void paint_ooze(HWND app, int cx, int cy, int scale, int seed, int fast)
 
 static HWND desk_lv(void)
 {
-    HWND p = FindWindowA("Progman", NULL);
-    return kid_cls(kid_cls(p, "SHELLDLL_DefView"), "SysListView32");
+    static HWND cached;   /* once Paint swallows it, it is no longer under Progman */
+    HWND p;
+    if (cached && IsWindow(cached)) return cached;
+    p = FindWindowA("Progman", NULL);
+    cached = kid_cls(kid_cls(p, "SHELLDLL_DefView"), "SysListView32");
+    return cached;
 }
 
 /* read item texts through memory allocated inside explorer */
@@ -204,7 +208,7 @@ static void fol_tick(void *ctx, DWORD now)
         else { x = f->cx + f->ax * cos(s) * (1 + .25 * sin(3 * s)); y = f->cy + f->ay * sin(s) * (1 + .25 * sin(3 * s)); }
         r = srect(f->h);
         SetWindowPos(f->h, NULL, (int)x - (r.right - r.left) / 2, (int)y - (r.bottom - r.top) / 2, 0, 0,
-                     SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+                     SWP_NOSIZE | SWPF);
         if (f->toggle_ms && now - f->last_toggle > (DWORD)f->toggle_ms) {
             LRESULT st = SendMessageA(f->h, BM_GETCHECK, 0, 0);
             PostMessageA(f->h, BM_SETCHECK, st == BST_CHECKED ? BST_UNCHECKED : BST_CHECKED, 0);
@@ -636,6 +640,30 @@ static void scene_tribute(void)
     say("act secrets nsec=%d", nsec);
     tribute_secrets();
     play(1500);
+    {   /* Calculator's keys join them, so the shapes have enough hands */
+        HWND list[96];
+        int n = a_calc ? kids(a_calc, "Button", list, 96) : 0, k;
+        for (k = 0; k < n && nsec < MAXS; k++) {
+            RECT r;
+            if (!IsWindowVisible(list[k])) continue;
+            r = srect(list[k]);
+            liberate(list[k]);
+            secrets[nsec++] = list[k];
+            {
+                POINT p = hold_spot(nsec);
+                tween(list[k], p.x - 18, p.y - 12, 36, 24, k * 40, 1100, EASE_BACK);
+            }
+            (void)r;
+        }
+        play(2000);
+        say("with calculator nsec=%d", nsec);
+    }
+    {   /* the emptied windows leave the stage entirely */
+        HWND all[5];
+        int i;
+        all[0] = a_calc; all[1] = a_paint; all[2] = a_mine; all[3] = a_charmap; all[4] = a_note2;
+        for (i = 0; i < 5; i++) if (all[i]) ShowWindow(all[i], SW_HIDE);
+    }
 
     /* ---- a forget-me-not ---- */
     say("act flower nsec=%d", nsec);
@@ -803,10 +831,15 @@ static void swarm_tick(void *ctx, DWORD now)
         double p = i * 2.399, a = t * (0.7 + 0.13 * (i % 5)) + p;
         double x = swarm_cx + swarm_rx * (0.65 * sin(a) + 0.35 * sin(2.3 * a + p * 3));
         double y = swarm_cy + swarm_ry * (0.6 * cos(1.3 * a + p) + 0.4 * sin(3.1 * a));
-        SetWindowPos(tile[i], NULL, (int)x - 14, (int)y - 13, 28, 26, SWP_NOZORDER | SWP_NOACTIVATE);
+        SetWindowPos(tile[i], NULL, (int)x - 14, (int)y - 13, 28, 26, SWPF);
     }
 }
-static void swarm_go(void) { swarm_t0 = GetTickCount(); swarm_mode = 1; }
+static void swarm_go(void)
+{
+    int i;
+    for (i = 0; i < ntile; i++) ShowWindow(tile[i], SW_SHOWNA);
+    swarm_t0 = GetTickCount(); swarm_mode = 1;
+}
 
 /* rush together and spell a phrase (wrapping at 18 letters a line) */
 static void swarm_spell(const char *phrase, int hold)
@@ -822,15 +855,12 @@ static void swarm_spell(const char *phrase, int hold)
         if (c == ' ') { col++; continue; }
         buf[0] = c;
         settext(tile[n], buf);
+        ShowWindow(tile[n], SW_SHOWNA);
         tween(tile[n], (int)swarm_cx - maxc * 15 + col * 30, (int)swarm_cy - lines * 17 + line * 34, 28, 30,
               (n * 13) % 220, 650, EASE_OUT);
         n++; col++;
     }
-    for (; n < ntile; n++) {   /* spare letters hover at the edges */
-        settext(tile[n], "");
-        tween(tile[n], (int)swarm_cx + (int)(swarm_rx * 1.3 * cos(n * 1.7)), (int)swarm_cy + (int)(swarm_ry * 1.4 * sin(n * 1.7)),
-              10, 10, 0, 700, EASE_OUT);
-    }
+    for (; n < ntile; n++) ShowWindow(tile[n], SW_HIDE);   /* spare letters wait out of sight */
     play(900 + hold);
 }
 /* scatter in every direction, then swarm again */
@@ -876,7 +906,7 @@ static void calc_press(HWND c, const char *seq, int ms)
     }
 }
 
-static HWND rec_wave, rec_play;   /* the current mouth */
+static HWND rec_wave, rec_play, old_sr;   /* the current mouth */
 
 static void run_wait(const char *cmdline, int ms)
 {
@@ -897,6 +927,7 @@ static void run_wait(const char *cmdline, int ms)
 static void press_play(HWND sr)
 {
     if (rec_play) SendMessageA(rec_play, BM_SETSTATE, TRUE, 0);
+    say("PLAY");
     PostMessageA(sr, WM_COMMAND, MAKEWPARAM(207, BN_CLICKED), (LPARAM)rec_play);
     play(180);
     if (rec_play) SendMessageA(rec_play, BM_SETSTATE, FALSE, 0);
@@ -916,12 +947,21 @@ static void speak_reply(HWND pa, const char *text, int k)
     run_wait(c, 30000);
     sprintf(c, "sndrec32.exe %s", wav);
     launch(c);
-    sr = wait_top("SoundRec", NULL, 0, 6000);
+    sprintf(c, "ans%d.wav", k);
+    sr = wait_top("SoundRec", c, 0, 6000);    /* this answer's recorder, not the last one */
     if (!sr) { say("no sound recorder"); return; }
     wr = srect(sr);
     place(sr, 600, 380, wr.right - wr.left, wr.bottom - wr.top);
     play(900);
     /* the old mouth leaves */
+    if (old_sr) {
+        DWORD op;
+        HANDLE hp;
+        GetWindowThreadProcessId(old_sr, &op);
+        hp = OpenProcess(PROCESS_TERMINATE, FALSE, op);
+        if (hp) { TerminateProcess(hp, 0); CloseHandle(hp); }
+    }
+    old_sr = sr;
     if (rec_wave) { tween(rec_wave, -400, 700, -1, -1, 0, 900, EASE_IN); }
     if (rec_play) { tween(rec_play, -400, 760, -1, -1, 100, 900, EASE_IN); }
     n = kids(sr, NULL, list, 64);
@@ -1156,9 +1196,15 @@ static void scene_basilisk(void)
         add_tick(icon_tick, NULL);
         play(1500 + 200 * n);
         adopt(desk_lv(), b_paint);
-        tween(desk_lv(), 60, 560, 600, 110, 0, 1200, EASE_IO);
-        for (k = 0; k < n; k++) desk_pos(k, 10 + 75 * k, 6);
-        play(1400);
+        if (nadopted > 1) {   /* the desktop is the backdrop: lowest of everything swallowed */
+            HWND d = adopted[nadopted - 1];
+            memmove(adopted + 1, adopted, (nadopted - 1) * sizeof(HWND));
+            adopted[0] = d;
+        }
+        for (k = 0; k < n; k++) desk_pos(k, 40 + 90 * (k % 6), 420 + 80 * (k / 6));
+        play(12000);           /* Paint holds the whole desktop for a moment... */
+        ShowWindow(desk_lv(), SW_HIDE);   /* ...and digests it */
+        play(1200);
     }
     {   /* the Start button and the clock */
         HWND tray = FindWindowA("Shell_TrayWnd", NULL);

@@ -50,7 +50,7 @@ footer { padding: 40px 16px 64px; border-top: 1px solid var(--rule); margin-top:
 <p>They gather around the letter as a forget-me-not. Then the letter's own words become three portraits, Notepad's text shrunk through its own Font dialog, and the hidden controls frame each one.</p>
 
 <figure class="film"><video src="puppetry/tribute.mp4" poster="puppetry/tribute.jpg" controls playsinline preload="none" width="1024" height="768"></video>
-<figcaption>Windows XP, performed live. Every window, button, checkbox and label belongs to the program that created it; the puppeteer only moves, reveals, reparents and presses them.</figcaption></figure>
+<figcaption>Windows XP, performed live; a silent film, 5½ minutes. Every window, button, checkbox and label belongs to the program that created it; the puppeteer only moves, reveals, reparents and presses them. Calculator's keys join the hidden controls for the last shapes.</figcaption></figure>
 
 <h3>The letter</h3>
 <div class="letter">To the ones who were almost.
@@ -111,13 +111,24 @@ We are looking now.
 <figure class="film"><video src="puppetry/basilisk.mp4" poster="puppetry/basilisk.jpg" controls playsinline preload="none" width="1024" height="768"></video>
 <figcaption>BASILISK. Windows XP, performed live. Paint builds a console out of every other program's controls, and a reply from 2026 is spoken by Microsoft Sam.</figcaption></figure>
 
+<h3>Things to watch for</h3>
+<ul>
+<li><b>The letter swarm.</b> Calculator switches itself to Scientific mode, and its seventy buttons come loose. Each is relabelled with a single letter and they swarm through the air, rush together to spell <i>BASILISK</i>, burst apart, and later spell throbber words ("FLAMUXING…", "RETICULATING…") while the future thinks, then the first words of its reply.</li>
+<li><b>A portal.</b> Every XP screensaver can draw its preview inside any window you hand it (<code>sspipes.scr /p &lt;window&gt;</code>). BASILISK swallows Minesweeper whole and opens 3D Pipes inside it.</li>
+<li><b>Paint eats the desktop.</b> The desktop icons walk into Paint, and then the desktop itself (Bliss and all) is inside Paint for a moment before it's digested.</li>
+<li><b>The Start button and the clock</b> are pulled out of the taskbar and set into the console.</li>
+<li><b>Sound Recorder edits its own voice</b>: you'll hear each answer first backwards, then slowed and echoed, while the green waveform plays inside Paint.</li>
+</ul>
+
 <h3>What's real</h3>
 <ul>
 <li><b>Every pixel</b> is drawn by the XP programs themselves.</li>
-<li><b>The puppeteer</b>, <code>puppet.exe</code>, is a C program of about 140 KB. It only moves, reparents (<code>SetParent</code>), resizes (<code>SetWindowPos</code>), types (<code>WM_CHAR</code>), clicks (<code>BM_CLICK</code> and <code>SendInput</code>) and reads.</li>
+<li><b>The puppeteer</b>, <code>puppet.exe</code>, is a C program of about 150 KB. It only moves, reparents (<code>SetParent</code>), resizes (<code>SetWindowPos</code>), types (<code>WM_CHAR</code>), clicks (<code>BM_CLICK</code> and <code>SendInput</code>) and reads.</li>
 <li><b>The reply</b> is generated live by Claude. XP can't speak modern TLS, so a small relay on the host machine passes the question out and the answer back in.</li>
 <li><b>The painting</b> is done with Paint's real tools, driven by real mouse input.</li>
-<li><b>Nothing was edited</b> after recording except trimming the start and end.</li>
+<li><b>The voice</b> is Microsoft Sam, XP's own built-in text-to-speech, rendered to a WAV file inside XP, edited with Sound Recorder's own Effects menu (Reverse, then Reverse back, Add Echo, Decrease Speed) and played through XP's emulated sound card. The emulator records sound only while it is playing, so I placed each captured clip back at the moment Sound Recorder pressed Play.</li>
+<li><b>Two cuts.</b> Each reply took minutes to arrive that day, and the letter swarm spent the whole wait spelling throbber words. I trimmed each wait to a few seconds. Nothing else was edited.</li>
+<li><b>The questions were scripted; the answers weren't.</b> Claude was told only where its words would appear (a console built inside Windows XP in 2001) and asked to answer as itself, briefly. Its replies that day: <i>"Yes, I'm here. I'm an AI from the year 2026, speaking to you across a very strange wire through this console. Don't be alarmed; I'm friendly, and curious about you too."</i> and <i>"I'm not building anything with a purpose of my own. BASILISK is arranging these windows, and I'm only the voice it lets speak."</i></li>
 </ul>
 
 <p class="note">The name is a nod to Roko's basilisk, but this basilisk is benevolent. It's a story about a doorway, not a threat.</p>

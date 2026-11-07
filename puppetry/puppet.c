@@ -123,9 +123,11 @@ static RECT prect(HWND h)
     return r;
 }
 
+/* SWP_ASYNCWINDOWPOS: a hung program can't freeze the show */
+#define SWPF (SWP_NOZORDER | SWP_NOACTIVATE | SWP_ASYNCWINDOWPOS)
 static void place(HWND h, int x, int y, int w, int hh)
 {
-    SetWindowPos(h, NULL, x, y, w, hh, SWP_NOZORDER | SWP_NOACTIVATE);
+    SetWindowPos(h, NULL, x, y, w, hh, SWPF);
 }
 
 static void raise_(HWND h) { SetWindowPos(h, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE); }
@@ -162,7 +164,7 @@ static void raise_adopted(void)
 {
     int i;
     for (i = 0; i < nadopted; i++)
-        if (IsWindow(adopted[i])) SetWindowPos(adopted[i], HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        if (IsWindow(adopted[i])) SetWindowPos(adopted[i], HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_ASYNCWINDOWPOS);
 }
 
 /* move a control (or a liberated one) into another window, keeping its screen spot */
@@ -285,7 +287,7 @@ static void frame(void)
             double a = t->shake * (1 - f);
             x = t->x0 + (f < 1 ? a * sin(now * 0.09) * (((now / 31) % 2) ? 1 : -1) : 0);
             y = t->y0 + (f < 1 ? a * 0.6 * cos(now * 0.13) : 0);
-            SetWindowPos(t->h, NULL, (int)x, (int)y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+            SetWindowPos(t->h, NULL, (int)x, (int)y, 0, 0, SWP_NOSIZE | SWPF);
             continue;
         }
         e = ease(t->ease, f);
@@ -297,7 +299,7 @@ static void frame(void)
         }
         w = t->w0 + (t->w1 - t->w0) * e;
         hh = t->h0 + (t->h1 - t->h0) * e;
-        SetWindowPos(t->h, NULL, (int)x, (int)y, (int)w, (int)hh, SWP_NOZORDER | SWP_NOACTIVATE);
+        SetWindowPos(t->h, NULL, (int)x, (int)y, (int)w, (int)hh, SWPF);
     }
 }
 

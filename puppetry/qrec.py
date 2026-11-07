@@ -18,18 +18,29 @@ def grab(name, fps):
     enc = subprocess.Popen(['ffmpeg', '-loglevel', 'error', '-y', '-f', 'image2pipe', '-framerate', str(fps),
                             '-c:v', 'ppm', '-i', '-', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '16',
                             '-pix_fmt', 'yuv420p', out], stdin=subprocess.PIPE)
-    s = socket.socket(socket.AF_UNIX)
-    s.connect(MON)
-    s.settimeout(60)
     buf = b''
+    s = None
 
     def wait_prompt():
         nonlocal buf
         while b'(qemu) ' not in buf:
-            buf += s.recv(65536)
+            d = s.recv(65536)
+            if not d:
+                raise ConnectionError('monitor closed')
+            buf += d
         buf = buf.split(b'(qemu) ', 1)[1]
 
-    wait_prompt()
+    def connect():
+        nonlocal s, buf
+        s = socket.socket(socket.AF_UNIX)
+        s.connect(MON)
+        s.settimeout(60)
+        buf = b''
+        wait_prompt()
+
+    connect()
+    errors = 0
+    errlog = open('/tmp/qrec-%s.err' % name, 'w')
     stop = {'v': False}
     signal.signal(signal.SIGTERM, lambda *a: stop.update(v=True))
     t0, written, last = time.time(), 0, None
@@ -45,8 +56,15 @@ def grab(name, fps):
             last = open(tmp, 'rb').read()
         except socket.timeout:
             pass
-        except Exception:
-            break  # the VM went away (e.g. it hibernated)
+        except Exception as e:
+            errlog.write('%.1f %r\n' % (time.time() - t0, e)); errlog.flush()
+            errors += 1
+            if errors > 20:
+                break  # the VM really went away (e.g. it hibernated)
+            try:
+                time.sleep(0.5); connect()
+            except Exception:
+                pass
         due = int((time.time() - t0) * fps) + 1
         while last and written < due:
             enc.stdin.write(last)

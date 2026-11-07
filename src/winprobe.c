@@ -717,6 +717,26 @@ int main(int argc, char **argv)
         dm.dmSize = sizeof dm;
         for (i = 0; EnumDisplaySettingsA(NULL, i, &dm); i++)
             printf("%lux%lu %lubpp %luHz\n", dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel, dm.dmDisplayFrequency);
+    } else if (!strcmp(cmd, "adopt") && argc > 3) {
+        /* reparent a control into another window (or "desktop" to float it free) */
+        HWND h = find_win(argv[2]);
+        RECT r;
+        GetWindowRect(h, &r);
+        if (!strcmp(argv[3], "desktop")) {
+            LONG st = GetWindowLongW(h, GWL_STYLE);
+            SetWindowLongW(h, GWL_STYLE, (st & ~WS_CHILD) | WS_POPUP);
+            SetParent(h, NULL);
+            SetWindowPos(h, HWND_TOPMOST, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+        } else {
+            HWND np = find_win(argv[3]);
+            POINT p = {r.left, r.top};
+            LONG st = GetWindowLongW(h, GWL_STYLE);
+            SetWindowLongW(h, GWL_STYLE, (st & ~WS_POPUP) | WS_CHILD);
+            SetParent(h, np);
+            ScreenToClient(np, &p);
+            SetWindowPos(h, HWND_TOP, p.x, p.y, r.right - r.left, r.bottom - r.top, SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+        }
+        printf("adopted 0x%08lx\n", (unsigned long)(UINT_PTR)GetParent(h));
     } else if (!strcmp(cmd, "wait") && argc > 2) {
         Sleep(atoi(argv[2]));
     } else if (!strcmp(cmd, "screenpos") && argc > 2) {
