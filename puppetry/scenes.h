@@ -1333,6 +1333,7 @@ static void scene_basilisk(void)
 
     /* ---- the console takes shape ---- */
     mark("console");
+    pscale = 1.0;            /* the conversation runs at its own pace */
     fol_speed = 0.45;
     for (i = 0; i < nfol; i++) { fol[i].cx = SW / 2; fol[i].cy = 250; fol[i].ax = 300; fol[i].ay = 90; }
     transcript = kid_cls(b_paint, "Edit");          /* Notepad's edit, now Paint's */

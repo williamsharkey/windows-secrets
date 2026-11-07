@@ -496,7 +496,7 @@ class Theatre:
         self.changed.set()
 
     # -- visitors in ----------------------------------------------------------
-    async def wake(self, s):
+    async def wake(self, s, fast=False):
         if not self.vm_ok:
             s.note = 'The stage is dark right now.'
             return
@@ -513,6 +513,7 @@ class Theatre:
         if len(self.queue) >= cfgf('STAGE_QUEUE_MAX'):
             s.note = 'The line is long. Watch a while and try again.'
             return
+        s.fast = bool(fast)
         self.queue.append(s)
         # gentle priority: visitors who woke it recently stand behind first-timers
         self.queue.sort(key=lambda q: LIMITS.recent_wakes(q.ip) > 0)   # stable: join order otherwise
@@ -629,7 +630,7 @@ class Theatre:
         out = None
         for attempt in range(2):
             try:
-                out = await self.agent_run(r'spawn C:\p\puppet.exe intro', 15)
+                out = await self.agent_run(r'spawn C:\p\puppet.exe basilisk fast' if getattr(s, 'fast', False) else r'spawn C:\p\puppet.exe intro', 15)
                 break
             except asyncio.TimeoutError:
                 log('agent did not answer (attempt %d)' % attempt)
@@ -889,7 +890,7 @@ async def p_ws(req):
                 continue
             t = m.get('t')
             if t == 'wake':
-                await T.wake(s)
+                await T.wake(s, m.get('fast'))
                 T.changed.set()
             elif t == 'ask':
                 k = m.get('k')

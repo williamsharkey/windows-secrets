@@ -328,9 +328,12 @@ static void frame(void)
 }
 
 /* run the world for ms milliseconds */
+/* "basilisk fast" (the live page's Run it now): fixed delays shrink until the console opens */
+static double pscale = 1.0;
+
 static void play(int ms)
 {
-    DWORD end = GetTickCount() + ms;
+    DWORD end = GetTickCount() + (DWORD)(ms * pscale);
     MSG m;
     while ((LONG)(GetTickCount() - end) < 0) {
         frame();
@@ -421,7 +424,8 @@ static void drag_path(const POINT *pts, int n, int ms_per_pt, int shift)
 /* type into an edit control with WM_CHAR at a human-ish pace */
 static void type_into(HWND edit, const char *s, int cps)
 {
-    int base = 1000 / (cps > 0 ? cps : 20);
+    int base = (int)(1000 / (cps > 0 ? cps : 20) * pscale);
+    if (base < 2) base = 2;
     for (; *s; s++) {
         char c = *s;
         if (c == '\n') { PostMessageA(edit, WM_CHAR, '\r', 0); play(base * 7); continue; }
@@ -579,7 +583,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cl, int show)
     while (*cl == ' ') cl++;
     scene = cl;
     say("puppet start: '%s' %dx%d", scene, SW, SH);
-    if (!*scene || !strncmp(scene, "basilisk", 8)) scene_basilisk();
+    if (!*scene || !strncmp(scene, "basilisk", 8)) { if (strstr(scene, "fast")) pscale = 0.3; scene_basilisk(); }
     else if (!strncmp(scene, "tribute", 7)) { fast_letter = strstr(scene, "fast") != NULL; scene_tribute(); }
     else if (!strncmp(scene, "intro", 5)) scene_intro();
     else if (!strncmp(scene, "v2", 2)) { if (strstr(scene, "fast")) v2_speed = 0.05; scene_v2(); }

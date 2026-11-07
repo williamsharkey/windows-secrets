@@ -57,6 +57,9 @@ h1 small { display: inline-block; font: 600 clamp(13px, 1.6vw, 16px)/1 var(--mon
 button.wake { font: 700 15px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; padding: 17px 20px 16px; background: #fff; color: #000; border: 2px solid #fff; cursor: pointer; min-width: 240px; }
 button.wake:hover:not(:disabled) { background: #000; color: #fff; }
 button.wake:disabled { background: transparent; color: #fff; cursor: default; }
+button.wakefast { display: block; margin: 10px 0 0; font: 600 12px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; padding: 10px 14px 9px; background: transparent; color: #fff; border: 1px dashed rgba(255,255,255,.6); cursor: pointer; min-width: 240px; }
+button.wakefast:hover:not(:disabled) { border-style: solid; background: #fff; color: #000; }
+button.wakefast:disabled { opacity: .35; cursor: default; }
 .ask { display: none; grid-column: 1 / -1; }
 .ask.on { display: block; }
 .ask label { display: block; font: 600 12px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
@@ -110,7 +113,8 @@ nav.sib i { font-style: normal; opacity: .6; }
       <div class="meta" id="meta">&nbsp;</div>
       <div class="note" id="note" aria-live="polite"></div>
     </div>
-    <div><button class="wake" id="wake" type="button" disabled>Wake BASILISK</button></div>
+    <div><button class="wake" id="wake" type="button" disabled>Wake BASILISK</button>
+      <button class="wakefast" id="wakefast" type="button" disabled title="Skip the curious user and run the possession at full speed">Run it now ▸▸</button></div>
     <form class="ask" id="ask" autocomplete="off">
       <label for="q" id="qlabel">The console is listening. Type the first question.</label>
       <div class="row"><input id="q" maxlength="120" placeholder="Is anyone there?" spellcheck="false" enterkeyhint="send"><button type="submit">Send</button></div>
@@ -334,6 +338,9 @@ nav.sib i { font-style: normal; opacity: .6; }
     else if (s.phase === 'dark') { b.disabled = true; b.textContent = 'Wake BASILISK'; }
     else if (showing) { b.disabled = false; b.textContent = 'Get in line'; }
     else { b.disabled = false; b.textContent = 'Wake BASILISK'; }
+    var bf = $('wakefast');
+    bf.hidden = you === 'waker' || you === 'queued';
+    bf.disabled = b.disabled || showing;
     // resting: one calm line, local time
     var rest = $('rest');
     if (s.rest_until) {
@@ -402,6 +409,10 @@ nav.sib i { font-style: normal; opacity: .6; }
     this.classList.remove('on');
     $('note').textContent = 'Sent. Watch the console.';
   });
+  $('wakefast').onclick = function () {
+    send({ t: 'wake', fast: true });
+    if (v.muted) { v.muted = false; $('sound').textContent = 'Sound off'; kick(); }
+  };
   $('wake').onclick = function () {
     send({ t: 'wake' });
     if (v.muted) { v.muted = false; $('sound').textContent = 'Sound off'; kick(); }   // a click is a gesture: sound on
