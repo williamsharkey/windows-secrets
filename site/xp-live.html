@@ -65,6 +65,10 @@ button.wake:disabled { background: transparent; color: #fff; cursor: default; }
 .ask input::placeholder { color: #fff; opacity: .5; }
 .ask button { font: 700 14px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; padding: 0 16px; background: #fff; color: #000; border: 2px solid #fff; cursor: pointer; }
 .ask .count { font: 400 12px/1 var(--mono); margin-top: 6px; opacity: .8; }
+.cap { position: relative; z-index: 2; max-width: 1024px; margin: 0 auto; background: #000; color: #fff; border: 2px solid #fff; border-top: 0; font: 400 clamp(15px, 2vw, 19px)/1.5 var(--mono); padding: 12px 14px; min-height: 3.2em; display: none; white-space: pre-wrap; }
+.cap.on { display: block; }
+.cap b { font-weight: 600; letter-spacing: .12em; font-size: 11px; text-transform: uppercase; display: block; opacity: .6; margin-bottom: 4px; }
+.cap i { font-style: normal; animation: blink 1s steps(2, jump-none) infinite; }
 .rest { font: 500 clamp(18px, 2.4vw, 24px)/1.3 var(--sans); display: none; }
 .rest.on { display: block; }
 
@@ -96,6 +100,8 @@ nav.sib i { font-style: normal; opacity: .6; }
     <span class="lag" id="lag" hidden></span>
     <div class="dark"><div>The stage is dark.<br>Come back a little later.</div></div>
   </div>
+
+  <div class="cap" id="cap" aria-live="polite"><b id="caphead">the console, in plain text</b><span id="captext"></span><i>▮</i></div>
 
   <div class="desk ink" id="desk">
     <div>
@@ -144,18 +150,20 @@ nav.sib i { font-style: normal; opacity: .6; }
 
   var CODEC = 'video/mp4; codecs="avc1.4D401F, mp4a.40.2"';
   var MS = window.MediaSource || window.ManagedMediaSource;
-  if (v.canPlayType('application/vnd.apple.mpegurl')) {
-    // Safari / iOS: native HLS
-    v.src = HLS;
+  function chase() {           // stay near the live edge: creep (pitch preserved), seek only when far
+    var r = v.buffered;
+    if (!r.length) return;
+    var end = r.end(r.length - 1), lag = end - v.currentTime;
+    if (v.currentTime < r.start(0) || lag > 10) v.currentTime = Math.max(r.start(0), end - 2);
+    else if (lag > 2.6) v.playbackRate = 1.25;
+    else if (lag < 1.6) v.playbackRate = 1;
+  }
+  if (MS && MS.isTypeSupported(CODEC)) {
+    mse();                    // our own tiny player: lowest latency, everywhere MSE exists
+  } else if (v.canPlayType('application/vnd.apple.mpegurl')) {
+    v.src = HLS;              // iPhone Safari: native HLS
     kick();
-    setInterval(function () {   // stay near the live edge
-      if (v.seekable && v.seekable.length) {
-        var end = v.seekable.end(v.seekable.length - 1);
-        if (end - v.currentTime > 9) v.currentTime = end - 3;
-      }
-    }, 4000);
-  } else if (MS && MS.isTypeSupported(CODEC)) {
-    mse();
+    setInterval(chase, 1000);
   } else {
     $('note').textContent = 'This browser cannot play the stream; the poster updates every few seconds.';
     setInterval(function () { $('poster').src = SERVER + '/poster.jpg?' + Date.now(); }, 4000);
@@ -218,7 +226,7 @@ nav.sib i { font-style: normal; opacity: .6; }
     function edge() {
       if (!sb || !sb.buffered.length) return;
       var end = sb.buffered.end(sb.buffered.length - 1), start = sb.buffered.start(0);
-      if (v.currentTime < start || end - v.currentTime > 3.5) v.currentTime = Math.max(start, end - 1.2);
+      chase();
       if (v.paused) kick();
     }
   }
@@ -340,6 +348,7 @@ nav.sib i { font-style: normal; opacity: .6; }
     else if (s.line === 'recorded') meta.push('the line is nearly spent this month: answers are recordings');
     $('meta').textContent = meta.join(' · ') || ' ';
     $('note').textContent = s.note || '';
+    caption(s.caption);
     // the question box, for the one who woke it
     var k = askK(s);
     var form = $('ask');
@@ -351,6 +360,23 @@ nav.sib i { font-style: normal; opacity: .6; }
       $('q').placeholder = k === 0 ? 'Is anyone there?' : 'What are you building on my computer?';
     } else if (you !== 'waker') { form.classList.remove('on'); sentK = {}; }
     else if (k == null || sentK[k] || (s.answered || []).includes(k)) form.classList.remove('on');
+  }
+  // captions: the answer as the server sent it to XP, typed out as the console types it
+  var capKey = null, capShown = 0, capTimer = null;
+  function caption(c) {
+    var box = $('cap');
+    if (!c) { if (capKey && st && (st.phase === 'idle' || st.phase === 'resetting')) { box.classList.remove('on'); capKey = null; } return; }
+    var key = c.k + ':' + c.text.length;
+    box.classList.add('on');
+    $('caphead').textContent = c.step === 'speak' ? 'it is answering out loud…' : 'the console, in plain text';
+    if (c.step !== 'type') { if (key !== capKey) $('captext').textContent = ''; return; }
+    if (key === capKey) return;
+    capKey = key; capShown = 0; clearInterval(capTimer);
+    capTimer = setInterval(function () {
+      capShown = Math.min(c.text.length, capShown + 1);
+      $('captext').textContent = c.text.slice(0, capShown);
+      if (capShown >= c.text.length) clearInterval(capTimer);
+    }, reduce ? 1 : 38);
   }
   // which question the waker may type now (they can type ahead of the console)
   function askK(s) {

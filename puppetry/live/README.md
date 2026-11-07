@@ -32,6 +32,7 @@ nothing here touches their sockets, ports (8765/8767/8779/8788...) or disks.
 | `puppetry/live/stage-vm.sh` | `/root/stage/bin/stage-vm.sh` | `pulse` (private PulseAudio), `run`/`boot` (the VM), `stop` |
 | `puppetry/live/streamer.py` | `/root/stage/bin/streamer.py` | framebuffer + sound -> HLS, one encode for all viewers |
 | `puppetry/live/server.py` | `/root/stage/bin/server.py` | show control, state channel, API, budget, limits |
+| `puppetry/live/stagectl`, `frame.sh` | `/root/stage/bin/` | admin hook client, HLS still grabber |
 | `puppetry/live/systemd/*` | `/etc/systemd/system/` | units (installed **disabled**) |
 | `puppetry/live/Caddyfile.live.snippet` | (applied in `/etc/caddy/Caddyfile`) | the public hostname |
 | `site/xp-live.html` | williamsharkey.com (Tigertech, not yet uploaded) | the page |
@@ -60,11 +61,13 @@ streamer runs (single-client socket); use `stagectl hmp` (QMP) instead.
   stream (silence when XP is quiet). QEMU's wavcapture/`-audiodev wav` only produce data
   while the guest plays, and a FIFO target would block QEMU when no reader is attached.
 * Stage: `basilisk-setup.bat` (launch-week desktop, Oct 25 2001 10:21), `puppet test icons`
-  (basilisk.exe in the middle, `C:\p\iconpos.txt`), Notepad font back to default, the timeout-safe
+  (basilisk.exe in the middle, `C:\p\iconpos.txt`), Notepad 14 pt Lucida Console (no wrap), the timeout-safe
   agent in Startup; then `savevm stage-ready` (168 MiB).
-* Reset: `loadvm stage-ready` **0.3-0.45 s** (measured). After a loadvm the in-guest agent
-  needs up to ~8 s to notice its stranded connection (socket timeout), so a show starts
-  ~9 s after the button.
+* Reset: `loadvm stage-ready` **0.35-0.5 s** (measured). After a loadvm the in-guest agent
+  may need up to ~8 s to notice a stranded connection (socket timeout), so a show starts
+  2-9 s after the button. `stage-vm.sh run` boots straight into `stage-ready` (`-loadvm`).
+* Notepad starts at 14 pt Lucida Console in the snapshot (the console's transcript is
+  Notepad's edit), for readability on the stream.
 
 To re-stage: `stagectl reset`, change things with `stagectl run ...`, then
 `stagectl hmp "savevm stage-ready"`.
@@ -78,8 +81,11 @@ wake, paint, swallow, devour, console, end) and asks `GET /question?k=0|1` (long
 `STAGE_QWAIT`=45 s; the swarm of calculator keys spells SPEAK TO ME... meanwhile). The visitor
 who woke it can type question 0 from the start of the show, question 1 after the first answer.
 No question in time (or they left, or hit a limit) -> the film's scripted question. Then
-`POST /claude` -> answer (API, or recording). After `end` the last frame holds ~17 s, then
-`loadvm` and idle (or the next visitor's show). Hard stop: `STAGE_SHOW_MAX` (600 s).
+`POST /claude` -> answer (API, or recording); the puppet reports `speak` and `type`, and the
+page shows the server's own answer text as a caption at that moment. After `end` the server
+saves the puppet's timing log to `data/last-show.log` (host only), the last frame holds ~16 s,
+then `loadvm` and idle (or the next visitor's show). A show is ~5.5 min; hard stop
+`STAGE_SHOW_MAX` (600 s). See `PERF.md` for the timing study.
 
 Puppet changes keep the films working: the studio server answers `/mark` and `/question` with
 404, which the puppet treats as "use the script".
@@ -110,39 +116,55 @@ Puppet changes keep the films working: the studio server answers `/mark` and `/q
   line "BASILISK is resting for you until 4:30 PM" (browser local time). Watching is never
   blocked.
 
-## Measured (2026-11-07, 8 vCPU droplet)
+## Measured (2026-11-07, 8 vCPU droplet) - details in PERF.md
 
-* Stream: 1024x768 @ 15 fps, H.264 main (veryfast, zerolatency, CRF 26, 2 s GOP = 2 s fMP4
-  segments) + AAC 64 kb/s. Still desktop ~0.5-0.8 Mb/s (Bliss keyframes are ~130-190 KB);
-  cap 1.5 Mb/s.
-* CPU while a show runs: stage QEMU ~135% (two busy vCPUs), ffmpeg ~35%, streamer.py ~7%,
-  PulseAudio ~8%, parec ~3%. Idle desktop: QEMU ~25%, ffmpeg ~35-45%.
-* Latency: segment cadence 2 s; glass-to-glass ~5-7 s with the page's MSE player (it holds
-  ~1.2-3.5 s of buffer), more with Safari's native HLS.
-* Reset (`loadvm`) 0.3-0.45 s; show start ~9 s after Wake; show length ~6-7 min.
+* Stream: 1024x768 @ 15 fps (grab 14.7-15.0), H.264 main (veryfast, zerolatency, CRF 26,
+  2 s GOP = 2 s fMP4 segments) + AAC 64 kb/s. Idle desktop ~0.75 Mb/s (Bliss keyframes are
+  130-190 KB), show content ~0.5 Mb/s, cap 1.5 Mb/s.
+* CPU: stage QEMU 25-55 % idle / ~135 % during a show, ffmpeg 35-43 %, streamer.py 7-9 %,
+  PulseAudio 8-17 %, parec 3-6 %.
+* Glass-to-glass ~4.2 s with the page's MSE player (buffer-ahead 1.8-3.3 s).
+* Reset 0.35-0.5 s; show 5 min 26 s; API 0.9-1.4 s per answer, $0.00022 per show.
 
 ## Going live
 
-Already done by the parent: DNS `live.williamsharkey.com -> 165.227.188.129`, the Caddy block
-(see `Caddyfile.live.snippet`), TLS.
+Done by the parent: DNS `live.williamsharkey.com -> 165.227.188.129`, the Caddy block (see
+`Caddyfile.live.snippet`), TLS, the API key in `/root/stage/.env`.
+
+**Run persistently.** Right now the four pieces run as hand-started processes (setsid). The
+units are installed in `/etc/systemd/system` and disabled. To switch over:
 
 ```
-# on the droplet: stop the hand-started processes, then run under systemd (not enabled at boot)
-cp /root/stage/bin/../systemd/*.service /root/stage/bin/../systemd/stage.target /etc/systemd/system/   # (already copied)
+cd /root/stage
+pkill -f '^venv/bin/python bin/server.py'; pkill -f '^python3 bin/streamer.py'
+bin/stage-vm.sh stop; sleep 3
+pkill -f 'pulseaudio -n --daemonize=no.*/root/stage/pulse'
 systemctl daemon-reload
-systemctl start stage.target            # pulse, VM, streamer, server
-systemctl enable stage.target           # ONLY when approved: start at boot
-# key:  printf 'ANTHROPIC_API_KEY=sk-ant-...\n' > /root/stage/.env; chmod 600 /root/stage/.env
-#       systemctl reload stage-server   (or just wait: .env is read before each call)
+systemctl enable --now stage.target     # pulse, VM (from stage-ready), streamer, server
+systemctl status 'stage-*' --no-pager
 ```
-Upload `site/xp-live.html` to williamsharkey.com (`~/html/live/`), and add it to the sibling
-navs when ready. The page's server defaults to `https://live.williamsharkey.com`;
-`?server=http://localhost:8780` points it elsewhere (local test: `ssh -L 8780:127.0.0.1:8780 root@165.227.188.129`).
+(`systemctl start stage.target` without `enable` runs it until the next reboot.) Reload the
+key/settings without a restart: `systemctl reload stage-server` (SIGHUP; `.env` is also
+re-read before each API call).
+
+**Publish the page.** Upload `site/xp-live.html` to the Tigertech docroot as
+`~/html/live/xp-live.html` (it is self-contained: inline CSS/JS, Google Fonts only; it
+references `xp-live/poster.jpg` only for og:image - copy `site/xp-live/poster.jpg` too).
+Its server defaults to `https://live.williamsharkey.com`. Then, if wanted, add
+`<a href="xp-live.html">□ Live</a>` to the `nav.sib` lists of the sibling pages. The page's
+origin must be in `STAGE_ORIGINS` for the WebSocket (williamsharkey.com, www., live. and
+localhost:8000 are; add others in `.env`).
+
+Local test: `ssh -L 8780:127.0.0.1:8780 root@165.227.188.129`, serve `site/` on
+localhost:8000, open `xp-live.html?server=http://localhost:8780`.
 
 ## Decisions for the user
 
-1. **Public hostname** - chosen: `live.williamsharkey.com` (Caddy block on the production
-   Caddyfile, applied). Alternatives were a catenarystudio.com subdomain or a separate host.
-2. **API key and monthly cap** - put the key in `/root/stage/.env`; cap is $25/month
-   (`STAGE_MONTHLY_CAP_USD`), recorded answers from 90% of it.
-3. Enabling `stage.target` at boot.
+1. **Public hostname** - decided: `live.williamsharkey.com` (Caddy block in the production
+   Caddyfile, applied by the parent). Alternatives were a catenarystudio.com subdomain or a
+   separate host.
+2. **API key and monthly cap** - decided: key installed in `/root/stage/.env`; cap $25/month
+   (`STAGE_MONTHLY_CAP_USD`), recorded answers from 90 % of it. Billing/credit errors (the
+   org's promotional credit ends 2026-11-25) fall back to recordings quietly for an hour at
+   a time.
+3. Still open: enabling `stage.target` at boot, and publishing the page.

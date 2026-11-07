@@ -263,11 +263,34 @@ static void add_tick(TickFn fn, void *ctx)
 }
 static void stop_ticks(void) { nticks = 0; }
 
+/* back-pressure.  Every async move of a window lands in its owner's queue; 70 topmost
+   calculator keys moved at 70 fps keep calc.exe repainting forever, and any synchronous
+   call into it then stalls the show for minutes.  So: the world moves at most 25 times a
+   second (the films are 25 fps, the live stream 15), and a program that hasn't caught up with the
+   last batch doesn't get a new one. */
+#define FRAME_MS 40
+static DWORD rdy_tid[32];
+static int rdy_ok[32], nrdy;
+static int ready(HWND h)
+{
+    DWORD tid = GetWindowThreadProcessId(h, NULL);
+    DWORD_PTR r;
+    int i;
+    for (i = 0; i < nrdy; i++) if (rdy_tid[i] == tid) return rdy_ok[i];
+    if (nrdy == 32) return 1;
+    rdy_tid[nrdy] = tid;
+    rdy_ok[nrdy] = SendMessageTimeoutA(h, WM_NULL, 0, 0, SMTO_ABORTIFHUNG | SMTO_NORMAL, 8, &r) != 0;
+    return rdy_ok[nrdy++];
+}
+
 static void frame(void)
 {
     DWORD now = GetTickCount();
-    static DWORD last_raise;
+    static DWORD last_raise, last_frame;
     int i;
+    if (now - last_frame < FRAME_MS) return;
+    last_frame = now;
+    nrdy = 0;
     if (now - last_raise > 400) { raise_adopted(); last_raise = now; }
     for (i = 0; i < nticks; i++) if (ticks[i].on) ticks[i].fn(ticks[i].ctx, now);
     for (i = 0; i < ntw; i++) {
@@ -275,6 +298,7 @@ static void frame(void)
         double f, e, x, y, w, hh;
         if (!t->active || (LONG)(now - t->start) < 0) continue;
         if (!IsWindow(t->h)) { t->active = 0; continue; }
+        if (!ready(t->h) && (LONG)(now - t->start) < (LONG)t->dur) continue;   /* catch up later */
         if (t->pending) {
             RECT r = prect(t->h);
             t->x0 = r.left; t->y0 = r.top; t->w0 = r.right - r.left; t->h0 = r.bottom - r.top;

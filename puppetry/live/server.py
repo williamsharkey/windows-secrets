@@ -390,7 +390,7 @@ async def ask_claude(question, history=()):
 
 PHASES = ['idle', 'resetting', 'intro', 'wake', 'paint', 'swallow', 'devour', 'console',
           'ask0', 'answer0', 'ask1', 'answer1', 'end', 'ending', 'dark']
-GUEST_MARKS = {'intro', 'wake', 'paint', 'swallow', 'devour', 'console', 'end'}
+GUEST_MARKS = {'intro', 'wake', 'paint', 'swallow', 'devour', 'console', 'end', 'speak', 'type'}
 
 
 def log(msg):
@@ -423,6 +423,8 @@ class Theatre:
         self.agent_out = asyncio.Queue()
         self.agent_lock = asyncio.Lock()
         self.history = []               # (question, live answer) of the current show
+        self.answers = {}               # k -> answer text as sent to XP (server-made, for captions)
+        self.caption_on = None
         self.task = None
         self.changed = asyncio.Event()
         self.show_count = 0
@@ -448,6 +450,10 @@ class Theatre:
             'now': time.time(), 'viewers': len(self.sessions), 'queue': len(self.queue),
             'asking': self.asking, 'line': self.line_note(), 'shows': self.show_count,
         }
+        # captions: the server's own answer text (never anything read back from Windows),
+        # released when the console starts speaking it
+        if self.caption_on and self.asking in self.answers and self.phase in ('answer0', 'answer1', 'ask1', 'end'):
+            st['caption'] = {'k': self.asking, 'text': self.answers[self.asking], 'step': self.caption_on}
         if s is not None:
             role = 'watcher'
             if s is self.owner:
@@ -614,7 +620,7 @@ class Theatre:
         LIMITS.wake_note(s.ip)
         self.owner, self.owner_ip = s, s.ip
         self.questions, self.qevents, self.asking = {}, {}, None
-        self.history = []
+        self.history, self.answers, self.caption_on = [], {}, None
         self.show_started = time.time()
         self.show_count += 1
         self.set_phase('resetting')
@@ -643,7 +649,13 @@ class Theatre:
             if m == 'end':
                 self.set_phase('end')
                 break
-        await asyncio.sleep(9)
+        try:   # keep the puppet's timing log on this host (never sent to browsers) for tuning
+            plog = await self.agent_run(r'type C:\p\puppet.log', 10)
+            with open(os.path.join(DATA, 'last-show.log'), 'w') as f:
+                f.write(plog)
+        except (asyncio.TimeoutError, OSError):
+            pass
+        await asyncio.sleep(7)
         self.set_phase('ending')
         await asyncio.sleep(8)
 
@@ -662,7 +674,10 @@ class Theatre:
     async def g_mark(self, req):
         p = req.query.get('p', '')
         if p in GUEST_MARKS and self.owner_ip:
-            if p != 'end':
+            if p in ('speak', 'type'):     # sub-steps of an answer: captions follow the voice / the typing
+                self.caption_on = p
+                self.changed.set()
+            elif p != 'end':
                 self.set_phase(p)
             self.marks.put_nowait(p)
         return web.Response(text='ok')
@@ -705,11 +720,14 @@ class Theatre:
                 ans = RECORDED[secrets.randbelow(len(RECORDED))]
             ans = QUIET + ans if mode == 'quiet' and not ans.startswith('The line is quiet') else ans
         self.answer_mode = mode
+        out = tidy_answer(ans) if mode == 'live' else ascii_only(ans)
+        self.answers[k] = out
+        self.caption_on = None
         if mode == 'live' and ans:
             self.history.append((q, ans))
         self.changed.set()
         log('answer k=%d mode=%s chars=%d' % (k, mode, len(ans)))
-        return web.Response(text=tidy_answer(ans) if mode == 'live' else ascii_only(ans))
+        return web.Response(text=out)
 
     async def g_admin(self, req):
         """host-only maintenance: POST /admin/<op>?token=...  (op: run, reset, abort, hmp, status)"""
@@ -887,6 +905,12 @@ async def p_ws(req):
 async def main():
     global T
     T = Theatre()
+    try:      # import (~2 s) and build the client now, not during the first answer
+        import anthropic  # noqa: F401
+        if cfg('ANTHROPIC_API_KEY'):
+            api_client(cfg('ANTHROPIC_API_KEY'))
+    except ImportError:
+        pass
     signal.signal(signal.SIGHUP, lambda *a: (load_env(), log('reloaded .env')))
     guest = web.Application(client_max_size=64 * 1024)
     guest.add_routes([web.get('/next', T.g_next), web.post('/out', T.g_out), web.get('/mark', T.g_mark),

@@ -204,7 +204,7 @@ static void fol_tick(void *ctx, DWORD now)
         Follower *f = &fol[i];
         double x, y, s = t * f->speed + f->ph;
         RECT r;
-        if (!f->on || !IsWindow(f->h)) continue;
+        if (!f->on || !IsWindow(f->h) || !ready(f->h)) continue;
         if (f->kind == 0) { x = f->cx + f->ax * sin(f->fx * s); y = f->cy + f->ay * sin(f->fy * s); }
         else { x = f->cx + f->ax * cos(s) * (1 + .25 * sin(3 * s)); y = f->cy + f->ay * sin(s) * (1 + .25 * sin(3 * s)); }
         r = srect(f->h);
@@ -829,7 +829,7 @@ static void swarm_tick(void *ctx, DWORD now)
     int i;
     double t = (now - swarm_t0) / 1000.0;
     (void)ctx;
-    if (swarm_mode != 1) return;
+    if (swarm_mode != 1 || !ntile || !ready(tile[0])) return;
     for (i = 0; i < ntile; i++) {
         double p = i * 2.399, a = t * (0.7 + 0.13 * (i % 5)) + p;
         double x = swarm_cx + swarm_rx * (0.65 * sin(a) + 0.35 * sin(2.3 * a + p * 3));
@@ -840,7 +840,7 @@ static void swarm_tick(void *ctx, DWORD now)
 static void swarm_go(void)
 {
     int i;
-    for (i = 0; i < ntile; i++) ShowWindow(tile[i], SW_SHOWNA);
+    for (i = 0; i < ntile; i++) ShowWindowAsync(tile[i], SW_SHOWNA);
     swarm_t0 = GetTickCount(); swarm_mode = 1;
 }
 
@@ -857,13 +857,16 @@ static void swarm_spell(const char *phrase, int hold)
         if (c == '\n' || col >= maxc) { line++; col = 0; if (c == '\n') continue; }
         if (c == ' ') { col++; continue; }
         buf[0] = c;
-        settext(tile[n], buf);
-        ShowWindow(tile[n], SW_SHOWNA);
+        {   /* async-ish: a busy calc.exe must not stall the show */
+            DWORD_PTR r;
+            SendMessageTimeoutA(tile[n], WM_SETTEXT, 0, (LPARAM)buf, SMTO_ABORTIFHUNG | SMTO_NORMAL, 250, &r);
+        }
+        ShowWindowAsync(tile[n], SW_SHOWNA);
         tween(tile[n], (int)swarm_cx - maxc * 15 + col * 30, (int)swarm_cy - lines * 17 + line * 34, 28, 30,
               (n * 13) % 220, 650, EASE_OUT);
         n++; col++;
     }
-    for (; n < ntile; n++) ShowWindow(tile[n], SW_HIDE);   /* spare letters wait out of sight */
+    for (; n < ntile; n++) ShowWindowAsync(tile[n], SW_HIDE);   /* spare letters wait out of sight */
     play(900 + hold);
 }
 /* scatter in every direction, then swarm again */
@@ -937,18 +940,41 @@ static void press_play(HWND sr)
 }
 
 /* the future answers out loud: Microsoft Sam -> WAV -> Sound Recorder, swallowed */
-static void speak_reply(HWND pa, const char *text, int k)
+/* Microsoft Sam renders the answer to a WAV in the background, so the voice is ready
+   by the time the swarm has finished spelling the first words */
+static HANDLE tts_proc;
+static void tts_start(const char *text, int k)
 {
     char txt[64], wav[64], c[256];
     FILE *f;
-    HWND sr, list[64];
-    int n, i;
-    RECT wr;
+    STARTUPINFOA si;
+    PROCESS_INFORMATION pi;
     sprintf(txt, "C:\\p\\ans%d.txt", k); sprintf(wav, "C:\\p\\ans%d.wav", k);
     f = fopen(txt, "w"); if (!f) return; fputs(text, f); fclose(f);
     sprintf(c, "cscript //nologo C:\\p\\speak.js %s %s", txt, wav);
-    say("speak: tts");
-    run_wait(c, 30000);
+    memset(&si, 0, sizeof si);
+    si.cb = sizeof si; si.dwFlags = STARTF_USESHOWWINDOW; si.wShowWindow = SW_HIDE;
+    if (CreateProcessA(NULL, c, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
+        CloseHandle(pi.hThread);
+        tts_proc = pi.hProcess;
+    }
+    say("speak: tts started");
+}
+
+static void speak_reply(HWND pa, const char *text, int k)
+{
+    char wav[64], c[256];
+    HWND sr, list[64];
+    int n, i;
+    RECT wr;
+    sprintf(wav, "C:\\p\\ans%d.wav", k);
+    if (!tts_proc) tts_start(text, k);
+    if (tts_proc) {
+        DWORD end = GetTickCount() + 30000;
+        while (WaitForSingleObject(tts_proc, 0) == WAIT_TIMEOUT && (LONG)(GetTickCount() - end) < 0) play(50);
+        CloseHandle(tts_proc);
+        tts_proc = NULL;
+    }
     say("speak: tts done");
     sprintf(c, "sndrec32.exe %s", wav);
     launch(c);
@@ -1109,7 +1135,7 @@ static char *ask_with_throbber(const char *q)
     j.q = q; j.a = NULL; j.done = 0;
     CloseHandle(CreateThread(NULL, 0, ask_thread, &j, 0, NULL));
     while (!j.done) {
-        if (ntile) { say("throb %d", k); swarm_spell(words[k++ % 6], 1100); swarm_burst(); play(700); }
+        if (ntile) { swarm_spell(words[k++ % 6], 1100); if (j.done) break; swarm_burst(); play(700); }
         else play(200);
     }
     return j.a;
@@ -1338,6 +1364,7 @@ static void scene_basilisk(void)
             say("asking %d", k);
             ans = ask_with_throbber(q);
             say("answer %d arrived (%d chars)", k, (int)strlen(ans));
+            tts_start(ans, k);
             fol_speed = 0.45;
             {   /* the swarm says the first words of the answer */
                 char head[40];
@@ -1349,8 +1376,10 @@ static void scene_basilisk(void)
                 swarm_burst();
             }
             say("speak_reply %d", k);
+            mark("speak");
             speak_reply(b_paint, ans, k);
             say("typing answer %d", k);
+            mark("type");
             type_into(te, ans, 26);
             type_into(te, "\n\n", 40);
             free(ans);

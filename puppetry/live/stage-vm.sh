@@ -22,6 +22,8 @@ ARGS=(-name stage -m 512 -enable-kvm -cpu host -smp 2
   -device AC97,audiodev=snd0
   -monitor unix:$MON,server,nowait
   -qmp unix:$QMP,server,nowait)
+# start straight from the staged desktop (no cold boot) once the snapshot exists
+qemu-img snapshot -U -l $ST/stage.qcow2 2>/dev/null | grep -q stage-ready && ARGS+=(-loadvm stage-ready)
 case "$1" in
 pulse)
   mkdir -p $PULSE

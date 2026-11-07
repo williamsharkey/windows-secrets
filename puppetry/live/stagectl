@@ -1,0 +1,8 @@
+#!/bin/bash
+# stagectl run "dir C:\p" | reset | status   (talks to server.py's host-only admin hook)
+T=$(cat /root/stage/data/admin.token)
+case "$1" in
+run) shift; curl -s --max-time 130 -X POST --data-binary "$*" "http://127.0.0.1:8770/admin/run?token=$T&timeout=120" ;;
+hmp) shift; curl -s --max-time 130 -X POST --data-binary "$*" "http://127.0.0.1:8770/admin/hmp?token=$T" ;;
+*) curl -s -X POST "http://127.0.0.1:8770/admin/$1?token=$T"; echo ;;
+esac
