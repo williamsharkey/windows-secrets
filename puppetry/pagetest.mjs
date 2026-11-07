@@ -1,0 +1,25 @@
+// Interaction test for windows-secrets.html: node pagetest.mjs <url> <outdir>
+import { chromium } from 'playwright';
+const [,, url, out] = process.argv;
+const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1100, height: 900 } });
+const logs = []; p.on('pageerror', e => logs.push('EXC ' + e.message)); p.on('console', m => m.type() === 'error' && logs.push('ERR ' + m.text()));
+await p.goto(url, { waitUntil: 'networkidle' });
+const shot = (n, s) => p.locator(s).screenshot({ path: `${out}/${n}.png` });
+await p.$eval('#edge', e => { e.value = 320; e.dispatchEvent(new Event('input')); });
+await p.click('#toyTab'); await p.click('#toyTab'); await p.click('#toyChk'); await p.waitForTimeout(150); await shot('t-toy', '#toy');
+await p.click('#ccSolid'); await shot('t-cc', '#cc');
+await p.click('#intl button[data-k=u]'); await p.waitForTimeout(400); await shot('t-intl', '#intl');
+await p.locator('#quest').scrollIntoViewIfNeeded(); await shot('t-quest0', '.quest-wrap');
+await p.click('#qgo'); await p.waitForTimeout(2900); await shot('t-quest1', '.quest-wrap');
+await p.$eval('#quest', q => { q.scrollLeft = 8000; q.scrollTop = 6000; }); await p.waitForTimeout(300); await shot('t-quest2', '.quest-wrap');
+await p.$eval('#quest', q => { q.scrollLeft = 0; q.scrollTop = 0; }); await p.waitForTimeout(400); await shot('t-quest3', '.quest-wrap');
+console.log('found:', await p.$eval('#foundBox', e => e.classList.contains('on')), '|', await p.textContent('#qmsg'));
+await p.click('#qhib'); await p.waitForTimeout(800);
+await p.locator('.scale').scrollIntoViewIfNeeded(); await shot('t-scale', '.scale');
+await p.click('#cfTab'); await p.click('#cfTab'); await p.waitForTimeout(300); await shot('t-cf', '#cardfile');
+await p.check('#npWhole'); await p.click('#npNext'); await shot('t-np', '#npsim');
+await p.click('#schedBtns button[data-i="2"]'); await p.waitForTimeout(900); await shot('t-sched', '#schedToy');
+await p.setViewportSize({ width: 390, height: 844 }); await p.waitForTimeout(300);
+console.log('mobile overflow px:', await p.evaluate(() => document.documentElement.scrollWidth - innerWidth));
+console.log(logs.join('\n') || 'no console errors');
+await b.close();

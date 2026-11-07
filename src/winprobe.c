@@ -294,6 +294,17 @@ static void dump_menu(HMENU m, int depth, int collect)
     }
 }
 
+/* ---- find child by id or text ---- */
+
+static BOOL CALLBACK findchild_cb(HWND h, LPARAM lp)
+{
+    struct { const char *t; int id; HWND f; } *q = (void *)lp;
+    char t[512];
+    if (q->t) { wtext(h, t, sizeof t); if (!strcmp(t, q->t)) { q->f = h; return FALSE; } }
+    else if (GetDlgCtrlID(h) == q->id) { q->f = h; return FALSE; }
+    return TRUE;
+}
+
 /* ---- resize ------------------------------------------------------------ */
 
 static void grow(HWND h, int w, int ht)
@@ -620,10 +631,109 @@ int main(int argc, char **argv)
         ShowWindow(h, SW_SHOWNA);
         EnableWindow(h, TRUE);
         InvalidateRect(GetParent(h), NULL, TRUE);
+    } else if (!strcmp(cmd, "move") && argc > 6) {
+        /* place a window: x y w h in its parent's client coordinates */
+        SetWindowPos(find_win(argv[2]), NULL, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]), atoi(argv[6]),
+                     SWP_NOZORDER | SWP_NOACTIVATE);
+    } else if (!strcmp(cmd, "tween") && argc > 7) {
+        /* animate to x y w h over ms milliseconds (ease in-out) */
+        HWND h = find_win(argv[2]), par = GetParent(h);
+        RECT r;
+        POINT p;
+        int x1 = atoi(argv[3]), y1 = atoi(argv[4]), w1 = atoi(argv[5]), h1 = atoi(argv[6]), ms = atoi(argv[7]);
+        int x0, y0, w0, h0;
+        DWORD t0 = GetTickCount(), t;
+        GetWindowRect(h, &r);
+        p.x = r.left; p.y = r.top;
+        if (par && (GetWindowLongW(h, GWL_STYLE) & WS_CHILD)) ScreenToClient(par, &p);
+        x0 = p.x; y0 = p.y; w0 = r.right - r.left; h0 = r.bottom - r.top;
+        do {
+            double f, e;
+            t = GetTickCount() - t0;
+            f = ms > 0 ? (double)t / ms : 1.0;
+            if (f > 1) f = 1;
+            e = f < .5 ? 2 * f * f : 1 - (-2 * f + 2) * (-2 * f + 2) / 2;
+            SetWindowPos(h, NULL, x0 + (int)((x1 - x0) * e), y0 + (int)((y1 - y0) * e), w0 + (int)((w1 - w0) * e),
+                         h0 + (int)((h1 - h0) * e), SWP_NOZORDER | SWP_NOACTIVATE);
+            UpdateWindow(h);
+            Sleep(16);
+        } while (t < (DWORD)ms);
+    } else if (!strcmp(cmd, "shake") && argc > 3) {
+        /* jiggle a window in place for ms milliseconds */
+        HWND h = find_win(argv[2]);
+        RECT r;
+        int ms = atoi(argv[3]), i;
+        GetWindowRect(h, &r);
+        for (i = 0; i * 30 < ms; i++) {
+            int dx = (i % 2 ? 6 : -6) * (ms - i * 30) / ms, dy = (i % 3 - 1) * 3 * (ms - i * 30) / ms;
+            SetWindowPos(h, NULL, r.left + dx, r.top + dy, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+            Sleep(30);
+        }
+        SetWindowPos(h, NULL, r.left, r.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+    } else if (!strcmp(cmd, "find") && argc > 3) {
+        /* print the hwnd of a descendant of <win> by control id (or by text with t:TEXT) */
+        HWND top = find_win(argv[2]);
+        struct { const char *t; int id; HWND f; } q;
+        q.t = !strncmp(argv[3], "t:", 2) ? argv[3] + 2 : NULL;
+        q.id = q.t ? 0 : atoi(argv[3]);
+        q.f = NULL;
+        EnumChildWindows(top, findchild_cb, (LPARAM)&q);
+        if (q.f) printf("0x%08lx\n", (unsigned long)(UINT_PTR)q.f); else { puts("none"); return 1; }
+    } else if (!strcmp(cmd, "res") && argc > 4) {
+        /* change display mode: width height bits-per-pixel */
+        DEVMODEA dm;
+        memset(&dm, 0, sizeof dm);
+        dm.dmSize = sizeof dm;
+        dm.dmPelsWidth = atoi(argv[2]);
+        dm.dmPelsHeight = atoi(argv[3]);
+        dm.dmBitsPerPel = atoi(argv[4]);
+        dm.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
+        if (argc > 5) { dm.dmDisplayFrequency = atoi(argv[5]); dm.dmFields |= DM_DISPLAYFREQUENCY; }
+        printf("ChangeDisplaySettings -> %ld\n", ChangeDisplaySettingsA(&dm, CDS_UPDATEREGISTRY));
+    } else if (!strcmp(cmd, "cursor") && argc > 3) {
+        /* glide the mouse pointer to x y (screen) over ms milliseconds */
+        POINT p0;
+        int x1 = atoi(argv[2]), y1 = atoi(argv[3]), ms = argc > 4 ? atoi(argv[4]) : 0;
+        DWORD t0 = GetTickCount(), t;
+        GetCursorPos(&p0);
+        do {
+            double f;
+            t = GetTickCount() - t0;
+            f = ms > 0 ? (double)t / ms : 1.0;
+            if (f > 1) f = 1;
+            f = f < .5 ? 2 * f * f : 1 - (-2 * f + 2) * (-2 * f + 2) / 2;
+            SetCursorPos(p0.x + (int)((x1 - p0.x) * f), p0.y + (int)((y1 - p0.y) * f));
+            Sleep(10);
+        } while (t < (DWORD)ms);
+    } else if (!strcmp(cmd, "desk") && argc > 4) {
+        /* plain desktop: no wallpaper, colour r g b */
+        int el = COLOR_DESKTOP;
+        COLORREF c = RGB(atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
+        SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, (PVOID)"", SPIF_SENDCHANGE);
+        SetSysColors(1, &el, &c);
+    } else if (!strcmp(cmd, "modes")) {
+        DEVMODEA dm;
+        DWORD i;
+        dm.dmSize = sizeof dm;
+        for (i = 0; EnumDisplaySettingsA(NULL, i, &dm); i++)
+            printf("%lux%lu %lubpp %luHz\n", dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel, dm.dmDisplayFrequency);
+    } else if (!strcmp(cmd, "wait") && argc > 2) {
+        Sleep(atoi(argv[2]));
+    } else if (!strcmp(cmd, "screenpos") && argc > 2) {
+        /* print a window's screen rectangle: x y w h */
+        RECT r;
+        GetWindowRect(find_win(argv[2]), &r);
+        printf("%ld %ld %ld %ld\n", r.left, r.top, r.right - r.left, r.bottom - r.top);
+    } else if (!strcmp(cmd, "post") && argc > 5) {
+        /* post <win> <msg> <wparam> <lparam>  (numbers, 0x.. allowed) */
+        PostMessageW(find_win(argv[2]), strtoul(argv[3], NULL, 0), strtoul(argv[4], NULL, 0), strtoul(argv[5], NULL, 0));
+    } else if (!strcmp(cmd, "send") && argc > 5) {
+        printf("%ld\n", (long)SendMessageW(find_win(argv[2]), strtoul(argv[3], NULL, 0), strtoul(argv[4], NULL, 0),
+                                           strtoul(argv[5], NULL, 0)));
     } else if (!strcmp(cmd, "enable") && argc > 2) EnableWindow(find_win(argv[2]), TRUE);
     else if (!strcmp(cmd, "check") && argc > 2) SendMessageW(find_win(argv[2]), BM_SETCHECK, BST_CHECKED, 0);
     else if (!strcmp(cmd, "click") && argc > 2) PostMessageW(find_win(argv[2]), BM_CLICK, 0, 0);
-    else if (!strcmp(cmd, "settext") && argc > 3) SetWindowTextA(find_win(argv[2]), argv[3]);
+    else if (!strcmp(cmd, "settext") && argc > 3) SendMessageA(find_win(argv[2]), WM_SETTEXT, 0, (LPARAM)argv[3]); /* WM_SETTEXT is marshalled across processes; SetWindowText is not */
     else if (!strcmp(cmd, "close") && argc > 2) PostMessageW(find_win(argv[2]), WM_CLOSE, 0, 0);
     else if (!strcmp(cmd, "crawl") && argc > 3) {
         /* everything after the outdir is the command line */

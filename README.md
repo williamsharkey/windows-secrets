@@ -54,6 +54,14 @@ winprobe grow   <win> <w> <h>        force a size, fixed border or not
 winprobe reveal <win>                grow until every child control is on screen
 winprobe shot   <win|screen> f.bmp   screenshot
 winprobe show|enable|check|click <hwnd>   resurrect a ghost and poke it
+winprobe find <win> <id|t:text>      print a descendant's HWND
+winprobe move|tween <hwnd> x y w h [ms]   place or animate a window / control
+winprobe shake <win> <ms>            jiggle a window
+winprobe cursor x y [ms]             glide the mouse pointer
+winprobe settext <hwnd> <text>       WM_SETTEXT (works across processes)
+winprobe post|send <win> msg wp lp   raw messages, e.g. menu commands (0x111)
+winprobe res w h bpp [hz] | modes    change / list display modes
+winprobe desk r g b                  plain desktop colour
 winprobe crawl  <outdir> <cmdline>   launch a program, open every "..." menu item,
                                      every property-sheet tab and every ">>" expander,
                                      probing and photographing each window
@@ -92,6 +100,14 @@ i686-w64-mingw32-gcc -O2 -o winprobe.exe src/winprobe.c -lgdi32 -luser32
 - `data/crawl-w7`, `data/crawl-xp` - runtime crawl logs (probe, tab order, menus) per program
 - `data/*-runtime-findings.tsv` - runtime flags with text, one per line
 
+## Recording rig (puppetry/)
+
+`puppetry/` holds the XP recording studio used for the article's clips:
+QEMU/KVM with Cirrus VGA, an in-guest `agent.exe` that runs commands sent
+from the host (`studio_server.py`, `xprun`), and `qrec.py`, which records
+the guest framebuffer through QEMU's monitor (SDL/Xvfb capture missed
+updates). `puppetry/clips/` has the choreography for each clip.
+
 ## Rigs used
 
 - **Windows 7** - real hardware, driven over SSH; GUI jobs run in the
@@ -114,8 +130,10 @@ i686-w64-mingw32-gcc -O2 -o winprobe.exe src/winprobe.c -lgdi32 -luser32
   ticked, it does nothing: Notepad still finds "cat" inside "concatenate".
 - **Control Panel International (3.11)** - 1×1 buttons "D", "U", "T", "N" at
   (300,200); Alt+D opens Date Format through an invisible button.
-- **XP Turn Off Computer** - a Hibernate button parked at (30093, 30049),
-  about 44 screen widths to the right.
+- **XP Turn Off Computer** - a plain Hibernate button meant for (30093, 30049)
+  dialog units; 16-bit coordinates wrap it to (-20396, -16706) at runtime.
+  At its true 33x33 size its caption reads "berna". Shift doesn't move it -
+  XP just repaints Stand By.
 - **Task Scheduler (mstask / xpsp2res)** - Weekly, Monthly, Once and Idle
   panels laid side by side out to x=1200 DLU, swapped in at runtime.
 - **Test hooks left in** - `ftsrch.dll`: *"No Data: This static is used to
