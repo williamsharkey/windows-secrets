@@ -1,0 +1,187 @@
+<!-- exhibit: heritage-solitaire — drop into section#sol, after the "twenty card faces" figure (and it corrects that caption: see "Not twenty faces") -->
+<section class="hgx" id="hg-sol" aria-labelledby="hg-sol-h">
+<style>
+.hgx { margin: 48px 0 0; padding-top: 6px; border-top: 1px dashed var(--rule); }
+.hgx > h3 { margin-top: 18px; }
+.hgx .hg-k { font: 600 12px/1.2 -apple-system, "Segoe UI", Tahoma, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+.hgx ol.tl { list-style: none; padding: 0 0 0 4px; margin: 20px 0; border-left: 2px solid var(--rule); }
+.hgx ol.tl li { position: relative; padding: 0 0 14px 18px; max-width: none; font-size: 16px; line-height: 1.5; }
+.hgx ol.tl li::before { content: ""; position: absolute; left: -7px; top: .5em; width: 10px; height: 10px; border-radius: 50%; background: var(--card); border: 2px solid var(--teal); box-sizing: border-box; }
+.hgx ol.tl li.me::before { background: var(--teal); }
+.hgx ol.tl .y { display: inline-block; min-width: 3.2em; font: 700 13px ui-monospace, Consolas, monospace; color: var(--teal); }
+.hgx .ev { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; margin: 22px 0; font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; }
+.hgx .ev > b.t { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.hgx .ev pre { margin: 8px 0 0; font-size: 12.5px; line-height: 1.45; overflow-x: auto; max-width: 100%; }
+.hgx .ev pre .h { background: var(--mark); }
+.hgx .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin: 22px 0; align-items: start; }
+.hgx .grid figure { margin: 0; }
+.hgx figure img, .hgx canvas { max-width: 100%; height: auto; }
+.hgx .px img, .hgx canvas.px { image-rendering: pixelated; }
+.hgx .src { font: 13px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); padding-left: 20px; }
+.hgx .src li { max-width: none; margin: 2px 0; }
+.hgx .toy { margin: 22px 0; }
+.hgx .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.hgx .seg button { border: 0; border-radius: 0; border-right: 1px solid var(--rule); }
+.hgx .seg button:last-child { border-right: 0; }
+.hgx .seg button[aria-pressed="true"] { background: var(--teal); color: var(--bg); }
+.hgx .scrollx { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+#hg-sol .backs { display: grid; grid-template-columns: repeat(2, minmax(0, 142px)); gap: 18px; align-items: end; margin-top: 10px; }
+#hg-sol .backs figure { margin: 0; text-align: center; }
+#hg-sol .backs img { width: 142px; height: 192px; display: block; image-rendering: pixelated; border-radius: 4px; }
+#hg-sol .backs .clip { width: 142px; height: 192px; overflow: hidden; border-radius: 4px; max-width: 100%; }
+#hg-sol .backs .clip img { width: 1704px; max-width: none; height: 192px; }
+#hg-sol input[type=range] { width: 100%; max-width: 320px; accent-color: var(--teal); }
+#hg-sol .anim { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+#hg-sol .anim canvas { width: 142px; height: 192px; image-rendering: pixelated; border-radius: 4px; background: #007f00; }
+#hg-sol .anim .meta { flex: 1 1 200px; min-width: 0; font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; }
+#hg-sol .anim code { font-size: 12.5px; }
+#hg-sol .live img { width: 100%; max-width: 480px; image-rendering: pixelated; }
+</style>
+
+<p class="hg-k">Heritage · Solitaire</p>
+<h3 id="hg-sol-h">The deck that outlived its own code</h3>
+
+<p>Solitaire began as a summer intern's side project. Wes Cherry wrote it in 1988 for Windows 2.x, and it shipped with Windows 3.0 in May 1990 to teach a generation of office workers to drag and drop. He was never paid royalties for it. His version had a boss key that put up a fake screen of work, and Microsoft made him take it out; Bill Gates's main complaint was that the game was too hard to win. The cards were drawn by Susan Kare, who had drawn the original Macintosh icons. Her deck, including twelve card backs, went unchanged for eleven years.</p>
+
+<ol class="tl">
+  <li><span class="y">1988</span> Cherry, an intern, writes Solitaire on Windows 2.x. It's in the 3.11 About box as "Developed for Microsoft by Wes Cherry".</li>
+  <li><span class="y">1990</span> Windows 3.0 ships it. Four of Kare's backs are animated: the robot's lights, the castle's bats, the beach's sun, and an ace sliding out of a sleeve.</li>
+  <li><span class="y">1992</span> Windows for Workgroups adds <code>CARDS.DLL</code>, "Card Display Technology", for Hearts and the Entertainment Packs. Solitaire doesn't use it.</li>
+  <li><span class="y">2001</span> XP's <code>sol.exe</code> finally imports <code>cards.dll</code>. All twelve backs are redrawn, the faces are kept, and the animation function becomes a stub.</li>
+  <li><span class="y">2006</span> Vista replaces the game with a rewrite by Oberon Games with new art of its own.</li>
+</ol>
+
+<h4>Twelve backs, 1992 and 2001</h4>
+<p>These are the real bitmaps, pulled from WfW 3.11's <code>CARDS.DLL</code> and XP's <code>cards.dll</code> by resource ID. Of the 74 bitmaps the two files share, 62 are pixel-for-pixel identical: all 52 faces, the blank, the X and O markers, and every animation frame. Only the twelve backs (IDs 54–65) were redrawn.</p>
+
+<div class="toy ui" id="hg-sol-backs">
+  <div class="backs">
+    <figure><div class="clip"><img src="windows-secrets/heritage/cards-backs-w311.png" alt="" width="1704" height="192" loading="lazy" data-strip></div><figcaption>WfW 3.11</figcaption></figure>
+    <figure><div class="clip"><img src="windows-secrets/heritage/cards-backs-xp.png" alt="" width="1704" height="192" loading="lazy" data-strip></div><figcaption>XP</figcaption></figure>
+  </div>
+  <label for="hg-sol-bk" class="status" style="display:block">Back ID <b id="hg-sol-bkid">54</b>: <span id="hg-sol-bkname"></span></label>
+  <input id="hg-sol-bk" type="range" min="0" max="11" value="2">
+</div>
+
+<h4>The animations were on a timer, and the help desk had the timings wrong</h4>
+<p>Microsoft's knowledge base article Q66960 describes the effects: the robot and the bats move all the time, the ace peeks out "every 15 seconds", and the sun sticks its tongue out "every 30 seconds". Both <code>CARDS.DLL</code> and <code>SOL.EXE</code> carry the same table of frames. Each entry gives the back, the frame size, the number of frames, and a position for each frame <span class="ver sx">static</span>:</p>
+
+<div class="ev"><b class="t">CARDS.DLL (3.11), data segment, offset 0x10</b>
+<pre>41 00 20 00 16 00 04 00  a6 02 20 00 20 00  a7 02 20 00 20 00  a6 02 …  <span class="h">back 65 (hand)</span>   32×22, 4 frames: 678, 679, 678 at (32,32)
+3f 00 24 00 0c 00 02 00  a8 02 2a 00 0c 00  3f 00 2a 00 0c 00      <span class="h">back 63 (castle)</span> 36×12, 2 frames: 680 at (42,12)
+40 00 0e 00 0c 00 04 00  a9 02 2f 00 01 00  aa 02 2f 00 01 00  …  <span class="h">back 64 (beach)</span>  14×12, 4 frames: 681, 682, 681 at (47,1)
+38 00 18 00 07 00 04 00  ab 02 18 00 28 00  ac 02 18 00 28 00  …  <span class="h">back 56 (robot)</span>  24×7,  4 frames: 683, 684, 683 at (24,40)</pre></div>
+
+<p>Solitaire calls the animation routine from a 250 ms timer, which it registers with ID <code>0x29A</code>, or 666. It runs only while the clock is running, so that's why the KB says timed games only. The code that picks a frame for each back is in segment 4 at <code>0B46</code>. The robot uses <code>tick mod 4</code> and the castle <code>tick mod 2</code>. The ace uses <code>(tick+4) mod 60</code> and the sun <code>(tick+4) mod 200</code>, and each plays its four frames when the remainder is below 4 <span class="ver sx">static</span>:</p>
+
+<div class="ev"><b class="t">SOL.EXE (3.11), file offset 0x5116: the sun</b>
+<pre>8b 46 06        mov  ax,[bp+6]      ; tick
+05 04 00        add  ax,4
+b9 <span class="h">c8 00</span>        mov  cx,<span class="h">200</span>
+99 f7 f9        cwd / idiv cx       ; dx = (tick+4) mod 200
+83 fa 04 7d 05  cmp  dx,4 / jge …   ; frames 0-3, then rest
+b8 40 00        mov  ax,0x40        ; back 64, the beach</pre></div>
+
+<p>A tick of 250 ms would put the ace at 15 seconds, as the KB says, but the sun at 50, not 30. Windows 3.1 rounds timers up to its 55 ms clock, so a tick is really 275 ms. I timed both on the running system <span class="ver live">verified live</span>: the ace came out at 0.1 s, 16.8 s and 33.9 s, and the sun at 6.7 s, 63.0 s and 118.8 s. That's one wink every 56 seconds, almost twice the period Microsoft's support article gave.</p>
+
+<div class="toy ui" id="hg-sol-anim">
+  <div class="anim">
+    <canvas id="hg-sol-cv" width="71" height="96" class="px" aria-label="Animated card back"></canvas>
+    <div class="meta">
+      <div class="seg" role="group" aria-label="Card back">
+        <button class="btn" type="button" data-b="56" aria-pressed="true">Robot</button><button class="btn" type="button" data-b="63" aria-pressed="false">Castle</button><button class="btn" type="button" data-b="64" aria-pressed="false">Beach</button><button class="btn" type="button" data-b="65" aria-pressed="false">Hand</button>
+      </div>
+      <div class="row"><button class="btn" type="button" id="hg-sol-ff">Fast-forward ×10</button></div>
+      <div class="status" id="hg-sol-st" aria-live="off">tick 0</div>
+    </div>
+  </div>
+  <p class="status"><span class="ver rec">reconstruction</span> Drawn on a canvas from the real 1992 bitmaps (the backs, plus frames 678–684 from <code>cards-anim-frames</code>) and the real table above, with a 275 ms tick and Solitaire's frame rules.</p>
+</div>
+
+<figure class="live"><img src="windows-secrets/heritage/sol-live-anim-frames.png" width="480" height="100" alt="Six captures of the Solitaire deck: three robot frames with different lights, then the hand back with the ace hidden, peeking and further out" loading="lazy"><figcaption><span class="ver live">verified live</span> Captured from WfW 3.11's Solitaire as it ran: the robot's lights and dial, and the ace coming out of the sleeve.</figcaption></figure>
+
+<h4 id="hg-sol-twenty">Not twenty faces: the whole deck, twice</h4>
+<p>Earlier I wrote that the 3.11 <code>SOL.EXE</code> oddly carries twenty card faces of its own. That was my scanner's mistake. It counted only bitmaps whose IDs appear as constants in the code. <code>SOL.EXE</code> actually holds all 74 card bitmaps, and each one is byte-for-byte identical to the bitmap with the same ID in <code>CARDS.DLL</code> <span class="ver sx">static</span>. The twenty "orphans" were just the cards whose IDs don't happen to appear in the code. The others are reached by arithmetic. At <code>seg10:0899</code> the code computes the resource ID as <code>(card&gt;&gt;2) mod 13 + (card&amp;3)×13 + 1</code>.</p>
+<p><code>SOL.EXE</code> doesn't import <code>CARDS.DLL</code> at all. Its module table lists only KERNEL, USER, GDI and SHELL. Hearts does use the DLL, but it loads it at run time ("Cannot find cards.dll."). Solitaire's own copy of the card engine sits in its segment 10. It's the same engine: both copies make exactly 16 <code>SetPixel</code> and 12 <code>GetPixel</code> calls to round the card corners. Solitaire predates the DLL, and in 1992 it still carried its own copy of the deck.</p>
+
+<div class="ev"><b class="t">XP cards.dll 5.1.2600.0, cdtAnimate (file offset 0x58A)</b>
+<pre><span class="h">33 c0</span>  xor eax,eax
+<span class="h">40</span>     inc eax          ; return TRUE
+<span class="h">c2 14 00</span> ret 14h        ; …and draw nothing</pre></div>
+<p>XP finally moved Solitaire onto the DLL, now called "Entertainment Pack Cardplaying Helper DLL" in its version resource. It kept all seven animation frames, 678 to 684, but the exported <code>cdtAnimate</code> is six bytes that return TRUE and draw nothing <span class="ver sx">static</span>. That was necessary: the backs with IDs 56, 63, 64 and 65 are now a fish, an astronaut, orange stripes and race cars, and the robot's dial would have blinked on the fish. So the frames still ship in XP, and nothing in XP can show them.</p>
+
+<div class="prior none"><b class="t">No earlier mention found</b> I couldn't find the KB timings checked against the code or a running copy, or the observation that 3.11 Solitaire's 74 bitmaps duplicate <code>CARDS.DLL</code> byte for byte. Known already: the animations (KB Q66960), that 3.x Solitaire drew its own cards (wiert.me), that the frames survive in XP (The Cutting Room Floor), and that XP's backs don't animate (wine-devel). See also the <a href="#sol">debug menu XP still remembers</a>.</div>
+
+<ol class="src">
+  <li><a href="https://jeffpar.github.io/kbarchive/kb/066/Q66960">KB Q66960, "Solitaire Card Backs Display Animated Effects in Windows"</a></li>
+  <li><a href="https://games.slashdot.org/story/04/01/29/0542251/creator-of-solitaire-for-windows-interviewed">Slashdot, 2004: Wes Cherry interview (b3ta), the boss key</a></li>
+  <li><a href="https://www.mentalfloss.com/fun/games/how-intern-developed-microsoft-solitaire">Mental Floss: how an intern developed Microsoft Solitaire</a></li>
+  <li><a href="https://news.xbox.com/en-us/2015/07/29/windows-solitaire-a-look-back-at-the-original-single-player-game/">Xbox Wire, 2015: Solitaire at 25</a></li>
+  <li><a href="https://kottke.org/15/08/real-windows-30-solitaire-deck-of-cards">kottke.org: Susan Kare's Windows 3.0 deck, printed</a></li>
+  <li><a href="https://wiert.me/2009/08/18/delphi-back-in-1996-cards-dll-component-wrapper-in-delphi-1-and-2/">wiert.me, 2009: CARDS.DLL, and Solitaire drawing its own cards</a></li>
+  <li><a href="https://list.winehq.org/archives/list/wine-devel@list.winehq.org/thread/JCYSYXUULHMWN4GW6ENCLYFVM44FBDOS">wine-devel: cdtAnimate as a stub for XP's backs</a></li>
+  <li><a href="https://www.tcrf.net/Solitaire_(Windows,_1990)">The Cutting Room Floor: Solitaire (Windows, 1990)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Microsoft_Solitaire">Wikipedia: Microsoft Solitaire</a></li>
+</ol>
+
+<script>
+(function () {
+  var root = document.getElementById('hg-sol'); if (!root) return;
+  // --- back slider
+  var names311 = ['red & blue weave','yellow & green weave','robot','roses','vines on black','vines on blue','fish on cyan','fish on blue','shell','castle','beach','hand of cards'];
+  var namesXP = ['clouds','aqua glass','tropical fish','frog','red swirl','palm island','blue squares','purple lights','moon over dunes','astronaut','orange stripes','race cars'];
+  var rng = root.querySelector('#hg-sol-bk'), strips = root.querySelectorAll('[data-strip]');
+  function showBack() {
+    var i = +rng.value;
+    strips.forEach(function (s) { s.style.transform = 'translateX(' + (-142 * i) + 'px)'; });
+    root.querySelector('#hg-sol-bkid').textContent = 54 + i;
+    root.querySelector('#hg-sol-bkname').textContent = names311[i] + ' (3.11) → ' + namesXP[i] + ' (XP)';
+    strips[0].alt = 'WfW 3.11 card back ' + (54 + i) + ': ' + names311[i];
+    strips[1].alt = 'XP card back ' + (54 + i) + ': ' + namesXP[i];
+  }
+  rng.addEventListener('input', showBack); showBack();
+
+  // --- animation reconstruction
+  var backs = new Image(), frames = new Image(), ready = 0;
+  backs.src = 'windows-secrets/heritage/cards-backs-w311.png';
+  frames.src = 'windows-secrets/heritage/cards-anim-frames-311.png';
+  // frame sprite: id -> [sx, w, h]
+  var F = { 678: [0, 32, 22], 679: [32, 32, 22], 680: [64, 26, 12], 681: [90, 14, 12], 682: [104, 14, 12], 683: [118, 24, 7], 684: [142, 24, 7] };
+  // the real table: back -> [[bmp,x,y] x n]
+  var T = { 65: [[678, 32, 32], [679, 32, 32], [678, 32, 32], [65, 32, 32]],
+            63: [[680, 42, 12], [63, 42, 12]],
+            64: [[681, 47, 1], [682, 47, 1], [681, 47, 1], [64, 47, 1]],
+            56: [[683, 24, 40], [684, 24, 40], [683, 24, 40], [56, 24, 40]] };
+  var cv = root.querySelector('#hg-sol-cv'), cx = cv.getContext('2d'), back = 56, tick = 0, st = root.querySelector('#hg-sol-st');
+  function frameFor(b, t) {               // SOL.EXE seg4:0B46
+    if (b === 56) return t % 4;
+    if (b === 63) return t % 2;
+    var r = (t + 4) % (b === 64 ? 200 : 60);
+    return r < 4 ? r : -1;
+  }
+  function draw() {
+    if (ready < 2) return;
+    var f = frameFor(back, tick);
+    cx.drawImage(backs, (back - 54) * 71, 0, 71, 96, 0, 0, 71, 96);
+    if (f >= 0) {
+      var e = T[back][f];
+      if (e[0] > 600) { var s = F[e[0]]; cx.drawImage(frames, s[0], 0, s[1], s[2], e[1], e[2], s[1], s[2]); }
+    }
+    var per = back === 64 ? 200 : back === 65 ? 60 : 0;
+    st.textContent = 'tick ' + tick + (per ? ' · next show in ' + (((per - ((tick + 4) % per)) % per) * 0.275).toFixed(1) + ' s' : ' · every tick') + (f >= 0 ? ' · frame ' + f : '');
+  }
+  backs.onload = frames.onload = function () { ready++; draw(); };
+  var mul = 1;
+  (function loop() { tick++; draw(); setTimeout(loop, 275 / mul); })();
+  root.querySelectorAll('[data-b]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      back = +b.getAttribute('data-b'); tick = 0;
+      root.querySelectorAll('[data-b]').forEach(function (o) { o.setAttribute('aria-pressed', o === b); });
+      draw();
+    });
+  });
+  var ff = root.querySelector('#hg-sol-ff');
+  ff.addEventListener('click', function () { mul = mul === 1 ? 10 : 1; ff.textContent = mul === 1 ? 'Fast-forward ×10' : 'Normal speed'; });
+})();
+</script>
+</section>

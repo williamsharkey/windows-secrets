@@ -1,0 +1,21 @@
+<!-- exhibit: xp-solitaire-debug — drop into section#sol -->
+<h3>Wes Cherry's debug menu, as XP still remembers it</h3>
+
+<p>XP's <code>sol.exe</code> (credited in string 108, "Developed for Microsoft by Wes Cherry") keeps the help-line text for a menu that the retail game doesn't have <span class="ver sx">static</span>:</p>
+
+<table class="mini"><thead><tr><th>ID</th><th>Status-bar text</th><th>Handled in XP?</th></tr></thead><tbody>
+<tr><td>1005</td><td>Set game number</td><td>no</td></tr>
+<tr><td>1006</td><td>Print # of cards in each col</td><td>no</td></tr>
+<tr><td>1007</td><td>Assertion failure</td><td>no</td></tr>
+<tr><td>1008</td><td>Heck, I don't know</td><td>no</td></tr>
+<tr><td>1009</td><td>Configure Solitaire for screen shots</td><td>no</td></tr>
+<tr><td>1010</td><td>Force a win</td><td>yes: <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>2</kbd>, table <code>HIDDENACCEL</code></td></tr>
+</tbody></table>
+
+<p>The retail command switch handles 1000–1004 (Deal, Undo, Deck, Options, Exit), 1010 and About, and nothing else. The famous instant win is the one debug command whose handler and hidden accelerator survived. The template for the assertion box is still in the file too, so I had XP draw it <span class="ver live">rendered live</span>:</p>
+
+<figure class="shot x2" style="--w:303"><img src="windows-secrets/xp-deep/xp-sol-assert.png" alt="Solitaire's unused Assertion Failure dialog: File, Line, Game #, Version 3.0, 'Please send bug report to winbug. Include file, line number, game number, version number and steps to reproduce. A file named sol.dbg will be created in the current directory. Please attach this file to the bug report -- Thanks', with Continue and Exit Windows buttons" width="303" height="216" loading="lazy">
+<figcaption>DIALOG 999 in XP SP3's <code>sol.exe</code>. "winbug" was an internal bug-report alias; "Exit Windows" dates from when a crashing game could take Windows 3.0 down with it.</figcaption></figure>
+
+<div class="prior"><b class="t">Prior art</b>
+<a href="https://www.tcrf.net/Solitaire_(Windows,_1990)">The Cutting Room Floor</a> covers these strings and <code>sol.dbg</code>, and <a href="https://eeggs.com/items/40189.html">eeggs.com</a> lists the IDs. What's new here is only the check that XP's retail switch handles 1010 and nothing else, and a picture of the dialog drawn from the XP binary.</div>

@@ -1,0 +1,14 @@
+[Unit]
+Description=BASILISK LIVE - theatre server (guest 127.0.0.1:8770, public 127.0.0.1:8780)
+After=stage-vm.service
+PartOf=stage.target
+
+[Service]
+WorkingDirectory=/root/stage
+ExecStart=/root/stage/venv/bin/python /root/stage/bin/server.py
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=stage.target

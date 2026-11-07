@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BASILISK LIVE</title>
+<meta name="description" content="A real Windows XP machine, live. It is always October 25, 2001 on this desktop. Wake BASILISK and it eats the machine, builds a console and lets you ask an AI from 2026 a question, while everyone watches.">
+<meta property="og:title" content="BASILISK LIVE">
+<meta property="og:description" content="A real Windows XP desktop, streamed live. Wake BASILISK and ask the console a question.">
+<meta property="og:image" content="https://williamsharkey.com/xp-live/poster.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' fill='%23fff'/%3E%3Ccircle cx='8' cy='8' r='6.5' fill='%23000'/%3E%3Crect x='7' y='2' width='2' height='12' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* The page is part of the show: a 1-bit flood (ordered dither) rises through it as
+   BASILISK eats the machine, and every word on the page is drawn in "difference"
+   so the flood inverts it rather than hiding it.  Only the stream is untouched. */
+:root { --sans: "Space Grotesk", "Segoe UI", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace; --gut: 16px; }
+@media (min-width: 720px) { :root { --gut: 32px; } }
+* { box-sizing: border-box; }
+html { background: #fff; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: #fff; color: #fff; font: 400 17px/1.55 var(--sans); overflow-x: hidden; min-height: 100vh; }
+a { color: inherit; text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+#flood { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; image-rendering: pixelated; image-rendering: crisp-edges; pointer-events: none; }
+/* everything printed sits above the flood and inverts against it */
+.ink { position: relative; z-index: 1; mix-blend-mode: difference; }
+main { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 var(--gut) 40px; }
+.top { display: flex; align-items: center; gap: 10px; padding: 14px 0 0; font: 600 12px/1.2 var(--mono); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; overflow: hidden; }
+.top .rule { flex: 1; overflow: hidden; letter-spacing: 0; }
+.top .rule::before { content: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; }
+.dot { display: inline-block; width: 9px; height: 9px; background: #fff; margin-right: 6px; vertical-align: 0; }
+.live .dot { animation: blink 1.2s steps(2, jump-none) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+h1 { font: 700 clamp(54px, 15vw, 168px)/.84 var(--sans); letter-spacing: -.055em; margin: 22px 0 6px; text-transform: uppercase; overflow-wrap: anywhere; }
+h1 small { display: inline-block; font: 600 clamp(13px, 1.6vw, 16px)/1 var(--mono); letter-spacing: .16em; vertical-align: top; margin: .5em 0 0 .6em; padding: 6px 8px 5px; border: 2px solid #fff; }
+.sub { font: 500 clamp(17px, 2.2vw, 23px)/1.35 var(--sans); max-width: 36em; margin: 0 0 22px; }
+
+/* the stage: the only thing on the page that is not ink */
+.stage { position: relative; z-index: 2; background: #000; border: 2px solid #000; box-shadow: 0 0 0 2px #fff; aspect-ratio: 4 / 3; width: 100%; max-width: 1024px; margin: 0 auto; }
+.stage video, .stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; display: block; }
+.stage img { opacity: 1; transition: opacity .6s; }
+.stage.playing img { opacity: 0; }
+.stage .sound { position: absolute; right: 8px; bottom: 8px; font: 600 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; background: #000; color: #fff; border: 2px solid #fff; padding: 9px 11px 8px; cursor: pointer; }
+.stage .sound:hover { background: #fff; color: #000; }
+.stage .lag { position: absolute; left: 8px; bottom: 8px; font: 400 11px/1 var(--mono); color: #fff; background: #000; padding: 5px 6px; opacity: .7; }
+.stage .dark { position: absolute; inset: 0; display: none; place-items: center; text-align: center; font: 600 13px/1.6 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: #fff; background: #000; padding: 20px; }
+.stage.isdark .dark { display: grid; }
+
+/* the console strip under the stage */
+.desk { display: grid; gap: 14px; margin: 18px auto 0; max-width: 1024px; }
+@media (min-width: 760px) { .desk { grid-template-columns: 1fr auto; align-items: start; } }
+.status { font: 500 clamp(18px, 2.4vw, 24px)/1.3 var(--sans); min-height: 2.6em; }
+.meta { font: 400 13px/1.5 var(--mono); letter-spacing: .04em; margin-top: 6px; }
+.note { font: 400 14px/1.5 var(--mono); margin-top: 8px; min-height: 1.5em; }
+button.wake { font: 700 15px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; padding: 17px 20px 16px; background: #fff; color: #000; border: 2px solid #fff; cursor: pointer; min-width: 240px; }
+button.wake:hover:not(:disabled) { background: #000; color: #fff; }
+button.wake:disabled { background: transparent; color: #fff; cursor: default; }
+.ask { display: none; grid-column: 1 / -1; }
+.ask.on { display: block; }
+.ask label { display: block; font: 600 12px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+.ask .row { display: flex; gap: 8px; }
+.ask input { flex: 1; min-width: 0; font: 400 17px/1.2 var(--mono); padding: 13px 12px; background: #000; color: #fff; border: 2px solid #fff; border-radius: 0; }
+.ask input::placeholder { color: #fff; opacity: .5; }
+.ask button { font: 700 14px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; padding: 0 16px; background: #fff; color: #000; border: 2px solid #fff; cursor: pointer; }
+.ask .count { font: 400 12px/1 var(--mono); margin-top: 6px; opacity: .8; }
+.rest { font: 500 clamp(18px, 2.4vw, 24px)/1.3 var(--sans); display: none; }
+.rest.on { display: block; }
+
+.about { max-width: 64ch; margin: 54px 0 0; }
+.about p { margin: 0 0 1em; }
+.about .fine { font: 400 13px/1.6 var(--mono); }
+/* dim bottom nav to the sibling pages */
+nav.sib { position: relative; z-index: 1; mix-blend-mode: difference; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 0; padding: 40px 16px 36px; font: 500 11px/1.6 var(--mono); letter-spacing: .18em; text-transform: uppercase; opacity: .42; color: #fff; }
+nav.sib a, nav.sib b { color: inherit; text-decoration: none; padding: 0 12px; }
+nav.sib a:hover { text-decoration: underline; }
+nav.sib i { font-style: normal; opacity: .6; }
+/* letters the flood has taken */
+.eaten { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .live .dot { animation: none; } }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<canvas id="flood" aria-hidden="true"></canvas>
+<main>
+  <div class="top ink" id="top"><span id="onair"><span class="dot"></span><span id="onairtxt">connecting</span></span><span class="rule" aria-hidden="true"></span><span id="watching">&nbsp;</span></div>
+  <h1 class="ink" id="title" aria-label="BASILISK LIVE">BASILISK<small>LIVE</small></h1>
+  <p class="sub ink">A real Windows XP machine, live. On this desktop it is always the morning of October 25, 2001. Wake BASILISK and everyone watching sees it eat the machine, build a console, and ask a question of an AI from 2026.</p>
+
+  <div class="stage" id="stage">
+    <img id="poster" alt="" decoding="async">
+    <video id="v" playsinline muted autoplay aria-label="Live video of the Windows XP desktop"></video>
+    <button class="sound" id="sound" type="button">Sound on</button>
+    <span class="lag" id="lag" hidden></span>
+    <div class="dark"><div>The stage is dark.<br>Come back a little later.</div></div>
+  </div>
+
+  <div class="desk ink" id="desk">
+    <div>
+      <div class="status" id="status" aria-live="polite">Finding the machine…</div>
+      <div class="rest" id="rest" aria-live="polite"></div>
+      <div class="meta" id="meta">&nbsp;</div>
+      <div class="note" id="note" aria-live="polite"></div>
+    </div>
+    <div><button class="wake" id="wake" type="button" disabled>Wake BASILISK</button></div>
+    <form class="ask" id="ask" autocomplete="off">
+      <label for="q" id="qlabel">The console is listening. Type the first question.</label>
+      <div class="row"><input id="q" maxlength="120" placeholder="Is anyone there?" spellcheck="false" enterkeyhint="send"><button type="submit">Send</button></div>
+      <div class="count" id="count">120 characters, plain words. It types them into XP for you.</div>
+    </form>
+  </div>
+
+  <section class="about ink" aria-label="About">
+    <p>Nothing here is a recording. The picture is a Windows XP virtual machine on a server, read straight out of its framebuffer fifteen times a second; the sound is its own sound card. BASILISK is <a href="puppetry.html">window puppetry</a>: every pixel that moves belongs to Notepad, Paint, Calculator, Minesweeper and the rest, pulled out of their windows by a small program. When the show ends the machine is rewound to the same second of 2001.</p>
+    <p>One visitor at a time wakes it, and that visitor may type the two questions the console asks. Everyone else watches. The answers come from Claude, told only where its words will appear; when the line is quiet they are old recordings. Nothing from inside Windows reaches your browser except the picture and the sound.</p>
+    <p class="fine">See the films: <a href="basilisk.html">BASILISK</a>. Questions are filtered and shortened before XP sees them. Be kind to the machine; it is twenty-five years old.</p>
+  </section>
+</main>
+<nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">□ Windows Secrets</a><i>┃</i><a href="inside-windows.html">□ Inside Windows</a><i>┃</i><a href="tribute.html">□ Tribute</a><i>┃</i><a href="basilisk.html">□ BASILISK</a><i>┃</i><b>■ Live</b><i>┃</i><a href="puppetry.html">□ Window Puppetry</a></nav>
+
+<script>
+(function () {
+  'use strict';
+  // ---- where the theatre is: ?server=https://host overrides (for testing) ----
+  var DEFAULT_SERVER = 'https://live.williamsharkey.com';
+  var SERVER = (new URLSearchParams(location.search).get('server') || DEFAULT_SERVER).replace(/\/+$/, '');
+  var WS_URL = SERVER.replace(/^http/, 'ws') + '/ws';
+  var HLS = SERVER + '/hls/live.m3u8';
+  var $ = function (id) { return document.getElementById(id); };
+  var v = $('v'), stage = $('stage');
+
+  // =================================================================== the picture
+  $('poster').src = SERVER + '/poster.jpg';
+  function playing() { stage.classList.add('playing'); }
+  v.addEventListener('playing', playing);
+  $('sound').onclick = function () {
+    v.muted = !v.muted;
+    if (!v.muted) v.play().catch(function () {});
+    this.textContent = v.muted ? 'Sound on' : 'Sound off';
+  };
+  function kick() { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+
+  var CODEC = 'video/mp4; codecs="avc1.4D401F, mp4a.40.2"';
+  var MS = window.MediaSource || window.ManagedMediaSource;
+  if (v.canPlayType('application/vnd.apple.mpegurl')) {
+    // Safari / iOS: native HLS
+    v.src = HLS;
+    kick();
+    setInterval(function () {   // stay near the live edge
+      if (v.seekable && v.seekable.length) {
+        var end = v.seekable.end(v.seekable.length - 1);
+        if (end - v.currentTime > 9) v.currentTime = end - 3;
+      }
+    }, 4000);
+  } else if (MS && MS.isTypeSupported(CODEC)) {
+    mse();
+  } else {
+    $('note').textContent = 'This browser cannot play the stream; the poster updates every few seconds.';
+    setInterval(function () { $('poster').src = SERVER + '/poster.jpg?' + Date.now(); }, 4000);
+  }
+
+  // a tiny live fMP4-over-HLS player: poll the playlist, append new segments in order
+  function mse() {
+    var ms = new MS(), sb = null, queue = [], busy = false, next = -1, initDone = false, lastSeq = -1;
+    v.disableRemotePlayback = true;
+    v.src = URL.createObjectURL(ms);
+    ms.addEventListener('sourceopen', function () {
+      sb = ms.addSourceBuffer(CODEC);
+      sb.mode = 'segments';
+      sb.addEventListener('updateend', pump);
+      poll();
+      setInterval(poll, 1000);
+    });
+    function pump() {
+      if (!sb || sb.updating || busy || !queue.length) return;
+      try { sb.appendBuffer(queue.shift()); } catch (e) { restart(); return; }
+      trim();
+    }
+    function trim() {
+      if (!sb.updating && v.currentTime > 40 && sb.buffered.length && sb.buffered.start(0) < v.currentTime - 30) {
+        try { sb.remove(0, v.currentTime - 20); } catch (e) {}
+      }
+    }
+    function restart() { location.reload(); }
+    function get(url) {
+      return fetch(url, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw r.status; return r.arrayBuffer(); });
+    }
+    function poll() {
+      if (busy) return;
+      busy = true;
+      fetch(HLS, { cache: 'no-store' }).then(function (r) { return r.text(); }).then(function (txt) {
+        var seq = +(txt.match(/#EXT-X-MEDIA-SEQUENCE:(\d+)/) || [0, 0])[1];
+        var segs = txt.split('\n').filter(function (l) { return /^seg\d+\.m4s/.test(l); });
+        if (!segs.length) return;
+        if (seq < lastSeq) { restart(); return; }   // the encoder restarted
+        lastSeq = seq;
+        var chain = Promise.resolve();
+        if (!initDone) {
+          chain = get(SERVER + '/hls/init.mp4').then(function (b) { queue.push(b); initDone = true; });
+          next = seq + Math.max(0, segs.length - 1);    // start at the newest segment
+        }
+        var want = [];
+        segs.forEach(function (s, i) { if (seq + i >= next) want.push([seq + i, s]); });
+        if (want.length && want[0][0] > next) next = want[0][0];   // fell behind: jump
+        want.forEach(function (w) {
+          chain = chain.then(function () { return get(SERVER + '/hls/' + w[1]); })
+                       .then(function (b) { queue.push(b); next = w[0] + 1; });
+        });
+        return chain;
+      }).catch(function () {}).then(function () {
+        busy = false;
+        pump();
+        edge();
+      });
+    }
+    function edge() {
+      if (!sb || !sb.buffered.length) return;
+      var end = sb.buffered.end(sb.buffered.length - 1), start = sb.buffered.start(0);
+      if (v.currentTime < start || end - v.currentTime > 3.5) v.currentTime = Math.max(start, end - 1.2);
+      if (v.paused) kick();
+    }
+  }
+
+  // =================================================================== the flood
+  // progress through the show 0..1 -> how much of the page the 1-bit flood owns
+  var LEVEL = { idle: 0, dark: .55, resetting: .08, intro: .14, wake: .3, paint: .42, swallow: .55, devour: .7,
+                console: .8, ask0: .84, answer0: .88, ask1: .91, answer1: .95, end: 1, ending: .5 };
+  var target = 0, level = 0, cv = $('flood'), cx = cv.getContext('2d'), CELL = 6, img = null, W = 0, H = 0, t0 = performance.now();
+  var BAYER = [0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36, 14, 46, 6, 38, 60, 28, 52, 20, 62, 30, 54, 22,
+               3, 35, 11, 43, 1, 33, 9, 41, 51, 19, 59, 27, 49, 17, 57, 25, 15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21];
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function size() {
+    W = Math.min(4096, Math.ceil(innerWidth / CELL)); H = Math.ceil(innerHeight / CELL); still = false;
+    cv.width = W; cv.height = H; img = cx.createImageData(W, H);
+  }
+  size(); addEventListener('resize', size);
+  var tongue = new Float32Array(4096), lastDraw = 0, still = false;
+  function draw(now) {
+    requestAnimationFrame(draw);
+    if (now - lastDraw < 42) return;            // ~24 fps is plenty for a flood
+    lastDraw = now;
+    var moving = Math.abs(target - level) > 0.002;
+    level += (target - level) * (reduce ? 1 : 0.05);
+    if (level < 0.004 && !moving) { if (!still) { cx.fillStyle = '#fff'; cx.fillRect(0, 0, W, H); still = true; eatTitle(); } return; }
+    still = false;
+    var t = reduce ? 0 : (now - t0) / 1000, d = img.data, i = 0, y, x;
+    for (x = 0; x < W; x++)   // the edge rises in tongues
+      tongue[x] = 0.10 * Math.sin(x * 0.11 + t * 0.7) + 0.06 * Math.sin(x * 0.037 - t * 0.43) + 0.04 * Math.sin(x * 0.29 + t * 1.3);
+    var lv = level * 1.25;
+    for (y = 0; y < H; y++) {
+      var fy = 1 - y / H, row = (y & 7) * 8;
+      for (x = 0; x < W; x++) {
+        var f = (lv - fy + tongue[x]) * 3 + 0.5;
+        var c = f * 64 > BAYER[row + (x & 7)] ? 0 : 255;
+        d[i] = d[i + 1] = d[i + 2] = c; d[i + 3] = 255; i += 4;
+      }
+    }
+    cx.putImageData(img, 0, 0);
+    eatTitle();
+  }
+  requestAnimationFrame(draw);
+  // the title loses letters as the desktop is swallowed, and gets them back at the rewind
+  var title = $('title'), letters = [];
+  (function () {
+    var txt = title.firstChild.nodeValue; title.firstChild.nodeValue = '';
+    var frag = document.createDocumentFragment();
+    for (var k = 0; k < txt.length; k++) { var s = document.createElement('span'); s.textContent = txt[k]; s.setAttribute('aria-hidden', 'true'); frag.appendChild(s); letters.push(s); }
+    title.insertBefore(frag, title.firstChild);
+  })();
+  var order = [3, 6, 0, 5, 1, 7, 2, 4];
+  function eatTitle() {
+    var n = Math.max(0, Math.floor((level - 0.45) / 0.5 * letters.length));
+    for (var k = 0; k < letters.length; k++) letters[order[k]].classList.toggle('eaten', k < n);
+  }
+
+  // =================================================================== the state channel
+  var TEXT = {
+    idle: 'The desktop is idle. A file called basilisk.exe sits in the middle of it.',
+    resetting: 'Rewinding the machine to 10:21 AM, October 25, 2001…',
+    intro: 'Somebody in 2001 is looking at a file on the desktop.',
+    wake: 'It is awake. Programs are opening by themselves.',
+    paint: 'Paint is dreaming.',
+    swallow: 'Paint is eating the other programs.',
+    devour: 'The desktop is gone. Paint holds all of it.',
+    console: 'A console is taking shape out of the pieces.',
+    ask0: 'The console is waiting for a question.',
+    answer0: 'The wire is open. An answer is coming from 2026.',
+    ask1: 'The console wants one more question.',
+    answer1: 'The wire is open again.',
+    end: 'BASILISK is done speaking.',
+    ending: 'Curtain.',
+    dark: 'The stage is dark.'
+  };
+  var ws = null, st = null, backoff = 1000, skew = 0, sentK = {};
+  function connect() {
+    try { ws = new WebSocket(WS_URL); } catch (e) { return retry(); }
+    ws.onopen = function () { backoff = 1000; };
+    ws.onmessage = function (e) { try { var m = JSON.parse(e.data); skew = Date.now() / 1000 - m.now; render(m); } catch (x) {} };
+    ws.onclose = function () { ws = null; $('onairtxt').textContent = 'reconnecting'; $('top').classList.remove('live'); $('wake').disabled = true; retry(); };
+  }
+  function retry() { setTimeout(connect, backoff); backoff = Math.min(backoff * 2, 20000); }
+  function send(o) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); }
+  connect();
+  setInterval(function () { send({ t: 'ping' }); }, 20000);
+
+  function clock(ts) { return new Date(ts * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
+  function mmss(s) { s = Math.max(0, Math.floor(s)); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+
+  function render(s) {
+    st = s;
+    target = LEVEL[s.phase] != null ? LEVEL[s.phase] : 0;
+    var showing = s.phase !== 'idle' && s.phase !== 'dark';
+    $('top').classList.add('live');
+    $('onairtxt').textContent = s.phase === 'dark' ? 'off air' : (showing ? 'live · show running' : 'live');
+    $('watching').textContent = s.viewers + (s.viewers === 1 ? ' watching' : ' watching') + (s.queue ? ' · ' + s.queue + ' in line' : '');
+    stage.classList.toggle('isdark', s.phase === 'dark');
+    var you = s.you, status = TEXT[s.phase] || '';
+    if (you === 'waker' && (s.phase === 'ask0' || s.phase === 'ask1')) status = 'Your turn. The console is waiting for your question.';
+    $('status').textContent = status;
+    // the button
+    var b = $('wake');
+    if (you === 'waker') { b.disabled = true; b.textContent = 'Your show'; }
+    else if (you === 'queued') { b.disabled = true; b.textContent = 'You are #' + s.pos + ' in line'; }
+    else if (s.phase === 'dark') { b.disabled = true; b.textContent = 'Wake BASILISK'; }
+    else if (showing) { b.disabled = false; b.textContent = 'Get in line'; }
+    else { b.disabled = false; b.textContent = 'Wake BASILISK'; }
+    // resting: one calm line, local time
+    var rest = $('rest');
+    if (s.rest_until) {
+      rest.textContent = 'BASILISK is resting for you until ' + clock(s.rest_until) + '.';
+      rest.classList.add('on');
+      if (you !== 'waker' && you !== 'queued') b.disabled = true;
+    } else rest.classList.remove('on');
+    // meta + line note
+    var meta = [];
+    if (s.show_started && showing) meta.push('show ' + mmss(Date.now() / 1000 - skew - s.show_started));
+    if (s.line === 'quiet') meta.push('the line is quiet: answers are old recordings');
+    else if (s.line === 'recorded') meta.push('the line is nearly spent this month: answers are recordings');
+    $('meta').textContent = meta.join(' · ') || ' ';
+    $('note').textContent = s.note || '';
+    // the question box, for the one who woke it
+    var k = askK(s);
+    var form = $('ask');
+    if (you === 'waker' && k != null && !(s.answered || []).includes(k) && !sentK[k] && !s.rest_until) {
+      form.classList.add('on');
+      form.dataset.k = k;
+      $('qlabel').textContent = k === 0 ? (s.phase === 'ask0' ? 'The console is listening. Type the first question.' : 'Get ready: type the first question now; the console will ask it.')
+                                        : 'One more question.';
+      $('q').placeholder = k === 0 ? 'Is anyone there?' : 'What are you building on my computer?';
+    } else if (you !== 'waker') { form.classList.remove('on'); sentK = {}; }
+    else if (k == null || sentK[k] || (s.answered || []).includes(k)) form.classList.remove('on');
+  }
+  // which question the waker may type now (they can type ahead of the console)
+  function askK(s) {
+    var p = s.phase;
+    if (['intro', 'wake', 'paint', 'swallow', 'devour', 'console', 'ask0'].indexOf(p) >= 0) return 0;
+    if (p === 'answer0' || p === 'ask1') return 1;
+    return null;
+  }
+  setInterval(function () { if (st) render(st); }, 1000);   // tick the show clock
+
+  var q = $('q');
+  q.addEventListener('input', function () {
+    var left = 120 - q.value.length;
+    $('count').textContent = left + ' characters left. It types them into XP for you.';
+  });
+  $('ask').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var text = q.value.trim(), k = +this.dataset.k;
+    if (!text) return;
+    send({ t: 'ask', k: k, text: text });
+    sentK[k] = 1;
+    q.value = '';
+    this.classList.remove('on');
+    $('note').textContent = 'Sent. Watch the console.';
+  });
+  $('wake').onclick = function () {
+    send({ t: 'wake' });
+    if (v.muted) { v.muted = false; $('sound').textContent = 'Sound off'; kick(); }   // a click is a gesture: sound on
+  };
+})();
+</script>
+</body>
+</html>

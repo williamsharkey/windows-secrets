@@ -93,6 +93,7 @@ static HWND find_win(const char *s)
 {
     struct find f;
     if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X')) return (HWND)(UINT_PTR)strtoul(s, NULL, 16);
+    if (!strncmp(s, "fw:", 3)) { HWND h = FindWindowA(s + 3, NULL); if (!h) { fprintf(stderr, "winprobe: no class %s\n", s + 3); exit(1); } return h; } /* any top-level window of that class, visible or not */
     f.found = NULL;
     f.cls = !strncmp(s, "class:", 6);
     f.pat = f.cls ? s + 6 : s;
@@ -705,6 +706,35 @@ int main(int argc, char **argv)
             SetCursorPos(p0.x + (int)((x1 - p0.x) * f), p0.y + (int)((y1 - p0.y) * f));
             Sleep(10);
         } while (t < (DWORD)ms);
+    } else if (!strcmp(cmd, "clickat") && argc > 3) {
+        /* clickat x y [ctrl|shift|right|dbl|drag x2 y2]... : real pointer click, optionally with a held key */
+        BYTE vk = 0; int i, right = 0, dbl = 0, dx = -1, dy = -1;
+        DWORD dn, up;
+        for (i = 4; i < argc; i++) {
+            if (!strcmp(argv[i], "ctrl")) vk = VK_CONTROL;
+            else if (!strcmp(argv[i], "shift")) vk = VK_SHIFT;
+            else if (!strcmp(argv[i], "right")) right = 1;
+            else if (!strcmp(argv[i], "dbl")) dbl = 1;
+            else if (!strcmp(argv[i], "drag") && i + 2 < argc) { dx = atoi(argv[i + 1]); dy = atoi(argv[i + 2]); i += 2; }
+        }
+        dn = right ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_LEFTDOWN;
+        up = right ? MOUSEEVENTF_RIGHTUP : MOUSEEVENTF_LEFTUP;
+        SetCursorPos(atoi(argv[2]), atoi(argv[3]));
+        Sleep(60);
+        if (vk) { keybd_event(vk, 0, 0, 0); Sleep(60); }
+        mouse_event(dn, 0, 0, 0, 0);
+        if (dx >= 0) {
+            POINT p0; int k;
+            GetCursorPos(&p0);
+            for (k = 1; k <= 30; k++) {
+                SetCursorPos(p0.x + (dx - p0.x) * k / 30, p0.y + (dy - p0.y) * k / 30);
+                mouse_event(MOUSEEVENTF_MOVE, 0, 0, 0, 0);
+                Sleep(25);
+            }
+        } else Sleep(40);
+        mouse_event(up, 0, 0, 0, 0);
+        if (dbl) { Sleep(40); mouse_event(dn, 0, 0, 0, 0); Sleep(40); mouse_event(up, 0, 0, 0, 0); }
+        if (vk) { Sleep(60); keybd_event(vk, 0, KEYEVENTF_KEYUP, 0); }
     } else if (!strcmp(cmd, "desk") && argc > 4) {
         /* plain desktop: no wallpaper, colour r g b */
         int el = COLOR_DESKTOP;

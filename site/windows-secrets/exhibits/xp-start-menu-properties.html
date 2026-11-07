@@ -1,0 +1,18 @@
+<!-- exhibit: xp-start-menu-properties — drop into section#shell, after "Exit Explorer, from the code" -->
+<h3>The menu behind the Start menu (XP), and a correction</h3>
+
+<p>Right-click an empty part of XP's Start menu, the blue banner with your name or the white space under your programs, and you get a menu with exactly one item: <b>Properties</b> <span class="ver live">verified live</span>. It's the same menu 211 as the Windows 7 code above. In XP it holds only <code>&amp;Properties</code> (command 32754); Windows 7 added <b>Exit Explorer</b> (32756) and the <kbd>Ctrl</kbd>+<kbd>Shift</kbd> check.</p>
+
+<p>Before showing it, XP's Explorer reads a registry value I haven't seen written down anywhere: <code>TaskbarContextMenu</code> under <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced</code> <span class="ver sx">static</span>. The code at <code>0x0103E8B4</code> pushes the value name, <code>Advanced</code> and <code>HKEY_CURRENT_USER</code>, calls a settings helper, and returns early if the helper says so. Otherwise it loads menu 211 and calls <code>TrackPopupMenuEx</code>. I set the value both ways:</p>
+
+<div class="pair" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px">
+  <figure style="margin:0"><img src="windows-secrets/xp-deep/xp-startmenu-properties.png" alt="XP Start menu with a one-item context menu reading Properties next to the user banner" width="420" height="478" loading="lazy" style="width:100%;height:auto"><figcaption>Value absent or 1: right-click the banner and Properties appears.</figcaption></figure>
+  <figure style="margin:0"><img src="windows-secrets/xp-deep/xp-startmenu-tcm0.png" alt="XP Start menu after a right-click on the banner, with no context menu" width="420" height="478" loading="lazy" style="width:100%;height:auto"><figcaption><code>TaskbarContextMenu</code> = 0: the same right-click does nothing.</figcaption></figure>
+</div>
+
+<p>The taskbar's own right-click menu (Toolbars, Cascade, Task Manager, Lock the Taskbar…) is unaffected, so despite its name the value switches off the <i>Start menu's</i> menu <span class="ver live">verified live</span>; I deleted it afterwards. Its exact semantics come from a shared helper that also consults policy keys, so treat "0 hides it" as what I observed, not the whole contract.</p>
+
+<p class="note"><b>Correction.</b> Because menu 211 is the Start menu's menu, Windows 7's Exit Explorer lives there too. The documented tip, which goes back to Vista, is to hold <kbd>Ctrl</kbd>+<kbd>Shift</kbd> and right-click an <i>empty area of the Start menu</i> (or its power button), as <a href="https://www.winhelponline.com/blog/hidden-right-click-context-menu-options-windows-7/">winhelponline</a> and <a href="https://blog.jtbworld.com/2007/10/exit-explorer-in-windows-vista.html">JTB World (2007, Vista)</a> describe. The taskbar version is Windows 8 and later. The code walk above is right; the place you click isn't the taskbar.</p>
+
+<div class="prior none"><b class="t">Prior art</b>
+Exit Explorer is well known. I found no description of the <code>TaskbarContextMenu</code> value: searches turn up only the documented <code>NoTrayContextMenu</code> policy, which hides the taskbar's menu instead. <a class="tell" href="#tell">Seen it before? Tell me.</a></div>

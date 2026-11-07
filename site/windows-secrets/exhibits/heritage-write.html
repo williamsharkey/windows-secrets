@@ -1,0 +1,124 @@
+<!-- exhibit: heritage-write — drop into section#write, after the facts list -->
+<section class="hgx" id="hg-write" aria-labelledby="hg-write-h">
+<style>
+.hgx { margin: 48px 0 0; padding-top: 6px; border-top: 1px dashed var(--rule); }
+.hgx > h3 { margin-top: 18px; }
+.hgx .hg-k { font: 600 12px/1.2 -apple-system, "Segoe UI", Tahoma, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+.hgx ol.tl { list-style: none; padding: 0 0 0 4px; margin: 20px 0; border-left: 2px solid var(--rule); }
+.hgx ol.tl li { position: relative; padding: 0 0 14px 18px; max-width: none; font-size: 16px; line-height: 1.5; }
+.hgx ol.tl li::before { content: ""; position: absolute; left: -7px; top: .5em; width: 10px; height: 10px; border-radius: 50%; background: var(--card); border: 2px solid var(--teal); box-sizing: border-box; }
+.hgx ol.tl li.me::before { background: var(--teal); }
+.hgx ol.tl .y { display: inline-block; min-width: 3.2em; font: 700 13px ui-monospace, Consolas, monospace; color: var(--teal); }
+.hgx .ev { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; margin: 22px 0; font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; }
+.hgx .ev > b.t { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.hgx .ev pre { margin: 8px 0 0; font-size: 12.5px; line-height: 1.45; overflow-x: auto; max-width: 100%; }
+.hgx .ev pre .h { background: var(--mark); }
+.hgx .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin: 22px 0; align-items: start; }
+.hgx .grid figure { margin: 0; }
+.hgx figure img, .hgx canvas { max-width: 100%; height: auto; }
+.hgx .px img, .hgx canvas.px { image-rendering: pixelated; }
+.hgx .src { font: 13px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); padding-left: 20px; }
+.hgx .src li { max-width: none; margin: 2px 0; }
+.hgx .toy { margin: 22px 0; }
+.hgx .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.hgx .seg button { border: 0; border-radius: 0; border-right: 1px solid var(--rule); }
+.hgx .seg button:last-child { border-right: 0; }
+.hgx .seg button[aria-pressed="true"] { background: var(--teal); color: var(--bg); }
+.hgx .scrollx { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+#hg-write .shot img { image-rendering: pixelated; }
+#hg-write .hex { font: 12px/1.6 ui-monospace, Consolas, monospace; background: var(--code-bg); border-radius: 8px; padding: 10px 12px; overflow-x: auto; white-space: pre; }
+#hg-write .hex span { border-radius: 2px; cursor: pointer; }
+#hg-write .hex .hdr { background: #3b82f633; } #hg-write .hex .txt { background: #10b98133; } #hg-write .hex .chp { background: #f59e0b33; }
+#hg-write .hex .pap { background: #a855f733; } #hg-write .hex .ffn { background: #ef444433; } #hg-write .hex .slack { color: var(--muted); }
+#hg-write .hex span.on { outline: 2px solid var(--fg); }
+#hg-write .legend2 { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 13px -apple-system, "Segoe UI", Tahoma, sans-serif; margin-top: 8px; }
+#hg-write .legend2 i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: -1px; margin-right: 4px; }
+#hg-write .info { min-height: 3em; }
+</style>
+
+<p class="hg-k">Heritage · Write</p>
+<h3 id="hg-write-h">Write's file format, byte by byte</h3>
+
+<ol class="tl">
+  <li><span class="y">1985</span> Windows 1.0 ships Write, a WYSIWYG word processor with fonts, bold and italic. It was free in the box, while Word for Windows didn't arrive until 1989.</li>
+  <li><span class="y">1990</span> Windows 3.0's Write saves <code>.WRI</code> files that begin with <code>31 BE</code>. Their 128-byte header closely follows Word for DOS's.</li>
+  <li><span class="y">1992</span> Write 3.1 can embed OLE objects. A file with pictures in it begins <code>32 BE</code> instead.</li>
+  <li><span class="y">1995</span> Windows 95 replaces Write with WordPad, built on the RichEdit control. WordPad's source code was published as a sample with MFC 3.2, so a Windows accessory doubled as a programming tutorial. <code>write.exe</code> stays as a tiny program that starts WordPad.</li>
+  <li><span class="y">2001</span> XP's <code>write.exe</code> is 5,632 bytes. Its version resource says "Windows Write", and all it does is <code>ShellExecute("wordpad.exe")</code> <span class="ver sx">static</span>. Windows 7's is 9,216 bytes and does the same.</li>
+  <li><span class="y">2023</span> Microsoft deprecates WordPad. Windows 11 24H2 removes it, and with it, finally, the last way to open a <code>.WRI</code> file in Windows.</li>
+</ol>
+
+<figure class="shot"><img src="windows-secrets/heritage/w311-write.png" width="560" height="120" alt="WfW 3.11 Write with one sentence typed" loading="lazy" style="max-width:100%;height:auto"><figcaption>One sentence typed into Write on WfW 3.11 and saved as <code>HERI.WRI</code>. The ¤ is Write's end-of-document mark.</figcaption></figure>
+
+<p>The file it saved is 640 bytes: five 128-byte pages. Write never wrote anything smaller than a page <span class="ver live">verified live</span>. Click a coloured region to see what it is:</p>
+
+<div class="toy ui" id="hg-write-toy">
+  <div class="hex scrollx" id="hg-write-hex" aria-label="Hex dump of HERI.WRI"></div>
+  <div class="legend2"><span><i style="background:#3b82f666"></i>header</span><span><i style="background:#10b98166"></i>text</span><span><i style="background:#f59e0b66"></i>character formatting</span><span><i style="background:#a855f766"></i>paragraph formatting</span><span><i style="background:#ef444466"></i>font table</span></div>
+  <div class="status info" id="hg-write-info" aria-live="polite">Real bytes of <code>HERI.WRI</code>, saved by WfW 3.11's Write.</div>
+</div>
+
+<p>One detail I didn't expect: the two formatting pages hold only a few meaningful bytes each, but they aren't zero-filled. Bytes 0x10 to 0x7E of the paragraph page are an exact copy of the same range in the character page, 111 bytes including the character properties, which mean nothing there. Write evidently built the second page in the first one's buffer without clearing it, and the first page's unused space holds whatever was in memory before that. So a 1993 <code>.WRI</code> file carries a small sample of Write's memory. It's harmless here, but it's the same kind of leftover-memory leak that was later found in Word's own files.</p>
+
+<figure class="shot"><img src="windows-secrets/heritage/w311-write-about.png" width="400" height="280" alt="About Write, Microsoft Windows for Workgroups Version 3.11, Copyright 1985-1993" loading="lazy" style="max-width:100%;height:auto"><figcaption>"Copyright © 1985-1993": the 1985 is Windows 1.0.</figcaption></figure>
+
+<div class="prior"><b class="t">Prior art</b> The format is documented (Windows 3.1 SDK; PRONOM x-fmt/4), and so are WordPad's MFC origin and its removal. New here is only the annotated dump of a file saved on a running 3.11, and the leftover bytes in its formatting pages.</div>
+
+<ol class="src">
+  <li><a href="https://pronom.nationalarchives.gov.uk/x-fmt/4">PRONOM x-fmt/4: Windows Write document (wIdent 0xBE31/0xBE32)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/WordPad">Wikipedia: WordPad (MFC sample, RichEdit, removal)</a></li>
+  <li><a href="https://github.com/malxau/wordpad">malxau/wordpad: the Windows 95 WordPad sample source, maintained</a></li>
+  <li><a href="https://ftp.zx.net.nz/pub/archive/ftp.microsoft.com/MISC/KB/en-us/159/852.HTM">KB 159852: tools not included in Windows 95 (Write, Clock, Recorder…)</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Microsoft_Write">Wikipedia: Microsoft Write</a></li>
+</ol>
+
+<script>
+(function () {
+  var root = document.getElementById('hg-write'); if (!root) return;
+  var H = '31be000000ab0000000000000000d000000003000400040004000400040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005000000000000000000000000000000000000000000000000000000000000005772697465207761732057696e646f77732720776f72642070726f636573736f722066726f6d203139383520756e74696c20576f7264506164207265706c6163656420697420696e20313939352e0d0a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000d00000007700381100002f01c25b20103e11381117200202c700203eef0000f3dc5b9b20ef0000000000003eef00f25b8945ef0000000b45300e185cf85be8000000185cb20f025c005cf85b3e1101003f11e800165cb31daf13185cb20f2f01af13ee000800c80fc80fce60170100003f11e7102c00d8030100140180000000d0000000ffffd2000000ffffc25b20103e11381117200202c700203eef0000f3dc5b9b20ef0000000000003eef00f25b8945ef0000000b45300e185cf85be8000000185cb20f025c005cf85b3e1101003f11e800165cb31daf13185cb20f2f01af13ee000800c80fc80fce60170100003f11e7102c00d803010014020100070020417269616c0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000';
+  var b = []; for (var i = 0; i < H.length; i += 2) b.push(parseInt(H.substr(i, 2), 16));
+  // [start, end, class, text]
+  var R = [
+    [0x00, 0x02, 'hdr', 'wIdent = 0xBE31: "Write 3.0 file, no OLE objects". Write 3.1 files with pictures use 0xBE32.'],
+    [0x02, 0x04, 'hdr', 'dty = 0: an ordinary document.'],
+    [0x04, 0x06, 'hdr', 'wTool = 0xAB00: the tool that wrote it, Write.'],
+    [0x06, 0x0e, 'hdr', 'Reserved, always zero.'],
+    [0x0e, 0x12, 'hdr', 'fcMac = 0xD0 = 208: the end of the text, as a byte offset. 128 for the header plus 80 bytes of text.'],
+    [0x12, 0x1e, 'hdr', 'pnPara = 3, then pnFntb, pnSep, pnSetb, pnPgtb, pnFfntb = 4: the 128-byte page numbers where the paragraph formatting, footnote, section, page and font tables start. The empty tables all point to page 4.'],
+    [0x1e, 0x60, 'hdr', 'Unused header space, all zero.'],
+    [0x60, 0x62, 'hdr', 'pnMac = 5: the file is five pages, 5 × 128 = 640 bytes. PRONOM notes that Word for DOS always leaves this at 0.'],
+    [0x62, 0x80, 'hdr', 'Rest of the header.'],
+    [0x80, 0xd0, 'txt', 'The text itself, plain ANSI, ending in CR LF. Write stored no markup in the text stream; all formatting lives in separate pages.'],
+    [0xd0, 0x100, 'slack', 'Padding to the end of the page.'],
+    [0x100, 0x10a, 'chp', 'Character formatting page (an FKP): fcFirst = 0x80, then one FOD. The run ends at fcLim = 0xD0, and bfprop = 0x77 points to its properties near the end of the page.'],
+    [0x10a, 0x17b, 'slack', 'Unused space, but not zero: leftover bytes from Write\u2019s buffer. From 0x110 on they are identical to the bytes at 0x190 on the next page.'],
+    [0x17b, 0x17f, 'chp', 'The CHP for that run: cch = 3, then three bytes of properties, ending in 0x14 = 20 half-points, so 10-point type.'],
+    [0x17f, 0x180, 'chp', 'cfod = 1: one run of character formatting on this page.'],
+    [0x180, 0x190, 'pap', 'Paragraph formatting page: fcFirst = 0x80, then two FODs ending at 0xD0 and 0xD2, both bfprop = 0xFFFF, meaning default paragraph properties. The second paragraph is the end mark (\u00a4).'],
+    [0x190, 0x1ff, 'slack', 'A copy of bytes 0x110\u20130x17E of the previous page, including its character properties: the page was built in the same buffer without being cleared.'],
+    [0x1ff, 0x200, 'pap', 'cfod = 2: two paragraph runs.'],
+    [0x200, 0x204, 'ffn', 'Font table: one font (cffn = 1).'],
+    [0x204, 0x20c, 'ffn', 'An FFN entry: length 7, family 0x20 (Swiss), name "Arial". On WfW 3.11 Write’s default is TrueType Arial.'],
+    [0x20c, 0x280, 'slack', 'Zero padding to the end of page 4.']
+  ];
+  function cls(o) { for (var i = 0; i < R.length; i++) if (o >= R[i][0] && o < R[i][1]) return i; return -1; }
+  var out = '', prev = -2, open = false;
+  for (var o = 0; o < b.length; o++) {
+    if (o % 16 === 0) { if (open) { out += '</span>'; open = false; } out += (o ? '\n' : '') + ('000' + o.toString(16)).slice(-4) + '  '; prev = -2; }
+    var c = cls(o);
+    if (c !== prev) { if (open) out += '</span>'; out += '<span data-r="' + c + '" class="' + (c >= 0 ? R[c][2] : '') + '">'; open = true; prev = c; }
+    out += ('0' + b[o].toString(16)).slice(-2) + (o % 16 === 15 ? '' : o % 16 === 7 ? '  ' : ' ');
+  }
+  if (open) out += '</span>';
+  var hex = root.querySelector('#hg-write-hex'), info = root.querySelector('#hg-write-info');
+  hex.innerHTML = out;
+  hex.addEventListener('click', function (e) {
+    var s = e.target.closest('span[data-r]'); if (!s) return;
+    var r = +s.getAttribute('data-r'); if (r < 0) return;
+    hex.querySelectorAll('span.on').forEach(function (x) { x.classList.remove('on'); });
+    hex.querySelectorAll('span[data-r="' + r + '"]').forEach(function (x) { x.classList.add('on'); });
+    info.textContent = '0x' + R[r][0].toString(16) + '–0x' + (R[r][1] - 1).toString(16) + ': ' + R[r][3];
+  });
+})();
+</script>
+</section>

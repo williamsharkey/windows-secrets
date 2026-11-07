@@ -1,0 +1,150 @@
+<!-- exhibit: heritage-freecell — drop into section#sol, after heritage-solitaire (covers FreeCell and Spider) -->
+<section class="hgx" id="hg-fc" aria-labelledby="hg-fc-h">
+<style>
+.hgx { margin: 48px 0 0; padding-top: 6px; border-top: 1px dashed var(--rule); }
+.hgx > h3 { margin-top: 18px; }
+.hgx .hg-k { font: 600 12px/1.2 -apple-system, "Segoe UI", Tahoma, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+.hgx ol.tl { list-style: none; padding: 0 0 0 4px; margin: 20px 0; border-left: 2px solid var(--rule); }
+.hgx ol.tl li { position: relative; padding: 0 0 14px 18px; max-width: none; font-size: 16px; line-height: 1.5; }
+.hgx ol.tl li::before { content: ""; position: absolute; left: -7px; top: .5em; width: 10px; height: 10px; border-radius: 50%; background: var(--card); border: 2px solid var(--teal); box-sizing: border-box; }
+.hgx ol.tl li.me::before { background: var(--teal); }
+.hgx ol.tl .y { display: inline-block; min-width: 3.2em; font: 700 13px ui-monospace, Consolas, monospace; color: var(--teal); }
+.hgx .ev { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; margin: 22px 0; font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; }
+.hgx .ev > b.t { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.hgx .ev pre { margin: 8px 0 0; font-size: 12.5px; line-height: 1.45; overflow-x: auto; max-width: 100%; }
+.hgx .ev pre .h { background: var(--mark); }
+.hgx .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin: 22px 0; align-items: start; }
+.hgx .grid figure { margin: 0; }
+.hgx figure img, .hgx canvas { max-width: 100%; height: auto; }
+.hgx .px img, .hgx canvas.px { image-rendering: pixelated; }
+.hgx .src { font: 13px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); padding-left: 20px; }
+.hgx .src li { max-width: none; margin: 2px 0; }
+.hgx .toy { margin: 22px 0; }
+.hgx .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.hgx .seg button { border: 0; border-radius: 0; border-right: 1px solid var(--rule); }
+.hgx .seg button:last-child { border-right: 0; }
+.hgx .seg button[aria-pressed="true"] { background: var(--teal); color: var(--bg); }
+.hgx .scrollx { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+#hg-fc .table { background: #007f00; border-radius: 8px; padding: 10px 8px 12px; display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; max-width: 600px; }
+#hg-fc .col { position: relative; min-height: 60px; }
+#hg-fc .card { position: absolute; left: 0; width: 100%; aspect-ratio: 71 / 96; background-image: url(windows-secrets/heritage/cards-faces-w311.png); background-repeat: no-repeat; background-size: 5200% 100%; border-radius: 3px; image-rendering: pixelated; box-shadow: 0 0 0 1px #0005; }
+#hg-fc .ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0 0; }
+#hg-fc .ctl input { font: 15px ui-monospace, Consolas, monospace; width: 8.5em; padding: 5px 8px; border: 1px solid var(--rule); border-radius: 6px; background: var(--card); color: var(--fg); }
+#hg-fc .spider { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; }
+#hg-fc .spider img { image-rendering: pixelated; width: 142px; height: 192px; }
+#hg-fc .spider p { flex: 1 1 220px; margin: 0; }
+</style>
+
+<p class="hg-k">Heritage · FreeCell and Spider</p>
+<h3 id="hg-fc-h">FreeCell's numbered deals, and a deck that kept moving house</h3>
+
+<ol class="tl">
+  <li><span class="y">1978</span> Paul Alfille writes FreeCell on PLATO at the University of Illinois.</li>
+  <li><span class="y">1991</span> Jim Horne, who had played it on PLATO, writes the Windows version for <i>Entertainment Pack</i> Vol. 2.</li>
+  <li><span class="y">1993</span> Horne's FreeCell ships with Win32s as a test program for 32-bit Windows on 3.1, so a card game helped test the move to 32 bits.</li>
+  <li><span class="y">1995</span> Windows 95 includes it. Dave Ring's Internet FreeCell Project solves all 32,000 deals by April 1995, and only #11982 has no solution.</li>
+  <li><span class="y">1998</span> Spider Solitaire appears in <i>Plus! 98</i>, then in Windows Me and XP.</li>
+  <li><span class="y">2001</span> XP raises FreeCell's range to a million deals.</li>
+</ol>
+
+<h4>Every deal from a number</h4>
+<p>A FreeCell game number is a seed for the C runtime's <code>rand()</code>. XP's <code>freecell.exe</code> calls <code>srand(n)</code>, then for each of 52 cards takes <code>rand() % cardsLeft</code>, swaps that card to the end of the deck, and deals it to column <code>i &amp; 7</code> <span class="ver sx">static</span>. The algorithm has been public for decades, so any number can be dealt anywhere. This one deals with the real 1992 card faces from <code>CARDS.DLL</code>:</p>
+
+<div class="toy ui" id="hg-fc-toy">
+  <div class="table" id="hg-fc-table" role="img" aria-label="FreeCell deal"></div>
+  <div class="ctl">
+    <label for="hg-fc-n">Game&nbsp;#</label><input id="hg-fc-n" type="text" inputmode="numeric" value="11982" aria-describedby="hg-fc-st">
+    <button class="btn primary" type="button" id="hg-fc-go">Deal</button>
+    <button class="btn" type="button" data-n="1">#1</button><button class="btn" type="button" data-n="11982">#11982</button><button class="btn" type="button" data-n="-1">#−1</button><button class="btn" type="button" data-n="-2">#−2</button>
+  </div>
+  <div class="status" id="hg-fc-st" aria-live="polite"></div>
+  <p class="status"><span class="ver rec">reconstruction</span> Positive numbers use Microsoft's <code>rand()</code> (<code>seed = seed × 214013 + 2531011</code>), like XP. The −1 and −2 layouts are decoded from XP's code at <code>0x01003233</code>.</p>
+</div>
+
+<h4>The two deals below zero</h4>
+<p>The Select Game dialog says "from 1 to 1000000", but the code that reads it accepts anything from <code>−2</code> to <code>0xF4240</code> <span class="ver sx">static</span>:</p>
+<div class="ev"><b class="t">freecell.exe (XP), 0x01002522</b>
+<pre>call  GetDlgItemInt
+cmp   eax, <span class="h">-2</span>              ; below -2?  -> 0
+mov   [gameNumber], eax
+jl    bad
+cmp   eax, <span class="h">0F4240h</span>          ; above 1,000,000? -> 0
+jle   ok</pre></div>
+<p>Neither −1 nor −2 goes through <code>rand()</code>. Two hand-written loops lay them out. In −1, columns 1–4 hold a whole suit each in the order A, 3, 5, 7, 9, J, K, with the aces at the bottom of the pile, and columns 5–8 hold the even cards from Q down to 2. In −2, the aces sit under rows of kings, queens and jacks. Both are known to be unwinnable. Reading the loops shows they were put together by hand, like a test fixture.</p>
+
+<div class="ev"><b class="t">Also in freecell.exe (XP)</b>
+<pre>"<span class="h">User-Friendly User Interface</span>"                   ; caption of the Ctrl+Shift+F10 box
+"Choose Abort to Win, Retry to Lose, or Ignore to Cancel."
+"<span class="h">entpack.ini</span>"                                    ; the Entertainment Pack's INI file</pre></div>
+<p>The well-known Ctrl+Shift+F10 cheat is a developer's joke: a message box that turns Abort/Retry/Ignore into Win/Lose/Cancel, with a sarcastic title. <code>entpack.ini</code> is the shared settings file of the 1991 Entertainment Pack. XP's FreeCell still knows its name, ten years later.</p>
+
+<h4>Spider brings its own deck</h4>
+<div class="spider">
+  <img src="windows-secrets/heritage/xp-spider-cardback.png" width="142" height="192" alt="Spider Solitaire's own card back: a black spider on a web" loading="lazy">
+  <p>XP's <code>spider.exe</code> doesn't use <code>cards.dll</code> either. It has 53 bitmaps of its own, <code>CARD1</code> to <code>CARD52</code> and <code>CARDBACK</code>. I compared them with 1992's <code>CARDS.DLL</code>: all 52 faces are pixel-identical to Susan Kare's originals, and 49 are identical byte for byte <span class="ver sx">static</span>. The other three were re-saved in a different bitmap header format. So in 2001 Kare's deck existed three times in one XP install: in <code>cards.dll</code>, in Spider, and in the copy that Solitaire's 1990 code had left behind. Only the spider on the back is new.</p>
+</div>
+
+<div class="prior none"><b class="t">No earlier mention found</b> for Spider's private, pixel-identical copy of the 1992 faces, or for the −1/−2 layouts read from the code (the deals themselves are known from The Cutting Room Floor and TV Tropes). The deal algorithm, #11982 and the Ctrl+Shift+F10 box are all well documented.</div>
+
+<ol class="src">
+  <li><a href="https://en.wikipedia.org/wiki/Microsoft_FreeCell">Wikipedia: Microsoft FreeCell (Alfille, Horne, Win32s, Ring's project)</a></li>
+  <li><a href="https://www.tcrf.net/FreeCell_(Microsoft,_Windows,_1991)">The Cutting Room Floor: FreeCell (games −1 and −2)</a></li>
+  <li><a href="https://freecell.net/f/c/FAQ.html">freecell.net FAQ</a></li>
+  <li><a href="https://rosettacode.org/wiki/Deal_cards_for_FreeCell">Rosetta Code: Deal cards for FreeCell</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Spider_(solitaire)">Wikipedia: Spider (solitaire), Plus! 98</a></li>
+</ol>
+
+<script>
+(function () {
+  var root = document.getElementById('hg-fc'); if (!root) return;
+  var tbl = root.querySelector('#hg-fc-table'), st = root.querySelector('#hg-fc-st'), inp = root.querySelector('#hg-fc-n');
+  var R = 'A23456789TJQK', S = '♣♦♥♠', SN = ['clubs', 'diamonds', 'hearts', 'spades'];
+  function deal(n) {
+    var cols = [[], [], [], [], [], [], [], []], v, r, c;
+    if (n === -1) {
+      for (r = 0, v = 0; r < 7; r++, v += 4) for (c = 0; c < 4; c++) cols[c].push(v++);
+      for (r = 0, v = 56; r < 6; r++) { v -= 12; for (c = 4; c < 8; c++) cols[c].push(v++); }
+      return cols;
+    }
+    if (n === -2) {
+      for (c = 0; c < 4; c++) cols[c].push(3 - c);
+      for (v = 51, r = 0; r < 6; r++) for (c = 0; c < 4; c++) cols[c].push(v--);
+      for (r = 0; r < 6; r++) for (c = 4; c < 8; c++) cols[c].push(v--);
+      return cols;
+    }
+    var seed = n >>> 0, deck = [], i;
+    for (i = 0; i < 52; i++) deck.push(i);
+    function rnd() { seed = (Math.imul(seed, 214013) + 2531011) >>> 0; return (seed >>> 16) & 0x7fff; }
+    for (i = 0; i < 52; i++) {
+      var left = 52 - i, k = rnd() % left, t = deck[k]; deck[k] = deck[left - 1]; deck[left - 1] = t;
+      cols[i & 7].push(t);
+    }
+    return cols;
+  }
+  function name(v) { return R[v >> 2] + S[v & 3]; }
+  function show(n) {
+    if (!(n >= -2 && n <= 1000000) || n === 0 || n !== Math.floor(n)) { st.textContent = 'XP accepts −2 to 1,000,000 (0 means "no game").'; return; }
+    var cols = deal(n); tbl.innerHTML = '';
+    var w = tbl.clientWidth / 8, step = Math.max(14, w * 0.36);
+    cols.forEach(function (col) {
+      var d = document.createElement('div'); d.className = 'col'; d.style.height = (step * (col.length - 1) + w * 96 / 71) + 'px';
+      col.forEach(function (v, j) {
+        var e = document.createElement('div'); e.className = 'card'; e.style.top = (j * step) + 'px';
+        var id = (v & 3) * 13 + (v >> 2);
+        e.style.backgroundPosition = (id / 51 * 100) + '% 0';
+        e.title = name(v); d.appendChild(e);
+      });
+      tbl.appendChild(d);
+    });
+    tbl.setAttribute('aria-label', 'FreeCell game ' + n + '. Exposed cards: ' + cols.map(function (c) { return name(c[c.length - 1]); }).join(', '));
+    st.textContent = 'Game #' + n + (n === 11982 ? ': the one deal among the first 32,000 that cannot be won.' : n < 0 ? ': laid out by hand in the code; unwinnable.' : '. Top row: ' + cols.map(function (c) { return name(c[0]); }).join(' '));
+  }
+  function go() { show(parseInt(String(inp.value).replace('−', '-'), 10)); }
+  root.querySelector('#hg-fc-go').addEventListener('click', go);
+  inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+  root.querySelectorAll('[data-n]').forEach(function (b) { b.addEventListener('click', function () { inp.value = b.getAttribute('data-n'); go(); }); });
+  var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(go, 150); });
+  go();
+})();
+</script>
+</section>

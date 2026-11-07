@@ -1,0 +1,150 @@
+<!-- exhibit: heritage-recorder — a new stop (Recorder and Terminal, WfW 3.11); suggested place: after section#write, or near the puppetry discussion -->
+<section class="hgx" id="hg-rec" aria-labelledby="hg-rec-h">
+<style>
+.hgx { margin: 48px 0 0; padding-top: 6px; border-top: 1px dashed var(--rule); }
+.hgx > h3 { margin-top: 18px; }
+.hgx .hg-k { font: 600 12px/1.2 -apple-system, "Segoe UI", Tahoma, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+.hgx ol.tl { list-style: none; padding: 0 0 0 4px; margin: 20px 0; border-left: 2px solid var(--rule); }
+.hgx ol.tl li { position: relative; padding: 0 0 14px 18px; max-width: none; font-size: 16px; line-height: 1.5; }
+.hgx ol.tl li::before { content: ""; position: absolute; left: -7px; top: .5em; width: 10px; height: 10px; border-radius: 50%; background: var(--card); border: 2px solid var(--teal); box-sizing: border-box; }
+.hgx ol.tl li.me::before { background: var(--teal); }
+.hgx ol.tl .y { display: inline-block; min-width: 3.2em; font: 700 13px ui-monospace, Consolas, monospace; color: var(--teal); }
+.hgx .ev { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; margin: 22px 0; font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; }
+.hgx .ev > b.t { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.hgx .ev pre { margin: 8px 0 0; font-size: 12.5px; line-height: 1.45; overflow-x: auto; max-width: 100%; }
+.hgx .ev pre .h { background: var(--mark); }
+.hgx .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin: 22px 0; align-items: start; }
+.hgx .grid figure { margin: 0; }
+.hgx figure img, .hgx canvas { max-width: 100%; height: auto; }
+.hgx .px img, .hgx canvas.px { image-rendering: pixelated; }
+.hgx .src { font: 13px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); padding-left: 20px; }
+.hgx .src li { max-width: none; margin: 2px 0; }
+.hgx .toy { margin: 22px 0; }
+.hgx .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.hgx .seg button { border: 0; border-radius: 0; border-right: 1px solid var(--rule); }
+.hgx .seg button:last-child { border-right: 0; }
+.hgx .seg button[aria-pressed="true"] { background: var(--teal); color: var(--bg); }
+.hgx .scrollx { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+#hg-rec .shot img { image-rendering: pixelated; }
+#hg-rec .pair2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (max-width: 600px) { #hg-rec .pair2 { grid-template-columns: 1fr; } }
+#hg-rec .pair2 figure { margin: 0; }
+#hg-rec .pair2 img { width: 100%; height: auto; }
+#hg-rec .w3 { border: 1px solid #000; background: #c0c0c0; color: #000; font: 13px/1.35 Tahoma, "MS Sans Serif", sans-serif; max-width: 420px; }
+#hg-rec .w3 .tb { background: #0000a8; color: #fff; text-align: center; font-weight: 700; padding: 2px; }
+#hg-rec .w3 .bd { padding: 8px; }
+#hg-rec .w3 textarea { width: 100%; height: 58px; font: 14px "Courier New", monospace; resize: vertical; box-sizing: border-box; }
+#hg-rec .w3 .lb { background: #fff; border: 2px inset #fff; height: 150px; overflow: auto; font: 12px/1.45 "Courier New", monospace; padding: 2px 4px; white-space: pre; margin-top: 8px; }
+#hg-rec .w3 .lb .sel { background: #0000a8; color: #fff; }
+</style>
+
+<p class="hg-k">Heritage · Recorder</p>
+<h3 id="hg-rec-h">Recorder: the puppeteer that shipped in 1990</h3>
+
+<p>The window puppetry films on this site drive other programs' windows from outside. Windows 3.0 shipped a program that did the same thing. Recorder captured every keystroke and mouse event in the system, saved them as a <code>.REC</code> macro, and played them back into whatever program you named. It lasted from 1990 to 1995.</p>
+
+<ol class="tl">
+  <li><span class="y">1990</span> Windows 3.0 ships Recorder. Its About box says "Developed for Microsoft by Softbridge Ltd." <span class="ver sx">static</span>. Softbridge also sold the <i>Automated Test Facility</i> and the <i>Bridge Toolkit</i>, which Microsoft's knowledge base recommends for editing Recorder macros.</li>
+  <li><span class="y">1992</span> Microsoft Test, Microsoft's own GUI-testing tool, records and replays the same kind of input.</li>
+  <li><span class="y">1995</span> Windows 95 leaves Recorder out (KB 159852). The journal hooks it relied on stay in the Windows API.</li>
+  <li><span class="y">2009</span> Windows 7 brings back a recorder in name only: the Problem Steps Recorder, which takes screenshots of your clicks for a bug report and doesn't play anything back.</li>
+  <li><span class="y">2021</span> Power Automate Desktop puts a free macro recorder back in Windows 11, 26 years after Recorder left.</li>
+</ol>
+
+<h4>How it worked: three hooks</h4>
+<p><code>RECORDER.DLL</code> ("Recorder Library") exports <code>JRHOOK</code>, <code>JPHOOK</code> and <code>KHOOK</code> <span class="ver sx">static</span>. They're a journal-record hook, which copies every input event in the system, a journal-playback hook, which feeds events back in as if from the hardware, and a keyboard hook for the shortcut keys. The library also checks where a played-back mouse event will land, using <code>WindowFromPoint</code>, <code>GetClassName</code> and <code>lstrcmp</code>. That's why the error strings read like a puppeteer's worries <span class="ver sx">static</span>:</p>
+
+<div class="ev"><b class="t">RECORDER.EXE (3.11), string table</b>
+<pre>2008  Cannot play back mouse movements to the window you want.
+2009  Playback window no longer exists.
+2018  <span class="h">Cannot play back to a covered window.</span>
+2020  Cannot play back to a missing window.
+1050  Mouse messages recorded on a %d by %d display may not work.
+1012  Same Application      1013  Any Application
+1019  Window                1020  Screen          ; "Relative to:"
+1035  <span class="h">%4.4d %s (%u,%u) %s, %ld msec</span>
+1036  <span class="h">%4.4d %s, %s, %s, %ld msec</span>
+1061  Developed for Microsoft by Softbridge Ltd.</pre></div>
+
+<p>Strings 1035 and 1036 are the format of a hidden window. Hold <kbd>Shift</kbd> while choosing Macro ▸ Properties and Recorder shows <b>Macro Events</b> instead of the Properties dialog. It's a list of every recorded event and the window it went to. The code checks <code>GetKeyState(VK_SHIFT)</code> just before it picks dialog 117 over 109 <span class="ver sx">static</span>. Microsoft did document this, in KB Q62647. Here it is on 3.11, after I recorded myself typing "hello" into Program Manager <span class="ver live">verified live</span>:</p>
+
+<figure class="shot"><img src="windows-secrets/heritage/w311-recorder-events.png" width="410" height="253" alt="Recorder's Macro Events dialog listing 12 events: Key Down h PROGMAN!Progman 0 msec, Key Up h 55 msec, and so on, ending with Key Up Enter" loading="lazy" style="max-width:100%;height:auto"><figcaption>Every event names its target as <code>MODULE!Class</code>, here <code>PROGMAN!Progman</code>. That's how Recorder found the window again on playback: by the program and window class, not by a handle that would change. The delays are multiples of 55 ms, the PC timer tick.</figcaption></figure>
+
+<div class="pair2">
+  <figure><img src="windows-secrets/heritage/w311-recorder-record.png" width="522" height="327" alt="Record Macro dialog: name, shortcut key Ctrl, playback to Same Application at Fast speed, Record Mouse Clicks + Drags relative to Window" loading="lazy"><figcaption>Record Macro: "Relative to: Window" stores mouse positions relative to the target window, so a macro survives the window being moved.</figcaption></figure>
+  <figure><img src="windows-secrets/heritage/w311-recorder-suspended.png" width="218" height="183" alt="Recorder: Macro Recording Suspended! Save Macro, Resume Recording, Cancel Recording" loading="lazy" style="max-width:218px"><figcaption>Ctrl+Break ends a recording. Recorder sits outside every program, so it needs a key no program will use.</figcaption></figure>
+</div>
+
+<h4>Record yourself</h4>
+<div class="toy ui" id="hg-rec-toy">
+  <div class="w3">
+    <div class="tb">Recorder - (Untitled)</div>
+    <div class="bd">
+      <label for="hg-rec-in" style="font-size:12px">Target window: <b>BROWSER!Textarea</b></label>
+      <textarea id="hg-rec-in" spellcheck="false" placeholder="Press Record, then type here…"></textarea>
+      <div class="lb" id="hg-rec-lb" aria-live="off"></div>
+    </div>
+  </div>
+  <div class="row"><button class="btn primary" type="button" id="hg-rec-rec">Record</button><button class="btn" type="button" id="hg-rec-play" disabled>Play back</button></div>
+  <div class="status" id="hg-rec-st" aria-live="polite">Nothing recorded.</div>
+  <p class="status"><span class="ver rec">reconstruction</span> Captures your key-down and key-up events in this page, rounds the delays to 55 ms ticks, and lists them in Recorder's own format (string 1036). Playback types them back with the recorded timing. It's a browser imitation of a journal hook, not one.</p>
+</div>
+
+<h4>Terminal, the other contractor</h4>
+<figure class="shot"><img src="windows-secrets/heritage/w311-terminal.png" width="832" height="60" alt="WfW 3.11 Terminal: title Terminal - (Untitled), menus File Edit Settings Phone Transfers Help" loading="lazy" style="max-width:100%;height:auto"></figure>
+<p>Recorder wasn't the only accessory Microsoft bought in. Terminal's About text says "Developed for Microsoft by Future Soft Engineering, Inc.", the makers of the DynaComm terminal program. The name hidden in its NE header is <code>Windows Terminal   Version 3.00</code> <span class="ver sx">static</span>. Twenty-nine years later Microsoft used "Windows Terminal" again, for a different program.</p>
+
+<div class="prior"><b class="t">Prior art</b> Shift+Properties is in Microsoft's own KB Q62647, and Softbridge's role is mentioned in KB Q72855. The hook exports, the window-matching code path and the <code>MODULE!Class</code> addressing are read from the 3.11 files here. I haven't seen them connected before to how puppetry finds its windows.</div>
+
+<ol class="src">
+  <li><a href="https://jeffpar.github.io/kbarchive/kb/062/Q62647">KB Q62647: How to View Recorder Macro Events</a></li>
+  <li><a href="https://techshelps.github.io/MSDN/KB/Source/win3x/q72855.htm">KB Q72855: Automated Test Facilities and Microsoft Windows (Softbridge)</a></li>
+  <li><a href="https://techshelps.github.io/MSDN/KB/Source/win3x/q78048.htm">KB Q78048: Keyboard commands more reliable with Recorder</a></li>
+  <li><a href="https://ftp.zx.net.nz/pub/archive/ftp.microsoft.com/MISC/KB/en-us/159/852.HTM">KB 159852: Macro Recorder not included in Windows 95</a></li>
+  <li><a href="https://www.mjtnet.com/blog/2014/07/03/remember-the-macro-recorder-in-windows-3-1">MJT Net: Remember the Macro Recorder in Windows 3.1?</a></li>
+  <li><a href="https://drdobbs.com/windows/windows-95-journaling-and-playback/184409843">Dr. Dobb's: Windows 95 journaling and playback</a></li>
+</ol>
+
+<script>
+(function () {
+  var root = document.getElementById('hg-rec'); if (!root) return;
+  var inp = root.querySelector('#hg-rec-in'), lb = root.querySelector('#hg-rec-lb'), st = root.querySelector('#hg-rec-st');
+  var bRec = root.querySelector('#hg-rec-rec'), bPlay = root.querySelector('#hg-rec-play');
+  var rec = false, ev = [], last = 0, playing = false;
+  function keyName(e) { var k = e.key; if (k === ' ') return 'Space'; if (k.length === 1) return k.toLowerCase(); return k === 'Backspace' ? 'Backspace' : k; }
+  function line(i, e) { return ('000' + (i + 1)).slice(-4) + ' ' + (e.up ? 'Key Up' : 'Key Down') + ', ' + e.name + ', BROWSER!Textarea, ' + e.dt + ' msec'; }
+  function render() { lb.textContent = ev.map(function (e, i) { return line(i, e); }).join('\n'); lb.scrollTop = lb.scrollHeight; }
+  function add(e, up) {
+    if (!rec || playing) return;
+    var now = performance.now(), dt = ev.length ? Math.round((now - last) / 55) * 55 : 0; last = now;
+    ev.push({ up: up, name: keyName(e), key: e.key, dt: dt }); render();
+    if (ev.length >= 400) stop();
+  }
+  inp.addEventListener('keydown', function (e) { add(e, false); });
+  inp.addEventListener('keyup', function (e) { add(e, true); });
+  function stop() { rec = false; bRec.textContent = 'Record'; bPlay.disabled = !ev.length; st.textContent = ev.length + ' events recorded. Play back types them again.'; }
+  bRec.addEventListener('click', function () {
+    if (rec) { stop(); return; }
+    ev = []; render(); inp.value = ''; rec = true; bRec.textContent = 'Stop (Ctrl+Break)'; bPlay.disabled = true; st.textContent = 'Recording. Type in the box.'; inp.focus();
+  });
+  inp.addEventListener('keydown', function (e) { if (rec && e.key === 'Pause') { e.preventDefault(); stop(); } });
+  bPlay.addEventListener('click', function () {
+    if (!ev.length || playing) return; playing = true; inp.value = ''; var i = 0; st.textContent = 'Playing back…';
+    (function next() {
+      if (i >= ev.length) { playing = false; st.textContent = 'Playback finished.'; return; }
+      var e = ev[i];
+      setTimeout(function () {
+        var rows = lb.textContent.split('\n'); rows[i] = '\u0000' + rows[i];
+        lb.innerHTML = rows.map(function (r) { var s = r.replace('\u0000', ''); var esc = s.replace(/&/g, '&amp;').replace(/</g, '&lt;'); return r[0] === '\u0000' ? '<span class="sel">' + esc + '</span>' : esc; }).join('\n');
+        if (!e.up) {
+          if (e.key.length === 1) inp.value += e.key;
+          else if (e.key === 'Backspace') inp.value = inp.value.slice(0, -1);
+          else if (e.key === 'Enter') inp.value += '\n';
+        }
+        i++; next();
+      }, Math.min(e.dt, 1500));
+    })();
+  });
+})();
+</script>
+</section>

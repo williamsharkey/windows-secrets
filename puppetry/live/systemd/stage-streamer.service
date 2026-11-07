@@ -1,0 +1,14 @@
+[Unit]
+Description=BASILISK LIVE - framebuffer + sound -> HLS (/dev/shm/stage-hls)
+After=stage-vm.service
+PartOf=stage.target
+
+[Service]
+ExecStart=/usr/bin/python3 /root/stage/bin/streamer.py
+Restart=always
+RestartSec=3
+# a guest on a shared box: the production services win any CPU fight
+Nice=5
+
+[Install]
+WantedBy=stage.target

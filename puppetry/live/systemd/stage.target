@@ -1,0 +1,6 @@
+[Unit]
+Description=BASILISK LIVE (stage VM, streamer, server)
+Wants=stage-pulse.service stage-vm.service stage-streamer.service stage-server.service
+
+[Install]
+WantedBy=multi-user.target

@@ -462,6 +462,11 @@ static char *http(const char *method, const char *path, const char *body, int *o
     a.sin_family = AF_INET;
     a.sin_port = htons(8765);
     a.sin_addr.s_addr = inet_addr("10.0.2.2");
+    {   /* never hang forever: a loadvm can strand a half-open connection */
+        int to = 75000;
+        setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (const char *)&to, sizeof to);
+        setsockopt(s, SOL_SOCKET, SO_SNDTIMEO, (const char *)&to, sizeof to);
+    }
     if (connect(s, (struct sockaddr *)&a, sizeof a)) { closesocket(s); return NULL; }
     sprintf(hdr, "%s %s HTTP/1.0\r\nHost: x\r\nContent-Length: %d\r\n\r\n", method, path, blen);
     send(s, hdr, (int)strlen(hdr), 0);

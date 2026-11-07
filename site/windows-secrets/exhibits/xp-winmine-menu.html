@@ -1,0 +1,16 @@
+<!-- exhibit: xp-winmine-menu — drop into section#winmine, after the XP screenshot -->
+<h3>F5 and F6 made it to XP</h3>
+
+<p>The 3.1 keys above were thought to have died with <code>winmine.ini</code>. XP's Minesweeper stores its settings in the registry instead, and it never writes a <code>Menu</code> value there. But it still reads one, and its keyboard handler still has the same branches <span class="ver sx">static</span>: <kbd>Shift</kbd> is the XYZZY toggle, <kbd>F4</kbd> flips <code>Sound</code> between 2 and 3 if it's already above 1, and <kbd>F5</kbd> and <kbd>F6</kbd> hide and restore the menu bar, but only if <code>Menu</code> is non-zero. The <kbd>Esc</kbd> boss key is gone.</p>
+
+<p>So I added <code>Menu</code> = 1 (a DWORD) under <code>HKCU\Software\Microsoft\winmine</code> <span class="ver live">verified live</span>:</p>
+
+<div class="pair px" style="display:grid;grid-template-columns:repeat(2,minmax(0,170px));gap:14px">
+  <figure style="margin:0"><img src="windows-secrets/xp-deep/xp-winmine-menu-hidden.png" alt="XP Minesweeper with no menu bar" width="170" height="238" loading="lazy"><figcaption>It starts with no menu bar. <kbd>F5</kbd> keeps it that way.</figcaption></figure>
+  <figure style="margin:0"><img src="windows-secrets/xp-deep/xp-winmine-menu-f6.png" alt="XP Minesweeper with Game and Help menus restored" width="170" height="258" loading="lazy"><figcaption><kbd>F6</kbd> brings Game and Help back.</figcaption></figure>
+</div>
+
+<p>A borderless, menuless board, for a 1990 developer taking screenshots or a 2001 office worker keeping a low profile. I removed the value afterwards.</p>
+
+<div class="prior"><b class="t">Prior art</b>
+<a href="https://www.tcrf.net/Minesweeper_(Windows,_1990)">The Cutting Room Floor</a> documents <code>Menu=1</code> in <code>winmine.ini</code> for the 3.1 and 98 versions. I found nothing about the XP registry value or the <kbd>F5</kbd>/<kbd>F6</kbd> keys. <a class="tell" href="#tell">Seen it before? Tell me.</a></div>

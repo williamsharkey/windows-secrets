@@ -1,0 +1,14 @@
+# BASILISK LIVE - site block for the production Caddyfile (/etc/caddy/Caddyfile).
+# Applied by hand (already live as of 2026-11-07); this repo never edits /etc/caddy.
+#   caddy validate --config /etc/caddy/Caddyfile && systemctl reload caddy
+#
+# Caddy proxies the WebSocket upgrade on /ws by itself and keeps it open
+# (server.py sends heartbeats every 25 s).  flush_interval -1 = no response
+# buffering, so playlists/segments reach viewers the moment they exist.
+# Caddy sets X-Forwarded-For to the real client address; server.py honours that
+# header only when the TCP peer is 127.0.0.1 (STAGE_TRUSTED_PROXY).
+live.williamsharkey.com {
+	reverse_proxy 127.0.0.1:8780 {
+		flush_interval -1
+	}
+}

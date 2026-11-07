@@ -1,0 +1,14 @@
+<!-- exhibit: xp-paint-grid-settings — drop into section#paint, near "The family tree" -->
+<h3>A dialog with no door: Grid Settings</h3>
+
+<p>XP Paint has a dialog that nothing in Paint can open. <code>mspaint.exe</code> resource DIALOG 4001 is called <b>Grid Settings</b>: a <i>Pixel Grid</i> checkbox and a <i>Tile Grid</i> with a width and height in pixels. The number 4001 appears once in the whole file, in the resource directory that lists it. No menu item, no accelerator, no line of code asks for it <span class="ver sx">static</span>. XP's only grid is View ▸ Zoom ▸ Show Grid (<kbd>Ctrl</kbd>+<kbd>G</kbd>), which has no settings.</p>
+
+<p>To see it I had XP itself draw the template, loading it straight from <code>mspaint.exe</code> with a do-nothing dialog procedure <span class="ver live">rendered live</span>:</p>
+
+<figure class="shot x2" style="--w:306"><img src="windows-secrets/xp-deep/xp-paint-grid.png" alt="A Windows XP dialog titled Grid Settings with a Pixel Grid checkbox, a Tile Grid group with Width and Height boxes in pixels, and OK and Cancel buttons" width="306" height="170" loading="lazy">
+<figcaption>DIALOG 4001 from XP SP3's <code>mspaint.exe</code>, drawn by XP. Not a mock-up; just never opened by Paint.</figcaption></figure>
+
+<p>I know this dialog from somewhere else. Visual C++'s resource editor has an image editor for icons and bitmaps, and its <a href="https://learn.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2013/h17585a7(v=vs.120)">Grid Settings dialog</a> has the same two parts. Microsoft's docs say the tile grid is for "bitmaps that contain multiple images arranged at regular intervals", like toolbar strips. Paint and that editor are both MFC programs from the mid-1990s. <i>My guess</i> is that they shared drawing code and this template came along with it. The pixel grid made it into Paint's View menu; the tile grid never did.</p>
+
+<div class="prior none"><b class="t">Prior art</b>
+The Visual Studio dialog is documented. I found no mention of a Grid Settings dialog, or a tile grid, inside Windows Paint. <a class="tell" href="#tell">Seen it before? Tell me.</a></div>

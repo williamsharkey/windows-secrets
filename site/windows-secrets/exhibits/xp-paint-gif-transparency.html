@@ -1,0 +1,61 @@
+<!-- exhibit: xp-paint-gif-transparency — drop into section#paint, after "It wakes up for GIFs" -->
+<h3 id="xp-gif-tick">Ticking it, finally</h3>
+
+<p>Nineteen years after the stretched dialog, the obvious question is whether the box does anything. So I did the whole act on XP SP3 <span class="ver live">verified live</span>: open a four-colour GIF, <b>Image ▸ Attributes</b>, pull the dialog taller, <kbd>Tab</kbd> four times, <kbd>Space</kbd>, <kbd>Tab</kbd>, <kbd>Enter</kbd> for <i>Select Color…</i>, pick yellow, OK, OK, <kbd>Ctrl</kbd>+<kbd>S</kbd>.</p>
+
+<figure><video src="windows-secrets/xp-deep/xp-paint-gif-transparency.mp4" poster="windows-secrets/xp-deep/xp-paint-gif-poster.jpg" controls muted playsinline preload="none" width="760" height="600"></video>
+<figcaption>XP SP3, keyboard only. The <i>Select Color</i> box opens already expanded, offering a muddy blue-grey (R 33, G 67, B 101) before anything is picked. Hold that thought.</figcaption></figure>
+
+<p>Then I copied the saved file back out of the VM and read its bytes. A GIF marks a transparent colour in a Graphic Control Extension, eight bytes beginning <code>21 F9</code>, whose flag bit says "index <i>n</i> is see-through". Here is the file I gave Paint, which already had one, and the file Paint wrote back:</p>
+
+<div class="toy ui" id="gifx" role="group" aria-label="GIF byte comparison">
+  <div class="row" style="margin-top:0"><button class="btn primary" type="button" data-f="in">Before: what I opened</button><button class="btn" type="button" data-f="out">After: what Paint saved</button></div>
+  <pre id="gifxHex" style="margin:12px 0 0;font-size:13px;line-height:1.55"></pre>
+  <div class="status" id="gifxNote" aria-live="polite"></div>
+</div>
+<script>
+(function(){
+  var F={
+    in:{rows:[
+      ['000000','<mark>47 49 46 38 39 61</mark> a0 00 64 00 81 00 00','GIF89a, 160×100, 4-colour palette'],
+      ['00000D','ff ff 00 ff 00 00 00 00 ff 00 00 00','palette: yellow, red, blue, black'],
+      ['000019','<b class="f-out">21 f9 04 01 00 00 00 00</b>','Graphic Control Extension: flag 01 = transparent, index 00 = yellow'],
+      ['000021','2c 00 00 00 00 a0 00 64 00 40 …','image data'],
+    ],note:'506 bytes. Byte 0x1C is 01: "colour 0 is transparent". Paint opened this with the box unticked.'},
+    out:{rows:[
+      ['000000','<mark>47 49 46 38 39 61</mark> a0 00 64 00 f7 00 00','GIF89a, 160×100, 256-colour palette'],
+      ['00000D','ff ff 00 ff 00 00 00 00 ff 00 00 00 00 00 00 …','yellow is still colour 0; 252 unused black slots follow'],
+      ['00030D','<b class="f-ghost">2c</b> 00 00 00 00 a0 00 64 00 00 …','image data straight away. No 21 F9 anywhere in the file.'],
+    ],note:'1,249 bytes, no Graphic Control Extension. Same result with the box ticked and yellow chosen, and when re-saving the already-transparent file: XP Paint neither reads nor writes GIF transparency.'}
+  };
+  var box=document.getElementById('gifx'),pre=document.getElementById('gifxHex'),note=document.getElementById('gifxNote');
+  function show(k){
+    pre.innerHTML=F[k].rows.map(function(r){return '<span style="color:var(--muted)">'+r[0]+':</span> '+r[1]+'\n        <span style="color:var(--muted)">'+r[2]+'</span>';}).join('\n');
+    note.textContent=F[k].note;
+    box.querySelectorAll('button').forEach(function(b){b.classList.toggle('primary',b.dataset.f===k);b.setAttribute('aria-pressed',b.dataset.f===k);});
+  }
+  box.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){show(b.dataset.f);});});
+  show('in');
+})();
+</script>
+
+<p>So, no: ticking it changes nothing in the file <span class="ver live">verified live</span>. The code says why <span class="ver sx">static</span>. When you press OK, Paint copies the checkbox into a global variable (at <code>0x0103E86C</code>) and the colour into another (<code>0x0103D6A4</code>). I searched the whole of <code>mspaint.exe</code> for that first address. It is read in exactly one place, the dialog's own setup code, which ticks the box again next time you open Attributes. It is written in three: the OK button, and File ▸ New and File ▸ Open, which reset it to zero. The GIF writer never looks at it. The box is a note Paint writes to itself and reads back to you.</p>
+
+<p>Two more details fall out of the same code. The box is enabled only when the open file's format ID equals <code>{B96B3CB0-0728-11D3-9D7B-0000F81EF32E}</code>, which is GDI+'s <code>ImageFormatGIF</code>. That's the tell: XP's Paint hands files to GDI+, the graphics library new in XP, while Windows 2000's Paint used the old image filters that could write a transparent GIF. The dialog survived the move to GDI+, and the plumbing behind it didn't. And the "unset" colour is a sentinel, <code>0x87654321</code>, written by New and Open as <code>C7 05 A4 D6 03 01 21 43 65 87</code>. A Windows colour value keeps red, green and blue in its low three bytes, and here those are <code>21 43 65</code>: R 33, G 67, B 101. That's the blue-grey the Color dialog offered in the clip. It's a programmer's countdown, not a colour.</p>
+
+<h3>The third colour was the transparent colour all along</h3>
+
+<p>Paint's colour box has a second way to fill <code>0x0103D6A4</code>. Its click handlers test the <kbd>Ctrl</kbd> bit of the mouse flags and, if it's set, send the colour there instead of to the foreground or background well <span class="ver sx">static</span>. Wikipedia and Betawiki record this as the Windows 98 "third colour": <kbd>Ctrl</kbd>+click a swatch, then hold <kbd>Ctrl</kbd> while drawing. On XP <span class="ver live">verified live</span>, <kbd>Ctrl</kbd>+click shows up as the backdrop behind the two colour wells, the dotted grey you may never have noticed was a third well:</p>
+
+<div class="pair px" style="display:grid;grid-template-columns:1fr;gap:10px;max-width:520px">
+  <figure style="margin:0"><img src="windows-secrets/xp-deep/xp-paint-colorbox-normal.png" alt="XP Paint colour box: black over white wells on a dithered grey backdrop" width="260" height="40" style="width:100%"><figcaption>As shipped: the dithered backdrop means "no third colour".</figcaption></figure>
+  <figure style="margin:0"><img src="windows-secrets/xp-deep/xp-paint-colorbox-ctrlclick.png" alt="XP Paint colour box after Ctrl+click on yellow: the backdrop behind the wells is solid yellow" width="260" height="40" style="width:100%"><figcaption>After <kbd>Ctrl</kbd>+click on yellow.</figcaption></figure>
+</div>
+
+<figure class="shot x15" style="--w:357"><img src="windows-secrets/xp-deep/xp-paint-attributes-ctrlclick.png" alt="XP Paint Attributes dialog, stretched, with a GIF open: the transparency checkbox is unticked but the colour swatch beside Select Color is yellow" width="357" height="320" loading="lazy">
+<figcaption>Then open Attributes. The box is still unticked, but the Transparency swatch is already yellow. With a BMP open the whole group is grey, yet the swatch still shows whatever you <kbd>Ctrl</kbd>+clicked; a <kbd>Ctrl</kbd>+drag with the pencil draws in that same colour (<a href="windows-secrets/xp-deep/xp-paint-third-color.png">red, in this test</a>).</figcaption></figure>
+
+<p>So in XP Paint, the "third colour" and the GIF's "transparent background colour" are one variable. Six of Paint's drawing routines check it against the <code>0x87654321</code> sentinel and use it in place of the foreground or background colour when it's set <span class="ver sx">static</span>. I couldn't make it change a transparent selection drag <span class="ver live">tested live</span>, so what else, if anything, it feeds remains open.</p>
+
+<div class="prior none"><b class="t">Prior art</b>
+The <kbd>Ctrl</kbd>+click third colour is noted on <a href="https://betawiki.net/wiki/Paint">Betawiki</a> and in Wikipedia-derived pages as a Windows 98 addition. I found nothing connecting it to the Attributes dialog's transparency colour, the indicator's dithered backdrop, the <code>0x87654321</code> sentinel, or the fact that XP's checkbox is never read. <a class="tell" href="#tell">Seen it before? Tell me.</a></div>

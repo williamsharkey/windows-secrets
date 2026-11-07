@@ -1,0 +1,15 @@
+[Unit]
+Description=BASILISK LIVE - the stage (Windows XP in QEMU, monitor /tmp/stage-mon.sock, QMP /tmp/stage-qmp.sock)
+Requires=stage-pulse.service
+After=stage-pulse.service
+PartOf=stage.target
+
+[Service]
+ExecStart=/root/stage/bin/stage-vm.sh run
+ExecStop=/root/stage/bin/stage-vm.sh stop
+TimeoutStopSec=20
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=stage.target

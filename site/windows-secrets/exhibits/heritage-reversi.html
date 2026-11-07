@@ -1,0 +1,135 @@
+<!-- exhibit: heritage-reversi — drop into section#winmine, before heritage-minesweeper (Minesweeper replaced it in 3.1) -->
+<section class="hgx" id="hg-rev" aria-labelledby="hg-rev-h">
+<style>
+.hgx { margin: 48px 0 0; padding-top: 6px; border-top: 1px dashed var(--rule); }
+.hgx > h3 { margin-top: 18px; }
+.hgx .hg-k { font: 600 12px/1.2 -apple-system, "Segoe UI", Tahoma, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+.hgx ol.tl { list-style: none; padding: 0 0 0 4px; margin: 20px 0; border-left: 2px solid var(--rule); }
+.hgx ol.tl li { position: relative; padding: 0 0 14px 18px; max-width: none; font-size: 16px; line-height: 1.5; }
+.hgx ol.tl li::before { content: ""; position: absolute; left: -7px; top: .5em; width: 10px; height: 10px; border-radius: 50%; background: var(--card); border: 2px solid var(--teal); box-sizing: border-box; }
+.hgx ol.tl li.me::before { background: var(--teal); }
+.hgx ol.tl .y { display: inline-block; min-width: 3.2em; font: 700 13px ui-monospace, Consolas, monospace; color: var(--teal); }
+.hgx .ev { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; margin: 22px 0; font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; }
+.hgx .ev > b.t { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.hgx .ev pre { margin: 8px 0 0; font-size: 12.5px; line-height: 1.45; overflow-x: auto; max-width: 100%; }
+.hgx .ev pre .h { background: var(--mark); }
+.hgx .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin: 22px 0; align-items: start; }
+.hgx .grid figure { margin: 0; }
+.hgx figure img, .hgx canvas { max-width: 100%; height: auto; }
+.hgx .px img, .hgx canvas.px { image-rendering: pixelated; }
+.hgx .src { font: 13px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); padding-left: 20px; }
+.hgx .src li { max-width: none; margin: 2px 0; }
+.hgx .toy { margin: 22px 0; }
+.hgx .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.hgx .seg button { border: 0; border-radius: 0; border-right: 1px solid var(--rule); }
+.hgx .seg button:last-child { border-right: 0; }
+.hgx .seg button[aria-pressed="true"] { background: var(--teal); color: var(--bg); }
+.hgx .scrollx { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+#hg-rev .rv { display: inline-block; border: 1px solid #000; background: #fff; color: #000; font: 13px/1.3 Tahoma, "MS Sans Serif", sans-serif; max-width: 100%; }
+#hg-rev .rv .tb { background: #0000a8; color: #fff; text-align: center; font-weight: 700; padding: 2px; }
+#hg-rev .rv .mb { border-bottom: 1px solid #000; padding: 1px 6px; display: flex; gap: 12px; flex-wrap: wrap; }
+#hg-rev .rv .mb button { background: none; border: 0; padding: 0; font: inherit; color: #000; cursor: pointer; }
+#hg-rev .rv .mb button:hover, #hg-rev .rv .mb button:focus-visible { background: #0000a8; color: #fff; outline: none; }
+#hg-rev .rv .mb select { font: inherit; }
+#hg-rev .bd { display: grid; width: max-content; grid-template-columns: repeat(8, 36px); grid-template-rows: repeat(8, 36px); gap: 0; margin: 8px; background: #808080; border: 1px solid #000; }
+@media (max-width: 400px) { #hg-rev .bd { grid-template-columns: repeat(8, 33px); grid-template-rows: repeat(8, 33px); } }
+#hg-rev .sq { border: 1px solid #000; background: #808080; padding: 0; position: relative; cursor: pointer; }
+#hg-rev .sq i { position: absolute; inset: 4px; border-radius: 50%; border: 1px solid #000; }
+#hg-rev .sq i.b { background: #000; } #hg-rev .sq i.w { background: #fff; }
+#hg-rev .sq.hint::after { content: ""; position: absolute; inset: 6px; background: linear-gradient(45deg, transparent 45%, #fff 45% 55%, transparent 55%), linear-gradient(-45deg, transparent 45%, #fff 45% 55%, transparent 55%); }
+#hg-rev .rv .sb { border-top: 1px solid #000; padding: 2px 6px; min-height: 1.4em; }
+</style>
+
+<p class="hg-k">Heritage · Reversi</p>
+<h3 id="hg-rev-h">Reversi, the game Minesweeper replaced</h3>
+
+<p>Before Solitaire or Minesweeper, Windows had one game. Reversi (Othello under another name) shipped with Windows 1.0 in 1985 and stayed through Windows 3.0. It had a Game menu with Hint, Pass, New and Exit, and a Skill menu with Beginner, Novice, Expert and Master, where higher levels simply thought longer. When Windows 3.1 arrived in 1992, Minesweeper took its place in the Games group. That makes Reversi the first game Windows ever dropped.</p>
+
+<ol class="tl">
+  <li><span class="y">1985</span> Windows 1.0: Reversi is the only game. Later accounts credit it to Chris Peters, then a Microsoft development manager, but I found only one source for that.</li>
+  <li><span class="y">1987</span> Windows 2.x keeps it, now in overlapping windows.</li>
+  <li><span class="y">1990</span> Windows 3.0 adds Solitaire alongside it.</li>
+  <li><span class="y">1992</span> Windows 3.1 drops it for Minesweeper. An updated <code>REVERSI.EXE</code> with its own help file is still in Microsoft's Windows 3.1 Driver Library, a quiet way out.</li>
+  <li><span class="y">today</span> "Reversi" in the Microsoft Store means third-party apps. The Windows original never came back.</li>
+</ol>
+
+<div class="toy ui" id="hg-rev-toy">
+  <div class="rv">
+    <div class="tb">Reversi</div>
+    <div class="mb"><button type="button" id="hg-rev-new">New</button><button type="button" id="hg-rev-hint">Hint</button><button type="button" id="hg-rev-pass">Pass</button>
+      <label>Skill <select id="hg-rev-skill" aria-label="Skill"><option value="1">Beginner</option><option value="2" selected>Novice</option><option value="3">Expert</option><option value="4">Master</option></select></label></div>
+    <div class="bd" id="hg-rev-bd" role="grid" aria-label="Reversi board"></div>
+    <div class="sb" id="hg-rev-sb" aria-live="polite">Your move (black).</div>
+  </div>
+  <p class="status"><span class="ver rec">reconstruction</span> A playable stand-in, not the original code. The menus, the four skill names and the cross-shaped Hint follow the 3.0-era help file. The computer's play is a simple corner-loving search whose depth rises with Skill. I have no Windows 1.x–3.0 install to capture, so there are no live screenshots here; MobyGames and GUIdebook have period pictures.</p>
+</div>
+
+<ol class="src">
+  <li><a href="https://discmaster.textfiles.com/file/14730/CD-MOM.iso/cd_mom/drivers/misc/revers/reversi.hlp/reversi.pdf">REVERSI.HLP from the Windows 3.1 Driver Library (rendered): menus, skill levels, Hint</a></li>
+  <li><a href="https://betawiki.net/wiki/Reversi">BetaWiki: Reversi (1.0 to 3.0; the 3.1 Driver Library version)</a></li>
+  <li><a href="https://tcrf.net/Reversi_(Microsoft,_Windows,_1985)">The Cutting Room Floor: Reversi (Microsoft, Windows, 1985)</a></li>
+  <li><a href="https://minesweepergame.com/history/bogus-software.php">minesweepergame.com: history (Chris Peters credited with Reversi)</a></li>
+  <li><a href="https://www.mobygames.com/game/46102">MobyGames: Microsoft Windows (included games), with screenshots</a></li>
+</ol>
+
+<script>
+(function () {
+  var root = document.getElementById('hg-rev'); if (!root) return;
+  var bd = root.querySelector('#hg-rev-bd'), sb = root.querySelector('#hg-rev-sb'), B, cells = [], busy = false;
+  var D = [-9, -8, -7, -1, 1, 7, 8, 9];
+  function flips(b, i, p) {
+    if (b[i]) return [];
+    var out = [], x = i % 8;
+    D.forEach(function (d) {
+      var run = [], j = i;
+      while (true) {
+        var jx = j % 8; j += d; if (j < 0 || j > 63) return;
+        var nx = j % 8; if (Math.abs(nx - jx) > 1) return;
+        if (b[j] === -p) run.push(j); else if (b[j] === p) { out = out.concat(run); return; } else return;
+      }
+    });
+    return out;
+  }
+  function moves(b, p) { var m = []; for (var i = 0; i < 64; i++) if (flips(b, i, p).length) m.push(i); return m; }
+  var W8 = [100, -20, 10, 5, 5, 10, -20, 100, -20, -40, -2, -2, -2, -2, -40, -20, 10, -2, 1, 1, 1, 1, -2, 10, 5, -2, 1, 0, 0, 1, -2, 5, 5, -2, 1, 0, 0, 1, -2, 5, 10, -2, 1, 1, 1, 1, -2, 10, -20, -40, -2, -2, -2, -2, -40, -20, 100, -20, 10, 5, 5, 10, -20, 100];
+  function evalb(b, p) { var s = 0; for (var i = 0; i < 64; i++) s += b[i] * W8[i]; return s * p + 3 * (moves(b, p).length - moves(b, -p).length); }
+  function play(b, i, p) { var n = b.slice(), f = flips(b, i, p); n[i] = p; f.forEach(function (j) { n[j] = p; }); return n; }
+  function search(b, p, d, a, be) {
+    var m = moves(b, p);
+    if (!d || (!m.length && !moves(b, -p).length)) return [evalb(b, p), -1];
+    if (!m.length) return [-search(b, -p, d - 1, -be, -a)[0], -1];
+    var best = -1e9, bi = m[0];
+    for (var k = 0; k < m.length; k++) { var v = -search(play(b, m[k], p), -p, d - 1, -be, -a)[0]; if (v > best) { best = v; bi = m[k]; } if (v > a) a = v; if (a >= be) break; }
+    return [best, bi];
+  }
+  function render(hint) {
+    for (var i = 0; i < 64; i++) { var c = cells[i]; c.innerHTML = B[i] ? '<i class="' + (B[i] > 0 ? 'b' : 'w') + '"></i>' : ''; c.classList.toggle('hint', i === hint); c.setAttribute('aria-label', 'row ' + ((i >> 3) + 1) + ' column ' + (i % 8 + 1) + (B[i] ? (B[i] > 0 ? ' black' : ' white') : ' empty')); }
+  }
+  function score() { var bl = 0, wh = 0; B.forEach(function (v) { if (v > 0) bl++; else if (v < 0) wh++; }); return [bl, wh]; }
+  function end() { var s = score(); sb.textContent = 'Game over: black ' + s[0] + ', white ' + s[1] + (s[0] > s[1] ? '. You win.' : s[0] < s[1] ? '. The computer wins.' : '. A tie.'); }
+  function computer() {
+    busy = true; sb.textContent = 'Thinking…';
+    setTimeout(function () {
+      var m = moves(B, -1);
+      if (m.length) { var r = search(B, -1, +root.querySelector('#hg-rev-skill').value, -1e9, 1e9); B = play(B, r[1] >= 0 ? r[1] : m[0], -1); }
+      busy = false; render();
+      if (!moves(B, 1).length) { if (!moves(B, -1).length) return end(); sb.textContent = 'You have no legal move. Choose Pass.'; }
+      else { var s = score(); sb.textContent = 'Your move. Black ' + s[0] + ', white ' + s[1] + '.'; }
+    }, 250);
+  }
+  function human(i) {
+    if (busy) return;
+    if (!flips(B, i, 1).length) { sb.textContent = 'You can’t move there.'; return; }
+    B = play(B, i, 1); render();
+    if (!moves(B, -1).length) { if (!moves(B, 1).length) return end(); sb.textContent = 'The computer must pass. Your move.'; return; }
+    computer();
+  }
+  for (var i = 0; i < 64; i++) { var c = document.createElement('button'); c.type = 'button'; c.className = 'sq'; (function (i) { c.addEventListener('click', function () { human(i); }); })(i); bd.appendChild(c); cells.push(c); }
+  function reset() { B = []; for (var i = 0; i < 64; i++) B.push(0); B[27] = B[36] = -1; B[28] = B[35] = 1; busy = false; render(); sb.textContent = 'Your move (black).'; }
+  root.querySelector('#hg-rev-new').addEventListener('click', reset);
+  root.querySelector('#hg-rev-hint').addEventListener('click', function () { if (busy) return; var r = search(B, 1, +root.querySelector('#hg-rev-skill').value, -1e9, 1e9); if (r[1] >= 0) { render(r[1]); sb.textContent = 'Hint: the cross marks the square I would choose.'; } else sb.textContent = 'No legal move. Choose Pass.'; });
+  root.querySelector('#hg-rev-pass').addEventListener('click', function () { if (busy) return; if (moves(B, 1).length) { sb.textContent = 'You can’t pass while you have a legal move.'; return; } computer(); });
+  reset();
+})();
+</script>
+</section>

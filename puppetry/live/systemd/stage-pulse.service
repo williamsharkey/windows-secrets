@@ -1,0 +1,11 @@
+[Unit]
+Description=BASILISK LIVE - private PulseAudio null sink for the stage VM
+PartOf=stage.target
+
+[Service]
+ExecStart=/root/stage/bin/stage-vm.sh pulse
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=stage.target

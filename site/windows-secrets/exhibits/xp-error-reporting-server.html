@@ -1,0 +1,14 @@
+<!-- exhibit: xp-error-reporting-server — drop into section#control -->
+<h3>System: a longer Error Reporting dialog that XP never shows (XP)</h3>
+
+<p>System Properties ▸ Advanced ▸ <b>Error Reporting</b> is XP's switch for the "Send Error Report" dialog. <code>sysdm.cpl</code> contains <i>two</i> templates for it. The one XP shows has Disable, Enable, <i>Windows operating system</i> and <i>Programs</i>. The other, DIALOG 4101, is never referenced by any code <span class="ver sx">static</span> and is 42 pixels taller, because it has two options the shipping one doesn't: <b>Unplanned machine shutdowns</b> and <b>Force queue mode for program errors</b>.</p>
+
+<div class="pair" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;align-items:start">
+  <figure style="margin:0"><img src="windows-secrets/xp-deep/xp-error-reporting-live.png" alt="The Error Reporting dialog as XP shows it: Disable error reporting, But notify me when critical errors occur, Enable error reporting, Windows operating system, Programs, Choose Programs" width="323" height="313" loading="lazy" style="width:100%;height:auto"><figcaption><span class="ver live">live</span> What XP opens.</figcaption></figure>
+  <figure style="margin:0"><img src="windows-secrets/xp-deep/xp-sysdm-4101.png" alt="The unused DIALOG 4101 Error Reporting template, which adds Unplanned machine shutdowns and Force queue mode for program errors checkboxes" width="323" height="355" loading="lazy" style="width:100%;height:auto"><figcaption><span class="ver live">rendered live</span> DIALOG 4101, drawn by XP from the same file.</figcaption></figure>
+</div>
+
+<p>Both extras belong to servers. "Unplanned machine shutdowns" pairs with the Shutdown Event Tracker that asks Windows Server 2003 admins why the machine went down, and "queue mode" is the Error Reporting policy that saves reports to send later instead of prompting. <i>My guess</i> is that this is the server variant of the dialog, compiled into the client because XP and Server 2003 were built from one source tree, and dropped on the floor by XP's code.</p>
+
+<div class="prior none"><b class="t">Prior art</b>
+I found no mention of this second template, or of these two checkboxes in an XP binary. <a class="tell" href="#tell">Seen it before? Tell me.</a></div>

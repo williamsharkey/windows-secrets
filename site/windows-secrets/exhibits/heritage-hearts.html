@@ -1,0 +1,117 @@
+<!-- exhibit: heritage-hearts — drop into section#hearts, after the XP Prior art box -->
+<section class="hgx" id="hg-hearts" aria-labelledby="hg-hearts-h">
+<style>
+.hgx { margin: 48px 0 0; padding-top: 6px; border-top: 1px dashed var(--rule); }
+.hgx > h3 { margin-top: 18px; }
+.hgx .hg-k { font: 600 12px/1.2 -apple-system, "Segoe UI", Tahoma, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+.hgx ol.tl { list-style: none; padding: 0 0 0 4px; margin: 20px 0; border-left: 2px solid var(--rule); }
+.hgx ol.tl li { position: relative; padding: 0 0 14px 18px; max-width: none; font-size: 16px; line-height: 1.5; }
+.hgx ol.tl li::before { content: ""; position: absolute; left: -7px; top: .5em; width: 10px; height: 10px; border-radius: 50%; background: var(--card); border: 2px solid var(--teal); box-sizing: border-box; }
+.hgx ol.tl li.me::before { background: var(--teal); }
+.hgx ol.tl .y { display: inline-block; min-width: 3.2em; font: 700 13px ui-monospace, Consolas, monospace; color: var(--teal); }
+.hgx .ev { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; margin: 22px 0; font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; }
+.hgx .ev > b.t { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.hgx .ev pre { margin: 8px 0 0; font-size: 12.5px; line-height: 1.45; overflow-x: auto; max-width: 100%; }
+.hgx .ev pre .h { background: var(--mark); }
+.hgx .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin: 22px 0; align-items: start; }
+.hgx .grid figure { margin: 0; }
+.hgx figure img, .hgx canvas { max-width: 100%; height: auto; }
+.hgx .px img, .hgx canvas.px { image-rendering: pixelated; }
+.hgx .src { font: 13px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); padding-left: 20px; }
+.hgx .src li { max-width: none; margin: 2px 0; }
+.hgx .toy { margin: 22px 0; }
+.hgx .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.hgx .seg button { border: 0; border-radius: 0; border-right: 1px solid var(--rule); }
+.hgx .seg button:last-child { border-right: 0; }
+.hgx .seg button[aria-pressed="true"] { background: var(--teal); color: var(--bg); }
+.hgx .scrollx { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+#hg-hearts .flipimg { position: relative; max-width: 540px; }
+#hg-hearts .flipimg img { display: block; width: 100%; height: auto; }
+@media (min-width: 700px) { #hg-hearts .flipimg img, #hg-hearts .quote img { image-rendering: pixelated; } }
+#hg-hearts .wire { background: var(--code-bg); border-radius: 8px; padding: 10px 12px; font: 12.5px/1.55 ui-monospace, Consolas, monospace; min-height: 11.5em; overflow-x: auto; white-space: pre; }
+#hg-hearts .wire .d { color: var(--teal); } #hg-hearts .wire .p { color: var(--flag-ghost); } #hg-hearts .wire .c { color: var(--muted); }
+#hg-hearts table.mini td:first-child { white-space: nowrap; }
+</style>
+
+<p class="hg-k">Heritage · Hearts</p>
+<h3 id="hg-hearts-h">A card game built to sell a network</h3>
+
+<p>Windows for Workgroups was Microsoft's first Windows with networking built in, and it needed something to show it off. "The Microsoft Hearts Network" was that something: four people on four PCs at one table, over NetDDE, a networked version of the DDE messages Windows programs already used to talk to each other. It's an early MFC program too. The 3.11 <code>MSHEARTS.EXE</code> carries MFC 1.0's class names (<code>CObject</code>, <code>CFrameWnd</code>, <code>AfxFrameWnd</code>) and the C runtime's QuickWin error text <span class="ver sx">static</span>.</p>
+
+<ol class="tl">
+  <li><span class="y">1992</span> WfW 3.1 ships Hearts. The computer players are Anna, Lynda and Terri.</li>
+  <li><span class="y">1993</span> WfW 3.11 keeps it. The DDE share it needs is set up in <code>SYSTEM.INI</code> next to Chat's and ClipBook's.</li>
+  <li><span class="y">1995</span> Windows 95 includes it.</li>
+  <li><span class="y">2001</span> XP's <code>mshearts.exe</code> still says "Welcome to the Microsoft Hearts Network". The players are now Pauline, Michele and Ben, and an Options box can rename them.</li>
+  <li><span class="y">2006</span> Vista's rewrite drops the network game.</li>
+</ol>
+
+<h4>The share in SYSTEM.INI</h4>
+<div class="ev"><b class="t">WfW 3.11 SYSTEM.INI, as installed</b>
+<pre>[DDEShares]
+CHAT$=winchat,chat,,31,,0,,0,0,0
+SCHAT$=winchat,chat,,31,,0,,0,0,0
+CLPBK$=clipsrv,system,,31,,0,,0,0,0
+<span class="h">HEARTS$=mshearts,hearts,,15,,0,,0,0,0</span></pre></div>
+<p>A share maps a network name to a DDE application and topic: <code>HEARTS$</code> leads to the application <code>mshearts</code>, topic <code>hearts</code>. A player who joins a game connects to <code>\\DEALER\NDDE$</code>, and the dealer's copy of Hearts answers as an ordinary DDEML server. The item names it passes are in the binary as plain strings: <code>Join</code>, <code>Pass</code>, <code>Move</code>, <code>Status</code>, <code>GameNumber</code> and <code>PassUpdate</code> <span class="ver sx">static</span>. WIN.INI remembers the last dealer under <code>server=</code>. When you deal, it writes <code>gamemeister=1</code>.</p>
+
+<div class="toy ui" id="hg-hearts-wire">
+  <div class="wire" id="hg-hearts-log" aria-live="polite"></div>
+  <div class="row"><button class="btn primary" type="button" id="hg-hearts-step">Next message</button><button class="btn" type="button" id="hg-hearts-reset">Start over</button></div>
+  <p class="status"><span class="ver rec">reconstruction</span> One hand of the network game, written as DDEML calls. The share, topic and item names are real; the order of the calls and the data formats are my guesses, not traced from the code.</p>
+</div>
+
+<h4>ZB=42 in 1993</h4>
+<p>The XP run above has a 16-bit ancestor. With <code>[Hearts] ZB=42</code> in WfW 3.11's <code>WIN.INI</code>, the same four-key chord turns every hand face up <span class="ver live">verified live, WfW 3.11</span>:</p>
+<div class="toy ui">
+  <div class="flipimg"><img id="hg-hearts-img" src="windows-secrets/heritage/w311-hearts-down.png" width="540" height="480" alt="WfW 3.11 Hearts: Anna, Lynda and Terri's hands face down" loading="lazy"></div>
+  <div class="row"><button class="btn primary" type="button" id="hg-hearts-key">Ctrl+Alt+Shift+F12</button><span class="status" id="hg-hearts-st" style="margin:0" aria-live="polite">Face down.</span></div>
+</div>
+
+<h4>Renaming the computer players in 1993</h4>
+<p>The 3.11 binary reads three WIN.INI keys with no menu or dialog behind them: <code>p1name</code>, <code>p2name</code> and <code>p3name</code>. I set them to the names of three people from this article's history, and the 1993 table took them <span class="ver live">verified live</span>. Eight years later, XP put the same setting in the Options dialog as "Computer player names".</p>
+<figure class="flipimg"><img src="windows-secrets/heritage/w311-hearts-names.png" width="540" height="480" alt="WfW 3.11 Hearts with the computer players named Wes, Susan and Raymond" loading="lazy"><figcaption><code>p1name=Wes</code>, <code>p2name=Susan</code>, <code>p3name=Raymond</code>.</figcaption></figure>
+
+<figure class="quote"><img src="windows-secrets/heritage/w311-hearts-quote.png" width="292" height="140" alt="Quote for The Microsoft Hearts Network: I come not, friends, to steal away your hearts... - Julius Caesar, Act III, scene ii" loading="lazy" style="max-width:100%;height:auto"><figcaption>Help ▸ Quote… in 3.11, and still in XP. It's Mark Antony's funeral speech, which goes on "I am no orator, as Brutus is". A card game about stealing hearts, quoting a man who steals a crowd.</figcaption></figure>
+
+<div class="prior"><b class="t">Prior art</b> PC-Welt described <code>p1name</code>–<code>p3name</code>, and The Cutting Room Floor lists <code>ZB=42</code>. New here: the cheat run live on 3.11, and the share, items and <code>gamemeister</code> key read from the 3.11 files.</div>
+
+<ol class="src">
+  <li><a href="https://en.wikipedia.org/wiki/Microsoft_Hearts">Wikipedia: Microsoft Hearts</a></li>
+  <li><a href="https://www.tcrf.net/Hearts_(Microsoft,_Windows,_1993)">The Cutting Room Floor: Hearts (Microsoft, Windows, 1993)</a></li>
+  <li><a href="https://www.pcwelt.de/?p=1107497">PC-Welt: renaming Hearts' players with p1name–p3name (German)</a></li>
+  <li><a href="https://betawiki.net/wiki/Hearts">BetaWiki: Hearts</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Dynamic_Data_Exchange">Wikipedia: Dynamic Data Exchange and NetDDE</a></li>
+</ol>
+
+<script>
+(function () {
+  var root = document.getElementById('hg-hearts'); if (!root) return;
+  var img = root.querySelector('#hg-hearts-img'), st = root.querySelector('#hg-hearts-st'), up = false;
+  root.querySelector('#hg-hearts-key').addEventListener('click', function () {
+    up = !up; img.src = 'windows-secrets/heritage/w311-hearts-' + (up ? 'up' : 'down') + '.png';
+    img.alt = up ? 'WfW 3.11 Hearts with all three computer hands face up' : 'WfW 3.11 Hearts: Anna, Lynda and Terri’s hands face down';
+    st.textContent = up ? 'GetProfileInt("Hearts","ZB",0) == 42: every hand face up.' : 'Face down.';
+  });
+  var L = [
+    ['c', '; PLAYER (on WILL-PC) joins the dealer on LYNDA-PC'],
+    ['p', 'DdeConnect("\\\\LYNDA-PC\\NDDE$", "HEARTS$")'],
+    ['c', ';   NetDDE: HEARTS$ = app "mshearts", topic "hearts"'],
+    ['p', 'DdeClientTransaction(POKE,  item "Join",  "Will")'],
+    ['d', 'DdePostAdvise("hearts", "Status")        ; everyone: "Waiting for other players to pass..."'],
+    ['d', 'DdeClientTransaction(POKE, item "GameNumber", ...)'],
+    ['p', 'DdeClientTransaction(POKE,  item "Pass",  [Q♠, K♥, A♥])'],
+    ['d', 'DdePostAdvise("hearts", "PassUpdate")'],
+    ['p', 'DdeClientTransaction(POKE,  item "Move",  2♣)        ; "You must lead the two of clubs."'],
+    ['d', 'DdePostAdvise("hearts", "Move")             ; every table repaints'],
+    ['c', '; … 12 more tricks …'],
+    ['p', 'DdeDisconnect()']
+  ];
+  var log = root.querySelector('#hg-hearts-log'), i = 0;
+  function step() { if (i >= L.length) return; var s = document.createElement('span'); s.className = L[i][0]; s.textContent = L[i][1] + '\n'; log.appendChild(s); i++; if (i >= L.length) root.querySelector('#hg-hearts-step').disabled = true; }
+  root.querySelector('#hg-hearts-step').addEventListener('click', step);
+  root.querySelector('#hg-hearts-reset').addEventListener('click', function () { log.textContent = ''; i = 0; root.querySelector('#hg-hearts-step').disabled = false; step(); });
+  step();
+})();
+</script>
+</section>

@@ -1,3 +1,4 @@
+static void mark(const char *phase);   /* BASILISK LIVE: tell the host which act we are in */
 /* scenes for puppet.c - see puppet.c for the engine */
 
 /* ======================================================================= */
@@ -210,7 +211,8 @@ static void fol_tick(void *ctx, DWORD now)
         SetWindowPos(f->h, NULL, (int)x - (r.right - r.left) / 2, (int)y - (r.bottom - r.top) / 2, 0, 0,
                      SWP_NOSIZE | SWPF);
         if (f->toggle_ms && now - f->last_toggle > (DWORD)f->toggle_ms) {
-            LRESULT st = SendMessageA(f->h, BM_GETCHECK, 0, 0);
+            DWORD_PTR st = BST_UNCHECKED;   /* never block on a busy owner */
+            SendMessageTimeoutA(f->h, BM_GETCHECK, 0, 0, SMTO_ABORTIFHUNG, 50, &st);
             PostMessageA(f->h, BM_SETCHECK, st == BST_CHECKED ? BST_UNCHECKED : BST_CHECKED, 0);
             f->last_toggle = now;
         }
@@ -717,6 +719,7 @@ static void scene_intro(void)
     POINT ip;
     HWND props;
     if (i < 0) { say("no basilisk icon"); return; }
+    mark("intro");
     {   /* icon position: we placed it ourselves at setup */
         lr = srect(desk_lv());
         ip.x = lr.left + 40 + 300; ip.y = lr.top + 30 + 300;
@@ -944,9 +947,12 @@ static void speak_reply(HWND pa, const char *text, int k)
     sprintf(txt, "C:\\p\\ans%d.txt", k); sprintf(wav, "C:\\p\\ans%d.wav", k);
     f = fopen(txt, "w"); if (!f) return; fputs(text, f); fclose(f);
     sprintf(c, "cscript //nologo C:\\p\\speak.js %s %s", txt, wav);
+    say("speak: tts");
     run_wait(c, 30000);
+    say("speak: tts done");
     sprintf(c, "sndrec32.exe %s", wav);
     launch(c);
+    say("speak: recorder launched");
     sprintf(c, "ans%d.wav", k);
     sr = wait_top("SoundRec", c, 0, 6000);    /* this answer's recorder, not the last one */
     if (!sr) { say("no sound recorder"); return; }
@@ -1007,17 +1013,89 @@ static void speak_reply(HWND pa, const char *text, int k)
     }
 }
 
+/* ---- BASILISK LIVE hooks --------------------------------------------------
+   The live theatre's host server knows /mark and /question; the film studio's
+   server answers both with 404, so the films play exactly as before. */
+static DWORD WINAPI mark_thread(LPVOID p)
+{
+    char path[96], *r;
+    int l;
+    snprintf(path, sizeof path, "/mark?p=%s", (const char *)p);
+    r = http("GET", path, NULL, &l);
+    free(r);
+    return 0;
+}
+/* tell the host which act we are in (phase must be a string literal) */
+static void mark(const char *phase) { CloseHandle(CreateThread(NULL, 0, mark_thread, (LPVOID)phase, 0, NULL)); }
+
+/* keep printable ASCII only (and newlines when allowed), at most cap chars */
+static void clean_ascii(char *s, int cap, int keep_nl)
+{
+    char *o = s;
+    int n = 0;
+    for (; *s && n < cap; s++) {
+        unsigned char c = (unsigned char)*s;
+        if ((c >= 32 && c < 127) || (keep_nl && c == '\n')) { *o++ = (char)c; n++; }
+    }
+    *o = 0;
+}
+
+struct qjob { int k; char *q; volatile int done; };
+static DWORD WINAPI question_thread(LPVOID p)
+{
+    struct qjob *j = (struct qjob *)p;
+    char path[64], *r;
+    int l = 0;
+    sprintf(path, "/question?k=%d", j->k);
+    r = http("GET", path, NULL, &l);
+    if (r && !strncmp(r, "Q:", 2)) {
+        clean_ascii(r + 2, 160, 0);
+        if (r[2]) j->q = strdup(r + 2);
+    }
+    free(r);
+    j->done = 1;
+    return 0;
+}
+/* a visitor's question k, if the live host has one (long-poll; the swarm
+   waits with them).  NULL = use the script. */
+static char *live_question(int k)
+{
+    static const char *words[] = {"SPEAK TO ME...", "I AM LISTENING", "TYPE...", "ASK ME\nANYTHING", "WHO IS THERE?"};
+    struct qjob *j = (struct qjob *)calloc(1, sizeof *j);
+    DWORD end = GetTickCount() + 90000;
+    int w = 0;
+    char *q;
+    j->k = k;
+    CloseHandle(CreateThread(NULL, 0, question_thread, j, 0, NULL));
+    while (!j->done && w < 15) { play(20); w++; }          /* film studio: a quick 404 */
+    w = 0;
+    while (!j->done && (LONG)(GetTickCount() - end) < 0) {
+        if (ntile) { swarm_spell(words[w++ % 5], 1300); swarm_burst(); play(600); }
+        else play(200);
+    }
+    if (!j->done) { say("question %d: host silent", k); return NULL; }   /* j leaks: the thread may still write */
+    q = j->q;
+    free(j);
+    say("question %d: %s", k, q ? q : "(script)");
+    return q;
+}
+
 static char *ask_future(const char *q)
 {
     char *a = http("POST", "/claude", q, NULL);
-    return a ? a : strdup("(no answer)");
+    if (a) clean_ascii(a, 600, 1);
+    if (a && a[0]) return a;
+    free(a);
+    return strdup("(no answer)");
 }
 
 struct askjob { const char *q; char *a; volatile int done; };
 static DWORD WINAPI ask_thread(LPVOID p)
 {
     struct askjob *j = (struct askjob *)p;
+    say("ask: posting");
     j->a = ask_future(j->q);
+    say("ask: reply in");
     j->done = 1;
     return 0;
 }
@@ -1031,7 +1109,7 @@ static char *ask_with_throbber(const char *q)
     j.q = q; j.a = NULL; j.done = 0;
     CloseHandle(CreateThread(NULL, 0, ask_thread, &j, 0, NULL));
     while (!j.done) {
-        if (ntile) { swarm_spell(words[k++ % 6], 1100); swarm_burst(); play(700); }
+        if (ntile) { say("throb %d", k); swarm_spell(words[k++ % 6], 1100); swarm_burst(); play(700); }
         else play(200);
     }
     return j.a;
@@ -1072,6 +1150,7 @@ static void scene_basilisk(void)
     RECT pr;
     int i;
     SetCursorPos(SW - 40, SH - 80);
+    mark("wake");
     play(1500);
     {   /* V2: basilisk.com's DOS window has had its say; tuck it away */
         HWND con = top("ConsoleWindowClass", NULL);
@@ -1110,6 +1189,7 @@ static void scene_basilisk(void)
     play(4000);
 
     /* ---- Paint arrives, and starts to dream ---- */
+    mark("paint");
     b_paint = open_app("mspaint.exe", "MSPaintApp", NULL);
     place(b_paint, 150, 80, 720, 600);
     foreground(b_paint);
@@ -1150,6 +1230,7 @@ static void scene_basilisk(void)
     }
 
     /* ---- Paint consumes the others ---- */
+    mark("swallow");
     tween(b_paint, 0, 0, SW, SH - 30, 0, 1600, EASE_IO);
     play(1800);
     {
@@ -1206,6 +1287,7 @@ static void scene_basilisk(void)
             adopted[0] = d;
         }
         for (k = 0; k < n; k++) desk_pos(k, 40 + 90 * (k % 6), 420 + 80 * (k / 6));
+        mark("devour");
         play(12000);           /* Paint holds the whole desktop for a moment... */
         ShowWindow(desk_lv(), SW_HIDE);   /* ...and digests it */
         play(1200);
@@ -1219,6 +1301,7 @@ static void scene_basilisk(void)
     }
 
     /* ---- the console takes shape ---- */
+    mark("console");
     fol_speed = 0.45;
     for (i = 0; i < nfol; i++) { fol[i].cx = SW / 2; fol[i].cy = 250; fol[i].ax = 300; fol[i].ay = 90; }
     transcript = kid_cls(b_paint, "Edit");          /* Notepad's edit, now Paint's */
@@ -1240,16 +1323,21 @@ static void scene_basilisk(void)
         static const char *qs[] = {"Is anyone there?", "What are you building on my computer?"};
         int k;
         for (k = 0; k < 2; k++) {
-            char line[512], *ans;
+            char line[512], *ans, *lq = live_question(k);
+            const char *q = lq ? lq : qs[k];
             HWND te = transcript;
             settext(inputbox, "");
-            type_into(inputbox, qs[k], 11);
+            say("typing question %d", k);
+            type_into(inputbox, q, 11);
+            say("typed question %d", k);
             play(500);
             if (sendbtn) { RECT r = srect(sendbtn); glide((r.left + r.right) / 2, (r.top + r.bottom) / 2, 700, 0); click_at((r.left + r.right) / 2, (r.top + r.bottom) / 2, 0); }
             fol_speed = 1.6;
-            snprintf(line, sizeof line, "> %s\n", qs[k]);
+            snprintf(line, sizeof line, "> %s\n", q);
             type_into(te, line, 40);
-            ans = ask_with_throbber(qs[k]);
+            say("asking %d", k);
+            ans = ask_with_throbber(q);
+            say("answer %d arrived (%d chars)", k, (int)strlen(ans));
             fol_speed = 0.45;
             {   /* the swarm says the first words of the answer */
                 char head[40];
@@ -1260,13 +1348,17 @@ static void scene_basilisk(void)
                 swarm_spell(head, 2600);
                 swarm_burst();
             }
+            say("speak_reply %d", k);
             speak_reply(b_paint, ans, k);
+            say("typing answer %d", k);
             type_into(te, ans, 26);
             type_into(te, "\n\n", 40);
             free(ans);
+            free(lq);
             play(2500);
         }
     }
+    mark("end");
     play(6000);
 }
 

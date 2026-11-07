@@ -1,0 +1,156 @@
+<!-- exhibit: heritage-paint. Paint heritage: drop in after section#paint (or after the Paint GIF transparency exhibit). Assets: windows-secrets/heritage/. Self-contained: scoped CSS (.hg) and inline JS. -->
+<section class="prog hg" id="heritage-paint">
+<style>
+/* heritage exhibits (shared; every rule is scoped to .hg) */
+.hg .hg-tl { list-style: none; padding: 0; margin: 28px 0; border-left: 2px solid var(--rule); }
+.hg .hg-tl > li { position: relative; padding: 0 0 22px 20px; max-width: none; }
+.hg .hg-tl > li::before { content: ""; position: absolute; left: -7px; top: 7px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg); border: 2px solid var(--teal); }
+.hg .hg-tl > li.ctx::before { border-color: var(--muted); }
+.hg .hg-tl > li.find::before { background: var(--flag-ghost); border-color: var(--flag-ghost); }
+.hg .hg-tl .y { display: block; font: 700 13px/1.3 ui-monospace, Consolas, monospace; color: var(--teal); letter-spacing: .02em; }
+.hg .hg-tl > li.ctx .y { color: var(--muted); }
+.hg .hg-tl > li.find .y { color: var(--flag-ghost); }
+.hg .hg-tl h4 { font: 700 17px/1.3 -apple-system, "Segoe UI", Tahoma, sans-serif; margin: 2px 0 4px; }
+.hg .hg-tl p { margin: 4px 0 8px; font-size: 16.5px; line-height: 1.55; }
+.hg .hg-tl figure { margin: 10px 0 4px; }
+.hg .hg-tl img, .hg .hg-shot img { display: block; max-width: 100%; height: auto; border-radius: 2px; }
+.hg .hg-noshot { font: 13px/1.45 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); border: 1px dashed var(--rule); border-radius: 6px; padding: 6px 10px; margin: 6px 0; }
+.hg .hg-box { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; margin: 28px 0; }
+.hg .hg-box > h4 { font: 700 15px/1.3 -apple-system, "Segoe UI", Tahoma, sans-serif; margin: 0 0 10px; }
+.hg .hg-stage { display: grid; justify-items: start; align-items: start; max-width: 100%; overflow: hidden; }
+.hg .hg-stage > * { grid-area: 1 / 1; max-width: 100%; height: auto; opacity: 0; transition: opacity .35s ease; }
+.hg .hg-stage > .on { opacity: 1; }
+.hg .hg-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 10px 0 0; }
+.hg .hg-row .btn { padding: 5px 10px; font-size: 13px; }
+.hg input[type=range] { width: 100%; accent-color: var(--teal); margin: 10px 0 0; }
+.hg .hg-cap { font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); margin-top: 8px; min-height: 3em; }
+.hg .hg-cap b { color: var(--fg); }
+.hg .hg-hex { font: 13px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; background: var(--code-bg); border-radius: 8px; padding: 10px 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: pre; margin: 8px 0; }
+.hg .hg-hex .o { color: var(--muted); }
+.hg .hg-hex .k { color: var(--flag-out); font-weight: 700; }
+.hg .hg-hex .g { color: var(--teal); font-weight: 700; }
+.hg .hg-hex .c { color: var(--muted); font-style: italic; }
+.hg table.hg-t { font-size: 13.5px; margin: 10px 0; }
+.hg table.hg-t td, .hg table.hg-t th { padding: 5px 8px; }
+.hg table.hg-t td.gone { color: var(--muted); text-decoration: line-through; }
+.hg table.hg-t td.same { color: var(--teal); font-weight: 700; }
+.hg .hg-src { font: 13px/1.55 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); padding-left: 20px; }
+.hg .hg-src li { max-width: none; margin-bottom: 3px; overflow-wrap: anywhere; }
+.hg .hg-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+@media (max-width: 600px) { .hg .hg-two { grid-template-columns: 1fr; } }
+.hg .hg-two figure { margin: 0; }
+.hg figcaption { font: 13.5px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); margin-top: 6px; }
+.hg .hg-swatch { display: inline-block; width: 1.1em; height: 1.1em; vertical-align: -3px; border: 1px solid var(--fg); border-radius: 2px; }
+.hg .hg-out { font: 700 15px ui-monospace, Consolas, monospace; }
+.hg .hg-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+</style>
+<h2>Paint: forty years in one dialog</h2>
+<p class="prog-meta">History, 1985 to today · new screenshots from WfW 3.11, XP SP3 and Windows 7 SP1, taken for this piece · <code>PBRUSH.EXE</code> 3.10, <code>mspaint.exe</code> 5.1.2600.5512 and 6.1.7600.16385</p>
+
+<p>The Transparency group that started this article is a fossil, and fossils make sense only in their layer. Paint's layers run deep. Windows has had a paint program since 1985, Microsoft has rebuilt it several times, and one small dialog, the one that tells you how big your picture is, has been in every version. If you line them up, you can watch the feature arrive, get stranded and disappear.</p>
+
+<ol class="hg-tl">
+  <li class="ctx"><span class="y">1984</span>
+    <h4>ZSoft's PC Paintbrush</h4>
+    <p>A DOS paint program from ZSoft of Marietta, Georgia, whose file format, <b>PCX</b>, became a standard. ZSoft's Mark Zachmann later called the deal with Microsoft a "typical OEM deal". Of the Windows paint program he said: "Unlike everything else, we sold it to them… They just bought it, included it in Windows, and we never saw it again." (<a href="https://www.digitaltrends.com/computing/the-history-of-microsoft-paint/">Digital Trends, 2023</a>).</p>
+    <div class="hg-noshot">No screenshot. I only capture systems we can run on our own rigs.</div></li>
+  <li><span class="y">1985</span>
+    <h4>Windows 1.0: Paint, saving <code>.MSP</code></h4>
+    <p>Black and white only, with its own file format, MSP. Wikipedia credits Microsoft's Dan McCabe, but gives no source <span class="ver unc">unconfirmed</span>.</p>
+    <div class="hg-noshot">Can't run it here.</div></li>
+  <li><span class="y">1990–1992</span>
+    <h4>Windows 3.x: Paintbrush, licensed from ZSoft</h4>
+    <p>The colour version came with ZSoft's name inside it. The file's hidden module description is <code>PC Paintbrush+</code> (see <a href="#paint">the family tree above</a>), and its version resource gives the internal name <code>PBrushX</code> <span class="ver sx">static</span>. It still knew its predecessor: the string table contains "Pasting from MSP files is not supported. Open the MSP file, use the Save As command to save it as a bitmap file…" and "Paintbrush cannot load this file because it was created using a version of Windows earlier than 3.0." So 3.x Paintbrush opened Windows 1.0 Paint files as a conversion path <span class="ver sx">static</span>. The size dialog is <i>Options ▸ Image Attributes</i>: Width, Height, units of in/cm/<b>pels</b>, and Black and White or Colors.</p>
+    <figure><img src="windows-secrets/heritage/w311-pbrush-attributes.png" width="325" height="219" alt="Paintbrush Image Attributes dialog in Windows for Workgroups 3.11: Width 10.67, Height 7.60, Units in/cm/pels, Colors Black and White or Colors, OK, Cancel, Default"><figcaption><span class="ver live">verified live</span> WfW 3.11. The ancestor of every Attributes dialog below.</figcaption></figure></li>
+  <li><span class="y">1995</span>
+    <h4>Windows 95: Paint again, written from scratch</h4>
+    <p>The name went back to Paint, the file to <code>MSPAINT.EXE</code>, and the default format to BMP. Wikipedia, citing Microsoft KB 130295, says the code was rewritten from scratch. The control IDs in today's Attributes dialog (Width 264, Height 266, Inches/Cm/Pixels 1028–1030, Default 280) are not Paintbrush's (100, 101, 102–104, 122), so the dialog we know comes from this rewrite or later <span class="ver sx">static</span>.</p>
+    <div class="hg-noshot">Can't run 95, 98 or 2000 here.</div></li>
+  <li class="find"><span class="y">1998–2000</span>
+    <h4>Windows 98 and 2000: GIF and JPEG, through borrowed filters</h4>
+    <p>Paint could suddenly open and save GIF and JPEG files, but not by itself. KB 298580: "Microsoft Paint does not include any native filters for JPEG or GIF files… the filters are not installed in Microsoft Paint until Paint actually opens a JPEG or GIF file." (<a href="https://ftp.zx.net.nz/pub/archive/ftp.microsoft.com/MISC/KB/en-us/298/580.HTM">KB 298580</a>). The filters were the Office-style graphics import and export DLLs, and with them came the Transparency group: for a GIF you could pick a transparent colour. This is the "standard part of 95 and a 98 upgrade" my 2007 email remembered. Windows 98 also added the Ctrl+click "third colour", which turns out to be the same variable (see <a href="#paint">the transparency exhibit</a>).</p></li>
+  <li class="find"><span class="y">2001</span>
+    <h4>Windows XP: GDI+ moves in, the filters move out, the dialog shrinks</h4>
+    <p>XP Paint hands images to GDI+, the graphics library new in XP. The dialog was cut off exactly at the top of the Transparency group: the template says the dialog is 122 units tall, and the group starts at y = 122 <span class="ver sx">static</span>. The old plumbing is still inside. <code>mspaint.exe</code> 5.1 contains, and calls from four places, a routine that walks <code>HKLM\SOFTWARE\Microsoft\Shared Tools\Graphics Filters\Import</code> (or <code>\Export</code>), reading each filter's <code>Name</code>, <code>Path</code> and <code>Extensions</code>, plus a list named <code>Image API Enabled Filters</code> <span class="ver sx">static</span>. Windows 7's Paint has none of these strings. XP still went looking for the filters that made the 98 feature possible.</p>
+    <figure><img src="windows-secrets/heritage/xp-paint-gif-transparency-ticked.png" width="357" height="320" alt="XP Paint Attributes dialog pulled taller with a GIF open: Use Transparent background color ticked and a magenta swatch beside Select Color"><figcaption><span class="ver live">verified live</span> XP SP3, my own 96×64 test GIF, dialog pulled taller, box ticked, magenta picked. I repeated the save test on a separate clone: the GIF Paint wrote has no <code>21 F9</code> transparency block, the same answer as the exhibit above.</figcaption></figure></li>
+  <li><span class="y">2009</span>
+    <h4>Windows 7: the ribbon, and "Image Properties"</h4>
+    <p>"Paint and Wordpad are two of the first consumers of the Windows Ribbon UI Platform", and they were meant as examples of putting a ribbon on an MFC program (<a href="https://learn.microsoft.com/en-us/archive/blogs/e7/showcasing-windows-7-platform-with-applets">Engineering Windows 7 blog, January 2009</a>). <code>mspaint.exe</code> 6.1 still imports <code>MFC42u.dll</code>. The dialog was redrawn as <i>Image Properties</i>, and the Transparency controls 1068–1070 are gone. Everything else kept its old ID. The sentinel didn't die either. Windows 7 Paint still stores "no transparent colour" as <code>0x87654321</code>, in four instructions, and it still carries GDI+'s GIF format GUID. Its string table now warns: "Any transparency will be lost if you save this picture." <span class="ver sx">static</span></p>
+    <figure><img src="windows-secrets/heritage/w7-paint.png" width="800" height="560" alt="Windows 7 Paint with the ribbon: Clipboard, Image, Tools, Shapes, Colors groups and a blank canvas" loading="lazy"><figcaption><span class="ver live">verified live</span> Windows 7 SP1. The ribbon is one window; the old dialogs live on behind it.</figcaption></figure></li>
+  <li class="ctx"><span class="y">2017</span>
+    <h4>The deprecation scare</h4>
+    <p>Paint appeared on the Fall Creators Update's deprecated list. Days later Microsoft wrote "MS Paint is here to stay", "after 32 years" (<a href="https://blogs.windows.com/windowsexperience/2017/07/24/ms-paint-stay/">Windows blog, 24 July 2017</a>).</p></li>
+  <li class="ctx"><span class="y">2023</span>
+    <h4>Windows 11: transparency, at last, for real</h4>
+    <p>"With this update, we are introducing support for layers and transparency!" (<a href="https://blogs.windows.com/windows-insider/2023/09/18/paint-app-update-adding-support-for-layers-and-transparency-begins-rolling-out-to-windows-insiders/">Windows Insider blog, 18 September 2023</a>). That's 25 years after Windows 98 first offered a transparent GIF colour and 22 after XP hid the checkbox.</p></li>
+</ol>
+
+<div class="hg-box" id="hgp-morph">
+  <h4>One dialog, four Windows</h4>
+  <div class="hg-stage" aria-live="polite">
+    <img src="windows-secrets/heritage/w311-pbrush-attributes.png" width="325" height="219" alt="Paintbrush 3.11 Image Attributes" class="on">
+    <img src="windows-secrets/xp-attributes-normal.png" width="357" height="230" alt="XP Paint Attributes as shipped">
+    <img src="windows-secrets/heritage/xp-paint-gif-transparency-ticked.png" width="357" height="320" alt="XP Paint Attributes pulled taller, GIF open, transparency ticked">
+    <img src="windows-secrets/heritage/w7-paint-imageproperties.png" width="384" height="344" alt="Windows 7 Paint Image Properties">
+  </div>
+  <input type="range" min="0" max="3" step="1" value="0" aria-label="Windows version">
+  <div class="hg-row" role="group" aria-label="Pick a version">
+    <button class="btn primary" data-i="0">3.11</button><button class="btn" data-i="1">XP</button><button class="btn" data-i="2">XP, pulled taller</button><button class="btn" data-i="3">7</button>
+  </div>
+  <p class="hg-cap"></p>
+  <div class="hg-scroll"><table class="hg-t" aria-label="Control IDs by version">
+    <thead><tr><th>control</th><th class="num">3.11</th><th class="num">XP</th><th class="num">7</th></tr></thead>
+    <tbody>
+      <tr><td>Width box</td><td class="num">100</td><td class="num same">264</td><td class="num same">264</td></tr>
+      <tr><td>Height box</td><td class="num">101</td><td class="num same">266</td><td class="num same">266</td></tr>
+      <tr><td>in / cm / pixels</td><td class="num">102–104</td><td class="num same">1028–1030</td><td class="num same">1028–1030</td></tr>
+      <tr><td>B&amp;W / Colors</td><td class="num">134, 135</td><td class="num same">1079, 1080</td><td class="num same">1079, 1080</td></tr>
+      <tr><td>Default</td><td class="num">122</td><td class="num same">280</td><td class="num same">280</td></tr>
+      <tr><td>File info lines</td><td class="num">—</td><td class="num same">1071–1073</td><td class="num same">1071–1073</td></tr>
+      <tr><td>Transparency</td><td class="num">—</td><td class="num">1068–1070</td><td class="num gone">gone</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hg-cap" style="min-height:0">Every frame is a real capture. IDs for 3.11 and XP are from the dialog templates; the Windows 7 IDs were read from the live window <span class="ver sx">static</span> <span class="ver live">verified live</span>.</p>
+</div>
+
+<div class="hg-box">
+  <h4>The same magic number, eight years apart</h4>
+  <p style="margin-top:0">"No transparent colour chosen" is stored as <code>0x87654321</code>. Its low three bytes, <code>21 43 65</code>, are the colour R 33, G 67, B 101 <span class="hg-swatch" style="background:#214365"></span>, which is why XP's Select Color box opens on a muddy blue. Here is the instruction that sets it in both Paints:</p>
+  <div class="hg-hex" role="img" aria-label="Hex bytes: XP mspaint at file offset 1D475: C7 05 A4 D6 03 01 21 43 65 87. Windows 7 mspaint at file offset 2BCF0: C7 05 CC A1 08 01 21 43 65 87."><span class="c">; mov dword ptr [global], 87654321h</span>
+<span class="o">XP  mspaint.exe 5.1  01D475:</span> C7 05 <span class="g">A4 D6 03 01</span> <span class="k">21 43 65 87</span>
+<span class="o">7   mspaint.exe 6.1  02BCF0:</span> C7 05 <span class="g">CC A1 08 01</span> <span class="k">21 43 65 87</span>
+<span class="c">;       opcode  address of the     the sentinel,
+;               transparent colour  little-endian</span></div>
+  <p class="hg-cap" style="min-height:0"><span class="ver sx">static</span> Real bytes. Only the address of the variable changed between the two programs. The 2009 ribbon rebuild carried an XP-era placeholder along with it, untouched.</p>
+  <figure style="margin:12px 0 0"><img src="windows-secrets/heritage/xp-paint-selectcolor-sentinel.png" width="453" height="331" alt="XP Paint's Select Color dialog fully expanded, Red 33, Green 67, Blue 101 already filled in" loading="lazy"><figcaption><span class="ver live">verified live</span> XP SP3, the first click on Select Color… for a freshly opened GIF: Red 33, Green 67, Blue 101.</figcaption></figure>
+</div>
+
+<div class="prior"><b class="t">Prior art</b>The ZSoft licence, the 98 filters and the 2023 transparency update are all documented (sources below). I found nothing about XP Paint still walking the Office graphics-filter registry, about the Attributes dialog being cut off exactly at y&nbsp;=&nbsp;122, or about Windows 7 Paint keeping the <code>0x87654321</code> sentinel. If you knew, <a href="https://github.com/williamsharkey/windows-secrets/issues">tell me</a>.</div>
+
+<ol class="hg-src">
+  <li>Brad Jones, "The history of Microsoft Paint", Digital Trends, 25 April 2023: <a href="https://www.digitaltrends.com/computing/the-history-of-microsoft-paint/">digitaltrends.com</a></li>
+  <li>Microsoft KB 298580 (Windows 98/ME Paint and the JPEG/GIF filters): <a href="https://ftp.zx.net.nz/pub/archive/ftp.microsoft.com/MISC/KB/en-us/298/580.HTM">archived KB</a>; KB 193354 (a missing JPEG filter): <a href="https://ftp.zx.net.nz/pub/archive/ftp.microsoft.com/MISC/KB/en-us/193/354.HTM">archived KB</a></li>
+  <li>KB Q132760, Windows 95 Paint's Stretch/Skew and its "transparent color": <a href="https://techshelps.github.io/MSDN/KB/Source/win95x/q132760.htm">techshelps mirror</a></li>
+  <li>Riyaz Pishori, "Showcasing Windows 7 Platform with Applets", Engineering Windows 7, 28 January 2009: <a href="https://learn.microsoft.com/en-us/archive/blogs/e7/showcasing-windows-7-platform-with-applets">learn.microsoft.com</a></li>
+  <li>Megan Saunders, "MS Paint is here to stay", 24 July 2017: <a href="https://blogs.windows.com/windowsexperience/2017/07/24/ms-paint-stay/">blogs.windows.com</a></li>
+  <li>Dave Grochocki, layers and transparency in Paint, 18 September 2023: <a href="https://blogs.windows.com/windows-insider/2023/09/18/paint-app-update-adding-support-for-layers-and-transparency-begins-rolling-out-to-windows-insiders/">blogs.windows.com</a></li>
+  <li>Wikipedia, "Microsoft Paint" (Windows 1.0 and 95 details; used where nothing better was found): <a href="https://en.wikipedia.org/wiki/Microsoft_Paint">en.wikipedia.org</a></li>
+</ol>
+
+<script>
+(function(){
+  var box=document.getElementById('hgp-morph'); if(!box) return;
+  var imgs=box.querySelectorAll('.hg-stage img'), btns=box.querySelectorAll('.hg-row .btn'), r=box.querySelector('input[type=range]'), cap=box.querySelector('.hg-cap');
+  var C=[
+    '<b>Windows for Workgroups 3.11, Paintbrush, 1992.</b> Options ▸ Image Attributes. Sizes in inches, centimetres or "pels". No file information, no transparency. Licensed code, Microsoft\'s dialog.',
+    '<b>Windows XP, Paint 5.1, 2001.</b> Image ▸ Attributes, as everyone saw it: file information on top, the same Units and Colors groups, and a bottom edge at exactly y = 122 dialog units.',
+    '<b>The same XP dialog, pulled taller with a GIF open.</b> The Transparency group from the Windows 98 and 2000 era sits just below the cut. It still enables itself for GIFs, and it remembers your colour, but Paint never writes it into the file.',
+    '<b>Windows 7, Paint 6.1, 2009.</b> Renamed Image Properties and laid out again for the ribbon era. The Transparency controls are gone at last. The IDs of everything else came along unchanged.'
+  ];
+  function go(i){ i=+i; imgs.forEach(function(m,k){m.classList.toggle('on',k===i);}); btns.forEach(function(b,k){b.classList.toggle('primary',k===i); b.setAttribute('aria-pressed',k===i);}); r.value=i; cap.innerHTML=C[i]; }
+  r.addEventListener('input',function(){go(r.value);});
+  btns.forEach(function(b){b.addEventListener('click',function(){go(b.dataset.i);});});
+  go(0);
+})();
+</script>
+</section>

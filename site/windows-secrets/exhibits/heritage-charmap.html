@@ -1,0 +1,131 @@
+<!-- exhibit: heritage-charmap. Character Map heritage: drop in after section#charmap. Assets: windows-secrets/heritage/. Self-contained: scoped CSS (.hg) and inline JS. -->
+<section class="prog hg" id="heritage-charmap">
+<style>
+/* heritage exhibits (shared; every rule is scoped to .hg) */
+.hg .hg-tl { list-style: none; padding: 0; margin: 28px 0; border-left: 2px solid var(--rule); }
+.hg .hg-tl > li { position: relative; padding: 0 0 22px 20px; max-width: none; }
+.hg .hg-tl > li::before { content: ""; position: absolute; left: -7px; top: 7px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg); border: 2px solid var(--teal); }
+.hg .hg-tl > li.ctx::before { border-color: var(--muted); }
+.hg .hg-tl > li.find::before { background: var(--flag-ghost); border-color: var(--flag-ghost); }
+.hg .hg-tl .y { display: block; font: 700 13px/1.3 ui-monospace, Consolas, monospace; color: var(--teal); letter-spacing: .02em; }
+.hg .hg-tl > li.ctx .y { color: var(--muted); }
+.hg .hg-tl > li.find .y { color: var(--flag-ghost); }
+.hg .hg-tl h4 { font: 700 17px/1.3 -apple-system, "Segoe UI", Tahoma, sans-serif; margin: 2px 0 4px; }
+.hg .hg-tl p { margin: 4px 0 8px; font-size: 16.5px; line-height: 1.55; }
+.hg .hg-tl figure { margin: 10px 0 4px; }
+.hg .hg-tl img, .hg .hg-shot img { display: block; max-width: 100%; height: auto; border-radius: 2px; }
+.hg .hg-noshot { font: 13px/1.45 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); border: 1px dashed var(--rule); border-radius: 6px; padding: 6px 10px; margin: 6px 0; }
+.hg .hg-box { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; margin: 28px 0; }
+.hg .hg-box > h4 { font: 700 15px/1.3 -apple-system, "Segoe UI", Tahoma, sans-serif; margin: 0 0 10px; }
+.hg .hg-stage { display: grid; justify-items: start; align-items: start; max-width: 100%; overflow: hidden; }
+.hg .hg-stage > * { grid-area: 1 / 1; max-width: 100%; height: auto; opacity: 0; transition: opacity .35s ease; }
+.hg .hg-stage > .on { opacity: 1; }
+.hg .hg-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 10px 0 0; }
+.hg .hg-row .btn { padding: 5px 10px; font-size: 13px; }
+.hg input[type=range] { width: 100%; accent-color: var(--teal); margin: 10px 0 0; }
+.hg .hg-cap { font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); margin-top: 8px; min-height: 3em; }
+.hg .hg-cap b { color: var(--fg); }
+.hg .hg-hex { font: 13px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; background: var(--code-bg); border-radius: 8px; padding: 10px 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: pre; margin: 8px 0; }
+.hg .hg-hex .o { color: var(--muted); }
+.hg .hg-hex .k { color: var(--flag-out); font-weight: 700; }
+.hg .hg-hex .g { color: var(--teal); font-weight: 700; }
+.hg .hg-hex .c { color: var(--muted); font-style: italic; }
+.hg table.hg-t { font-size: 13.5px; margin: 10px 0; }
+.hg table.hg-t td, .hg table.hg-t th { padding: 5px 8px; }
+.hg table.hg-t td.gone { color: var(--muted); text-decoration: line-through; }
+.hg table.hg-t td.same { color: var(--teal); font-weight: 700; }
+.hg .hg-src { font: 13px/1.55 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); padding-left: 20px; }
+.hg .hg-src li { max-width: none; margin-bottom: 3px; overflow-wrap: anywhere; }
+.hg .hg-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+@media (max-width: 600px) { .hg .hg-two { grid-template-columns: 1fr; } }
+.hg .hg-two figure { margin: 0; }
+.hg figcaption { font: 13.5px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); margin-top: 6px; }
+.hg .hg-swatch { display: inline-block; width: 1.1em; height: 1.1em; vertical-align: -3px; border: 1px solid var(--fg); border-radius: 2px; }
+.hg .hg-out { font: 700 15px ui-monospace, Consolas, monospace; }
+.hg .hg-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+</style>
+<h2>Character Map: the program that was called UCE</h2>
+<p class="prog-meta">History, 1992 to today · new screenshots from WfW 3.11, XP SP3 and Windows 7 SP1 · <code>CHARMAP.EXE</code> 3.10, <code>charmap.exe</code> 5.1 and "5.2.3668", <code>getuname.dll</code>, <code>eudcedit.exe</code></p>
+
+<p>Before Unicode, a font held at most 256 characters, and the ones that weren't on your keyboard (é, ©, ½) were reached by typing four digits on the number pad while holding Alt. Character Map was the cheat sheet. Then Windows NT switched to Unicode, a single font could hold tens of thousands of characters, and the cheat sheet had to become a search engine. In the process it picked up an internal name that, as far as I can find, no one has explained.</p>
+
+<ol class="hg-tl">
+  <li><span class="y">1992</span>
+    <h4>Windows 3.1: a grid of 224 characters</h4>
+    <p>The 16-bit <code>CHARMAP.EXE</code> describes itself, in a string Windows never shows, as a "Utility for easily selecting special characters." <span class="ver sx">static</span>. One font, one grid, a Characters to Copy box. The status bar names the keystroke for whatever character is selected ("Keystroke: Spacebar" in the capture below). OSNews notes that it "started its life in Windows 3.11, with version number 3.10" (<a href="https://www.osnews.com/story/28632/the-peculiar-history-of-the-windows-character-map/">OSNews, 2015</a>).</p>
+    <figure><img src="windows-secrets/heritage/w311-charmap.png" width="611" height="213" alt="Windows for Workgroups 3.11 Character Map showing the Symbol font: Greek letters, arrows, math symbols; buttons Close, Select, Copy, Help; status bar Keystroke: Spacebar"><figcaption><span class="ver live">verified live</span> WfW 3.11 with the Symbol font. Greek and maths symbols, typed through Alt codes.</figcaption></figure></li>
+  <li class="find"><span class="y">1990s</span>
+    <h4>Windows NT and 2000: Unicode, and "UCE"</h4>
+    <p>The Unicode Character Map was a different program, and its insides still call it <b>UCE</b> <span class="ver sx">static</span>:</p>
+    <ul style="margin:6px 0 8px;padding-left:20px;font-size:16px">
+      <li>XP's <code>charmap.exe</code> builds its main window from a dialog resource named <code>UCE</code>, passing the string <code>"UCE"</code> to <code>CreateDialogParamW</code>.</li>
+      <li>It keeps its settings in a WIN.INI-style section called <code>[MSUCE]</code>, through <code>GetProfileStringW</code>, <code>GetProfileIntW</code> and <code>WriteProfileStringW</code>. Windows 7 moved them to <code>HKCU\Software\Microsoft\CharMap</code>.</li>
+      <li>The DLL that supplies character names describes itself as "Unicode name Dll for UCE" (<code>getuname.dll</code>, version 5.1.2600.0).</li>
+      <li>Its file filter is <code>*.uce</code>, for "Unicode Subrange" and "Japanese Shift-JIS Subrange" groupings.</li>
+      <li>An accelerator table named <code>UCE</code> (Ctrl+Home, End, arrows, PgUp and PgDn) is in both XP's and 7's files. Neither program imports <code>LoadAccelerators</code>, so the keys were already dead in 2001.</li>
+    </ul>
+    <p>What the letters stood for, I can't prove. "Unicode Character Explorer" or "…Editor" would fit, but that's a guess <span class="ver unc">unconfirmed</span>. I couldn't find the name in Microsoft documentation or anywhere else.</p></li>
+  <li><span class="y">2001</span>
+    <h4>XP: Advanced view and 10,685 names</h4>
+    <p>Tick <i>Advanced view</i> and the window grows over a panel that was already there (see <a href="#charmap">the Character Map section</a>): Character set, Group by, Go to Unicode, Search for. Search works because <code>getuname.dll</code> carries a name for every code point it knows: <b>10,685</b> strings, in Title Case ("Latin Capital Letter A", "Euro Sign", "White Smiling Face"), ending at U+FFFE "Undefined". The private-use area gets placeholders: U+E000 is "Private Use" and U+F8FF is "&lt;Private Use, Last&gt;" <span class="ver sx">static</span>. Others have since found the undocumented <code>GetUName</code> function and call it from their own code (<a href="https://dev.to/donnaken15/feb-19-get-unicode-character-name-in-c-dllimport-charmap-mechanism-1na4">dev.to</a>).</p></li>
+  <li><span class="y">2001–2009</span>
+    <h4>Private Character Editor: drawing your own</h4>
+    <p>For East Asian users the problem wasn't finding a character but not having it, such as a rare surname or a company mark. Windows' answer was <b>EUDC</b>, end-user-defined characters: "custom characters… defined and implemented either by an end user or by another party, such as an equipment manufacturer, a user group, a government body, or a font design company" (<a href="https://learn.microsoft.com/en-us/windows/win32/intl/end-user-defined-characters">Microsoft Learn</a>). <code>eudcedit.exe</code> draws them into the Unicode private-use area starting at U+E000, and Character Map checks the <code>\FONTS\EUDC</code> registry entries so it can show them. The editor hardly changed between XP and 7. Windows 7's menu code even deletes the IME import items unless the editor's language is Chinese or Japanese <span class="ver sx">static</span>.</p>
+    <div class="hg-two">
+      <figure><img src="windows-secrets/heritage/xp-eudcedit.png" width="816" height="612" alt="XP Private Character Editor with the Select Code grid starting at E000" loading="lazy"><figcaption><span class="ver live">verified live</span> XP SP3.</figcaption></figure>
+      <figure><img src="windows-secrets/heritage/w7-eudcedit.png" width="816" height="612" alt="Windows 7 Private Character Editor with the same Select Code grid" loading="lazy"><figcaption><span class="ver live">verified live</span> Windows 7 SP1. The same program in a new frame.</figcaption></figure>
+    </div></li>
+  <li><span class="y">2009</span>
+    <h4>Windows 7: the Server 2003 binary</h4>
+    <p>Windows 7's Character Map says it is version 5.2.3668.0, a pre-release Server 2003 number, flagged as a private build (see <a href="#charmap">above</a>). It looks the same as XP's because, judging by the version stamp, it hardly changed after 2003.</p></li>
+</ol>
+
+<div class="hg-box" id="hgm-adv">
+  <h4>Tick "Advanced view"</h4>
+  <div class="hgm-clip" style="overflow:hidden;transition:height .45s ease;max-width:447px;position:relative">
+    <img class="b" src="windows-secrets/heritage/xp-charmap-basic.png" width="447" height="413" alt="XP Character Map, normal view, Arial font" style="display:block;max-width:100%;height:auto">
+    <img class="a" src="windows-secrets/heritage/xp-charmap-advanced.png" width="447" height="510" alt="XP Character Map in Advanced view: Character set Unicode, Group by All, Search for, Go to Unicode, status bar U+0021: Exclamation Mark" style="display:none;max-width:100%;height:auto">
+  </div>
+  <div class="hg-row"><button class="btn" aria-pressed="false">☐ Advanced view</button></div>
+  <p class="hg-cap">The window is 413 pixels tall. The Advanced panel is already laid out beneath it.</p>
+  <p class="hg-cap" style="min-height:0"><span class="ver live">verified live</span> Two real XP SP3 captures, before and after the tick. The box animates between their heights, 413 and 510 pixels.</p>
+</div>
+
+<div class="hg-box">
+  <h4>"UCE" in the bytes</h4>
+  <div class="hg-hex" role="img" aria-label="XP charmap.exe at file offset 5BDA pushes the string UCE then calls CreateDialogParamW; getuname.dll FileDescription reads Unicode name Dll for UCE"><span class="c">; XP charmap.exe 5.1, file offset 005BDA</span>
+68 <span class="g">40 16 00 01</span>     push 01001640h      <span class="c">; L"<span class="k">UCE</span>" (dialog template name)</span>
+D1 E0              shl eax,1
+57                 push edi            <span class="c">; hInstance</span>
+A3 5C C9 00 01     mov [0100C95Ch],eax
+FF 15 A8 11 00 01  call [CreateDialogParamW]
+
+<span class="c">; getuname.dll 5.1, VS_VERSION_INFO</span>
+FileDescription    "Unicode name Dll for <span class="k">UCE</span>"
+InternalName       "getuname"
+
+<span class="c">; charmap.exe 5.1, profile section passed to Get/WriteProfileStringW</span>
+L"<span class="k">MSUCE</span>"</div>
+  <p class="hg-cap" style="min-height:0"><span class="ver sx">static</span> Real bytes and strings from XP SP3's files.</p>
+</div>
+
+<div class="prior none"><b class="t">No earlier mention found</b>I searched for "Unicode name Dll for UCE", <code>MSUCE</code> and the <code>UCE</code> dialog and found <code>getuname.dll</code> discussed only as a source of character names, never what UCE means or that Character Map uses the name internally. Did you work on it? <a href="https://github.com/williamsharkey/windows-secrets/issues">Tell me</a>.</div>
+
+<ol class="hg-src">
+  <li>Thom Holwerda, "The peculiar history of the Windows Character Map", OSNews, 17 June 2015: <a href="https://www.osnews.com/story/28632/the-peculiar-history-of-the-windows-character-map/">osnews.com</a></li>
+  <li>"End-User-Defined Characters", Microsoft Learn: <a href="https://learn.microsoft.com/en-us/windows/win32/intl/end-user-defined-characters">learn.microsoft.com</a></li>
+  <li>donnaken15, calling <code>GetUName</code> from C#: <a href="https://dev.to/donnaken15/feb-19-get-unicode-character-name-in-c-dllimport-charmap-mechanism-1na4">dev.to</a>; ReactOS's reimplementation: <a href="https://grok.dragonflybsd.org/xref/reactos/dll/win32/getuname/getuname.c?r=cdf90707">getuname.c</a></li>
+</ol>
+
+<script>
+(function(){
+  var box=document.getElementById('hgm-adv'); if(!box) return;
+  var clip=box.querySelector('.hgm-clip'), ib=clip.querySelector('img.b'), ia=clip.querySelector('img.a'), b=box.querySelector('.btn'), cap=box.querySelector('.hg-cap'), on=false;
+  function w(){ return clip.getBoundingClientRect().width||447; }
+  function set(){ ib.style.display=on?'none':'block'; ia.style.display=on?'block':'none'; clip.style.height=(w()*(on?510:413)/447)+'px'; b.textContent=(on?'☑':'☐')+' Advanced view'; b.setAttribute('aria-pressed',on); b.classList.toggle('primary',on);
+    cap.textContent=on?'The window grows by 97 pixels to show Character set, Group by and Search for. Nothing new was created; those controls were already there below the edge.':'The window is 413 pixels tall. The Advanced panel is already laid out beneath it.'; }
+  b.addEventListener('click',function(){on=!on;set();});
+  window.addEventListener('resize',set); set();
+})();
+</script>
+</section>

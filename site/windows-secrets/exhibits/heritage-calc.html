@@ -1,0 +1,205 @@
+<!-- exhibit: heritage-calc. Calculator heritage: drop in after section#calc. Assets: windows-secrets/heritage/. Self-contained: scoped CSS (.hg) and inline JS. -->
+<section class="prog hg" id="heritage-calc">
+<style>
+/* heritage exhibits (shared; every rule is scoped to .hg) */
+.hg .hg-tl { list-style: none; padding: 0; margin: 28px 0; border-left: 2px solid var(--rule); }
+.hg .hg-tl > li { position: relative; padding: 0 0 22px 20px; max-width: none; }
+.hg .hg-tl > li::before { content: ""; position: absolute; left: -7px; top: 7px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg); border: 2px solid var(--teal); }
+.hg .hg-tl > li.ctx::before { border-color: var(--muted); }
+.hg .hg-tl > li.find::before { background: var(--flag-ghost); border-color: var(--flag-ghost); }
+.hg .hg-tl .y { display: block; font: 700 13px/1.3 ui-monospace, Consolas, monospace; color: var(--teal); letter-spacing: .02em; }
+.hg .hg-tl > li.ctx .y { color: var(--muted); }
+.hg .hg-tl > li.find .y { color: var(--flag-ghost); }
+.hg .hg-tl h4 { font: 700 17px/1.3 -apple-system, "Segoe UI", Tahoma, sans-serif; margin: 2px 0 4px; }
+.hg .hg-tl p { margin: 4px 0 8px; font-size: 16.5px; line-height: 1.55; }
+.hg .hg-tl figure { margin: 10px 0 4px; }
+.hg .hg-tl img, .hg .hg-shot img { display: block; max-width: 100%; height: auto; border-radius: 2px; }
+.hg .hg-noshot { font: 13px/1.45 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); border: 1px dashed var(--rule); border-radius: 6px; padding: 6px 10px; margin: 6px 0; }
+.hg .hg-box { background: var(--card); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; margin: 28px 0; }
+.hg .hg-box > h4 { font: 700 15px/1.3 -apple-system, "Segoe UI", Tahoma, sans-serif; margin: 0 0 10px; }
+.hg .hg-stage { display: grid; justify-items: start; align-items: start; max-width: 100%; overflow: hidden; }
+.hg .hg-stage > * { grid-area: 1 / 1; max-width: 100%; height: auto; opacity: 0; transition: opacity .35s ease; }
+.hg .hg-stage > .on { opacity: 1; }
+.hg .hg-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 10px 0 0; }
+.hg .hg-row .btn { padding: 5px 10px; font-size: 13px; }
+.hg input[type=range] { width: 100%; accent-color: var(--teal); margin: 10px 0 0; }
+.hg .hg-cap { font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); margin-top: 8px; min-height: 3em; }
+.hg .hg-cap b { color: var(--fg); }
+.hg .hg-hex { font: 13px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; background: var(--code-bg); border-radius: 8px; padding: 10px 12px; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: pre; margin: 8px 0; }
+.hg .hg-hex .o { color: var(--muted); }
+.hg .hg-hex .k { color: var(--flag-out); font-weight: 700; }
+.hg .hg-hex .g { color: var(--teal); font-weight: 700; }
+.hg .hg-hex .c { color: var(--muted); font-style: italic; }
+.hg table.hg-t { font-size: 13.5px; margin: 10px 0; }
+.hg table.hg-t td, .hg table.hg-t th { padding: 5px 8px; }
+.hg table.hg-t td.gone { color: var(--muted); text-decoration: line-through; }
+.hg table.hg-t td.same { color: var(--teal); font-weight: 700; }
+.hg .hg-src { font: 13px/1.55 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); padding-left: 20px; }
+.hg .hg-src li { max-width: none; margin-bottom: 3px; overflow-wrap: anywhere; }
+.hg .hg-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+@media (max-width: 600px) { .hg .hg-two { grid-template-columns: 1fr; } }
+.hg .hg-two figure { margin: 0; }
+.hg figcaption { font: 13.5px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); margin-top: 6px; }
+.hg .hg-swatch { display: inline-block; width: 1.1em; height: 1.1em; vertical-align: -3px; border: 1px solid var(--fg); border-radius: 2px; }
+.hg .hg-out { font: 700 15px ui-monospace, Consolas, monospace; }
+.hg .hg-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+</style>
+<h2>Calculator: the arithmetic underneath</h2>
+<p class="prog-meta">History, 1985 to today · new screenshots from WfW 3.11, XP SP3 and Windows 7 SP1, taken for this piece · <code>CALC.EXE</code> 3.10, <code>calc.exe</code> 5.1 and 6.1.7601.17514</p>
+
+<p>Calculator looks like the least interesting program in Windows: a picture of a pocket calculator. But a pocket calculator works in decimal, and a PC works in binary floating point, which can't hold 0.01 exactly. Each generation of Windows Calculator is a different answer to that mismatch, and you can still see each answer on the screen.</p>
+
+<ol class="hg-tl">
+  <li class="ctx"><span class="y">1985</span>
+    <h4>Windows 1.0: a desk accessory</h4>
+    <p>Calculator shipped in Windows 1.0 with Clock, Notepad, Cardfile and the rest of the "desk" (<a href="https://en.wikipedia.org/wiki/Windows_1.0">Wikipedia</a>).</p>
+    <div class="hg-noshot">Can't run it here; GUIdebook has <a href="https://guidebookgallery.org/screenshots/win101">real 1.01 screenshots</a>.</div></li>
+  <li><span class="y">1990–1992</span>
+    <h4>Windows 3.x: Kraig Brockschmidt's scientific calculator</h4>
+    <p>The 3.x Calculator has a scientific mode with hex, octal and binary, statistics and trig. It is credited twice: in the hidden module description ("Microsoft Calculator: Developed by Kraig Brockschmidt", <a href="#calc">shown above</a>) and, which is easy to forget, on screen in its own About box. Microsoft's Channel 9 later interviewed him as the man "who wrote the scientific calculator for Windows 3!" (<a href="https://learn.microsoft.com/en-us/shows/seth-juarez/kraig-brockschmidt-creator-of-calc-on-early-days-microsoft">Microsoft Learn</a>). Its window class is <code>SciCalc</code>, and the scientific layout is a dialog template named <code>SC</code> <span class="ver sx">static</span>. The class name lasted: XP's Calculator is still a <code>SciCalc</code> window.</p>
+    <div class="hg-two">
+      <figure><img src="windows-secrets/heritage/w311-calc-scientific.png" width="482" height="337" alt="Windows for Workgroups 3.11 Calculator in Scientific view: Hex Dec Oct Bin, Deg Rad Grad, Inv Hyp, Sta Ave Sum s Dat, sin cos tan, Mod And Or Xor Lsh Not Int, hex digits A to F"><figcaption><span class="ver live">verified live</span> WfW 3.11, View ▸ Scientific.</figcaption></figure>
+      <figure><img src="windows-secrets/heritage/w311-calc-about.png" width="392" height="277" alt="About Calculator in WfW 3.11: Calculator, Microsoft Windows for Workgroups Version 3.11, Copyright 1985-1993 Microsoft Corporation, Developed for Microsoft by Kraig Brockschmidt"><figcaption><span class="ver live">verified live</span> "Developed for Microsoft by Kraig Brockschmidt", right there in Help ▸ About.</figcaption></figure>
+    </div></li>
+  <li class="find"><span class="y">January 1995</span>
+    <h4>The subtraction bug, and the fix</h4>
+    <p>Microsoft shipped an updated Calculator for Windows 3.1 and 3.11 because "previous versions of Calculator display simple subtraction errors": 12.52 − 12.51 showed 0.00, and the new one "displays the correct result, which is .01" (<a href="https://techshelps.github.io/MSDN/KB/Source/win3x/q124345.htm">KB Q124345, "WW1138: Updated Calculator"</a>). The copy on our 3.11 rig is the original, and it still gets it wrong <span class="ver live">verified live</span>. So do 2.01 − 2 and 10.21 − 10.2. The value underneath isn't zero, though: multiply that 0.00 by 100 and the display shows 1. The number was right to within a hair. What failed was turning it back into decimal digits for the display.</p>
+    <p>The same month, someone at Microsoft started a new maths library. The header of <code>ratpak.h</code> in today's open-source Calculator reads "Package Title ratpak … Copyright (C) 1995-99 Microsoft … Date 01-16-95 … Infinite precision math package" (<a href="https://github.com/microsoft/calculator/blob/main/src/CalcManager/Ratpack/ratpak.h">GitHub</a>). Raymond Chen describes what it replaced: "The standard IEEE floating point library was replaced with an arbitrary-precision arithmetic library" (<a href="https://devblogs.microsoft.com/oldnewthing/20040525-00/?p=39193">The Old New Thing, 2004</a>).</p></li>
+  <li><span class="y">2001</span>
+    <h4>Windows XP: 32 digits, and the square-root crumb</h4>
+    <p>XP's Calculator gets 12.52 − 12.51 right. Arbitrary precision has a cost, though: √4 isn't stored as exactly 2, so √4 − 2 shows a crumb, −8.16…e−39 on XP <span class="ver live">verified live</span>. Windows 7 shows a different crumb for the same keys, −1.068…e−19, the value Raymond Chen explains in his 2016 post on Calculator's "32 digits of precision" (<a href="https://devblogs.microsoft.com/oldnewthing/20160628-00/?p=93765">The Old New Thing, 2016</a>). The two values were compared on CodeProject in 2010 (<a href="https://forum.codeproject.com/post/2793261">thread</a>). The crumb was finally swept away in 2018: "Square roots of perfect squares are now exact" (<a href="https://devblogs.microsoft.com/oldnewthing/20180704-00/?p=99165">The Old New Thing, 2018</a>).</p></li>
+  <li class="find"><span class="y">2009</span>
+    <h4>Windows 7: a new Calculator, run by an XML file</h4>
+    <p>Rewritten with Programmer and Statistics modes, history, date calculation, and unit conversion and worksheets (mortgage, lease, fuel economy) (<a href="https://learn.microsoft.com/en-us/archive/blogs/e7/showcasing-windows-7-platform-with-applets">Engineering Windows 7</a>). The window class is now <code>CalcFrame</code>. Every conversion and worksheet is data: a 73,540-character XML document stored in <code>calc.exe.mui</code> as resource <code>IDS_TEMPALTE_XML</code> [sic], in a schema at <code>http://www.microsoft.com/applets/calc/templates/v1</code>, with 192 conversion formulas written as text <span class="ver sx">static</span>. Try them below.</p>
+    <figure><img src="windows-secrets/heritage/w7-calc-ev.png" width="602" height="322" alt="Windows 7 Calculator in unit conversion mode: Energy, From 1 Electron-Volts, To 1.60217653e-19 Joule" loading="lazy"><figcaption><span class="ver live">verified live</span> One electron-volt is 1.60217653 × 10<sup>−19</sup> joules, according to Windows 7.</figcaption></figure></li>
+  <li class="ctx"><span class="y">2019</span>
+    <h4>Open source</h4>
+    <p>"We are open sourcing Windows Calculator on GitHub under the MIT License" (<a href="https://blogs.windows.com/windowsdeveloper/2019/03/06/announcing-the-open-sourcing-of-windows-calculator/">Windows blog, 6 March 2019</a>). The 1995 ratpak is in it. The unit table moved into C# code, and its electron-volt is 1.602176565 × 10<sup>−19</sup> (<a href="https://github.com/microsoft/calculator">GitHub</a>).</p></li>
+</ol>
+
+<div class="hg-box" id="hgc-sub">
+  <h4>Same keys, three Calculators</h4>
+  <div class="hg-row" role="group" aria-label="Pick a calculation">
+    <button class="btn primary" data-k="1252">12.52 − 12.51</button><button class="btn" data-k="201">2.01 − 2</button><button class="btn" data-k="1021">10.21 − 10.2</button><button class="btn" data-k="sqrt4">√4 − 2</button><button class="btn" data-k="times100">(12.52 − 12.51) × 100</button>
+  </div>
+  <div class="hgc-lcds"></div>
+  <p class="hg-cap"></p>
+</div>
+
+<div class="hg-box" id="hgc-conv">
+  <h4>Windows 7's unit converter, running on its own formulas</h4>
+  <div class="hg-row">
+    <label style="font:14px -apple-system,'Segoe UI',Tahoma,sans-serif;color:var(--muted)">Type <select data-r="cat"></select></label>
+  </div>
+  <div class="hg-row">
+    <input data-r="val" type="text" inputmode="decimal" value="212" aria-label="Value" style="width:7em;font:15px ui-monospace,Consolas,monospace;padding:4px 6px">
+    <select data-r="from" aria-label="From unit"></select> → <select data-r="to" aria-label="To unit"></select>
+  </div>
+  <p class="hg-out" data-r="out" aria-live="polite"></p>
+  <div class="hg-hex" data-r="trace"></div>
+  <p class="hg-cap" style="min-height:0"><span class="ver rec">reconstruction</span> The formulas are copied from <code>IDS_TEMPALTE_XML</code> in the Windows 7 <code>calc.exe.mui</code>, character for character, and chained through each category's <code>hintBaseUnit</code>, like the real one. The arithmetic here is JavaScript doubles, not ratpak, so the last digits can differ.</p>
+</div>
+
+<div class="hg-box">
+  <h4>Inside the XML: the bugs that aren't</h4>
+  <p style="margin-top:0">The template has the fingerprints of a hurried copy and paste <span class="ver sx">static</span>:</p>
+  <div class="hg-hex" role="img" aria-label="XML excerpt from the Windows 7 Calculator unit template"><span class="c">&lt;!-- in the Temperature category: --&gt;</span>
+<span class="o">&lt;!-- function call:  convert (Length, mm, cm, 80.4); ... --&gt;</span>   <span class="c">&lt;- comment pasted from Length</span>
+&lt;formula name="dfToK" toUnit="k" fromUnit="df"&gt;
+  &lt;constantString formulaConst=" 273.15 + (5 / 9) * ("/&gt;
+  &lt;unit unitName="<span class="k">dc</span>"/&gt;        <span class="c">&lt;- Celsius, in the Fahrenheit formula</span>
+<span class="c">&lt;!-- in Velocity and Area: --&gt;</span>
+&lt;formula name="<span class="k">mesecTo</span>" toUnit="cmsec" fromUnit="mesec"&gt;
+&lt;formula name="<span class="k">sqcmTo</span>"  toUnit="sqmm"  fromUnit="sqcm"&gt;
+&lt;formula name="sqcmTosqcm" ...&gt; formulaConst="<span class="k">1</span>"  <span class="c">&lt;- "x 1", no operator</span>
+<span class="c">&lt;!-- in Energy: --&gt;</span>
+formulaConst="* <span class="g">160217653 e-27</span>"      <span class="c">&lt;- CODATA 2002</span>
+&lt;description&gt; There are various units for length unit ...&lt;/description&gt;</div>
+  <p>Do they break anything? I tested each one on the real Windows 7 Calculator <span class="ver live">verified live</span>. 212 °F → 373.15 K, and 212 °F → 100 °C. 1 m/s → 100 cm/s, and back. 5 cm² → 500 mm², 0.0005 m², and the reverse conversions. 1 inch → 2.54 cm. All right. The engine finds formulas by their <code>fromUnit</code> and <code>toUnit</code> attributes, so the names are just labels, and it drops the input into whatever <code>&lt;unit&gt;</code> slot it finds, whatever that slot is called. The broken identity formula is never needed. The typos are harmless, much like the misspelt registry names (<code>Unit_Converion_history</code>) in <a href="#calc">the Calculator section</a>.</p>
+  <p>The electron-volt is the one that dates it. 1.60217653 × 10<sup>−19</sup> J is the CODATA <b>2002</b> recommended value. CODATA 2006, published in 2007, refined it to 1.602176487 × 10<sup>−19</sup> (<a href="https://physics.nist.gov/cuu/Constants/ArchiveASCII/allascii_2002.txt">NIST, CODATA 2002 table</a>). So Windows 7 shipped in 2009 with a constant that was already one revision old. Its successor on GitHub uses the 2010 value, 1.602176565.</p>
+</div>
+
+<div class="prior"><b class="t">Prior art</b>The 3.x subtraction bug, ratpak and the square-root crumb are well documented (above). I found no earlier write-up of Windows 7 Calculator's embedded XML template, of its CODATA&nbsp;2002 electron-volt, or of a check that the misnamed formulas still work. If you knew, <a href="https://github.com/williamsharkey/windows-secrets/issues">tell me</a>.</div>
+
+<ol class="hg-src">
+  <li>KB Q124345, "WW1138: Updated Calculator" (Windows 3.1, 3.11, WfW): <a href="https://techshelps.github.io/MSDN/KB/Source/win3x/q124345.htm">techshelps mirror</a></li>
+  <li>Raymond Chen, "When you change the insides, nobody notices", 25 May 2004: <a href="https://devblogs.microsoft.com/oldnewthing/20040525-00/?p=39193">The Old New Thing</a></li>
+  <li>Raymond Chen, on √4 − 2 and 32 digits, 28 June 2016: <a href="https://devblogs.microsoft.com/oldnewthing/20160628-00/?p=93765">The Old New Thing</a>; the 2018 fix: <a href="https://devblogs.microsoft.com/oldnewthing/20180704-00/?p=99165">The Old New Thing</a></li>
+  <li>Kraig Brockschmidt interview, Seth Juarez: <a href="https://learn.microsoft.com/en-us/shows/seth-juarez/kraig-brockschmidt-creator-of-calc-on-early-days-microsoft">Microsoft Learn</a></li>
+  <li>"Announcing the open sourcing of Windows Calculator", 6 March 2019: <a href="https://blogs.windows.com/windowsdeveloper/2019/03/06/announcing-the-open-sourcing-of-windows-calculator/">blogs.windows.com</a>; source with <code>ratpak.h</code>: <a href="https://github.com/microsoft/calculator">github.com/microsoft/calculator</a></li>
+  <li>CodeProject lounge thread on √4 − 2 in XP and 7 (2010): <a href="https://forum.codeproject.com/post/2793261">forum.codeproject.com</a></li>
+  <li>CODATA 2002 values ("electron volt 1.602 176 53(14) e-19 J"): <a href="https://physics.nist.gov/cuu/Constants/ArchiveASCII/allascii_2002.txt">NIST</a></li>
+</ol>
+
+<script>
+(function(){
+  var box=document.getElementById('hgc-sub'); if(!box) return;
+  var P='windows-secrets/heritage/lcd-';
+  var D={
+    '1252':{a:12.52,b:12.51,op:'-',w:{w311:'w311-1252',xp:'xp-1252',w7:'w7-1252'},t:'Windows 3.11 shows <b>0.00</b>; XP and 7 show <b>0.01</b>. This is the case from KB Q124345.'},
+    '201':{a:2.01,b:2,op:'-',w:{w311:'w311-201'},t:'3.11 shows <b>0.00</b> for 2.01 − 2 too. (I captured this one on 3.11 only.)'},
+    '1021':{a:10.21,b:10.2,op:'-',w:{w311:'w311-1021'},t:'Raymond Chen\'s example: the old engine\'s answer was 0.0100000000000016, and the 3.11 display turned it into <b>0.00</b>.'},
+    'sqrt4':{op:'sqrt',w:{w311:'w311-sqrt4',xp:'xp-sqrt4',w7:'w7-sqrt4'},t:'3.11\'s plain floating point gets √4 − 2 exactly right, <b>0.</b> The arbitrary-precision engines leave a crumb: XP shows −8.16…e−39 and 7 shows −1.068…e−19. Fixed in 2018.'},
+    'times100':{op:'x100',w:{w311:'w311-times100'},t:'On 3.11, (12.52 − 12.51) × 100 shows <b>1.</b> The value under the "0.00" was 0.00999…, so the subtraction was fine. It was the decimal display that dropped it.'}
+  };
+  var V=[['w311','WfW 3.11',204,30],['xp','XP',243,28],['w7','Windows 7',193,54]];
+  var lc=box.querySelector('.hgc-lcds'), cap=box.querySelector('.hg-cap'), btns=box.querySelectorAll('.btn');
+  function go(k){
+    var d=D[k], h='';
+    V.forEach(function(v){
+      h+='<figure style="margin:8px 0"><figcaption style="margin:0 0 3px">'+v[1]+'</figcaption>'+(d.w[v[0]]?'<img src="'+P+d.w[v[0]]+'.png" width="'+v[2]+'" height="'+v[3]+'" alt="'+v[1]+' display">':'<div class="hg-noshot" style="margin:0">not captured</div>')+'</figure>';
+    });
+    var x = d.op==='-' ? (d.a-d.b) : d.op==='sqrt' ? (Math.sqrt(4)-2) : ((12.52-12.51)*100);
+    lc.innerHTML=h;
+    cap.innerHTML=d.t+'<br><span class="ver rec">reconstruction</span> In ordinary IEEE double arithmetic, this is <code>'+x.toPrecision(17)+'</code>.';
+    btns.forEach(function(b){var on=b.dataset.k===k; b.classList.toggle('primary',on); b.setAttribute('aria-pressed',on);});
+  }
+  btns.forEach(function(b){b.addEventListener('click',function(){go(b.dataset.k);});});
+  go('1252');
+})();
+(function(){
+  var box=document.getElementById('hgc-conv'); if(!box) return;
+  var U=[{"cat":"Length","base":"cm","units":[["an","Angstrom"],["na","Nanometer"],["mic","Microns"],["ml","Millimeters"],["cm","Centimeters"],["me","Meter"],["ki","Kilometers"],["in","Inch"],["ro","Rods"],["fe","Feet"],["ya","Yard"],["fa","Fathom"],["mi","Mile"],["nu","Nautical Miles"],["pi","PICA"],["ha","Hand"],["li","Link"],["ch","Chain"],["sp","Span"]],"f":{"an>cm":["anTocm","v / 100000000"],"cm>an":["cmToan","v * 100000000"],"na>cm":["naTocm","v / 10000000"],"cm>na":["cmTona","v * 10000000"],"mic>cm":["micTocm","v / 10000"],"cm>mic":["cmTomic","v * 10000"],"ml>cm":["mlTocm","v / 10"],"cm>ml":["cmToml","v * 10"],"cm>cm":["cmTocm","v * 1"],"me>cm":["meTocm","v * 100"],"cm>me":["cmTome","v / 100"],"ki>cm":["kiTocm","v * 100000"],"cm>ki":["cmToki","v / 100000"],"in>cm":["inTocm","v * 254 / 100"],"cm>in":["cmToin","v * 100 / 254"],"ro>cm":["roTocm","v * 165 / 10 * 254 / 100 * 12"],"cm>ro":["cmToro","v * 10 / 165 / 254 * 100 / 12"],"fe>cm":["feTocm","v * 254 / 100 * 12"],"cm>fe":["cmTofe","v * 100 / 254 / 12"],"ya>cm":["yaTocm","v * 9144 / 100"],"cm>ya":["cmToya","v * 100 / 9144"],"fa>cm":["faTocm","v * 6 * 12 * 254 / 100"],"cm>fa":["cmTofa","v / 6 / 12 / 254 * 100"],"mi>cm":["miTocm","v * 5280 * 12 * 254 / 100"],"cm>mi":["cmTomi","v / 5280 / 12 / 254 * 100"],"nu>cm":["nuTocm","v * 185200"],"cm>nu":["cmTonu","v / 185200"],"pi>cm":["piTocm","v * 12 * 254 / 100 * 13837 / 1000000"],"cm>pi":["cmTopi","v / 12 / 254 * 100 / 13837 * 1000000"],"ha>cm":["haTocm","v * 1016 / 100"],"cm>ha":["cmToha","v / 1016 * 100"],"li>cm":["liTocm","v * 12 * 254 / 100 * 66 / 100"],"cm>li":["cmToli","v / 12 / 254 * 100 / 66 * 100"],"ch>cm":["chTocm","v * 12 * 254 / 100 * 66"],"cm>ch":["cmToch","v / 12 / 254 * 100 / 66"],"sp>cm":["spTocm","v * 9 * 254 / 100"],"cm>sp":["cmTosp","v / 9 / 254 * 100"]}},{"cat":"Weight/Mass","base":"gm","units":[["mg","Milligram"],["cg","Centigram"],["dg","Decigram"],["dkg","Dekagram"],["hg","Hectogram"],["gm","Gram"],["kg","Kilogram"],["tn","Tonne"],["ou","Ounce"],["lb","Pound"],["st","Stone"],["sht","Short ton"],["lgt","Long ton"],["ct","Carat"]],"f":{"mg>gm":["mgTogm","v / 1000"],"gm>mg":["gmTomg","v * 1000"],"cg>gm":["cgTogm","v / 100"],"gm>cg":["gmTocg","v * 100"],"dg>gm":["dgTogm","v / 10"],"gm>dg":["gmTodg","v * 10"],"gm>gm":["gmTogm","v *1"],"kg>gm":["kgTogm","v * 1000"],"gm>kg":["gmTokg","v / 1000"],"tn>gm":["tnTogm","v * 1000000"],"gm>tn":["gmTotn","v / 1000000"],"ou>gm":["ouTogm","v * 28.349523125"],"gm>ou":["gmToou","v / 28.349523125"],"lb>gm":["lbTogm","v * 453.59237"],"gm>lb":["gmTolb","v / 453.59237"],"st>gm":["stTogm","v * 6350.29318"],"gm>st":["gmTost","v / 6350.29318"],"sht>gm":["shtTogm","v * 907184.74"],"gm>sht":["gmTosht","v / 907184.74"],"lgt>gm":["lgtTogm","v * 1016046.9088"],"gm>lgt":["gmTolgt","v / 1016046.9088"],"ct>gm":["ctTogm","v / 5"],"gm>ct":["gmToct","v * 5"],"dkg>gm":["dkgTogm","v *10"],"gm>dkg":["gmTodkg","v /10"],"hg>gm":["hgTogm","v * 100"],"gm>hg":["gmTohg","v / 100"]}},{"cat":"Volume","base":"lit","units":[["cubcm","Cubic centimeter"],["lit","Liter"],["cubme","Cubic meter"],["cubin","Cubic inch"],["flonuk","Fluid ounce (UK)"],["flonus","Fluid ounce (US)"],["pius","Pint (US)"],["piuk","Pint (UK)"],["quuk","Quart (UK)"],["quus","Quart (US)"],["gauk","Gallon (UK)"],["gaus","Gallon (US)"],["cubft","Cubic feet"],["cubya","Cubic yard"]],"f":{"cubcm>lit":["cubcmTolit","v / 1000"],"lit>cubcm":["litTocubcm","v * 1000"],"lit>lit":["litTolit","v * 1"],"cubme>lit":["cubmeTolit","v * 1000"],"lit>cubme":["litTocubme","v / 1000"],"cubin>lit":["cubinTolit","v * 254 * 254 * 254 / 1000000000"],"lit>cubin":["litTocubin","v / 254 / 254 / 254 * 1000000000"],"flonuk>lit":["flonukTolit","v * 284130625 / 10000000000"],"lit>flonuk":["litToflonuk","v / 284130625 * 10000000000"],"flonus>lit":["flonusTolit","v * 0.0295735295625"],"lit>flonus":["litToflonus","v / 0.0295735295625"],"pius>lit":["piusTolit","v * 0.473176473"],"lit>pius":["litTopius","v / 0.473176473"],"piuk>lit":["piukTolit","v * 0.56826125"],"lit>piuk":["litTopiuk","v / 0.56826125"],"quuk>lit":["quukTolit","v * 1.1365225"],"lit>quuk":["litToquuk","v / 1.1365225"],"quus>lit":["quusTolit","v * 0.946352946"],"lit>quus":["litToquus","v / 0.946352946"],"gauk>lit":["gaukTolit","v * 4.54609"],"lit>gauk":["litTogauk","v / 4.54609"],"gaus>lit":["gausTolit","v * 3.785411784"],"lit>gaus":["litTogaus","v / 3.785411784"],"cubft>lit":["cubftTolit","v * 28.316846592"],"lit>cubft":["litTocubft","v / 28.316846592"],"cubya>lit":["cubyaTolit","v * 764.554857984"],"lit>cubya":["litTocubya","v / 764.554857984"]}},{"cat":"Temperature","base":"k","units":[["df","Degrees Fahrenheit"],["dc","Degrees Celsius"],["k","Kelvin"]],"f":{"dc>k":["dcToK","273.15 + v"],"df>k":["dfToK","273.15 + (5 / 9) * ( v - 32)"],"k>df":["Ktodf","9/5 * ( v - 273.15) + 32"],"k>dc":["Ktodc","v - 273.15"]}},{"cat":"Angle","base":"de","units":[["de","Degree"],["gr","Gradian"],["ra","Radian"]],"f":{"de>de":["deTode","v * 1"],"gr>de":["grTode","v * 9 / 10"],"de>gr":["deTogr","v * 10 / 9"],"ra>de":["raTode","v * 180 / 3.141592653589793"],"de>ra":["deTora","v * 3.141592653589793 / 180"]}},{"cat":"Pressure","base":"pa","units":[["pa","Pascal"],["kpa","Kilo Pascal"],["hg","Millimeter of mercury"],["ba","Bar"],["at","Atmosphere"],["psi","Pound per square inch (PSI)"]],"f":{"pa>pa":["paToPa","v * 1"],"kpa>pa":["kpaTopa","v * 1000"],"pa>kpa":["paTokpa","v / 1000"],"hg>pa":["hgTopa","v * 1333 / 10"],"pa>hg":["paTohg","v * 10 / 1333"],"ba>pa":["baTopa","v * 100000"],"pa>ba":["paToba","v / 100000"],"at>pa":["atTopa","v * 101325"],"pa>at":["paToat","v / 101325"],"psi>pa":["psiTopa","v * 6894757 / 1000"],"pa>psi":["paTopsi","v * 1000 / 6894757"]}},{"cat":"Velocity","base":"mesec","units":[["cmsec","Centimeter per second"],["mihr","Miles per hour"],["ftsec","Feet per second"],["mesec","Meter per second"],["kihr","Kilometer per hour"],["kn","Knots"],["ma","Mach (at std. atm)"]],"f":{"cmsec>mesec":["cmsecTomesec","v / 100"],"mesec>cmsec":["mesecTo","v * 100"],"mihr>mesec":["mihrTomesec","v * 5280 * 12 * 254 / 10000 / 3600"],"mesec>mihr":["mesecTomihr","v * 10000 * 3600 / 5280 / 12 / 254"],"ftsec>mesec":["ftsecTomesec","v *254 / 100 * 12 / 100"],"mesec>ftsec":["mesecToftsec","v * 100 / 254 * 100 / 12"],"kihr>mesec":["kihrTomesec","v * 1000 / 3600"],"mesec>kihr":["mesecTokihr","v * 3600 / 1000"],"kn>mesec":["knTomesec","v * 1852 / 3600"],"mesec>kn":["mesecTokn","v * 3600 /1852"],"ma>mesec":["maTomesec","v * 3402933 / 10000"],"mesec>ma":["mesecToma","v * 10000 / 3402933"]}},{"cat":"Area","base":"sqcm","units":[["sqmm","Square millimeter"],["sqcm","Square centimeter"],["sqin","Square inch"],["sqft","Square feet"],["hec","Hectares"],["sqkm","Square kilometer"],["sqya","Square Yard"],["ac","Acres"],["sqmi","Square mile"],["sqm","Square meters"]],"f":{"sqcm>sqcm":["sqcmTosqcm","v 1"],"sqmm>sqcm":["sqmmTosqcm","v / 100"],"sqcm>sqmm":["sqcmTo","v * 100"],"sqin>sqcm":["sqinTosqcm","v * 254 * 254 / 10000"],"sqcm>sqin":["sqcmTosqin","v * 10000 / 254 / 254"],"sqft>sqcm":["sqftTosqcm","v * 254 * 12 * 254 * 12 / 10000"],"sqcm>sqft":["sqcmTosqft","v * 10000 / 254 / 254 / 12 / 12"],"hec>sqcm":["hecTosqcm","v * 100000000"],"sqcm>hec":["sqcmTohec","v / 100000000"],"sqkm>sqcm":["sqkmTosqcm","v * 10000000000"],"sqcm>sqkm":["sqcmTosqkm","v / 10000000000"],"sqya>sqcm":["sqyaTosqcm","v * 9144 * 9144 / 10000"],"sqcm>sqya":["sqcmTosqya","v * 10000 / 9144 / 9144"],"ac>sqcm":["acTosqcm","v * 43560 * 254 * 12 * 254 * 12 / 10000"],"sqcm>ac":["sqcmToac","v / 43560 / 254 / 12 / 254 / 12 * 10000"],"sqmi>sqcm":["sqmiTosqcm","v * 5280 * 5280 * 12 * 12 * 254 * 254 / 10000"],"sqcm>sqmi":["sqcmTosqmi","v / 5280 / 5280 / 12 / 12 / 254 / 254 * 10000"],"sqm>sqcm":["sqmTosqcm","v * 10000"],"sqcm>sqm":["sqcmTosqm","v / 10000"]}},{"cat":"Energy","base":"jo","units":[["jo","Joule"],["kjo","Kilojoule"],["cal","Calorie"],["kcal","Kilocalorie"],["btu","British Thermal Unit"],["ftlb","Foot-Pound"],["elvo","Electron-Volts"]],"f":{"jo>jo":["joTojo","v *1"],"kjo>jo":["kjoTojo","v *1000"],"jo>kjo":["joTokjo","v / 1000"],"cal>jo":["calTojo","v * 41868 / 10000"],"jo>cal":["joTocal","v * 10000 / 41868"],"kcal>jo":["kcalTojo","v * 41868 / 10"],"jo>kcal":["joTokcal","v * 10 / 41868"],"btu>jo":["btuTojo","v * 1055056 / 1000"],"jo>btu":["joTobtu","v / 1055056 * 1000"],"ftlb>jo":["ftlbTojo","v * 1.355817948331400"],"jo>ftlb":["joToftlb","v / 1.355817948331400"],"elvo>jo":["elvoTojo","v * 160217653e-27"],"jo>elvo":["joToelvo","v / 160217653e-27"]}},{"cat":"Power","base":"wa","units":[["wa","Watt"],["hp","Horsepower"],["kw","Kilowatt"],["btumin","BTU/minute"],["lbmin","Foot-Pound/minute"]],"f":{"wa>wa":["waTowa","v * 1"],"hp>wa":["hpTowa","v * 745.6998715822702"],"wa>hp":["waTohp","v / 745.6998715822702"],"kw>wa":["kwTowa","v * 1000"],"wa>kw":["waTokw","v / 1000"],"btumin>wa":["btuminTowa","v * 1055056 / 1000 / 60"],"wa>btumin":["waTobtumin","v / 1055056 * 1000 * 60"],"lbmin>wa":["lbminTowa","v * 1.355817948331400 / 60"],"wa>lbmin":["waTolbmin","v / 1.355817948331400 * 60"]}},{"cat":"Time","base":"sec","units":[["misec","Microsecond"],["mlsec","Millisecond"],["sec","Second"],["min","Minute"],["ho","Hour"],["da","Day"],["we","Week"]],"f":{"misec>sec":["misecTosec","v / 1000000"],"sec>misec":["secTomisec","v * 1000000"],"mlsec>sec":["mlsecTosec","v / 1000"],"sec>mlsec":["secTomlsec","v * 1000"],"sec>sec":["secTosec","v * 1"],"min>sec":["minTosec","v * 60"],"sec>min":["secTomin","v / 60"],"ho>sec":["hoTosec","v * 3600"],"sec>ho":["secToho","v / 3600"],"da>sec":["daTosec","v * 86400"],"sec>da":["secToda","v / 86400"],"we>sec":["weTosec","v * 604800"],"sec>we":["secTowe","v / 604800"]}}];
+  function q(r){return box.querySelector('[data-r='+r+']');}
+  var cat=q('cat'),from=q('from'),to=q('to'),val=q('val'),out=q('out'),tr=q('trace');
+  U.forEach(function(c,i){var o=document.createElement('option');o.value=i;o.textContent=c.cat;cat.appendChild(o);});
+  function name(c,u){for(var i=0;i<c.units.length;i++) if(c.units[i][0]===u) return c.units[i][1]; return u;}
+  function fill(){
+    var c=U[cat.value];
+    [from,to].forEach(function(s,j){s.innerHTML='';c.units.forEach(function(u){var o=document.createElement('option');o.value=u[0];o.textContent=u[1];s.appendChild(o);});});
+    if(c.cat==='Temperature'){from.value='df';to.value='k';}
+    else if(c.cat==='Velocity'){from.value='mesec';to.value='cmsec';}
+    else if(c.cat==='Energy'){from.value='elvo';to.value='jo';}
+    else {to.selectedIndex=Math.min(1,c.units.length-1);}
+    calc();
+  }
+  function ev(expr,v){
+    var js=expr.replace(/\bv\b/g,'('+v+')').replace(/\^/g,'**');
+    if(!/^[\d\s.+\-*\/()e]*$/.test(js.replace(/\*\*/g,''))) throw 0;
+    return Function('return ('+js+')')();
+  }
+  function fmt(x){ if(!isFinite(x)) return String(x); var s=Number(x.toPrecision(15)); return (Math.abs(s)>=1e15||(s!==0&&Math.abs(s)<1e-6))?s.toExponential():String(s); }
+  var NAMES={'mesecTo':'misnamed; should be mesecTocmsec','sqcmTo':'misnamed; should be sqcmTosqmm','dfToK':'reads the "dc" slot, but gets the Fahrenheit value','sqcmTosqcm':'"x 1", no operator; never used'};
+  function step(c,a,b,v,lines){
+    var f=c.f[a+'>'+b]; if(!f) return null;
+    var r=ev(f[1],v);
+    lines.push('<span class="o">'+f[0]+'</span>'+(NAMES[f[0]]?'  <span class="k">('+NAMES[f[0]]+')</span>':'')+'\n  '+f[1].replace(/\bv\b/,'<span class="g">'+fmt(v)+'</span>')+'  =  '+fmt(r));
+    return r;
+  }
+  function calc(){
+    var c=U[cat.value], a=from.value, b=to.value, v=parseFloat(val.value), lines=[], r;
+    if(isNaN(v)){out.textContent='Enter a number.';tr.innerHTML='';return;}
+    try{
+      if(a===b) r=v;
+      else if(c.f[a+'>'+b]) r=step(c,a,b,v,lines);
+      else { var m=step(c,a,c.base,v,lines); r=step(c,c.base,b,m,lines); }
+      out.textContent=fmt(v)+' '+name(c,a)+' = '+fmt(r)+' '+name(c,b);
+      tr.innerHTML=lines.join('\n')||'<span class="c">(same unit)</span>';
+    }catch(e){out.textContent='—';tr.innerHTML='';}
+  }
+  cat.addEventListener('change',fill); [from,to].forEach(function(s){s.addEventListener('change',calc);}); val.addEventListener('input',calc);
+  for(var i=0;i<U.length;i++) if(U[i].cat==='Temperature') cat.value=i;
+  fill();
+})();
+</script>
+</section>

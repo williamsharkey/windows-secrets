@@ -487,3 +487,233 @@ python3 tools/codehunt.py --icons-dir icons  wfw311/              > codehunt-w31
 It uses only the standard library. Pillow is optional and needed only for
 `--icons-dir`. Run it with plain `python3` (or `-s`) if Pillow is in the user
 site.
+
+## XP (SP3, build 2600.5512)
+
+Source: 99 binaries copied from the studio XP VM (`C:\WINDOWS\system32` unless
+noted: `explorer.exe`/`regedit.exe` from `C:\WINDOWS`, WordPad/HyperTerminal/
+Pinball/IE/MSInfo/msconfig/OE/WMP/Movie Maker from their own folders) through
+the FAT32 data disk. Raw output: `data/codehunt-xp.jsonl.gz` (13,281 records;
+`file` paths are relative to that copy). Command:
+`python3 tools/codehunt.py --icons-dir icons xpbin/ > codehunt-xp.jsonl`.
+
+Rigor, as above: **static** = bytes read and code disassembled (capstone,
+x86-32; VAs are at the default image base); **live** = triggered on the XP VM
+and observed (screenshot, clip, or file bytes). Live evidence is in
+`site/windows-secrets/xp-deep/`. Orphan dialogs were rendered with a 40-line
+helper (`dlgshow`: `LoadLibraryEx(..., LOAD_LIBRARY_AS_DATAFILE)` +
+`CreateDialogParam` with a do-nothing dialog procedure and a comctl32 v6
+manifest), so the pictures are the real templates drawn by XP, not mock-ups.
+"Prior art" = what a web search turned up; "none found" is only claimed
+after searching.
+
+### X1. Paint's GIF transparency checkbox is a round trip to nowhere (live + static)
+
+`mspaint.exe` 5.1.2600.5512. **Live:** opened a 4-colour GIF, Image ▸
+Attributes, dragged the dialog taller, Tab ×4 lands on *Use Transparent
+background color* (tab stop 5), Space ticks it, Tab + Enter opens *Select
+Color* (a ChooseColor box that opens fully expanded), picked yellow
+(255,255,0), OK, Ctrl+S. Clip: `xp-deep/xp-paint-gif-transparency.mp4`.
+
+Saved file (copied out and parsed): `GIF89a`, 1,249 bytes, 256-entry global
+palette (yellow is index 0), image descriptor at offset 781, **no Graphic
+Control Extension at all**, so no transparency flag and no transparent index.
+Control: a GIF that already had a GCE (`21 f9 04 01 00 00 00 00`,
+transparent index 0) opens with the box **unticked**, and re-saving it
+without changes writes the same GCE-less 1,249-byte layout. XP Paint
+neither reads nor writes GIF transparency.
+
+**Why (static).** The dialog's MFC message map at VA 0x01002280 (file 0x1680)
+is `11 01 00 00 | 00 00 | 2c 04 | 2c 04 | 0c | aa d9 00 01`: WM_COMMAND from
+control 1068 goes to 0x0100d9aa, which only enables *Select Color* (1069)
+to match the box. In OnInitDialog the box is enabled only if the document's
+format GUID (16 bytes at 0x0103f108) equals `b96b3cb0-0728-11d3-9d7b-0000f81ef32e`
+(GDI+ `ImageFormatGIF`), compared with `repe cmpsd` at 0x0100e186. OnOK at
+0x0100e214 stores `IsDlgButtonChecked(1068)` in global 0x0103e86c (bytes at
+file 0xd650: `a3 6c e8 03 01`) and, if set, the colour in global 0x0103d6a4.
+The **only** other references to 0x0103e86c are two writes of 0 in the
+New/Open handlers (0x0101e06f, 0x0101e0e5). Nothing on the save path reads
+it. The colour global is reset there to the sentinel **0x87654321**
+(`c7 05 a4 d6 03 01 21 43 65 87`), which is why *Select Color* first offers
+R 33 G 67 B 101 (the COLORREF's low three bytes, 0x21 0x43 0x65).
+
+### X2. The transparent colour is Paint's Ctrl-click "third colour" (live + static)
+
+The colour box's mouse handlers (0x0100fd51 / 0x0100fdae) test
+`[ebp+8] & 8` (MK_CONTROL) and, if set, call 0x0100c81c instead of the
+set-foreground/background routines; 0x0100c81c → 0x0100c3d9 writes the
+same global 0x0103d6a4. **Live:** Ctrl+click yellow on the palette fills
+the dithered backdrop of the colour indicator with yellow
+(`xp-paint-colorbox-normal.png` → `xp-paint-colorbox-ctrlclick.png`), and
+the Attributes dialog's Transparency swatch then shows yellow even with the
+box unticked (`xp-paint-attributes-ctrlclick.png`). Ctrl+click red, then
+Ctrl+drag with the pencil, draws red, and the (disabled, BMP) Transparency
+swatch shows red (`xp-paint-third-color.png`). So the "third colour" of
+Win98-era folklore and the GIF "transparent background colour" are one
+variable, and the dithered square behind the two colour wells is its
+"unset" state. Six drawing routines (0x0100ff46, 0x01015490, 0x01015749,
+0x010169bb, 0x010171d4, 0x01017465) compare it with 0x87654321 and use it
+instead of the foreground/background colour. Live test of
+transparent-mode selection drag: no visible change from the third colour
+(with a 24-bit BMP; on an 8-colour GIF white maps to the nearest palette
+colour, which confounds that test).
+*Prior art:* Betawiki and a French wiki say Win98 Paint added a third colour
+selected with Ctrl+click. No source found that ties it to the Attributes
+transparency colour, the indicator backdrop, or the 0x87654321 sentinel.
+
+### X3. Paint's orphaned "Grid Settings" dialog (live render, static)
+
+`mspaint.exe` DIALOG 4001 "Grid Settings": *Pixel Grid*, a *Tile Grid*
+group with Width/Height in pixels, OK/Cancel. The only occurrence of
+0x0FA1 in the file is the resource directory entry (VA 0x010402f8); no
+code, menu or accelerator reaches it. Rendered: `xp-deep/xp-paint-grid.png`.
+It matches the *Grid Settings* dialog of the Visual C++ resource editor's
+image editor (documented by Microsoft for VS 2008–2015: pixel grid + tile
+grid "for bitmaps with multiple images at regular intervals").
+*Speculation:* evidence of shared lineage between Paint and the VC++ image
+editor (both MFC). *Prior art:* the VS dialog is documented; nothing found
+on the copy inside Paint.
+
+### X4. "TaskbarContextMenu" governs the Start menu's right-click menu (live + static)
+
+`explorer.exe` 6.0.2900.5512, function 0x0103e8b4 (called from a
+WM_CONTEXTMENU case at 0x0101b715): reads `HKCU\Software\Microsoft\Windows\
+CurrentVersion\Explorer\Advanced`, value `TaskbarContextMenu` (UTF-16 at
+file 0x3dd6c) via helper 0x0103d1ed (bytes at file 0x3dcbf:
+`57 68 6c e9 03 01 68 80 9c 02 01 68 00 00 00 02 68 01 00 00 80`). If the
+helper returns nonzero it returns without a menu; otherwise it loads MENU
+211 (0xD3), `TrackPopupMenuEx`, and on 0x7FF2 ("&Properties") opens the
+Taskbar and Start Menu properties. In XP MENU 211 is just `&Properties`.
+**Live:** right-clicking empty parts of the XP Start menu (user banner,
+middle, footer) shows the one-item *Properties* menu
+(`xp-startmenu-properties.png`). With the DWORD set to **0** no menu
+appears (`xp-startmenu-tcm0.png`); with 1 or absent it does. The taskbar's
+own menu is unaffected. Value deleted afterwards. Despite its name, it is
+the Start-menu context switch.
+**Consequence for H2:** Windows 7's MENU 211 (Properties + Exit Explorer)
+is the same Start-menu menu, and the well-known tip is Ctrl+Shift+right-
+click on an *empty area of the Start menu* (or its power button), not the
+taskbar (that moved to the taskbar in Windows 8). *Prior art:* the Exit
+Explorer tip is well documented (winhelponline, JTB World 2007 for Vista);
+no source found for the `TaskbarContextMenu` value.
+
+### X5. XP's sysdm.cpl carries an unused, longer Error Reporting dialog (live render + live compare)
+
+`sysdm.cpl` 5.1.2600.5512 DIALOG 4101 "Error Reporting" (unreferenced; the
+only dword 0x1005 hit, 0x47d86268, is a help-ID table). Rendered:
+`xp-sysdm-4101.png`. It has two options the dialog XP actually shows does
+not: **"Unplanned machine shutdowns"** and **"Force queue mode for program
+errors."** The live dialog (System Properties ▸ Advanced ▸ Error
+Reporting, `xp-error-reporting-live.png`, 323×313 vs 323×355) has only
+Disable / notify / Enable / Windows operating system / Programs / Choose
+Programs. *Speculation:* the server variant (Windows Server 2003 surfaces
+shutdown events and a ForceQueue policy). No prior description found.
+
+### X6. Notepad 5.1 `/.SETUP` checked live (follows H7)
+
+`notepad.exe` 5.1.2600.5512 has `fMLE_is_broken` (file 0x85c),
+`SlipUpAcc` (0xb48) and `/.SETUP` (0xb5c), completing the 1992 → 2001 →
+2009 line. **Live:** `notepad /.SETUP t.txt` creates an invisible window
+(found only with `FindWindow`); after showing and focusing it, **Esc**
+closes it and, in a second run, **Ctrl+D** closes it. Control: Esc does
+nothing in a normal Notepad.
+
+### X7. XP Minesweeper keeps F4/F5/F6 behind a registry value (live + static)
+
+`winmine.exe` 5.1.2600.0 WM_KEYDOWN at 0x01001c9a: VK_SHIFT (0x10) is the
+XYZZY toggle; 0x73 F4 toggles Sound between 2 and 3 only if Sound > 1;
+0x74 F5 / 0x75 F6 call 0x01003ce5(1/2) (SetMenu NULL / restore) only if
+the `Menu` global is nonzero. No Esc boss key any more. XP never writes a
+`Menu` value. **Live:** with `HKCU\Software\Microsoft\winmine\Menu=1`
+(DWORD) Minesweeper starts with **no menu bar**, F5 keeps it hidden, F6
+brings Game/Help back (`xp-winmine-menu-hidden.png`,
+`xp-winmine-menu-f6.png`). Value deleted afterwards. *Prior art:* TCRF
+documents `Menu=1` in `winmine.ini` for 3.1/98 and says nothing about XP's
+registry or F5/F6.
+
+### X8. Solitaire's debug menu residue (static, rendered)
+
+`sol.exe` 5.1.2600.0: strings 1005–1010 "Set game number", "Print # of
+cards in each col", "Assertion failure", "Heck, I don't know", "Configure
+Solitaire for screen shots", "Force a win"; `HIDDENACCEL` maps Alt+Shift+2
+(flags 0x17) to 1010. The retail WM_COMMAND switch at 0x01001968 handles
+1000–1004, 1010 and 2000 only. DIALOG 999 "Assertion Failure" (rendered
+`xp-sol-assert.png`): "Please send bug report to winbug. … A file named
+sol.dbg will be created in the current directory. Please attach this file
+to the bug report -- Thanks", buttons *Continue* / *Exit Windows*, "Version
+3.0". *Prior art:* TCRF documents these strings and sol.dbg for the 1990
+game; Force-a-win is common folklore.
+
+### X9. Answers to the earlier "check on XP" list
+
+1. `shdoclc.dll` 6.0.2900.5512 has the MSHTML `Debug` popup in MENU 24640
+   and 24641 (Debug Break, Debug View, …) and a `Dummy` item; Alt+Shift+F12,
+   Ctrl+F12 and F12 map to command 70 in five accelerator tables. Not
+   enabled live.
+2. `mmc.exe` 5.2.3790.4136: the same ACCELERATOR 128 Ctrl+Alt+Shift+F7 →
+   13235, no `push 13235` in mmc.exe or mmcndmgr.dll. Unresolved, static.
+3. Notepad: X6. 4. Minesweeper: X7.
+5. `mshearts.exe` 5.1.2600.0 at 0x01007272: opens
+   `…\Applets\Hearts`, reads `ZB` (UTF-16 at 0x01002360), compares chars
+   `'4'` `'2'`, toggles `[ebx+0x10c]`, invalidates, checks menu item 121.
+   ZB=42 survives into XP (string, not DWORD). Static.
+6. FreeCell `FREEMENU` Ctrl+Shift+F10 → 114; Solitaire Alt+Shift+2 (X8);
+   Pinball keeps `EDIT_COMPONENTS` "Edit Pinball Components FOR TESTING
+   ONLY" (rendered `xp-pinball-edit.png`; TCRF already lists it for Full
+   Tilt!) and a `Secret` string.
+7. `dxdiag.exe` 5.3.2600.5512 reads all the `Stress …` values and their
+   `… Freq` twins from `HKCU\Software\Microsoft\DirectX Diagnostic Tool`
+   (UTF-16 at 0x4b0c–0x4c80), plus `Never Skip` and `Allow WHQL Checks`.
+   It also embeds string tables in ~15 languages.
+8. `magnify.exe` (XP) has no command-word parser (no `hilight`/`wait`
+   strings); `osk.exe` has no Longhorn/Classic skin names but has string
+   22 "Credits box", 23 "Thank you" and `mailto:sales@madenta.com` (OSK was
+   licensed from Madenta). Static.
+9. `charmap.exe` (XP) is 5.1.2600.0 with FileFlags 0 — the Windows 7 copy's
+   5.2.3668 private-build stamp is not inherited from XP. XP still has the
+   `UCE` dialog and the dead `UCE` accelerator table.
+10. Every XP SP3 CodeView record in the sample is a bare `name.pdb` (RSDS or
+    NB10). Source paths survive only in assert strings:
+    `d:\xpsp\base\subsys\sm\sfc\dll\apicli.c` (sfc_os.dll),
+    `d:\xpsp\admin\pchealth\client\common\fhclicfg\util.cpp` (sysdm.cpl).
+11. 614 orphan-looking images rendered (most are base+n tables: Spider's 52
+    card faces, explorer's Start-menu/taskbar preview strips with a "Nina's
+    Webs…" button, the classic Start menu's "Windows XP Home Edition"
+    banner). Nothing clearly dead.
+
+### X10. Smaller static oddities
+
+* `explorer.exe` string 717: "This pre-release version of "Internet
+  Explorer 4.0" Desktop/Explorer has expired…" — IE4 beta time-bomb text
+  in XP SP3's shell.
+* `msconfig.exe` treats `whistler` as a BOOT.INI OS name next to
+  `windows xp`, `windows 2002`; `inetcpl.cpl` has INF sections
+  `RegDll.Whistler`; `browseui.dll` exports
+  `InstallBrowseUIPreWhistler`.
+* `hypertrm.exe` FileFlags `DEBUG|PRERELEASE`; `hypertrm.dll`
+  `PRIVATEBUILD` and an orphan `IDD_REGISTRATION_REMINDER` ("Please
+  Register Now"); `packager.exe` FileFlags `DEBUG`; `main.cpl`
+  `PRIVATEBUILD`; `msdtc.exe` `SPECIALBUILD`.
+* `dvdplay.exe` FileDescription "dvdplay placeholder Application".
+* `drwtsn32.exe` DIALOG 513 keeps placeholder labels "This is to the left"
+  / "This is to the right."
+* `ntbackup.exe` contains `d:\buggy` next to "Short Tape Size".
+* `sndrec32.exe` string 140 "# do not localize this string"; `mplay32.exe`
+  string 149 "(Bogus)".
+* `access.cpl` exports `DebugMain`; `desk.cpl` exports
+  `DisplayTestSettingsW`.
+* `desk.cpl` DIALOG 151 is the Windows 2000 Background page with
+  *Pattern* / *Edit Pattern…*; `msconfig.exe` DIALOG 205 is Windows 98
+  msconfig's International page (Language, MS-DOS Code Page, Country Code,
+  Keyboard Layout…). Both unreferenced child templates.
+
+### Tooling notes
+
+* `src/winprobe.c` gained `clickat x y [ctrl|shift|right|dbl|drag x2 y2]`
+  (real pointer via `SetCursorPos`/`mouse_event`) and a `fw:CLASS` window
+  selector (`FindWindow`, finds invisible windows). QEMU's HMP
+  `mouse_move` does nothing with the usb-tablet, hence `clickat`.
+* The XP data disk is `E:` in the guest (not `D:`) and the FAT32 volume
+  starts at 1 MiB: `mcopy -i /root/xp/data.img@@1M ::/FILE .` The guest's
+  lazy writer needs ~20 s before the host sees new files; `fsutil volume
+  dismount` refuses FAT volumes.

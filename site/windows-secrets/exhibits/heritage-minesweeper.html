@@ -1,0 +1,169 @@
+<!-- exhibit: heritage-minesweeper — drop into section#winmine, after the "Prior art" box (before/after the xp-winmine-menu exhibit) -->
+<section class="hgx" id="hg-mine" aria-labelledby="hg-mine-h">
+<style>
+.hgx { margin: 48px 0 0; padding-top: 6px; border-top: 1px dashed var(--rule); }
+.hgx > h3 { margin-top: 18px; }
+.hgx .hg-k { font: 600 12px/1.2 -apple-system, "Segoe UI", Tahoma, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+.hgx ol.tl { list-style: none; padding: 0 0 0 4px; margin: 20px 0; border-left: 2px solid var(--rule); }
+.hgx ol.tl li { position: relative; padding: 0 0 14px 18px; max-width: none; font-size: 16px; line-height: 1.5; }
+.hgx ol.tl li::before { content: ""; position: absolute; left: -7px; top: .5em; width: 10px; height: 10px; border-radius: 50%; background: var(--card); border: 2px solid var(--teal); box-sizing: border-box; }
+.hgx ol.tl li.me::before { background: var(--teal); }
+.hgx ol.tl .y { display: inline-block; min-width: 3.2em; font: 700 13px ui-monospace, Consolas, monospace; color: var(--teal); }
+.hgx .ev { background: var(--card); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; margin: 22px 0; font: 14px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; }
+.hgx .ev > b.t { display: block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.hgx .ev pre { margin: 8px 0 0; font-size: 12.5px; line-height: 1.45; overflow-x: auto; max-width: 100%; }
+.hgx .ev pre .h { background: var(--mark); }
+.hgx .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; margin: 22px 0; align-items: start; }
+.hgx .grid figure { margin: 0; }
+.hgx figure img, .hgx canvas { max-width: 100%; height: auto; }
+.hgx .px img, .hgx canvas.px { image-rendering: pixelated; }
+.hgx .src { font: 13px/1.5 -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); padding-left: 20px; }
+.hgx .src li { max-width: none; margin: 2px 0; }
+.hgx .toy { margin: 22px 0; }
+.hgx .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.hgx .seg button { border: 0; border-radius: 0; border-right: 1px solid var(--rule); }
+.hgx .seg button:last-child { border-right: 0; }
+.hgx .seg button[aria-pressed="true"] { background: var(--teal); color: var(--bg); }
+.hgx .scrollx { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+#hg-mine .shots3 { display: grid; grid-template-columns: repeat(3, minmax(0, max-content)); gap: 14px; align-items: end; }
+@media (max-width: 520px) { #hg-mine .shots3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+#hg-mine .shots3 figure { margin: 0; }
+#hg-mine .shots3 img { image-rendering: pixelated; }
+#hg-mine .wm { display: inline-block; background: #c0c0c0; color: #000; border: 1px solid #000; font: 13px/1.2 "MS Sans Serif", Tahoma, sans-serif; user-select: none; outline: none; position: relative; }
+#hg-mine .wm:focus-visible { box-shadow: 0 0 0 3px var(--teal); }
+#hg-mine .wm .tb { background: #0000a8; color: #fff; text-align: center; font-weight: 700; padding: 2px 4px; }
+#hg-mine .wm .mb { background: #fff; padding: 1px 6px; border-bottom: 1px solid #000; }
+#hg-mine .wm .mb u { text-decoration: underline; }
+#hg-mine .wm .body { padding: 6px; }
+#hg-mine .wm .hdr { display: flex; justify-content: space-between; align-items: center; border: 2px inset #fff; padding: 3px 5px; margin-bottom: 6px; }
+#hg-mine .wm .led { background: #000; color: #f00; font: 700 18px/1 "Courier New", monospace; padding: 1px 3px; min-width: 38px; text-align: right; }
+#hg-mine .wm .face { width: 26px; height: 26px; border: 2px outset #fff; background: #c0c0c0; font-size: 15px; line-height: 20px; text-align: center; cursor: pointer; padding: 0; }
+#hg-mine .wm .board { display: grid; grid-template-columns: repeat(8, 22px); border: 3px inset #fff; }
+#hg-mine .wm .c { width: 22px; height: 22px; border: 3px outset #fff; background: #c0c0c0; font: 700 13px/16px Tahoma, sans-serif; text-align: center; cursor: pointer; padding: 0; color: #000; }
+#hg-mine .wm .c.o { border: 1px solid #808080; border-width: 0 1px 1px 0; line-height: 21px; cursor: default; }
+#hg-mine .wm .c.boom { background: #f00; }
+#hg-mine .n1 { color: #0000ff !important; } #hg-mine .n2 { color: #008000 !important; } #hg-mine .n3 { color: #ff0000 !important; } #hg-mine .n4 { color: #000080 !important; } #hg-mine .n5 { color: #800000 !important; } #hg-mine .n6 { color: #008080 !important; }
+#hg-mine .mstage { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+#hg-mine .pix { font: 12px -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); }
+#hg-mine .pix i { display: inline-block; width: 24px; height: 24px; vertical-align: middle; border: 1px solid var(--rule); margin-right: 6px; background: repeating-conic-gradient(#8884 0 25%, transparent 0 50%) 0 0 / 8px 8px; }
+#hg-mine .icon { display: none; text-align: center; font: 12px Tahoma, sans-serif; color: var(--fg); cursor: pointer; padding: 6px; border: 1px dashed var(--rule); border-radius: 6px; background: none; }
+#hg-mine .icon b { display: block; font-size: 26px; line-height: 1.1; }
+#hg-mine .min .wm { display: none; } #hg-mine .min .icon { display: inline-block; }
+#hg-mine label.chk { font: 14px -apple-system, "Segoe UI", Tahoma, sans-serif; color: var(--muted); }
+</style>
+
+<p class="hg-k">Heritage · Minesweeper</p>
+<h3 id="hg-mine-h">From OS/2 to a field of flowers</h3>
+
+<ol class="tl">
+  <li><span class="y">1989?</span> Curt Johnson writes a mine game for OS/2. Robert Donner ports it to Windows. Both names are still in the 3.11 About box (shown above in the DEBUG dump).</li>
+  <li><span class="y">1990</span> It ships on 8 October in the <i>Microsoft Entertainment Pack</i>, a box of small games sold alongside Windows 3.0.</li>
+  <li><span class="y">1992</span> Windows 3.1 includes it in place of Reversi. Like Solitaire's drag and drop, it trains a mouse skill, here the right click. The WfW 3.11 file still calls itself "Minesweeper v3.0a".</li>
+  <li><span class="y">1999</span> In Italy, Sergio Chiodo starts the "International Campaign to Ban Winmine", saying a game about landmines is offensive. Italian Windows 2000, ME and XP ship it as <i>Prato fiorito</i>, "flower field", with flowers instead of mines and a tune instead of an explosion.</li>
+  <li><span class="y">2001</span> XP moves its settings from <code>winmine.ini</code> to the registry and loses the Esc boss key.</li>
+  <li><span class="y">2006</span> Vista's rewrite (Oberon Games) gives everyone a flower-garden option. Windows 8 drops the game, and it moves to the Store.</li>
+</ol>
+
+<h4>The 1992 keys, on a running 3.11</h4>
+<p>The handler shown above checks <code>Menu=</code> in <code>winmine.ini</code> before F5 and F6 do anything. With <code>[Minesweeper] Menu=1</code> added, the game starts with no menu bar at all <span class="ver live">verified live</span>:</p>
+<div class="shots3">
+  <figure><img src="windows-secrets/heritage/w311-mine.png" width="154" height="235" alt="WfW 3.11 Minesweeper with its Game and Help menu bar" loading="lazy"><figcaption>Default.</figcaption></figure>
+  <figure><img src="windows-secrets/heritage/w311-mine-nomenu.png" width="154" height="216" alt="Minesweeper with no menu bar after Menu=1" loading="lazy"><figcaption><code>Menu=1</code>, F5.</figcaption></figure>
+  <figure><img src="windows-secrets/heritage/w311-mine-menu-back.png" width="154" height="235" alt="Minesweeper with Game and Help menus back after F6" loading="lazy"><figcaption>F6.</figcaption></figure>
+</div>
+<p><kbd>Esc</kbd> made the window disappear at once, minimised. That's a boss key, and unlike Wes Cherry's in Solitaire, this one shipped. The Cutting Room Floor already lists <code>Menu=1</code>. I still found no description of Esc as a boss key.</p>
+
+<div class="toy ui" id="hg-mine-toy">
+  <div class="mstage" id="hg-mine-stage">
+    <div class="wm" tabindex="0" role="application" aria-label="Minesweeper reconstruction. Focus it, then type XYZZY and press Shift, or press F5, F6 or Esc." id="hg-mine-win">
+      <div class="tb">Minesweeper</div>
+      <div class="mb" id="hg-mine-mb"><u>G</u>ame&nbsp;&nbsp;&nbsp;<u>H</u>elp</div>
+      <div class="body">
+        <div class="hdr"><span class="led" id="hg-mine-left">010</span><button type="button" class="face" id="hg-mine-face" aria-label="New game"></button><span class="led" id="hg-mine-time">000</span></div>
+        <div class="board" id="hg-mine-board"></div>
+      </div>
+    </div>
+    <button type="button" class="icon" id="hg-mine-icon"><b id="hg-mine-ico"></b>Minesweeper</button>
+    <div class="pix"><i id="hg-mine-px"></i>screen pixel (0,0), enlarged</div>
+  </div>
+  <div class="row"><label class="chk"><input type="checkbox" id="hg-mine-menu1"> <code>Menu=1</code> in winmine.ini</label></div>
+  <div class="status" id="hg-mine-st" aria-live="polite">Click the board, then try the keys. Right-click (or long-press) to flag.</div>
+  <p class="status"><span class="ver rec">reconstruction</span> This is a toy, not the original. The key handling follows the 3.11 handler at <code>seg1:063A</code>: a five-letter match counter, Shift toggling it between 5 and 17 with <code>xor 14h</code>, F5 and F6 gated on <code>Menu</code>, and Esc posting <code>SC_MINIMIZE</code>. The "pixel" stands in for the real one at the top-left corner of the screen.</p>
+</div>
+
+<div class="prior"><b class="t">Prior art</b> XYZZY, the authors and Prato fiorito are well documented. <code>Menu=1</code> is in The Cutting Room Floor. The Esc boss key and the Menu-gated F5 and F6 keys were verified live here.</div>
+
+<ol class="src">
+  <li><a href="https://minesweepergame.com/history/robert-donner.php">minesweepergame.com: Robert Donner</a></li>
+  <li><a href="https://minesweeper.info/wiki/Windows_Minesweeper">Minesweeper wiki: Windows Minesweeper (Entertainment Pack, 1990; Prato fiorito)</a></li>
+  <li><a href="https://www.tcrf.net/Minesweeper_(Windows,_1990)">The Cutting Room Floor: Minesweeper (Windows, 1990)</a></li>
+  <li><a href="https://betawiki.net/wiki/Minesweeper">BetaWiki: Minesweeper</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Microsoft_Minesweeper">Wikipedia: Microsoft Minesweeper</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Microsoft_Entertainment_Pack">Wikipedia: Microsoft Entertainment Pack</a></li>
+</ol>
+
+<script>
+(function () {
+  var root = document.getElementById('hg-mine'); if (!root) return;
+  var SV = function (b) { return '<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style="display:block;margin:auto">' + b + '</svg>'; };
+  var FACE = function (m) { return SV('<circle cx="8" cy="8" r="7" fill="#ff0" stroke="#000"/>' + m); };
+  var SMILE = FACE('<rect x="5" y="5" width="2" height="2"/><rect x="9" y="5" width="2" height="2"/><path d="M5 10q3 3 6 0" fill="none" stroke="#000"/>');
+  var DEAD = FACE('<path d="M4.5 4.5l3 3m0-3l-3 3M8.5 4.5l3 3m0-3l-3 3" stroke="#000"/><path d="M5 12q3-3 6 0" fill="none" stroke="#000"/>');
+  var COOL = FACE('<rect x="3.5" y="5" width="9" height="2.5"/><path d="M5 10q3 3 6 0" fill="none" stroke="#000"/>');
+  var MINE = SV('<circle cx="8" cy="8" r="4.5"/><path d="M8 1.5v13M1.5 8h13M3.5 3.5l9 9m0-9l-9 9" stroke="#000" stroke-width="1.4"/><rect x="6" y="6" width="2" height="2" fill="#fff"/>');
+  var FLAG = SV('<path d="M8 2v9" stroke="#000"/><path d="M8 2L3 4.5 8 7z" fill="#f00"/><rect x="4" y="11" width="8" height="2"/>');
+  var W = 8, H = 8, M = 10, board = root.querySelector('#hg-mine-board'), win = root.querySelector('#hg-mine-win');
+  var st = root.querySelector('#hg-mine-st'), px = root.querySelector('#hg-mine-px'), mb = root.querySelector('#hg-mine-mb');
+  var cells, mines, open, flag, over, first, t0, timer, iX = 0, XY = 'XYZZY', hover = -1;
+  function nb(i) { var x = i % W, y = (i / W) | 0, r = []; for (var dy = -1; dy <= 1; dy++) for (var dx = -1; dx <= 1; dx++) { var a = x + dx, b = y + dy; if ((dx || dy) && a >= 0 && b >= 0 && a < W && b < H) r.push(b * W + a); } return r; }
+  function lay(skip) { mines = {}; var n = 0; while (n < M) { var k = (Math.random() * W * H) | 0; if (k !== skip && !mines[k]) { mines[k] = 1; n++; } } }
+  function cnt(i) { return nb(i).filter(function (j) { return mines[j]; }).length; }
+  function pad(n) { n = Math.max(-99, Math.min(999, n)); return (n < 0 ? '-' + ('0' + -n).slice(-2) : ('00' + n).slice(-3)); }
+  function reset() {
+    board.innerHTML = ''; cells = []; open = {}; flag = {}; over = false; first = true; clearInterval(timer);
+    root.querySelector('#hg-mine-time').textContent = '000'; root.querySelector('#hg-mine-face').innerHTML = SMILE;
+    for (var i = 0; i < W * H; i++) {
+      var c = document.createElement('button'); c.type = 'button'; c.className = 'c'; c.setAttribute('aria-label', 'cell ' + (i % W + 1) + ',' + ((i / W | 0) + 1));
+      (function (i) {
+        c.addEventListener('click', function () { reveal(i); });
+        c.addEventListener('contextmenu', function (e) { e.preventDefault(); toggleFlag(i); });
+        c.addEventListener('mouseenter', function () { hover = i; pixel(); });
+        var lp; c.addEventListener('touchstart', function () { lp = setTimeout(function () { lp = 'done'; toggleFlag(i); }, 450); }, { passive: true });
+        c.addEventListener('touchend', function (e) { if (lp === 'done') e.preventDefault(); clearTimeout(lp); });
+      })(i);
+      board.appendChild(c); cells.push(c);
+    }
+    left();
+  }
+  function left() { root.querySelector('#hg-mine-left').textContent = pad(M - Object.keys(flag).length); }
+  function toggleFlag(i) { if (over || open[i]) return; if (flag[i]) delete flag[i]; else flag[i] = 1; cells[i].innerHTML = flag[i] ? FLAG : ''; left(); }
+  function reveal(i) {
+    if (over || flag[i] || open[i]) return;
+    if (first) { lay(i); first = false; t0 = Date.now(); timer = setInterval(function () { root.querySelector('#hg-mine-time').textContent = pad(Math.min(999, ((Date.now() - t0) / 1000) | 0)); }, 250); }
+    if (mines[i]) { over = true; clearInterval(timer); cells[i].classList.add('boom'); for (var k in mines) cells[k].innerHTML = MINE; root.querySelector('#hg-mine-face').innerHTML = DEAD; st.textContent = 'Boom.'; return; }
+    var q = [i];
+    while (q.length) { var j = q.pop(); if (open[j] || flag[j]) continue; open[j] = 1; var n = cnt(j), c = cells[j]; c.classList.add('o'); c.textContent = n || ''; if (n) c.classList.add('n' + n); else nb(j).forEach(function (k) { if (!open[k]) q.push(k); }); }
+    if (Object.keys(open).length === W * H - M) { over = true; clearInterval(timer); root.querySelector('#hg-mine-face').innerHTML = COOL; st.textContent = 'Cleared.'; }
+  }
+  function pixel() {
+    if (iX >= 17 && hover >= 0 && !first) px.style.background = mines[hover] ? '#000' : '#fff';
+    else px.style.background = '';
+  }
+  win.addEventListener('keydown', function (e) {
+    var k = e.key;
+    if (k === 'F4' || k === 'F5' || k === 'F6' || k === 'Escape' || k === 'Shift') e.preventDefault();
+    if (k === 'F5') { if (root.querySelector('#hg-mine-menu1').checked) { mb.style.display = 'none'; st.textContent = 'F5: SetMenu(hwnd, NULL).'; } else st.textContent = 'F5 ignored: Menu=0.'; return; }
+    if (k === 'F6') { if (root.querySelector('#hg-mine-menu1').checked) { mb.style.display = ''; st.textContent = 'F6: menu bar restored.'; } else st.textContent = 'F6 ignored: Menu=0.'; return; }
+    if (k === 'Escape') { root.querySelector('#hg-mine-stage').classList.add('min'); st.textContent = 'Esc: PostMessage(WM_SYSCOMMAND, SC_MINIMIZE). Click the icon to restore.'; root.querySelector('#hg-mine-icon').focus(); return; }
+    if (k === 'Shift') { if (iX >= 5) { iX ^= 0x14; st.textContent = iX === 17 ? 'XYZZY on: hover a square and watch the pixel.' : 'XYZZY off.'; pixel(); } return; }
+    if (iX < 5 && k.length === 1) { iX = (XY[iX] === k.toUpperCase()) ? iX + 1 : 0; if (iX === 5) st.textContent = 'XYZZY typed. Now press Shift.'; }
+  });
+  root.querySelector('#hg-mine-icon').addEventListener('click', function () { root.querySelector('#hg-mine-stage').classList.remove('min'); win.focus(); st.textContent = 'Restored.'; });
+  root.querySelector('#hg-mine-menu1').addEventListener('change', function (e) { mb.style.display = e.target.checked ? 'none' : ''; st.textContent = e.target.checked ? 'Menu=1: the game starts without a menu bar. F6 shows it, F5 hides it.' : 'Menu=0: F5 and F6 do nothing.'; win.focus(); });
+  root.querySelector('#hg-mine-face').addEventListener('click', reset);
+  board.addEventListener('mouseleave', function () { hover = -1; pixel(); });
+  root.querySelector('#hg-mine-ico').innerHTML = MINE.replace(/16" height="16/, '28" height="28');
+  reset();
+})();
+</script>
+</section>
