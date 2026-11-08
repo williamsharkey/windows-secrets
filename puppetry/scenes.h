@@ -309,12 +309,19 @@ static void collect(HWND h, int w, int hh)
     secrets[nsec++] = h;
 }
 
-/* stage a window: restore it at a spot and shake it */
-static void stage(HWND w, int x, int y)
+/* the middle of the stage for a w x h window (the taskbar takes the bottom 30) */
+static int cx_(int w) { return (SW - w) / 2; }
+static int cy_(int h) { return (SH - 30 - h) / 2; }
+static void repaint(HWND h) { RedrawWindow(h, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN); }
+
+/* stage a window: restore it in the middle of the ring and shake it */
+static void stage(HWND w)
 {
+    RECT r;
     ShowWindow(w, SW_RESTORE);
     play(250);
-    tween(w, x, y, -1, -1, 0, 700, EASE_OUT);
+    r = srect(w);
+    tween(w, cx_(r.right - r.left), cy_(r.bottom - r.top), -1, -1, 0, 700, EASE_OUT);
     play(750);
     foreground(w);
     shake(w, 0, 900, 9);
@@ -361,7 +368,7 @@ static void arrange_flower(int t0, int dur)
     int i;
     for (i = 0; i < nsec; i++) {
         int petal = i % 5, k = i / 5, per = (nsec + 4) / 5;
-        double th = -PI / 2 + petal * 2 * PI / 5, D = 232, a = 100, b = 62;
+        double th = -PI / 2 + petal * 2 * PI / 5, D = 252, a = 100, b = 62;
         double s = 2 * PI * (k + .5) / per;      /* around this petal's outline */
         double lx = D + a * cos(s), ly = b * sin(s);
         double x = SW / 2 + lx * cos(th) - ly * sin(th), y = SH / 2 - 16 + lx * sin(th) + ly * cos(th);
@@ -423,16 +430,17 @@ static void tribute_secrets(void)
     static const char *tdl[] = {"Month", "Year", "Day", "Hour", "Minute", "Second", "AM/PM"};
 
     /* 1. Paint: Image > Attributes - the Transparency group under the floor */
-    stage(a_paint, 40, 160);
+    stage(a_paint);
     GetWindowThreadProcessId(a_paint, &pid);
     cmd(a_paint, 37683);
     d = wait_top("#32770", "Attributes", pid, 3000);
     if (d) {
         RECT r = srect(d);
-        place(d, 90, 230, r.right - r.left, r.bottom - r.top);
+        int x = cx_(r.right - r.left), y = cy_(322);
+        place(d, x, y, r.right - r.left, r.bottom - r.top);
         play(600);
         shake(d, 0, 800, 7); play(850);
-        tween(d, 90, 230, r.right - r.left, 322, 0, 1500, EASE_IO); play(1900);
+        tween(d, x, y, r.right - r.left, 322, 0, 1500, EASE_IO); play(1900);
         collect(kid_text(d, "Transparency"), -1, -1);
         collect(kid_id(d, 1068), -1, -1);
         collect(kid_id(d, 1069), -1, -1);
@@ -448,23 +456,27 @@ static void tribute_secrets(void)
         PostMessageA(kid_id(d, 719), BM_CLICK, 0, 0);
         play(700);
         r = srect(d);
-        place(d, 60, 200, r.right - r.left, r.bottom - r.top);
-        shake(d, 0, 700, 6); play(750);
-        tween(d, 60, 200, r.right - r.left + 24, r.bottom - r.top + 70, 0, 1400, EASE_IO); play(1700);
+        {
+            int x = cx_(r.right - r.left + 24), y = cy_(r.bottom - r.top + 70);
+            place(d, x, y, r.right - r.left, r.bottom - r.top);
+            shake(d, 0, 700, 6); play(750);
+            tween(d, x, y, r.right - r.left + 24, r.bottom - r.top + 70, 0, 1400, EASE_IO); play(1700);
+        }
         collect(kid_id(d, 713), 46, 23);
         play(800);
         close_dlg(d);
     }
-    ShowWindow(a_paint, SW_MINIMIZE);
+    untween(a_paint); ShowWindowAsync(a_paint, SW_HIDE);
     play(500);
 
     /* 3. Notepad: Find - "Match whole word only" and Help, ghosts */
-    stage(a_note2, 60, 200);
+    stage(a_note2);
     GetWindowThreadProcessId(a_note2, &pid);
     cmd(a_note2, 21);
     d = wait_top("#32770", "Find", pid, 3000);
     if (d) {
-        place(d, 80, 260, srect(d).right - srect(d).left, srect(d).bottom - srect(d).top);
+        RECT r = srect(d);
+        place(d, cx_(r.right - r.left), cy_(r.bottom - r.top), r.right - r.left, r.bottom - r.top);
         play(700);
         shake(d, 0, 700, 6); play(750);
         h = kid_id(d, 1040); reveal(h); play(700);
@@ -480,7 +492,7 @@ static void tribute_secrets(void)
     if (d) {
         static const int ids[] = {1072, 1040, 1041, 1091, 1139, 1026, 1038};
         RECT r = srect(d);
-        place(d, 40, 150, r.right - r.left, r.bottom - r.top);
+        place(d, cx_(r.right - r.left), cy_(r.bottom - r.top), r.right - r.left, r.bottom - r.top);
         play(600);
         shake(d, 0, 700, 6); play(750);
         for (i = 0; i < 7; i++) { reveal(kid_id(d, ids[i])); play(160); }
@@ -489,28 +501,29 @@ static void tribute_secrets(void)
         play(700);
         close_dlg(d);
     }
-    ShowWindow(a_note2, SW_MINIMIZE);
+    untween(a_note2); ShowWindowAsync(a_note2, SW_HIDE);
     play(500);
 
     /* 5. Character Map - the advanced panel waiting below */
-    stage(a_charmap, 30, 150);
+    stage(a_charmap);
     {
         static const int ids[] = {129, 130, 700, 701, 201, 202, 131, 132, 133};
         RECT r = srect(a_charmap);
-        tween(a_charmap, r.left, r.top, r.right - r.left, r.bottom - r.top + 92, 0, 1200, EASE_IO); play(1300);
+        int w = r.right - r.left, h = r.bottom - r.top + 92;
+        tween(a_charmap, cx_(w), cy_(h), w, h, 0, 1200, EASE_IO); play(1300);
         for (i = 0; i < 9; i++) { reveal(kid_id(a_charmap, ids[i])); play(110); }
         play(800);
         for (i = 0; i < 9; i++) { collect(kid_id(a_charmap, ids[i]), -1, -1); play(130); }
         play(800);
     }
-    ShowWindow(a_charmap, SW_MINIMIZE);
+    untween(a_charmap); ShowWindowAsync(a_charmap, SW_HIDE);
     play(500);
 
     /* 6. Date and Time - invisible names for the spin boxes */
     d = open_cpl("timedate.cpl", "Date and Time");
     if (d) {
         RECT r = srect(d);
-        place(d, 30, 160, r.right - r.left, r.bottom - r.top);
+        place(d, cx_(r.right - r.left), cy_(r.bottom - r.top), r.right - r.left, r.bottom - r.top);
         play(900);
         shake(d, 0, 700, 6); play(750);
         for (i = 0; i < 7; i++) {
@@ -529,7 +542,7 @@ static void tribute_secrets(void)
         HWND tab = kid_cls(d, "SysTabControl32");
         int n = tab ? (int)SendMessageA(tab, TCM_GETITEMCOUNT, 0, 0) : 0;
         RECT r = srect(d);
-        place(d, 30, 120, r.right - r.left, r.bottom - r.top);
+        place(d, cx_(r.right - r.left), cy_(r.bottom - r.top), r.right - r.left, r.bottom - r.top);
         SendMessageA(d, WM_USER + 101, n - 1, 0);   /* PSM_SETCURSEL: last tab, UPS */
         play(900);
         shake(d, 0, 700, 6); play(750);
@@ -545,7 +558,7 @@ static void tribute_secrets(void)
     d = open_cpl("sysdm.cpl", "System Properties");
     if (d) {
         RECT r = srect(d);
-        place(d, 30, 120, r.right - r.left, r.bottom - r.top);
+        place(d, cx_(r.right - r.left), cy_(r.bottom - r.top), r.right - r.left, r.bottom - r.top);
         play(900);
         shake(d, 0, 700, 6); play(750);
         h = kid_id(d, 60); reveal(h); play(300); collect(h, -1, -1);
@@ -600,21 +613,19 @@ static void scene_tribute(void)
     set_title(letter, "For the ones who were almost - Notepad");
     play(2500);
     if (fast_letter) { char *t = crlf(letter_txt); settext(letter_edit, t); free(t); }
-    else type_into(letter_edit, letter_txt, 17);
+    else type_into(letter_edit, letter_txt, 24);
     play(4000);
 
     /* ---- the room fills with life ---- */
     say("act energy nsec=%d", nsec);
     tween(letter, 512 - 190, 384 - 206, 380, 380, 0, 2600, EASE_IO);
     play(3000);
-    a_calc = open_app("calc.exe", "SciCalc", NULL);   place(a_calc, 24, 18, -1, -1);
-    if (a_calc) { RECT r = srect(a_calc); place(a_calc, 24, 18, r.right - r.left, r.bottom - r.top); }
+    a_calc = open_app_at("calc.exe", "SciCalc", NULL, 24, 18, -1, -1);
     act_on = 1; add_tick(energy_tick, NULL);
     play(2500);
-    a_paint = open_app("mspaint.exe", "MSPaintApp", NULL); place(a_paint, 690, 14, 320, 330);
+    a_paint = open_app_at("mspaint.exe", "MSPaintApp", NULL, 690, 14, 320, 330);
     play(2500);
-    a_mine = open_app("winmine.exe", "Minesweeper", NULL);
-    if (a_mine) { RECT r = srect(a_mine); place(a_mine, 60, 440, r.right - r.left, r.bottom - r.top); }
+    a_mine = open_app_at("winmine.exe", "Minesweeper", NULL, 60, 440, -1, -1);
     play(2500);
     a_charmap = open_app("charmap.exe", "MyDlgClass", "Character Map");
     if (a_charmap) { RECT r = srect(a_charmap); place(a_charmap, 1024 - (r.right - r.left) - 12, 360, r.right - r.left, r.bottom - r.top); }
@@ -637,6 +648,10 @@ static void scene_tribute(void)
     }
     tween(letter, 512 - 150, 384 - 166, 300, 300, 0, 1800, EASE_IO);
     play(2400);
+    repaint(letter);
+    play(1600);
+    ShowWindow(letter, SW_MINIMIZE);     /* the letter steps aside so the hidden ones have the middle */
+    play(800);
 
     /* ---- the hidden ones, one source at a time ---- */
     say("act secrets nsec=%d", nsec);
@@ -669,7 +684,11 @@ static void scene_tribute(void)
 
     /* ---- a forget-me-not ---- */
     say("act flower nsec=%d", nsec);
+    ShowWindow(letter, SW_RESTORE);
+    place(letter, 512 - 125, 384 - 141, 250, 250);    /* small enough that no petal lands on the words */
     raise_(letter);
+    play(300);
+    repaint(letter);
     arrange_flower(0, 3200);
     play(4200);
     play(7000);
@@ -679,6 +698,7 @@ static void scene_tribute(void)
     arrange_frame(512 - 300, 384 - 330, 600, 610, 0, 0, 2500);
     tween(letter, 512 - 280, 384 - 310, 560, 580, 300, 2200, EASE_IO);
     play(2800);
+    font_dlg_x = SW - 440; font_dlg_y = SH - 30 - 356;   /* off to the corner, never over the portrait */
     notepad_font(letter, "Lucida Console", "4", 2400);
     play(2500);
     portrait("C:\\p\\portrait-mother.txt", "For the mothers who worked so we could have something", 7000);
@@ -693,10 +713,10 @@ static void scene_tribute(void)
     set_title(letter, "We see you - Notepad");
     settext(letter_edit, "");
     tween(letter, 512 - 260, 384 - 180, 520, 300, 0, 1800, EASE_IO);
-    arrange_flower(0, 2200);
+    arrange_frame(512 - 260 - 60, 384 - 180 - 40, 520 + 120, 300 + 80, 27, 0, 2200);   /* a border, clear of the words */
     play(2200);
     type_into(letter_edit, "\n We see you.\n\n Every life is worthy\n of respect.\n", 12);
-    play(5000);
+    play(9000);                          /* the words the film came to say get their full hold */
 
     /* ---- peace ---- */
     say("act peace nsec=%d", nsec);

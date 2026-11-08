@@ -224,6 +224,9 @@ static void cancel_tweens(HWND h)
     for (i = 0; i < ntw; i++) if (tw[i].h == h) tw[i].active = 0;
 }
 
+/* scene clock for animations: tribute runs its whole world at a faster tempo */
+static double tscale = 1.0;
+
 /* tween h to x,y,w,h (parent coords) starting after delay ms, lasting dur ms.
    w or h < 0 keeps the current size. */
 static Tween *tween(HWND h, int x, int y, int w, int hh, int delay, int dur, int e)
@@ -237,6 +240,7 @@ static Tween *tween(HWND h, int x, int y, int w, int hh, int delay, int dur, int
     t->h = h; t->pending = 1; t->active = 1;
     t->x1 = x; t->y1 = y; t->w1 = w; t->h1 = hh;
     t->keep_size = w < 0 || hh < 0;
+    delay = (int)(delay * tscale); dur = (int)(dur * tscale);
     t->start = GetTickCount() + delay; t->dur = dur > 0 ? dur : 1; t->ease = e;
     return t;
 }
@@ -254,7 +258,7 @@ static void shake(HWND h, int delay, int dur, double amp)
     if (i == ntw) { if (ntw >= MAXT) return; ntw++; }
     memset(&tw[i], 0, sizeof tw[i]);
     tw[i].h = h; tw[i].pending = 1; tw[i].active = 1; tw[i].shake = amp;
-    tw[i].start = GetTickCount() + delay; tw[i].dur = dur;
+    tw[i].start = GetTickCount() + (int)(delay * tscale); tw[i].dur = (int)(dur * tscale) > 0 ? (int)(dur * tscale) : 1;
 }
 
 static void add_tick(TickFn fn, void *ctx)
@@ -467,6 +471,41 @@ static HWND wait_top(const char *cls, const char *title, DWORD pid, int ms)
     return NULL;
 }
 
+/* launch minimized, then restore straight into place: no full-size flash of a fresh window */
+static HWND open_app_at(const char *exe, const char *cls, const char *title, int x, int y, int w, int hh)
+{
+    STARTUPINFOA si;
+    PROCESS_INFORMATION pi;
+    char cl[512];
+    HWND h;
+    WINDOWPLACEMENT wp;
+    say("open_app_at %s", exe);
+    memset(&si, 0, sizeof si);
+    si.cb = sizeof si; si.dwFlags = STARTF_USESHOWWINDOW; si.wShowWindow = SW_SHOWMINNOACTIVE;
+    snprintf(cl, sizeof cl, "%s", exe);
+    if (!CreateProcessA(NULL, cl, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) { say("launch failed %s", exe); return NULL; }
+    WaitForInputIdle(pi.hProcess, 5000);
+    CloseHandle(pi.hThread); CloseHandle(pi.hProcess);
+    h = wait_top(cls, title, 0, 8000);
+    if (!h) return NULL;
+    memset(&wp, 0, sizeof wp); wp.length = sizeof wp;
+    GetWindowPlacement(h, &wp);
+    if (w < 0) w = wp.rcNormalPosition.right - wp.rcNormalPosition.left;
+    if (hh < 0) hh = wp.rcNormalPosition.bottom - wp.rcNormalPosition.top;
+    wp.rcNormalPosition.left = x; wp.rcNormalPosition.top = y;
+    wp.rcNormalPosition.right = x + w; wp.rcNormalPosition.bottom = y + hh;
+    wp.showCmd = SW_SHOWNOACTIVATE; wp.flags = 0;
+    SetWindowPlacement(h, &wp);
+    return h;
+}
+
+/* forget any queued animation on h (a busy program applies late moves to a minimized window) */
+static void untween(HWND h)
+{
+    int i;
+    for (i = 0; i < ntw; i++) if (tw[i].active && tw[i].h == h) tw[i].active = 0;
+}
+
 static HWND open_app(const char *exe, const char *cls, const char *title)
 {
     say("open_app %s", exe);
@@ -544,14 +583,17 @@ static char *crlf(const char *s)
 /* ===================================================================== */
 
 /* change Notepad's font through its own Font dialog */
+/* where the Font dialog stands while it is driven (-1: wherever Windows puts it) */
+static int font_dlg_x = -1, font_dlg_y = -1;
 static void notepad_font(HWND np, const char *face, const char *size, int show_ms)
 {
-    DWORD pid;
+    DWORD pid, end;
     HWND d, e;
     GetWindowThreadProcessId(np, &pid);
     cmd(np, 33);
     d = wait_top("#32770", "Font", pid, 4000);
     if (!d) return;
+    if (font_dlg_x >= 0) { RECT r = srect(d); place(d, font_dlg_x, font_dlg_y, r.right - r.left, r.bottom - r.top); }
     play(show_ms / 3);
     e = kid_cls(kid_id(d, 1136), "Edit");
     if (e) settext(e, face);
@@ -561,8 +603,22 @@ static void notepad_font(HWND np, const char *face, const char *size, int show_m
     if (e) settext(e, size);
     SendMessageA(d, WM_COMMAND, MAKEWPARAM(1138, CBN_EDITCHANGE), (LPARAM)kid_id(d, 1138));
     play(show_ms / 3);
-    PostMessageA(kid_id(d, 1), BM_CLICK, 0, 0);
-    play(400);
+    /* a posted BM_CLICK on OK is ignored by the common dialogs; IDOK is not */
+    PostMessageA(d, WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), (LPARAM)kid_id(d, IDOK));
+    end = GetTickCount() + 3000;
+    while (IsWindow(d) && IsWindowVisible(d) && (LONG)(GetTickCount() - end) < 0) play(40);
+    if (IsWindow(d) && IsWindowVisible(d)) {
+        say("font dialog stayed open; cancelling");
+        PostMessageA(d, WM_COMMAND, IDCANCEL, 0);
+        play(300);
+    }
+    {
+        HFONT f = (HFONT)SendMessageA(kid_cls(np, "Edit"), WM_GETFONT, 0, 0);
+        LOGFONTA lf;
+        if (f && GetObjectA(f, sizeof lf, &lf)) say("notepad font now %s h=%ld", lf.lfFaceName, lf.lfHeight);
+    }
+    RedrawWindow(np, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
+    play(250);
 }
 
 #include "scenes.h"
@@ -584,7 +640,11 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cl, int show)
     scene = cl;
     say("puppet start: '%s' %dx%d", scene, SW, SH);
     if (!*scene || !strncmp(scene, "basilisk", 8)) { if (strstr(scene, "fast")) pscale = 0.3; scene_basilisk(); }
-    else if (!strncmp(scene, "tribute", 7)) { fast_letter = strstr(scene, "fast") != NULL; scene_tribute(); }
+    else if (!strncmp(scene, "tribute", 7)) {
+        fast_letter = strstr(scene, "fast") != NULL;
+        if (!strstr(scene, "slow")) pscale = tscale = 0.5;   /* the same film at a quicker tempo */
+        scene_tribute();
+    }
     else if (!strncmp(scene, "intro", 5)) scene_intro();
     else if (!strncmp(scene, "v2", 2)) { if (strstr(scene, "fast")) v2_speed = 0.05; scene_v2(); }
     else if (!strncmp(scene, "test", 4)) scene_test(scene + 4);
