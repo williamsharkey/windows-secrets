@@ -9,7 +9,7 @@ PNG for 24 hours under an unguessable id.
   public  127.0.0.1:8784   POST /make  GET /job/<id>  GET /img/<id>.png  GET /state
   guest   127.0.0.1:8774   the COM1 line (DOSBox-X connects to us once, at its start)
 """
-import asyncio, json, os, re, secrets, subprocess, textwrap, time, unicodedata
+import asyncio, json, os, re, secrets, signal, subprocess, textwrap, time, unicodedata
 from collections import deque
 from aiohttp import web
 
@@ -188,6 +188,7 @@ class Line:
                     line = line.strip(b'\r').decode('cp1252', 'replace')
                     if line == 'HELLO':
                         self.hello.set()
+                        asyncio.get_running_loop().call_later(4, lambda: (not QUEUE) and freeze())   # booted and composed: rest
                     elif line == 'PONG':
                         self.pong.set()
                     elif line.startswith('READY '):
@@ -210,6 +211,46 @@ class Line:
 
 
 LINE = Line()
+
+
+# ------------------------------------------------------------------ freezing Windows between jobs
+# An idle DOSBox-X still emulates a CPU flat out (~40-60% of a host core). Between jobs it is stopped
+# with SIGSTOP and resumed with SIGCONT when the next job arrives; DOS's clock is then set from the host.
+
+def dosbox_pids():
+    pids = []
+    for d in os.listdir('/proc'):
+        if not d.isdigit():
+            continue
+        try:
+            with open('/proc/%s/cmdline' % d, 'rb') as f:
+                cl = f.read().split(b'\0')
+        except OSError:
+            continue
+        if cl and cl[0].endswith(b'/usr/bin/dosbox-x') and b'/root/snap/dosbox-x/common/val31/val31.conf' in cl:
+            pids.append(int(d))
+    return pids
+
+
+FROZEN = {'on': False}
+
+
+def freeze():
+    for pid in dosbox_pids():
+        try:
+            os.kill(pid, signal.SIGSTOP)
+        except OSError:
+            pass
+    FROZEN['on'] = True
+
+
+def thaw():
+    for pid in dosbox_pids():
+        try:
+            os.kill(pid, signal.SIGCONT)
+        except OSError:
+            pass
+    FROZEN['on'] = False
 
 
 def dbx(cmd):
@@ -257,17 +298,23 @@ async def worker():
                     if not LINE.hello.is_set():
                         await asyncio.wait_for(LINE.hello.wait(), 60)
                     ev = LINE.ready[jid] = asyncio.Event()
+                    thaw()
+                    lt = time.localtime()
+                    await LINE.send('TIME %d %d %d %d %d %d\r\n' % lt[:6])
                     await LINE.send(job_lines(jid, j['job']))
                     await asyncio.wait_for(ev.wait(), 40)
                     await asyncio.sleep(0.5)        # let the last paint reach the framebuffer
                     path = os.path.join(RES, jid + '.png')
                     await capture(path)
+                    if len(QUEUE) <= 1:
+                        freeze()               # the picture is taken: Windows rests until the next job
                     j['state'] = 'done'
                     j['secs'] = round(time.time() - t0, 1)
                     log('job %s done in %.1fs' % (jid[:6], time.time() - t0))
                     break
                 except (asyncio.TimeoutError, RuntimeError, OSError) as e:
                     log('job %s attempt %d failed: %r; restarting Windows' % (jid[:6], attempt, e))
+                    thaw()
                     LINE.hello.clear()
                     await asyncio.get_running_loop().run_in_executor(None, dbx, 'restart')
             else:
@@ -291,6 +338,7 @@ async def line_watch():
         busy = bool(QUEUE) and JOBS.get(QUEUE[0], {}).get('state') == 'working'
         if not busy and time.time() - down_since > 20:
             log('COM1 silent for 20 s; restarting Windows')
+            thaw()
             await asyncio.get_running_loop().run_in_executor(None, dbx, 'restart')
             down_since = time.time() + 40      # give it time to boot before trying again
 

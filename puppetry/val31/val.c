@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <dos.h>
 
 #define SW 1024
 #define SH 768
@@ -395,6 +396,20 @@ void on_line(const char FAR *l)
     } else if (collecting && !_fstrcmp(l, "END")) {
         collecting = 0;
         compose();
+    } else if (!_fstrncmp(l, "TIME ", 5)) {
+        /* the host froze this machine between jobs; set DOS's clock (and so Clock's) back to now */
+        int y, mo, d, h, mi, se;
+        char buf[64];
+        _fstrncpy(buf, l + 5, sizeof buf - 1); buf[sizeof buf - 1] = 0;
+        if (sscanf(buf, "%d %d %d %d %d %d", &y, &mo, &d, &h, &mi, &se) == 6) {
+            struct dosdate_t dd;
+            struct dostime_t dt;
+            dd.year = y; dd.month = (unsigned char)mo; dd.day = (unsigned char)d; dd.dayofweek = 0;
+            dt.hour = (unsigned char)h; dt.minute = (unsigned char)mi; dt.second = (unsigned char)se; dt.hsecond = 0;
+            _dos_setdate(&dd);
+            _dos_settime(&dt);
+            if (hClock) InvalidateRect(hClock, NULL, TRUE);
+        }
     } else if (!_fstrcmp(l, "PING")) {
         say("PONG\r\n");
     }

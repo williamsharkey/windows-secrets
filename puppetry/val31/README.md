@@ -1,7 +1,7 @@
 # VALENTINE 3.11
 
 A visitor types a valentine on williamsharkey.com/valentine-31.html. Windows for Workgroups 3.11 (DOSBox-X,
-headless on Xvfb :41, catenary-core) types it onto a real Cardfile card inside a heart of Solitaire's hearts
+headless on Xvfb :41, sharkey-server) types it onto a real Cardfile card inside a heart of Solitaire's hearts
 (drawn by CARDS.DLL), next to a real Clock, and the host photographs the screen.
 
 - `val.c` - VAL.EXE, the 16-bit composer. Host build: Open Watcom v2 at /root/val31/ow,
@@ -15,7 +15,11 @@ headless on Xvfb :41, catenary-core) types it onto a real Cardfile card inside a
 - `systemd/` - val31.target = val31-x (Xvfb :41) + val31-server + val31-dosbox.
 - Public URL (needs the Caddy route): https://live.williamsharkey.com/val31/ -> 127.0.0.1:8784 (handle_path).
 
-Wire protocol (cp1252, CRLF): host `JOB id`, `T:to`, `M:line\x01line...`, `F:`, `S:0|1|2`, `END`;
+Idle cost: once a job is photographed the server SIGSTOPs dosbox-x (0% CPU) and SIGCONTs it when the next
+job arrives (adds milliseconds; jobs still take ~3-4 s). Because DOS's clock stops too, each job starts with
+`TIME y mo d h mi s`, which VAL.EXE applies with _dos_setdate/_dos_settime so Clock shows the real time.
+
+Wire protocol (cp1252, CRLF): host `TIME ...`, `JOB id`, `T:to`, `M:line\x01line...`, `F:`, `S:0|1|2`, `END`;
 guest `HELLO` at start, `READY id` once everything has repainted, `DBG ...` diagnostics.
 
 Lessons (all found in screenshots): a Win16 message queue holds 8 messages, so characters are typed with
