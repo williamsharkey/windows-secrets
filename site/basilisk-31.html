@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BASILISK 3.11</title>
+<meta name="description" content="Claude Code on Windows for Workgroups 3.11: a 16-bit client compiled in Notepad and Open Watcom, assembled from Terminal, Clock, Cardfile and Calculator, live in your browser.">
+<style>
+:root {
+  --desk: #c0c0c0; --face: #c0c0c0; --hi: #ffffff; --lo: #808080; --ink: #000000;
+  --title: #000080; --title-ink: #ffffff; --paper: #ffffff; --muted: #404040; --link: #000080;
+}
+* { box-sizing: border-box; }
+html { background: var(--desk); }
+body { margin: 0; color: var(--ink); background: var(--desk);
+  font: 15px/1.55 "MS Sans Serif", "Microsoft Sans Serif", Arial, Helvetica, sans-serif; }
+a { color: var(--link); }
+.wrap { max-width: 1060px; margin: 0 auto; padding: 18px 16px 40px; }
+
+/* a Windows 3.1 window */
+.win { background: var(--paper); border: 1px solid var(--ink); box-shadow: 0 0 0 3px var(--face), 0 0 0 4px var(--ink); margin: 6px 4px 28px; }
+.cap { display: flex; align-items: center; height: 22px; background: var(--title); color: var(--title-ink); border-bottom: 1px solid var(--ink); font-weight: 700; font-size: 14px; }
+.cap .box { width: 22px; height: 21px; background: var(--face); border-right: 1px solid var(--ink); display: grid; place-items: center; }
+.cap .box::before { content: ""; width: 12px; height: 3px; background: var(--paper); border: 1px solid var(--ink); }
+.cap .t { flex: 1; text-align: center; letter-spacing: .02em; }
+.cap .arr { width: 22px; height: 21px; background: var(--face); border-left: 1px solid var(--ink); font-size: 10px; color: var(--ink); display: grid; place-items: center; }
+.menu { display: flex; gap: 18px; padding: 2px 10px; border-bottom: 1px solid var(--ink); font-size: 14px; }
+.menu u { text-decoration: underline; }
+
+/* the screen */
+.screen { position: relative; background: #000; aspect-ratio: 4 / 3; width: 100%; outline: none; overflow: hidden; }
+.screen canvas { image-rendering: pixelated; }
+.screen.focus { box-shadow: inset 0 0 0 3px #ffff00; }
+.hint { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--face); color: var(--ink);
+  border: 1px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); padding: 10px 16px; font-weight: 700; display: none; pointer-events: none; text-align: center; max-width: 80%; }
+.screen.need-focus .hint { display: block; }
+
+.bar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding: 10px 12px; background: var(--face); border-top: 1px solid var(--ink); }
+.btn { font: inherit; font-weight: 700; min-width: 110px; padding: 5px 14px; background: var(--face); color: var(--ink); cursor: pointer;
+  border: 1px solid var(--ink); border-radius: 3px; box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo); }
+.btn:active { box-shadow: inset 2px 2px 0 var(--lo); }
+.btn:focus-visible { outline: 1px dotted var(--ink); outline-offset: -5px; }
+.btn[hidden] { display: none; }
+.btn:disabled { color: var(--lo); cursor: default; }
+.status { flex: 1 1 280px; min-width: 0; }
+.meter { font-size: 13px; color: var(--muted); white-space: nowrap; }
+.mob { display: none; width: 100%; font: 16px/1.3 "Courier New", monospace; padding: 8px; border: 1px solid var(--ink); box-shadow: inset 1px 1px 0 var(--lo); }
+.mob.on { display: block; }
+
+/* prose */
+.doc { padding: 6px 22px 20px; }
+.doc h2 { font-size: 17px; margin: 22px 0 6px; }
+.doc p { margin: 8px 0; max-width: 72ch; }
+table { border-collapse: collapse; margin: 10px 0; width: 100%; max-width: 760px; font-size: 14px; }
+td, th { border: 1px solid var(--ink); padding: 5px 8px; text-align: left; vertical-align: top; }
+th { background: var(--face); }
+code { font-family: "Courier New", monospace; font-size: 14px; }
+.sib { margin: 26px 0 0; text-align: center; font-size: 13px; color: var(--muted); line-height: 2; }
+.sib a { color: var(--muted); text-decoration: none; }
+.sib a:hover { color: var(--ink); text-decoration: underline; }
+.sib i { font-style: normal; margin: 0 8px; opacity: .6; }
+.sib b { color: var(--ink); }
+@media (max-width: 640px) {
+  .wrap { padding: 10px 8px 30px; }
+  .menu { display: none; }
+  .doc { padding: 4px 12px 16px; }
+  .win { margin: 4px 3px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="win">
+  <div class="cap"><span class="box" aria-hidden="true"></span><span class="t">Windows for Workgroups 3.11 &mdash; live</span></div>
+  <div class="screen" id="screen" tabindex="0" aria-label="The live Windows for Workgroups 3.11 screen. When it is your turn, click here and type.">
+    <div class="hint" id="hint">Click here, then type.<br>Enter sends &middot; Esc interrupts &middot; PgUp/PgDn scroll</div>
+  </div>
+  <div class="bar">
+    <button class="btn" id="start" type="button">Start</button>
+    <button class="btn" id="leave" type="button" hidden>Leave</button>
+    <div class="status" id="status" role="status" aria-live="polite">Connecting to the machine&hellip;</div>
+    <span class="meter" id="meter"></span>
+    <input class="mob" id="mob" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type here, then Enter">
+  </div>
+</div>
+
+<div class="win">
+  <div class="cap"><span class="box" aria-hidden="true"></span><span class="t">README.TXT</span></div>
+  <div class="doc">
+    <p>This is Claude, working as a coding agent like Claude Code, inside a real copy of Windows for Workgroups 3.11 running on DOS in an emulator. Press <b>Start</b>. The machine pours a C file into Notepad, saves it, compiles it with Open Watcom in a DOS window, and runs it, which takes about 25 seconds. Then it's yours: type requests, as many as you like. It can look around the machine, read and write files, and write, compile and run C programs.</p>
+
+    <h2>What it is made of</h2>
+    <p>The client is a 16-bit Windows program, <code>BASILISK.C</code>, under 400 lines. It draws nothing itself. It starts four programs that came with Windows 3.1 and moves their parts into one window:</p>
+    <table>
+      <tr><th>Part</th><th>From</th><th>Job</th></tr>
+      <tr><td>The console</td><td>Terminal</td><td>The transcript, the 399-line scrollback, and the null-modem cable (COM1) that carries the conversation</td></tr>
+      <tr><td>The face</td><td>Clock</td><td>Moved in as a child window, still ticking on its own timer</td></tr>
+      <tr><td>Status card</td><td>Cardfile</td><td>The model, tokens and what it's doing now; the card behind holds the keys</td></tr>
+      <tr><td>The bill</td><td>Calculator</td><td>Its display, showing what the session has cost</td></tr>
+      <tr><td>The build</td><td>Notepad, Open Watcom</td><td>Notepad receives the source; <code>wcl</code> compiles it in a DOS window</td></tr>
+    </table>
+
+    <h2>How your keys get there</h2>
+    <p>Windows 3.11 has no network here. A second serial line (COM2) connects <code>BASILISK.EXE</code> to the server that talks to Claude, and on Claude's request it runs DOS commands, reads files and writes them. Your keystrokes go to that server, which does the line editing and echoes each character back down COM1, so it appears in Terminal the way remote echo always did. Measured on the server, a keystroke reaches the screen in about 40 ms; add your own round trip to see it here.</p>
+
+    <h2>Fair use</h2>
+    <p>One person drives at a time; everyone else watches the same screen. If someone is waiting, a turn lasts ten minutes, and a turn ends after three quiet minutes. The machine is reset for every visitor. The model is <code>claude-haiku-5-5</code>, with a small monthly budget; if it runs out, the line goes quiet until next month.</p>
+  </div>
+</div>
+
+<nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">Windows Secrets</a><i>&middot;</i><a href="inside-windows.html">Inside Windows</a><i>&middot;</i><a href="tribute.html">Tribute</a><i>&middot;</i><a href="basilisk.html">BASILISK</a><i>&middot;</i><a href="basilisk-term.html">BASILISK III</a><i>&middot;</i><b>BASILISK 3.11</b><i>&middot;</i><a href="xp-live.html">Live</a><i>&middot;</i><a href="puppetry.html">Window Puppetry</a></nav>
+</div>
+
+<script type="module">
+import RFB from './basilisk-31/novnc/core/rfb.js';
+
+const qs = new URLSearchParams(location.search);
+const EP = (qs.get('ep') || 'wss://live.williamsharkey.com/w31/').replace(/\/?$/, '/');
+const $ = id => document.getElementById(id);
+const screen = $('screen'), statusEl = $('status'), startB = $('start'), leaveB = $('leave'), meter = $('meter'), mob = $('mob');
+let ws, st = {}, rfb, rtt = [], probeN = 0, sentAt = {};
+
+/* ---- the picture: view-only VNC through the server's filter ---- */
+function connectScreen() {
+  try {
+    rfb = new RFB(screen, EP + 'vnc', { shared: true });
+    rfb.viewOnly = true;
+    rfb.scaleViewport = true;
+    rfb.clipViewport = false;
+    rfb.focusOnClick = false;
+    rfb.qualityLevel = 7;
+    rfb.compressionLevel = 2;
+    rfb.background = '#000';
+    rfb.addEventListener('disconnect', () => setTimeout(connectScreen, 2500));
+  } catch (e) { setTimeout(connectScreen, 4000); }
+}
+
+/* ---- the control line ---- */
+function connect() {
+  ws = new WebSocket(EP + 'ws');
+  ws.onmessage = e => {
+    const m = JSON.parse(e.data);
+    if (m.t === 'state') { st = m; render(); }
+    else if (m.t === 'ka' && sentAt[m.n]) {
+      rtt.push(performance.now() - sentAt[m.n]); delete sentAt[m.n];
+      if (rtt.length > 20) rtt.shift();
+      const s = [...rtt].sort((a, b) => a - b);
+      meter.textContent = 'line ' + Math.round(s[s.length >> 1]) + ' ms';
+    }
+  };
+  ws.onclose = () => { statusEl.textContent = 'The connection to the machine dropped. Reconnecting...'; setTimeout(connect, 2500); };
+  ws.onopen = () => send({ t: 'ping' });
+}
+function send(m) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(m)); }
+
+function clock(epoch) { return new Date(epoch * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }); }
+function mins(s) { const m = Math.floor(s / 60), r = s % 60; return m + ':' + String(r).padStart(2, '0'); }
+
+function render() {
+  const you = st.you, p = st.phase, driver = you === 'driver';
+  let t = '';
+  if (st.rest_until) t = 'You have had a few turns this hour. You can start again at ' + clock(st.rest_until) + '.';
+  else if (driver && p === 'building') t = 'Building: ' + ({ notepad: 'opening Notepad', typing: 'pouring the source into Notepad', saving: 'saving BASILISK.C', compiling: 'compiling with Open Watcom', running: 'starting BASILISK.EXE' }[st.step] || 'starting') + '...';
+  else if (driver && p === 'live') t = (st.busy ? 'Claude is working. Esc interrupts. ' : "It's yours. Click the screen and type. Enter sends, Esc interrupts. ") + (st.lease_left != null ? 'Someone is waiting: ' + mins(st.lease_left) + ' left.' : '');
+  else if (you === 'queued') t = 'You are number ' + st.pos + ' in line. Watch while you wait.';
+  else if (p === 'ready') t = 'The machine is free. Press Start: it builds BASILISK (about 25 seconds), then it is yours.';
+  else if (p === 'building' || p === 'live') t = 'Someone is using BASILISK' + (st.queue ? ' (' + st.queue + ' waiting)' : '') + '. Press Start to get in line.';
+  else if (p === 'booting' || p === 'ending') t = 'Windows for Workgroups is restarting for the next visitor...';
+  else t = 'The machine is starting up.';
+  if (st.note) t = st.note + ' ' + t;
+  if (st.quiet && driver) t += ' (The line to Claude is quiet this month: the budget is spent.)';
+  statusEl.textContent = t;
+  startB.hidden = driver || you === 'queued' || !!st.rest_until;
+  leaveB.hidden = !(driver || you === 'queued');
+  leaveB.textContent = driver ? 'End my turn' : 'Leave line';
+  const typing = driver && p === 'live';
+  screen.classList.toggle('need-focus', typing && !armed);
+  screen.classList.toggle('focus', typing && armed);
+  mob.classList.toggle('on', typing && matchMedia('(pointer: coarse)').matches);
+}
+
+startB.onclick = () => send({ t: 'start' });
+leaveB.onclick = () => send({ t: 'leave' });
+
+/* ---- keys: only the driver's count; they go to the server's line editor ---- */
+const NAMED = new Set(['Enter', 'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown', 'Escape']);
+function key(k, c) { const n = ++probeN; sentAt[n] = performance.now(); send({ t: 'k', k, c: c ? 1 : 0, n }); }
+let armed = false;                                  /* a click on the screen arms the keyboard until you click elsewhere */
+document.addEventListener('mousedown', e => { armed = screen.contains(e.target); render(); }, true);
+document.addEventListener('keydown', e => {         /* capture phase: before noVNC's canvas swallows it */
+  if (!armed || e.target === mob) return;
+  if (st.you !== 'driver' || st.phase !== 'live') return;
+  e.stopPropagation();
+  if (e.metaKey) return;
+  if (e.ctrlKey && !e.altKey) {
+    const k = e.key.toLowerCase();
+    if (k === 'v') return;                                  /* paste event below */
+    if ('uae'.includes(k)) { key(k, true); e.preventDefault(); }
+    return;
+  }
+  if (NAMED.has(e.key)) { key(e.key); e.preventDefault(); return; }
+  if (e.key.length === 1) {
+    if (e.key.charCodeAt(0) < 128) key(e.key); else send({ t: 'paste', text: e.key });
+    e.preventDefault();
+  }
+}, true);
+screen.addEventListener('paste', e => {
+  if (st.you !== 'driver') return;
+  const text = (e.clipboardData || window.clipboardData).getData('text');
+  if (text) send({ t: 'paste', text });
+  e.preventDefault();
+});
+let wheelAcc = 0, wheelT = 0;
+screen.addEventListener('wheel', e => {
+  if (st.you !== 'driver' || st.phase !== 'live') return;
+  e.preventDefault();
+  wheelAcc += e.deltaY;
+  const now = performance.now();
+  if (Math.abs(wheelAcc) >= 40 && now - wheelT > 60) {
+    send({ t: 'wheel', n: Math.max(-6, Math.min(6, Math.round(wheelAcc / 40))) });
+    wheelAcc = 0; wheelT = now;
+  }
+}, { passive: false });
+screen.addEventListener('mousedown', () => { screen.focus({ preventScroll: true }); setTimeout(() => screen.focus({ preventScroll: true }), 0); }, true);
+
+/* phones: a plain text box */
+mob.addEventListener('keydown', e => {
+  if (e.key === 'Enter') { if (mob.value) send({ t: 'paste', text: mob.value }); mob.value = ''; key('Enter'); e.preventDefault(); }
+  else if (e.key === 'Escape') key('Escape');
+});
+
+connect();
+connectScreen();
+setInterval(() => send({ t: 'ping' }), 15000);
+</script>
+</body>
+</html>

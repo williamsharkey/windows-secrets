@@ -1,0 +1,6 @@
+[Unit]
+Description=BASILISK 3.11 (Windows for Workgroups 3.11 in DOSBox-X, x11vnc, server)
+Wants=w31-xvfb.service w31-vnc.service w31-server.service
+
+[Install]
+WantedBy=multi-user.target

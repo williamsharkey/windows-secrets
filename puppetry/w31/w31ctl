@@ -1,0 +1,10 @@
+#!/bin/bash
+# w31ctl dev|stop|adm OP [BODY]|shots NAME s1 s2 ...   (dev control of the BASILISK 3.11 server)
+cd /root/w31
+case "$1" in
+dev)  pkill -f "venv/bin/[p]ython /root/w31/server.py"; sleep 1
+      W31_NO_SCHED=${2:-1} setsid nohup /root/w31/venv/bin/python /root/w31/server.py > /root/w31/server.log 2>&1 < /dev/null & sleep 2 ;;
+stop) pkill -f "venv/bin/[p]ython /root/w31/server.py" ;;
+adm)  T=$(cat /root/w31/data/admin.token); curl -s -XPOST "http://127.0.0.1:8782/admin/$2?token=$T" --data-binary "${3:-}" ;;
+shots) n=$2; shift 2; prev=0; for t in "$@"; do sleep $(echo "$t - $prev" | bc); prev=$t; DISPLAY=:31 import -window root /root/w31/shots/$n-$t.png; done ;;
+esac

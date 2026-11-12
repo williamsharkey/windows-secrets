@@ -1,0 +1,14 @@
+[Unit]
+Description=BASILISK 3.11 - view-only x11vnc of :31 on 127.0.0.1:5931 (server.py proxies it, dropping all input)
+After=w31-xvfb.service
+Requires=w31-xvfb.service
+PartOf=w31.target
+
+[Service]
+ExecStartPre=/bin/sleep 1
+ExecStart=/usr/bin/x11vnc -display :31 -rfbport 5931 -localhost -viewonly -shared -forever -nopw -nocursor -wait 5 -defer 5 -threads -quiet
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=w31.target

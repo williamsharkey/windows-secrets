@@ -1,0 +1,18 @@
+[Unit]
+Description=BASILISK 3.11 - server: serial lines, terminal UI, Claude, queue; starts DOSBox-X (127.0.0.1:8782 public)
+After=w31-xvfb.service
+Requires=w31-xvfb.service
+PartOf=w31.target
+
+[Service]
+WorkingDirectory=/root/w31
+ExecStart=/root/w31/venv/bin/python /root/w31/server.py
+ExecStopPost=/root/w31/dbx.sh stop
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=3
+# a guest on a shared box: production services win any CPU fight
+Nice=5
+
+[Install]
+WantedBy=w31.target

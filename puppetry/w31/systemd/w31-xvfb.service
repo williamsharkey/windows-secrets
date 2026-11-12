@@ -1,0 +1,11 @@
+[Unit]
+Description=BASILISK 3.11 - private X display :31 for DOSBox-X
+PartOf=w31.target
+
+[Service]
+ExecStart=/usr/bin/Xvfb :31 -screen 0 1024x768x24 -nolisten tcp
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=w31.target

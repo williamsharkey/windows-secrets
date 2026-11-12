@@ -1,0 +1,14 @@
+#!/bin/bash
+# w31build: push puppetry/w31 sources into the guest drive, reboot, run the build, shoot it
+cd /root/w31
+export WATCOM=/root/w31/dl/ow PATH=/root/w31/dl/ow/binl64:$PATH INCLUDE=/root/w31/dl/ow/h:/root/w31/dl/ow/h/win
+R=/root/snap/dosbox-x/common/w31/run
+wcl -q -bt=windows -l=windows -ml -k16384 basilisk.c 2>&1 | head -20 || exit 1
+wcl -q -bt=windows -l=windows -ml -k16384 -fe=b3boot.exe b3boot.c 2>&1 | head -5
+cp b3boot.exe $R/B3/B3BOOT.EXE
+python3 -c "s=open('basilisk.c').read().replace('\r\n','\n').replace('\n','\r\n'); open('$R/B3/BASILISK.SRC','w',newline='').write(s)"
+rm -f $R/B3/BASILISK.C $R/B3/BASILISK.EXE $R/B3/BASILISK.OBJ $R/B3/SPY.TXT
+w31ctl adm boot >/dev/null; sleep 15
+w31ctl adm send2 G >/dev/null
+w31ctl shots b "$@"
+grep COM2 server.log | tail -6
