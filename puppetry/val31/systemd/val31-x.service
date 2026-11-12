@@ -1,0 +1,11 @@
+[Unit]
+Description=VALENTINE 3.11 - headless X display :41 for DOSBox-X
+PartOf=val31.target
+
+[Service]
+ExecStart=/usr/bin/Xvfb :41 -screen 0 1024x768x24 -nolisten tcp
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=val31.target

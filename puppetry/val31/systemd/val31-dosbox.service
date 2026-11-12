@@ -1,0 +1,17 @@
+[Unit]
+Description=VALENTINE 3.11 - Windows for Workgroups 3.11 in DOSBox-X on :41 (COM1 -> 127.0.0.1:8774)
+Requires=val31-x.service
+After=val31-x.service val31-server.service
+PartOf=val31.target
+
+[Service]
+Environment=DISPLAY=:41
+WorkingDirectory=/root/snap/dosbox-x/common/val31
+ExecStartPre=/bin/sleep 2
+ExecStart=/snap/bin/dosbox-x -defaultdir /root/snap/dosbox-x/common/val31 -conf /root/snap/dosbox-x/common/val31/val31.conf
+Nice=5
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=val31.target

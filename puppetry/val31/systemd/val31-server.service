@@ -1,0 +1,13 @@
+[Unit]
+Description=VALENTINE 3.11 - host server (COM1 line 127.0.0.1:8774, public 127.0.0.1:8784)
+After=val31-x.service
+PartOf=val31.target
+
+[Service]
+WorkingDirectory=/root/val31
+ExecStart=/root/val31/venv/bin/python /root/val31/server.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=val31.target

@@ -1,0 +1,6 @@
+[Unit]
+Description=VALENTINE 3.11 (Xvfb, server, DOSBox-X)
+Wants=val31-x.service val31-server.service val31-dosbox.service
+
+[Install]
+WantedBy=multi-user.target
