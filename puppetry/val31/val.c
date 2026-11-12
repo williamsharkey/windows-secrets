@@ -156,7 +156,7 @@ static void heart_points(int cx, int cy, double sx, double sc)
     for (k = 0; k < 11; k++) {
         pts[npts].x = 2 * cx - pts[k].x; pts[npts].y = pts[k].y; rank_of[npts] = k + 1; npts++;
     }
-    pts[npts].x = cx; pts[npts].y = cy - (int)(5.0 * sc) - 34; rank_of[npts] = 0; npts++;
+    pts[npts].x = cx; pts[npts].y = cy - (int)(5.0 * sc) - 40; rank_of[npts] = 0; npts++;   /* clear of Cardfile's top edge */
     heart_xy(3.14159265, &x, &y);
     pts[npts].x = cx; pts[npts].y = cy + (int)(y * sc); rank_of[npts] = 12; npts++;
 }
@@ -189,9 +189,10 @@ static void paint_back(HDC dc)
             int n = order[i2], rank = rank_of[n];
             RECT c, w, x;
             SetRect(&c, pts[n].x - cardW / 2, pts[n].y - cardH / 2, pts[n].x + cardW / 2, pts[n].y + cardH / 2);
-            SetRect(&w, CARD_X, CARD_Y, CARD_X + CARD_W, CARD_Y + CARD_H);
-            /* a card mostly behind Cardfile would only show as a sliver: leave it out */
-            if (IntersectRect(&x, &c, &w) && (long)(x.right - x.left) * (x.bottom - x.top) * 2 > (long)cardW * cardH) continue;
+            SetRect(&w, CARD_X - 4, CARD_Y - 4, CARD_X + CARD_W + 4, CARD_Y + CARD_H + 4);
+            /* the heart runs behind Cardfile: a card that would touch the window is not dealt at all,
+               so every card on screen is whole and the gap is the same on both sides */
+            if (IntersectRect(&x, &c, &w)) continue;
             cdtDraw(dc, c.left, c.top, rank * 4 + 2, 0, 0);
         }
     }
@@ -323,7 +324,8 @@ static void place_parts(void)
 {
     /* Cardfile in the middle of the heart, Clock at the cusp */
     if (hCard) SetWindowPos(hCard, NULL, CARD_X, CARD_Y, CARD_W, CARD_H, SWP_NOZORDER | SWP_NOACTIVATE);
-    if (hClock) SetWindowPos(hClock, NULL, SW - 196, SH - 250, 168, 196, SWP_NOZORDER | SWP_NOACTIVATE);
+    /* wide enough for Clock's own caption, "Clock - mm/dd/yy", beside its buttons */
+    if (hClock) SetWindowPos(hClock, NULL, SW - 236, SH - 276, 212, 232, SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 static void settle_and_report(void)

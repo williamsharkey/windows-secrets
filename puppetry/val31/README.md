@@ -21,5 +21,6 @@ guest `HELLO` at start, `READY id` once everything has repainted, `DBG ...` diag
 Lessons (all found in screenshots): a Win16 message queue holds 8 messages, so characters are typed with
 SendMessage, not PostMessage; Cardfile ignores WM_SETTEXT on its card, so the card is typed; focus is
 dropped (SetFocus(NULL)) so no caret is photographed, and WM_NCACTIVATE keeps Cardfile's caption active;
-cards more than half behind Cardfile are not dealt, so no slivers show; 16-bit int math overflowed the
+a card that would touch Cardfile (with a 4 px margin) is not dealt, so every card on screen is whole and the
+heart passes behind the card symmetrically; Clock is sized so its own caption fits beside its buttons; 16-bit int math overflowed the
 gradient; the Index dialog clips names by pixel width, so the host measures names first.
