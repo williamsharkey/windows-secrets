@@ -21,3 +21,9 @@ Emulator: DOSBox-X snap (snap install dosbox-x). Snap AppArmor only lets it read
     wcl -q -bt=windows -l=windows -ml prog.c
   In-guest (DOS-hosted): copied binw, h, lib286 into C:\WATCOM\{BINW,H,LIB286}; SET WATCOM=C:\WATCOM,
   PATH ...;C:\WATCOM\BINW, INCLUDE=C:\WATCOM\H;C:\WATCOM\H\WIN. Copy those dirs from /root/w31/dl/ow too.
+
+Idle (sharkey-server, 2026-11-12): server.py SIGSTOPs DOSBox-X whenever the machine is ready and nobody drives
+(after 8 s of settling), with a still of the last frame shown in front by ImageMagick `display` (a stopped window
+goes black on the next expose). SIGCONT + 1.5 s before the build; G is resent until B3BOOT answers.
+`snap run` puts DOSBox-X in a scope under root's user manager (user@0), which systemd stops when the last root
+SSH session ends - killing the emulator. Fixed with `loginctl enable-linger root` (also protects val31's snap).

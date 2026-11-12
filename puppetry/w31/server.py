@@ -181,6 +181,7 @@ class Line:
         self.connected = asyncio.Event()
         self.q = asyncio.Queue()
         self.cps = 1800          # 19200 baud: pace writes so the UART never overruns
+        self.on_lost = None
 
     async def serve(self):
         srv = await asyncio.start_server(self._conn, '127.0.0.1', self.port)
@@ -210,6 +211,8 @@ class Line:
                 self.connected.clear()
                 while not self.q.empty():
                     self.q.get_nowait()
+                if self.on_lost:
+                    self.on_lost()
             log('%s closed' % self.name)
 
     def send(self, b):
@@ -517,12 +520,27 @@ class Session:
         self.rest_until = 0
 
 
+def dosbox_pids():
+    out = subprocess.run(['pgrep', '-f', 'dosbox-x -defaultdir ' + SNAPC], capture_output=True, text=True).stdout
+    return [int(x) for x in out.split()]
+
+
+def freeze(stop):
+    """idle costs nothing: the emulator is paused (SIGSTOP) while nobody drives; Xvfb keeps its last frame"""
+    for pid in dosbox_pids():
+        try:
+            os.kill(pid, signal.SIGSTOP if stop else signal.SIGCONT)
+        except ProcessLookupError:
+            pass
+
+
 class Machine:
     def __init__(self):
         self.phase = 'dark'
         self.phase_t = time.time()
         self.com1 = Line('COM1', int(cfg('W31_COM1')), self.on_com1)
         self.com2 = Line('COM2', int(cfg('W31_COM2')), self.on_com2)
+        self.com2.on_lost = self.lost
         self.rx2 = b''
         self.waiters = {}          # tool id -> future
         self.events = asyncio.Queue()   # (type, payload) from COM2
@@ -540,6 +558,7 @@ class Machine:
         self.build_t = 0
         self.lat = deque(maxlen=50)
         self.boot_lock = asyncio.Lock()
+        self.frozen = False
         tok = os.path.join(DATA, 'admin.token')
         if not os.path.exists(tok):
             with open(tok, 'w') as f:
@@ -608,24 +627,90 @@ class Machine:
         async with self.boot_lock:
             self.set_phase('booting')
             self.step = ''
-            await self.sh(DBX, 'stop')
-            self.com1.flush_pending()
-            self.com2.flush_pending()
-            if os.path.isdir(GOLDEN):
-                await self.sh('rsync', '-a', '--delete', GOLDEN + '/', RUN + '/')
-            while not self.events.empty():
-                self.events.get_nowait()
-            self.rx2 = b''
-            await self.sh(DBX, 'start')
+            freeze(False)                          # a paused process ignores SIGTERM
+            self.frozen = False
+            self.drop_still()
+            for attempt in range(3):
+                await self.sh(DBX, 'stop')
+                for _ in range(50):                # the old emulator's cables must be unplugged first
+                    if not self.com1.connected.is_set() and not self.com2.connected.is_set():
+                        break
+                    await asyncio.sleep(0.1)
+                self.com1.flush_pending()
+                self.com2.flush_pending()
+                if os.path.isdir(GOLDEN) and attempt == 0:
+                    await self.sh('rsync', '-a', '--delete', GOLDEN + '/', RUN + '/')
+                while not self.events.empty():
+                    self.events.get_nowait()
+                self.rx2 = b''
+                await self.sh(DBX, 'start')
+                try:      # the snap launcher can stall on a loaded host: retry rather than wait forever
+                    await asyncio.wait_for(self.com2.connected.wait(), 45)
+                    break
+                except asyncio.TimeoutError:
+                    log('DOSBox-X did not connect (attempt %d); restarting it' % (attempt + 1))
             try:
-                await asyncio.wait_for(self.com2.connected.wait(), 20)
-                await self.wait_event(('H',), 90)
+                if not self.com2.connected.is_set():
+                    raise asyncio.TimeoutError()
+                await self.wait_event(('H',), 150)
                 self.set_phase('ready')
+                await asyncio.sleep(8)             # let Windows settle (and paint the frame watchers will see)
+                if self.phase == 'ready' and not self.driver and not self.queue:
+                    self.freeze()
                 return True
             except asyncio.TimeoutError:
                 log('boot timed out')
                 self.set_phase('dark')
                 return False
+
+    def lost(self):
+        """the emulator vanished outside a reboot: say so, and let the scheduler boot a fresh one"""
+        if self.boot_lock.locked() or self.phase in ('booting', 'dark'):
+            return
+        log('DOSBox-X went away during %s' % self.phase)
+        if self.task and not self.task.done():
+            self.task.cancel()
+        if self.driver:
+            self.note(self.driver, 'The machine stopped unexpectedly; it is restarting.')
+            self.driver = None
+        self.frozen = False
+        self.drop_still()
+        self.set_phase('dark')
+
+    STILL = os.path.join(DATA, 'still.png')
+
+    def freeze(self):
+        """pause the emulator; a still of the last frame stands in front of it (a paused window
+        can't repaint, so X would show black after the next expose)"""
+        if self.frozen:
+            return
+        env = dict(os.environ, DISPLAY=':31')
+        try:
+            subprocess.run(['import', '-window', 'root', self.STILL], env=env, timeout=10,
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            self.still = subprocess.Popen(['display', '-immutable', '-geometry', '+0+0', '-title', 'w31-still',
+                                           self.STILL], env=env, stdout=subprocess.DEVNULL,
+                                          stderr=subprocess.DEVNULL)
+            time.sleep(0.4)                      # mapped before the emulator stops answering exposes
+        except (OSError, subprocess.SubprocessError) as e:
+            log('still frame: %r' % e)
+            self.still = None
+        freeze(True)
+        self.frozen = True
+        log('emulator paused (idle)')
+
+    def drop_still(self):
+        st = getattr(self, 'still', None)
+        if st and st.poll() is None:
+            st.terminate()
+        self.still = None
+
+    def thaw(self):
+        if self.frozen:
+            freeze(False)
+            self.frozen = False
+            log('emulator resumed')
+        self.drop_still()
 
     @staticmethod
     async def sh(*args):
@@ -636,7 +721,17 @@ class Machine:
         """B3BOOT pours the source into Notepad, saves it, compiles it; BASILISK.EXE comes up"""
         self.set_phase('building')
         self.build_t = time.time()
-        self.send2('G')
+        self.thaw()
+        await asyncio.sleep(1.5)                  # a just-resumed DOSBox-X can drop the first bytes it gets
+        for attempt in range(4):
+            self.send2('G')
+            try:
+                await self.wait_event(('S',), 5)     # B3BOOT's first step: it heard us
+                break
+            except asyncio.TimeoutError:
+                log('no answer to G (attempt %d)' % (attempt + 1))
+        else:
+            raise RuntimeError('B3BOOT did not answer')
         try:
             t, p = await self.wait_event(('D', 'E'), 150)
             if t == 'E':
@@ -760,13 +855,18 @@ class Machine:
                 LIMITS.session_note(s.ip)
                 self.driver, self.lease_start, self.last_key = s, time.time(), time.time()
                 self.changed.set()
-                try:
-                    await self.build()
-                except Exception as e:
-                    log('build failed: %r' % e)
-                    self.driver = None
-                    self.note(s, 'The build failed on this machine; it is rebooting. Try again in a minute.')
-                    await self.boot()
+                for attempt in (1, 2):               # one quiet retry on a fresh boot before giving up
+                    try:
+                        await self.build()
+                        break
+                    except Exception as e:
+                        log('build failed (attempt %d): %r' % (attempt, e))
+                        if attempt == 1 and s in self.sessions:
+                            await self.boot()
+                            continue
+                        self.driver = None
+                        self.note(s, 'The build failed on this machine; it is rebooting. Try again in a minute.')
+                        await self.boot()
                 self.changed.set()
 
     async def end_session(self, why):
@@ -1011,9 +1111,12 @@ class Machine:
             await asyncio.sleep(0.15)
 
     async def ticker(self):
-        """keep the Cardfile status card's countdown honest while someone waits"""
+        """keep the Cardfile status card's countdown honest while someone waits; re-pause an idle machine"""
         while True:
             await asyncio.sleep(15)
+            if (self.phase == 'ready' and not self.driver and not self.queue and not self.frozen
+                    and time.time() - self.phase_t > 10):
+                self.freeze()
             if self.phase == 'live' and self.driver and self.queue:
                 self.status()
 
@@ -1158,7 +1261,8 @@ async def p_vnc(req):
                 elif t == 6:
                     if len(buf) < 8:
                         break
-                    need = 8 + struct.unpack('>I', buf[4:8])[0]
+                    # signed: noVNC announces Extended Clipboard with a negative length
+                    need = 8 + abs(struct.unpack('>i', buf[4:8])[0])
                     if need > 1 << 16:
                         raise ValueError('cut text too long')
                 elif need is None:
@@ -1171,8 +1275,8 @@ async def p_vnc(req):
             if outb:
                 w.write(outb)
                 await w.drain()
-    except Exception:
-        pass
+    except Exception as e:
+        log('vnc proxy closed: %r' % e)
     finally:
         VNC_CLIENTS.discard(ws)
         dt.cancel()
@@ -1191,6 +1295,8 @@ async def p_admin(req):
         raise web.HTTPForbidden()
     op = req.match_info['op']
     body = (await req.read()).decode('utf-8', 'replace')
+    if op in ('x', 'y', 'send2', 'out1', 'type', 'live'):
+        M.thaw()
     if op == 'x':          # B3BOOT: WinExec
         tid = 'x'
         M.send2('X', body)
@@ -1237,7 +1343,7 @@ async def p_admin(req):
     if op == 'status':
         return web.json_response({'phase': M.phase, 'step': M.step, 'spent': BUDGET.spent(),
                                   'driver': bool(M.driver), 'queue': len(M.queue), 'viewers': len(M.sessions),
-                                  'vnc': len(VNC_CLIENTS)})
+                                  'vnc': len(VNC_CLIENTS), 'frozen': M.frozen})
     raise web.HTTPNotFound()
 
 
