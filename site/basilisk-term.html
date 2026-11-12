@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BASILISK III</title>
-<meta name="description" content="A working Claude Code client assembled from Windows XP's own parts: Notepad keeps the transcript, its Find box takes your words, Date and Time keeps the clock. Drive it from your browser.">
+<meta name="description" content="A working Claude Code client assembled from Windows XP's own parts, now a tabbed suite: Notepad keeps the transcript, its Find box takes your words, Date and Time lends its tabs and clock. Drive it from your browser.">
 <style>
 :root {
   --bg: #f4f2ec; --ink: #1d1f22; --muted: #62666d; --line: #d8d4c8; --panel: #fffdf8;
@@ -31,6 +31,7 @@ h1 { font: 700 26px/1.2 var(--mono); letter-spacing: .02em; margin: 0 0 6px; }
 .stagebox.driving { box-shadow: 0 0 0 3px var(--xp); }
 #screen { position: absolute; inset: 0; }
 #screen canvas { cursor: default !important; }
+.stagebox.driving #screen canvas { cursor: none !important; }   /* while driving, XP's own pointer is the cursor */
 .veil { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center;
   color: #e9e6de; background: rgba(0, 0, 0, .55); font: 15px/1.5 var(--sans); padding: 16px; pointer-events: none; }
 .veil[hidden] { display: none; }
@@ -69,7 +70,7 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3p
 <body>
 <header class="wrap">
   <h1>BASILISK III</h1>
-  <p class="dek">A working Claude Code client, assembled from Windows XP's own parts. Notepad keeps the transcript, Notepad's Find box takes your words, Date and Time keeps the clock, Calculator keeps the bill. It runs on a real XP machine; Claude works in it with real tools. Press start, wait for it to build itself, then type.</p>
+  <p class="dek">A working Claude Code client, assembled from Windows XP's own parts, in six tabs. Notepad keeps the transcript, Notepad's Find box takes your words, Date and Time lends its tabs, clock and calendar, Calculator keeps the bill, and a real message box asks before Claude runs anything. It runs on a real XP machine; Claude works in it with real tools. Press start, wait for it to build itself, then type.</p>
 </header>
 
 <main class="wrap">
@@ -93,9 +94,11 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3p
     <div>
       <h2>How to drive</h2>
       <ul>
-        <li>Click the screen, then type. <kbd>Enter</kbd> sends, <kbd>Esc</kbd> stops Claude.</li>
+        <li>Click the screen, then type. <kbd>Enter</kbd> sends, <kbd>Esc</kbd> stops Claude. Your mouse is XP's mouse: click, right-click, select and scroll.</li>
         <li><kbd>&uarr;</kbd> <kbd>&darr;</kbd> recall what you typed. <kbd>PgUp</kbd> <kbd>PgDn</kbd> or the mouse wheel scroll back.</li>
-        <li>Paste works (<kbd>Ctrl</kbd>+<kbd>V</kbd>). <code>/help</code>, <code>/clear</code>, <code>/model sonnet</code>, <code>/cost</code>.</li>
+        <li>Paste works (<kbd>Ctrl</kbd>+<kbd>V</kbd>). <code>/help</code>, <code>/clear</code>, <code>/compact</code>, <code>/plan</code>, <code>/effort high</code>, <code>/model sonnet</code>, <code>/cost</code>.</li>
+        <li>Click a tab, or <kbd>Ctrl</kbd>+<kbd>Tab</kbd>. <b>Chat</b> talks. <b>Plan</b> shows Claude's to-do list, plan mode and which commands may run without asking. <b>Files</b> shows the work folder; <code>CLAUDE.md</code> there is Claude's memory, and a file can be @-mentioned. <b>Usage</b> is Task Manager for the context window, with a Defragment button that compacts it. <b>Tools</b> lists every tool run, with End Process. <b>Settings</b> has model, effort and the list of where each part comes from.</li>
+        <li>When Claude wants to run a command or change a file, a message box asks: Allow, Always or Deny.</li>
         <li>One person drives at a time; everyone else watches live. If someone is waiting you get ten minutes, otherwise as long as you keep typing.</li>
       </ul>
     </div>
@@ -106,11 +109,12 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3p
         <li>Write a C program that draws a spiral in a window, compile it with tcc and run it.</li>
         <li>Make a JScript that prints the first 30 primes.</li>
         <li>What are the ten biggest files in C:\WINDOWS?</li>
+        <li>Tick plan mode, then: plan a small text adventure in C. Untick it and say go.</li>
       </ul>
     </div>
     <div>
       <h2>What it's made of</h2>
-      <p>Each session starts from a clean desktop. A blank Notepad receives <code>basilisk.c</code>, it is saved to the desktop and compiled there by the Tiny C Compiler, and the program takes Notepad, Notepad's Find dialog, the Date and Time page and Calculator's display, and puts them together. Every part is still drawn by the program that made it. Claude (Haiku 5.5 by default) runs the conversation on a server; its four tools (run a command, read, write and edit a file) run inside XP. The machine has no internet and is reset after every session. <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry/b3">Source</a>.</p>
+      <p>Each session starts from a clean desktop. A blank Notepad receives <code>basilisk.c</code>, it is saved to the desktop and compiled there by the Tiny C Compiler, and the program takes Notepad, Notepad's Find dialog, Date and Time's tabs and page, and Calculator's display, and puts them together, one change at a time. Borrowed, and still drawn by the program that made them: the transcript (Notepad's edit), the prompt bar (the Find dialog), the tabs and the clock and calendar (Date and Time), the cost meter (Calculator), the permission prompts (MessageBox) and the busy animation (shell32's file copy). Created here from the same XP control classes: the lists, the file tree, the status bar, the trackbar. Drawn here, after Task Manager, a drive's Properties and Disk Defragmenter: the meters, graphs, the context pie and the context map. Claude (Haiku 5.5 by default) runs the conversation on a server; its four tools (run a command, read, write and edit a file) run inside XP. The machine has no internet and is reset after every session. <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry/b3">Source</a>.</p>
     </div>
   </section>
 </main>
@@ -228,13 +232,41 @@ stagebox.addEventListener('paste', (e) => {
   const text = (e.clipboardData || window.clipboardData).getData('text');
   if (text) { e.preventDefault(); send({ t: 'paste', text: text.slice(0, 4000) }); }
 });
+/* the mouse: the driver's pointer moves XP's pointer; buttons and the wheel are XP's own */
+function guestXY(e) {
+  const c = document.querySelector('#screen canvas');
+  if (!c) return null;
+  const r = c.getBoundingClientRect();
+  if (!r.width || e.clientX < r.left || e.clientY < r.top || e.clientX > r.right || e.clientY > r.bottom) return null;
+  return { x: Math.round((e.clientX - r.left) * (c.width || 1024) / r.width), y: Math.round((e.clientY - r.top) * (c.height || 768) / r.height) };
+}
+let moveQ = null, moveRaf = 0;
+stagebox.addEventListener('pointermove', (e) => {
+  if (!driving()) return;
+  const p = guestXY(e);
+  if (!p) return;
+  moveQ = p;
+  if (!moveRaf) moveRaf = requestAnimationFrame(() => { moveRaf = 0; if (moveQ) send({ t: 'mouse', x: moveQ.x, y: moveQ.y }); moveQ = null; });
+});
+const BTN = ['left', 'middle', 'right'];
+function button(e, down) {
+  if (!driving()) return;
+  const p = guestXY(e);
+  if (!p || !BTN[e.button]) return;
+  e.preventDefault();
+  moveQ = null;
+  send({ t: 'mouse', x: p.x, y: p.y, b: BTN[e.button], down });
+}
+stagebox.addEventListener('pointerdown', (e) => { button(e, true); if (driving()) stagebox.setPointerCapture && stagebox.setPointerCapture(e.pointerId); });
+stagebox.addEventListener('pointerup', (e) => button(e, false));
+stagebox.addEventListener('contextmenu', (e) => { if (driving()) e.preventDefault(); });
 let wheelAcc = 0;
 stagebox.addEventListener('wheel', (e) => {
   if (!driving()) return;
   e.preventDefault();
-  wheelAcc += e.deltaMode === 1 ? e.deltaY : e.deltaY / 40;
+  wheelAcc += e.deltaMode === 1 ? e.deltaY / 3 : e.deltaY / 100;      /* one notch = three lines in XP */
   const n = Math.trunc(wheelAcc);
-  if (n) { wheelAcc -= n; send({ t: 'wheel', n }); }
+  if (n) { wheelAcc -= n; send({ t: 'mwheel', n }); }
 }, { passive: false });
 
 /* phones: type in the box, Send pastes it and presses Enter */

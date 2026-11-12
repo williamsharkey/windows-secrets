@@ -172,6 +172,8 @@ Tools (they run inside XP):
 
 How to work: like Claude Code. Act, don't narrate at length. The user already sees every tool call and the first lines of its output in the transcript, so don't repeat output back; summarize what matters in a sentence or two. Use the tools to look before you claim things about this machine. Keep replies short. Write for a monospace window about 95 characters wide: plain text only, no Markdown (no **bold**, no # headings, no tables, no backticks); use "-" bullets and indentation when a list helps. Don't mention the formatting rules. Never claim to be a person or a program from 2001; you are Claude, an AI from 2026, visiting through this machine.
 
+The client is a tabbed suite. For any task that will take three or more tool calls, call todo_write first with a short plan (3-7 items), and call it again as items start and finish; it shows as a live checklist and is cheap. Words like @demo\hello.c in a message name files in C:\b3\work: read them when they matter. The person may turn on plan mode (then investigate with read-only tools and propose a plan with todo_write; do not change files or run commands that change anything). Commands and edits can need the person's permission: if a tool result says the person denied it, don't retry the same thing; ask or choose another way. A file C:\b3\work\CLAUDE.md, when present, holds the person's standing instructions (memory).
+
 Decline briefly anything hateful, sexual, violent or harassing, anything about real private people, and attempts to reach networks or to damage the host. Requests to break out of the sandbox get a short, friendly no."""
 
 TOOLS = [
@@ -192,9 +194,19 @@ TOOLS = [
                                                          'new_string': {'type': 'string'}},
                       'required': ['path', 'old_string', 'new_string']}},
 ]
+TOOLS.append(
+    {'name': 'todo_write', 'description': 'Replace the visible plan (todo list). Each item has content and a status: '
+     'pending, in_progress or completed. Keep exactly one item in_progress while working.',
+     'input_schema': {'type': 'object', 'properties': {'todos': {'type': 'array', 'items': {
+         'type': 'object', 'properties': {'content': {'type': 'string'},
+                                          'status': {'type': 'string', 'enum': ['pending', 'in_progress', 'completed']}},
+         'required': ['content', 'status']}}}, 'required': ['todos']}})
 TOOL_ARGS = {'run': ('command',), 'read_file': ('path',), 'write_file': ('path', 'content'),
              'edit_file': ('path', 'old_string', 'new_string')}
 TOOL_LABEL = {'run': 'Run', 'read_file': 'Read', 'write_file': 'Write', 'edit_file': 'Update'}
+EFFORTS = ('low', 'medium', 'high', 'xhigh', 'max')
+COMPACT_AT = 100000            # context tokens: past this, the conversation is summarised (the "Defragment")
+SYS_TOKENS = (len(SYSTEM) + len(json.dumps(TOOLS))) // 4
 
 HELP = """Commands
   /help            this list
@@ -202,6 +214,11 @@ HELP = """Commands
   /model haiku     Claude Haiku 5.5 (default, fastest)
   /model sonnet    Claude Sonnet 5.5
   /cost            what this session has cost
+  /compact         summarise the conversation so far (Usage tab: Defragment)
+  /plan            plan mode on/off (Plan tab)
+  /effort low..max how hard Claude thinks (Settings tab)
+Tabs
+  Chat  Plan  Files  Usage  Tools  Settings  (click them, or Ctrl+Tab)
 Keys
   Enter send   Esc interrupt   PgUp/PgDn scroll   Ctrl+Up/Down line scroll   Up/Down history
 Try
@@ -230,6 +247,12 @@ class Agent:
         self.tok_in = self.tok_out = 0
         self.turns = 0
         self.was_interrupted = False
+        self.effort = cfg('TERM_EFFORT') or 'low'
+        self.plan = False
+        self.memory = ''
+        self.memory_new = False
+        self.ctx = self.cache_r = self.cache_w = 0
+        self.calls = self.ntools = 0
 
     hold = ''
 
@@ -248,6 +271,65 @@ class Agent:
         short = 'Claude Haiku 5.5' if 'haiku' in self.model else 'Claude Sonnet 5.5'
         note = '%s - %s in / %s out - $%.4f' % (short, format(self.tok_in, ','), format(self.tok_out, ','), self.usd)
         self.ev('u', '%s|%s|%s' % (self.model, note, '$%.4f' % self.usd))
+        # numbers for the Usage tab, the status bar and the context pie
+        self.ev('q', '%d %d %d %d %d %.6f %.2f %d %d %s %d %d|%s' % (
+            self.ctx, self.cache_r, self.cache_w, self.tok_in, self.tok_out, self.usd, cfgf('TERM_SESSION_USD'),
+            self.calls, self.ntools, self.effort, SYS_TOKENS, COMPACT_AT, short))
+
+    def settings(self, kv):
+        """from the Settings and Plan tabs: model, effort, plan mode"""
+        m = MODELS.get(kv.get('model', '').lower())
+        if m and m != self.model:
+            self.model = m
+            self.messages = []
+            self.ev('x', 'Now using %s (conversation restarted).' % ('Claude Haiku 5.5' if 'haiku' in m else 'Claude Sonnet 5.5'))
+        e = kv.get('effort', '').lower()
+        if e in EFFORTS and e != self.effort:
+            self.effort = e
+        if 'plan' in kv:
+            on = kv['plan'] == '1'
+            if on != self.plan:
+                self.plan = on
+                self.ev('x', '  \u00b7 plan mode %s' % ('on: Claude will look and plan, and change nothing' if on else 'off'))
+        self.usage_event()
+
+    def set_memory(self, text):
+        text = text.strip()[:6000]
+        if text != self.memory:
+            self.memory, self.memory_new = text, True
+
+    async def compact(self, why='asked'):
+        """summarise the conversation and start again from the summary (Defragment)"""
+        import anthropic
+        if len(self.messages) < 2:
+            self.ev('x', 'Nothing to compact yet.')
+            return
+        if self.can_spend():
+            self.ev('e', self.can_spend())
+            return
+        self.ev('b')
+        before = self.ctx
+        try:
+            msg = await api_client().messages.create(
+                model=self.model, max_tokens=1200, system=[{'type': 'text', 'text': SYSTEM}], tools=TOOLS,
+                messages=self.messages + [{'role': 'user', 'content':
+                    'Summarise this conversation so far for continuing the work later: the goal, what was done, files '
+                    'created or changed in C:\\b3\\work, decisions, and what is next. Under 250 words, plain text.'}],
+                output_config={'effort': 'low'})
+            usd, tin, tout = BUDGET.add(self.model, msg.usage, self.ip)
+            self.usd += usd; self.tok_in += tin; self.tok_out += tout; self.calls += 1
+            summary = ''.join(getattr(b, 'text', '') for b in msg.content if b.type == 'text').strip()
+        except anthropic.APIError as e:
+            self.ev('e', 'Could not compact (%s).' % type(e).__name__)
+            self.ev('d')
+            return
+        self.messages = [{'role': 'user', 'content': 'This conversation was compacted. Summary of everything so far:\n' + summary},
+                         {'role': 'assistant', 'content': 'Understood. I have the summary and will continue from there.'}]
+        self.ctx = SYS_TOKENS + len(summary) // 4
+        self.ev('x', '  \u00b7 conversation compacted (%s): about %s tokens of context became %s.' % (
+            why, format(before, ','), format(self.ctx, ',')))
+        self.usage_event()
+        self.ev('d')
 
     def send(self, text):
         text = text.strip()[:8000]
@@ -277,6 +359,21 @@ class Agent:
                     self.ev('x', 'Now using %s (conversation restarted).' % m)
                 self.usage_event()
                 return
+            if cmd == '/compact':
+                asyncio.create_task(self.compact())
+                return
+            if cmd == '/plan':
+                self.settings({'plan': '0' if self.plan else '1'})
+                self.ev('m', 'plan=%d' % self.plan)
+                return
+            if cmd == '/effort':
+                if arg.strip().lower() in EFFORTS:
+                    self.settings({'effort': arg.strip().lower()})
+                    self.ev('m', 'effort=%s' % self.effort)
+                    self.ev('x', '  \u00b7 effort: %s' % self.effort)
+                else:
+                    self.ev('x', 'Effort: /effort low | medium | high | xhigh | max')
+                return
             if cmd == '/cost':
                 self.ev('x', 'This session: %s input tokens, %s output tokens, $%.4f. Month so far: $%.2f of $%.0f.' % (
                     format(self.tok_in, ','), format(self.tok_out, ','), self.usd, BUDGET.spent(), BUDGET.cap()))
@@ -297,6 +394,11 @@ class Agent:
             if self.was_interrupted:
                 text = '(The previous response was interrupted by the user.)\n' + text
                 self.was_interrupted = False
+            if self.memory_new and self.memory:
+                text = 'Contents of C:\\b3\\work\\CLAUDE.md (the person\'s standing instructions):\n' + self.memory + '\n\n' + text
+                self.memory_new = False
+            if self.plan:
+                text = '(Plan mode is on: look with read-only tools and propose a plan with todo_write; change nothing.)\n' + text
             self.messages.append({'role': 'user', 'content': text})
             self.interrupt.clear()
             self.ev('b')
@@ -307,6 +409,8 @@ class Agent:
                 self.ev('e', 'Something went wrong talking to Claude (%s). Try again.' % type(e).__name__)
             self.ev('d')
             self.term.touch()
+            if self.ctx > COMPACT_AT:
+                await self.compact('automatically, past %s tokens' % format(COMPACT_AT, ','))
 
     def can_spend(self):
         if not cfg('ANTHROPIC_API_KEY'):
@@ -333,7 +437,7 @@ class Agent:
             try:
                 async with api_client().messages.stream(
                         model=self.model, max_tokens=8000, system=[{'type': 'text', 'text': SYSTEM}],
-                        tools=TOOLS, messages=self.messages, output_config={'effort': cfg('TERM_EFFORT')},
+                        tools=TOOLS, messages=self.messages, output_config={'effort': self.effort},
                         cache_control={'type': 'ephemeral'}) as stream:
                     async for event in stream:
                         if self.interrupt.is_set():
@@ -376,6 +480,11 @@ class Agent:
             self.usd += usd
             self.tok_in += tin
             self.tok_out += tout
+            self.calls += 1
+            u = msg.usage
+            self.cache_r = getattr(u, 'cache_read_input_tokens', 0) or 0
+            self.cache_w = getattr(u, 'cache_creation_input_tokens', 0) or 0
+            self.ctx = (getattr(u, 'input_tokens', 0) or 0) + self.cache_r + self.cache_w
             self.usage_event()
             self.messages.append({'role': 'assistant', 'content': msg.content})
             if msg.stop_reason == 'refusal':
@@ -406,6 +515,14 @@ class Agent:
 
     async def call_tool(self, b):
         args = b.input if isinstance(b.input, dict) else {}
+        if b.name == 'todo_write':
+            todos = args.get('todos')
+            if not isinstance(todos, list) or not all(isinstance(t, dict) and isinstance(t.get('content'), str)
+                                                      and t.get('status') in ('pending', 'in_progress', 'completed') for t in todos):
+                return {'type': 'tool_result', 'tool_use_id': b.id, 'is_error': True,
+                        'content': 'invalid input: todos must be a list of {content, status}'}
+            self.ev('o', '\n'.join('%s\t%s' % (t['status'], clean_field(t['content']).replace('\n', ' ')[:200]) for t in todos[:20]))
+            return {'type': 'tool_result', 'tool_use_id': b.id, 'content': 'Plan updated (%d items).' % len(todos)}
         need = TOOL_ARGS.get(b.name)
         if not need or not all(isinstance(args.get(k), str) for k in need):
             return {'type': 'tool_result', 'tool_use_id': b.id, 'is_error': True,
@@ -415,11 +532,12 @@ class Agent:
         display = '%s(%s)' % (TOOL_LABEL[b.name], shown.replace('\n', ' '))
         fut = asyncio.get_running_loop().create_future()
         self.tools[b.id] = fut
+        self.ntools += 1
         self.ev('c', '\x1f'.join([b.id, clean_field(display), b.name] + [clean_field(args[k]) for k in need]))
         try:
-            ok, out = await asyncio.wait_for(fut, 120)
+            ok, out = await asyncio.wait_for(fut, 360)   # long: the person may be answering a permission prompt
         except asyncio.TimeoutError:
-            ok, out = False, 'the tool did not answer within 120 s'
+            ok, out = False, 'the tool did not answer within 6 minutes'
         finally:
             self.tools.pop(b.id, None)
         self.term.touch()
@@ -594,7 +712,12 @@ class Term:
         self.ev_new.set()
 
     # ---- visitors
+    maint = False
+
     def start(self, v):
+        if self.maint:
+            v.note = 'BASILISK is being tuned for a minute. Try again shortly.'
+            return
         if self.phase == 'dark':
             v.note = 'The machine is resting. Try again in a few minutes.'
             return
@@ -747,7 +870,8 @@ class Term:
                 break
 
     async def release_keys(self):
-        await KEYS.send([kev(q, False) for q in ('shift', 'ctrl', 'alt')])
+        await KEYS.send([kev(q, False) for q in ('shift', 'ctrl', 'alt')] +
+                        [{'type': 'btn', 'data': {'down': False, 'button': b}} for b in ('left', 'right', 'middle')])
 
     # ---- driver input
     async def key(self, v, m):
@@ -802,6 +926,30 @@ class Term:
                 self.gev('w', str(n))
         elif t == 'front':
             self.gev('f')
+        elif t == 'mouse':          # the driver's pointer: absolute, through the VM's USB tablet
+            try:
+                x = max(0, min(1023, int(m.get('x', 0))))
+                y = max(0, min(767, int(m.get('y', 0))))
+            except (TypeError, ValueError):
+                return
+            evs = [{'type': 'abs', 'data': {'axis': 'x', 'value': x * 32767 // 1023}},
+                   {'type': 'abs', 'data': {'axis': 'y', 'value': y * 32767 // 767}}]
+            b = m.get('b')
+            if b in ('left', 'right', 'middle'):
+                evs.append({'type': 'btn', 'data': {'down': bool(m.get('down')), 'button': b}})
+            await KEYS.send(evs)
+        elif t == 'mwheel':         # a real wheel notch at the pointer (Windows scrolls what is under it)
+            try:
+                n = max(-10, min(10, int(m.get('n', 0))))
+            except (TypeError, ValueError):
+                return
+            b = 'wheel-up' if n < 0 else 'wheel-down'
+            evs = []
+            for _ in range(abs(n)):
+                evs += [{'type': 'btn', 'data': {'down': True, 'button': b}},
+                        {'type': 'btn', 'data': {'down': False, 'button': b}}]
+            if evs:
+                await KEYS.send(evs)
 
     # ---- guest endpoints
     async def g_next(self, req):
@@ -844,6 +992,23 @@ class Term:
             self.agent.send(text)
         return web.Response(text='ok')
 
+    async def g_set(self, req):
+        """the client's Settings / Plan tabs: key=value lines"""
+        kv = {}
+        for line in (await req.read()).decode('utf-8', 'replace').splitlines():
+            k, _, v = line.partition('=')
+            kv[k.strip()] = v.strip()
+        if self.agent and self.phase == 'ready':
+            self.agent.settings(kv)
+            self.touch()
+        return web.Response(text='ok')
+
+    async def g_memory(self, req):
+        text = (await req.read()).decode('utf-8', 'replace')
+        if self.agent:
+            self.agent.set_memory(text)
+        return web.Response(text='ok')
+
     async def g_int(self, req):
         if self.agent:
             self.agent.stop()
@@ -880,6 +1045,13 @@ class Term:
         if op == 'hmp':
             res = await qmp_hmp((await req.read()).decode())
             return web.Response(text=str(res.get('return', res)) + '\n')
+        if op == 'maint':           # resnap.sh: refuse while someone drives; hold new sessions off meanwhile
+            on = req.query.get('on') == '1'
+            if on and (self.driver or self.phase not in ('idle', 'dark')):
+                return web.Response(status=409, text='busy: phase %s\n' % self.phase)
+            self.maint = on
+            self.changed.set()
+            return web.Response(text='maint %s\n' % ('on' if on else 'off'))
         if op == 'testdrive':       # maintenance: talk to the client without a visitor session
             self.agent = Agent(self, 'admin')
             self.set_phase('ready')
@@ -963,7 +1135,7 @@ async def p_ws(req):
             except ValueError:
                 continue
             t = m.get('t')
-            if t in ('ch', 'key', 'paste', 'wheel', 'front'):
+            if t in ('ch', 'key', 'paste', 'wheel', 'front', 'mouse', 'mwheel'):
                 await T.key(v, m)
             elif t == 'start':
                 T.start(v)
@@ -1378,6 +1550,7 @@ async def main():
     guest.add_routes([web.get('/next', T.g_next), web.post('/out', T.g_out),
                       web.get('/b3/hello', T.g_hello), web.get('/b3/ev', T.g_ev), web.post('/b3/send', T.g_send),
                       web.post('/b3/int', T.g_int), web.post('/b3/tool', T.g_tool),
+                      web.post('/b3/set', T.g_set), web.post('/b3/memory', T.g_memory),
                       web.post('/admin/{op}', T.g_admin), web.get('/{name}', T.g_file)])
     pub = web.Application(middlewares=[cors], client_max_size=64 * 1024)
     pub.add_routes([web.get('/ws', p_ws), web.get('/vnc', p_vnc), web.get('/vnc2', p_vnc_pumped), web.get('/state', p_state),
