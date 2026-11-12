@@ -1,0 +1,190 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BASILISK variants</title><style>
+:root { --bg:#f3f1ea; --ink:#1d1f22; --muted:#61656c; --line:#d9d4c6; --card:#fffdf8; --accent:#245edb; }
+@media (prefers-color-scheme: dark) { :root { --bg:#16181b; --ink:#e9e6de; --muted:#9aa0a8; --line:#33373d; --card:#1e2125; --accent:#7aa5ff; } }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.55 Tahoma, "Segoe UI", system-ui, sans-serif; }
+.wrap { max-width:1180px; margin:0 auto; padding:0 18px 60px; }
+header { padding:34px 0 10px; }
+h1 { font:700 26px/1.2 "Lucida Console", ui-monospace, monospace; margin:0 0 6px; }
+h2 { font:700 18px/1.3 "Lucida Console", ui-monospace, monospace; margin:44px 0 10px; }
+h3 { margin:0 0 4px; font-size:18px; }
+p { margin:6px 0; max-width:900px; }
+.note { color:var(--muted); font-size:13.5px; }
+table { border-collapse:collapse; width:100%; margin:8px 0 4px; font-size:13.5px; background:var(--card); }
+th, td { text-align:left; vertical-align:top; padding:6px 8px; border-bottom:1px solid var(--line); overflow-wrap:anywhere; }
+p, li, .donor { overflow-wrap:anywhere; }
+th { font-weight:700; color:var(--muted); font-size:12.5px; text-transform:uppercase; letter-spacing:.04em; }
+.variant { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:16px; margin:26px 0; }
+.variant img { width:100%; height:auto; display:block; border:1px solid var(--line); image-rendering:auto; cursor:zoom-in; }
+.vhead { display:flex; gap:12px; align-items:baseline; flex-wrap:wrap; margin-bottom:8px; }
+.vid { font:700 13px "Lucida Console", monospace; color:var(--accent); }
+.verdict { margin-top:8px; padding:8px 10px; border-left:3px solid var(--accent); background:rgba(36,94,219,.06); }
+.feas { color:var(--muted); font-size:13.5px; }
+.donors { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:14px; }
+.donor { background:var(--card); border:1px solid var(--line); border-radius:6px; padding:10px; font-size:13px; }
+.donor img { max-width:100%; height:auto; display:block; margin-bottom:6px; }
+.dots { letter-spacing:2px; color:var(--accent); }
+.top3 li { margin:6px 0; }
+#zoom { position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; z-index:9; cursor:zoom-out; }
+#zoom img { max-width:98vw; max-height:96vh; image-rendering:pixelated; }
+@media (max-width:640px) { th:nth-child(4), td:nth-child(4) { display:none; } }
+</style></head><body><div class="wrap">
+<header><h1>BASILISK, twelve ways</h1><p>Mockups of a fuller Claude Code client assembled from Windows parts. Every window, tab, list, button, meter and dialog in these images was cut from a screendump of a real Windows XP machine (or an existing 3.11 capture); the text a real build would put in them is drawn in the real XP fonts. Click any mockup to see it at full size. Local review page; not published.</p><p class="note">Captured on the studio VM, 2026-11-12. The compositor is <code>compose.py</code>; captures are in <code>captures/</code>.</p></header>
+<h2>Top three</h2><ol class="top3">
+<li><a href="#v12"><b>The suite</b></a> — tabs + WordPad diffs + plan + context strip: the most useful whole, built from parts we already know how to move.</li>
+<li><a href="#v07"><b>WordPad transcript</b></a> — the cheapest big readability win; do it first.</li>
+<li><a href="#v04"><b>Defrag context map</b></a> — the idea people will remember; Defragment = /compact needs no explanation.</li>
+</ol>
+<h2>1. Claude Code's UX, and which Windows part could carry each piece</h2><table><tr><th>Claude Code element</th><th>Windows part</th><th>Why it earns its space</th></tr>
+<tr><td>Prompt input (multi-line, history)</td><td>Notepad&#x27;s Find box (today) / the Run dialog&#x27;s combo / Explorer&#x27;s Address bar</td><td>Where you type. The Run combo adds a real drop-down for history and slash completions.</td></tr>
+<tr><td>Slash commands with autocomplete</td><td>The Run dialog&#x27;s auto-complete drop-down</td><td>Typing &quot;/&quot; lists /compact /context /cost /model with one-line help.</td></tr>
+<tr><td>@-file mentions</td><td>Explorer&#x27;s folder tree (and the Open dialog list)</td><td>Click or type @ to pull a file from C:\b3\work into the prompt.</td></tr>
+<tr><td>Tool-call blocks with folded output</td><td>Notepad / WordPad transcript</td><td>&quot;• Run(...)&quot; then &quot;└ first lines … +N lines&quot;, as Claude Code prints them.</td></tr>
+<tr><td>Edit diffs (+/- lines)</td><td>WordPad&#x27;s RichEdit (real red/green highlight)</td><td>The single most useful upgrade over plain Notepad: you can read what changed.</td></tr>
+<tr><td>Permission prompts</td><td>MessageBox (Yes / No / Cancel)</td><td>Allow once, deny, always allow this command. A real modal, so it cannot be missed.</td></tr>
+<tr><td>To-do list (TodoWrite)</td><td>Windows Components wizard check list</td><td>Checked = done, highlighted = in progress, empty = pending.</td></tr>
+<tr><td>Spinner: verb, elapsed, tokens, &quot;esc to interrupt&quot;</td><td>The shell&#x27;s copy animation (flying papers) + its progress bar</td><td>Shows a tool is working and how long; Cancel = Esc.</td></tr>
+<tr><td>Status line: model, context %, cost, cwd</td><td>WordPad / Explorer status bar</td><td>Always-visible facts in a strip you already know how to read.</td></tr>
+<tr><td>Context usage (/context)</td><td>Disk Defragmenter&#x27;s map; the drive Properties pie</td><td>Unmovable = system prompt + tools, contiguous = cached history, fragmented = new this turn, free = room left.</td></tr>
+<tr><td>Compaction (/compact)</td><td>Defragmenter&#x27;s Defragment button + &quot;after&quot; map</td><td>The metaphor is exact: compaction squeezes the history to free space.</td></tr>
+<tr><td>Usage and cost</td><td>Task Manager Performance tab (meters, history graphs, totals)</td><td>Context %, output rate, tokens in/cached/out, session/day/month spend.</td></tr>
+<tr><td>Running tools / background tasks</td><td>Task Manager Processes list</td><td>One row per running tool with time and output size; End Process = stop it.</td></tr>
+<tr><td>Effort / model picker</td><td>Mouse Properties trackbar; Volume Control sliders; a property-sheet combo</td><td>Low ↔ max effort; Haiku / Sonnet.</td></tr>
+<tr><td>Plan mode, auto-accept edits</td><td>Check boxes (Mouse Properties / Volume Control &quot;Mute&quot;)</td><td>The two modes people toggle most, one click each.</td></tr>
+<tr><td>Queued messages while busy</td><td>The prompt stays live; queued lines show greyed in the transcript</td><td>Type the next thing while Claude works.</td></tr>
+<tr><td>Session history / resume</td><td>Explorer Back / Forward; a &quot;Sessions&quot; tab</td><td>Go back to an earlier conversation.</td></tr>
+<tr><td>Memory (CLAUDE.md)</td><td>A file in the Explorer tree; a &quot;Memory&quot; settings tab</td><td>Open and edit what Claude is told every session.</td></tr>
+<tr><td>Done notification</td><td>A tray balloon tip</td><td>Tells you a long turn finished while you looked elsewhere.</td></tr>
+<tr><td>Clock / time</td><td>Date and Time&#x27;s analog clock and calendar</td><td>Kept from today&#x27;s build: honest, readable, and the soul of the piece.</td></tr>
+</table>
+<h2>2. Donors captured for this review</h2><div class="donors">
+<div class="donor"><img src="donors/wordpad.png" alt="WordPad" loading="lazy"><b>WordPad</b><br>RichEdit transcript with real colour; status bar<br><span class="note">Use: Diffs, bold tool names</span></div>
+<div class="donor"><img src="donors/perm.png" alt="MessageBox (from a script)" loading="lazy"><b>MessageBox (from a script)</b><br>A real Yes/No/Cancel prompt with our text<br><span class="note">Use: Permission prompts</span></div>
+<div class="donor"><img src="donors/taskmgr_perf.png" alt="Task Manager · Performance" loading="lazy"><b>Task Manager · Performance</b><br>Usage meters, history graphs, totals; tab strip<br><span class="note">Use: Usage tab</span></div>
+<div class="donor"><img src="donors/taskmgr_proc.png" alt="Task Manager · Processes" loading="lazy"><b>Task Manager · Processes</b><br>A sortable list with End Process<br><span class="note">Use: Running tools</span></div>
+<div class="donor"><img src="donors/defrag2.png" alt="Disk Defragmenter" loading="lazy"><b>Disk Defragmenter</b><br>Cluster map, legend, Analyze / Defragment<br><span class="note">Use: Context window, /compact</span></div>
+<div class="donor"><img src="donors/driveprops.png" alt="Local Disk Properties" loading="lazy"><b>Local Disk Properties</b><br>Used / free pie<br><span class="note">Use: Context gauge</span></div>
+<div class="donor"><img src="donors/display.png" alt="Display Properties" loading="lazy"><b>Display Properties</b><br>Luna tab strip and tab-page body<br><span class="note">Use: Tabs: Chat | Plan | Files | Usage | Settings</span></div>
+<div class="donor"><img src="donors/explorer.png" alt="Explorer" loading="lazy"><b>Explorer</b><br>Folder tree, Address bar + Go, toolbar, status bar<br><span class="note">Use: @-mentions, prompt, history</span></div>
+<div class="donor"><img src="donors/components.png" alt="Windows Components wizard" loading="lazy"><b>Windows Components wizard</b><br>Check-box list with sizes and a description<br><span class="note">Use: To-do list</span></div>
+<div class="donor"><img src="donors/cleanup.png" alt="Disk Cleanup" loading="lazy"><b>Disk Cleanup</b><br>Green-tick check list with sizes<br><span class="note">Use: Always-allowed commands</span></div>
+<div class="donor"><img src="donors/mouse.png" alt="Mouse Properties" loading="lazy"><b>Mouse Properties</b><br>Trackbar, themed check boxes, property page<br><span class="note">Use: Effort slider, mode toggles, Settings</span></div>
+<div class="donor"><img src="donors/volume.png" alt="Volume Control" loading="lazy"><b>Volume Control</b><br>Vertical sliders with Mute check boxes<br><span class="note">Use: Effort / output / thinking mixer</span></div>
+<div class="donor"><img src="donors/copy1.png" alt="Copying… (shell)" loading="lazy"><b>Copying… (shell)</b><br>Flying-papers animation, progress bar, Cancel<br><span class="note">Use: The busy spinner</span></div>
+<div class="donor"><img src="donors/run.png" alt="Run" loading="lazy"><b>Run</b><br>Auto-complete combo with history<br><span class="note">Use: Prompt with slash completion</span></div>
+</div><p class="note">Not on the Windows Secrets page but captured or used here: Disk Defragmenter, Task Manager, Disk Cleanup, the Windows Components wizard, the shell copy dialog, Volume Control, Mouse Properties, the Run dialog and WordPad. Worth capturing next: the tray balloon tip, HyperTerminal (a true VT100 transcript), Outlook Express&#x27;s three panes (sessions), WinHelp/HTML Help (/help), the File Download security warning, and System Restore&#x27;s calendar (checkpoints / undo).</p>
+<h2>3. The variants</h2>
+<section class="variant" id="v01"><div class="vhead"><span class="vid">01 · v01</span><h3>Notepad, refined</h3></div>
+<p>Today&#x27;s BASILISK III, plus the three things it most lacks: a status line, a context gauge and the to-do list.</p><a href="img/v01.png" class="z"><img src="img/v01.png" alt="Mockup: Notepad, refined" loading="lazy" width="1024" height="768"></a>
+<table><tr><th>Part</th><th>Taken from</th><th>Does</th><th>Space</th></tr>
+<tr><td>Transcript</td><td>Notepad&#x27;s edit</td><td>scrollback, tool blocks</td><td>78%</td></tr>
+<tr><td>Prompt + Send/Stop</td><td>Notepad&#x27;s own Find dialog</td><td>input, Esc</td><td>5%</td></tr>
+<tr><td>Status line</td><td>a status bar (Notepad has one, off by default)</td><td>model · effort · context % · cost · cwd</td><td>3%</td></tr>
+<tr><td>Clock</td><td>Date and Time page</td><td>time (kept)</td><td>—</td></tr>
+<tr><td>Context gauge</td><td>drive Properties pie</td><td>used / free tokens</td><td>—</td></tr>
+<tr><td>To do</td><td>Windows Components check list</td><td>Claude&#x27;s plan, live</td><td>sidebar 22%</td></tr>
+</table><p class="feas"><b>Feasibility.</b> Small step from what runs today. Notepad&#x27;s own status bar only shows with word wrap off and holds only &quot;Ln, Col&quot;, so the status line is a borrowed status bar (WordPad&#x27;s) or our own msctls_statusbar32 in Notepad. The pie is drawn by the shell from disk numbers we cannot feed: in practice we would draw a matching pie ourselves in a borrowed static. Components&#x27; list is a plain check-box list view we can fill (LVM_INSERTITEM across processes needs memory allocated in that process, as we already do for the desktop).</p><div class="verdict"><b>Verdict.</b> The safe next version: same calm screen, three useful additions.</div></section>
+<section class="variant" id="v02"><div class="vhead"><span class="vid">02 · v02</span><h3>Property-sheet tabs</h3></div>
+<p>Display Properties&#x27; tab strip turns the client into Chat | Tasks | Files | Usage | Settings.</p><a href="img/v02.png" class="z"><img src="img/v02.png" alt="Mockup: Property-sheet tabs" loading="lazy" width="1024" height="768"></a>
+<table><tr><th>Part</th><th>Taken from</th><th>Does</th><th>Space</th></tr>
+<tr><td>Tabs</td><td>Display Properties (Luna tab control)</td><td>switch modality</td><td>3%</td></tr>
+<tr><td>Chat page</td><td>tab-page body + Notepad edit + Find bar</td><td>the conversation</td><td>85%</td></tr>
+<tr><td>Buttons</td><td>the sheet&#x27;s OK/Cancel/Help row, relabelled</td><td>Clear · Model… · Help</td><td>4%</td></tr>
+</table><p class="feas"><b>Feasibility.</b> A property sheet is the most natural container on XP: each page is a dialog, so other donors (Task Manager&#x27;s graphs, a check list) can be hosted per tab. Lesson from today: a themed page moved while visible leaves stale copies of its controls, so lay pages out hidden and show once. Relabelling tabs is TCM_SETITEM with a pointer, so it needs process memory like the list views.</p><div class="verdict"><b>Verdict.</b> The cleanest way to add modes without clutter. Good host for the others.</div></section>
+<section class="variant" id="v03"><div class="vhead"><span class="vid">03 · v03</span><h3>Task Manager: the Usage tab</h3></div>
+<p>Task Manager&#x27;s tabs as Chat | Tools | Usage | Model | Sessions; the Usage tab shown.</p><a href="img/v03.png" class="z"><img src="img/v03.png" alt="Mockup: Task Manager: the Usage tab" loading="lazy" width="1024" height="768"></a>
+<table><tr><th>Part</th><th>Taken from</th><th>Does</th><th>Space</th></tr>
+<tr><td>Context meter + history</td><td>Task Manager CPU meter and graph</td><td>context % now and over the session</td><td>35%</td></tr>
+<tr><td>Output rate meter + graph</td><td>Task Manager PF meter and graph</td><td>tokens/s while streaming</td><td>35%</td></tr>
+<tr><td>Totals boxes</td><td>Totals / Physical / Commit / Kernel groups</td><td>tokens, context window, spend, tools</td><td>20%</td></tr>
+<tr><td>Status bar</td><td>Task Manager status bar</td><td>tools running, context, spend vs cap</td><td>3%</td></tr>
+</table><p class="feas"><b>Feasibility.</b> Task Manager owner-draws its meters and graphs from its own counters, so we cannot feed its graphs: we would host Task Manager&#x27;s frame and tab strip and draw identical meters ourselves (or, honestly, show XP&#x27;s real CPU graph while tools run). The Processes tab, however, is a real list view we can fill with running tools, and End Process works as Stop.</p><div class="verdict"><b>Verdict.</b> Best &quot;Usage&quot; page: dense, readable, and every number is something people ask Claude Code for.</div></section>
+<section class="variant" id="v04"><div class="vhead"><span class="vid">04 · v04</span><h3>Defrag context map</h3></div>
+<p>Disk Defragmenter&#x27;s analysis panel under the transcript, mapping the context window.</p><a href="img/v04.png" class="z"><img src="img/v04.png" alt="Mockup: Defrag context map" loading="lazy" width="1024" height="768"></a>
+<table><tr><th>Part</th><th>Taken from</th><th>Does</th><th>Space</th></tr>
+<tr><td>Transcript</td><td>Notepad</td><td>conversation</td><td>60%</td></tr>
+<tr><td>Context map</td><td>Defragmenter map + legend</td><td>system prompt+tools / cached / new / free</td><td>30%</td></tr>
+<tr><td>Buttons</td><td>Analyze, Defragment, Pause, Stop, View Report</td><td>/context, /compact, pause, stop, /cost</td><td>—</td></tr>
+</table><p class="feas"><b>Feasibility.</b> The map is drawn by the defrag ActiveX inside MMC from real disk data; we can take the panel&#x27;s frame, buttons and legend (buttons and statics are real children), but the map itself we would draw, in its sliver style. The metaphor is exact and needs no explanation: Defragment really is /compact.</p><div class="verdict"><b>Verdict.</b> The most &quot;secret Windows&quot; idea that is also genuinely informative. Could be smaller.</div></section>
+<section class="variant" id="v05"><div class="vhead"><span class="vid">05 · v05</span><h3>Explorer workspace</h3></div>
+<p>Explorer&#x27;s folder tree is the project; its Address bar is the prompt; Back/Forward are sessions.</p><a href="img/v05.png" class="z"><img src="img/v05.png" alt="Mockup: Explorer workspace" loading="lazy" width="1024" height="768"></a>
+<table><tr><th>Part</th><th>Taken from</th><th>Does</th><th>Space</th></tr>
+<tr><td>Prompt</td><td>Explorer Address bar + Go</td><td>type, @-mention, Send</td><td>3%</td></tr>
+<tr><td>Files</td><td>Explorer folder tree</td><td>click to @-mention; open CLAUDE.md</td><td>22%</td></tr>
+<tr><td>Transcript</td><td>Notepad edit in the list pane&#x27;s place</td><td>conversation</td><td>70%</td></tr>
+<tr><td>Status bar</td><td>Explorer status bar</td><td>objects · model · context · cost</td><td>3%</td></tr>
+</table><p class="feas"><b>Feasibility.</b> Explorer is one process with many threads; reparenting its panes is fragile (it rebuilds them on navigation). Safer: host our own SysTreeView32 styled identically and Explorer&#x27;s address combo (ComboBoxEx32) which is a plain control. The Address bar&#x27;s auto-complete is a free gift for history.</p><div class="verdict"><b>Verdict.</b> Most &quot;IDE-like&quot; and the most useful for real coding; moderate risk.</div></section>
+<section class="variant" id="v06"><div class="vhead"><span class="vid">06 · v06</span><h3>Permissions and plan</h3></div>
+<p>The approval-centric layout: plan, always-allowed list, modes, and a real MessageBox asking.</p><a href="img/v06.png" class="z"><img src="img/v06.png" alt="Mockup: Permissions and plan" loading="lazy" width="1024" height="768"></a>
+<table><tr><th>Part</th><th>Taken from</th><th>Does</th><th>Space</th></tr>
+<tr><td>Transcript</td><td>Notepad</td><td>conversation</td><td>70%</td></tr>
+<tr><td>Plan (to do)</td><td>Windows Components list</td><td>live plan</td><td>—</td></tr>
+<tr><td>Always allowed</td><td>Disk Cleanup green-tick list</td><td>which commands run without asking</td><td>—</td></tr>
+<tr><td>Modes</td><td>themed check boxes</td><td>plan mode, auto-accept edits</td><td>—</td></tr>
+<tr><td>Permission prompt</td><td>MessageBox</td><td>Yes = once, No = deny, Cancel = always</td><td>modal</td></tr>
+</table><p class="feas"><b>Feasibility.</b> MessageBox is the easiest real part of all: the client calls it. Yes/No/Cancel mapping is clumsy: a TaskDialog-like custom dialog built from a real #32770 with three relabelled buttons reads better. The check lists are list views we can fill.</p><div class="verdict"><b>Verdict.</b> The most trustworthy-feeling version; shows Claude Code&#x27;s safety model.</div></section>
+<section class="variant" id="v07"><div class="vhead"><span class="vid">07 · v07</span><h3>WordPad transcript</h3></div>
+<p>WordPad&#x27;s RichEdit as the transcript: real colour, bold tool names and red/green diffs; the Run box as the prompt.</p><a href="img/v07.png" class="z"><img src="img/v07.png" alt="Mockup: WordPad transcript" loading="lazy" width="1024" height="768"></a>
+<table><tr><th>Part</th><th>Taken from</th><th>Does</th><th>Space</th></tr>
+<tr><td>Transcript</td><td>WordPad RichEdit</td><td>colour diffs, bold names</td><td>75%</td></tr>
+<tr><td>Prompt</td><td>Run dialog combo + its drop-down</td><td>history, slash completions</td><td>6%</td></tr>
+<tr><td>Status bar</td><td>WordPad status bar</td><td>model · context · cost</td><td>3%</td></tr>
+</table><p class="feas"><b>Feasibility.</b> Very buildable: the client streams RTF into WordPad with EM_STREAMIN/EM_SETCHARFORMAT (cross-process needs a buffer in WordPad&#x27;s memory, or simply write an .rtf and EM_REPLACESEL plain text then format ranges). The Run combo is a plain ComboBox; its drop-down list we fill.</p><div class="verdict"><b>Verdict.</b> Biggest readability win per effort. Diffs alone justify it.</div></section>
+<section class="variant" id="v08"><div class="vhead"><span class="vid">08 · v08</span><h3>Mixer controls</h3></div>
+<p>Volume Control&#x27;s faders as the controls Claude Code really has: effort, output length, thinking; Mute boxes become modes.</p><a href="img/v08.png" class="z"><img src="img/v08.png" alt="Mockup: Mixer controls" loading="lazy" width="1024" height="768"></a>
+<table><tr><th>Part</th><th>Taken from</th><th>Does</th><th>Space</th></tr>
+<tr><td>Transcript</td><td>Notepad</td><td>conversation</td><td>66%</td></tr>
+<tr><td>Faders</td><td>Volume Control columns</td><td>effort, output length, thinking depth</td><td>sidebar 34%</td></tr>
+<tr><td>Mode boxes</td><td>the columns&#x27; Mute check boxes</td><td>plan, auto-accept, show thinking</td><td>—</td></tr>
+<tr><td>Clock</td><td>Date and Time</td><td>time</td><td>—</td></tr>
+</table><p class="feas"><b>Feasibility.</b> The faders are msctls_trackbar32 controls (sndvol32 is one process): we can reparent a column and read TBM_GETPOS. Fewer than three faders would be more honest: effort is the one that matters.</p><div class="verdict"><b>Verdict.</b> Charming and tactile, but the controls are rarely touched: keep one fader.</div></section>
+<section class="variant" id="v09"><div class="vhead"><span class="vid">09 · v09</span><h3>Busy strip</h3></div>
+<p>The shell&#x27;s flying-papers copy animation docks above the prompt while a tool runs, with live output.</p><a href="img/v09.png" class="z"><img src="img/v09.png" alt="Mockup: Busy strip" loading="lazy" width="1024" height="768"></a>
+<table><tr><th>Part</th><th>Taken from</th><th>Does</th><th>Space</th></tr>
+<tr><td>Transcript</td><td>Notepad</td><td>conversation</td><td>68%</td></tr>
+<tr><td>Animation + progress</td><td>shell Copying… dialog (SysAnimate32 + progress bar)</td><td>something is running, for how long; Cancel = Esc</td><td>17%</td></tr>
+<tr><td>Tool output</td><td>an edit</td><td>last lines of output, live</td><td>—</td></tr>
+</table><p class="feas"><b>Feasibility.</b> The animation is a SysAnimate32 control playing a resource from shell32.dll: we can create our own Animate control with ACM_OPEN on shell32&#x27;s copy AVI, no reparenting needed. The strip appears only while a tool runs.</p><div class="verdict"><b>Verdict.</b> Delightful and useful; best as a feature of v01/v02 rather than a layout.</div></section>
+<section class="variant" id="v10"><div class="vhead"><span class="vid">10 · v10</span><h3>Windows for Workgroups 3.11</h3></div>
+<p>The 3.11 build, tidied: Terminal transcript, a normal-sized Clock, Calculator&#x27;s display as the bill, a Cardfile to-do card, and 3.11&#x27;s own Find dialog as the prompt.</p><a href="img/v10.png" class="z"><img src="img/v10.png" alt="Mockup: Windows for Workgroups 3.11" loading="lazy" width="1024" height="768"></a>
+<table><tr><th>Part</th><th>Taken from</th><th>Does</th><th>Space</th></tr>
+<tr><td>Transcript</td><td>Terminal (real capture of today&#x27;s build)</td><td>VT-100 scrollback</td><td>64%</td></tr>
+<tr><td>Clock</td><td>Clock</td><td>time</td><td>—</td></tr>
+<tr><td>Bill</td><td>Calculator&#x27;s display</td><td>session cost</td><td>—</td></tr>
+<tr><td>To do</td><td>Cardfile card</td><td>the plan, on a card</td><td>—</td></tr>
+<tr><td>Prompt</td><td>Find dialog (Find Next = Send, Cancel = Stop, Direction = history)</td><td>input</td><td>—</td></tr>
+</table><p class="feas"><b>Feasibility.</b> Same mechanics the 3.11 lane already uses (SetParent works in Win16; one shared message queue makes it easier than XP). Cardfile&#x27;s card is a real edit; Find is COMMDLG&#x27;s and posts back to its owner, so we own it. The card text here is drawn in Tahoma Bold as a stand-in for the System font.</p><div class="verdict"><b>Verdict.</b> Fix the oversized clock and give the plan a card: clear improvement for 3.11.</div></section>
+<section class="variant" id="v11"><div class="vhead"><span class="vid">11 · v11</span><h3>Settings page (/config)</h3></div>
+<p>Mouse Properties&#x27; page rebuilt as BASILISK Settings: effort slider, mode check boxes, model combo.</p><a href="img/v11.png" class="z"><img src="img/v11.png" alt="Mockup: Settings page (/config)" loading="lazy" width="1024" height="768"></a>
+<table><tr><th>Part</th><th>Taken from</th><th>Does</th><th>Space</th></tr>
+<tr><td>Dialog + tabs</td><td>Mouse Properties sheet</td><td>Effort | Model | Permissions | Memory | Display</td><td>modal</td></tr>
+<tr><td>Effort</td><td>pointer-speed trackbar</td><td>low ↔ max</td><td>—</td></tr>
+<tr><td>Modes</td><td>themed check boxes</td><td>plan, auto-accept, thinking, notify</td><td>—</td></tr>
+<tr><td>Model</td><td>a Luna combo box</td><td>Haiku / Sonnet</td><td>—</td></tr>
+</table><p class="feas"><b>Feasibility.</b> Opening main.cpl and reparenting its controls is exactly what we do with Date and Time today. Simplest honest version: create a real property sheet from the client (PropertySheet API) and borrow only the trackbar&#x27;s look.</p><div class="verdict"><b>Verdict.</b> Needed by any tabbed version; a /config that looks like home.</div></section>
+<section class="variant" id="v12"><div class="vhead"><span class="vid">12 · v12</span><h3>The suite</h3></div>
+<p>Tabs (Display Properties) + WordPad-quality diffs + the plan + a slim context map + status line.</p><a href="img/v12.png" class="z"><img src="img/v12.png" alt="Mockup: The suite" loading="lazy" width="1024" height="768"></a>
+<table><tr><th>Part</th><th>Taken from</th><th>Does</th><th>Space</th></tr>
+<tr><td>Tabs</td><td>Display Properties</td><td>Chat | Plan | Files | Usage | Settings</td><td>3%</td></tr>
+<tr><td>Transcript</td><td>WordPad RichEdit</td><td>colour diffs</td><td>62%</td></tr>
+<tr><td>Plan</td><td>Components check list</td><td>live to-do</td><td>—</td></tr>
+<tr><td>Clock</td><td>Date and Time</td><td>time</td><td>—</td></tr>
+<tr><td>Context strip</td><td>Defragmenter map</td><td>context at a glance</td><td>9%</td></tr>
+<tr><td>Prompt + status</td><td>Find bar, status bar</td><td>input, facts</td><td>8%</td></tr>
+</table><p class="feas"><b>Feasibility.</b> Combines v02 + v07 + v06&#x27;s plan + v04&#x27;s map. Every part is one we have already reparented in kind (pages, lists, edits). The Usage and Settings tabs would host v03 and v11.</p><div class="verdict"><b>Verdict.</b> The recommended destination; build it in steps (v07, then v02 tabs, then the map).</div></section>
+<h2>4. Side by side</h2><table><tr><th>Variant</th><th>Usefulness</th><th>Build effort</th><th>Risk</th></tr>
+<tr><td><a href="#v01">01 Notepad, refined</a></td><td><span class="dots">●●●●<span style="opacity:.25">●</span></span></td><td><span class="dots">●●<span style="opacity:.25">●●●</span></span></td><td><span class="dots">●<span style="opacity:.25">●●●●</span></span></td></tr>
+<tr><td><a href="#v02">02 Property-sheet tabs</a></td><td><span class="dots">●●●●●<span style="opacity:.25"></span></span></td><td><span class="dots">●●●<span style="opacity:.25">●●</span></span></td><td><span class="dots">●●<span style="opacity:.25">●●●</span></span></td></tr>
+<tr><td><a href="#v03">03 Task Manager: the Usage tab</a></td><td><span class="dots">●●●●<span style="opacity:.25">●</span></span></td><td><span class="dots">●●●<span style="opacity:.25">●●</span></span></td><td><span class="dots">●●<span style="opacity:.25">●●●</span></span></td></tr>
+<tr><td><a href="#v04">04 Defrag context map</a></td><td><span class="dots">●●●●<span style="opacity:.25">●</span></span></td><td><span class="dots">●●●<span style="opacity:.25">●●</span></span></td><td><span class="dots">●●●<span style="opacity:.25">●●</span></span></td></tr>
+<tr><td><a href="#v05">05 Explorer workspace</a></td><td><span class="dots">●●●●●<span style="opacity:.25"></span></span></td><td><span class="dots">●●●●<span style="opacity:.25">●</span></span></td><td><span class="dots">●●●<span style="opacity:.25">●●</span></span></td></tr>
+<tr><td><a href="#v06">06 Permissions and plan</a></td><td><span class="dots">●●●●<span style="opacity:.25">●</span></span></td><td><span class="dots">●●<span style="opacity:.25">●●●</span></span></td><td><span class="dots">●<span style="opacity:.25">●●●●</span></span></td></tr>
+<tr><td><a href="#v07">07 WordPad transcript</a></td><td><span class="dots">●●●●●<span style="opacity:.25"></span></span></td><td><span class="dots">●●<span style="opacity:.25">●●●</span></span></td><td><span class="dots">●●<span style="opacity:.25">●●●</span></span></td></tr>
+<tr><td><a href="#v08">08 Mixer controls</a></td><td><span class="dots">●●●<span style="opacity:.25">●●</span></span></td><td><span class="dots">●●<span style="opacity:.25">●●●</span></span></td><td><span class="dots">●●<span style="opacity:.25">●●●</span></span></td></tr>
+<tr><td><a href="#v09">09 Busy strip</a></td><td><span class="dots">●●●●<span style="opacity:.25">●</span></span></td><td><span class="dots">●<span style="opacity:.25">●●●●</span></span></td><td><span class="dots">●<span style="opacity:.25">●●●●</span></span></td></tr>
+<tr><td><a href="#v10">10 Windows for Workgroups 3.11</a></td><td><span class="dots">●●●●<span style="opacity:.25">●</span></span></td><td><span class="dots">●●<span style="opacity:.25">●●●</span></span></td><td><span class="dots">●●<span style="opacity:.25">●●●</span></span></td></tr>
+<tr><td><a href="#v11">11 Settings page (/config)</a></td><td><span class="dots">●●●<span style="opacity:.25">●●</span></span></td><td><span class="dots">●●<span style="opacity:.25">●●●</span></span></td><td><span class="dots">●<span style="opacity:.25">●●●●</span></span></td></tr>
+<tr><td><a href="#v12">12 The suite</a></td><td><span class="dots">●●●●●<span style="opacity:.25"></span></span></td><td><span class="dots">●●●●<span style="opacity:.25">●</span></span></td><td><span class="dots">●●●<span style="opacity:.25">●●</span></span></td></tr>
+</table><p class="note">Dots: more = more useful / more work / more risk. Risk is mostly cross-process fragility (themed pages leaving stale copies when moved visibly, XOR-drawn clock hands ghosting on forced repaints, statics moved off their dialogs painting the wrong background, controls that need memory in their own process to be filled).</p>
+</div><div id="zoom"></div><script>var z=document.getElementById("zoom"),zi=null;document.querySelectorAll("a.z").forEach(function(a){a.addEventListener("click",function(e){e.preventDefault();if(!zi){zi=document.createElement("img");zi.alt="";z.appendChild(zi);}zi.src=a.getAttribute("href");z.style.display="flex";});});z.addEventListener("click",function(){z.style.display="none";});document.addEventListener("keydown",function(e){if(e.key==="Escape")z.style.display="none";});</script></body></html>
