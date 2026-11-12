@@ -52,8 +52,9 @@ static void scene_b3(void)
 
     /* the source, dropped in: forty-odd kilobytes in a few seconds */
     say("dump %d bytes", len);
-    {
-        int chunks = 26, step = (len + chunks - 1) / chunks, at = 0;
+    {   /* small chunks, ~20 a second: each one scrolls the edit by a few lines, which Windows does by
+           copying the pixels already there and drawing only the new lines (no whole-page repaints) */
+        int chunks = 70, step = (len + chunks - 1) / chunks, at = 0;
         char *buf = (char *)malloc(step + 1);
         while (at < len) {
             int m = len - at < step ? len - at : step;
@@ -61,8 +62,9 @@ static void scene_b3(void)
             SendMessageA(ed, EM_SETSEL, 0x7fffffff, 0x7fffffff);
             SendMessageA(ed, EM_REPLACESEL, FALSE, (LPARAM)buf);
             SendMessageA(ed, EM_SCROLLCARET, 0, 0);
+            UpdateWindow(ed);
             at += m;
-            play(125);
+            play(48);
         }
         free(buf);
     }

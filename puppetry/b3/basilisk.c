@@ -1131,6 +1131,14 @@ static void fly(Fly *f, int n)
            window under it repaints leaves a ghost of itself (UpdateWindow waits for the owner) */
         if (np) { UpdateWindow(np); if (np_edit) UpdateWindow(np_edit); }
         for (i = 0; i < n; i++) if (f[i].h && !f[i].done) UpdateWindow(f[i].h);
+        {   /* the other donors still standing repaint what a passing part uncovered (children too) */
+            HWND others[3];
+            int k;
+            others[0] = calc; others[1] = clk_dlg; others[2] = fd;
+            for (k = 0; k < 3; k++)
+                if (others[k] && IsWindowVisible(others[k]))
+                    RedrawWindow(others[k], NULL, NULL, RDW_UPDATENOW | RDW_ALLCHILDREN);
+        }
         Sleep(15);
     }
 }
@@ -1234,29 +1242,114 @@ static int assemble(void)
     SetWindowPlacement(np, &wp);
     Sleep(200);
 
-    /* 3. the parts lift out of their programs and fly to where they will live */
+    /* 3. the parts lift out of their programs, one at a time, each moving mostly intact and
+          then refining, quickly but one change at a time */
     {
         RECT cr;
         POINT o = {0, 0};
-        int W, H, top, tw, ph, n = 0;
-        Fly f[3];
-        memset(f, 0, sizeof f);
+        int W, H, top, tw, ph, ex;
         GetClientRect(np, &cr);
         ClientToScreen(np, &o);
         W = cr.right; H = cr.bottom;
         tw = W - SIDE;
         top = H - BAR - PAGE_H; if (top < 0) top = 0;
         ph = H - BAR - top;
-        {                                                 /* Notepad's own Find box: down to the bottom */
-            RECT r;
-            GetWindowRect(fd, &r);
-            f[n].h = fd; f[n].a = r;
-            f[n].b = rc_xywh(o.x + 6, o.y + H - (r.bottom - r.top) - 6, r.right - r.left, r.bottom - r.top);
-            f[n].start = 0; f[n].dur = 1500; n++;
+        ex = W - 2 * 78 - 12;
+        fd_edit = GetDlgItem(fd, 1152);
+        fd_send = GetDlgItem(fd, IDOK);
+        fd_stop = GetDlgItem(fd, IDCANCEL);
+        {   /* the "Find what:" label (its id is -1) */
+            HWND c = NULL;
+            fd_label = NULL;
+            while ((c = FindWindowExA(fd, c, "Static", NULL))) {
+                char t[32];
+                GetWindowTextA(c, t, sizeof t);
+                if (strstr(t, "ind")) { fd_label = c; break; }
+            }
         }
-        if (clk_page) {      /* the Date and Time page leaves its dialog and folds into a column, hidden */
+
+        /* Find: glides down to the bottom of Notepad, still itself */
+        {
+            Fly f[1];
+            RECT r;
+            memset(f, 0, sizeof f);
+            GetWindowRect(fd, &r);
+            f[0].h = fd; f[0].a = r;
+            f[0].b = rc_xywh(o.x + 6, o.y + H - (r.bottom - r.top) - 6, r.right - r.left, r.bottom - r.top);
+            f[0].dur = 800;
+            fly(f, 1);
+        }
+        /* someone types into it */
+        {
+            const char *q = "find a connection to 2026";
+            for (; *q; q++) { PostMessageA(fd_edit, WM_CHAR, (BYTE)*q, 0); Sleep(22); UpdateWindow(fd_edit); }
+            Sleep(250);
+        }
+        /* what it won't need drops away, one control at a time */
+        {
+            static const int gone[] = {1041, 1056, 1057, 1072, 1040, 1038};
+            int i;
+            for (i = 0; i < 6; i++) {
+                HWND c = GetDlgItem(fd, gone[i]);
+                if (c && IsWindowVisible(c)) { ShowWindow(c, SW_HIDE); UpdateWindow(fd); Sleep(110); }
+            }
+            if (fd_label) { ShowWindow(fd_label, SW_HIDE); UpdateWindow(fd); Sleep(110); }
+        }
+        /* its buttons take their new names (and new ids, so Notepad never searches or closes it) */
+        SetWindowLongA(fd_send, GWL_ID, 0x7701);
+        SetWindowLongA(fd_stop, GWL_ID, 0x7702);
+        SetWindowTextA(fd_send, "Send"); UpdateWindow(fd_send); Sleep(160);
+        SetWindowTextA(fd_stop, "Stop"); UpdateWindow(fd_stop); Sleep(160);
+        /* it stretches into the bar: the box and its edit and buttons move together */
+        {
+            RECT r, e0, s0, t0;
+            POINT p0 = {0, 0};
+            DWORD t_0 = GetTickCount();
+            int dur = 450;
+            GetWindowRect(fd, &r);
+            ClientToScreen(fd, &p0);
+            GetWindowRect(fd_edit, &e0); GetWindowRect(fd_send, &s0); GetWindowRect(fd_stop, &t0);
+            OffsetRect(&e0, -p0.x, -p0.y); OffsetRect(&s0, -p0.x, -p0.y); OffsetRect(&t0, -p0.x, -p0.y);
+            for (;;) {
+                double t = (double)(GetTickCount() - t_0) / dur, e;
+                int cw = p0.x - r.left, chh = p0.y - r.top;          /* border + caption */
+                RECT fb;
+                if (t > 1) t = 1;
+                e = ease_io(t);
+#define LERP(a, b) ((a) + (int)(((b) - (a)) * e))
+                fb = rc_xywh(LERP(r.left, o.x - cw), LERP(r.top, o.y + H - BAR - chh), LERP(r.right - r.left, W + 2 * cw),
+                             LERP(r.bottom - r.top, BAR + chh + cw));
+                SetWindowPos(fd, NULL, fb.left, fb.top, fb.right - fb.left, fb.bottom - fb.top, SWP_NOZORDER | SWP_NOACTIVATE);
+                MoveWindow(fd_edit, LERP(e0.left, 8), LERP(e0.top, 8), LERP(e0.right - e0.left, ex - 16), LERP(e0.bottom - e0.top, 24), TRUE);
+                MoveWindow(fd_send, LERP(s0.left, ex), LERP(s0.top, 7), LERP(s0.right - s0.left, 74), LERP(s0.bottom - s0.top, 26), TRUE);
+                MoveWindow(fd_stop, LERP(t0.left, ex + 78), LERP(t0.top, 7), LERP(t0.right - t0.left, 74), LERP(t0.bottom - t0.top, 26), TRUE);
+#undef LERP
+                UpdateWindow(np); UpdateWindow(np_edit); UpdateWindow(fd);
+                if (t >= 1) break;
+                Sleep(15);
+            }
+        }
+        /* its frame goes: it is part of Notepad now; the words it was given clear */
+        ShowWindow(fd, SW_HIDE);
+        SetWindowPos(fd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        EnumChildWindows(fd, hide_cb, 0);
+        make_child(fd, np);
+        SetWindowPos(fd, HWND_TOP, 0, H - BAR, W, BAR, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+        if (np_font) SendMessageA(fd_edit, WM_SETFONT, (WPARAM)np_font, TRUE);
+        SendMessageA(fd_edit, EM_LIMITTEXT, 30000, 0);
+        EnableWindow(fd_send, TRUE);
+        EnableWindow(fd_stop, FALSE);
+        UpdateWindow(fd);
+        Sleep(200);
+        SendMessageA(fd_edit, EM_SETSEL, 0, -1); UpdateWindow(fd_edit); Sleep(200);
+        SendMessageA(fd_edit, WM_SETTEXT, 0, (LPARAM)""); UpdateWindow(fd_edit);
+
+        /* the Date and Time page leaves its dialog, folds into a column (hidden) and flies over */
+        if (clk_page) {
+            Fly f[1];
             RECT r;
             HWND c = NULL;
+            memset(f, 0, sizeof f);
             float_out(clk_page);
             ShowWindow(clk_page, SW_HIDE);
             ShowWindow(clk_dlg, SW_HIDE);
@@ -1269,27 +1362,10 @@ static int assemble(void)
             SetWindowPos(clk_page, NULL, r.left, r.top, SIDE, ph, SWP_NOZORDER | SWP_NOACTIVATE);
             page_inner();
             ShowWindow(clk_page, SW_SHOWNA);
-            f[n].h = clk_page; f[n].a = rc_xywh(r.left, r.top, SIDE, ph);
-            f[n].b = rc_xywh(o.x + tw, o.y + top, SIDE, ph);
-            f[n].start = 600; f[n].dur = 1700; n++;
-        }
-        if (calc_disp) {                                  /* Calculator's display, alone */
-            RECT r;
-            float_out(calc_disp);
-            ShowWindow(calc, SW_HIDE);
-            SendMessageA(calc_disp, EM_SETREADONLY, FALSE, 0);     /* white, like it is inside Calculator */
-            SetWindowLongA(calc_disp, GWL_EXSTYLE, GetWindowLongA(calc_disp, GWL_EXSTYLE) | WS_EX_CLIENTEDGE);
-            SetWindowPos(calc_disp, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED | SWP_NOACTIVATE);
-            GetWindowRect(calc_disp, &r);
-            f[n].h = calc_disp; f[n].a = r;
-            f[n].b = rc_xywh(o.x + tw + 10, o.y + (top > 34 ? (top - 24) / 2 : 6), SIDE - 20, 24);
-            f[n].start = 1300; f[n].dur = 1500; n++;
-        }
-        fly(f, n);
-        Sleep(200);
-
-        /* 4. landing: each part becomes part of Notepad exactly where it already is */
-        if (clk_page) {
+            f[0].h = clk_page; f[0].a = rc_xywh(r.left, r.top, SIDE, ph);
+            f[0].b = rc_xywh(o.x + tw, o.y + top, SIDE, ph);
+            f[0].dur = 1100;
+            fly(f, 1);
             SetWindowPos(clk_page, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
             make_child(clk_page, np);
             SetWindowPos(clk_page, HWND_TOP, tw, top, SIDE, ph, SWP_NOACTIVATE);
@@ -1298,40 +1374,53 @@ static int assemble(void)
             if (grp_date) RedrawWindow(grp_date, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_UPDATENOW);
             if (cal) RedrawWindow(cal, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_UPDATENOW);
         }
-        if (calc_disp) {
-            LONG st = GetWindowLongA(calc_disp, GWL_STYLE);
-            SetWindowPos(calc_disp, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-            SetWindowLongA(calc_disp, GWL_STYLE, (st & ~WS_POPUP) | WS_CHILD);
-            SetParent(calc_disp, np);
-            SetWindowPos(calc_disp, HWND_TOP, tw + 10, top > 34 ? (top - 24) / 2 : 6, SIDE - 20, 24, SWP_NOACTIVATE);
+
+        /* Calculator: moves over whole, sheds its keys one by one, then its display slides into place */
+        if (calc && calc_disp) {
+            Fly f[1];
+            RECT r, d;
+            HWND kid[160];
+            int nk = 0, i, j;
+            HWND c = NULL;
+            memset(f, 0, sizeof f);
+            GetWindowRect(calc, &r);
+            GetWindowRect(calc_disp, &d);
+            f[0].h = calc; f[0].a = r;
+            /* it parks against the right edge, over the sidebar, below where the meter will live */
+            f[0].b = rc_xywh(o.x + W - (r.right - r.left) - 4, o.y + top + 70, r.right - r.left, r.bottom - r.top);
+            f[0].dur = 700;
+            fly(f, 1);
+            while ((c = FindWindowExA(calc, c, NULL, NULL)) && nk < 160)
+                if (c != calc_disp && IsWindowVisible(c)) kid[nk++] = c;
+            for (i = 0; i < nk; i++)          /* bottom-right first, like a page being wiped */
+                for (j = i + 1; j < nk; j++) {
+                    RECT a, b;
+                    GetWindowRect(kid[i], &a); GetWindowRect(kid[j], &b);
+                    if (b.top + b.left > a.top + a.left) { HWND t = kid[i]; kid[i] = kid[j]; kid[j] = t; }
+                }
+            for (i = 0; i < nk; i++) { ShowWindow(kid[i], SW_HIDE); if (i % 3 == 2) { UpdateWindow(calc); Sleep(14); } }
+            UpdateWindow(calc);
+            Sleep(150);
+            float_out(calc_disp);
+            ShowWindow(calc, SW_HIDE);
+            SendMessageA(calc_disp, EM_SETREADONLY, FALSE, 0);     /* white, like it is inside Calculator */
+            SetWindowLongA(calc_disp, GWL_EXSTYLE, GetWindowLongA(calc_disp, GWL_EXSTYLE) | WS_EX_CLIENTEDGE);
+            SetWindowPos(calc_disp, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED | SWP_NOACTIVATE);
+            GetWindowRect(calc_disp, &d);
+            memset(f, 0, sizeof f);
+            f[0].h = calc_disp; f[0].a = d;
+            f[0].b = rc_xywh(o.x + tw + 10, o.y + (top > 34 ? (top - 24) / 2 : 6), SIDE - 20, 24);
+            f[0].dur = 500;
+            fly(f, 1);
+            {
+                LONG st = GetWindowLongA(calc_disp, GWL_STYLE);
+                SetWindowPos(calc_disp, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+                SetWindowLongA(calc_disp, GWL_STYLE, (st & ~WS_POPUP) | WS_CHILD);
+                SetParent(calc_disp, np);
+                SetWindowPos(calc_disp, HWND_TOP, tw + 10, top > 34 ? (top - 24) / 2 : 6, SIDE - 20, 24, SWP_NOACTIVATE);
+            }
         }
     }
-    fd_edit = GetDlgItem(fd, 1152);
-    fd_send = GetDlgItem(fd, IDOK);
-    fd_stop = GetDlgItem(fd, IDCANCEL);
-    fd_label = GetDlgItem(fd, 0xFFFF);
-    {   /* find the "Find what:" label (its id is -1) */
-        HWND c = NULL;
-        while ((c = FindWindowExA(fd, c, "Static", NULL))) {
-            char t[32];
-            GetWindowTextA(c, t, sizeof t);
-            if (strstr(t, "ind")) { fd_label = c; break; }
-        }
-    }
-    ShowWindow(fd, SW_HIDE);
-    SetWindowPos(fd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-    EnumChildWindows(fd, hide_cb, 0);
-    /* new ids, so Notepad never runs a search or closes the bar when these are pressed */
-    SetWindowLongA(fd_send, GWL_ID, 0x7701);
-    SetWindowLongA(fd_stop, GWL_ID, 0x7702);
-    SetWindowTextA(fd_send, "Send");
-    SetWindowTextA(fd_stop, "Stop");
-    if (fd_label) ShowWindow(fd_label, SW_HIDE);
-    if (np_font) SendMessageA(fd_edit, WM_SETFONT, (WPARAM)np_font, TRUE);
-    SendMessageA(fd_edit, EM_LIMITTEXT, 30000, 0);
-    EnableWindow(fd_send, TRUE);
-    EnableWindow(fd_stop, FALSE);
-    make_child(fd, np);
 
     lay_w = lay_h = -1;
     layout();
