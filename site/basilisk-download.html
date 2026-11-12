@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BASILISK Downloads</title>
+<meta name="description" content="Run BASILISK on your own computer: Windows for Workgroups 3.11 with Claude Code built into it, in a window of its own, using your own Anthropic account.">
+<style>
+:root {
+  --desk: #008080; --face: #c0c0c0; --hi: #ffffff; --lo: #808080; --ink: #000000;
+  --title: #000080; --title-ink: #ffffff; --paper: #ffffff; --muted: #404040; --link: #000080;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --desk: #004848; }
+}
+:root[data-theme="dark"] { --desk: #004848; }
+* { box-sizing: border-box; }
+html { background: var(--desk); }
+body { margin: 0; color: var(--ink); background: var(--desk);
+  font: 15px/1.55 "MS Sans Serif", "Microsoft Sans Serif", Arial, Helvetica, sans-serif; }
+a { color: var(--link); }
+.wrap { max-width: 980px; margin: 0 auto; padding: 22px 16px 40px; }
+.win { background: var(--paper); border: 1px solid var(--ink); box-shadow: 0 0 0 3px var(--face), 0 0 0 4px var(--ink); margin: 8px 4px 30px; }
+.cap { display: flex; align-items: center; height: 22px; background: var(--title); color: var(--title-ink); border-bottom: 1px solid var(--ink); font-weight: 700; }
+.cap .box { width: 22px; height: 21px; background: var(--face); border-right: 1px solid var(--ink); display: grid; place-items: center; flex: none; }
+.cap .box::before { content: ""; width: 12px; height: 3px; background: var(--paper); border: 1px solid var(--ink); }
+.cap .t { flex: 1; text-align: center; letter-spacing: .02em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0 6px; }
+.body { padding: 16px 20px 18px; }
+h1 { font-size: 22px; margin: 0 0 6px; }
+h2 { font-size: 16px; margin: 18px 0 6px; }
+p { margin: 0 0 10px; }
+.shot { width: 100%; height: auto; display: block; border: 1px solid var(--ink); margin: 6px 0 14px; image-rendering: auto; }
+.dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 10px 0 6px; }
+.dl a { display: block; text-decoration: none; color: var(--ink); background: var(--face); border: 1px solid var(--ink); border-radius: 3px;
+  box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo); padding: 10px 12px; }
+.dl a:active { box-shadow: inset 2px 2px 0 var(--lo); }
+.dl b { display: block; font-size: 15px; }
+.dl span { font-size: 13px; color: var(--muted); }
+code, pre { font: 13px "Fixedsys Excelsior", "Lucida Console", ui-monospace, Menlo, Consolas, monospace; }
+pre { background: #000; color: #c0c0c0; padding: 10px 12px; overflow-x: auto; margin: 6px 0 12px; white-space: pre; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 6px 0 10px; }
+td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var(--face); vertical-align: top; }
+th { font-weight: 700; }
+.note { font-size: 13.5px; color: var(--muted); }
+.sib { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 0; padding: 26px 16px 40px; font: 11px/1.6 "Lucida Console", monospace;
+  letter-spacing: .12em; text-transform: uppercase; color: #fff; opacity: .6; }
+.sib a, .sib b { color: inherit; text-decoration: none; padding: 0 10px; } .sib a:hover { text-decoration: underline; opacity: 1; }
+.sib i { font-style: normal; opacity: .6; }
+@media (max-width: 560px) { .body { padding: 12px 12px 14px; } h1 { font-size: 19px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="win">
+  <div class="cap"><span class="box"></span><span class="t">BASILISK Downloads</span></div>
+  <div class="body">
+    <h1>Run BASILISK on your own computer</h1>
+    <p>BASILISK is Claude Code living inside old Windows, built by Windows itself out of Notepad, Terminal, Clock, Cardfile and Calculator. On this site it runs on a shared server, one visitor at a time, on a small monthly budget. Downloaded, it is yours: no queue and no caps, any model and effort you like, and it bills <b>your own</b> Anthropic account.</p>
+  </div>
+</div>
+
+<div class="win" id="basilisk-311">
+  <div class="cap"><span class="box"></span><span class="t">BASILISK 3.11 &mdash; Windows for Workgroups 3.11</span></div>
+  <div class="body">
+    <img class="shot" src="basilisk-download/basilisk-311.png" width="1040" height="807" alt="BASILISK 3.11 running in its own window: Windows Terminal holds the conversation with Claude, a clock, the bill in Calculator's display and a Cardfile status card on the right, and an input line at the bottom.">
+    <p>One window, titled BASILISK 3.11. The first start shows the build: Windows boots, pours <code>BASILISK.C</code> into Notepad, compiles it with Open Watcom, and assembles the client (about half a minute). Later starts open straight into BASILISK in about eight seconds. Type in the line at the bottom. Claude can run DOS commands, read and write files, and compile and run C programs, all inside 3.11.</p>
+    <div class="dl">
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-3.11-v1.0.0/BASILISK-3.11-windows-x64.zip"><b>Windows 10 / 11</b><span>x64 &middot; .zip &middot; <!--SIZE-windows-->40 MB</span></a>
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-3.11-v1.0.0/BASILISK-3.11-macos-arm64.dmg"><b>macOS, Apple silicon</b><span>M1 and later &middot; .dmg &middot; <!--SIZE-macarm-->91 MB</span></a>
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-3.11-v1.0.0/BASILISK-3.11-macos-x64.dmg"><b>macOS, Intel</b><span>.dmg &middot; <!--SIZE-macx64-->98 MB</span></a>
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-3.11-v1.0.0/BASILISK-3.11-linux-x64.AppImage"><b>Linux</b><span>x64 &middot; AppImage &middot; <!--SIZE-linux-->61 MB</span></a>
+    </div>
+    <p class="note">All files, checksums and the DOSBox-X source are on the <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-3.11-v1.0.0">release page</a>.</p>
+
+    <h2>Start it</h2>
+    <table>
+      <tr><th>Windows</th><td>Unzip, open the <b>BASILISK 3.11</b> folder, double-click <b>BASILISK 3.11.exe</b>. SmartScreen may say "Windows protected your PC": <i>More info</i> &gt; <i>Run anyway</i>. It adds itself to the Start menu.</td></tr>
+      <tr><th>macOS</th><td>Open the .dmg and drag BASILISK 3.11 to Applications. It is not notarized, so the first time right-click it &gt; <i>Open</i> &gt; <i>Open</i> (macOS 15 and later: System Settings &gt; Privacy &amp; Security &gt; <i>Open Anyway</i>). Or skip the warning by downloading in Terminal:
+        <pre>curl -LO https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-3.11-v1.0.0/BASILISK-3.11-macos-arm64.dmg
+open BASILISK-3.11-macos-arm64.dmg</pre></td></tr>
+      <tr><th>Linux</th><td><code>chmod +x BASILISK-3.11-linux-x64.AppImage</code> and run it. Needs a desktop (X11 or Wayland) and glibc 2.35 or newer (Ubuntu 22.04, Debian 12, Fedora 36 and later).</td></tr>
+    </table>
+
+    <h2>Sign in</h2>
+    <p>Copy your API key from <a href="https://console.anthropic.com/settings/keys">console.anthropic.com</a>, then type <code>/login</code> inside BASILISK. It reads the key from your clipboard (never typed, never shown), checks it with a free call, and keeps it on your computer, readable only by your account. If you use the Anthropic CLI, <code>ant auth login</code> works too, as does <code>ANTHROPIC_API_KEY</code>.</p>
+
+    <h2>Who pays</h2>
+    <p>You do. Requests go from your computer straight to the Claude API and are billed to your Anthropic account at the published prices. A Claude.ai Pro or Max plan does not cover API use. BASILISK has no caps: the bill so far is on the Calculator and in <code>/cost</code>, and the Console can set a spend limit.</p>
+    <table>
+      <tr><th>/model</th><th>model</th><th>per million tokens, in / out</th></tr>
+      <tr><td>haiku (default)</td><td>claude-haiku-5-5</td><td>$0.10 / $0.50 &mdash; writing and running a small C program costs well under a cent</td></tr>
+      <tr><td>sonnet</td><td>claude-sonnet-5-5</td><td>$2 / $10</td></tr>
+      <tr><td>opus</td><td>claude-opus-5-5</td><td>$4 / $20</td></tr>
+      <tr><td>fable</td><td>claude-fable-5-2</td><td>$8 / $40</td></tr>
+    </table>
+
+    <h2>Inside</h2>
+    <p><code>/model</code> and <code>/effort low|medium|high|xhigh|max</code> change the model and how hard it thinks, from the next request. <code>/settings</code> shows everything. <code>/intro on</code> brings back the build at every start. <code>/size</code> picks the window size, and Alt+Enter switches to full screen. <code>/files</code>: drive <b>D:</b> is a folder on your computer (Documents/BASILISK 3.11), shared both ways. <code>/reset</code> gives you a fresh C: on the next start. Closing the window quits.</p>
+
+    <h2>What is in it</h2>
+    <p class="note">Windows for Workgroups 3.11 (&copy; 1993 Microsoft), included as part of this art project. The engine is <a href="https://github.com/joncampbell123/dosbox-x">DOSBox-X</a> (GPLv2): the official build, with one change, a byte patch to its window-title format so the title reads BASILISK 3.11. Its source is attached to the release. Also included: Open Watcom, Python (python-build-standalone) and the Anthropic SDK. Everything else is in <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-311">packages/basilisk-311</a>.</p>
+  </div>
+</div>
+
+</div>
+<nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">Windows Secrets</a><i>&middot;</i><a href="inside-windows.html">Inside Windows</a><i>&middot;</i><a href="tribute.html">Tribute</a><i>&middot;</i><a href="basilisk.html">BASILISK</a><i>&middot;</i><a href="basilisk-term.html">BASILISK III</a><i>&middot;</i><a href="basilisk-31.html">BASILISK 3.11</a><i>&middot;</i><a href="xp-live.html">Live</a><i>&middot;</i><a href="puppetry.html">Window Puppetry</a><i>&middot;</i><a href="valentine-xp.html">XP Valentine</a><i>&middot;</i><a href="valentine-31.html">Valentine 3.11</a><i>&middot;</i><a href="basilisk-31-browser.html">3.11 in your browser</a><i>&middot;</i><b>Download</b></nav>
+</body>
+</html>
