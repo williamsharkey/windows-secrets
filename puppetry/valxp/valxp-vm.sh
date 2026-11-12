@@ -3,7 +3,7 @@
 V=/root/valxp
 MON=/tmp/valxp-mon.sock; QMP=/tmp/valxp-qmp.sock; VNC=/tmp/valxp-vnc.sock
 GUESTPORT=${GUESTPORT:-8773}
-ARGS=(-name valxp -m 512 -enable-kvm -cpu host -smp 2
+ARGS=(-name valxp -machine pc-i440fx-jammy -m 512 -enable-kvm -cpu host -smp 2
   -drive file=$V/valxp.qcow2,format=qcow2,if=ide,index=0
   -vga cirrus -display none -vnc unix:$VNC,share=force-shared
   -netdev "user,id=n0,restrict=on,net=10.0.2.0/24,host=10.0.2.100,guestfwd=tcp:10.0.2.2:8765-cmd:socat STDIO TCP:127.0.0.1:$GUESTPORT"

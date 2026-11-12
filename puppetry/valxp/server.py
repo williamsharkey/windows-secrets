@@ -188,7 +188,10 @@ class Studio:
         while True:
             while not self.line:
                 self.wake.clear()
-                await self.wake.wait()
+                try:
+                    await asyncio.wait_for(self.wake.wait(), 120)
+                except asyncio.TimeoutError:
+                    await self.park()     # e.g. the VM service restarted and came back running
             job = self.line.popleft()
             self.current = job
             job.state = 'rendering'
@@ -206,6 +209,14 @@ class Studio:
                     log('render failed again: %r' % e2)
                     job.state, job.error = 'error', 'The valentine machine stumbled. Please try again in a minute.'
             self.current = None
+            await self.park()
+
+    async def park(self):
+        """between jobs the VM is paused: it costs no CPU until the next loadvm + cont"""
+        try:
+            await self.qmp('stop')
+        except Exception as e:
+            log('could not pause the VM: %r' % e)
 
     async def sweeper(self):
         while True:
@@ -330,6 +341,7 @@ async def main():
     await web.TCPSite(r1, '127.0.0.1', GUEST_PORT).start()
     await web.TCPSite(r2, '127.0.0.1', PUBLIC_PORT).start()
     log('guest 127.0.0.1:%d, public 127.0.0.1:%d' % (GUEST_PORT, PUBLIC_PORT))
+    await S.park()          # idle from the start; the first job's loadvm + cont wakes it
     await asyncio.gather(S.worker(), S.sweeper())
 
 
