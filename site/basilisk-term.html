@@ -136,7 +136,7 @@ let rfb = null, rfbTimer = null;
 function connectScreen() {
   clearTimeout(rfbTimer);
   try {
-    rfb = new RFB($('screen'), BASE + '/vnc', { shared: true, wsProtocols: ['binary'] });
+    rfb = new RFB($('screen'), BASE + '/vnc2', { shared: true, wsProtocols: ['binary'] });
   } catch (e) { rfbTimer = setTimeout(connectScreen, 3000); return; }
   rfb.viewOnly = true;
   rfb.scaleViewport = true;

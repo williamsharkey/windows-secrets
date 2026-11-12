@@ -32,9 +32,9 @@ ROOT = os.environ.get('TERM_ROOT', '/root/term')
 ENVFILE = os.path.join(ROOT, '.env')
 DATA = os.path.join(ROOT, 'data')
 WWW = os.path.join(ROOT, 'www')
-QMP = '/tmp/term-qmp.sock'          # commands (loadvm, savevm): one short connection each
-QMPK = '/tmp/term-qmpk.sock'        # keys: a second QMP socket, held open (QMP serves one client per socket)
-VNC = '/tmp/term-vnc.sock'
+QMP = os.environ.get('TERM_QMP', '/tmp/term-qmp.sock')      # commands (loadvm, savevm): one short connection each
+QMPK = os.environ.get('TERM_QMPK', '/tmp/term-qmpk.sock')   # keys: a second QMP socket, held open (one client per socket)
+VNC = os.environ.get('TERM_VNC', '/tmp/term-vnc.sock')
 os.makedirs(DATA, exist_ok=True)
 
 DEFAULTS = {
@@ -1090,6 +1090,268 @@ async def p_vnc(req):
     return ws
 
 
+# ---- the screen, pumped: one update request always outstanding upstream (on this host), so QEMU
+# sends every 30 ms refresh while the screen changes, instead of once per browser round trip.
+# The browser receives QEMU's own lossless ZRLE rectangles untouched, so pixels are exact.
+
+ENC_OK = {16, 6, 0, 1, -223, -224, -239, -258, -307, -308, -1063131698} | set(range(-256, -246))
+
+
+class Down:
+    """incremental parser of QEMU's RFB stream: tells where each FramebufferUpdate message ends"""
+
+    def __init__(self):
+        self.buf = b''
+        self.stage = 'version'
+        self.bpp = 4
+        self.nsec = 0
+        self.area = 0
+
+    def feed(self, data):
+        """-> list of (bytes, is_update_end, update_pixel_area)"""
+        self.buf += data
+        out = []
+        while True:
+            n, end = self.step()
+            if n is None:
+                break
+            out.append((self.buf[:n], end, self.area if end else 0))
+            self.buf = self.buf[n:]
+        return out
+
+    def need(self, n):
+        return n if len(self.buf) >= n else None
+
+    def step(self):
+        b = self.buf
+        st = self.stage
+        if st == 'version':
+            if len(b) < 12:
+                return None, False
+            self.stage = 'sectypes'
+            return 12, False
+        if st == 'sectypes':
+            if len(b) < 1 or len(b) < 1 + b[0]:
+                return None, False
+            self.stage = 'secresult'
+            return 1 + b[0], False
+        if st == 'secresult':
+            if len(b) < 4:
+                return None, False
+            self.stage = 'serverinit'
+            return 4, False
+        if st == 'serverinit':
+            if len(b) < 24:
+                return None, False
+            nl = struct.unpack('>I', b[20:24])[0]
+            if len(b) < 24 + nl:
+                return None, False
+            self.bpp = b[4] // 8
+            self.stage = 'msg'
+            return 24 + nl, False
+        if st == 'raw':                     # unknown territory: pass bytes through, no pumping
+            return (len(b), False) if b else (None, False)
+        # normal messages
+        if not b:
+            return None, False
+        t = b[0]
+        if t == 0:
+            if len(b) < 4:
+                return None, False
+            nrect = struct.unpack('>H', b[2:4])[0]
+            off = 4
+            k = 0
+            area = 0
+            while nrect == 0xFFFF or k < nrect:
+                if len(b) < off + 12:
+                    return None, False
+                x, y, w, h, enc = struct.unpack('>HHHHi', b[off:off + 12])
+                off += 12
+                if enc in (16, 6, 0, 1):
+                    area += w * h
+                if enc in (16, 6):
+                    if len(b) < off + 4:
+                        return None, False
+                    off += 4 + struct.unpack('>I', b[off:off + 4])[0]
+                elif enc == 0:
+                    off += w * h * self.bpp
+                elif enc == 1:
+                    off += 4
+                elif enc == -239:
+                    off += w * h * self.bpp + ((w + 7) // 8) * h
+                elif enc == -308:
+                    if len(b) < off + 4:
+                        return None, False
+                    off += 4 + 16 * b[off]
+                elif enc == -307:
+                    if len(b) < off + 4:
+                        return None, False
+                    off += 4 + struct.unpack('>I', b[off:off + 4])[0]
+                elif enc == -261:
+                    off += 1
+                elif enc == -224:            # LastRect
+                    k += 1
+                    break
+                elif enc in (-223, -258, -257):
+                    pass
+                else:
+                    self.stage = 'raw'
+                    return len(b), False
+                k += 1
+                if len(b) < off:
+                    return None, False
+            if len(b) < off:
+                return None, False
+            self.area = area
+            return off, True
+        if t == 1:
+            if len(b) < 6:
+                return None, False
+            n = 6 + 6 * struct.unpack('>H', b[4:6])[0]
+            return (n, False) if len(b) >= n else (None, False)
+        if t == 2:
+            return 1, False
+        if t == 3:
+            if len(b) < 8:
+                return None, False
+            n = 8 + abs(struct.unpack('>i', b[4:8])[0])
+            return (n, False) if len(b) >= n else (None, False)
+        self.stage = 'raw'
+        return len(b), False
+
+
+async def p_vnc_pumped(req):
+    """view-only like /vnc, plus: this host keeps one incremental update request outstanding"""
+    if not origin_ok(req):
+        raise web.HTTPForbidden()
+    if T.vnc_viewers >= cfgf('TERM_VIEWERS_MAX'):
+        raise web.HTTPServiceUnavailable()
+    ws = web.WebSocketResponse(protocols=('binary',), max_msg_size=1 << 16, heartbeat=30)
+    await ws.prepare(req)
+    try:
+        r, w = await asyncio.open_unix_connection(VNC)
+    except OSError:
+        await ws.close()
+        return ws
+    T.vnc_viewers += 1
+    st = {'w': 1024, 'h': 768, 'pump': False, 'pumping_ok': True}
+    down_p = Down()
+
+    held = {'buf': b'', 'n': 0, 'msgs': []}
+
+    def merged(msgs):
+        """several FramebufferUpdates as ONE (summed rect count, rects in order): noVNC draws a single
+           update and presents it once, so no intermediate state is ever on screen"""
+        if len(msgs) == 1:
+            return msgs[0]
+        if any(struct.unpack('>H', m[2:4])[0] == 0xFFFF for m in msgs):
+            return b''.join(msgs)
+        n = sum(struct.unpack('>H', m[2:4])[0] for m in msgs)
+        if n > 0xFFFE:
+            return b''.join(msgs)
+        return b'\x00\x00' + struct.pack('>H', n) + b''.join(m[4:] for m in msgs)
+    BIG = int(os.environ.get('TERM_COHERE_AREA', str(1024 * 768 * 15 // 100)))
+    TICK = float(os.environ.get('TERM_COHERE_WAIT', '0.045'))
+
+    async def down():
+        try:
+            while True:
+                try:     # a held big update waits at most one refresh tick for the rest of its repaint
+                    data = await (asyncio.wait_for(r.read(262144), TICK) if held['buf'] else r.read(262144))
+                except asyncio.TimeoutError:
+                    await ws.send_bytes(merged(held['msgs']))
+                    held['buf'], held['n'], held['msgs'] = b'', 0, []
+                    continue
+                if not data:
+                    break
+                pieces = down_p.feed(data)
+                if down_p.stage == 'raw':
+                    st['pumping_ok'] = False
+                for piece, end, area in pieces:
+                    if not (end and st['pump'] and st['pumping_ok']):
+                        await ws.send_bytes(piece)          # handshake, clipboard, bell, or pass-through mode
+                        continue
+                    # Coherence: QEMU samples the framebuffer while Windows may be half way through a
+                    # repaint. A big update is held for one tick; the rest of the repaint is merged into it
+                    # and the browser draws the merged update as one, so a half-drawn state never shows.
+                    if held['msgs']:
+                        held['msgs'].append(piece)
+                        held['n'] += 1
+                        if area < BIG or held['n'] >= 3:    # the repaint has settled (or cap)
+                            await ws.send_bytes(merged(held['msgs']))
+                            held['buf'], held['n'], held['msgs'] = b'', 0, []
+                    elif area >= BIG:
+                        held['buf'], held['n'], held['msgs'] = b'1', 1, [piece]
+                    else:
+                        await ws.send_bytes(piece)          # waits when the browser falls behind: natural pacing
+                    w.write(struct.pack('>BBHHHH', 3, 1, 0, 0, st['w'], st['h']))
+                    await w.drain()
+                if down_p.buf and down_p.stage == 'raw':
+                    await ws.send_bytes(down_p.buf)
+                    down_p.buf = b''
+        except Exception:
+            pass
+        finally:
+            await ws.close()
+
+    dt = asyncio.create_task(down())
+    stage, buf = 0, b''
+    try:
+        async for msg in ws:
+            if msg.type != WSMsgType.BINARY:
+                continue
+            buf += msg.data
+            out = b''
+            while True:
+                if stage == 0:
+                    if len(buf) < 12:
+                        break
+                    out += buf[:12]; buf = buf[12:]; stage = 1
+                elif stage == 1:
+                    if len(buf) < 1:
+                        break
+                    out += buf[:1]; buf = buf[1:]; stage = 2
+                elif stage == 2:
+                    if len(buf) < 1:
+                        break
+                    out += b'\x01'; buf = buf[1:]; stage = 3
+                else:
+                    if not buf:
+                        break
+                    n = rfb_len(buf)
+                    if n == -1:
+                        raise ConnectionError('unknown RFB message %d' % buf[0])
+                    if n is None or len(buf) < n:
+                        break
+                    if buf[0] == 2:
+                        encs = struct.unpack('>%di' % ((n - 4) // 4), buf[4:n])
+                        keep = [e for e in encs if e in ENC_OK]
+                        out += struct.pack('>BxH', 2, len(keep)) + struct.pack('>%di' % len(keep), *keep)
+                    elif buf[0] == 0:
+                        down_p.bpp = buf[4] // 8
+                        out += buf[:n]
+                    elif buf[0] == 3:
+                        inc, x, y, ww, hh = struct.unpack('>BHHHH', buf[1:10])
+                        if not inc or not st['pump'] or not st['pumping_ok']:
+                            out += buf[:n]                 # the first full frame, or no pumping
+                            st['w'], st['h'] = x + ww, y + hh
+                            st['pump'] = True
+                        # else: the browser's own incremental requests are already covered by the pump
+                    buf = buf[n:]
+            if len(buf) > 1 << 20:
+                break
+            if out:
+                w.write(out)
+                await w.drain()
+    except Exception:
+        pass
+    finally:
+        T.vnc_viewers -= 1
+        dt.cancel()
+        w.close()
+    return ws
+
+
 async def p_state(req):
     return web.json_response(T.public())
 
@@ -1118,7 +1380,7 @@ async def main():
                       web.post('/b3/int', T.g_int), web.post('/b3/tool', T.g_tool),
                       web.post('/admin/{op}', T.g_admin), web.get('/{name}', T.g_file)])
     pub = web.Application(middlewares=[cors], client_max_size=64 * 1024)
-    pub.add_routes([web.get('/ws', p_ws), web.get('/vnc', p_vnc), web.get('/state', p_state),
+    pub.add_routes([web.get('/ws', p_ws), web.get('/vnc', p_vnc), web.get('/vnc2', p_vnc_pumped), web.get('/state', p_state),
                     web.get('/', lambda r: web.Response(text='BASILISK III\n'))])
     r1, r2 = web.AppRunner(guest, access_log=None), web.AppRunner(pub, access_log=None)
     await r1.setup()

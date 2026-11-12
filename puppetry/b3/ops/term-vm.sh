@@ -14,7 +14,7 @@ ARGS=(-name term -machine pc-i440fx-jammy -m 512 -enable-kvm -cpu host -smp 2
   -qmp unix:/tmp/term-qmpk.sock,server,nowait)
 qemu-img snapshot -U -l $T/term.qcow2 2>/dev/null | grep -q term-desk && ARGS+=(-loadvm term-desk)
 case "$1" in
-run)  exec qemu-system-i386 "${ARGS[@]}" ;;
+run)  exec /root/term/bin/qemu-system-i386-vnc30 "${ARGS[@]}" ;;
 boot) qemu-system-i386 "${ARGS[@]}" -daemonize ;;
 stop) python3 -c "import socket,time;s=socket.socket(socket.AF_UNIX);s.connect(\"$QMP\");s.recv(4096);s.sendall(b\"{\\\"execute\\\":\\\"qmp_capabilities\\\"}{\\\"execute\\\":\\\"quit\\\"}\");time.sleep(1)" ;;
 esac
