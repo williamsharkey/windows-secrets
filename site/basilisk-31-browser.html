@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BASILISK 3.11, in your browser</title>
+<meta name="description" content="Windows for Workgroups 3.11 boots inside this page, compiles a Claude Code client from a Notepad file with Open Watcom, and assembles it from Notepad, Clock, Cardfile and Calculator. Your typing never leaves your machine; only the words for Claude do.">
+<style>
+:root {
+  --bg: #0f1a2b; --panel: #15233a; --ink: #f1ead9; --muted: #a9b2c2; --line: #2a3b57;
+  --teal: #008080; --blue: #000080; --sel: #9fc3ff; --ok: #7fd18b; --warn: #f0b860;
+  --mono: "Fixedsys Excelsior", "Px437 IBM VGA 8x16", "Lucida Console", ui-monospace, Menlo, Consolas, monospace;
+  --sans: "MS Sans Serif", Tahoma, "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) { --bg: #e9e4d6; --panel: #f6f2e8; --ink: #1d2230; --muted: #5e6578; --line: #cfc7b3; --sel: #000080; --ok: #2f7d32; --warn: #9a5b00; }
+}
+:root[data-theme="light"] { --bg: #e9e4d6; --panel: #f6f2e8; --ink: #1d2230; --muted: #5e6578; --line: #cfc7b3; --sel: #000080; --ok: #2f7d32; --warn: #9a5b00; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans); }
+a { color: var(--sel); }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+header { padding: 34px 0 16px; }
+h1 { font: 700 26px/1.2 var(--mono); margin: 0 0 6px; letter-spacing: .02em; }
+h1 small { font-weight: 400; color: var(--muted); font-size: 17px; }
+.dek { margin: 0; color: var(--muted); max-width: 780px; }
+
+.screen { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #000; border: 2px solid var(--line); outline: none;
+  box-shadow: 0 0 0 1px #000, 0 18px 40px rgba(0,0,0,.35); }
+.screen.on { border-color: var(--sel); }
+.screen canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: auto; }
+@media (min-width: 1060px) { .screen canvas { image-rendering: pixelated; } }
+.veil { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  text-align: center; padding: 16px; color: #f1ead9; background: rgba(0, 0, 40, .62); font: 15px/1.5 var(--sans); }
+.veil[hidden] { display: none; }
+.bar { width: min(360px, 80%); height: 14px; border: 2px solid #f1ead9; padding: 2px; }
+.bar i { display: block; height: 100%; width: 0; background: #f1ead9; transition: width .2s; }
+button { font: 700 14px/1 var(--sans); padding: 10px 18px; border: 2px solid #000; border-radius: 0; cursor: pointer;
+  background: #c0c0c0; color: #000; box-shadow: inset -2px -2px #808080, inset 2px 2px #fff; min-height: 38px; }
+button:active { box-shadow: inset 2px 2px #808080, inset -2px -2px #fff; }
+.status { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; padding: 12px 0 2px; font-size: 14px; }
+.status b { font-weight: 700; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--muted); margin-right: 6px; }
+.dot.ok { background: var(--ok); } .dot.busy { background: var(--warn); }
+.meta { font: 12px/1.4 var(--mono); color: var(--muted); }
+.touch { display: none; gap: 8px; padding-top: 8px; }
+.touch input { flex: 1; min-width: 0; font: 16px var(--mono); padding: 9px; background: var(--panel); color: var(--ink); border: 2px solid var(--line); }
+@media (pointer: coarse) { .touch.on { display: flex; } }
+
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px 30px; padding: 28px 0 8px; }
+.notes h2 { font: 700 13px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; color: var(--muted); }
+.notes p, .notes ul { margin: 0; font-size: 14.5px; }
+.notes ul { padding-left: 18px; }
+code, kbd { font: 13px var(--mono); }
+kbd { border: 1px solid var(--line); border-bottom-width: 2px; padding: 0 4px; background: var(--panel); }
+.credits { font-size: 12.5px; color: var(--muted); padding: 18px 0 0; }
+.sib { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 0; padding: 34px 16px 40px; font: 11px/1.6 var(--mono);
+  letter-spacing: .12em; text-transform: uppercase; opacity: .45; }
+.sib a, .sib b { color: inherit; text-decoration: none; padding: 0 10px; } .sib a:hover { text-decoration: underline; opacity: 1; }
+.sib i { font-style: normal; opacity: .6; }
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1>BASILISK 3.11 <small>in your browser</small></h1>
+  <p class="dek">Windows for Workgroups 3.11 boots inside this page. It pours a C file into Notepad, compiles it with Open Watcom, and the program it builds turns Notepad, Clock, Cardfile and Calculator into a Claude Code client. Everything you see and everything you type stays on your machine; only your words for Claude, and what Claude asks this Windows to do, cross the network.</p>
+</header>
+
+<main class="wrap">
+  <div class="screen" id="screen" tabindex="0" aria-label="Windows for Workgroups 3.11, running in this page. Click, then type.">
+    <canvas id="c" width="1024" height="768"></canvas>
+    <div class="veil" id="veil">
+      <div id="vtext">Windows for Workgroups 3.11 is about 20 MB. It runs here, in your browser.</div>
+      <div class="bar" id="vbar" hidden><i id="vfill"></i></div>
+      <button id="go">Start Windows</button>
+    </div>
+  </div>
+  <div class="status" id="status"><span><span class="dot" id="dot"></span><span id="stext">Not started.</span></span><span class="meta" id="meta"></span></div>
+  <div class="touch" id="touch"><input id="tt" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type here, then Send"><button id="ttgo">Send</button></div>
+
+  <section class="notes" aria-label="About">
+    <div>
+      <h2>How to use it</h2>
+      <ul>
+        <li>Click the screen, then type: the letters go into Notepad's Find box, as real keystrokes.</li>
+        <li><kbd>Enter</kbd> sends, <kbd>Esc</kbd> stops Claude, <kbd>&uarr;</kbd> <kbd>&darr;</kbd> recall, <kbd>PgUp</kbd> <kbd>PgDn</kbd> or the wheel scroll.</li>
+        <li><code>/help</code>, <code>/clear</code>, <code>/cost</code>. Reloading the page starts Windows afresh.</li>
+        <li>Try: write a C program that prints a multiplication table, compile it and run it.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>What happens</h2>
+      <p>The page loads DOSBox-X compiled to WebAssembly (js-dos) and boots Windows for Workgroups 3.11 from a disk image. A small 16-bit program pours <code>BASILISK.C</code> into Notepad, saves it, and runs Open Watcom's compiler in a DOS window, all inside your browser, in about 20 seconds. The program it builds takes Notepad's edit for the transcript, Notepad's own Find dialog for the input bar, Clock, a Cardfile card for the status, and Calculator's display for the bill. Windows and the page pass notes through two files on its C: drive.</p>
+    </div>
+    <div>
+      <h2>What goes over the network</h2>
+      <p>When you press Enter, your sentence goes to a small server that talks to Claude (Haiku 5.5). Claude's reply streams back into Notepad; when Claude wants to run a DOS command or read or write a file, the request comes to this page and BASILISK.EXE does it inside your Windows. Nothing else leaves the page. The other version of this, <a href="basilisk-31.html">BASILISK 3.11</a>, runs on a server and streams its screen instead.</p>
+    </div>
+  </section>
+  <p class="credits">Windows for Workgroups 3.11 &copy; 1993 Microsoft, shown here as part of an art project. js-dos and DOSBox-X are GPL-licensed emulators (self-hosted copies). Open Watcom is open source. <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry/w31b">Source of this page and of BASILISK.C</a>.</p>
+</main>
+
+<nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">Windows Secrets</a><i>&middot;</i><a href="inside-windows.html">Inside Windows</a><i>&middot;</i><a href="tribute.html">Tribute</a><i>&middot;</i><a href="basilisk.html">BASILISK</a><i>&middot;</i><a href="basilisk-term.html">BASILISK III</a><i>&middot;</i><a href="basilisk-31.html">BASILISK 3.11</a><i>&middot;</i><b>3.11 in your browser</b><i>&middot;</i><a href="valentine-xp.html">XP Valentine</a><i>&middot;</i><a href="valentine-31.html">Valentine 3.11</a><i>&middot;</i><a href="puppetry.html">Window Puppetry</a><i>&middot;</i><a href="xp-live.html">Live</a></nav>
+
+<script src="basilisk-31-browser/emulators.js"></script>
+<script>
+(function () {
+const ASSETS = 'basilisk-31-browser/';
+const SERVER = (location.search.includes('local') ? 'ws://127.0.0.1:8785' : 'wss://live.williamsharkey.com/w31b') + '/ws';
+const $ = (id) => document.getElementById(id);
+const screen = $('screen'), canvas = $('c'), g = canvas.getContext('2d');
+let ci = null, FS = null, phase = 'off', busy = false, ready = false;
+
+function setStatus(text, kind) { $('stext').innerHTML = text; $('dot').className = 'dot ' + (kind || ''); }
+
+/* ---------------------------------------------------------------- the cable: two files on C: */
+let towin = '', jsOff = 0;
+const bytes = (s) => { const b = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); b[i] = c < 256 ? c : 63; } return b; };
+const clean = (s) => String(s).replace(/[\x00\x04\x1f]/g, ' ');
+function toWin(type, ...parts) {
+  towin += type + parts.map(clean).join('\x1f') + '\x04';
+  FS.writeFile('B3/TOWIN.TXT', bytes(towin));
+}
+function pollWin() {
+  let d;
+  try { d = FS.readFile('B3/TOJS.TXT'); } catch (e) { return; }
+  if (d.length <= jsOff) return;
+  let s = '';
+  for (let i = jsOff; i < d.length; i++) s += String.fromCharCode(d[i]);
+  const k = s.lastIndexOf('\x04');
+  if (k < 0) return;
+  jsOff += k + 1;
+  for (const f of s.slice(0, k).split('\x04')) if (f) fromWin(f[0], f.slice(1).split('\x1f'));
+}
+
+/* ---------------------------------------------------------------- the transcript (Notepad's edit) */
+const W = 80, BUL = '*';
+let col = 0, sword = '', streaming = false;
+function out(s) { if (s) toWin('A', s.replace(/\r?\n/g, '\r\n')); }
+function para(text, first, rest) {
+  first = first || ''; rest = rest === undefined ? '  ' : rest;
+  const lines = String(text).split('\n');
+  let o = '';
+  lines.forEach((line, li) => {
+    let cur = li === 0 ? first : rest;
+    for (const wd of line.split(/(\s+)/)) {
+      if (!wd) continue;
+      if (cur.length + wd.length > W - 1 && cur.trim()) { o += cur.replace(/\s+$/, '') + '\n'; cur = rest + (/^\s+$/.test(wd) ? '' : wd.replace(/^\s+/, '')); continue; }
+      let w = wd;
+      while (rest.length + w.length > W - 1) { const room = W - 1 - cur.length; o += cur + w.slice(0, room) + '\n'; w = w.slice(room); cur = rest; }
+      cur += w;
+    }
+    o += cur.replace(/\s+$/, '') + '\n';
+  });
+  out(o);
+}
+function streamStart() { out(BUL + ' '); col = 2; sword = ''; streaming = true; }
+function stream(t) {
+  let o = '';
+  for (const ch of t) {
+    if (ch === '\n') { o += '\n  '; col = 2; sword = ''; continue; }
+    if (col >= W - 1) {
+      if (ch === ' ') { o += '\n  '; col = 2; sword = ''; continue; }
+      if (sword && sword.length < 30) {
+        if (o.length >= sword.length && o.endsWith(sword)) o = o.slice(0, -sword.length);
+        else { out(o); o = ''; toWin('B', String(sword.length)); }
+        o += '\n  ' + sword; col = 2 + sword.length;
+      } else { o += '\n  '; col = 2; }
+    }
+    o += ch; col++;
+    sword = ch === ' ' ? '' : (sword + ch).slice(-40);
+  }
+  out(o);
+}
+function streamEnd() { if (streaming) out('\n'); streaming = false; }
+function banner() {
+  out('BASILISK 3.11  -  Claude Code for Windows for Workgroups 3.11\n');
+  out('==============================================================\n\n');
+  para('Assembled a moment ago from Notepad, Clock, Cardfile and Calculator, compiled by Open Watcom from a Notepad file. This Windows is running inside your web browser.', '  ', '  ');
+  out('\n');
+  para('Ask it to look around, write a file, or write and compile a C program. Enter sends. Esc interrupts. Up/Down recall. PgUp/PgDn scroll. /help', '  ', '  ');
+  out('\n');
+}
+
+/* ---------------------------------------------------------------- the conversation */
+let sock = null, usage = { tin: 0, tout: 0, usd: 0 }, hist = [], hi = 0, thinking = false;
+function status(doing) {
+  toWin('S', ['model   claude-haiku-5-5', 'tokens  ' + usage.tin.toLocaleString() + ' in, ' + usage.tout.toLocaleString() + ' out',
+    'cost    $' + usage.usd.toFixed(5) + '  (see Calculator)', 'cwd     C:\\B3\\WORK', '', 'now     ' + (doing || 'ready')].join('\r\n'));
+  toWin('C', '$' + usage.usd.toFixed(5) + ' ');
+}
+function thinkOn() { if (!thinking) { out('  (thinking...)'); thinking = true; } }
+function thinkOff() { if (thinking) { toWin('B', String('  (thinking...)'.length)); thinking = false; } }
+function setBusy(b) { busy = b; toWin('Y', b ? '1' : '0'); render(); }
+
+function connect() {
+  sock = new WebSocket(SERVER);
+  sock.onopen = () => render();
+  sock.onclose = () => { sock = null; if (busy) { thinkOff(); streamEnd(); para('(The line to Claude dropped. Try again.)', BUL + ' '); setBusy(false); status('ready'); } render(); setTimeout(connect, 2500); };
+  sock.onmessage = (e) => {
+    let m; try { m = JSON.parse(e.data); } catch (x) { return; }
+    if (m.t === 'begin') { thinkOff(); streamStart(); }
+    else if (m.t === 'text') { thinkOff(); if (!streaming) streamStart(); stream(m.d); }
+    else if (m.t === 'end') { streamEnd(); thinkOn(); }
+    else if (m.t === 'tool') { thinkOff(); streamEnd(); runTool(m); }
+    else if (m.t === 'usage') { usage = { tin: m.tin, tout: m.tout, usd: m.usd }; status(busy ? 'thinking' : 'ready'); }
+    else if (m.t === 'note') { thinkOff(); streamEnd(); para(m.text, BUL + ' '); }
+    else if (m.t === 'done') { thinkOff(); streamEnd(); out('\n'); setBusy(false); status('ready'); toWin('V', 'E'); }
+  };
+}
+function send(o) { if (sock && sock.readyState === 1) sock.send(JSON.stringify(o)); }
+
+const pendingTools = {};
+function runTool(m) {
+  para(m.title, BUL + ' ', '    ');
+  if (m.error) { out('  | ' + m.error + '\n'); return; }
+  status(m.title.slice(0, 30));
+  pendingTools[m.id] = m;
+  if (m.name === 'run_command') toWin('R', m.id, m.input.command);
+  else if (m.name === 'read_file') toWin('G', m.id, m.input.path);
+  else toWin('W', m.id, m.input.path, m.input.content.replace(/\r?\n/g, '\r\n'));
+}
+function toolResult(id, st, text) {
+  const m = pendingTools[id]; delete pendingTools[id];
+  text = (text || '').replace(/\r\n/g, '\n').replace(/[\n\x1a]+$/, '');
+  const lines = text.split('\n').filter((l) => l.trim());
+  let shown = m && m.name === 'write_file' && st === 'ok' ? ['wrote ' + (m.input.content.split('\n').length) + ' lines'] : lines.slice(0, 5);
+  for (const l of shown) out('  | ' + l.slice(0, W - 6).replace(/\s+$/, '') + '\n');
+  if (m && m.name !== 'write_file' && lines.length > shown.length) out('  | ... (+' + (lines.length - shown.length) + ' lines)\n');
+  if (!text.trim()) out('  | (no output)\n');
+  send({ t: 'result', id, status: st, text });
+  thinkOn();
+  status('thinking');
+}
+
+function submit(text) {
+  text = text.trim();
+  if (!text) return;
+  if (!hist.length || hist[hist.length - 1] !== text) hist.push(text);
+  hi = hist.length;
+  out('> ');
+  para(text, '', '  ');
+  if (text[0] === '/') {
+    const cmd = text.split(/\s+/)[0].toLowerCase();
+    if (cmd === '/help') para('Type a request and press Enter. BASILISK can run DOS commands, read and write files, and compile C with Open Watcom. Keys: Esc interrupts, Up/Down recall, PgUp/PgDn scroll. Commands: /help, /clear (forget the conversation), /cost.', BUL + ' ');
+    else if (cmd === '/clear') { send({ t: 'clear' }); toWin('K'); banner(); para('Conversation cleared.', BUL + ' '); }
+    else if (cmd === '/cost') para('This session: ' + usage.tin.toLocaleString() + ' tokens in, ' + usage.tout.toLocaleString() + ' out, $' + usage.usd.toFixed(5) + '.', BUL + ' ');
+    else para('Unknown command. Try /help.', BUL + ' ');
+    out('\n');
+    return;
+  }
+  if (!sock || sock.readyState !== 1) { para('The line to Claude is not connected right now. Try again in a moment.', BUL + ' '); out('\n'); return; }
+  out('\n');
+  setBusy(true);
+  status('thinking');
+  thinkOn();
+  send({ t: 'turn', text });
+}
+
+function fromWin(type, p) {
+  if (type === 'H' && p[0] === 'boot') { helloSeen = true; phase = 'building'; setStatus('<b>Building.</b> Notepad, the source, Save As, Open Watcom&hellip;', 'busy'); toWin('G'); }
+  else if (type === 'S' && phase === 'building') { setStatus('<b>Building:</b> ' + clean(p[0]) + '&hellip;', 'busy'); }
+  else if (type === 'E') { setStatus('<b>The build stopped:</b> ' + clean(p[0]) + '. Reload to try again.', ''); }
+  else if (type === 'R' && p[0] === 'assembled') {
+    phase = 'ready'; ready = true; buildT = (performance.now() - t0) / 1000;
+    banner(); status('ready'); render();
+    toWin('F');
+  }
+  else if (type === 'U') submit(p[0] || '');
+  else if (type === 'O') toolResult(p[0], p[1], p.slice(2).join(' '));
+}
+
+/* ---------------------------------------------------------------- keys */
+/* every printable key becomes one complete press on a US keyboard (shift added from the character itself),
+   so capitals and symbols come out right whatever the visitor's own layout is */
+const SHIFTED = { '!': '1', '@': '2', '#': '3', '$': '4', '%': '5', '^': '6', '&': '7', '*': '8', '(': '9', ')': '0',
+  '_': '-', '+': '=', '{': '[', '}': ']', '|': '\\', ':': ';', '"': "'", '<': ',', '>': '.', '?': '/', '~': '`' };
+const PLAIN = { '-': 45, '=': 61, '[': 91, ']': 93, '\\': 92, ';': 59, "'": 39, ',': 44, '.': 46, '/': 47, '`': 96, ' ': 32 };
+const NAMED = { Backspace: 259, Delete: 261, ArrowLeft: 263, ArrowRight: 262, Home: 268, End: 269, Insert: 260 };
+const SHIFT = 340, CTRL = 341;
+function charKey(c) {
+  if (c >= 'a' && c <= 'z') return [c.toUpperCase().charCodeAt(0), false];
+  if (c >= 'A' && c <= 'Z') return [c.charCodeAt(0), true];
+  if (c >= '0' && c <= '9') return [c.charCodeAt(0), false];
+  if (c in PLAIN) return [PLAIN[c], false];
+  if (c in SHIFTED) { const b = SHIFTED[c]; return [b >= '0' && b <= '9' ? b.charCodeAt(0) : PLAIN[b], true]; }
+  return null;
+}
+function press(code, shift, ctrl) {
+  if (ctrl) ci.sendKeyEvent(CTRL, true);
+  if (shift) ci.sendKeyEvent(SHIFT, true);
+  ci.sendKeyEvent(code, true); ci.sendKeyEvent(code, false);
+  if (shift) ci.sendKeyEvent(SHIFT, false);
+  if (ctrl) ci.sendKeyEvent(CTRL, false);
+}
+const OURS = ['Enter', 'Escape', 'PageUp', 'PageDown', 'ArrowUp', 'ArrowDown', 'Tab'];
+function onKey(e, down) {
+  if (!ready || e.isComposing) return;
+  if (!down) { if (e.key.length === 1 || e.key in NAMED || OURS.includes(e.key)) e.preventDefault(); return; }
+  if (OURS.includes(e.key)) {
+    e.preventDefault();
+    if (e.key === 'Enter') { if (!busy) toWin('Z'); }
+    else if (e.key === 'Escape') { if (busy) { send({ t: 'int' }); toWin('X'); } }
+    else if (e.key === 'PageUp') toWin('V', 'P-');
+    else if (e.key === 'PageDown') toWin('V', 'P+');
+    else if (e.key === 'ArrowUp' && hist.length) { hi = Math.max(0, hi - 1); toWin('T', hist[hi]); }
+    else if (e.key === 'ArrowDown' && hist.length) { hi = Math.min(hist.length, hi + 1); toWin('T', hi < hist.length ? hist[hi] : ''); }
+    return;
+  }
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) return;     /* the paste event */
+  if (e.altKey || e.metaKey) return;
+  if (e.key in NAMED) { e.preventDefault(); press(NAMED[e.key], e.shiftKey, e.ctrlKey); return; }
+  if ([...e.key].length !== 1) return;
+  e.preventDefault();
+  if (e.ctrlKey) { const k = charKey(e.key.toLowerCase()); if (k) press(k[0], false, true); return; }
+  const k = charKey(e.key);
+  if (k) press(k[0], k[1], false);
+  else if (e.key.charCodeAt(0) >= 32) toWin('P', e.key);       /* a character a US keyboard lacks */
+}
+screen.addEventListener('keydown', (e) => onKey(e, true));
+screen.addEventListener('keyup', (e) => onKey(e, false));
+screen.addEventListener('paste', (e) => { if (!ready) return; const t = (e.clipboardData || window.clipboardData).getData('text'); if (t) { e.preventDefault(); toWin('P', t.replace(/[\r\n\t]+/g, ' ').slice(0, 900)); } });
+let wheel = 0;
+screen.addEventListener('wheel', (e) => { if (!ready) return; e.preventDefault(); wheel += e.deltaMode === 1 ? e.deltaY : e.deltaY / 40; const n = Math.trunc(wheel); if (n) { wheel -= n; toWin('V', String(n)); } }, { passive: false });
+screen.addEventListener('mousedown', () => setTimeout(() => screen.focus(), 0));
+screen.addEventListener('focus', render); screen.addEventListener('blur', render);
+$('ttgo').onclick = () => { const v = $('tt').value; if (v && ready && !busy) { toWin('T', v); toWin('Z'); $('tt').value = ''; } };
+$('tt').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('ttgo').click(); } });
+
+/* ---------------------------------------------------------------- boot */
+let t0 = 0, buildT = 0, bootT = 0, helloSeen = false, bundleBytes = null, tries = 0;
+function render() {
+  screen.classList.toggle('on', ready && document.activeElement === screen);
+  $('touch').classList.toggle('on', ready);
+  if (ready) setStatus(busy ? '<b>Claude is working.</b> Esc stops it.' : (document.activeElement === screen ? '<b>Ready.</b> Type into the Find box; Enter sends.' : '<b>Ready.</b> Click the screen to type.'), busy ? 'busy' : 'ok');
+  $('meta').textContent = ready ? ('booted in ' + bootT.toFixed(1) + ' s, built in ' + buildT.toFixed(1) + ' s' + (sock ? '' : ' \u00b7 connecting to Claude\u2026')) : '';
+}
+async function fetchWithProgress(url, onp) {
+  const r = await fetch(url);
+  const total = +r.headers.get('content-length') || 0;
+  if (!r.body || !total) return new Uint8Array(await r.arrayBuffer());
+  const reader = r.body.getReader(), parts = []; let got = 0;
+  for (;;) { const { done, value } = await reader.read(); if (done) break; parts.push(value); got += value.length; onp(got / total); }
+  const out = new Uint8Array(got); let o = 0; for (const p of parts) { out.set(p, o); o += p.length; }
+  return out;
+}
+async function boot() {
+  $('vtext').textContent = 'Starting DOSBox-X\u2026';
+  helloSeen = false; jsOff = 0; towin = ''; tries++;
+  if (ci) { try { await ci.exit(); } catch (e) {} ci = null; }
+  ci = await emulators.dosboxXDirect(bundleBytes);
+  FS = ci.transport.module.FS;
+  let img = null;
+  ci.events().onFrameSize((w, h) => { canvas.width = w; canvas.height = h; img = g.createImageData(w, h); });
+  ci.events().onFrame((rgb, rgba) => {
+    if (!img || img.width !== ci.width()) { canvas.width = ci.width(); canvas.height = ci.height(); img = g.createImageData(canvas.width, canvas.height); }
+    if (rgba) img.data.set(rgba);
+    else if (rgb) { const d = img.data; for (let i = 0, j = 0; i < rgb.length; i += 3, j += 4) { d[j] = rgb[i]; d[j + 1] = rgb[i + 1]; d[j + 2] = rgb[i + 2]; d[j + 3] = 255; } }
+    g.putImageData(img, 0, 0);
+  });
+  const myTry = tries;
+  setTimeout(() => {      /* now and then DOSBox-X stops at its welcome screen: start it again */
+    if (!helloSeen && myTry === tries && tries < 4) { setStatus('<b>Windows did not start;</b> trying again&hellip;', 'busy'); boot(); }
+  }, 40000);
+}
+async function start() {
+  $('go').hidden = true; $('vbar').hidden = false;
+  $('vtext').textContent = 'Fetching Windows for Workgroups 3.11 and the emulator\u2026';
+  setStatus('Loading&hellip;', 'busy');
+  t0 = performance.now();
+  emulators.pathPrefix = ASSETS;
+  let wasmP = 0, bundleP = 0;
+  const upd = () => { $('vfill').style.width = Math.round((wasmP * 0.4 + bundleP * 0.6) * 100) + '%'; };
+  fetch(ASSETS + 'wdosbox-x.wasm').then(async (r) => { const t = +r.headers.get('content-length') || 1; const rd = r.body.getReader(); let got = 0; for (;;) { const { done, value } = await rd.read(); if (done) break; got += value.length; wasmP = Math.min(1, got / t); upd(); } }).catch(() => {});
+  const bundle = await fetchWithProgress(ASSETS + 'w31.jsdos', (f) => { bundleP = f; upd(); });
+  bundleBytes = bundle;
+  await boot();
+  $('veil').hidden = true;
+  setStatus('<b>Booting</b> Windows for Workgroups 3.11&hellip;', 'busy');
+  bootT = 0;
+  (function loop() { pollWin(); if (!bootT && phase !== 'off') bootT = (performance.now() - t0) / 1000; setTimeout(loop, 30); })();
+  connect();
+  screen.focus();
+}
+$('go').onclick = start;
+window.b311 = { toWin: (...a) => toWin(...a), state: () => ({ phase, ready, busy, bootT, buildT, usage }),
+  files: () => { const r = (f) => { try { return Array.from(FS.readFile(f)).map((c) => String.fromCharCode(c)).join(''); } catch (e) { return '(' + e + ')'; } }; return { towin: r('B3/TOWIN.TXT').slice(-300), tojs: r('B3/TOJS.TXT').slice(-300) }; } };
+})();
+</script>
+</body>
+</html>

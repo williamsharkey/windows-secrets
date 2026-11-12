@@ -1,0 +1,14 @@
+[Unit]
+Description=BASILISK 3.11 in the browser - Claude conversation server (127.0.0.1:8785; no emulator here)
+After=network.target
+
+[Service]
+WorkingDirectory=/root/w31b
+ExecStart=/root/w31/venv/bin/python /root/w31b/server.py
+Restart=always
+RestartSec=3
+Nice=10
+CPUWeight=25
+
+[Install]
+WantedBy=multi-user.target
