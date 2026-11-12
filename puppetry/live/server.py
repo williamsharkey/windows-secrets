@@ -429,6 +429,8 @@ class Theatre:
         self.changed = asyncio.Event()
         self.show_count = 0
         self.agent_seen = 0
+        self.vm_paused = False          # standby: nobody watching, no show -> the VM is QMP-stopped
+        self.quiet_since = None
         tok = os.path.join(DATA, 'admin.token')
         if not os.path.exists(tok):
             with open(tok, 'w') as f:
@@ -577,6 +579,7 @@ class Theatre:
         if 'error' in res or (isinstance(ret, str) and 'rror' in ret):
             raise RuntimeError('loadvm: %r' % res)
         await self.qmp('cont')
+        self.vm_paused = False
         log('reset in %.2fs' % (time.time() - t))
         self.agent_q.clear()
         while not self.marks.empty():
@@ -785,13 +788,43 @@ class Theatre:
             await self.broadcast()
             await asyncio.sleep(0.15)    # coalesce bursts
 
+    async def resume(self):
+        """someone is here: wake a paused stage at once"""
+        if self.vm_paused:
+            try:
+                await self.qmp('cont')
+                self.vm_paused = False
+                log('standby over: VM resumed')
+            except Exception as e:
+                log('resume failed: %r' % e)
+
+    async def standby(self):
+        """nobody watching and no show for a while: pause the VM (the streamer rests too)"""
+        while True:
+            await asyncio.sleep(3)
+            quiet = not self.sessions and self.phase == 'idle' and not self.queue
+            if not quiet:
+                self.quiet_since = None
+                await self.resume()
+                continue
+            if self.quiet_since is None:
+                self.quiet_since = time.time()
+            if not self.vm_paused and time.time() - self.quiet_since > 25:
+                try:
+                    await self.qmp('stop')
+                    self.vm_paused = True
+                    log('standby: nobody watching, VM paused')
+                except Exception as e:
+                    log('standby pause failed: %r' % e)
+
     async def watchdog(self):
         """is the VM there at all?  (QMP query-status, idle only)"""
         while True:
             if self.phase in ('idle', 'dark'):
                 try:
                     r = await self.qmp('info status')
-                    ok = 'running' in str(r.get('return', ''))
+                    st = str(r.get('return', ''))
+                    ok = 'running' in st or (self.vm_paused and 'paused' in st)
                 except Exception:
                     ok = False
                 if ok != self.vm_ok or (ok and self.phase == 'dark'):
@@ -872,6 +905,7 @@ async def p_ws(req):
         return ws
     s = Session(ws, ip, secrets.token_hex(6))
     T.sessions.add(s)
+    asyncio.create_task(T.resume())
     T.changed.set()
     msgs = deque()
     try:
@@ -929,7 +963,7 @@ async def main():
     log('guest side 127.0.0.1:%s, public side 127.0.0.1:%s, model %s, key %s, month $%.4f of $%s' % (
         cfg('STAGE_GUEST_PORT'), cfg('STAGE_PUBLIC_PORT'), cfg('STAGE_MODEL'),
         'present' if cfg('ANTHROPIC_API_KEY') else 'absent', BUDGET.spent(), cfg('STAGE_MONTHLY_CAP_USD')))
-    await asyncio.gather(T.pusher(), T.watchdog())
+    await asyncio.gather(T.pusher(), T.watchdog(), T.standby())
 
 
 if __name__ == '__main__':

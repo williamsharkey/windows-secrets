@@ -20,6 +20,7 @@ import socket
 import subprocess
 import sys
 import time
+import urllib.request
 
 MON = os.environ.get('STAGE_MON', '/tmp/stage-mon.sock')
 PULSE = os.environ.get('STAGE_PULSE', 'unix:/root/stage/pulse/native')
@@ -28,6 +29,8 @@ FPS = float(os.environ.get('STAGE_FPS', '15'))
 VBR = os.environ.get('STAGE_VBITRATE', '1500k')    # peak cap (motion); a still desktop costs ~0.4 Mbps
 GOP = float(os.environ.get('STAGE_GOP', '2'))      # seconds per keyframe = per HLS segment
 TMP = '/dev/shm/stage-frame.ppm'
+STATE = os.environ.get('STAGE_STATE_URL', 'http://127.0.0.1:8780/state')
+STANDBY_AFTER = float(os.environ.get('STAGE_STANDBY_AFTER', '20'))   # quiet seconds before the encoder rests
 
 stop = {'v': False}
 signal.signal(signal.SIGTERM, lambda *a: stop.update(v=True))
@@ -69,9 +72,29 @@ class Monitor:
         self._prompt()
 
 
-def start_encoder():
-    shutil.rmtree(OUT, ignore_errors=True)
+def clear_stream():
+    """drop the playlist and segments but keep poster.jpg (pages show it while nothing streams)"""
     os.makedirs(OUT, exist_ok=True)
+    for n in os.listdir(OUT):
+        if n != 'poster.jpg':
+            try:
+                os.remove(os.path.join(OUT, n))
+            except OSError:
+                shutil.rmtree(os.path.join(OUT, n), ignore_errors=True)
+
+
+def wanted():
+    """is anyone watching, or is a show on?  (server.py's own public state; on any doubt: yes)"""
+    try:
+        with urllib.request.urlopen(STATE, timeout=2) as r:
+            st = json.loads(r.read())
+        return st.get('viewers', 1) > 0 or st.get('phase') != 'idle' or st.get('queue', 0) > 0
+    except Exception:
+        return True
+
+
+def start_encoder():
+    clear_stream()
     rd, wr = os.pipe()
     parec = subprocess.Popen(['parec', '--server=' + PULSE, '-d', 'stage.monitor', '--raw',
                               '--format=s16le', '--rate=44100', '--channels=2', '--latency-msec=40'],
@@ -118,10 +141,26 @@ def main():
             break
         except OSError:
             time.sleep(1)
+    while not stop['v'] and not wanted():      # standby: no grabs, no encode, no CPU
+        time.sleep(1)
+    if stop['v']:
+        return 0
     parec, enc = start_encoder()
     t0, written, last, grabbed, errors = time.time(), 0, None, 0, 0
     stat_t, stat_n = time.time(), 0
+    quiet_since, check_t, standby = None, 0, False
     while not stop['v']:
+        if time.time() - check_t >= 2:
+            check_t = time.time()
+            if wanted():
+                quiet_since = None
+            elif quiet_since is None:
+                quiet_since = check_t
+            elif check_t - quiet_since > STANDBY_AFTER:
+                sys.stderr.write('nobody watching: encoder resting\n')
+                poster(last)
+                standby = True
+                break
         try:
             mon.cmd('screendump ' + TMP)
             with open(TMP, 'rb') as f:
@@ -171,13 +210,19 @@ def main():
     except subprocess.TimeoutExpired:
         enc.kill()
     mon.close()
+    if standby and not stop['v']:
+        clear_stream()
+        return 2                     # rest until someone comes back (run() loops)
     return 0 if stop['v'] else 1     # non-zero -> systemd restarts us
 
 
 def run():
     # children die with us, however we die (systemd's cgroup kill covers SIGKILL)
     try:
-        return main()
+        while True:
+            rc = main()
+            if rc != 2:
+                return rc
     finally:
         subprocess.run(['pkill', '-P', str(os.getpid())], check=False)
 
