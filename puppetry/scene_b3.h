@@ -55,9 +55,12 @@ static void scene_b3(void)
     {   /* small chunks, ~20 a second: each one scrolls the edit by a few lines, which Windows does by
            copying the pixels already there and drawing only the new lines (no whole-page repaints) */
         int chunks = 70, step = (len + chunks - 1) / chunks, at = 0;
-        char *buf = (char *)malloc(step + 1);
+        char *buf = (char *)malloc(len + 1);
         while (at < len) {
+            /* whole lines only: the caret always lands at the start of a line, so the edit never jumps
+               sideways to follow it to the end of a long line */
             int m = len - at < step ? len - at : step;
+            while (at + m < len && src[at + m - 1] != '\n') m++;
             memcpy(buf, src + at, m); buf[m] = 0;
             SendMessageA(ed, EM_SETSEL, 0x7fffffff, 0x7fffffff);
             SendMessageA(ed, EM_REPLACESEL, FALSE, (LPARAM)buf);
