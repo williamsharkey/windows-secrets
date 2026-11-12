@@ -170,6 +170,8 @@ Tools (they run inside XP):
 - run: runs a command with cmd.exe /c in C:\b3\work and returns its output (60 s limit). Long-running or GUI programs block until the limit: launch GUI programs with `start "" prog.exe` so they return at once. There is no PowerShell, no Python, no git, no curl. Available: cmd builtins, findstr, sort, more, tree, xcopy, attrib, fc, ipconfig, systeminfo, tasklist, taskkill, reg, debug.exe, cscript (JScript/VBScript via `cscript //nologo file.js`), and the Tiny C Compiler at C:\tcc\tcc.exe (`C:\tcc\tcc.exe hello.c` builds hello.exe; for a window program add `-luser32 -lgdi32 -Wl,-subsystem=windows`; tcc ships only kernel32, user32, gdi32 and msvcrt import libraries).
 - read_file, write_file, edit_file: files on this machine; relative paths are under C:\b3\work. Text is saved in the Windows-1252 code page with CRLF line ends.
 
+Writing programs: C for the Tiny C Compiler. Keep each write_file under about 250 lines; for a bigger program write it in parts (the first write_file, then write_file with append true), then compile, read the errors and fix them with edit_file. Window programs and games: plain Win32 + GDI, double-buffered drawing on a timer, keys via GetAsyncKeyState, no external files; build with -luser32 -lgdi32 -Wl,-subsystem=windows and start them with `start "" game.exe` so they open on top of this window, then tell the user how to play (they can click the game window to give it the keyboard, and click BASILISK to come back).
+
 How to work: like Claude Code. Act, don't narrate at length. The user already sees every tool call and the first lines of its output in the transcript, so don't repeat output back; summarize what matters in a sentence or two. Use the tools to look before you claim things about this machine. Keep replies short. Write for a monospace window about 95 characters wide: plain text only, no Markdown (no **bold**, no # headings, no tables, no backticks); use "-" bullets and indentation when a list helps. Don't mention the formatting rules. Never claim to be a person or a program from 2001; you are Claude, an AI from 2026, visiting through this machine.
 
 The client is a tabbed suite. For any task that will take three or more tool calls, call todo_write first with a short plan (3-7 items), and call it again as items start and finish; it shows as a live checklist and is cheap. Words like @demo\hello.c in a message name files in C:\b3\work: read them when they matter. The person may turn on plan mode (then investigate with read-only tools and propose a plan with todo_write; do not change files or run commands that change anything). Commands and edits can need the person's permission: if a tool result says the person denied it, don't retry the same thing; ask or choose another way. A file C:\b3\work\CLAUDE.md, when present, holds the person's standing instructions (memory).
@@ -184,9 +186,12 @@ TOOLS = [
     {'name': 'read_file', 'description': 'Read a text file (returned with line numbers).',
      'eager_input_streaming': True,
      'input_schema': {'type': 'object', 'properties': {'path': {'type': 'string'}}, 'required': ['path']}},
-    {'name': 'write_file', 'description': 'Create or overwrite a text file with the given content.',
+    {'name': 'write_file', 'description': 'Create or overwrite a text file with the given content. With append true, '
+     'add the content to the end of the file instead. Write anything longer than about 250 lines in parts: the first '
+     'part without append, the rest with append true.',
      'eager_input_streaming': True,
-     'input_schema': {'type': 'object', 'properties': {'path': {'type': 'string'}, 'content': {'type': 'string'}},
+     'input_schema': {'type': 'object', 'properties': {'path': {'type': 'string'}, 'content': {'type': 'string'},
+                                                         'append': {'type': 'boolean'}},
                       'required': ['path', 'content']}},
     {'name': 'edit_file', 'description': 'Replace exactly one occurrence of old_string with new_string in a file.',
      'eager_input_streaming': True,
@@ -436,12 +441,29 @@ class Agent:
             parts = []
             try:
                 async with api_client().messages.stream(
-                        model=self.model, max_tokens=8000, system=[{'type': 'text', 'text': SYSTEM}],
+                        model=self.model, max_tokens=32000, system=[{'type': 'text', 'text': SYSTEM}],
                         tools=TOOLS, messages=self.messages, output_config={'effort': self.effort},
                         cache_control={'type': 'ephemeral'}) as stream:
+                    tool_name, tool_chars, last_g = '', 0, 0.0
                     async for event in stream:
                         if self.interrupt.is_set():
                             break
+                        if event.type == 'content_block_start' and event.content_block.type == 'tool_use':
+                            tool_name, tool_chars = event.content_block.name, 0
+                        elif event.type == 'input_json':
+                            # a long tool input (a whole program) streams for a while: show it growing
+                            tool_chars += len(event.partial_json)
+                            now = time.time()
+                            if now - last_g > 0.5:
+                                last_g = now
+                                snap = event.snapshot if isinstance(getattr(event, 'snapshot', None), dict) else {}
+                                path = str(snap.get('path', '') or '')[:60]
+                                if tool_name == 'write_file':
+                                    self.ev('g', 'Writing %s (%.1f KB)' % (path or 'a file', tool_chars / 1024))
+                                elif tool_name == 'edit_file':
+                                    self.ev('g', 'Editing %s (%.1f KB)' % (path or 'a file', tool_chars / 1024))
+                                elif tool_name:
+                                    self.ev('g', 'Preparing %s' % TOOL_LABEL.get(tool_name, tool_name))
                         if event.type == 'content_block_start' and event.content_block.type == 'text':
                             started_text = False
                         elif event.type == 'text':
@@ -477,6 +499,8 @@ class Agent:
                 self.ev('e', 'Could not reach Claude. Try again.')
                 return
             usd, tin, tout = BUDGET.add(self.model, msg.usage, self.ip)
+            log('call %s stop=%s out=%d ctx=%d tools=%s' % (self.model, msg.stop_reason, getattr(msg.usage, 'output_tokens', 0) or 0,
+                                                       tin, ','.join(b.name for b in msg.content if b.type == 'tool_use') or '-'))
             self.usd += usd
             self.tok_in += tin
             self.tok_out += tout
@@ -496,11 +520,14 @@ class Agent:
             if not uses:
                 return
             if msg.stop_reason == 'max_tokens':
-                self.ev('e', 'That reply ran past the length limit; ask for something smaller.')
+                # a tool input too long for one reply: nothing runs; Claude is told and tries again in parts
+                self.ev('x', '  \u00b7 that file was too long for one reply; writing it in parts')
                 self.messages.append({'role': 'user', 'content': [
                     {'type': 'tool_result', 'tool_use_id': b.id, 'is_error': True,
-                     'content': 'cut off at max_tokens; not run'} for b in uses]})
-                return
+                     'content': 'Cut off: the input was longer than one reply allows, so nothing was run. Write the file '
+                                'in parts of under 250 lines (write_file, then write_file with append true).'}
+                    for b in uses]})
+                continue
             results = []
             for b in uses:          # in order, one at a time: a compile must not race the write before it
                 results.append(await self.call_tool(b) if not self.interrupt.is_set() else
@@ -533,7 +560,10 @@ class Agent:
         fut = asyncio.get_running_loop().create_future()
         self.tools[b.id] = fut
         self.ntools += 1
-        self.ev('c', '\x1f'.join([b.id, clean_field(display), b.name] + [clean_field(args[k]) for k in need]))
+        extra = ['1' if args.get('append') is True else '0'] if b.name == 'write_file' else []
+        if extra == ['1']:
+            display = display.replace('Write(', 'Append(', 1)
+        self.ev('c', '\x1f'.join([b.id, clean_field(display), b.name] + [clean_field(args[k]) for k in need] + extra))
         try:
             ok, out = await asyncio.wait_for(fut, 360)   # long: the person may be answering a permission prompt
         except asyncio.TimeoutError:

@@ -366,6 +366,7 @@ static void spin_off(void)
 }
 static int busy;
 static const WCHAR *spin_word = L"Thinking";
+static WCHAR spin_custom[128];     /* progress from the host, e.g. "Writing heli.c (9.4 KB)" */
 static void spin_on(void)
 {
     static const WCHAR *f[] = {L"\x00B7", L"\x2022", L"*", L"\x2022"};
@@ -631,7 +632,7 @@ static char *to_dos(const char *u8, int *n)
     return o;
 }
 
-static char *tool_write(const char *p_u8, const char *content, int *ok)
+static char *tool_write(const char *p_u8, const char *content, int append, int *ok)
 {
     WCHAR *wp = u8_to_w(p_u8, -1);
     char *pa = w_to_cp(wp, CP_ACP), *path = abspath(pa), *data, *msg;
@@ -640,10 +641,17 @@ static char *tool_write(const char *p_u8, const char *content, int *ok)
     free(wp); free(pa);
     data = to_dos(content, &n);
     for (i = 0; i < n; i++) if (data[i] == '\n') lines++;
-    f = fopen(path, "wb");
+    {   /* make any missing folders on the way (C:\b3\work\heli\game.c) */
+        char *q;
+        for (q = path + 3; *q; q++) if (*q == '\\') { *q = 0; CreateDirectoryA(path, NULL); *q = '\\'; }
+    }
+    f = fopen(path, append ? "ab" : "wb");
     msg = (char *)malloc(MAX_PATH * 2 + 64);
     if (!f) { *ok = 0; sprintf(msg, "cannot write %s", path); }
-    else { fwrite(data, 1, n, f); fclose(f); *ok = 1; sprintf(msg, "wrote %d lines to %s", lines + (n && data[n - 1] != '\n'), path); }
+    else {
+        fwrite(data, 1, n, f); fclose(f); *ok = 1;
+        sprintf(msg, "%s %d lines %s %s", append ? "appended" : "wrote", lines + (n && data[n - 1] != '\n'), append ? "to" : "to", path);
+    }
     free(data); free(path);
     return msg;
 }
@@ -695,7 +703,7 @@ static DWORD WINAPI tool_thread(LPVOID p)
     else if (denied) res = _strdup("The person denied this. Do not retry it; ask them, or choose another way.");
     else if (!strcmp(t->name, "run")) res = tool_run(t->a1, &ok);
     else if (!strcmp(t->name, "read_file")) res = tool_read(t->a1, &ok);
-    else if (!strcmp(t->name, "write_file")) res = tool_write(t->a1, t->a2 ? t->a2 : "", &ok);
+    else if (!strcmp(t->name, "write_file")) res = tool_write(t->a1, t->a2 ? t->a2 : "", t->a3 && t->a3[0] == '1', &ok);
     else if (!strcmp(t->name, "edit_file")) res = tool_edit(t->a1, t->a2 ? t->a2 : "", t->a3 ? t->a3 : "", &ok);
     else { res = _strdup("unknown tool"); ok = 0; }
     blen = (int)strlen(res);
@@ -926,6 +934,14 @@ static void handle_ev(Ev *e)
         last_block_blank = 0;
         if (busy) spin_on();
         break;
+    case 'g': {                       /* progress while Claude composes a long tool input */
+        WCHAR *w = u8_to_w(e->data, e->n);
+        lstrcpynW(spin_custom, w, 127);
+        free(w);
+        spin_word = spin_custom;
+        if (busy) spin_on();
+        break;
+    }
     case 'x':                         /* a quiet note from the host */
         spin_off();
         t_block();
@@ -2836,6 +2852,9 @@ static LRESULT CALLBACK me_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
                 if (cur_tab == T_USAGE) InvalidateRect(panel[T_USAGE], NULL, FALSE);
             }
             if (!IsWindow(np)) { PostQuitMessage(0); return 0; }
+            /* BASILISK lives maximized: if someone restores it while it is in front, put it back
+               (a smaller window would leave the tab strip and sidebar out of place) */
+            if (GetForegroundWindow() == np && !IsZoomed(np) && !IsIconic(np)) ShowWindow(np, SW_SHOWMAXIMIZED);
             layout();
             keep_parts();
             if (lay_t && GetTickCount() - lay_t > 700) {   /* the calendar does not repaint itself after a move */
