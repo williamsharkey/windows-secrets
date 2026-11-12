@@ -432,7 +432,7 @@ The machine:
 - Drive C: is the only drive. Your working directory is C:\\B3\\WORK (put new files there). DOS 8.3 file names only.
 - run_command runs one line through COMMAND.COM in a background DOS window with stdout captured (stderr is not; \
 DOS can't redirect it). Things like DIR, TYPE, TREE, FIND, MEM, VER, SET, COPY, MD, DEL, REN, ECHO, and .BAT files \
-work. One command per call: this COMMAND.COM has no && or ;, so run steps as separate calls. Never run interactive or full-screen programs (EDIT, QBASIC, MORE without input), they would hang until the 60 s \
+work. One command per call: this COMMAND.COM has no &, && or ;, so run steps as separate calls, and each call starts again in C:\\B3\\WORK (a CD does not carry over; use paths instead). There is no MOVE: use COPY then DEL. wcl writes its .EXE to C:\\B3\\WORK unless you add -fe=DIR\\NAME.EXE. Never run interactive or full-screen programs (EDIT, QBASIC, MORE without input), they would hang until the 60 s \
 timeout. Windows programs can't be started from run_command.
 - Open Watcom C is installed: compile DOS programs with   wcl -q -bt=dos -ms PROG.C   and Windows 3.1 programs with \
   wcl -q -bt=windows -l=windows -ml PROG.C   (WATCOM, PATH and INCLUDE are set). DOS .EXE output can be run and its \
