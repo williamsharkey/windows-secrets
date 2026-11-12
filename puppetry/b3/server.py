@@ -650,6 +650,7 @@ class Term:
                 try:
                     self.set_phase('ending')
                     await self.reset()
+                    await qmp_hmp('stop')      # idle: the VM is paused and costs no CPU; a session resumes it
                     self.set_phase('idle')
                 except Exception as e:
                     log('reset failed: %r' % e)
@@ -896,6 +897,7 @@ class Term:
             if self.phase == 'dark' and not self.driver:
                 try:
                     await self.reset()
+                    await qmp_hmp('stop')
                     self.set_phase('idle')
                     if self.queue and (not self.runner or self.runner.done()):
                         self.runner = asyncio.create_task(self.run_queue())

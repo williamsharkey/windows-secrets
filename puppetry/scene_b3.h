@@ -17,8 +17,12 @@ static void scene_b3(void)
     POINT ip;
     DWORD pid;
 
-    src = readfile("C:\\p\\basilisk3.c");
-    if (!src) { say("no C:\\p\\basilisk3.c"); return; }
+    {   /* the file has Unix line ends; XP's Notepad shows a bare LF as a box, so give it CRLF */
+        char *raw = readfile("C:\\p\\basilisk3.c");
+        if (!raw) { say("no C:\\p\\basilisk3.c"); return; }
+        src = crlf(raw);
+        free(raw);
+    }
     len = (int)strlen(src);
     GetEnvironmentVariableA("USERPROFILE", path, sizeof path);
     strcat(path, "\\Desktop\\basilisk.c");

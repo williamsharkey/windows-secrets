@@ -4,7 +4,7 @@
 T=/root/term
 MON=/tmp/term-mon.sock; QMP=/tmp/term-qmp.sock; VNC=/tmp/term-vnc.sock
 GUESTPORT=${GUESTPORT:-8771}
-ARGS=(-name term -m 512 -enable-kvm -cpu host -smp 2
+ARGS=(-name term -machine pc-i440fx-jammy -m 512 -enable-kvm -cpu host -smp 2
   -drive file=$T/term.qcow2,format=qcow2,if=ide,index=0
   -vga cirrus -display none -vnc unix:$VNC,share=force-shared
   -netdev "user,id=n0,restrict=on,net=10.0.2.0/24,host=10.0.2.100,guestfwd=tcp:10.0.2.2:8765-cmd:socat STDIO TCP:127.0.0.1:$GUESTPORT"
