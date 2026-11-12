@@ -1,0 +1,6 @@
+[Unit]
+Description=BASILISK III (term VM + server)
+Wants=term-vm.service term-server.service
+
+[Install]
+WantedBy=multi-user.target

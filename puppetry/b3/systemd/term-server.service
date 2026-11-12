@@ -1,0 +1,14 @@
+[Unit]
+Description=BASILISK III - terminal server (guest 127.0.0.1:8771, public 127.0.0.1:8781)
+After=term-vm.service
+PartOf=term.target
+
+[Service]
+WorkingDirectory=/root/term
+ExecStart=/root/stage/venv/bin/python /root/term/bin/server.py
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=term.target

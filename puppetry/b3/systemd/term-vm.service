@@ -1,0 +1,13 @@
+[Unit]
+Description=BASILISK III - the term VM (Windows XP in QEMU; VNC /tmp/term-vnc.sock, QMP /tmp/term-qmp.sock + term-qmpk.sock)
+PartOf=term.target
+
+[Service]
+ExecStart=/root/term/bin/term-vm.sh run
+ExecStop=/root/term/bin/term-vm.sh stop
+TimeoutStopSec=20
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=term.target

@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BASILISK III</title>
+<meta name="description" content="A working Claude Code client assembled from Windows XP's own parts: Notepad keeps the transcript, its Find box takes your words, Date and Time keeps the clock. Drive it from your browser.">
+<style>
+:root {
+  --bg: #f4f2ec; --ink: #1d1f22; --muted: #62666d; --line: #d8d4c8; --panel: #fffdf8;
+  --xp: #245edb; --xp-deep: #0a2a8a; --ok: #2f7d32; --warn: #a15c00;
+  --mono: "Lucida Console", "Cousine", ui-monospace, Menlo, Consolas, monospace;
+  --sans: Tahoma, "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #16181b; --ink: #e9e6de; --muted: #9a9ea6; --line: #33373d; --panel: #1d2024; --xp: #6d9bff; --xp-deep: #a9c2ff; --ok: #7cc47f; --warn: #e3a64a; }
+}
+:root[data-theme="dark"] { --bg: #16181b; --ink: #e9e6de; --muted: #9a9ea6; --line: #33373d; --panel: #1d2024; --xp: #6d9bff; --xp-deep: #a9c2ff; --ok: #7cc47f; --warn: #e3a64a; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--sans); }
+a { color: var(--xp); }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+header { padding: 34px 0 18px; }
+h1 { font: 700 26px/1.2 var(--mono); letter-spacing: .02em; margin: 0 0 6px; }
+.dek { margin: 0; color: var(--muted); max-width: 760px; }
+
+/* the screen */
+.stagebox { position: relative; background: #000; border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
+  aspect-ratio: 4 / 3; width: 100%; outline: none; }
+.stagebox.driving { box-shadow: 0 0 0 3px var(--xp); }
+#screen { position: absolute; inset: 0; }
+#screen canvas { cursor: default !important; }
+.veil { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center;
+  color: #e9e6de; background: rgba(0, 0, 0, .55); font: 15px/1.5 var(--sans); padding: 16px; pointer-events: none; }
+.veil[hidden] { display: none; }
+
+/* the bar under it */
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 12px 0 4px; }
+.status { flex: 1 1 320px; min-width: 0; font: 14px/1.45 var(--sans); }
+.status b { font-weight: 700; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--muted); margin-right: 6px; vertical-align: 1px; }
+.dot.live { background: var(--ok); } .dot.busy { background: var(--warn); }
+button { font: 600 14px/1 var(--sans); padding: 10px 16px; border-radius: 4px; border: 1px solid #003c74; cursor: pointer;
+  background: linear-gradient(#fff, #ece9d8); color: #000; min-height: 38px; }
+button.primary { background: linear-gradient(#3c8cff, #1c5fd9); color: #fff; border-color: #0a3a9a; }
+button:disabled { opacity: .5; cursor: default; }
+button[hidden] { display: none; }
+.meta { font: 12px/1.4 var(--mono); color: var(--muted); }
+
+/* phones and tablets: a plain input that forwards what you type */
+.touchtype { display: none; gap: 8px; padding: 6px 0 0; }
+.touchtype input { flex: 1; min-width: 0; font: 16px var(--mono); padding: 9px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: var(--ink); }
+@media (pointer: coarse) { .touchtype.on { display: flex; } }
+
+.notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px 28px; padding: 26px 0 8px; }
+.notes h2 { font: 700 13px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; color: var(--muted); }
+.notes p, .notes ul { margin: 0; font-size: 14.5px; }
+.notes ul { padding-left: 18px; }
+.notes code, kbd { font: 13px var(--mono); }
+kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px; padding: 0 4px; background: var(--panel); }
+
+.sib { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 0; padding: 34px 16px 40px; font: 11px/1.6 var(--mono);
+  letter-spacing: .12em; text-transform: uppercase; opacity: .45; }
+.sib a, .sib b { color: inherit; text-decoration: none; padding: 0 10px; } .sib a:hover { text-decoration: underline; opacity: 1; }
+.sib i { font-style: normal; opacity: .6; }
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1>BASILISK III</h1>
+  <p class="dek">A working Claude Code client, assembled from Windows XP's own parts. Notepad keeps the transcript, Notepad's Find box takes your words, Date and Time keeps the clock, Calculator keeps the bill. It runs on a real XP machine; Claude works in it with real tools. Press start, wait for it to build itself, then type.</p>
+</header>
+
+<main class="wrap">
+  <div class="stagebox" id="stagebox" tabindex="0" aria-label="The Windows XP screen. When you are driving, keys you press here go to BASILISK.">
+    <div id="screen"></div>
+    <div class="veil" id="veil">Connecting to the XP machine&hellip;</div>
+  </div>
+  <div class="bar">
+    <div class="status" id="status" aria-live="polite"><span class="dot"></span>Connecting&hellip;</div>
+    <button class="primary" id="start" hidden>Start a session</button>
+    <button id="front" hidden title="If a program Claude started is in front, bring BASILISK back">Bring BASILISK forward</button>
+    <button id="leave" hidden>End my session</button>
+  </div>
+  <div class="touchtype" id="touchtype">
+    <input id="tt" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type here, then Send" aria-label="Text to type into BASILISK">
+    <button id="ttsend">Send</button>
+  </div>
+  <div class="meta" id="meta"></div>
+
+  <section class="notes" aria-label="About">
+    <div>
+      <h2>How to drive</h2>
+      <ul>
+        <li>Click the screen, then type. <kbd>Enter</kbd> sends, <kbd>Esc</kbd> stops Claude.</li>
+        <li><kbd>&uarr;</kbd> <kbd>&darr;</kbd> recall what you typed. <kbd>PgUp</kbd> <kbd>PgDn</kbd> or the mouse wheel scroll back.</li>
+        <li>Paste works (<kbd>Ctrl</kbd>+<kbd>V</kbd>). <code>/help</code>, <code>/clear</code>, <code>/model sonnet</code>, <code>/cost</code>.</li>
+        <li>One person drives at a time; everyone else watches live. If someone is waiting you get ten minutes, otherwise as long as you keep typing.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Things to try</h2>
+      <ul>
+        <li>What is this machine? How much memory does it have?</li>
+        <li>Write a C program that draws a spiral in a window, compile it with tcc and run it.</li>
+        <li>Make a JScript that prints the first 30 primes.</li>
+        <li>What are the ten biggest files in C:\WINDOWS?</li>
+      </ul>
+    </div>
+    <div>
+      <h2>What it's made of</h2>
+      <p>Each session starts from a clean desktop. A blank Notepad receives <code>basilisk.c</code>, it is saved to the desktop and compiled there by the Tiny C Compiler, and the program takes Notepad, Notepad's Find dialog, the Date and Time page and Calculator's display, and puts them together. Every part is still drawn by the program that made it. Claude (Haiku 5.5 by default) runs the conversation on a server; its four tools (run a command, read, write and edit a file) run inside XP. The machine has no internet and is reset after every session. <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry/b3">Source</a>.</p>
+    </div>
+  </section>
+</main>
+
+<nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">Windows Secrets</a><i>·</i><a href="inside-windows.html">Inside Windows</a><i>·</i><a href="tribute.html">Tribute</a><i>·</i><a href="basilisk.html">BASILISK</a><i>·</i><b>BASILISK III</b><i>·</i><a href="valentine-xp.html">Valentine XP</a><i>·</i><a href="valentine-31.html">Valentine 3.1</a><i>·</i><a href="puppetry.html">Window Puppetry</a></nav>
+
+<script type="module">
+import RFB from './basilisk-term/novnc/core/rfb.js';
+
+const BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') && location.search.includes('local')
+  ? 'ws://127.0.0.1:8781' : 'wss://live.williamsharkey.com/term';
+const $ = (id) => document.getElementById(id);
+const stagebox = $('stagebox'), veil = $('veil'), statusEl = $('status'), meta = $('meta');
+const bStart = $('start'), bLeave = $('leave'), bFront = $('front');
+
+let tok = '';
+try { tok = sessionStorage.getItem('b3tok') || ''; } catch (e) {}
+if (!tok) { tok = Array.from(crypto.getRandomValues(new Uint8Array(8)), (b) => b.toString(16).padStart(2, '0')).join('');
+  try { sessionStorage.setItem('b3tok', tok); } catch (e) {} }
+
+/* ---- the screen: VNC, view only (the server drops any input on this socket anyway) ---- */
+let rfb = null, rfbTimer = null;
+function connectScreen() {
+  clearTimeout(rfbTimer);
+  try {
+    rfb = new RFB($('screen'), BASE + '/vnc', { shared: true, wsProtocols: ['binary'] });
+  } catch (e) { rfbTimer = setTimeout(connectScreen, 3000); return; }
+  rfb.viewOnly = true;
+  rfb.scaleViewport = true;
+  rfb.resizeSession = false;
+  rfb.focusOnClick = false;
+  rfb.showDotCursor = false;
+  rfb.qualityLevel = 7;
+  rfb.compressionLevel = 1;
+  rfb.background = '#000';
+  rfb.addEventListener('connect', () => { screenUp = true; render(); });
+  rfb.addEventListener('disconnect', () => { screenUp = false; render(); rfbTimer = setTimeout(connectScreen, 2000); });
+}
+let screenUp = false;
+
+/* ---- control: state, start, keys ---- */
+let ws = null, st = null, wsTimer = null, pingT = 0, rtt = 0;
+function connectControl() {
+  clearTimeout(wsTimer);
+  ws = new WebSocket(BASE + '/ws?tok=' + tok);
+  ws.onmessage = (e) => {
+    let m; try { m = JSON.parse(e.data); } catch (x) { return; }
+    if (m.t === 'state') { if (pingT) { rtt = performance.now() - pingT; pingT = 0; } st = m; render(); }
+  };
+  ws.onclose = () => { st = null; render(); wsTimer = setTimeout(connectControl, 2000); };
+}
+function send(o) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(o)); }
+setInterval(() => { if (ws && ws.readyState === 1 && !pingT) { pingT = performance.now(); send({ t: 'ping' }); } }, 5000);
+
+const driving = () => st && st.you === 'driver' && st.phase === 'ready';
+function fmtLeft(s) { s = Math.max(0, Math.round(s)); return s >= 90 ? Math.round(s / 60) + ' min' : s + ' s'; }
+
+function render() {
+  const d = driving();
+  stagebox.classList.toggle('driving', d);
+  bStart.hidden = !st || st.you !== 'watcher' || st.phase === 'dark';
+  bStart.disabled = false;
+  bStart.textContent = st && (st.driving || st.phase === 'building') ? 'Join the line' : 'Start a session';
+  bLeave.hidden = !st || (st.you !== 'driver' && st.you !== 'queued');
+  bLeave.textContent = st && st.you === 'queued' ? 'Leave the line' : 'End my session';
+  bFront.hidden = !d;
+  $('touchtype').classList.toggle('on', d);
+
+  let dot = '', msg = '';
+  if (!st) { msg = 'Connecting to the server&hellip;'; }
+  else if (st.phase === 'dark') { msg = 'The XP machine is resting. Try again in a few minutes.'; }
+  else if (st.you === 'driver' && st.phase === 'building') { dot = 'busy'; msg = '<b>Your session is starting.</b> Watch it build itself: Notepad, the source, the compiler&hellip;'; }
+  else if (d) {
+    dot = 'live';
+    msg = '<b>You are driving.</b> Click the screen and type. Enter sends, Esc stops.';
+    if (st.ends) msg += ' <span class="meta">(' + (st.queue ? 'someone is waiting: ' : 'idle timeout: ') + fmtLeft(st.ends - st.now) + ' left)</span>';
+  }
+  else if (st.you === 'queued') { dot = 'busy'; msg = '<b>You are in line</b>, number ' + st.pos + '. You will see your session start here.'; }
+  else if (st.phase === 'building') { dot = 'busy'; msg = 'Someone is starting a session; BASILISK is building itself.'; }
+  else if (st.driving) { dot = 'live'; msg = 'Someone is driving. You can watch, or join the line.'; }
+  else if (st.phase === 'ending') { msg = 'Resetting the machine for the next person&hellip;'; }
+  else { dot = ''; msg = 'Nobody is driving. Start a session; it takes about half a minute to build.'; }
+  if (st && st.note) msg += ' <span class="meta">' + st.note.replace(/</g, '&lt;') + '</span>';
+  if (st && st.line === 'quiet') msg += ' <span class="meta">(the line to Claude is quiet right now)</span>';
+  statusEl.innerHTML = '<span class="dot ' + dot + '"></span>' + msg;
+
+  if (!screenUp) { veil.hidden = false; veil.textContent = 'Connecting to the XP machine\u2026'; }
+  else if (st && st.you === 'driver' && st.phase === 'ready' && document.activeElement !== stagebox && !touch) {
+    veil.hidden = false; veil.textContent = 'Click here to type into BASILISK';
+  } else veil.hidden = true;
+  meta.textContent = st ? (st.viewers + ' watching' + (st.queue ? ' \u00b7 ' + st.queue + ' in line' : '') + (rtt ? ' \u00b7 server round trip ' + Math.round(rtt) + ' ms' : '')) : '';
+}
+const touch = matchMedia('(pointer: coarse)').matches;
+
+bStart.onclick = () => { send({ t: 'start' }); setTimeout(() => stagebox.focus(), 50); };
+bLeave.onclick = () => send({ t: 'leave' });
+bFront.onclick = () => { send({ t: 'front' }); stagebox.focus(); };
+stagebox.addEventListener('mousedown', () => setTimeout(() => stagebox.focus(), 0));
+stagebox.addEventListener('focus', render);
+stagebox.addEventListener('blur', render);
+
+/* keys: printable characters go as characters (any layout); editing keys go by name */
+const NAMED = new Set(['Enter', 'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown', 'Escape', 'Tab', 'Insert']);
+stagebox.addEventListener('keydown', (e) => {
+  if (!driving()) return;
+  if (e.isComposing) return;
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) return;     // the paste event handles it
+  if (e.altKey || e.metaKey) return;
+  if (NAMED.has(e.key)) { e.preventDefault(); send({ t: 'key', k: e.key, ctrl: e.ctrlKey, shift: e.shiftKey }); return; }
+  if (e.ctrlKey) { if (e.key.length === 1) { e.preventDefault(); send({ t: 'key', k: e.key, ctrl: true, shift: e.shiftKey }); } return; }
+  if (e.key.length === 1 || [...e.key].length === 1) { e.preventDefault(); send({ t: 'ch', c: e.key }); }
+});
+stagebox.addEventListener('paste', (e) => {
+  if (!driving()) return;
+  const text = (e.clipboardData || window.clipboardData).getData('text');
+  if (text) { e.preventDefault(); send({ t: 'paste', text: text.slice(0, 4000) }); }
+});
+let wheelAcc = 0;
+stagebox.addEventListener('wheel', (e) => {
+  if (!driving()) return;
+  e.preventDefault();
+  wheelAcc += e.deltaMode === 1 ? e.deltaY : e.deltaY / 40;
+  const n = Math.trunc(wheelAcc);
+  if (n) { wheelAcc -= n; send({ t: 'wheel', n }); }
+}, { passive: false });
+
+/* phones: type in the box, Send pastes it and presses Enter */
+const tt = $('tt');
+function ttSend() { const v = tt.value; if (!v || !driving()) return; send({ t: 'paste', text: v }); setTimeout(() => send({ t: 'key', k: 'Enter' }), 120); tt.value = ''; }
+$('ttsend').onclick = ttSend;
+tt.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); ttSend(); } });
+
+setInterval(() => { if (st && st.ends) { st.now += 1; render(); } }, 1000);
+connectScreen();
+connectControl();
+render();
+</script>
+</body>
+</html>
