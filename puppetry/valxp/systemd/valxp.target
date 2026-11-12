@@ -1,0 +1,6 @@
+[Unit]
+Description=XP VALENTINE (valentine VM and server)
+Wants=valxp-vm.service valxp-server.service
+
+[Install]
+WantedBy=multi-user.target

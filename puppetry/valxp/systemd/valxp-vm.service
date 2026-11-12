@@ -1,0 +1,14 @@
+[Unit]
+Description=XP VALENTINE - the valentine VM (Windows XP in QEMU, QMP /tmp/valxp-qmp.sock)
+PartOf=valxp.target
+
+[Service]
+ExecStart=/root/valxp/bin/valxp-vm.sh run
+ExecStop=/root/valxp/bin/valxp-vm.sh stop
+TimeoutStopSec=20
+Restart=on-failure
+RestartSec=5
+Nice=5
+
+[Install]
+WantedBy=valxp.target

@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XP Valentine</title>
+<meta name="description" content="Write a valentine. A real Windows XP machine lifts Calculator's keys into a heart, sets your words in Notepad, picks red in Paint, and sends you the picture.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #fbf3ea;
+  --card: #fffaf4;
+  --ink: #3a1f26;
+  --muted: #7d5a62;
+  --rose: #c44868;
+  --rose-deep: #9c2f4c;
+  --line: #ecd6cf;
+  --shadow: 0 1px 2px rgba(80, 20, 35, .08), 0 14px 40px -14px rgba(120, 30, 55, .35);
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --display: "Fraunces", Georgia, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1e1216; --card: #28181d; --ink: #f6e6e9; --muted: #c4a2aa; --rose: #e2698a; --rose-deep: #f08aa6;
+    --line: #432a31; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 40px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #1e1216; --card: #28181d; --ink: #f6e6e9; --muted: #c4a2aa; --rose: #e2698a; --rose-deep: #f08aa6;
+  --line: #432a31; --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 40px -14px rgba(0,0,0,.7);
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 18px/1.6 var(--serif); }
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+header.wrap { padding-top: 72px; padding-bottom: 8px; text-align: center; }
+.kicker { font: 600 12px/1 var(--display); letter-spacing: .22em; text-transform: uppercase; color: var(--rose); }
+h1 { font: 600 clamp(40px, 8vw, 64px)/1.02 var(--display); letter-spacing: -.01em; margin: 14px 0 16px; }
+h1 em { font-style: italic; font-weight: 400; color: var(--rose); }
+.dek { color: var(--muted); max-width: 560px; margin: 0 auto; font-size: 19px; }
+.heart { display: inline-block; color: var(--rose); }
+
+form { margin: 44px auto 0; background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 26px 26px 22px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+label { display: block; font: 600 13px/1.2 var(--display); letter-spacing: .06em; color: var(--muted); margin: 0 0 7px; }
+label small { font-weight: 400; letter-spacing: 0; text-transform: none; }
+input, textarea { width: 100%; font: 18px/1.45 var(--serif); color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; outline: none; }
+textarea { min-height: 128px; resize: vertical; font-style: italic; }
+input:focus, textarea:focus { border-color: var(--rose); box-shadow: 0 0 0 3px color-mix(in srgb, var(--rose) 20%, transparent); }
+.field { margin-top: 16px; }
+.count { float: right; font: 400 12px/1.2 var(--serif); color: var(--muted); }
+.actions { display: flex; align-items: center; gap: 16px; margin-top: 18px; flex-wrap: wrap; }
+button, .btn { font: 600 16px/1 var(--display); letter-spacing: .02em; border: 0; border-radius: 999px; padding: 14px 24px; cursor: pointer; background: var(--rose); color: #fff; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+button:hover, .btn:hover { background: var(--rose-deep); }
+button:disabled { opacity: .55; cursor: default; }
+.btn.ghost { background: transparent; color: var(--rose-deep); box-shadow: inset 0 0 0 1.5px var(--rose); }
+.btn.ghost:hover { background: color-mix(in srgb, var(--rose) 10%, transparent); }
+.note { color: var(--muted); font-size: 15px; }
+.err { color: var(--rose-deep); font-size: 16px; min-height: 1.4em; margin: 12px 0 0; }
+
+#making { display: none; text-align: center; margin: 46px auto 0; }
+#making.on { display: block; }
+.beat { font-size: 44px; color: var(--rose); animation: beat 1.1s ease-in-out infinite; display: inline-block; }
+@keyframes beat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.18); } 30% { transform: scale(1); } 45% { transform: scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .beat { animation: none; } }
+#step { font: italic 19px/1.5 var(--serif); color: var(--muted); margin-top: 8px; }
+
+#result { display: none; margin: 46px auto 0; text-align: center; }
+#result.on { display: block; }
+.frame { background: var(--card); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 14px; display: inline-block; max-width: 100%; }
+.frame img { display: block; width: 100%; height: auto; border-radius: 6px; image-rendering: auto; }
+.result-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+.small { font-size: 14px; color: var(--muted); margin-top: 14px; }
+
+section.how { margin-top: 84px; }
+h2 { font: 600 26px/1.2 var(--display); margin: 0 0 14px; }
+.how ul { padding-left: 1.1em; }
+.how li { margin: 6px 0; }
+.how code { font: 15px/1 ui-monospace, Consolas, monospace; background: color-mix(in srgb, var(--rose) 9%, transparent); padding: 1px 5px; border-radius: 4px; }
+
+footer { margin-top: 90px; }
+.sib { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 0; padding: 24px 16px 40px; font: italic 14px/1.8 var(--serif); color: var(--muted); opacity: .62; }
+.sib a, .sib b { color: inherit; text-decoration: none; padding: 0 10px; }
+.sib a:hover { text-decoration: underline; opacity: 1; }
+.sib b { color: var(--rose); font-weight: 400; }
+.sib i { font-style: normal; opacity: .55; }
+@media (max-width: 560px) {
+  header.wrap { padding-top: 48px; }
+  .row { grid-template-columns: 1fr; gap: 0; }
+  .row .field:first-child { margin-top: 0; }
+  form { padding: 20px 16px 18px; }
+  .wrap { padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <div class="kicker">Windows XP · real parts · <span class="heart">♥</span></div>
+  <h1>XP <em>Valentine</em></h1>
+  <p class="dek">Write a few words for someone. A real Windows XP machine lifts Calculator's keys into a heart, sets your letter in Notepad, picks red in Paint, and sends you back the picture.</p>
+</header>
+
+<main class="wrap">
+  <form id="f" autocomplete="off">
+    <div class="row">
+      <div class="field"><label for="to">For</label><input id="to" maxlength="40" required placeholder="Alice"></div>
+      <div class="field"><label for="from">From <small>(optional)</small></label><input id="from" maxlength="40" placeholder="Bob"></div>
+    </div>
+    <div class="field">
+      <label for="msg">Your letter <span class="count" id="count">0 / 240</span></label>
+      <textarea id="msg" maxlength="240" required placeholder="You make every ordinary day feel like a holiday. Be my valentine?"></textarea>
+    </div>
+    <div class="actions">
+      <button id="go" type="submit">Make my valentine <span aria-hidden="true">♥</span></button>
+      <span class="note">Takes about ten seconds.</span>
+    </div>
+    <p class="err" id="err" role="alert"></p>
+  </form>
+
+  <div id="making" aria-live="polite">
+    <div class="beat" aria-hidden="true">♥</div>
+    <div id="step">Starting Windows XP…</div>
+  </div>
+
+  <div id="result" aria-live="polite">
+    <div class="frame"><img id="img" alt="" width="864" height="704"></div>
+    <div class="result-actions">
+      <button id="savehtml" type="button">Save as a page</button>
+      <a class="btn ghost" id="savepng" download="valentine.png" href="#">Save the picture</a>
+      <button class="btn ghost" id="open" type="button">Open in a new window</button>
+      <button class="btn ghost" id="again" type="button">Write another</button>
+    </div>
+    <p class="small">"Save as a page" gives you one .html file with the picture inside it: it opens by itself in any browser, offline, forever. The picture is kept on our side for 24 hours, reachable only through your link, then deleted. There is no gallery.</p>
+  </div>
+
+  <section class="how" aria-labelledby="how-h">
+    <h2 id="how-h">What happens to your words</h2>
+    <ul>
+      <li>The machine is Windows XP, really running, in a virtual machine of its own. Each valentine starts from the same quiet desktop.</li>
+      <li>Calculator opens in Scientific view, out of sight. Its push keys are taken out of Calculator with <code>SetParent</code> and stood along a heart curve, in mirror pairs. They are still Calculator's keys, painted by Calculator.</li>
+      <li>Notepad opens with its font set to Times New Roman italic, and your letter goes in as Notepad's own text. Its title becomes the name you wrote.</li>
+      <li>When the letter leaves room, Paint's colour box joins it, with red already picked.</li>
+      <li>Nothing is moved while it's on screen, so nothing smears. Every part is placed while hidden, then shown all at once. The whole screen is repainted and left to settle before the picture is taken.</li>
+      <li>Letters keep to what XP's fonts can draw: Latin, Greek, Cyrillic, and a ♥. Heart emoji become ♥, and other emoji are left out.</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">Windows Secrets</a><i>·</i><a href="inside-windows.html">Inside Windows</a><i>·</i><a href="tribute.html">Tribute</a><i>·</i><a href="basilisk.html">BASILISK</a><i>·</i><a href="puppetry.html">Window Puppetry</a><i>·</i><a href="xp-live.html">Live</a><i>·</i><b>♥ XP Valentine</b></nav>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  const API = new URLSearchParams(location.search).get('api') || 'https://live.williamsharkey.com/valxp';
+  const $ = (id) => document.getElementById(id);
+  const f = $('f'), go = $('go'), err = $('err'), making = $('making'), step = $('step'), result = $('result'), img = $('img');
+  const STEPS = ['Starting Windows XP…', 'Opening Calculator in Scientific view…', 'Lifting its keys out, one by one…',
+                 'Standing them in a heart…', 'Setting your letter in Notepad…', 'Picking red in Paint…', 'Letting the paint settle…'];
+  let current = null, timer = null;
+
+  $('msg').addEventListener('input', () => { $('count').textContent = $('msg').value.length + ' / 240'; });
+
+  function show(el, on) { el.classList.toggle('on', on); }
+
+  function play() {
+    let i = 0;
+    step.textContent = STEPS[0];
+    clearInterval(timer);
+    timer = setInterval(() => { i = Math.min(i + 1, STEPS.length - 1); step.textContent = STEPS[i]; }, 1300);
+  }
+
+  async function poll(id) {
+    for (;;) {
+      await new Promise((r) => setTimeout(r, 700));
+      let s;
+      try { s = await (await fetch(API + '/job/' + encodeURIComponent(id))).json(); } catch (e) { continue; }
+      if (s.state === 'queued' && s.pos > 1) step.textContent = (s.pos - 1) + (s.pos === 2 ? ' valentine is' : ' valentines are') + ' ahead of yours…';
+      if (s.state === 'done') return true;
+      if (s.state === 'error' || s.state === 'gone') { throw new Error(s.error || 'The valentine machine stumbled. Please try again.'); }
+    }
+  }
+
+  f.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    err.textContent = '';
+    const body = { to: $('to').value.trim(), from: $('from').value.trim(), msg: $('msg').value.trim() };
+    if (!body.to) { err.textContent = 'Who is it for? Add a name.'; return; }
+    if (!body.msg) { err.textContent = 'Write a few words for the inside.'; return; }
+    go.disabled = true;
+    try {
+      const r = await fetch(API + '/make', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const j = await r.json();
+      if (!r.ok || !j.id) throw new Error(j.error || 'That did not go through. Try again?');
+      current = j;
+      f.hidden = true; show(result, false); show(making, true); play();
+      await poll(j.id);
+      img.crossOrigin = 'anonymous';   /* so the picture can be read back into the saved page */
+      img.src = API + '/img/' + j.id + '.png';
+      img.alt = 'A valentine for ' + j.to + ': a heart of Windows XP Calculator keys around a Notepad window holding the letter';
+      await img.decode().catch(() => {});
+      $('savepng').href = img.src;
+      $('savepng').download = 'valentine-for-' + slug(j.to) + '.png';
+      show(making, false); show(result, true);
+      result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) {
+      show(making, false); f.hidden = false;
+      err.textContent = e.message;
+    } finally {
+      clearInterval(timer); go.disabled = false;
+    }
+  });
+
+  function slug(s) { return (s || 'you').normalize('NFKD').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '').toLowerCase() || 'you'; }
+  function esc(s) { return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+
+  async function dataUrl() {
+    const blob = await (await fetch(img.src)).blob();
+    return await new Promise((res) => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
+  }
+
+  async function page() {
+    const d = await dataUrl(), to = esc(current.to), from = esc(current.from || '');
+    return '<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
+      '<title>A valentine for ' + to + '</title><style>html,body{margin:0;min-height:100%;background:#c44868}' +
+      'body{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font:italic 17px/1.5 Georgia,serif;color:#fff3f5}' +
+      'img{max-width:min(96vw,864px);height:auto;box-shadow:0 20px 60px -20px rgba(60,0,20,.6);border-radius:4px}p{margin:18px 16px 24px;opacity:.85;text-align:center}</style></head>' +
+      '<body><img src="' + d + '" alt="A valentine for ' + to + '"><p>For ' + to + (from ? ', from ' + from : '') +
+      ' ♥ assembled from Windows XP\'s own Calculator, Notepad and Paint</p></body></html>\n';
+  }
+
+  $('savehtml').addEventListener('click', async () => {
+    const html = await page();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    a.download = 'valentine-for-' + slug(current.to) + '.html';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  });
+  $('open').addEventListener('click', async () => {
+    const w = window.open('', '_blank');
+    const html = await page();
+    if (w) { w.document.open(); w.document.write(html); w.document.close(); }
+  });
+  $('again').addEventListener('click', () => {
+    show(result, false); f.hidden = false; $('msg').focus();
+  });
+})();
+</script>
+</body>
+</html>

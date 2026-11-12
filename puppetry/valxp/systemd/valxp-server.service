@@ -1,0 +1,13 @@
+[Unit]
+Description=XP VALENTINE - server (guest 127.0.0.1:8773, public 127.0.0.1:8783)
+After=valxp-vm.service
+PartOf=valxp.target
+
+[Service]
+WorkingDirectory=/root/valxp
+ExecStart=/root/valxp/venv/bin/python /root/valxp/bin/server.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=valxp.target
