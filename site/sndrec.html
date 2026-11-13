@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sound Recorder Synths</title>
+<meta name="description" content="BASILISK SYNTH and BASILISK 16: sixteen real Windows Sound Recorders, from Windows XP and Windows 3.11, played as one instrument in your DAW.">
+<style>
+:root {
+  --desk: #008080; --face: #c0c0c0; --hi: #ffffff; --lo: #808080; --ink: #000000;
+  --title: #000080; --title-ink: #ffffff; --paper: #ffffff; --muted: #404040; --link: #000080; --draft: #ffffcc;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --desk: #004848; }
+}
+:root[data-theme="dark"] { --desk: #004848; }
+* { box-sizing: border-box; }
+html { background: var(--desk); }
+body { margin: 0; color: var(--ink); background: var(--desk);
+  font: 15px/1.55 "MS Sans Serif", "Microsoft Sans Serif", Arial, Helvetica, sans-serif; }
+a { color: var(--link); }
+.wrap { max-width: 980px; margin: 0 auto; padding: 22px 16px 40px; }
+.win { background: var(--paper); border: 1px solid var(--ink); box-shadow: 0 0 0 3px var(--face), 0 0 0 4px var(--ink); margin: 8px 4px 30px; }
+.cap { display: flex; align-items: center; height: 22px; background: var(--title); color: var(--title-ink); border-bottom: 1px solid var(--ink); font-weight: 700; }
+.cap .box { width: 22px; height: 21px; background: var(--face); border-right: 1px solid var(--ink); display: grid; place-items: center; flex: none; }
+.cap .box::before { content: ""; width: 12px; height: 3px; background: var(--paper); border: 1px solid var(--ink); }
+.cap .t { flex: 1; text-align: center; letter-spacing: .02em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0 6px; }
+.body { padding: 16px 20px 18px; }
+.draft { background: var(--draft); border: 1px dashed var(--ink); padding: 6px 10px; margin: 0 0 12px; font-size: 13.5px; }
+h1 { font-size: 22px; margin: 0 0 6px; }
+h2 { font-size: 16px; margin: 18px 0 6px; }
+p { margin: 0 0 10px; }
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 10px 0; }
+.pair figure { margin: 0; }
+.pair img { width: 100%; height: auto; display: block; border: 1px solid var(--ink); }
+.pair figcaption { font-size: 13.5px; color: var(--muted); margin-top: 4px; }
+.btn { display: inline-block; text-decoration: none; color: var(--ink); background: var(--face); border: 1px solid var(--ink); border-radius: 3px;
+  box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo); padding: 6px 12px; margin: 2px 6px 6px 0; }
+.btn:active { box-shadow: inset 2px 2px 0 var(--lo); }
+code { font: 13px "Fixedsys Excelsior", "Lucida Console", ui-monospace, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 6px 0 10px; }
+td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var(--face); vertical-align: top; }
+th { font-weight: 700; }
+.note { font-size: 13.5px; color: var(--muted); }
+@media (max-width: 560px) { .body { padding: 12px 12px 14px; } h1 { font-size: 19px; } table { font-size: 13px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="win">
+  <div class="cap"><span class="box"></span><span class="t">Sound Recorder Synths</span></div>
+  <div class="body">
+    <h1>Sixteen Sound Recorders, one instrument</h1>
+    <p>Two plugin instruments for your DAW. Each one runs a real old Windows in an emulator, opens sixteen copies of Sound Recorder, and plays your notes on them. Every sound is built with Sound Recorder's own menu commands, such as Increase Speed, Add Echo, Reverse and Mix with File. The plugin never makes a sound of its own.</p>
+    <div class="pair">
+      <figure><img src="basilisk-download/basilisk-synth.png" alt="BASILISK SYNTH: sixteen Windows XP Sound Recorders lined up as one synthesizer, with a keyboard along the bottom"><figcaption><b>BASILISK SYNTH</b>: Windows XP's sndrec32.exe. VST3 for Windows and macOS, and AU and CLAP on macOS.</figcaption></figure>
+      <figure><img src="basilisk-download/basilisk-16.png" alt="BASILISK 16: sixteen Windows 3.11 Sound Recorders and Clock arranged into one synthesizer"><figcaption><b>BASILISK 16</b>: Windows 3.11's SOUNDREC.EXE. VST3 for Windows and macOS, and AU on macOS.</figcaption></figure>
+    </div>
+    <p><a class="btn" href="basilisk-download.html">Download</a><a class="btn" href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth">Source</a></p>
+
+    <h2>The sound is one line of text</h2>
+    <p>A sound is a <i>DNA</i>: layers of Sound Recorder commands, then settings. For example, <code>chord#10/ding&gt;&gt;E#6;A2D300S70R250</code> is chord.wav on ten recorders, plus ding.wav sped up twice and echoed on six more. Windows builds it in front of you: each command pops up from that recorder's own menu. The same DNA plays in both instruments.</p>
+    <table>
+      <tr><th>Layers</th><td>Up to 8, each with its own recorders, offset, pan and drawn envelope.</td></tr>
+      <tr><th>Macros</th><td>Four automatable knobs. The DNA says what each one moves. The mod wheel adds to Macro 1.</td></tr>
+      <tr><th>Collages</th><td>Insert and mix other sounds at any time in a sound, such as <code>tada@t300Mding@t900Ichimes&gt;</code>.</td></tr>
+      <tr><th>Library disc</th><td>249 public domain sounds, usable by name alongside Windows' own.</td></tr>
+      <tr><th>Keyboard</th><td>Push-button keys, Hold, Bend and Mod, all built from real Windows controls. Play them with the mouse or the computer keyboard.</td></tr>
+    </table>
+
+    <h2>Windows Help, the old way</h2>
+    <p>Each instrument comes with a help file for its own Windows Help viewer: WINHELP.EXE on Windows 3.11, winhlp32 on Windows XP. The help icon sits on the desktop in XP and in a Program Manager group in 3.11. Coming next: F1 in the synth, and minimizing the synth to use Windows as usual. It has a contents page, Search, a glossary of popups and a full DNA reference. The help files are compiled from plain text by a small WinHelp compiler written for this project, with no Microsoft tools.</p>
+
+    <h2>Get Windows from a public archive</h2>
+    <p>The downloads above already include the Windows they run. If you would rather build the machine from your own copy, these are the install media the synths recognize, each checked by hash. They are public copies kept by the Internet Archive; Microsoft no longer offers any of them itself (its own Windows XP Mode link closed years ago). Use them only if you own a license.</p>
+    <p>
+      <a class="btn" href="https://archive.org/download/wfw311-disk/Microsoft%20Windows%20for%20Workgroups%203.11%20(3.5-1.44mb).zip">Windows for Workgroups 3.11, floppy set (13 MB)</a>
+      <a class="btn" href="https://archive.org/download/16-bit/16-BIT.ISO">MSDN 16-bit CD: DOS, 3.1, 3.11 (547 MB)</a>
+      <a class="btn" href="https://archive.org/download/virtualpc-7/WindowsXPMode_en-us.exe">Windows XP Mode, Microsoft's package (493 MB)</a>
+      <a class="btn" href="https://archive.org/download/XPPRO_SP3_ENU/WinXP_SP3/en_windows_xp_professional_with_service_pack_3_x86_cd_x14-80428.iso">Windows XP Professional SP3 CD (618 MB)</a>
+    </p>
+    <p class="note">Licenses: Windows for Workgroups 3.11 has no product key or activation, but you must own a copy. Windows XP Mode is licensed for use with Windows 7 Professional, Enterprise or Ultimate. The XP CD needs your own product key. Building a machine from your own media inside the synths is in progress; for now the downloads above ship ready to play.</p>
+
+    <h2>What is in it</h2>
+    <p class="note">Windows XP, Windows for Workgroups 3.11, their sounds and Sound Recorder are Microsoft's, included as part of this art project. The emulators are <a href="https://www.qemu.org/">QEMU</a> (GPLv2) and DOSBox Pure (GPLv2). The plugins are built with <a href="https://github.com/DISTRHO/DPF">DPF</a>.</p>
+  </div>
+</div>
+</div>
+</body>
+</html>
