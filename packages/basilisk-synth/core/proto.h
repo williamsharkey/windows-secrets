@@ -10,11 +10,18 @@
 namespace bsynth {
 namespace proto {
 
-constexpr int kVersion = 1;
+constexpr int kVersion = 2;
 inline int hi(char *b, int n) { return std::snprintf(b, n, "hi %d\n", kVersion); }
 inline int go(char *b, int n) { return std::snprintf(b, n, "go\n"); }
 inline int dna(char *b, int n, const std::string &d) { return std::snprintf(b, n, "dna %s\n", d.c_str()); }
 inline int on(char *b, int n, int rec, unsigned rate, unsigned vol) { return std::snprintf(b, n, "on %d %u %u\n", rec, rate, vol); }
+// v2: on <rec> <rate> <vol> <pan> <delay_ms> <layer>
+inline int on2(char *b, int n, int rec, unsigned rate, unsigned vol, int pan, unsigned delayMs, int layer)
+{
+    return std::snprintf(b, n, "on %d %u %u %d %u %d\n", rec, rate, vol, pan, delayMs, layer);
+}
+// v2: lenv <layer> <a|p> <t,l.t,l...|->
+inline int lenv(char *b, int n, int layer, char which, const Env &e) { return std::snprintf(b, n, "lenv %d %c %s\n", layer, which, envText(e).c_str()); }
 inline int off(char *b, int n, int rec) { return std::snprintf(b, n, "off %d\n", rec); }
 inline int cut(char *b, int n, int rec) { return std::snprintf(b, n, "cut %d\n", rec); }
 inline int panic(char *b, int n) { return std::snprintf(b, n, "panic\n"); }
@@ -25,7 +32,7 @@ inline int env(char *b, int n, const Globals &g) { return env(b, n, g.attack, g.
 inline int cmd(char *b, int n, const Cmd &c)
 {
     switch (c.kind) {
-    case Cmd::On: return on(b, n, c.rec, c.rateHz, c.vol);
+    case Cmd::On: return on2(b, n, c.rec, c.rateHz, c.vol, c.pan, c.delayMs, c.layer);
     case Cmd::Off: return off(b, n, c.rec);
     case Cmd::Cut: return cut(b, n, c.rec);
     case Cmd::Panic: return panic(b, n);

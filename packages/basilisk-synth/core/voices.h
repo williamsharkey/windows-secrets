@@ -12,6 +12,9 @@ struct Cmd {
     uint8_t note;       // the MIDI note it belongs to
     uint32_t rateHz;    // On
     uint16_t vol;       // On: 0..65535
+    int8_t pan = 0;     // On (v2): -100..100, the layer's Q
+    uint16_t delayMs = 0;   // On (v2): the layer's O; the host may wait this long itself and send 0
+    uint8_t layer = 0;  // On (v2): the layer it plays (its envelope applies)
 };
 constexpr int kMaxCmds = 2 * kRecorders + 4;
 
@@ -43,7 +46,7 @@ private:
     struct Rec { bool busy = false, released = false, held = false; int note = -1, layer = -1; uint64_t start = 0, finish = 0; };
     Rec rec_[kRecorders];
     LayerInfo info_[kMaxLayers];
-    struct L { bool valid = false, fixed = false; int T = 0, U = 1, C = 0, level = 100, nh = 1; int h[kMaxHarmony] = {0}; } lay_[kMaxLayers];
+    struct L { bool valid = false, fixed = false; int T = 0, U = 1, C = 0, level = 100, nh = 1, pan = 0, offset = 0; int h[kMaxHarmony] = {0}; } lay_[kMaxLayers];
     int nlay_ = 0, root_ = 60, velocity_ = 100, bendRange_ = 2;
     double sr_, bend_ = 0;
     bool sustain_ = false;

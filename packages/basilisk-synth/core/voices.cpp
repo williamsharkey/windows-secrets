@@ -33,7 +33,7 @@ int Voices::setDna(const Dna &d, Cmd *out)
         if (i >= nlay_) continue;
         const Layer &s = d.layers[i];
         lay_[i].valid = s.valid() && s.count > 0;
-        lay_[i].fixed = s.fixed; lay_[i].T = s.transpose; lay_[i].U = s.unison; lay_[i].C = s.spreadCents; lay_[i].level = s.level;
+        lay_[i].fixed = s.fixed; lay_[i].T = s.transpose; lay_[i].U = s.unison; lay_[i].C = s.spreadCents; lay_[i].level = s.level; lay_[i].pan = s.pan; lay_[i].offset = s.offset;
         lay_[i].nh = (int)s.harmony.size();
         for (int k = 0; k < lay_[i].nh && k < kMaxHarmony; k++) lay_[i].h[k] = s.harmony[k];
         info_[i].first = s.first; info_[i].count = s.count;
@@ -95,8 +95,11 @@ int Voices::noteOn(int note, int vel, uint64_t t, Cmd *out)
             taken[best] = true;
             Rec &R = rec_[best];
             R.busy = true; R.released = false; R.held = false; R.note = note; R.layer = li; R.start = t;
-            R.finish = finishOf(li, rate, t);
-            out[n++] = Cmd{Cmd::On, (uint8_t)best, (uint8_t)note, rate, vol};
+            uint64_t start = t + (uint64_t)(l.offset * sr_ / 1000.0);
+            R.finish = finishOf(li, rate, start);
+            Cmd c{Cmd::On, (uint8_t)best, (uint8_t)note, rate, vol};
+            c.pan = (int8_t)l.pan; c.delayMs = (uint16_t)l.offset; c.layer = (uint8_t)li;
+            out[n++] = c;
             if (n >= kMaxCmds - 1) return n;
         }
     }

@@ -1,7 +1,9 @@
 #include "dna.h"
 #include <algorithm>
+#include <cmath>
 #include <cctype>
 #include <cstdio>
+#include <cstring>
 
 namespace bsynth {
 
@@ -19,6 +21,10 @@ const char *const kSoundFilesXP[kSoundCount] = {
     "Windows XP Menu Command.wav", "Windows XP Minimize.wav", "Windows XP Notify.wav", "Windows XP Pop-up Blocked.wav",
     "Windows XP Print complete.wav", "Windows XP Recycle.wav", "Windows XP Restore.wav", "Windows XP Ringin.wav",
     "Windows XP Ringout.wav", "Windows XP Shutdown.wav", "Windows XP Startup.wav", "Windows XP Start.wav"};
+
+static std::vector<std::string> g_library;
+void setLibrary(const std::vector<std::string> &names) { g_library = names; }
+bool inLibrary(const std::string &name) { for (auto &n : g_library) if (n == name) return true; return false; }
 
 int soundIndex(const std::string &name)
 {
@@ -57,7 +63,7 @@ struct Reader {
     explicit Reader(const std::string &t) : s(t) {}
     bool end() const { return p >= s.size(); }
     char peek() const { return p < s.size() ? s[p] : 0; }
-    static bool namech(char c) { return (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'); }
+    static bool namech(char c) { return (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_'; }
     std::string name() { size_t b = p; while (p < s.size() && namech(s[p])) p++; return s.substr(b, p - b); }
     bool hasInt() const {
         size_t q = p;
@@ -75,10 +81,29 @@ struct Reader {
 };
 std::string num(int v) { return std::to_string(v); }
 
+// t,l.t,l... (DNA.md 5.1): times never decrease, at most 8 points
+Env readEnv(Reader &r, int lo, int hi)
+{
+    Env e;
+    for (;;) {
+        if (!r.hasInt()) break;
+        int t = clampi(r.integer(0), 0, 20000);
+        int l = 0;
+        if (r.peek() == ',') { r.p++; l = clampi(r.integer(0), lo, hi); }
+        if (!e.empty() && t < e.back().first) t = e.back().first;
+        if ((int)e.size() < kMaxEnvPoints && !(!e.empty() && e.back().first == t && e.back().second == l)) e.push_back({t, l});
+        if (r.peek() == '.') { r.p++; continue; }
+        break;
+    }
+    return e;
+}
+
 void parseLayer(Reader &r, Layer &L)
 {
     std::string nm = r.name();
     L.source = soundIndex(nm);
+    L.sourceName = nm;
+    L.lib = L.source < 0 && inLibrary(nm);
     L.tokens.push_back(nm);
     while (!r.end() && r.peek() != '/' && r.peek() != ';') {
         char c = r.peek(); r.p++;
@@ -87,13 +112,31 @@ void parseLayer(Reader &r, Layer &L)
             if ((int)L.steps.size() < kMaxSteps) { Step s; s.op = c; L.steps.push_back(s); L.tokens.push_back(std::string(1, c)); }
             break;
         case '@': {
+            if (r.peek() == 't') {   // v2 @t<ms>
+                r.p++;
+                int ms = clampi(r.integer(0), 0, kMaxBufferMs);
+                if ((int)L.steps.size() < kMaxSteps) { Step s; s.op = '@'; s.ms = ms; L.steps.push_back(s); L.tokens.push_back("@t" + num(ms)); }
+                break;
+            }
             int v = clampi(r.integer(0), 0, 99);
             if ((int)L.steps.size() < kMaxSteps) { Step s; s.op = '@'; s.arg = v; L.steps.push_back(s); L.tokens.push_back("@" + num(v)); }
             break; }
         case 'I': case 'M': {
             std::string n = r.name();
             int si = soundIndex(n);
-            if (si >= 0 && (int)L.steps.size() < kMaxSteps) { Step s; s.op = c; s.sound = si; L.steps.push_back(s); L.tokens.push_back(std::string(1, c) + n); }
+            if ((si >= 0 || inLibrary(n)) && (int)L.steps.size() < kMaxSteps) {
+                Step s; s.op = c; s.sound = si; s.name = n; L.steps.push_back(s); L.tokens.push_back(std::string(1, c) + n);
+            }
+            break; }
+        case 'O': { int v = clampi(r.integer(0), 0, 4000); L.offset = v; L.tokens.push_back("O" + num(v)); break; }
+        case 'Q': { int v = clampi(r.integer(0), -100, 100); L.pan = v; L.tokens.push_back("Q" + num(v)); break; }
+        case 'J': {
+            char w = r.peek();
+            if (w != 'a' && w != 'p') break;
+            r.p++;
+            Env e = readEnv(r, w == 'a' ? 0 : -100, 100);
+            if (w == 'a') L.envA = e; else L.envP = e;
+            if (!e.empty()) L.tokens.push_back(std::string("J") + w + envText(e));
             break; }
         case '#': { int v = clampi(r.integer(1), 1, kRecorders); L.pool = v; L.tokens.push_back("#" + num(v)); break; }
         case 'T': { int v = clampi(r.integer(0), -48, 48); L.transpose = v; L.tokens.push_back("T" + num(v)); break; }
@@ -123,6 +166,38 @@ void parseGlobals(Reader &r, Globals &g)
     while (!r.end()) {
         char c = r.peek(); r.p++;
         int *f = nullptr;
+        if (c == 'm') {   // v2 macros: mK=V or mKLPlo,hi
+            char kc = r.peek();
+            if (kc < '1' || kc > '4') continue;
+            r.p++;
+            int k = kc - '0';
+            if (r.peek() == '=') {
+                r.p++;
+                int v = clampi(r.integer(0), 0, 100);
+                g.macro[k - 1] = v;
+                g.tokens.push_back("m" + num(k) + "=" + num(v));
+                continue;
+            }
+            char lc = r.peek();
+            if (lc < '0' || lc > '8') continue;
+            r.p++;
+            char pc = r.peek();
+            if (!strchr("OQLTCZN", pc) || !pc) continue;
+            r.p++;
+            int lo = r.integer(0), hi = lo;
+            if (r.peek() == ',') { r.p++; hi = r.integer(lo); }
+            auto lim = [&](int v) {
+                switch (pc) {
+                case 'O': return clampi(v, 0, 4000); case 'Q': return clampi(v, -100, 100); case 'L': return clampi(v, 0, 400);
+                case 'T': return clampi(v, -48, 48); case 'C': return clampi(v, 0, 100); case 'Z': return clampi(v, 10, 1000);
+                default: return clampi(v, 0, 8);
+                }
+            };
+            MacroMap mm; mm.macro = k; mm.layer = lc - '0'; mm.param = pc; mm.lo = lim(lo); mm.hi = lim(hi);
+            g.maps.push_back(mm);
+            g.tokens.push_back("m" + num(k) + std::string(1, lc) + std::string(1, pc) + num(mm.lo) + "," + num(mm.hi));
+            continue;
+        }
         switch (c) {
         case 'A': f = &g.attack; break; case 'D': f = &g.decay; break; case 'S': f = &g.sustain; break;
         case 'R': f = &g.release; break; case 'B': f = &g.bendRange; break; case 'V': f = &g.velocity; break;
@@ -223,6 +298,8 @@ std::string setLayerGene(const std::string &dna, int li, char c, int v, int v2)
     case '#': tok = "#" + std::to_string(clampi(v, 1, kRecorders)); break;
     case 'U': tok = "U" + std::to_string(clampi(v, 1, 8)) + "~" + std::to_string(clampi(v2, 0, 100)); break;
     case 'F': tok = v ? "F" : ""; break;
+    case 'O': tok = "O" + std::to_string(clampi(v, 0, 4000)); break;
+    case 'Q': tok = "Q" + std::to_string(clampi(v, -100, 100)); break;
     default: return d.canonical;
     }
     auto &T = d.layers[li].tokens;
@@ -246,10 +323,88 @@ std::string appendStep(const std::string &dna, int li, char op, int arg, const s
     Dna d = parse(dna);
     if (li < 0 || li >= (int)d.layers.size()) return d.canonical;
     std::string tok(1, op);
-    if (op == '@') tok += std::to_string(clampi(arg, 0, 99));
+    if (op == '@') tok += arg < 0 ? "t" + std::to_string(-arg) : std::to_string(clampi(arg, 0, 99));   // arg < 0: @t(-arg) ms
     if (op == 'I' || op == 'M') tok += name;
     d.layers[li].tokens.push_back(tok);
     return parse(join(d, true)).canonical;
+}
+
+std::string envText(const Env &e)
+{
+    if (e.empty()) return "-";
+    std::string s;
+    for (size_t i = 0; i < e.size(); i++) s += (i ? "." : "") + std::to_string(e[i].first) + "," + std::to_string(e[i].second);
+    return s;
+}
+
+std::string setLayerEnv(const std::string &dna, int li, char which, const Env &env)
+{
+    Dna d = parse(dna);
+    if (li < 0 || li >= (int)d.layers.size() || (which != 'a' && which != 'p')) return d.canonical;
+    auto &T = d.layers[li].tokens;
+    std::string head = std::string("J") + which;
+    for (int i = (int)T.size() - 1; i >= 1; i--) if (T[i].compare(0, 2, head) == 0) T.erase(T.begin() + i);
+    if (!env.empty()) T.push_back(head + envText(env));
+    return parse(join(d, true)).canonical;
+}
+
+std::string setMacro(const std::string &dna, int k, int v)
+{
+    Dna d = parse(dna);
+    if (k < 1 || k > kMacros) return d.canonical;
+    std::string tok = "m" + std::to_string(k) + "=" + std::to_string(clampi(v, 0, 100)), pre = "m" + std::to_string(k) + "=";
+    bool done = false;
+    for (auto &t : d.g.tokens) if (t.compare(0, pre.size(), pre) == 0) { t = tok; done = true; }
+    if (!done) d.g.tokens.push_back(tok);
+    return parse(join(d, true)).canonical;
+}
+
+Dna applyMacros(const Dna &d0)
+{
+    Dna d = d0;
+    if (d.g.maps.empty()) return d;
+    for (size_t li = 0; li < d.layers.size(); li++) {
+        Layer &L = d.layers[li];
+        // per parameter: first mapping contributes lo + (hi - lo) v, later ones (hi - lo) v (DNA.md 5.3)
+        const char params[] = "OQLTCZN";
+        for (const char *pp = params; *pp; pp++) {
+            bool any = false;
+            double val = 0;
+            for (auto &m : d.g.maps) {
+                if (m.param != *pp || (m.layer != 0 && m.layer != (int)li + 1)) continue;
+                double v = d.g.macro[m.macro - 1] / 100.0;
+                val += (any ? 0 : m.lo) + (m.hi - m.lo) * v;
+                any = true;
+            }
+            if (!any) continue;
+            int iv = (int)std::lround(val);
+            switch (*pp) {
+            case 'O': L.offset = clampi(iv, 0, 4000); break;
+            case 'Q': L.pan = clampi(iv, -100, 100); break;
+            case 'L': L.level = clampi(iv, 0, 400); break;
+            case 'T': L.transpose = clampi(iv, -48, 48); break;
+            case 'C': L.spreadCents = clampi(iv, 0, 100); break;
+            case 'Z': {
+                double z = clampi(iv, 10, 1000) / 100.0;
+                for (auto &p : L.envA) p.first = (int)std::lround(p.first * z);
+                for (auto &p : L.envP) p.first = (int)std::lround(p.first * z);
+                break; }
+            case 'N': {
+                if (L.steps.empty()) break;
+                int n = clampi(iv, 0, 8);
+                Step last = L.steps.back();
+                std::string tok;   // the last step's token is the last step-ish token of the layer
+                for (int i = (int)L.tokens.size() - 1; i >= 1; i--) {
+                    char c = L.tokens[i][0];
+                    if (strchr("+-><ER@[]CPXIM", c)) { tok = L.tokens[i]; L.tokens.erase(L.tokens.begin() + i); break; }
+                }
+                L.steps.pop_back();
+                for (int k = 0; k < n && (int)L.steps.size() < kMaxSteps; k++) { L.steps.push_back(last); L.tokens.push_back(tok); }
+                break; }
+            }
+        }
+    }
+    return d;
 }
 
 }  // namespace bsynth

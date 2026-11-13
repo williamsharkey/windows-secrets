@@ -19,11 +19,23 @@ const char *soundFile311(int index);               // "C:\\WINDOWS\\DING.WAV" et
 struct Step {
     char op = 0;          // + - > < E R @ [ ] C P X I M
     int arg = 0;          // @: percent 0..99
-    int sound = -1;       // I, M: sound index
+    int ms = -1;          // @t: position in ms (v2); -1 = arg is a percent
+    int sound = -1;       // I, M: built-in sound index (-1: a library sound, see name)
+    std::string name;     // I, M: the NAME as written
 };
 
+// v2: a breakpoint envelope (time ms from the voice's start, level: 0..100 for amplitude, -100..100 for pan)
+using Env = std::vector<std::pair<int, int>>;
+constexpr int kMaxEnvPoints = 8, kMacros = 4;
+
+// v2: the sounds on the machine's library disc (DNA.md 5.5). A NAME that is not built in but listed here is valid.
+void setLibrary(const std::vector<std::string> &names);
+bool inLibrary(const std::string &name);
+
 struct Layer {
-    int source = -1;                 // sound index; -1 = unknown NAME: silent and empty
+    int source = -1;                 // built-in sound index; -1 = a library sound (lib) or unknown NAME
+    std::string sourceName;          // the NAME as written
+    bool lib = false;                // v2: the source is a library sound
     std::vector<Step> steps;         // in order (at most kMaxSteps)
     int pool = 0;                    // #N as written (0 = not given)
     int transpose = 0;               // T
@@ -31,14 +43,21 @@ struct Layer {
     int unison = 1, spreadCents = 0; // U N ~ C
     bool fixed = false;              // F
     int level = 100;                 // L, percent 0..400
+    int offset = 0;                  // v2 O: start offset ms 0..4000
+    int pan = 0;                     // v2 Q: -100..100
+    Env envA, envP;                  // v2 Ja, Jp (empty: none)
     std::vector<std::string> tokens; // canonical text of each step/gene, in written order (source first)
     // filled by assignPools():
     int first = 0, count = 0;
-    bool valid() const { return source >= 0; }
+    bool valid() const { return source >= 0 || lib; }
 };
+
+struct MacroMap { int macro = 1, layer = 0; char param = 'L'; int lo = 0, hi = 0; };   // v2 mKLPlo,hi
 
 struct Globals {
     int attack = 0, decay = 0, sustain = 100, release = 120, bendRange = 2, velocity = 100, root = 60, gainDb = 0;
+    int macro[kMacros] = {0, 0, 0, 0};   // v2 mK=V, percent
+    std::vector<MacroMap> maps;          // v2 mKLPlo,hi
     std::vector<std::string> tokens;   // canonical global tokens in written order
 };
 
@@ -62,6 +81,15 @@ std::string setLayerGene(const std::string &dna, int layer, char letter, int val
 std::string setLayerSource(const std::string &dna, int layer, const std::string &name);
 // Append a step to layer i (op, plus arg/sound name as needed).
 std::string appendStep(const std::string &dna, int layer, char op, int arg = 0, const std::string &name = "");
+
+// v2: the DNA as it sounds with its macros applied: mapped layer genes replaced (O Q L T C), envelope times scaled
+// (Z), and the last step repeated (N, which changes layersText: a rebuild). Returns a parsed Dna.
+Dna applyMacros(const Dna &d);
+// v2: set macro K (1..4) to V % and return the new canonical DNA
+std::string setMacro(const std::string &dna, int k, int value);
+// v2: replace layer i's envelope (which: 'a' or 'p'); empty = remove
+std::string setLayerEnv(const std::string &dna, int layer, char which, const Env &env);
+std::string envText(const Env &e);   // "t,l.t,l" ("-" when empty)
 
 // Clamp ranges used by the parser.
 int clampGlobal(char letter, int v);
