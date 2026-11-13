@@ -1,0 +1,633 @@
+; BASILISK SYNTH (Windows XP) and BASILISK 16 (Windows 3.11) Help: one source, two help files.
+; Build: sh build.sh   (mkrtf.py makes bsynth.rtf and basil16.rtf; hlpc.py compiles them).
+; Lines starting ":xp " or ":311 " are only in that edition. Format: see mkrtf.py.
+
+%topic contents
+%title {NAME} Help Contents
+%keys contents;help;{NAME}
+%map 1
+{NAME} is an instrument for your DAW. Sixteen {WIN} Sound Recorders play your notes.
+:311 To learn how to use Help, press F1.
+## Getting Started
++ [What {NAME} Is](what_is)
++ [Playing the Instrument](playing)
++ [The Keyboard, Bend and Mod Wheel](keyboard)
++ [The Strips](strips)
++ [Presets](presets)
+## Making Sounds
++ [The DNA](dna)
++ [Effects and Edits](effects)
++ [Layers](layers)
++ [Envelopes](envelopes)
++ [Harmony, Unison and Transpose](voices)
++ [Macros and the Mod Wheel](macros)
++ [Collages](collages)
++ [The Sounds](sounds)
+## Using Windows
++ [Minimizing the Synth to Use Windows](minimize)
+:xp + [Menus and Panels](menus)
+:311 + [The Panel](menus)
+## Reference
++ [DNA Reference](dna_ref)
++ [Glossary](glossary)
++ [Troubleshooting](trouble)
+
+%topic what_is
+%title What {NAME} Is
+%keys {NAME};about;Sound Recorder;{WIN};emulator;machine
+%map 2
+{NAME} is a plugin instrument for a [DAW](!term_daw). {xp:It is a VST3 for Windows and macOS, and also an Audio Unit and a CLAP on macOS.|311:It is a VST3 for Windows and macOS, and also an Audio Unit on macOS.}
+Each copy of the plugin runs its own {WIN} in an emulator. In that Windows, sixteen copies of Sound Recorder ({SR}) are open. The plugin calls each copy a [recorder](!term_recorder).
+When you play a note, the plugin chooses a recorder. That Sound Recorder plays its sound through the sound card of {WIN}, at the pitch of your note. The plugin passes that sound to your DAW. It does not make a sound of its own.
+The sound itself is one line of text, the [DNA](!term_dna). Windows builds it with Sound Recorder's own menu commands: Increase Speed, Add Echo, Reverse, Paste Mix and the rest.
+## See Also
++ [Playing the Instrument](playing)
++ [The DNA](dna)
+
+%topic playing
+%title Playing the Instrument
+%keys playing;MIDI;notes;velocity;sustain pedal;pitch bend;mod wheel;parameters;automation;latency
+%map 3
+Put {NAME} on an instrument track and play. When the plugin loads, Windows starts and the sixteen recorders arrange themselves into one instrument. This takes a few seconds.
+:xp > **Note:** The first time you use {NAME}, it downloads its Windows XP machine (about 860 MB) and unpacks it. The editor shows the progress.
+## What the plugin hears
+| Notes | Each note plays on one or more recorders, at its own pitch. |
+| Velocity | How hard you play sets the volume. See the [Velocity](!term_velocity) setting. |
+| Sustain pedal | Holds notes after you let go of the keys. |
+| Pitch bend | Bends notes by up to the Bend Range. The bend is set when a note starts. |
+| Mod wheel | Adds to Macro 1. See [Macros and the Mod Wheel](macros). |
+## Parameters in your DAW
+These can be automated:
+| Attack, Decay | Times in milliseconds. |
+| Sustain | Level in percent. |
+| Release | Time in milliseconds. |
+| Velocity | How much velocity changes the volume. |
+| Bend Range | The pitch bend range in semitones. |
+| Transpose | Moves every note, in semitones. |
+| {xp:Gain|311:Output Gain} | The output level in dB. |
+| Macro 1 to 4 | Whatever the sound maps them to. |
+Each parameter is part of the DNA. When you change one, the DNA changes too, and your project saves it.
+## Timing
+The plugin tells your DAW its latency ({LAT}), so recorded notes play back in time. When you play live, you hear the delay.
+## See Also
++ [The Keyboard, Bend and Mod Wheel](keyboard)
++ [Presets](presets)
+
+%topic keyboard
+%title The Keyboard, Bend and Mod Wheel
+%keys keyboard;keys;Hold;latch;{PCKEYS};computer keyboard;pitch bend;Bend;mod wheel;Mod;octave
+%map 4
+Along the bottom of the synth is a keyboard made of real Windows push buttons ({KEYS}).
+## To play the keyboard
+- Click a key to play it. Hold the mouse button down to hold the note.
+- Drag across the keys to play one note after another.
+- Notes from your DAW push their keys down, so you can watch what plays.
+## To hold notes
+- Click **Hold**. Notes keep sounding after you let go.
+- Click **Hold** again to release them.
+## To play from the computer keyboard
+1. Click **{PCKEYS}**.
+2. Type on the middle row: `a w s e d f t g y h u j k` play C to C, like the white and black keys.
+3. Press `z` for an octave down and `x` for an octave up.
+:xp 4. Press `c` and `v` for a softer or harder touch.
+## Bend and Mod
+| Bend | The pitch bend. It springs back to the middle when you let go. |
+| Mod | The mod wheel. It stays where you leave it. It adds to Macro 1. |
+When your DAW sends pitch bend or mod wheel, these controls follow it.
+> **Note:** Notes you play on this keyboard go through the plugin, just like notes from your DAW. To record them, record the plugin's output.
+## See Also
++ [Macros and the Mod Wheel](macros)
++ [Playing the Instrument](playing)
+
+%topic strips
+%title The Strips
+%keys strips;recorders;Play;Stop;wave;position;length
+%map 5
+:xp %col 2700
+:311 %col 1700
+Each strip is one real Sound Recorder, without its menu bar and title bar. There are sixteen strips.
+:xp | Play, Stop | Sound Recorder's own buttons. They play this recorder's sound at its own pitch. |
+:xp | Position | The time of the play position, in seconds. |
+:xp | Wave | The green wave display. It follows the sound. |
+:xp | Length | The length of the sound, in seconds. |
+:xp | Slider | Shows and sets the position. |
+:311 | Status | What the recorder is doing: Stopped, Playing, or the command it is carrying out while a sound is built. |
+:311 | Position | The time of the play position, in seconds. |
+:311 | Wave | The green wave display. It follows the sound. |
+:311 | Length | The length of the sound, in seconds. |
+:311 | Seek | Shows and sets the position. |
+:311 | Rewind, Forward | Move to the start or the end. |
+:311 | Play, Stop | Play or stop this recorder. |
+:311 | Record | Sound Recorder's own Record button. The instrument does not use it. |
+A note can sound more than one recorder at once: [layers](!term_layer), [harmony](!term_harmony) and [unison](!term_unison) all add recorders. When a note needs a recorder and none is free, the oldest one stops quickly and plays the new note.
+## Watching a sound being built
+:xp When the editor is open, you can watch Windows build a sound. Each command pops up from the recorder's own File, Edit or Effects menu and runs.
+:311 While Windows builds a sound, the recorder's row number lights up, and its Status field names each command as it runs (Open, Echo, Insert ding, Seek 500 ms).
+:xp Notes that arrive while a sound is being built are skipped.
+:311 The old sound keeps playing until the new one is ready, so nothing you play is lost.
+
+%topic presets
+%title Presets
+%keys presets;programs;factory presets;categories;user presets;copying a sound
+%map 6
+{NAME} has {NPRESETS} factory presets, named "Category: Name". They are in the preset list of your DAW{xp:.|311: and in the Preset list at the top of the synth. Click < or > to step through them.}
+Categories: Keys, Bells, Pads, Bass, Plucks, Percussion, Collage, FX, Macro, Brass and Library.
+%col 1900
+## Some of the factory presets
+| Chord Organ | `chord#10/ding>>E#6;A2D300S70R250` |
+| Ding Bells | `ding#8H0,12/xpding#8T12;R600` |
+| Wide Chimes | `chimes#6Q-80/chimes#6Q80O40/ding>>#4O90L60;R700` |
+| Tada Collage | `tada@t300Mding@t900Ichimes>#16;R400` |
+| Macro Swell | `chord#8/ding>E#8O120Q40;m1=0m11Z50,300m12Q-100,100` |
+:311 > **Note:** Windows 3.11 does not have most of the Windows XP sounds. A name it does not have plays DING.WAV. See [The Sounds](sounds).
+## Your own presets
+Save a preset with the preset menu of your DAW. The preset keeps the DNA, so it gives the same sound in every project. A preset from {OTHER} also plays here.
+## To copy a sound as text
+1. Select the text in the DNA box and press CTRL+C.
+2. To use a DNA, paste it into the DNA box and press ENTER.
+## See Also
++ [The DNA](dna)
+
+%topic dna
+%title The DNA
+%keys DNA;sound;recipe;Apply;Mutate;Undo;rules;canonical form
+%map 7
+%col 1900
+The whole sound of the instrument is one line of text, the DNA. Windows builds the sound from it with the real menu commands of Sound Recorder, from left to right. Because the order changes the result, there are a great many different sounds.
+## Example
+`chord#10/ding>>E#6;A2D300S70R250`
+| `chord#10` | [Layer](!term_layer) 1: chord.wav on 10 recorders. |
+| `/` | Starts the next layer. |
+| `ding>>E#6` | Layer 2: ding.wav, Increase Speed two times, Add Echo, on 6 recorders. |
+| `;A2D300S70R250` | [Globals](!term_global): attack 2 ms, decay 300 ms, sustain 70%, release 250 ms. |
+## To change the DNA
+1. Type in the DNA box, then {xp:click Apply or press ENTER.|311:press ENTER. ESC puts back the DNA you had.}
+2. Or choose a command {xp:from the Edit, Effects, Voices or Layers menu|311:on the panel}. The command is added to the DNA of the selected layer.
+3. Windows builds the new sound. Your DAW gets the new DNA.
+:xp **Mutate** makes one random change: a new step, a new source sound, a harmony, or a mixed-in sound. **Undo** goes back to the DNA before the last change.
+:311 **Undo** goes back to the DNA before the last change. **Clear** removes the steps of the selected layer.
+## Rules
+- A DNA has no spaces and is at most 1024 characters.
+- Up to 8 layers, and up to 64 steps in each layer.
+- A step that would make a sound longer than 30 seconds is skipped.
+- Unknown characters are skipped. A number out of range is set to the nearest limit.
+- An unknown sound name makes that layer silent.
+- The plugin keeps the DNA in a tidy form, the [canonical form](!term_canonical).
+## See Also
++ [DNA Reference](dna_ref)
++ [Effects and Edits](effects)
++ [Layers](layers)
+
+%topic effects
+%title Effects and Edits
+%keys steps;Effects;Edit;Increase Volume;Decrease Volume;Increase Speed;Decrease Speed;Add Echo;Reverse;Copy;Paste Insert;Paste Mix;Insert File;Mix with File;Delete Before;Delete After;position
+%map 8
+%col 1100
+Each [step](!term_step) of a layer is one of Sound Recorder's own commands. The commands run in order on that layer's sound.
+## Effects
+| `+` | Increase Volume (by 25%) |
+| `-` | Decrease Volume |
+| `>` | Increase Speed (by 100%): half as long, an octave up |
+| `<` | Decrease Speed: twice as long, an octave down |
+| `E` | Add Echo |
+| `R` | Reverse |
+## Edits
+| `@`*NN* | Move the position to NN% of the length (0 to 99) |
+| `@t`*N* | Move the position to N milliseconds |
+| `[` | Delete Before Current Position |
+| `]` | Delete After Current Position |
+| `C` | Copy the whole sound |
+| `P` | Paste Insert at the position |
+| `X` | Paste Mix at the position |
+| `I`*name* | Insert File: insert that sound at the position |
+| `M`*name* | Mix with File: mix that sound in at the position |
+The position starts at 0 when the source sound loads. If `P` or `X` comes before any `C`, they paste the layer's source sound.
+## Example
+`tada@20[` keeps tada.wav from 20% to the end: it moves to 20%, then deletes what comes before.
+## See Also
++ [Collages](collages)
++ [The Sounds](sounds)
+
+%topic layers
+%title Layers
+%keys layers;Add Layer;Remove Layer;recorders;pool;offset;pan;level;O;Q;L;#
+%map 9
+%col 1100
+A sound can have up to 8 [layers](!term_layer). Each layer has its own source sound, its own steps and its own [pool](!term_pool) of recorders. Every note plays all the layers at once. Layers are separated by `/` in the DNA.
+## To add or remove a layer
+:xp - On the Layers menu, choose Add Layer or Remove Layer. The commands work on the selected layer.
+:311 - Use the Layers buttons on the panel. The header shows "Layer 1 of 2" and so on; < and > select a layer.
+## Layer genes
+| `#`*N* | Recorders for this layer, 1 to 16. |
+| `O`*N* | [Offset](!term_offset): the layer starts N ms after the note (0 to 4000). |
+| `Q`*N* | [Pan](!term_pan): -100 is left, 0 is the middle, 100 is right. |
+| `L`*N* | Level in percent (0 to 400). |
+| `F` | Fixed pitch: the layer ignores the note and plays at the sound's own speed. Good for drums. |
+Offset, pan and level are applied as the sound card's volume while the note plays. They never change the sound that Sound Recorder made.
+## How recorders are shared
+There are 16 recorders. Layers with `#` get their number first, in order. Layers without `#` share what is left equally. Every layer gets at least one.
+## Example
+`chimes#6Q-80/chimes#6Q80O40/ding>>#4O90L60` is chimes on the left, chimes on the right 40 ms later, and a quiet high ding 90 ms after the note.
+## See Also
++ [Envelopes](envelopes)
++ [Harmony, Unison and Transpose](voices)
+
+%topic envelopes
+%title Envelopes
+%keys envelope;ADSR;attack;decay;sustain;release;drawn envelope;Ja;Jp;breakpoints;pan envelope
+%map 10
+%col 1500
+An [envelope](!term_envelope) shapes the volume of each note over time.
+## Attack, decay, sustain and release
+The globals `A`, `D`, `S` and `R` are one envelope for the whole sound. Attack, decay and release are in milliseconds; sustain is a level in percent. You can also set them from your DAW.
+## Drawn envelopes
+A layer can have its own envelope, drawn as up to 8 [breakpoints](!term_breakpoint).
+| `Ja`*t,l.t,l...* | Volume envelope: time in ms after the layer starts, and level 0 to 100. |
+| `Jp`*t,l.t,l...* | Pan envelope: time in ms, and pan -100 to 100. It adds to the layer's pan. |
+Between points the level moves in a straight line. The last level holds while the key is down; then the release fades it out. A layer with `Ja` ignores the global attack, decay and sustain.
+Example: `Ja0,0.30,100.400,60` rises to full in 30 ms, then falls to 60% by 400 ms.
+## To draw an envelope
+:xp - Under the strips, the envelope editor shows the selected layer. Move the eight upright sliders to draw the curve; each one is a fixed time, marked below it.
+:xp - **Length** stretches or shrinks the times. **Offset** and **Pan** set the layer's `O` and `Q`.
+:xp - **A D S** removes the drawn envelope, so the layer uses the global envelope again.
+:311 - In the header, **Env** shows the selected layer's points. Click < or > to pick a point, + to add one and - to delete one. Then set the point's time and level.
+:311 - **Envelope**, a seventeenth Sound Recorder, draws the curve in its green wave display.
+## See Also
++ [Layers](layers)
++ [Macros and the Mod Wheel](macros)
+
+%topic voices
+%title Harmony, Unison and Transpose
+%keys harmony;chords;unison;detune;transpose;octave;voices;H;U;T
+%map 11
+%col 1400
+These genes say how a layer's recorders play each note.
+| `T`*N* | [Transpose](!term_transpose) the layer by N semitones (-48 to 48). |
+| `H`*a,b,...* | [Harmony](!term_harmony): each note plays one voice per interval, in semitones. Up to 8. |
+| `U`*N*`~`*C* | [Unison](!term_unison): each voice becomes N voices (1 to 8), spread over C [cents](!term_cents) (0 to 100). |
+## Harmony examples
+| `H0,12` | The note and an octave up. |
+| `H0,4,7` | A major triad. |
+| `H0,3,7` | A minor triad. |
+| `H0,12,-12` | Octaves both ways. |
+:xp The Voices menu has these and more, and also Transpose Up or Down an Octave, Unison, and More or Fewer Recorders.
+:311 The panel has Harmony, Voices, Transpose, Unison and Level controls for the selected layer.
+> **Tip:** Harmony and unison use more recorders for each note. Give the layer more recorders with `#` if notes cut each other off.
+## See Also
++ [Layers](layers)
+
+%topic macros
+%title Macros and the Mod Wheel
+%keys macros;Macro 1;Macro 2;Macro 3;Macro 4;mod wheel;automation;m
+%map 12
+%col 2000
+A sound has four [macros](!term_macro). Each macro is a knob for your DAW (Macro 1 to Macro 4) that moves one or more genes of the sound at once. The DNA says what each macro does.
+## In the DNA
+Macros are globals, after the `;`.
+| `m`*K*`=`*V* | Macro K (1 to 4) is at V percent. |
+| `m`*K L P min*`,`*max* | Macro K moves gene P of layer L from min (at 0%) to max (at 100%). Layer 0 means every layer. |
+## Genes a macro can move
+| `O` | Offset, in ms. |
+| `Q` | Pan. |
+| `L` | Level, in percent. |
+| `T` | Transpose, in semitones. |
+| `C` | Unison spread, in cents. |
+| `Z` | Envelope time, in percent (100 is as drawn). |
+| `N` | How many times the layer's last step repeats (0 to 8). Windows rebuilds the layer, so it takes a moment. |
+Example: `;m1=0m11Z50,300m12Q-100,100` - Macro 1 slows layer 1's envelope and swings layer 2 from left to right.
+## The mod wheel
+The mod wheel adds to Macro 1. With Macro 1 at 0, the wheel moves it from 0 to 100%. A sound that maps nothing to Macro 1 does not change with the wheel.
+:xp The four upright sliders in the Macros panel are Macro 1 to 4 (named Tone, Body, Time and Motion).
+:311 The Macro 1 to 4 sliders on the panel move the same macros.
+## See Also
++ [The Keyboard, Bend and Mod Wheel](keyboard)
++ [DNA Reference](dna_ref)
+
+%topic collages
+%title Collages
+%keys collage;Insert File;Mix with File;position;@t;cut-up
+%map 13
+A [collage](!term_collage) is a sound made of other sounds. It uses the position and the Insert File and Mix with File commands.
+## Example
+`tada@t300Mding@t900Ichimes>`
+1. Load tada.wav.
+2. Move to 300 ms and mix in ding.wav.
+3. Move to 900 ms and insert chimes.wav.
+4. Increase Speed: the whole collage plays twice as fast.
+Any name from [The Sounds](sounds) can be inserted or mixed, library sounds too.
+## See Also
++ [Effects and Edits](effects)
+
+%topic sounds
+%title The Sounds
+%keys sounds;source sounds;Media folder;library;library disc;names of sounds;WAV files
+%map 14
+:xp %col 2700
+:311 %col 1300
+:xp Each layer starts from a sound. Windows XP has 35 of them in C:\WINDOWS\Media. Use these short names in the DNA:
+:xp | `chimes` `chord` `ding` | chimes.wav, chord.wav, ding.wav |
+:xp | `notify` `recycle` | notify.wav, recycle.wav |
+:xp | `ringin` `ringout` | ringin.wav, ringout.wav |
+:xp | `start` `tada` | start.wav, tada.wav |
+:xp The other 26 are the files "Windows XP *name*.wav":
+:xp | `balloon` | Balloon |
+:xp | `batcrit` `batlow` | Battery Critical, Battery Low |
+:xp | `critstop` | Critical Stop |
+:xp | `default` | Default |
+:xp | `xpding` | Ding |
+:xp | `error` `exclaim` | Error, Exclamation |
+:xp | `hwfail` `hwin` `hwout` | Hardware Fail, Insert, Remove |
+:xp | `infobar` | Information Bar |
+:xp | `logoff` `logon` | Logoff Sound, Logon Sound |
+:xp | `menu` `minimize` | Menu Command, Minimize |
+:xp | `xpnotify` | Notify |
+:xp | `popup` `print` | Pop-up Blocked, Print complete |
+:xp | `xprecycle` `restore` | Recycle, Restore |
+:xp | `xpringin` `xpringout` | Ringin, Ringout |
+:xp | `shutdown` `startup` | Shutdown, Startup |
+:xp | `xpstart` | Start |
+:311 Each layer starts from a sound. C:\WINDOWS has six:
+:311 | `chimes` | CHIMES.WAV |
+:311 | `chord` | CHORD.WAV (from Windows 3.1) |
+:311 | `ding` | DING.WAV |
+:311 | `ringin` | RINGIN.WAV |
+:311 | `ringout` | RINGOUT.WAV |
+:311 | `tada` | TADA.WAV (from Windows 3.1) |
+:311 Every other Windows XP name in a DNA plays DING.WAV here, so a sound from {OTHER} still plays.
+## The library disc
+:xp The machine has a CD drive. The plugin puts the library disc in it: 249 public domain sounds (instruments, glass and bells, nature). Use their names in a DNA like the ones above, for example `kalimba_c4` or `glass_ping`.
+:311 Drive L: is the library disc: 249 public domain sounds (instruments, glass and bells, nature), at 22050 Hz so Sound Recorder 3.1 opens them. Use their names in a DNA like the ones above, for example `kalimba_c4` or `glass_ping`.
+:xp To choose a sound for the selected layer, double-click it in the Library panel.
+:311 To choose a sound for the selected layer, pick it from the Sound list in the header.
+## The root note
+A sound plays at its own speed on the [root note](!term_root), middle C (60), unless the DNA sets another with `K`.
+## See Also
++ [Collages](collages)
+
+%topic minimize
+%title Minimizing the Synth to Use Windows
+%keys minimize;restore;desktop;{xp:taskbar|311:Program Manager};using Windows;help, opening;F1
+%map 15
+:xp The synth window covers the whole screen of Windows XP. You can minimize it and use Windows XP as usual: My Computer, Notepad, Paint, or this Help. The instrument keeps playing while it is minimized.
+:311 The synth window covers the whole screen of Windows 3.11. You can minimize it and use Windows as usual: Program Manager, File Manager, Notepad, Paintbrush, or this Help. The instrument keeps playing while it is minimized.
+## To minimize the synth
+:xp - On the File menu, choose Minimize.
+:xp The taskbar comes back, with a BASILISK SYNTH button on it. The desktop has the BASILISK SYNTH Help icon.
+:311 - Click the Minimize button at the right end of the synth's title bar.
+:311 The synth becomes the BASILISK 16 icon at the bottom of the screen.
+## To restore the synth
+:xp - Click the BASILISK SYNTH button on the taskbar.
+:311 - Double-click the BASILISK 16 icon.
+## To open this Help
+:xp - In the synth, press F1, or choose Help Contents from the Help menu.
+:xp - On the desktop, double-click **BASILISK SYNTH Help**.
+:311 - In the synth, press F1.
+:311 - In Program Manager, open the BASILISK 16 group and double-click **BASILISK 16 Help**.
+> **Note:** The system sounds of this Windows are turned off, so they never play into your music. When you remove the plugin, this Windows stops, and changes to its files are not kept.
+
+%topic menus
+:xp %title Menus and Panels
+:311 %title The Panel
+%keys menus;panels;DNA box;Library;Layers;Macros;{xp:Task Manager|311:Clock};Preset;Sound
+%map 16
+:xp %col 2700
+:311 %col 2900
+:xp ## Menus
+:xp | File | Apply DNA, Mutate, Undo. |
+:xp | Edit | Copy, Paste Insert, Paste Mix, Insert File, Mix with File, Move Position To, Delete Before and After Current Position. |
+:xp | Effects | Increase or Decrease Volume, Increase or Decrease Speed, Add Echo, Reverse. |
+:xp | Voices | Transpose, harmony, unison, and more or fewer recorders. |
+:xp | Layers | Add Layer, Remove Layer. |
+:xp | Help | Help Contents and About BASILISK SYNTH. |
+:xp The Edit and Effects commands are added to the DNA of the selected layer. See [Effects and Edits](effects).
+:xp ## Panels
+:xp | DNA | The DNA box, with Apply, Mutate and Undo. See [The DNA](dna). |
+:xp | Layers | The layers of the sound. Click one to select it. |
+:xp | Library | Windows XP's sounds, the library disc's sounds by category, and its presets. Double-click to use one. |
+:xp | Envelope | The selected layer's envelope, offset and pan. See [Envelopes](envelopes). |
+:xp | Macros | Macro 1 to 4. See [Macros and the Mod Wheel](macros). |
+:xp | This machine | Task Manager's CPU and page file graphs: how hard Windows XP is working. |
+:xp | Time | The Date and Time clock of Windows XP. |
+:xp | Keyboard | See [The Keyboard, Bend and Mod Wheel](keyboard). |
+:311 ## The header
+:311 | Preset | Every factory preset. < and > step through them. |
+:311 | Sound | Every sound: C:\WINDOWS's six and the library's 249. |
+:311 | Pan, Offset | The selected layer's pan and offset. |
+:311 | Env | The selected layer's drawn envelope. See [Envelopes](envelopes). |
+:311 | Envelope | A seventeenth Sound Recorder that draws the envelope. |
+:311 ## The panel
+:311 | Sound | chimes, ding, ringin, ringout. |
+:311 | Effects | Sound Recorder's commands, added to the DNA. |
+:311 | Undo, Clear | Undo the last change; clear the layer's steps. |
+:311 | Layers, Harmony | Select, add and remove layers; choose a harmony. |
+:311 | Voices, Transpose, Unison, Level | The selected layer's recorders and voice genes. |
+:311 | Attack, Decay, Sustain, Release | The envelope. |
+:311 | Macro 1-4 | The four macros. |
+:311 Clock, at the top right, is Windows' own Clock.
+Each change becomes the plugin's sound, and your project saves it.
+
+%topic dna_ref
+%title DNA Reference
+%keys DNA;reference;steps;genes;globals;syntax;attack;decay;sustain;release;velocity;bend range;root note;gain
+%map 17
+%col 1700
+A DNA is: *layer* `/` *layer* `/` ... `;` *globals*. A layer is a sound name, then steps and genes in any order.
+## Steps (run in order)
+| `+` `-` | Increase / Decrease Volume |
+| `>` `<` | Increase / Decrease Speed |
+| `E` `R` | Add Echo, Reverse |
+| `@`*NN* `@t`*N* | Move the position to NN% / N ms |
+| `[` `]` | Delete Before / After Current Position |
+| `C` `P` `X` | Copy, Paste Insert, Paste Mix |
+| `I`*name* `M`*name* | Insert File, Mix with File |
+## Layer genes (the last one of each kind wins)
+| `#`*N* | Recorders, 1 to 16 |
+| `T`*N* | Transpose, -48 to 48 semitones |
+| `H`*a,b,...* | Harmony intervals, up to 8 |
+| `U`*N*`~`*C* | Unison: N voices (1 to 8) over C cents (0 to 100) |
+| `F` | Fixed pitch |
+| `L`*N* | Level, 0 to 400% |
+| `O`*N* | Offset, 0 to 4000 ms |
+| `Q`*N* | Pan, -100 to 100 |
+| `Ja`*t,l.t,l...* | Volume envelope, up to 8 points |
+| `Jp`*t,l.t,l...* | Pan envelope, up to 8 points |
+## Globals (after the semicolon)
+| `A`*N* `D`*N* | Attack, decay in ms (default 0) |
+| `S`*N* | Sustain in % (default 100) |
+| `R`*N* | Release in ms (default 120) |
+| `B`*N* | Pitch bend range in semitones (default 2) |
+| `V`*N* | Velocity sensitivity in % (default 100; 0 is every note at full volume) |
+| `K`*N* | Root note (default 60, middle C) |
+| `G`*N* | Output gain in dB (default 0) |
+| `m`*K*`=`*V* | Macro K at V% |
+| `m`*K L P min,max* | Macro K moves gene P (O Q L T C Z N) of layer L |
+## Pitch
+A note plays at the sound's own speed times 2 to the power of (note - K + T + harmony + bend) / 12, plus the unison detune. Speeds outside 2,000 to 192,000 Hz are held at the limit.
+## See Also
++ [The DNA](dna)
++ [Glossary](glossary)
+
+%topic glossary
+%title Glossary
+%keys glossary;terms;definitions
+%map 18
+Click a term to see what it means.
++ [breakpoint](!term_breakpoint)
++ [canonical form](!term_canonical)
++ [cents](!term_cents)
++ [collage](!term_collage)
++ [DAW](!term_daw)
++ [DNA](!term_dna)
++ [envelope](!term_envelope)
++ [gene](!term_gene)
++ [global](!term_global)
++ [harmony](!term_harmony)
++ [latency](!term_latency)
++ [layer](!term_layer)
++ [library disc](!term_library)
++ [macro](!term_macro)
++ [mod wheel](!term_modwheel)
++ [offset](!term_offset)
++ [pan](!term_pan)
++ [pitch bend](!term_bend)
++ [pool](!term_pool)
++ [preset](!term_preset)
++ [recorder](!term_recorder)
++ [root note](!term_root)
++ [semitone](!term_semitone)
++ [step](!term_step)
++ [transpose](!term_transpose)
++ [unison](!term_unison)
++ [velocity](!term_velocity)
+
+%topic trouble
+%title Troubleshooting
+%keys troubleshooting;problems;no sound;silent;late notes;latency;clicks;Windows looks wrong
+%map 19
+## There is no sound
+:xp - The first time, the plugin downloads its machine. Wait until the editor shows the synth.
+- Wait until the recorders have lined up. Notes sound as soon as Windows is ready.
+- Check that the DNA names a sound that exists. An unknown name makes its layer silent.
+- Check that the layer's level (`L`) and the Gain are not at the bottom.
+## Notes come late when I play live
+The plugin has a fixed [latency](!term_latency) of {LAT}. Your DAW makes up for it on playback, but you hear it when you play live.
+## A note cuts off another note
+Each layer has a limited number of recorders. When they are all busy, the oldest note stops. Give the layer more recorders with `#`, or use less harmony or unison.
+## A step did nothing
+Sound Recorder skipped it. A step that would make the sound longer than 30 seconds is skipped, and so is a step Sound Recorder refuses, like Delete Before at position 0.
+## The new sound did not play right away
+Windows builds a new sound with Sound Recorder's commands, one recorder at a time. A long DNA takes longer.
+:xp ## The first note after a pause is late
+:xp After 4 quiet seconds with the editor closed, Windows XP is paused to save power. The next note wakes it.
+## Something in Windows looks wrong
+Remove the plugin and add it again. Windows starts fresh each time; nothing you change there is kept.
+
+; ---------------------------------------------------------------- glossary popups
+
+%topic term_breakpoint popup
+%title breakpoint
+A point of a drawn envelope: a time in milliseconds and a level. The envelope moves in a straight line from one point to the next.
+
+%topic term_canonical popup
+%title canonical form
+The tidy form of a DNA that the plugin keeps: unknown characters removed and numbers written plainly. Presets store it.
+
+%topic term_cents popup
+%title cents
+A hundredth of a semitone. Unison spreads its voices over a few cents so they shimmer.
+
+%topic term_collage popup
+%title collage
+A sound made from other sounds with Insert File and Mix with File at chosen positions.
+
+%topic term_daw popup
+%title DAW
+Digital audio workstation: the music program that hosts the plugin, such as Ableton Live, Cubase, Logic, REAPER or Bitwig.
+
+%topic term_dna popup
+%title DNA
+One line of text that is the whole sound: its layers, the Sound Recorder commands that build each one, and the settings for playing it.
+
+%topic term_envelope popup
+%title envelope
+How the volume (or the pan) of a note changes over time, from the moment it starts until it fades out.
+
+%topic term_gene popup
+%title gene
+A letter and number in a layer that says how the layer plays, such as #8 (eight recorders) or Q-50 (pan left). Genes do not change the sound itself.
+
+%topic term_global popup
+%title global
+A setting for the whole sound, written after the semicolon: attack, decay, sustain, release, bend range, velocity, root note, gain and macros.
+
+%topic term_harmony popup
+%title harmony
+Extra voices at fixed intervals above or below each note, such as an octave or a triad.
+
+%topic term_latency popup
+%title latency
+The delay between a note and its sound. The plugin reports it to the DAW, which makes up for it on playback.
+
+%topic term_layer popup
+%title layer
+One part of a sound: a source sound, its steps and its genes, on its own recorders. A note plays every layer at once.
+
+%topic term_library popup
+%title library disc
+A disc of 249 public domain sounds that the plugin puts in the machine, usable by name in a DNA.
+
+%topic term_macro popup
+%title macro
+One of four knobs (Macro 1 to 4) that move several genes of a sound at once. Your DAW can automate them.
+
+%topic term_modwheel popup
+%title mod wheel
+The modulation wheel of a MIDI keyboard (controller 1). Here it adds to Macro 1.
+
+%topic term_offset popup
+%title offset
+How long after the note a layer starts, in milliseconds.
+
+%topic term_pan popup
+%title pan
+Where a sound sits between the left and right speakers.
+
+%topic term_bend popup
+%title pitch bend
+The pitch wheel of a MIDI keyboard. It bends notes up or down by the bend range (B). The bend is set when each note starts.
+
+%topic term_pool popup
+%title pool
+The recorders that belong to one layer. A note takes a free recorder from each layer's pool.
+
+%topic term_preset popup
+%title preset
+A saved sound. A preset is just its DNA.
+
+%topic term_recorder popup
+%title recorder
+One of the sixteen Sound Recorders that play the notes. Each is a strip of the synth.
+
+%topic term_root popup
+%title root note
+The note that plays a sound at its own speed. Higher notes play it faster, lower notes slower. Middle C (60) unless the DNA says K.
+
+%topic term_semitone popup
+%title semitone
+The step from one key to the next on a piano keyboard. Twelve make an octave.
+
+%topic term_step popup
+%title step
+One Sound Recorder command in a layer, such as > (Increase Speed) or E (Add Echo). Steps change the sound itself, in order.
+
+%topic term_transpose popup
+%title transpose
+To move notes up or down by a number of semitones.
+
+%topic term_unison popup
+%title unison
+Several copies of each voice, slightly out of tune with each other, for a fuller sound.
+
+%topic term_velocity popup
+%title velocity
+How hard a key is played (1 to 127). The V setting says how much it changes the volume.

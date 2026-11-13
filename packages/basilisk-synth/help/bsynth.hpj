@@ -1,4 +1,5 @@
-; BASILISK SYNTH Help (Windows XP edition). Build: python3 hlpc.py bsynth.hpj -o out/BSYNTH.HLP
+; BASILISK SYNTH Help (Windows XP edition). Built by build.sh: mkrtf.py makes bsynth.rtf from help.txt,
+; hlpc.py compiles this project to out/BSYNTH.HLP.
 [OPTIONS]
 TITLE=BASILISK SYNTH Help
 COPYRIGHT=BASILISK SYNTH by William Sharkey. Windows XP and Sound Recorder are Microsoft's.
@@ -9,3 +10,6 @@ bsynth.rtf
 
 [CONFIG]
 BrowseButtons()
+
+[MAP]
+#include helpmap.txt

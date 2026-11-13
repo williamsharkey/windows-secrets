@@ -17,7 +17,8 @@ Supported RTF (what the topic files use):
   {\\strike ...} is also a jump.  \\keepn paragraphs at the top of a topic form its non-scrolling region.
   \\par \\line \\tab \\pard \\plain \\b \\i \\f \\fs \\cf \\li \\ri \\fi \\sb \\sa \\sl \\qc \\qr \\ql \\tx \\tqr \\tqc,
   \\'hh, \\~, \\-, \\{ \\} \\\\, \\fonttbl and \\colortbl.  Everything else is ignored.
-Supported HPJ: [OPTIONS] TITLE, COPYRIGHT, CONTENTS; [FILES]; [CONFIG] (one macro per line).
+Supported HPJ: [OPTIONS] TITLE, COPYRIGHT, CONTENTS; [FILES]; [CONFIG] (one macro per line); [MAP] ("context number"
+lines or #define lines, also through #include), for WinHelp(HELP_CONTEXT, number).
 """
 import os
 import re
@@ -475,8 +476,10 @@ class Compiler:
             self.desc.append(d)
         return self.desc_ix[d]
 
-    def para_record(self, pp, items):
-        """One TOPICLINK of type 0x20: (LinkData1, LinkData2, TopicLength)."""
+    def para_record(self, pp, paras):
+        """One TOPICLINK of type 0x20: (LinkData1, LinkData2, TopicLength). paras: the item lists of one or more
+        consecutive paragraphs with the same paragraph formatting; like HC31, they share one record, separated by
+        0x82 (WINHELP.EXE 3.1 lays out the first-line indent and tabs of separate same-format records wrongly)."""
         bits = 0
         vals = b''
         if pp.sb:
@@ -500,6 +503,9 @@ class Compiler:
         bits |= pp.align
         fmt = bytes([0x00, 0x80, 0x00, 0x00]) + struct.pack('<H', bits) + vals
         strings, cur, cur_font = [], '', None
+        items = []
+        for k, p in enumerate(paras):
+            items += p + ([('par',)] if k + 1 < len(paras) else [])
         for it in items:
             if it[0] == 't':
                 fi = self.font_index(it[2])
@@ -519,6 +525,11 @@ class Compiler:
                 fmt += bytes([0xE2 if it[1] == 'popup' else 0xE3]) + struct.pack('<l', h)
             elif it[0] == 'endhot':
                 strings.append(cur); cur = ''; fmt += b'\x89'
+            elif it[0] == 'par':
+                if cur_font is None:
+                    fmt += bytes([0x80]) + struct.pack('<H', self.font_index((0, 20, False, False, 0)))
+                    strings.append(''); cur_font = -1
+                strings.append(cur); cur = ''; fmt += b'\x82'
         if cur_font is None:                  # an empty paragraph still needs a font
             fmt += bytes([0x80]) + struct.pack('<H', self.font_index((0, 20, False, False, 0)))
             strings.append('')
@@ -532,8 +543,16 @@ class Compiler:
 
     def compile(self, hpj_path, out_path):
         base = os.path.dirname(os.path.abspath(hpj_path))
-        sec, opts, files, config = None, {}, [], []
-        for line in open(hpj_path, encoding='cp1252'):
+        sec, opts, files, config, mapping = None, {}, [], [], []
+
+        def hpj_lines(path):
+            for line in open(path, encoding='cp1252'):
+                m = re.match(r'\s*#include\s+[<"]?([^>"\s]+)', line)
+                if m:                                     # HC31's #include, used in [MAP]
+                    yield from hpj_lines(os.path.join(os.path.dirname(os.path.abspath(path)), m.group(1)))
+                else:
+                    yield line
+        for line in hpj_lines(hpj_path):
             line = line.strip()
             if not line or line.startswith(';'):
                 continue
@@ -551,6 +570,11 @@ class Compiler:
                 files.append(line)
             elif sec == 'CONFIG':
                 config.append(line)
+            elif sec == 'MAP':                            # "context number" or "#define context number"
+                w = line.split()
+                if w[0] == '#define':
+                    w = w[1:]
+                mapping.append((w[0], int(w[1], 0)))
         topics = []
         for fn in files:
             src = open(os.path.join(base, fn), encoding='cp1252').read()
@@ -561,8 +585,15 @@ class Compiler:
         for ti, t in enumerate(topics):
             recs.append([ti, 2, None, (t.title or '').encode('cp1252', 'replace') +
                          b''.join(b'\0' + m.encode('cp1252') for m in t.macros), 0, False])
+            groups = []
             for pp, items in t.paras:
-                l1, l2, tl = self.para_record(pp, items)
+                if (groups and os.environ.get('HLPC_NOMERGE') is None and
+                        all(getattr(groups[-1][0], k) == getattr(pp, k) for k in pp.__slots__)):
+                    groups[-1][1].append(items)
+                else:
+                    groups.append((pp, [items]))
+            for pp, paras in groups:
+                l1, l2, tl = self.para_record(pp, paras)
                 recs.append([ti, 0x20, l1, l2, tl, pp.keepn])
         recs.append([None, 2, None, b'', 0, False])       # the closing empty topic header, as HC31 writes it
         HDR_L1 = 28
@@ -713,7 +744,13 @@ class Compiler:
                 m += struct.pack('<lH', k, p)
                 k += struct.unpack_from('<h', tree, 38 + p * 2048 + 2)[0]
             internal['|KWMAP'] = struct.pack('<h', nleaf) + m
-        internal['|CTXOMAP'] = struct.pack('<h', 0)
+        omap = []
+        for name, num in mapping:
+            ti = [ti for ti, t in enumerate(topics) if any(c.lower() == name.lower() for c in t.ctx)]
+            if not ti:
+                raise SystemExit('hlpc: [MAP] names %r, which no topic defines' % name)
+            omap.append(struct.pack('<ll', num, topic_off[ti[0]]))
+        internal['|CTXOMAP'] = struct.pack('<h', len(omap)) + b''.join(omap)
         # |FONT
         faces = b''.join(f.encode('cp1252')[:19].ljust(20, b'\0') for f in self.faces)
         descs = b''.join(struct.pack('<BBBH', a, hp, fam, fi) + bytes(rgb) + bytes(3)
