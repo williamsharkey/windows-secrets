@@ -31,6 +31,13 @@ struct Window {
     Range l{-1, -1};          // Wl  length (-1: not given; end = e)
     int vel = 0;              // Wv  velocity moves the start toward 0, 0..kOne (kOne: velocity 127 starts at 0)
     int maxMs = 0;            // Wm  real-time cap in ms (tape length); 0 = none
+    // time and tempo (as on main, 4bda617, the 3.11 lane: no "tempo twins", looping drawn envelopes, long offsets)
+    int offMs = 0;            // Wo  start offset in ms, 0..30000; replaces v2 O (capped at 4000) when given
+    int beat16 = 0;           // Wb  start offset in 1/16 beats of the host tempo, 0..1024; added to O / Wo
+    int gate16 = 0;           // Wg  release the note after n/16 beats (a beat gate), 0 = none
+    bool tempo = false;       // Wt  every ms time of this layer (O Wo Wm Ja Jp Ss Yt Ng) counts at 120 bpm: x 120/bpm
+    int loopA = 0;            // Wr  loop the last n (2..8) points of the drawn amp envelope (Ja) while the key is held
+    int loopP = 0;            // Wp  the same for the drawn pan envelope (Jp)
 };
 // N: voice mode (owner wish 2)
 struct VoiceMode {

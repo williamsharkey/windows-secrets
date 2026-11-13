@@ -202,7 +202,7 @@ Example: `m1 1 W 200,400` written as `m11W200,400` moves layer 1's start from 0.
 
 | Token | Subkeys | Meaning |
 |---|---|---|
-| `W` window | `s`F[`~`F] start, `e`F[`~`F] end, `l`F[`~`F] length, `v`F velocity to start, `m`ms real-time cap | Section 4 |
+| `W` window and time | `s`F[`~`F] start, `e`F[`~`F] end, `l`F[`~`F] length, `v`F velocity to start, `m`ms real-time cap; time and tempo (added by the 3.11 lane on `main`, 4bda617): `o`ms start offset 0..30000 (replaces v2 `O`, capped at 4000, when given), `b`n start offset in 1/16 beats (added to `O`/`Wo`), `g`n beat gate (release after n/16 beats), `t` tempo-sync (every ms time of the layer, `O Wo Wm Ja Jp Ss Yt Ng`, counts at 120 bpm: x 120/bpm), `r`n / `p`n loop the last n (2..8) points of the drawn amp / pan envelope while the key is held | Sections 4, 18.7 |
 | `N` voice mode | `p`[n] poly (at most n notes), `m` mono, `l` legato, `c` continue, `g`ms glide, `k`(`n`\|`h`\|`l`) note priority | Section 5 |
 | `S` stack | `r` round-robin, `x` random interval, `p` random recorder, `g`n[`x`] layer group, `s`ms strum, `w`F unison pan width (the earlier `d`n chord moved to `D`) | Section 5 |
 | `D` degree harmony | `h`d,d,... degrees above (1 = the note), `b`d,... degrees below, `i`n inversion, `s`n out-of-scale snap (1 nearest, 2 down, 3 up, 4 off) | Section 18 |
@@ -1016,8 +1016,8 @@ Status on `main` (2026-11-13) of the notes in the first version of this spec, an
    one tap at 150 ms x0.25 and never lengthens the buffer; `<E>` gives a 75 ms echo (the doc says longer), `>E<`
    300 ms; `<>` is bit-identical (no filter); `><` and `>><<` darken with strong aliasing. That doc's `W`N wow gene
    is `Yd` here (v3 `W` is the window), its strum `Hs` is `Ss`, its round robin `Y` is `Sg` groups, its `Ja!3` loop
-   and `O`Nb beat offset need sign-free v3 tokens (proposal: an `A` layer token, `Al3` loop the last 3 points, `Ab4`
-   offset in 1/16 beats).
+   is `Wr3` and its `O`Nb beat offset is `Wb`n (the `W` time subkeys on `main`, 4bda617; an earlier proposal of an
+   `A` token is withdrawn).
 
 ---
 
@@ -1344,7 +1344,7 @@ spellings below are the ASCII ones.
 | `UN~C`, `F`, `LN` | unison N +-Cc (u2+-9c), fixed pitch (fixed, fix), level 80% (lv80) |
 | `ON`, `QN` | offset 120ms (o120), pan L40 / R40 / C |
 | `Ja...`, `Jp...` | amp env 0:0,30:100 (ms:level), pan env 0:-50,500:50 |
-| `W` | start 20-40%, end 90%, length 10-30%, velocity start 50%, tape 8s (fractions shown as percent, 0.01 % steps) |
+| `W` | start 20-40%, end 90%, length 10-30%, velocity start 50%, tape 8s (fractions shown as percent, 0.01 % steps); delay 9s (`Wo`), beat-delay 4/16 (`Wb`), beat-gate 8/16 (`Wg`), tempo-sync (`Wt`), loop-amp 3 (`Wr`), loop-pan 2 (`Wp`) (short: dly, bdly, bgate, tsync, lamp, lpan) |
 | `N` | poly 4, mono, legato, continue, glide 80ms, priority high/low |
 | `S` | round-robin, random note, random recorder, group 2 [random], strum 30ms, chord 3, spread 50% |
 | `Y` | random pitch +-8c, random level 6%, random late 12ms, random pan 20, seed key, seed recorder |
@@ -1569,6 +1569,10 @@ COMBOBOXes, check boxes and radio buttons.
 - `key <note> <vel>` from the strip keeps sending MIDI note numbers (anchor + step in remap), so the host maps the
   strip and MIDI the same way.
 - Automating Key or Scale changes the next notes; parameter changes are sample-accurate in the host, like notes.
+- The beat-relative times of the `W` time subkeys (`Wb` beat delay, `Wg` beat gate, `Wt` tempo-sync) are resolved
+  on the host from the DAW tempo in the same pass as pitches, so a render at a given tempo is also deterministic.
+  The sequencer (section 9) and these subkeys read the same transport. The free letters for later layer tokens are
+  now `A`, `B` and `K` (`B` is the "unknown token" example in the tests).
 
 ### 18.8 Recipe words
 

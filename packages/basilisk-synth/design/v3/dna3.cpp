@@ -113,6 +113,12 @@ static void layerToken(const std::string &s, size_t &p, Layer3 &L)
             else if (k == 'l') L.w.l = readFracRange(s, p, kOne);
             else if (k == 'v') L.w.vel = clampi(readFrac(s, p), 0, kOne);
             else if (k == 'm') L.w.maxMs = clampi(readInt(s, p, 0), 0, 30000);
+            else if (k == 'o') L.w.offMs = clampi(readInt(s, p, 0), 0, 30000);
+            else if (k == 'b') L.w.beat16 = clampi(readInt(s, p, 0), 0, 1024);
+            else if (k == 'g') L.w.gate16 = clampi(readInt(s, p, 0), 0, 1024);
+            else if (k == 't') L.w.tempo = true;
+            else if (k == 'r') { int n = clampi(readInt(s, p, 2), 0, 8); L.w.loopA = n == 1 ? 2 : n; }
+            else if (k == 'p') { int n = clampi(readInt(s, p, 2), 0, 8); L.w.loopP = n == 1 ? 2 : n; }
             else known = false;
             break;
         case 'N':
@@ -404,6 +410,12 @@ std::string Layer3::tokens() const
         if (this->w.l.lo >= 0) w += "l" + rangeText(this->w.l);
         if (this->w.vel) w += "v" + fracText(this->w.vel);
         if (this->w.maxMs) w += "m" + std::to_string(this->w.maxMs);
+        if (this->w.offMs) w += "o" + std::to_string(this->w.offMs);
+        if (this->w.beat16) w += "b" + std::to_string(this->w.beat16);
+        if (this->w.gate16) w += "g" + std::to_string(this->w.gate16);
+        if (this->w.tempo) w += "t";
+        if (this->w.loopA) w += "r" + std::to_string(this->w.loopA);
+        if (this->w.loopP) w += "p" + std::to_string(this->w.loopP);
         w += extra[0];
         if (!w.empty()) t += "W" + w;
     }

@@ -99,6 +99,7 @@ int main(int argc, char **argv)
             {"tada | m1 50%  m1 layer1 pan -100-100", "tada;m1=50m11Q-100,100"},
             {"ding scale 1 3 5 -5  inv 1  snap up | scale minor root D mask 101101011010", "dingDh1,3,5b5i1s3;q1r2n1453"},
             {"chord scale 1 3 5 7  4 recorders | scale 19tet", "chord#4Dh1,3,5,7;q31"},
+            {"ding delay 9s beat-delay 4/16 beat-gate 8/16 tempo-sync loop-amp 3 loop-pan 2", "dingWo9000b4g8tr3p2"},
             {"ding-xp faster, insert chimes-xp, mix tada-xp  8 recorders / ding echo / chord-xp slower", "dingxp>IchimesxpMtadaxp#8/dingE/chordxp<"},
         };
         for (auto &t : typed) {
@@ -187,7 +188,7 @@ int main(int argc, char **argv)
                                "Idingxp", "Mtadaxp", "Ichimesxp", "Mchordxp"};
         const char *v3tok[] = {"Ws.2~.4l.1~.3", "We.9", "Wv.5m8000", "Np4", "Nm", "Nlg80", "Ncg200kh", "Sr", "Sx", "Sp",
                                "Sg2x", "Ss30", "Sd3", "Sw.5", "Yd8l6t12q20kr", "Vw8,6", "Vf2,12s30,80", "Z0,59,48",
-                               "Gp.5j.2z40~90n60c30o20e3s.5bv6w.7y", "Gf", "Ws.1u5", "G", "Z40,70", "Bl3", "Dh1,3,5", "Dh1,3,5,7b5i1s2", "Db8s4"};
+                               "Gp.5j.2z40~90n60c30o20e3s.5bv6w.7y", "Gf", "Ws.1u5", "G", "Z40,70", "Bl3", "Dh1,3,5", "Dh1,3,5,7b5i1s2", "Db8s4", "Wo9000b4g8tr3p2"};
         const char *v2glob[] = {"A10", "D300", "S70", "R250", "B12", "V80", "K48", "G-6", "m1=40", "m21L0,200", "m30Z50,200", "R1500"};
         const char *v3glob[] = {"q0", "q9r4", "x", "xd8tg60s20n1p6a5o3l12b96fh", "m11W200,400", "m40J10,300", "xz2", "k36", "k42l3j2e.5c1f15",
                                 "k46l3j2s.5c1", "k60,72l2p100w5t20h40y1,90g", "kd", "k38u1,2z", "E7", "q20r2n2741", "q34", "q7e19", "q105r11"};
@@ -201,7 +202,7 @@ int main(int argc, char **argv)
                 if (l) v3 += "/";
                 v3 += src[r.in(0, 9)];
                 int m = r.in(0, 8);
-                for (int i = 0; i < m; i++) v3 += r.in(0, 2) == 0 ? v3tok[r.in(0, 26)] : v2tok[r.in(0, 34)];
+                for (int i = 0; i < m; i++) v3 += r.in(0, 2) == 0 ? v3tok[r.in(0, 27)] : v2tok[r.in(0, 34)];
             }
             if (r.in(0, 1)) {
                 v3 += ";";

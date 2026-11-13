@@ -451,6 +451,10 @@ int main()
         Tuning rt; CHECK(tuningFromText(tuningText(maj), rt) && rt.steps == maj.steps && tuningText(rt) == tuningText(maj));
         // the DNA side: D and q
         CHECK(canonical3("dingDh1,3,5b5i1s2") == "dingDh1,3,5b5i1s2" && strip3("dingDh1,3,5b5i1s2") == "ding");
+        // time and tempo W subkeys, as on main (4bda617): Wo Wb Wg Wt Wr Wp
+        CHECK(canonical3("dingWt r3 p2 o9000 b4 g8 s.2") == "dingWs.2o9000b4g8tr3p2");
+        Dna3 tw = parse3("dingWo9000b4g8tr1p2");
+        CHECK(tw.layers[0].w.offMs == 9000 && tw.layers[0].w.beat16 == 4 && tw.layers[0].w.gate16 == 8 && tw.layers[0].w.tempo && tw.layers[0].w.loopA == 2 && tw.layers[0].w.loopP == 2);
         Dna3 dd = parse3("dingDh1,3,5i1");
         CHECK(dd.layers[0].d.up.size() == 3 && dd.layers[0].d.inversion == 1);
         CHECK(canonical3("a;q7r2n2741e16") == "a;q7r2n2741e16" && parse3("a;q34").g.scale == 34 && parse3("a;q0n5").g.mask == 5);

@@ -123,6 +123,7 @@ enum W {
     // v3 layer
     wStart, wEnd, wLength, wVelStart, wTape, wPoly, wMono, wLegato, wContinue, wGlide, wPrio, wRoundRobin, wRandomNote,
     wRandomRec, wGroup, wStrum, wChord, wSpread, wRand, wSeed, wWow, wFlutter, wScoop, wKeys, wRoot, wGrains,
+    wDelay, wBeatDelay, wBeatGate, wTempoSync, wLoopAmp, wLoopPan,
     // globals
     wAttack, wDecay, wSustain, wRelease, wBend, wVelocity, wGain, wMacro, wScale, wSeq, wPad, wKitOff, wInv, wSnap,
     wCount
@@ -143,6 +144,8 @@ const Spell kW[wCount] = {
     {"group", "group", "grp"}, {"strum", "strum", "strum"}, {"chord", "chord", "chord"}, {"spread", "spread", "spr"},
     {"random", "rand", "rnd"}, {"seed", "seed", "seed"}, {"wow", "wow", "wow"}, {"flutter", "flutter", "flut"},
     {"scoop", "scoop", "scoop"}, {"keys", "keys", "keys"}, {"root", "root", "root"}, {"grains", "grains", "gr"},
+    {"delay", "delay", "dly"}, {"beat-delay", "beat-delay", "bdly"}, {"beat-gate", "beat-gate", "bgate"},
+    {"tempo-sync", "tempo-sync", "tsync"}, {"loop-amp", "loop-amp", "lamp"}, {"loop-pan", "loop-pan", "lpan"},
     {"attack", "atk", "a"}, {"decay", "dec", "d"}, {"sustain", "sus", "s"}, {"release", "rel", "r"}, {"bend", "bend", "b"},
     {"velocity", "vel", "v"}, {"gain", "gain", "g"}, {"macro", "m", "m"}, {"scale", "scale", "scale"}, {"sequencer", "seq", "seq"},
     {"pad", "pad", "pad"}, {"kit off", "kit off", "kitoff"}, {"inversion", "inv", "inv"}, {"snap", "snap", "snap"},
@@ -210,6 +213,12 @@ std::string v3Layer(const std::string &tok, RecipeForm f)
         if (L.w.l.lo >= 0) o.push_back(kv(wLength, rangeText(L.w.l) + (sh ? "" : "%"), f));
         if (L.w.vel) o.push_back(kv(wVelStart, pct(L.w.vel) + (sh ? "" : "%"), f));
         if (L.w.maxMs) o.push_back(kv(wTape, unitless(msText(L.w.maxMs), f, "ms"), f));
+        if (L.w.offMs) o.push_back(kv(wDelay, unitless(msText(L.w.offMs), f, "ms"), f));
+        if (L.w.beat16) o.push_back(kv(wBeatDelay, itos(L.w.beat16) + "/16", f));
+        if (L.w.gate16) o.push_back(kv(wBeatGate, itos(L.w.gate16) + "/16", f));
+        if (L.w.tempo) o.push_back(spell(wTempoSync, f));
+        if (L.w.loopA) o.push_back(kv(wLoopAmp, itos(L.w.loopA), f));
+        if (L.w.loopP) o.push_back(kv(wLoopPan, itos(L.w.loopP), f));
         break; }
     case 'N':
         if (L.n.mode == 'p') o.push_back(L.n.poly ? kv(wPoly, itos(L.n.poly), f) : spell(wPoly, f));
@@ -770,6 +779,18 @@ bool parseGene(P &p, std::vector<std::string> &toks, V3 &v3)
         if (!parseFracRange(a, f)) return p.fail("a percent of the sound, such as 20% or 20..40%");
         p.i++;
         v3.W_ += std::string(k == wStart ? "s" : k == wEnd ? "e" : k == wLength ? "l" : "v") + f; return true;
+    }
+    case wDelay: { std::string a = arg(); if (!parseMs(a, v)) return p.fail("a time such as 9000ms or 9s"); p.i++; v3.W_ += "o" + itos(v); return true; }
+    case wBeatDelay: case wBeatGate: {
+        std::string a = arg();
+        if (a.size() > 3 && a.compare(a.size() - 3, 3, "/16") == 0) a.resize(a.size() - 3);
+        if (!isnum(a)) return p.fail("sixteenths of a beat, such as 4/16");
+        p.i++; v3.W_ += std::string(k == wBeatDelay ? "b" : "g") + a; return true;
+    }
+    case wTempoSync: p.i++; v3.W_ += "t"; return true;
+    case wLoopAmp: case wLoopPan: {
+        std::string a = arg(); if (!isnum(a)) return p.fail("how many points loop, 2 to 8");
+        p.i++; v3.W_ += std::string(k == wLoopAmp ? "r" : "p") + a; return true;
     }
     case wTape: { std::string a = arg(); if (!parseMs(a, v)) return p.fail("a time such as 8000ms or 8s"); p.i++; v3.W_ += "m" + itos(v); return true; }
     // ---- v3 voice mode
