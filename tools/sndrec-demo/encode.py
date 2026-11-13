@@ -57,6 +57,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('render'); ap.add_argument('out'); ap.add_argument('edition')
     ap.add_argument('--lufs', type=float, default=-16.0); ap.add_argument('--kbps', type=int, default=96)
+    ap.add_argument('--renderer', default='render311', help='what rendered the plain demos')
+    ap.add_argument('--macro-renderer', default='BasiliskHost (VST3, Macro 1 automated)')
     ap.add_argument('--review', help='JSON of listening notes per slug: {"drop": [flag substrings], "note": text}')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -114,7 +116,7 @@ def main():
             env = np.abs(m) * g
             n = len(env) // 64
             wave_bars = [round(float(min(1.0, env[k * n:(k + 1) * n].max())), 3) for k in range(64)]
-        man.append(dict(row, edition=a.edition, renderer='BasiliskHost (VST3, Macro 1 automated)' if mac else 'render311',
+        man.append(dict(row, edition=a.edition, renderer=a.macro_renderer if mac else a.renderer,
                         macro_curve=mac['curve'] if mac else None, file=os.path.basename(mp3) if 'silent' not in flags else None,
                         mono=mono, peak_dbfs=round(20 * np.log10(peak + 1e-12), 1), rms_dbfs=round(20 * np.log10(rms + 1e-12), 1),
                         lufs_render=I_before, lufs_out=I_after, gain_db=round(gain_db, 1), onsets=len(ons), heard=heard,
