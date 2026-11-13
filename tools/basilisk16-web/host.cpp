@@ -25,6 +25,19 @@
 using namespace bsynth;
 
 extern "C" volatile int web_snapshot_request;
+extern "C" volatile int web_mouse_dx, web_mouse_dy;   // web_engine.c: relative motion for the emulated mouse
+static float relScale = 1.f, relAccX = 0, relAccY = 0;
+static double relDownT = 0;
+// the drag's motion goes to the emulated mouse only once the press has reached Windows at its own place (the
+// engine moves the pointer there first and holds the button for 3 frames): until then it is kept
+static void relFlush()
+{
+    if (emscripten_get_now() - relDownT < 120) return;
+    const int dx = (int)relAccX, dy = (int)relAccY;
+    relAccX -= dx; relAccY -= dy;
+    if (dx) __sync_fetch_and_add(&web_mouse_dx, dx);
+    if (dy) __sync_fetch_and_add(&web_mouse_dy, dy);
+}
 
 namespace {
 
@@ -253,6 +266,7 @@ EMSCRIPTEN_KEEPALIVE const int *b16_layout()
 EMSCRIPTEN_KEEPALIVE void b16_tick()
 {
     if (!S) return;
+    if (S->mouse_btn & 1) relFlush();
     if (!hello && S->state >= BS_RUNNING && S->state != BS_FAILED) {
         hello = true;
         char b[128];
@@ -310,6 +324,10 @@ EMSCRIPTEN_KEEPALIVE void b16_mouse(int x, int y)
     if (!S) return;
     if (x < 0) x = 0; if (y < 0) y = 0; if (x >= BSHM_W) x = BSHM_W - 1; if (y >= BSHM_H) y = BSHM_H - 1;
     if (x == S->mouse_x && y == S->mouse_y) return;
+    if (S->mouse_btn & 1) {   // a drag: the emulated mouse moves too (see web_engine.c), so Windows' modal loops follow
+        relAccX += (x - S->mouse_x) * relScale; relAccY += (y - S->mouse_y) * relScale;
+        relFlush();
+    }
     S->mouse_x = x; S->mouse_y = y; S->mouse_seq++;
 }
 EMSCRIPTEN_KEEPALIVE void b16_button(int bit, int down)
@@ -317,6 +335,7 @@ EMSCRIPTEN_KEEPALIVE void b16_button(int bit, int down)
     if (!S) return;
     uint32_t btn = S->mouse_btn;
     if (down) btn |= (uint32_t)bit; else btn &= ~(uint32_t)bit;
+    if (bit == 1) { relAccX = relAccY = 0; relDownT = emscripten_get_now(); }
     if (down && bit == 1) {
         const uint32_t w = S->click_w;
         S->click_x[w % 4] = S->mouse_x; S->click_y[w % 4] = S->mouse_y;
@@ -325,6 +344,9 @@ EMSCRIPTEN_KEEPALIVE void b16_button(int bit, int down)
     }
     S->mouse_btn = btn; S->mouse_seq++;
 }
+// tests and calibration: relative motion straight to the emulated mouse; the scale of drag motion
+EMSCRIPTEN_KEEPALIVE void b16_rel(int dx, int dy) { __sync_fetch_and_add(&web_mouse_dx, dx); __sync_fetch_and_add(&web_mouse_dy, dy); }
+EMSCRIPTEN_KEEPALIVE void b16_relscale(float f) { relScale = f; }
 EMSCRIPTEN_KEEPALIVE void b16_key(int down, int rk)
 {
     if (!S || S->key_w - S->key_r >= BSHM_KEYS) return;

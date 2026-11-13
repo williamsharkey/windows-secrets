@@ -28,6 +28,22 @@ void bsyn_host_stats(uint32_t *ontime, uint32_t *late, uint32_t *latemax);
 
 volatile int web_snapshot_request;
 
+/* The pointer while a button is held. The plugin's engine moves Windows' pointer through the guest program
+   (SetCursorPos, the 0x0600 packet), which runs only between messages: inside Windows' own modal loops (dragging a
+   scroll-bar thumb) it never runs, and the thumb would stay put. So while the host holds the left button, the moves
+   also go to the emulated mouse itself, as relative motion, which Windows' mouse driver follows in any loop. */
+volatile int web_mouse_dx, web_mouse_dy;
+static retro_input_state_t web_engine_state;
+static int16_t web_istate(unsigned port, unsigned dev, unsigned idx, unsigned id)
+{
+  if (!port && dev == RETRO_DEVICE_MOUSE && (id == RETRO_DEVICE_ID_MOUSE_X || id == RETRO_DEVICE_ID_MOUSE_Y)) {
+    int v = __sync_lock_test_and_set(id == RETRO_DEVICE_ID_MOUSE_X ? &web_mouse_dx : &web_mouse_dy, 0);
+    return (int16_t)(v < -32767 ? -32767 : v > 32767 ? 32767 : v);
+  }
+  return web_engine_state ? web_engine_state(port, dev, idx, id) : 0;
+}
+static void web_set_input_state(retro_input_state_t cb) { web_engine_state = cb; retro_set_input_state(web_istate); }
+
 static int web_reports(uint16_t *w, int max)
 {
   int k = bsyn_host_reports(w, max - 1), i = 0, o = 0;
@@ -50,7 +66,7 @@ static void *web_dlsym(void *h, const char *n)
     {"retro_unserialize", (void *)retro_unserialize}, {"retro_set_environment", (void *)retro_set_environment},
     {"retro_set_video_refresh", (void *)retro_set_video_refresh}, {"retro_set_audio_sample", (void *)retro_set_audio_sample},
     {"retro_set_audio_sample_batch", (void *)retro_set_audio_sample_batch}, {"retro_set_input_poll", (void *)retro_set_input_poll},
-    {"retro_set_input_state", (void *)retro_set_input_state},
+    {"retro_set_input_state", (void *)web_set_input_state},
     {"bsyn_host_event", (void *)bsyn_host_event}, {"bsyn_host_reports", (void *)web_reports}, {"bsyn_host_dac", (void *)bsyn_host_dac},
     {"bsyn_host_read", (void *)bsyn_host_read}, {"bsyn_host_stats", (void *)bsyn_host_stats},
   };

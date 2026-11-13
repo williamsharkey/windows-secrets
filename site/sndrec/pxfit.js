@@ -25,7 +25,7 @@
     if (el.width !== s.P || el.height !== s.Q) { el.width = s.P; el.height = s.Q; }
     ctx.imageSmoothingEnabled = false;
     ctx.fillStyle = s.bg; ctx.fillRect(0, 0, s.P, s.Q);
-    if (src && (src.naturalWidth || src.width)) ctx.drawImage(src, 0, 0, s.nw, s.nh, 0, 0, s.dw, s.dh);
+    if (src && (src.naturalWidth || src.width)) ctx.drawImage(src, 0, 0, s.sw, s.sh, 0, 0, s.dw, s.dh);   // (a 1/n reduction reads n*dw source pixels: exactly every nth)
   }
   function fit(el) {
     var m = /^(\d+)x(\d+)$/.exec(el.getAttribute('data-px') || ''); if (!m) return;
@@ -33,18 +33,18 @@
     var nw = +m[1], nh = +m[2], dpr = window.devicePixelRatio || 1;
     var box = el.parentNode, cs = getComputedStyle(box);
     var avail = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-    var k = Math.floor(avail * dpr / nw + 1e-6), dw, dh, note = '', scale;
+    var k = Math.floor(avail * dpr / nw + 1e-6), dw, dh, note = '', scale, sw = nw, sh = nh;
     while (k >= 1 && exactSize(nw * k, dpr) > avail * dpr + 1e-6) k--;   // the padded size must fit the column too
     if (k >= 1) { dw = nw * k; dh = nh * k; scale = String(k); }
     else {
       var n = 2; while (exactSize(Math.floor(nw / n), dpr) > avail * dpr + 1e-6) n++;
-      dw = Math.floor(nw / n); dh = Math.floor(nh / n); scale = '1/' + n;
+      dw = Math.floor(nw / n); dh = Math.floor(nh / n); scale = '1/' + n; sw = dw * n; sh = dh * n;
       note = 'Shown at 1/' + n + ' size to fit this screen (every ' + n + 'th pixel); widen the window, or turn the phone, to see every pixel.';
     }
     var P = exactSize(dw, dpr), Q = exactSize(dh, dpr);
     var bg = 'rgb(255, 255, 255)';   // padding pixels: the first background behind the picture
     for (var a = box; a && a.nodeType === 1; a = a.parentNode) { var c = getComputedStyle(a).backgroundColor; if (c && c !== 'rgba(0, 0, 0, 0)' && c !== 'transparent') { bg = c; break; } }
-    el._pxs = {nw: nw, nh: nh, dw: dw, dh: dh, P: P, Q: Q, k: k, bg: bg};
+    el._pxs = {nw: nw, nh: nh, sw: sw, sh: sh, dw: dw, dh: dh, P: P, Q: Q, k: k, bg: bg};
     el.style.width = (P / dpr) + 'px'; el.style.height = (Q / dpr) + 'px';
     el.setAttribute('data-px-scale', scale);
     place(el, box, cs, dpr, avail * dpr, P);

@@ -9,7 +9,7 @@
   if (!root) return;
   var base = (function () { var s = document.currentScript; return s ? s.src.replace(/[^\/]*$/, '') : 'sndrec/try/'; })();
   var $ = function (s) { return root.querySelector(s); };
-  var box = $('.b16box'), poster = $('.b16poster'), over = $('.b16over'), go = $('.b16go'), bar = $('.b16prog i'),
+  var over = $('.b16over'), go = $('.b16go'), bar = $('.b16prog i'),
       msg = $('.b16msg'), stopB = $('.b16stop'), midiB = $('.b16midi'), presetS = $('.b16preset'), stat = $('.b16stat');
   var canvas = null, worker = null, actx = null, node = null, running = false, ready = false, paused = false;
   var memMsg = null, hb = { t: 0, dac: -1, dacT: 0 }, audio = { hist: [] }, wd = 0, tClick = 0, times = null, midi = null, held = {};
@@ -29,7 +29,26 @@
       : 'This browser cannot run the online version (it needs SharedArrayBuffer and AudioWorklet).');
   }
   if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) $('.b16mobile').hidden = false;
-  var fit = window.__b16fit || function () {};
+  // the screen: one canvas, sized by pxfit (the page's pixel-exact pictures: every Windows pixel exactly k x k device
+  // pixels, or an exact 1/n reduction when even k = 1 does not fit). It shows the poster until Windows runs.
+  var canvas = null, posterSrc = null;
+  function screen() {
+    var c = document.getElementById('b16screen');
+    if (c && c !== canvas && c.tagName === 'CANVAS') {
+      canvas = c; canvas.tabIndex = 0;
+      canvas.setAttribute('aria-label', 'Windows for Workgroups 3.11 running BASILISK 16. Click to play; the keys go to Windows.');
+      bindInput(canvas);
+    }
+    return canvas;
+  }
+  function show(src) {
+    var c = screen(); if (!c) return;
+    var old = c.pxSource;
+    c.pxSource = src;
+    if (old && old !== posterSrc && old.close) old.close();
+    if (window.pxfit) pxfit.draw(c); else { var x = c.getContext('2d'); x.imageSmoothingEnabled = false; x.drawImage(src, 0, 0, c.width, c.height); }
+  }
+  screen();
   function fillPresets() {
     presetS.innerHTML = '<option value="">Preset…</option>' + DATA.presets.map(function (p, i) {
       return '<option value="' + i + '">' + p[0].replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</option>'; }).join('');
@@ -40,23 +59,14 @@
   function start() {
     if (running || !supported) return;
     tClick = performance.now();
-    setState('loading'); go.hidden = true; $('.b16prog').hidden = false; bar.style.width = '0%'; say('Loading Windows for Workgroups 3.11…');
+    setState('loading'); go.style.visibility = 'hidden'; $('.b16prog').style.visibility = ''; bar.style.width = '0%'; say('Loading Windows for Workgroups 3.11…');
     try {
       var AC = window.AudioContext || window.webkitAudioContext;
       try { actx = new AC({ sampleRate: 48000, latencyHint: 'interactive' }); } catch (e) { actx = new AC({ latencyHint: 'interactive' }); }
       actx.resume();
     } catch (e) { return fail('Audio could not start: ' + e.message); }
-    // a fresh canvas each run (an OffscreenCanvas can be handed to one worker only)
-    if (canvas) canvas.remove();
-    canvas = document.createElement('canvas');
-    canvas.width = 1024; canvas.height = 768; canvas.className = 'b16screen'; canvas.tabIndex = 0;
-    canvas.setAttribute('aria-label', 'Windows for Workgroups 3.11 running BASILISK 16. Click to play; the keys go to Windows.');
-    canvas.hidden = true;
-    box.insertBefore(canvas, over);
-    fit();
-    bindInput(canvas);
-    var off = null, xfer = [];
-    if (canvas.transferControlToOffscreen) { try { off = canvas.transferControlToOffscreen(); xfer = [off]; } catch (e) { off = null; } }
+    screen();
+    if (canvas && canvas.pxSource && !posterSrc) posterSrc = canvas.pxSource;
     running = true; ready = false; paused = false; hb = { t: performance.now(), dac: -1, dacT: performance.now() }; audio.hist = [];
     var dataP = DATA ? Promise.resolve(DATA) : fetch(base + 'b16-data.json?v=' + CFG.v).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
@@ -69,9 +79,9 @@
       worker = new Worker(base + 'b16-worker.js?v=' + CFG.v);
       worker.onmessage = onWorker;
       worker.onerror = function (e) { fail('The emulator stopped: ' + (e.message || 'error')); };
-      worker.postMessage({ t: 'init', canvas: off, conf: DATA.conf, lead: CFG.lead, layers: DATA.layers, libraryNames: DATA.libraryNames,
+      worker.postMessage({ t: 'init', conf: DATA.conf, lead: CFG.lead, layers: DATA.layers, libraryNames: DATA.libraryNames,
         libraryUrl: new URL(base + 'library.zip', location.href).href, librarySize: DATA.librarySize, libraryChunk: 262144,
-        files: CFG.files.map(function (f) { return { name: f.name, size: f.size, url: base + f.name + '?v=' + CFG.v }; }) }, xfer);
+        files: CFG.files.map(function (f) { return { name: f.name, size: f.size, url: base + f.name + '?v=' + CFG.v }; }) });
       clearInterval(wd); wd = setInterval(watchdog, 500);
     }).catch(function (e) { fail('It could not start: ' + e.message); });
   }
@@ -85,9 +95,9 @@
       if (node && memMsg) node.port.postMessage({ t: 'mem', buffer: memMsg.buffer, base: memMsg.base, lay: memMsg.lay, lead: CFG.lead });
       ready = true; api.ready = true; setState('running');
       times = api.times = { clickToReady: Math.round(performance.now() - tClick), worker: m.ms };
-      over.hidden = true; poster.hidden = true; canvas.hidden = false; say('');
+      over.hidden = true; say('');
       stopB.disabled = false; midiB.disabled = !navigator.requestMIDIAccess; presetS.disabled = false;
-      try { canvas.focus({ preventScroll: true }); } catch (err) {}
+      try { if (canvas) canvas.focus({ preventScroll: true }); } catch (err) {}
       status();
     } else if (m.t === 'hb') {
       var now = performance.now();
@@ -95,7 +105,7 @@
       hb.t = now; api.stats = m;
       if (m.building) stat.textContent = 'Sound Recorder is building the sound…'; else status();
     } else if (m.t === 'frame') {
-      var c = canvas.getContext('2d'); var img = new ImageData(m.data, m.w, m.h); c.putImageData(img, 0, 0);
+      if (running) show(m.bitmap); else if (m.bitmap.close) m.bitmap.close();
     } else if (m.t === 'info') { var cb = pending[m.id]; delete pending[m.id]; if (cb) cb(m.info); }
     else if (m.t === 'error') fail('The emulator stopped: ' + m.msg);
   }
@@ -119,9 +129,9 @@
     if (worker) { worker.terminate(); worker = null; }
     if (node) { try { node.disconnect(); } catch (e) {} node = null; }
     if (actx) { try { actx.close(); } catch (e) {} actx = null; }
-    if (canvas) canvas.hidden = true;
-    poster.hidden = false; over.hidden = false; $('.b16prog').hidden = true;
-    go.hidden = false; go.textContent = 'Restart';
+    if (posterSrc) show(posterSrc);
+    over.hidden = false; $('.b16prog').style.visibility = 'hidden';
+    go.style.visibility = ''; go.textContent = 'Restart';
     stopB.disabled = true; midiB.disabled = true; presetS.disabled = true; stat.textContent = '';
     say(text || 'Stopped.');
     setState('stopped');
@@ -166,8 +176,10 @@
   }
   function bindInput(cv) {
     function at(e) {
-      var r = cv.getBoundingClientRect();
-      return { x: Math.round((e.clientX - r.left) * 1024 / r.width), y: Math.round((e.clientY - r.top) * 768 / r.height) };
+      // Windows' pixel under the pointer: the picture is s.dw device pixels wide for 1024 (the canvas may be padded)
+      var r = cv.getBoundingClientRect(), s = cv._pxs, dpr = window.devicePixelRatio || 1;
+      if (!s) return { x: Math.round((e.clientX - r.left) * 1024 / r.width), y: Math.round((e.clientY - r.top) * 768 / r.height) };
+      return { x: Math.floor((e.clientX - r.left) * dpr * (s.sw || s.nw) / s.dw), y: Math.floor((e.clientY - r.top) * dpr * (s.sh || s.nh) / s.dh) };
     }
     cv.addEventListener('pointermove', function (e) { if (worker && ready) { var p = at(e); worker.postMessage({ t: 'm', x: p.x, y: p.y }); } });
     cv.addEventListener('pointerdown', function (e) {

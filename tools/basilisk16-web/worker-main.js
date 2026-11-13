@@ -3,8 +3,8 @@
 // host's tick, draws Windows' screen and passes the pointer, the keys and MIDI on. The page never waits for it.
 if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (function () {
   'use strict';
-  let M = null, lay = null, S = 0, u32 = null, ctx2d = null, img = null, canvasOff = null, tickTimer = 0, running = false;
-  let fallbackFrames = false, t0 = 0, lastPost = 0;
+  let M = null, lay = null, S = 0, img = null, tickTimer = 0, running = false;
+  let t0 = 0, lastPost = 0;
   const post = (m, tr) => self.postMessage(m, tr || []);
 
   async function fetchAll(files, onBytes) {
@@ -30,23 +30,21 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
 
   function info(withLog) { return JSON.parse(M.UTF8ToString(M._b16_info(withLog ? 1 : 0))); }
 
+  // the screen goes to the page as an ImageBitmap at Windows' own 1024x768: the page draws it at exactly k x k device
+  // pixels per Windows pixel (pxfit, the site's pixel-exact pictures), never resampled
+  let inFlight = false;
   function draw() {
     if (!running) return;
-    const p = M._b16_frame();
+    const p = inFlight ? 0 : M._b16_frame();
     if (p) {
       const h32 = new Uint32Array(M.wasmMemory.buffer);
       const w = h32[p >> 2], h = h32[(p >> 2) + 1];
-      const src = new Uint8Array(M.wasmMemory.buffer, p + 8, w * h * 4);
-      if (fallbackFrames) {
-        const copy = new Uint8ClampedArray(src);   // (not shared: it is transferred to the page)
-        post({ t: 'frame', w, h, data: copy }, [copy.buffer]);
-      } else {
-        if (!img || img.width !== w || img.height !== h) img = new ImageData(w, h);
-        img.data.set(src);
-        ctx2d.putImageData(img, 0, 0);
-      }
+      if (!img || img.width !== w || img.height !== h) img = new ImageData(w, h);
+      img.data.set(new Uint8Array(M.wasmMemory.buffer, p + 8, w * h * 4));
+      inFlight = true;
+      createImageBitmap(img).then(bm => { inFlight = false; post({ t: 'frame', bitmap: bm }, [bm]); }, () => { inFlight = false; });
     }
-    if (self.requestAnimationFrame && !fallbackFrames) self.requestAnimationFrame(draw); else setTimeout(draw, 16);
+    setTimeout(draw, 16);
   }
 
   function tick() {
@@ -64,9 +62,6 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
 
   async function init(m) {
     t0 = performance.now();
-    canvasOff = m.canvas || null;
-    fallbackFrames = !canvasOff;
-    if (canvasOff) ctx2d = canvasOff.getContext('2d', { alpha: false, desynchronized: true });
     const files = m.files;   // [{name, url, size}] : b16.wasm, w31web.state, drive.zip
     let loaded = 0; const total = files.reduce((a, f) => a + (f.size || 0), 0);
     let lastP = 0;

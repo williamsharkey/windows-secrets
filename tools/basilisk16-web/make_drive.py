@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The web edition's machine files: drive.zip (C:), the same Windows for Workgroups 3.11 drive as the plugin's
+r"""The web edition's machine files: drive.zip (C:), the same Windows for Workgroups 3.11 drive as the plugin's
 (packages/basilisk-synth-311/tools/make_machine.py: the same steps, without the native snapshot, which the web
 edition makes with its own engine, make_snapshot.mjs), plus w31.conf.
 
@@ -44,6 +44,9 @@ def key(name):
 k = key('WINDOWS/SYSTEM.INI'); files[k] = files[k].replace(b'Wave=sb16snd.drv\r\n', b'Wave=bsynth.drv\r\n')
 k = key('WINDOWS/WIN.INI'); b = files[k]
 b = re.sub(rb'run=[^\r\n]*', rb'run=C:\\BS\\SYNTH.EXE', b, count=1)
+# no pointer acceleration: a drag reaches the emulated mouse as relative motion (web_engine.c), which must move
+# Windows' pointer by the same distance however fast it goes
+if not re.search(rb'(?im)^MouseSpeed=', b): b = re.sub(rb'(?i)\[windows\]\r\n', lambda m: m.group(0) + b'MouseSpeed=0\r\n', b, count=1)
 if b'[sounds]' not in b:
     b = b.rstrip(b'\r\n\x1a') + (b'\r\n\r\n[sounds]\r\nSystemStart=none,Windows Start\r\nSystemExit=none,Windows Exit\r\n'
          b'SystemDefault=none,Default Beep\r\nSystemAsterisk=none,Asterisk\r\nSystemExclamation=none,Exclamation\r\n'
