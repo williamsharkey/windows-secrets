@@ -92,27 +92,48 @@ def dna_names(dna):
     return res
 
 
+def core_tables(src=os.path.join(REPO, 'packages', 'basilisk-synth', 'core', 'dna.cpp')):
+    """kSoundNames, kSoundFilesXP and kSoundFiles311 from core/dna.cpp (DNA.md 2.4: one name, one file)"""
+    c = open(src).read()
+    def arr(name):
+        body = re.search(r'%s\[kSoundCount\] = \{(.*?)\};' % name, c, re.S).group(1)
+        return [x.encode().decode('unicode_escape') for x in re.findall(r'"((?:[^"\\]|\\.)*)"', body)]
+    return arr('kSoundNames'), arr('kSoundFilesXP'), arr('kSoundFiles311')
+
+
+def display_name(n):   # core::displayName: chimesxp chordxp dingxp tadaxp are written chimes-xp ... in recipes and here
+    return n[:-2] + '-xp' if n in ('chimesxp', 'chordxp', 'dingxp', 'tadaxp') else n
+
+
 def sound_table_311(machine, names, cat, research):
     tab = {}
     drive = zipfile.ZipFile(os.path.join(machine, 'drive.zip'))
     libz = zipfile.ZipFile(os.path.join(machine, 'library.zip'))
+    knames, kxp, k311 = core_tables()
     tsv = {}
     for line in libz.read('LIBRARY.TSV').decode('latin1').splitlines():
         p = line.split('\t')
         if len(p) >= 5 and not line.startswith('#'): tsv[p[0]] = p
     for n in names:
-        if n in W311:
-            f, o = W311[n]
-            dur, fmt = wav_facts(drive.read('WINDOWS/' + f))
-            r = find_research(research, f, 'Workgroups') if o == '311' else find_research(research, f, '3.1 /')
-            if n in ('ringin', 'ringout'): r = find_research(research, n + '.wav', 'XP')   # the same 11 kHz files
-            tab[n] = {'o': o, 'file': f, 'path': 'C:\\WINDOWS\\' + f, 'dur': dur, 'fmt': fmt, 'root': r and r.get('root'),
-                      'what': (r or {}).get('character'),
-                      'from': 'Windows for Workgroups 3.11' if o == '311' else 'Windows 3.1 (added to C:\\WINDOWS; WfW 3.11 had dropped it)'}
-        elif n in XP_NAMES:
-            dur, fmt = wav_facts(drive.read('WINDOWS/DING.WAV'))
-            tab[n] = {'o': 'fb', 'file': 'DING.WAV', 'path': 'C:\\WINDOWS\\DING.WAV', 'dur': dur, 'fmt': fmt, 'root': 'G5',
-                      'xp': XP_NAMES[n], 'from': 'Windows XP name: Windows 3.11 has no such file, so DING.WAV plays instead'}
+        if n in knames:
+            i = knames.index(n); path = k311[i]
+            dur, fmt = wav_facts(drive.read(path[3:].replace('\\', '/')))
+            xpfile = kxp[i].split('\\')[-1]
+            if i in (0, 2):     # chimes ding: Windows for Workgroups 3.11's own
+                r = find_research(research, path.split('\\')[-1], 'Workgroups') or {}
+                o, frm = '311', 'Windows for Workgroups 3.11'
+            elif i in (1, 8):   # chord tada: Windows 3.1's (3.11's disks dropped them)
+                r = find_research(research, path.split('\\')[-1], '3.1 /') or {}
+                o, frm = '31', 'Windows 3.1 (added to C:\\WINDOWS; WfW 3.11 had dropped it)'
+            elif i in (5, 6):   # ringin ringout: the same bytes in 3.11 and XP
+                r = find_research(research, xpfile, 'XP') or {}
+                o, frm = 'both', 'Windows for Workgroups 3.11, byte-identical to Windows XP\'s copy'
+            else:               # an XP file, converted to PCM that SOUNDREC opens
+                r = find_research(research, xpfile, 'XP') or {}
+                o, frm = 'xp', 'Windows XP (%s), converted to PCM that Sound Recorder 3.1 opens%s' % (
+                    xpfile, ('; XP\'s own %s' % r['format']) if r.get('format') else '')
+            tab[n] = {'o': o, 'd': display_name(n), 'file': path.split('\\')[-1], 'path': path, 'dur': dur, 'fmt': fmt,
+                      'root': r.get('root'), 'what': r.get('character'), 'from': frm}
         elif n in tsv:
             p = tsv[n]; e = cat.get(n, {})
             lic = e.get('license', p[4].split(', ')[-1])
@@ -157,6 +178,60 @@ def recipes(cli, dnas, names_file):
     return out
 
 
+class Iso:
+    """just enough ISO 9660 + Joliet to read files by their real names (the XP library disc)"""
+    def __init__(self, path):
+        self.f = open(path, 'rb'); self.root = None
+        for sec in range(16, 32):
+            self.f.seek(sec * 2048); vd = self.f.read(2048)
+            if vd[0] == 2 and vd[88:91] in (b'%/@', b'%/C', b'%/E'):   # Joliet supplementary descriptor
+                self.root = (struct.unpack('<I', vd[158:162])[0], struct.unpack('<I', vd[166:170])[0])
+            if vd[0] == 255: break
+
+    def entries(self, ext, size):
+        self.f.seek(ext * 2048); d = self.f.read(size); p = 0; out = {}
+        while p < len(d):
+            l = d[p]
+            if l == 0: p = (p // 2048 + 1) * 2048; continue
+            nl = d[p + 32]; raw = d[p + 33:p + 33 + nl]
+            if raw not in (b'\x00', b'\x01'):
+                out[raw.decode('utf-16-be').split(';')[0].lower()] = (struct.unpack('<I', d[p + 2:p + 6])[0], struct.unpack('<I', d[p + 10:p + 14])[0])
+            p += l
+        return out
+
+    def read(self, path):
+        ext, size = self.root
+        for part in [x for x in path.replace('\\', '/').split('/') if x]:
+            ext, size = self.entries(ext, size)[part.lower()]
+        self.f.seek(ext * 2048); return self.f.read(size)
+
+
+def sound_table_xp(machine, names, cat, research):
+    tab = {}
+    iso = Iso(os.path.join(machine, 'library.iso'))
+    tsv = {}
+    for line in iso.read('LIBRARY.TSV').decode('utf-8', 'replace').splitlines():
+        p = line.split('\t')
+        if len(p) >= 5 and not line.startswith('#'): tsv[p[0]] = p
+    for n in names:
+        if n in XP_NAMES:
+            f = XP_NAMES[n]; r = find_research(research, f, 'XP') or {}
+            tab[n] = {'o': 'xp', 'file': f, 'path': 'C:\\WINDOWS\\Media\\' + f, 'dur': r.get('duration'), 'fmt': r.get('format'),
+                      'root': r.get('root'), 'what': r.get('character'), 'from': 'Windows XP'}
+        elif n in tsv:
+            p = tsv[n]; e = cat.get(n, {})
+            lic = e.get('license', p[4].split(', ')[-1]); syn = bool(e.get('synth_method'))
+            try: dur, fmt = wav_facts(iso.read(p[2]))
+            except Exception: dur, fmt = float(p[3]), None
+            tab[n] = {'o': 'syn' if syn else ('cc0' if 'CC0' in lic else 'pd'), 'file': p[2].split('\\')[-1],
+                      'path': 'library disc ' + p[2], 'dur': dur, 'fmt': fmt, 'root': root_of(n, e), 'what': e.get('description'),
+                      'author': e.get('author', p[4].rsplit(', ', 1)[0]), 'lic': lic, 'url': e.get('source_url'),
+                      'how': e.get('synth_method'), 'from': 'Library disc (%s)' % p[1]}
+        else:
+            tab[n] = {'o': 'unk', 'from': 'Unknown name: the layer is silent'}
+    return tab
+
+
 def pack(ed, cat):
     if ed == 'b16':
         if cat == 'BASILISK 16': return '3.11 originals'
@@ -178,15 +253,22 @@ def main():
         rows = json.load(open(d + '/manifest.json'))
         names = []
         for r in rows: names += [n for n in dna_names(r['dna']) if n not in names]
-        sounds = sound_table_311(machine, names, cat, research) if ed == 'b16' and machine else {}
-        recs = recipes(cli, [r['dna'] for r in rows], os.path.join(machine, 'library.names.txt') if machine else None) if cli else {}
+        sounds = {} if not machine else sound_table_311(machine, names, cat, research) if ed == 'b16' else sound_table_xp(machine, names, cat, research)
+        names_file = None
+        if machine and os.path.exists(os.path.join(machine, 'library.names.txt')): names_file = os.path.join(machine, 'library.names.txt')
+        elif machine and ed == 'xp':   # the XP disc's names, for the recipe converter
+            names_file = os.path.join(d, 'library.names.txt')
+            open(names_file, 'w').write('\n'.join(l.split('\t')[0] for l in Iso(os.path.join(machine, 'library.iso')).read('LIBRARY.TSV').decode('utf-8', 'replace').splitlines() if l and not l.startswith('#')) + '\n')
+        recs = recipes(cli, [r['dna'] for r in rows], names_file) if cli else {}
         out['editions'][ed] = {'plugin': PLUGIN.get(ed, ed), 'sounds': sounds, 'presets': [{
             'n': r['i'], 'cat': r['cat'].replace('B16 ', '') if r['cat'] != 'BASILISK 16' else 'Classic', 'program': r['cat'] + ': ' + r['name'],
             'pack': pack(ed, r['cat']), 'name': r['name'], 'dna': r['dna'], 'phrase': r['phrase'], 'src': dna_names(r['dna']), 'rec': recs.get(r['dna']),
             'file': ('sndrec/audio/%s/%s' % (ed, r['file'])) if r['file'] else None, 'sec': r['render_seconds'],
             'wave': [round(x * 100) for x in r['wave']], 'flags': [f for f in r['flags'] if not f.startswith('hot')],
             'hot': next((f for f in r['flags'] if f.startswith('hot')), None), 'note': r.get('note'),
-            'macro': r.get('macro_curve') is not None} for r in rows]}
+            'macro': r.get('macro_curve') is not None,
+            # DNA.md 2.4: a DNA's edition is xp when it uses any XP file, else w31 (library sounds do not count)
+            'ed': 'xp' if any(sounds.get(n, {}).get('o') == 'xp' for n in dna_names(r['dna'])) else 'w31'} for r in rows]}
         from collections import Counter
         print(ed, len(rows), 'presets,', len(sounds), 'sounds', dict(Counter(s['o'] for s in sounds.values())))
     json.dump(out, open(sys.argv[1], 'w'), separators=(',', ':'))
