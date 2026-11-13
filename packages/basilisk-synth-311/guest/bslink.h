@@ -96,6 +96,32 @@ static void bs_rate(HTASK task, DWORD id, DWORD hz, WORD glide_ms, WORD regate)
     outpw(BS_CMD, 30);
     _enable();
 }
+/* the DAC sample an event id is stamped for (the DAC now if the card does not know it) */
+static DWORD bs_stamp_lo(DWORD id, DWORD *hi)
+{
+    WORD w[4];
+    _disable();
+    bs_put(LOWORD(id)); bs_put(HIWORD(id)); outpw(BS_CMD, 33);
+    w[0] = bs_get(); w[1] = bs_get(); w[2] = bs_get(); w[3] = bs_get();
+    _enable();
+    *hi = MAKELONG(w[2], w[3]);
+    return MAKELONG(w[0], w[1]);
+}
+/* the task's playing voice fades out at the event's sample (as a stop would) and plays on silently */
+static void bs_muteat(HTASK task, DWORD id, WORD fade_ms)
+{
+    _disable();
+    bs_put((WORD)task); bs_put(LOWORD(id)); bs_put(HIWORD(id)); bs_put(fade_ms);
+    outpw(BS_CMD, 34);
+    _enable();
+}
+static DWORD bs_dacnow_lo(DWORD *hi)
+{
+    WORD w[4];
+    _disable(); outpw(BS_CMD, 25); w[0] = bs_get(); w[1] = bs_get(); w[2] = bs_get(); w[3] = bs_get(); _enable();
+    *hi = MAKELONG(w[2], w[3]);
+    return MAKELONG(w[0], w[1]);
+}
 /* v3: stop a task's ghosts (sounds a regate kept going after Sound Recorder stopped) */
 static void bs_stoptask(HTASK task, DWORD id, WORD fade_ms)
 {

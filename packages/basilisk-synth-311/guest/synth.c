@@ -20,7 +20,7 @@
 #define NR 16
 #define ROW0 66      /* the header above: title, envelope, presets, library, pan, offset, envelope points */
 #define ROWH 30
-#define STRIPX 44   /* left of the strips: a layer-colour bar (0..2) and the Calculator digit key (4..42) */
+#define STRIPX 44   /* left of the strips: the Calculator digit key (4..42) */
 #define STRIPW 924
 #define STRIPH 30   /* (a strip shorter than its row leaves gaps that make every repaint of the window slow) */
 #define PANEL 550
@@ -77,6 +77,10 @@ BOOL assembled, building, titleShown;
 char dnaText[1100] = "ding#16;R120";
 int envA, envD, envS = 100, envR = 120;
 int selLayer;
+#define NDIG 16
+static HWND hDig[NDIG];   /* the strips' Calculator keys 0-F */
+static const COLORREF layerColor[NL] = {RGB(0, 128, 0), RGB(0, 0, 160), RGB(160, 0, 0), RGB(128, 0, 128),
+                                        RGB(0, 128, 128), RGB(160, 96, 0), RGB(64, 64, 64), RGB(96, 0, 48)};
 char line[1200];
 
 static void panel_refresh(void);
@@ -453,9 +457,9 @@ static void light_row(int r)
     RECT b; int old = buildRow;
     buildRow = r;
     if (!hMain) return;
-    if (old >= 0) { SetRect(&b, 4, ROW0 + old * ROWH + 2, 36, ROW0 + old * ROWH + 30); InvalidateRect(hMain, &b, FALSE); }
-    if (r >= 0) { SetRect(&b, 4, ROW0 + r * ROWH + 2, 36, ROW0 + r * ROWH + 30); InvalidateRect(hMain, &b, FALSE); }
-    UpdateWindow(hMain);
+    (void)b;
+    if (old >= 0 && old < NR && hDig[old]) { InvalidateRect(hDig[old], NULL, FALSE); UpdateWindow(hDig[old]); }
+    if (r >= 0 && r < NR && hDig[r]) { InvalidateRect(hDig[r], NULL, FALSE); UpdateWindow(hDig[r]); }
 }
 
 /* one layer's steps, on one recorder; returns its final length in centiseconds */
@@ -536,6 +540,7 @@ static char pendingDna[1100];
 static BOOL assembling;
 static int poll_host(void);
 static void dig_watch(void);
+static void dig_refresh_all(void);
 static void kb_repaint(void);
 static void layer_replies(void)
 {
@@ -610,7 +615,12 @@ static void build(const char *dna)
 }
 
 /* ================================================================ notes */
-static BOOL regated[NALL];   /* a regate (v3 continue) keeps this recorder's ghost sounding after Sound Recorder stopped */
+static BOOL regated[NALL];
+static BOOL stopDue[NALL];   /* a note's Stop waits for the card (stop_rec) */
+/* What a recorder played, so Stop can leave Sound Recorder's position where the sound really stopped. The host
+   sends a note's `off` ahead of time, so a short note's Stop is pressed before the card even starts it: Sound
+   Recorder never sees it play, and its wave view (drawn at its position) would stay at the start. */
+static DWORD pStartLo[NALL], pStartHi[NALL], pHz[NALL]; static long pFrom[NALL]; static int pLayer[NALL];   /* a regate (v3 continue) keeps this recorder's ghost sounding after Sound Recorder stopped */
 static void play_rec(int r, DWORD id, DWORD hz, WORD vol, int pan, int layer, long from)
 {
     if (r < 0 || r >= NR) return;
@@ -620,6 +630,7 @@ static void play_rec(int r, DWORD id, DWORD hz, WORD vol, int pan, int layer, lo
     {
     DWORD t0 = timeGetTime(), t1, t2, t3;
     if (rplay[r] || is_playing(r)) { bs_armstop(rt[r], id, 5); press(r, SR_STOP); }
+    stopDue[r] = FALSE;
     if (regated[r]) { bs_stoptask(rt[r], id, 5); regated[r] = FALSE; }
     t1 = timeGetTime();
     {   /* v3 window: start at frame `from` of the layer's buffer (the host ends it with a stamped cut) */
@@ -629,21 +640,65 @@ static void play_rec(int r, DWORD id, DWORD hz, WORD vol, int pan, int layer, lo
     }
     t2 = timeGetTime();
     bs_arm2(rt[r], id, hz, vol, pan, layer < 0 ? rlayer[r] : layer);
+    pStartLo[r] = bs_stamp_lo(id, &pStartHi[r]); pHz[r] = hz; pFrom[r] = from > 0 ? from : 0;
+    pLayer[r] = layer >= 0 && layer < NL ? layer : rlayer[r];
     press(r, SR_PLAY);
     t3 = timeGetTime();
     if (t3 - t0 > 30) logf_("slow play rec %d: stop %ld rew %ld play %ld ms", r, t1 - t0, t2 - t1, t3 - t2);
     }
     rplay[r] = TRUE;
 }
+/* A note's end. The host sends it ahead of time, so pressing Stop at once would stop Sound Recorder before the card
+   even starts a short note: Sound Recorder would never be seen playing it, and its wave view (drawn at its position
+   by its own timer) would never move. So the card fades the voice out at the stamped sample exactly as a stop
+   would (MUTEAT) and lets it play on silently; Stop is pressed when the card has passed the stamp and the fade, and
+   the note has been playing for at least 100 ms. Then the position is left where the sound stopped. */
+static DWORD stopDueLo[NALL], stopDueHi[NALL], stopId[NALL]; static int stopFade[NALL];
+static void stop_now(int r)
+{
+    int L = pLayer[r];
+    stopDue[r] = FALSE;
+    if (rplay[r] || is_playing(r)) {
+        bs_armstop(rt[r], 0, 5);
+        press(r, SR_STOP);
+        if (stopId[r] && L >= 0 && L < NL && layerFrames[L] > 0 && pHz[r]) {
+            DWORD hi, lo = bs_stamp_lo(stopId[r], &hi);
+            lo += (DWORD)stopFade[r] * 48;   /* where the sound ends: after its release */
+            if (hi == pStartHi[r] && lo > pStartLo[r]) {
+                long f = pFrom[r] + (long)((double)(lo - pStartLo[r]) * pHz[r] / 48000.0);
+                if (f > layerFrames[L]) f = layerFrames[L];
+                if (f > 0) seek_frac(r, f, layerFrames[L]);
+            }
+        }
+    }
+    rplay[r] = FALSE;
+}
 static void stop_rec(int r, DWORD id, int fade_ms)   /* r: an absolute recorder (bank * NR + row) */
 {
     if (r < 0 || r >= NALL || !rw[r]) return;
-    if (rplay[r] || is_playing(r)) {
-        bs_armstop(rt[r], id, (WORD)fade_ms);
-        press(r, SR_STOP);
-    }
     if (regated[r]) { bs_stoptask(rt[r], id, (WORD)fade_ms); regated[r] = FALSE; }
+    if ((rplay[r] || is_playing(r)) && id) {
+        DWORD hi, lo = bs_stamp_lo(id, &hi), end = lo + (DWORD)fade_ms * 48, min = pStartLo[r] + 4800;
+        bs_muteat(rt[r], id, (WORD)fade_ms);
+        stopId[r] = id; stopFade[r] = fade_ms;
+        stopDueHi[r] = hi + (end < lo ? 1 : 0); stopDueLo[r] = end;
+        if (pStartHi[r] == hi && min > stopDueLo[r]) stopDueLo[r] = min;
+        stopDue[r] = TRUE;
+        return;
+    }
+    stopId[r] = 0;
+    if (rplay[r] || is_playing(r)) { bs_armstop(rt[r], id, (WORD)fade_ms); press(r, SR_STOP); }
+    stopDue[r] = FALSE;
     rplay[r] = FALSE;
+}
+static void stops_due(void)   /* the deferred Stops whose time has come */
+{
+    int r; DWORD hi, lo; BOOL any = FALSE;
+    for (r = 0; r < NALL; r++) if (stopDue[r]) { any = TRUE; break; }
+    if (!any) return;
+    lo = bs_dacnow_lo(&hi);
+    for (r = 0; r < NALL; r++)
+        if (stopDue[r] && (hi > stopDueHi[r] || (hi == stopDueHi[r] && lo >= stopDueLo[r]))) stop_now(r);
 }
 /* v3: the recorder's sounding voice (and its release) changes to hz at the event's sample, gliding over glide_ms */
 static void rate_rec(int r, DWORD id, DWORD hz, int glide_ms, int regate)
@@ -651,7 +706,8 @@ static void rate_rec(int r, DWORD id, DWORD hz, int glide_ms, int regate)
     if (r < 0 || r >= NALL || !rw[r] || !hz) return;
     if (hostRate[r] && recRate[r] && hostRate[r] != recRate[r]) hz = hz * recRate[r] / hostRate[r];
     bs_rate(rt[r], id, hz, (WORD)(glide_ms < 0 ? 0 : glide_ms), (WORD)(regate != 0));
-    if (regate) regated[r] = TRUE;   /* the next stop or play also ends the ghost it kept */
+    if (regate && stopDue[r]) stopDue[r] = FALSE;   /* still Sound Recorder's: the fade is taken back, Stop is not due */
+    else if (regate) regated[r] = TRUE;   /* the next stop or play also ends the ghost it kept */
 }
 /* Recording (RECORDING.md 1.3, 4.3): the card has one ADC, so while a recorder records every other Record button
    is grey; the host hears `rec start <rec>` / `rec stop <rec> <ms>` (it keeps its notes off that recorder) */
@@ -669,9 +725,11 @@ static void watch_rec(void)
     if (recording >= 0)   /* Sound Recorder enables its own button again on its state changes: keep the others grey */
         for (r = 0; r < NR; r++) if (r != recording && IsWindowEnabled(GetDlgItem(rw[AR(r)], SR_REC))) EnableWindow(GetDlgItem(rw[AR(r)], SR_REC), FALSE);
 }
+static void stops_due(void);
 static void watch_ends(void)
 {
     static DWORD last; int r;
+    stops_due();
     if (timeGetTime() - last < 25) return;
     last = timeGetTime();
     watch_rec();
@@ -1134,6 +1192,7 @@ static void harmony_from_dna(void)   /* the Harmony button follows the DNA's H g
 static void panel_refresh(void)
 {
     int i; char t[48];
+    dig_refresh_all();   /* the selected layer's keys show the focus rectangle */
     if (!hSb[0]) return;
     harmony_from_dna();
     if (hHarm) SetWindowText(hHarm, harmNames[harmIdx]);
@@ -1606,15 +1665,14 @@ static int poll_host(void);
    fills it, the digit is white). In the assembly the keys fly from Calculator to the strips, and Calculator closes.
    Each is then an owner-drawn button: pressed while held (an audition: the recorder plays at its root rate) and
    while its recorder sounds. */
-#define NDIG 16
 #define DIGW 39
 #define DIGH 28
 #define DIGX 4
 #define ID_DIG 1300
 #define CALCX 272
 #define CALCY 214
-static HWND hCalc, hDig[NDIG];
-static HBITMAP digUp[NDIG], digDn[NDIG], digMask;
+static HWND hCalc;
+static HBITMAP digUp[NDIG], digDn[NDIG], digMask, digFace[NDIG];   /* digFace: 0 on the key's white face, 1 elsewhere */
 static BOOL digShown[NDIG], digHeld[NDIG];
 static const int digKX[NDIG] = {221, 221, 264, 307, 221, 264, 307, 221, 264, 307, 221, 264, 307, 350, 393, 436};   /* Calculator's client */
 static const int digKY[NDIG] = {216, 180, 180, 180, 144, 144, 144, 108, 108, 108, 252, 252, 252, 252, 252, 252};
@@ -1632,6 +1690,20 @@ static void calc_prepare(void)
     UpdateWindow(hCalc); pump();
     ClientToScreen(hCalc, &o);
     sdc = GetDC(NULL); mdc = CreateCompatibleDC(sdc); kdc = CreateCompatibleDC(sdc);
+    {   /* Calculator painted completely before its keys are taken: each key's outline must be there (its top edge
+           in the key colour, its corner in the background's), else wait and look again */
+        int tries, ok = 0;
+        for (tries = 0; tries < 20 && ok < NDIG; tries++) {
+            RedrawWindow(hCalc, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+            wait_ms(tries ? 100 : 30);
+            for (ok = 0, i = 0; i < NDIG; i++) {
+                COLORREF top = GetPixel(sdc, o.x + digKX[i] + DIGW / 2, o.y + digKY[i]), corner = GetPixel(sdc, o.x + digKX[i], o.y + digKY[i]);
+                COLORREF mid = GetPixel(sdc, o.x + digKX[i] + 3, o.y + digKY[i] + DIGH / 2);
+                if (top != corner && mid != top) ok++;
+            }
+        }
+        logf_("Calculator painted: %d of %d keys outlined after %d looks", ok, NDIG, tries);
+    }
     for (i = 0; i < NDIG; i++) {
         int x = o.x + digKX[i], y = o.y + digKY[i], px, py;
         COLORREF ink = RGB(0, 0, 255);
@@ -1651,10 +1723,26 @@ static void calc_prepare(void)
     }
     UpdateWindow(hCalc);
     ShowWindow(hCalc, SW_HIDE);   /* until its turn in the assembly (it would only be in the way of the recorders) */
-    /* the mask: 1 where Calculator's background shows (outside the rounded key), from the corner's colour */
-    SelectObject(mdc, digUp[0]); bg = GetPixel(mdc, 0, 0);
-    digMask = CreateBitmap(DIGW, DIGH, 1, 1, NULL);
-    SelectObject(kdc, digMask); SetBkColor(mdc, bg); BitBlt(kdc, 0, 0, DIGW, DIGH, mdc, 0, 0, SRCCOPY);
+    for (i = 0; i < NDIG; i++) {   /* the face (Calculator's white inside the outline), for a layer's tint */
+        SelectObject(mdc, digUp[i]);
+        digFace[i] = CreateBitmap(DIGW, DIGH, 1, 1, NULL);
+        SelectObject(kdc, digFace[i]); SetBkColor(mdc, RGB(255, 255, 255)); BitBlt(kdc, 0, 0, DIGW, DIGH, mdc, 0, 0, NOTSRCCOPY);
+    }
+    /* the mask: 1 outside the key's rounded outline. Found by shape, not by colour (the background and the key's
+       face may be the same colour in another palette): on each row, from both ends inward to the first pixel of the
+       outline's colour; a row without one (above or below the key) is all outside */
+    {
+        COLORREF ink; int px, py, l, r2;
+        SelectObject(mdc, digUp[0]); ink = GetPixel(mdc, DIGW / 2, 0);
+        digMask = CreateBitmap(DIGW, DIGH, 1, 1, NULL);
+        SelectObject(kdc, digMask); PatBlt(kdc, 0, 0, DIGW, DIGH, BLACKNESS);
+        for (py = 0; py < DIGH; py++) {
+            for (l = 0; l < DIGW && GetPixel(mdc, l, py) != ink; l++) {}
+            for (r2 = DIGW - 1; r2 >= 0 && GetPixel(mdc, r2, py) != ink; r2--) {}
+            for (px = 0; px < DIGW; px++) if (l >= DIGW || px < l || px > r2) SetPixel(kdc, px, py, RGB(255, 255, 255));
+        }
+        bg = 0; (void)bg;
+    }
     for (i = 0; i < NDIG; i++) {   /* the pictures with that background black, for SRCAND + SRCPAINT */
         SelectObject(mdc, digUp[i]); BitBlt(mdc, 0, 0, DIGW, DIGH, kdc, 0, 0, 0x00220326L);
         SelectObject(mdc, digDn[i]); BitBlt(mdc, 0, 0, DIGW, DIGH, kdc, 0, 0, 0x00220326L);
@@ -1672,6 +1760,28 @@ static void dig_draw(HDC dc, int i, BOOL down, int x, int y)
         HBITMAP ob = SelectObject(mdc, digMask);
         BitBlt(dc, x, y, DIGW, DIGH, mdc, 0, 0, SRCAND);
         SelectObject(mdc, down ? digDn[i] : digUp[i]); BitBlt(dc, x, y, DIGW, DIGH, mdc, 0, 0, SRCPAINT);
+        {   /* the recorder's layer: layer 1 is Calculator's own white; the others tint the face lightly */
+            int l = rlayer[AR(i)];
+            if (!down && l > 0 && digFace[i]) {
+                COLORREF c = layerColor[l % NL];
+                HBRUSH tb = CreateSolidBrush(RGB(255 - (255 - GetRValue(c)) / 6, 255 - (255 - GetGValue(c)) / 6, 255 - (255 - GetBValue(c)) / 6));
+                HBRUSH obr = SelectObject(dc, tb);
+                SelectObject(mdc, digFace[i]); BitBlt(dc, x, y, DIGW, DIGH, mdc, 0, 0, 0x00B8074AL);   /* the brush where the face is */
+                SelectObject(dc, obr); DeleteObject(tb);
+            }
+            if (i == buildRow) {   /* being rebuilt: the bold border of a default button, in the key's own colour */
+                HDC m2 = mdc; COLORREF ink; HPEN pn, op; HBRUSH ob2;
+                SelectObject(m2, digUp[i]); ink = GetPixel(m2, DIGW / 2, 0);
+                pn = CreatePen(PS_SOLID, 1, ink); op = SelectObject(dc, pn); ob2 = SelectObject(dc, GetStockObject(NULL_BRUSH));
+                RoundRect(dc, x + 1, y + 1, x + DIGW - 1, y + DIGH - 1, 10, 10);
+                SelectObject(dc, op); SelectObject(dc, ob2); DeleteObject(pn);
+            }
+            if (nlay > 1 && l == selLayer) {   /* the selected layer's recorders: Windows' focus rectangle */
+                RECT f; SetRect(&f, x + 5, y + 4, x + DIGW - 5, y + DIGH - 4);
+                SetTextColor(dc, RGB(0, 0, 0)); SetBkColor(dc, RGB(255, 255, 255));
+                DrawFocusRect(dc, &f);
+            }
+        }
         SelectObject(mdc, ob);
         SetTextColor(dc, tc); SetBkColor(dc, bc);
     } else {   /* no Calculator: the digit as text */
@@ -1693,6 +1803,7 @@ static void dig_drawitem(const DRAWITEMSTRUCT FAR *d)
     }
     dig_draw(d->hDC, i, sel || rplay[AR(i)], d->rcItem.left, d->rcItem.top);
 }
+static void dig_refresh_all(void) { int i; for (i = 0; i < NDIG; i++) if (hDig[i]) InvalidateRect(hDig[i], NULL, FALSE); }
 static void dig_watch(void)   /* down while its recorder sounds */
 {
     int i;
@@ -2060,8 +2171,7 @@ static int poll_host(void)   /* returns how many events it handled */
 }
 
 /* ================================================================ the window */
-static const COLORREF layerColor[NL] = {RGB(0, 128, 0), RGB(0, 0, 160), RGB(160, 0, 0), RGB(128, 0, 128),
-                                        RGB(0, 128, 128), RGB(160, 96, 0), RGB(64, 64, 64), RGB(96, 0, 48)};
+
 
 static void paint(HWND h)
 {
@@ -2091,16 +2201,7 @@ static void paint(HWND h)
             TextOut(dc, STRIPX + hx[i] - LOWORD(e), ROW0 - 15, t, lstrlen(t));
         }
     }
-    for (i = 0; i < NR; i++) {   /* left of each Calculator key: its layer's colour (yellow while it is built) */
-        RECT b;
-        int y = ROW0 + i * ROWH;
-        int l = rlayer[AR(i)];
-        SetRect(&b, 0, y + 3, 3, y + 27);
-        if (i == buildRow || l >= 0) {
-            HBRUSH br = CreateSolidBrush(i == buildRow ? RGB(255, 255, 0) : layerColor[l % NL]);
-            FillRect(dc, &b, br); DeleteObject(br);
-        }
-    }
+
     SetTextColor(dc, RGB(0, 0, 0));
 
     SelectObject(dc, of);
@@ -2137,7 +2238,7 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
         if (assembled) {
             static int iconic;
             if (w == SIZE_MINIMIZED && !iconic) { iconic = 1; say("desk 1"); }
-            else if (w != SIZE_MINIMIZED && iconic) { int r; iconic = 0; for (r = 0; r < NR; r++) layout_strip(r); say("desk 0"); }
+            else if (w != SIZE_MINIMIZED && iconic) { int r; iconic = 0; for (r = 0; r < NR; r++) layout_strip(r); kb_repaint(); say("desk 0"); }
         }
         break;
     case WM_CLOSE: return 0;           /* BASILISK 16 is the machine: it does not close */

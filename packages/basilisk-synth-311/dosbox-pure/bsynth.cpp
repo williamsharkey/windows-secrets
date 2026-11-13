@@ -79,6 +79,10 @@ struct BSVoice {
 	int rqn;               /* rate changes waiting (rq[0] is the next) */
 	bool rt_on; Bit64u rt_at; Bit32u rt_len; float rt_from, rt_to;   /* the glide in progress */
 	Bit64u kill_at;        /* STOPTASK: a stop no regate takes back (~0 = none) */
+	/* MUTEAT: from mute_at the voice fades out over mute_len exactly as a stop would, then plays on silently, so
+	   Sound Recorder (which owns it) still sees it play and its wave view follows; the guest presses Stop later */
+	Bit64u mute_at; Bit32u mute_len, mute_left; bool muted;
+	Bit64u mute_next_at; Bit32u mute_next_len;   /* a later end, sent ahead, that a regate before it brings into force */
 	Bit32u kill_fade;
 };
 
@@ -223,7 +227,10 @@ static void render(float *out, Bitu len)
 				for (int k = 1; k < v.rqn; k++) v.rq[k - 1] = v.rq[k];
 				v.rqn--;
 				v.rt_on = true; v.rt_at = r.at; v.rt_len = r.len; v.rt_from = v.armrate; v.rt_to = r.to;
-				if (r.regate) { v.stop_at = ~(Bit64u)0; v.fade_left = 0; }   /* continue: the release is taken back */
+				if (r.regate) {   /* continue: the release is taken back (a later end sent meanwhile comes into force) */
+					v.stop_at = ~(Bit64u)0; v.fade_left = 0; v.muted = false; v.mute_left = 0;
+					v.mute_at = v.mute_next_at; v.mute_len = v.mute_next_len; v.mute_next_at = ~(Bit64u)0;
+				}
 			}
 			if (v.rt_on) {
 				Bit64u k = t - v.rt_at;
@@ -240,6 +247,12 @@ static void render(float *out, Bitu len)
 				fg = (float)v.fade_left / (float)(v.fade_len ? v.fade_len : 1);
 				if (--v.fade_left == 0) { v.on = false; v.q.clear(); break; }
 			}
+			if (t >= v.mute_at && !v.muted) {   /* the same fade as a stop's, then silence while it plays on */
+				if (!v.mute_left) v.mute_left = v.mute_len ? v.mute_len : 1;
+				fg *= (float)v.mute_left / (float)(v.mute_len ? v.mute_len : 1);
+				if (--v.mute_left == 0) v.muted = true;
+			}
+			if (v.muted) fg = 0.f;
 			if (v.ea.n) fg *= env_at(v.ea, v.age_a);
 			else if (v.env_a || v.env_d || v.env_s < 1.f) {
 				float eg;
@@ -364,8 +377,15 @@ static void ghost(int ch, Bit64u stop_at, Bit32u fade)
 	BSVoice &v = bs.v[ch];
 	if (v.on && !v.q.empty()) {
 		for (int g = BS_CH; g < BS_CH * 2; g++) if (!bs.v[g].on) {
-			bs.v[g] = v; bs.v[g].owner = -1; bs.v[g].done.clear();
-			bs.v[g].stop_at = stop_at; bs.v[g].fade_len = fade ? fade : BS_FADE; bs.v[g].fade_left = 0;
+			BSVoice &G = bs.v[g];
+			G = v; G.owner = -1; G.done.clear();
+			G.stop_at = stop_at; G.fade_len = fade ? fade : BS_FADE; G.fade_left = 0;
+			if (v.mute_at != ~(Bit64u)0) {   /* an end already set by MUTEAT keeps its own sample and fade */
+				if (v.muted) { G.on = false; G.q.clear(); }
+				else if (v.mute_left) { G.fade_len = v.mute_len; G.fade_left = v.mute_left; G.stop_at = ~(Bit64u)0; }
+				else if (v.mute_at <= stop_at) { G.stop_at = v.mute_at; G.fade_len = v.mute_len; }
+				G.mute_at = ~(Bit64u)0; G.muted = false; G.mute_left = 0; G.mute_next_at = ~(Bit64u)0;
+			}
 			break;
 		}
 	}
@@ -390,7 +410,7 @@ static void command(Bit16u c)
 		BSVoice &v = bs.v[ch];
 		v = BSVoice(); v.owner = ch;
 		v.nch = (Bit8u)arg(1); v.bits = (Bit8u)arg(2); v.srate = arg32(3);
-		v.rate = 1.f; v.armrate = 1.f; v.voll = v.volr = 1.f; v.gain = 1.f; v.stop_at = ~(Bit64u)0; v.kill_at = ~(Bit64u)0;
+		v.rate = 1.f; v.armrate = 1.f; v.voll = v.volr = 1.f; v.gain = 1.f; v.stop_at = ~(Bit64u)0; v.kill_at = ~(Bit64u)0; v.mute_at = ~(Bit64u)0; v.mute_next_at = ~(Bit64u)0;
 		bs.chopen[ch] = true; bs.chtask[ch] = arg(0); v.task = arg(0);
 		int a = find_arm(arg(0), false);
 		v.start_at = bs.dac;
@@ -546,6 +566,20 @@ static void command(Bit16u c)
 		break; }
 	case 47: /* INGETPOS -> bytes lo hi */
 		bs.results.push_back((Bit16u)bs.in.bytes); bs.results.push_back((Bit16u)(bs.in.bytes >> 16)); break;
+	case 34: { /* MUTEAT task id_lo id_hi fade_ms: the task's playing voice fades out at the event's sample as a stop
+	              would, then plays on silently until the guest presses Stop */
+		Bit16u task = arg(0); Bit64u at = target_of(arg32(1)); Bit32u fade = (Bit32u)arg(3) * (BS_RATE / 1000);
+		for (int i = 0; i < BS_CH; i++) {
+			BSVoice &v = bs.v[i];
+			if (!v.on || v.task != task || v.muted) continue;
+			if (v.mute_at == ~(Bit64u)0) { v.mute_at = at; v.mute_len = fade ? fade : BS_FADE; v.mute_left = 0; }
+			else if (at > v.mute_at) { v.mute_next_at = at; v.mute_next_len = fade ? fade : BS_FADE; }
+		}
+		break; }
+	case 33: { /* STAMPOF id_lo id_hi -> the event's DAC sample (4 words; the DAC now if it is not known) */
+		Bit32u id = arg32(0); Bit64u at = (id && bs.tgt_id[id & 4095] == id) ? bs.tgt_at[id & 4095] : bs.dac;
+		for (int i = 0; i < 4; i++) bs.results.push_back((Bit16u)(at >> (16 * i)));
+		break; }
 	case 32: /* PTRGET -> seq x y: the host's pointer for the driver's timer, which moves it with USER's mouse_event
 	            (at interrupt time, so it also moves while a scroll bar's tracking loop holds the synth program) */
 		bs.ptr_polled = true;
