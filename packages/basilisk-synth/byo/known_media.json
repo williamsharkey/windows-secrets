@@ -1,5 +1,5 @@
 {
- "about": "Install media that BASILISK SYNTH (XP) and BASILISK 16 (3.11) can build a machine from. Size, SHA-1 and MD5 as published by archive.org item metadata (and, for XP Mode, by the Wayback Machine's capture of Microsoft's own download URL). sha256 is null until a maintainer hashes an owned copy; the plugin then pins it. Listing a file here is not a license to use it: see design/BYO-IMAGE.md section 1.",
+ "about": "Install media that BASILISK SYNTH (XP) and BASILISK 16 (3.11) can build a machine from. Size, SHA-1 and MD5 as published by archive.org item metadata (and, for XP Mode, by the Wayback Machine's capture of Microsoft's own download URL). sha256 is null until a maintainer hashes a copy fetched from a listed mirror (and checked against the published SHA-1); the plugin then pins it. Listing a file here is not a license to use it: see byo/DESIGN.md (Licensing).",
  "media": [
   {"id": "xpmode-en-us", "edition": "xp", "kind": "xp-mode-package", "file": "WindowsXPMode_en-us.exe",
    "size": 492597008, "sha1": "bf9ae7899a332c083676d7d973a4ab68ea4143b1", "md5": "bf3726d684d3acb98185665123c9efcf", "sha256": null,
@@ -35,11 +35,11 @@
    "size": 592150528, "sha1": "7f395b9ec84cffcc43c855bf89ab91ef3bfad612", "md5": "0f707417150c0aee4e91c9919d86b4a7", "sha256": null,
    "license": "OEM EULA; OEM key; activation required"},
   {"id": "wfw311-en-144-set-zip", "edition": "311", "kind": "wfw311-floppy-set", "file": "Microsoft Windows for Workgroups 3.11 (3.5-1.44mb).zip",
-   "size": 13086682, "sha1": "a00f327f1fe7642547a68eb3fb25ee534ce32431", "md5": null, "sha256": null,
+   "size": 13086682, "sha1": "a00f327f1fe7642547a68eb3fb25ee534ce32431", "md5": "ede88f5812f24510889f8cf034213297", "sha256": "c77ea878fe228943214fa7e2ac907402f366ce8d8651929f1a2ff41c44116f1e",
    "mirrors": ["https://archive.org/download/wfw311-disk/Microsoft%20Windows%20for%20Workgroups%203.11%20(3.5-1.44mb).zip"],
    "license": "WfW 3.11 EULA (1993); no product key, no activation; the person must own a licensed copy"},
   {"id": "wfw311-en-oem-unpacked-zip", "edition": "311", "kind": "wfw311-flat-files", "file": "Microsoft Windows for Workgroups 3.11 (OEM) (Unpacked).zip",
-   "size": 13028777, "sha1": "d6a34925b960dc9ed274b7c5a046e5a4d062d484", "md5": null, "sha256": null,
+   "size": 13028777, "sha1": "d6a34925b960dc9ed274b7c5a046e5a4d062d484", "md5": "30e8200cd88bf76ffe921829e6bfa00f", "sha256": null,
    "mirrors": ["https://archive.org/download/wfw311-disk/Microsoft%20Windows%20for%20Workgroups%203.11%20(OEM)%20(Unpacked).zip"],
    "license": "OEM WfW 3.11; the person must own a licensed copy"},
   {"id": "wfw311-en-retail-disk01-a", "edition": "311", "kind": "wfw311-disk1", "file": "Disk01.img", "size": 1474560,

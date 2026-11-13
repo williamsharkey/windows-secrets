@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Offline tests for the BYO prototype: python3 -I test_byo.py (stdlib only; uses pycdlib for the ISO test if present).
 
-Online checks (range reads of published media, a few hundred KB) are in design/BYO-IMAGE.md, appendix B."""
+Online checks (range reads of published media, a few hundred KB) are in DESIGN.md, "Tests"."""
 import io
 import json
 import os
@@ -14,6 +14,7 @@ sys.path.insert(0, HERE)
 import floppy      # noqa: E402
 import media_id    # noqa: E402
 import answers     # noqa: E402
+import install     # noqa: E402
 
 
 def test_floppy_roundtrip():
@@ -90,6 +91,48 @@ def test_xp_iso():
         r = media_id.identify(p)
     assert r['kind'] == 'windows-xp-cd' and r['edition'] == 'professional', r
     assert r['service_pack'] == 'SP3' and r['channel'] == 'volume' and not r['problems'], r
+
+
+def test_allowlist():
+    ok = ['https://archive.org/download/x/y.zip', 'https://ia800300.us.archive.org/1/items/x/y.zip',
+          'https://download.microsoft.com/download/a/b.exe']
+    bad = ['http://archive.org/download/x/y.zip', 'https://archive.org.evil.com/x', 'https://evilarchive.org/x',
+           'https://example.com/x', 'file:///etc/passwd', 'ftp://microsoft.com/x']
+    assert all(install.allowed(u) for u in ok) and not any(install.allowed(u) for u in bad)
+
+
+def test_ini_set():
+    b = b'[boot]\r\nshell=progman.exe\r\ndisplay.drv=vga.drv\r\n\r\n[drivers]\r\ntimer=timer.drv\r\n'
+    b = install.ini_set(b, b'boot', b'display.drv', b'svga256.drv')
+    b = install.ini_set(b, b'drivers', b'Wave', b'bsynth.drv')
+    b = install.ini_set(b, b'svga256.drv', b'resolution', b'3')
+    assert b == (b'[boot]\r\nshell=progman.exe\r\ndisplay.drv=svga256.drv\r\n\r\n[drivers]\r\nWave=bsynth.drv\r\n'
+                 b'timer=timer.drv\r\n\r\n[svga256.drv]\r\nresolution=3\r\n'), b
+
+
+def test_wfw_files():
+    with tempfile.TemporaryDirectory() as d:
+        p = os.path.join(d, 'set.zip')
+        with zipfile.ZipFile(p, 'w') as z:
+            z.writestr('disk01.img', fake_wfw_disk1())
+            for n in range(2, 9):
+                z.writestr('disk%02d.img' % n, floppy.make([('DISK%d' % n, b''), ('F%d.DL_' % n, b'n%d' % n)], 'MSWFW%d' % n))
+            # a 720 KB display-driver disk: same file names as the main set, different contents; must be ignored
+            z.writestr('diskega.img', floppy.make([('F2.DL_', b'ega')]) [:737280])
+        out = os.path.join(d, 'flat')
+        install.wfw_files(p, 'wfw311-floppy-set', out)
+        assert open(os.path.join(out, 'F2.DL_'), 'rb').read() == b'n2'
+        assert os.path.exists(os.path.join(out, 'SETUP.EXE')) and os.path.exists(os.path.join(out, 'F8.DL_'))
+        p2 = os.path.join(d, 'short.zip')
+        with zipfile.ZipFile(p2, 'w') as z:
+            z.writestr('disk01.img', fake_wfw_disk1())
+            z.writestr('disk03.img', floppy.make([('DISK3', b'')]))
+        try:
+            install.wfw_files(p2, 'wfw311-floppy-set', os.path.join(d, 'f2'))
+        except install.Fail as e:
+            assert e.code == 'media-incomplete' and '2' in str(e), e
+        else:
+            raise AssertionError('a set without disk 2 was accepted')
 
 
 if __name__ == '__main__':

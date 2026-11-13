@@ -3,7 +3,7 @@
 
     media_id.py PATH_OR_URL [--hash] [--json]
 
-A prototype for design/BYO-IMAGE.md. The plugin is to do the same in C++. The rules:
+A prototype for DESIGN.md. The plugin is to do the same in C++. The rules:
 
   - Known media are recognized by size + SHA-1 (+ MD5) from known_media.json. SHA-1 and MD5 are what Microsoft's
     MSDN listings and archive.org publish; the plugin computes SHA-256 too and stores it beside the build.

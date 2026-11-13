@@ -83,24 +83,28 @@ DefaultStartPanelOff=Yes
 DefaultThemesOff=Yes
 
 [GuiRunOnce]
-Command0="cmd /c for %d in (D E F G H) do if exist %d:\BSYNTH\INSTALL.CMD %d:\BSYNTH\INSTALL.CMD"
+Command0="A:\BSYNTH.CMD"
 """
 
-# Section names and keys follow the SETUP.SHH template on WfW 3.11 disk 1 (read with media_id.py over HTTP ranges
-# from a published disk 1). display=8vga768s is "Super VGA (1024x768, 256 colors, small fonts)" in that disk's
-# SETUP.INF: Microsoft's own SVGA256.DRV (VESA), so no third-party S3 driver is needed. Accessories (Sound Recorder,
-# Clock) must stay installed. The network line is left out: the no-network id comes from the disk's NETWORK.INF and
-# is still to be confirmed by a test install.
+# Section names and keys follow the SETUP.SHH template on WfW 3.11 disk 1. Tested in DOSBox Pure (install.py):
+#  - display = vga for Setup itself: Setup's Windows part cannot start with SVGA256.DRV ("An error occurred while
+#    trying to initialize the video adapter"). install.py then expands Microsoft's SVGA256.DRV/VDDSVGA.386/VGADIB.3GR
+#    from the same disks and sets 1024x768, 256 colors, small fonts (SETUP.INF [svga768s]), which runs in 386
+#    enhanced mode.
+#  - network = nonet (WINNET.INF), and Setup is run with /i: its network-card detection hangs DOSBox otherwise.
+#  - Accessories (Sound Recorder, Clock) must stay installed, and so must "bitmaps": SETUP.INF [win.bmps] holds the
+#    wallpapers and also CHIMES, DING, RINGIN and RINGOUT.WAV, the sounds the DNA starts from.
 W311_SHH = r"""[sysinfo]
 showsysinfo=no
 
 [configuration]
 machine = ibm_compatible
-display = 8vga768s
+display = vga
 mouse = ps2mouse
 keyboard = t4s0enha
 language = enu
 kblayout = nodll
+network = nonet
 
 [windir]
 C:\WINDOWS
@@ -113,7 +117,6 @@ C:\WINDOWS
 readmes
 games
 screensavers
-bitmaps
 
 [endinstall]
 configfiles = dontsave
