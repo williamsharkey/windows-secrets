@@ -136,6 +136,7 @@ function toWin(type, ...parts) {
   FS.writeFile('B3/TOWIN.TXT', bytes(towin));
 }
 function pollWin() {
+  if (!frames) return;          /* hands off the emulator's files until it has drawn a frame */
   let d;
   try { d = FS.readFile('B3/TOJS.TXT'); } catch (e) { return; }
   if (d.length <= jsOff) return;
@@ -431,7 +432,17 @@ $('ttgo').onclick = () => { const v = $('tt').value; if (v && ready && !busy) { 
 $('tt').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('ttgo').click(); } });
 
 /* ---------------------------------------------------------------- boot */
-let t0 = 0, buildT = 0, bootT = 0, helloSeen = false, bundleBytes = null, tries = 0;
+let t0 = 0, buildT = 0, bootT = 0, helloSeen = false, bundleBytes = null, tries = 0, frames = 0;
+/* DOSBox-X in WebAssembly sometimes traps while starting ("unreachable", "null function"): when it does, before
+   Windows has said hello, start a fresh one at once instead of leaving a black screen */
+function crashed(msg) {
+  if (!/unreachable|null function|RuntimeError|memory access out of bounds/i.test(String(msg || ''))) return;
+  if (helloSeen || !bundleBytes || tries >= 5) return;
+  setStatus('<b>The emulator stumbled starting up;</b> starting it again&hellip;', 'busy');
+  setTimeout(boot, 300);
+}
+window.addEventListener('error', (e) => crashed((e.error && e.error.message) || e.message));
+window.addEventListener('unhandledrejection', (e) => crashed(e.reason && (e.reason.message || e.reason)));
 function render() {
   screen.classList.toggle('on', ready && document.activeElement === screen);
   $('touch').classList.toggle('on', ready);
@@ -450,13 +461,14 @@ async function fetchWithProgress(url, onp) {
 }
 async function boot() {
   $('vtext').textContent = 'Starting DOSBox-X\u2026';
-  helloSeen = false; jsOff = 0; towin = ''; tries++;
+  helloSeen = false; jsOff = 0; towin = ''; tries++; frames = 0;
   if (ci) { try { await Promise.race([ci.exit(), new Promise((r) => setTimeout(r, 3000))]); } catch (e) {} ci = null; }
   ci = await emulators.dosboxXDirect(bundleBytes);
   FS = ci.transport.module.FS;
   let img = null;
   ci.events().onFrameSize((w, h) => { canvas.width = w; canvas.height = h; img = g.createImageData(w, h); });
   ci.events().onFrame((rgb, rgba) => {
+    frames++;
     if (!img || img.width !== ci.width()) { canvas.width = ci.width(); canvas.height = ci.height(); img = g.createImageData(canvas.width, canvas.height); }
     if (rgba) img.data.set(rgba);
     else if (rgb) { const d = img.data; for (let i = 0, j = 0; i < rgb.length; i += 3, j += 4) { d[j] = rgb[i]; d[j + 1] = rgb[i + 1]; d[j + 2] = rgb[i + 2]; d[j + 3] = 255; } }
