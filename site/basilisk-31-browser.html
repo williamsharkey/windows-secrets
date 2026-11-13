@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BASILISK 3.11, in your browser</title>
-<meta name="description" content="Windows for Workgroups 3.11 boots inside this page, compiles a Claude Code suite from two Notepad files with Open Watcom, and assembles it from Notepad, Cardfile, Clock, Calculator, File Manager and Control Panel, with Cardfile's cards as its tabs. Your typing never leaves your machine; only the words for Claude do.">
+<meta name="description" content="Windows for Workgroups 3.11 runs inside this page, with a Claude Code suite assembled from Notepad, Cardfile, Clock, Calculator, File Manager and Control Panel, with Cardfile's cards as its tabs. Your typing never leaves your machine; only the words for Claude do.">
 <style>
 :root {
   --bg: #0f1a2b; --panel: #15233a; --ink: #f1ead9; --muted: #a9b2c2; --line: #2a3b57;
@@ -26,11 +26,11 @@ h1 { font: 700 26px/1.2 var(--mono); margin: 0 0 6px; letter-spacing: .02em; }
 h1 small { font-weight: 400; color: var(--muted); font-size: 17px; }
 .dek { margin: 0; color: var(--muted); max-width: 780px; }
 
-.screen { position: relative; width: 100%; aspect-ratio: 4 / 3; background: #000; border: 2px solid var(--line); outline: none;
+.screen { position: relative; width: 100%; background: var(--bg); outline: none; line-height: 0;
   box-shadow: 0 0 0 1px #000, 0 18px 40px rgba(0,0,0,.35); }
-.screen.on { border-color: var(--sel); }
-.screen canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: auto; }
-@media (min-width: 1060px) { .screen canvas { image-rendering: pixelated; } }
+
+.screen canvas { display: block; outline: 2px solid var(--line); }
+.screen.on canvas { outline-color: var(--sel); }
 .veil { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
   text-align: center; padding: 16px; color: #f1ead9; background: rgba(0, 0, 40, .62); font: 15px/1.5 var(--sans); }
 .veil[hidden] { display: none; }
@@ -64,18 +64,19 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; padding: 0 4px; b
 <body>
 <header class="wrap">
   <h1>BASILISK 3.11 <small>in your browser</small></h1>
-  <p class="dek">Windows for Workgroups 3.11 boots inside this page. It pours two C files into Notepad, compiles them with Open Watcom, and the program it builds turns Notepad, Cardfile, Clock, Calculator, File Manager and Control Panel into a Claude Code suite, with five Cardfile cards for tabs. Everything you see and everything you type stays on your machine; only your words for Claude, and what Claude asks this Windows to do, cross the network.</p>
+  <p class="dek">Windows for Workgroups 3.11 runs inside this page, in DOSBox Pure compiled to WebAssembly, resumed in about a second from the moment its Claude Code suite finished assembling: a 16-bit program that turns Notepad, Cardfile, Clock, Calculator, File Manager and Control Panel into a Claude Code client, with five Cardfile cards for tabs. Everything you see and everything you type stays on your machine; only your words for Claude, and what Claude asks this Windows to do, cross the network.</p>
 </header>
 
 <main class="wrap">
   <div class="screen" id="screen" tabindex="0" aria-label="Windows for Workgroups 3.11, running in this page. Click, then type.">
-    <canvas id="c" width="1024" height="768"></canvas>
+    <canvas id="c" data-px="1024x768" data-px-note="pxnote" width="1024" height="768"></canvas>
     <div class="veil" id="veil">
       <div id="vtext">Windows for Workgroups 3.11 is about 20 MB. It runs here, in your browser.</div>
       <div class="bar" id="vbar" hidden><i id="vfill"></i></div>
       <button id="go">Start Windows</button>
     </div>
   </div>
+  <p class="meta" id="pxnote"></p>
   <div class="status" id="status"><span><span class="dot" id="dot"></span><span id="stext">Not started.</span></span><span class="meta" id="meta"></span></div>
   <div class="touch" id="touch"><input id="tt" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type here, then Send"><button id="ttgo">Send</button></div>
 
@@ -102,50 +103,48 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; padding: 0 4px; b
     </div>
     <div>
       <h2>What happens</h2>
-      <p>The page loads DOSBox-X compiled to WebAssembly (js-dos) and boots Windows for Workgroups 3.11 from a disk image. A small 16-bit program pours <code>BASILISK.C</code> and <code>PARTS.C</code> into Notepad, saves them, and runs Open Watcom's compiler in a DOS window, all inside your browser, in about half a minute. The program it builds then assembles the suite in about six seconds, one part at a time: Notepad fills the screen, Find becomes the input bar, Clock and Calculator's display join the right-hand column, Cardfile opens five cards and gives them up, and Notepad, File Manager and Control Panel arrive and go behind their cards.</p>
+      <p>The page loads DOSBox Pure, compiled to WebAssembly (the same engine as BASILISK 16's "Try it online", running in a worker), with the C: drive of Windows for Workgroups 3.11 and a snapshot of the machine. The snapshot was taken just after <code>BASILISK.EXE</code> (built by Open Watcom from <code>BASILISK.C</code> and <code>PARTS.C</code>, which are on C: in <code>\B3</code>) assembled the suite, one part at a time: Notepad filled the screen, Find became the input bar, Clock and Calculator's display joined the right-hand column, Cardfile opened five cards and gave them up, and Notepad, File Manager and Control Panel went behind their cards. Every Windows pixel is shown as a whole number of screen pixels.</p>
     </div>
     <div>
       <h2>What goes over the network</h2>
-      <p>When you press Enter, your sentence goes to a small server that talks to Claude (Haiku 5.5 unless you pick Sonnet 5.5 on the Settings card). Claude's reply streams back into Notepad; when Claude wants to run a DOS command or read or write a file, the request comes to this page and BASILISK.EXE does it inside your Windows. Nothing else leaves the page. Windows and the page pass notes through two files on its C: drive, and your pointer travels the same way. The other version of this, <a href="basilisk-31.html">BASILISK 3.11</a>, runs on a server and streams its screen instead.</p>
+      <p>When you press Enter, your sentence goes to a small server that talks to Claude (Haiku 5.5 unless you pick Sonnet 5.5 on the Settings card). Claude's reply streams back into Notepad; when Claude wants to run a DOS command or read or write a file, the request comes to this page and BASILISK.EXE does it inside your Windows. Nothing else leaves the page. Windows and the page pass notes through the emulated BASILISK 16 sound card's message ports; your keys go to the emulated keyboard, and your pointer to the emulated mouse (BASILISK.EXE places Windows' pointer). The other version of this, <a href="basilisk-31.html">BASILISK 3.11</a>, runs on a server and streams its screen instead.</p>
     </div>
   </section>
-  <p class="credits">Windows for Workgroups 3.11 &copy; 1993 Microsoft, shown here as part of an art project. js-dos and DOSBox-X are GPL-licensed emulators (self-hosted copies). Open Watcom is open source. <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry/w31suite">Source of the suite (BASILISK.C, PARTS.C, B3BOOT.C)</a> and <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry/w31b">of this page's server</a>.</p>
+  <p class="credits">Windows for Workgroups 3.11 &copy; 1993 Microsoft, shown here as part of an art project. DOSBox Pure is a GPL-licensed emulator (a self-hosted build, <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry/w31web">puppetry/w31web</a>). Open Watcom is open source. <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry/w31suite">Source of the suite (BASILISK.C, PARTS.C, B3BOOT.C)</a> and <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry/w31b">of this page's server</a>.</p>
 </main>
 
 <nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">Windows Secrets</a><i>&middot;</i><a href="inside-windows.html">Inside Windows</a><i>&middot;</i><a href="tribute.html">Tribute</a><i>&middot;</i><a href="basilisk.html">BASILISK</a><i>&middot;</i><a href="basilisk-term.html">BASILISK III</a><i>&middot;</i><a href="basilisk-31.html">BASILISK 3.11</a><i>&middot;</i><b>3.11 in your browser</b><i>&middot;</i><a href="valentine-xp.html">XP Valentine</a><i>&middot;</i><a href="valentine-31.html">Valentine 3.11</a><i>&middot;</i><a href="puppetry.html">Window Puppetry</a><i>&middot;</i><a href="xp-live.html">Live</a><i>&middot;</i><a href="basilisk-download.html">Download</a></nav>
 
-<script src="basilisk-31-browser/emulators.js"></script>
+<script src="sndrec/pxfit.js"></script>
 <script>
 (function () {
-const ASSETS = 'basilisk-31-browser/';
+const ASSETS = 'basilisk-31-browser/web/', V = '311w-50f0a1ea';
+/* sizes of the machine's files (the progress bar's total); the worker fetches them when Start is pressed */
+const FILES = [{name: 'b31.wasm', size: 2469917}, {name: 'w31web.state', size: 5946022}, {name: 'drive.bin.gz', size: 11147031}];
+const CONF = '[dosbox]\nmachine=svga_s3\nmemsize=64\n[cpu]\ncputype=pentium\ncore=normal\ncycles=fixed 60000\n[render]\nscaler=none\n[mixer]\nrate=48000\n[sblaster]\nsbtype=sb16\nsbbase=220\nirq=5\ndma=1\nhdma=5\n[speaker]\npcspeaker=false\n[autoexec]\nmount c /machine/c\nc:\nSET BLASTER=A220 I5 D1 H5 P330 T6\nSET TEMP=C:\\WINDOWS\\TEMP\nSET PATH=C:\\WINDOWS;C:\\WATCOM\\BINW\nSET WATCOM=C:\\WATCOM\nSET INCLUDE=C:\\WATCOM\\H;C:\\WATCOM\\H\\WIN\ncd \\WINDOWS\nWIN.COM\n';
 const Q = new URLSearchParams(location.search);
 const SERVER = Q.get('ws') || ((Q.has('local') ? 'ws://127.0.0.1:8785' : 'wss://live.williamsharkey.com/w31b') + '/ws');
-const BUNDLE = /^[\w.-]+\.jsdos$/.test(Q.get('bundle') || '') ? Q.get('bundle') : 'w31.jsdos';
 const $ = (id) => document.getElementById(id);
-const screen = $('screen'), canvas = $('c'), g = canvas.getContext('2d');
-let ci = null, FS = null, phase = 'off', busy = false, ready = false;
+const screen = $('screen'), canvas = $('c');
+let worker = null, phase = 'off', busy = false, ready = false;
+/* the screen: every Windows pixel exactly k x k device pixels (sndrec/pxfit.js), sized before the first paint */
+if (window.pxfit) pxfit.fit(canvas);
+const poster = new Image();
+poster.onload = () => { if (!canvas.pxSource) { canvas.pxSource = poster; if (window.pxfit) pxfit.draw(canvas); } };
+poster.src = ASSETS + 'poster.png?v=' + V;
+function show(bm) { const old = canvas.pxSource; canvas.pxSource = bm; if (old && old !== poster && old.close) old.close(); if (window.pxfit) pxfit.draw(canvas); }
 
 function setStatus(text, kind) { $('stext').innerHTML = text; $('dot').className = 'dot ' + (kind || ''); }
 
-/* ---------------------------------------------------------------- the cable: two files on C: */
-let towin = '', jsOff = 0;
-const bytes = (s) => { const b = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); b[i] = c < 256 ? c : 63; } return b; };
+/* ---------------------------------------------------------------- the cable: the BSYN card's packets
+   (the worker hands each line to the engine, which feeds it to BASILISK.EXE; BASILISK.EXE's lines come back the
+   same way). A line is <type><fields separated by 0x1F>. */
 const clean = (s) => String(s).replace(/[\x00\x04\x1f]/g, ' ');
-function toWin(type, ...parts) {
-  towin += type + parts.map(clean).join('\x1f') + '\x04';
-  FS.writeFile('B3/TOWIN.TXT', bytes(towin));
-}
-function pollWin() {
-  if (!frames) return;          /* hands off the emulator's files until it has drawn a frame */
-  let d;
-  try { d = FS.readFile('B3/TOJS.TXT'); } catch (e) { return; }
-  if (d.length <= jsOff) return;
-  let s = '';
-  for (let i = jsOff; i < d.length; i++) s += String.fromCharCode(d[i]);
-  const k = s.lastIndexOf('\x04');
-  if (k < 0) return;
-  jsOff += k + 1;
-  for (const f of s.slice(0, k).split('\x04')) if (f) fromWin(f[0], f.slice(1).split('\x1f'));
+let winLog = '';
+function toWin(type, ...parts) { if (worker) worker.postMessage({ t: 'send', s: type + parts.map(clean).join('\x1f') }); }
+function fromLines(s) {
+  winLog = (winLog + s).slice(-4000);
+  for (const f of s.split('\x04')) if (f) fromWin(f[0], f.slice(1).split('\x1f'));
 }
 
 /* ---------------------------------------------------------------- the transcript (Notepad's edit) */
@@ -191,7 +190,7 @@ function streamEnd() { if (streaming) out('\n'); streaming = false; }
 function banner() {
   out('BASILISK 3.11  -  Claude Code for Windows for Workgroups 3.11\n');
   out('==============================================================\n\n');
-  para('Assembled a moment ago from Notepad, Cardfile, Clock, Calculator, File Manager and Control Panel, compiled by Open Watcom from two Notepad files. This Windows is running inside your web browser.', '  ', '  ');
+  para('Assembled from Notepad, Cardfile, Clock, Calculator, File Manager and Control Panel. This Windows is running inside your web browser, resumed from the moment the suite finished assembling.', '  ', '  ');
   out('\n');
   para('Cards (Alt+1..5, or click one): 1 Chat, 2 Plan, 3 Files, 4 Usage, 5 Settings. The mouse works.', '  ', '  ');
   out('\n');
@@ -341,25 +340,26 @@ function settingsFromWin(v) {      /* Settings card: effort|length|ask|model, fr
 const SHIFTED = { '!': '1', '@': '2', '#': '3', '$': '4', '%': '5', '^': '6', '&': '7', '*': '8', '(': '9', ')': '0',
   '_': '-', '+': '=', '{': '[', '}': ']', '|': '\\', ':': ';', '"': "'", '<': ',', '>': '.', '?': '/', '~': '`' };
 const PLAIN = { '-': 45, '=': 61, '[': 91, ']': 93, '\\': 92, ';': 59, "'": 39, ',': 44, '.': 46, '/': 47, '`': 96, ' ': 32 };
-const NAMED = { Backspace: 259, Delete: 261, ArrowLeft: 263, ArrowRight: 262, Home: 268, End: 269, Insert: 260 };
-const SHIFT = 340, CTRL = 341;
+const NAMED = { Backspace: 8, Delete: 127, ArrowLeft: 276, ArrowRight: 275, Home: 278, End: 279, Insert: 277 };   /* libretro key codes */
+const SHIFT = 304, CTRL = 306;
 function charKey(c) {
-  if (c >= 'a' && c <= 'z') return [c.toUpperCase().charCodeAt(0), false];
-  if (c >= 'A' && c <= 'Z') return [c.charCodeAt(0), true];
+  if (c >= 'a' && c <= 'z') return [c.charCodeAt(0), false];
+  if (c >= 'A' && c <= 'Z') return [c.toLowerCase().charCodeAt(0), true];
   if (c >= '0' && c <= '9') return [c.charCodeAt(0), false];
   if (c in PLAIN) return [PLAIN[c], false];
   if (c in SHIFTED) { const b = SHIFTED[c]; return [b >= '0' && b <= '9' ? b.charCodeAt(0) : PLAIN[b], true]; }
   return null;
 }
+function key(rk, down) { if (worker) worker.postMessage({ t: 'k', down, rk }); }
 function press(code, shift, ctrl) {
-  if (ctrl) ci.sendKeyEvent(CTRL, true);
-  if (shift) ci.sendKeyEvent(SHIFT, true);
-  ci.sendKeyEvent(code, true); ci.sendKeyEvent(code, false);
-  if (shift) ci.sendKeyEvent(SHIFT, false);
-  if (ctrl) ci.sendKeyEvent(CTRL, false);
+  if (ctrl) key(CTRL, true);
+  if (shift) key(SHIFT, true);
+  key(code, true); key(code, false);
+  if (shift) key(SHIFT, false);
+  if (ctrl) key(CTRL, false);
 }
 const OURS = ['Enter', 'Escape', 'PageUp', 'PageDown', 'ArrowUp', 'ArrowDown', 'Tab'];
-const RAW = { Enter: 257, Escape: 256, Tab: 258, PageUp: 266, PageDown: 267, ArrowUp: 265, ArrowDown: 264 };
+const RAW = { Enter: 13, Escape: 27, Tab: 9, PageUp: 280, PageDown: 281, ArrowUp: 273, ArrowDown: 274 };
 function onKey(e, down) {
   if (!ready || e.isComposing) return;
   if (!down) { if (e.key.length === 1 || e.key in NAMED || OURS.includes(e.key) || (e.altKey && /^[1-5]$/.test(e.key))) e.preventDefault(); return; }
@@ -396,111 +396,91 @@ screen.addEventListener('keyup', (e) => onKey(e, false));
 screen.addEventListener('paste', (e) => { if (!ready) return; const t = (e.clipboardData || window.clipboardData).getData('text'); if (t) { e.preventDefault(); toWin('P', t.replace(/[\r\n\t]+/g, ' ').slice(0, 900)); } });
 let wheel = 0;
 screen.addEventListener('wheel', (e) => { if (!ready) return; e.preventDefault(); wheel += e.deltaMode === 1 ? e.deltaY : e.deltaY / 40; const n = Math.trunc(wheel); if (n) { wheel -= n; toWin('w', String(n)); } }, { passive: false });
-/* the mouse: BASILISK.EXE puts Windows' own pointer where yours is and clicks there (M x|y|button|down) */
-let mx = -1, my = -1, mSent = 0, mTimer = 0, mDown = 0;
-function mpos(e) {
-  const r = canvas.getBoundingClientRect();
-  return [Math.max(0, Math.min(canvas.width - 1, Math.round((e.clientX - r.left) * canvas.width / r.width))),
-          Math.max(0, Math.min(canvas.height - 1, Math.round((e.clientY - r.top) * canvas.height / r.height)))];
+/* the mouse: the engine moves Windows' pointer through BASILISK.EXE and presses the emulated mouse's own buttons */
+function at(e) {
+  const r = canvas.getBoundingClientRect(), p = canvas._pxs, dpr = window.devicePixelRatio || 1;
+  if (!p) return { x: Math.round((e.clientX - r.left) * 1024 / r.width), y: Math.round((e.clientY - r.top) * 768 / r.height) };
+  return { x: Math.floor((e.clientX - r.left) * dpr * (p.sw || p.nw) / p.dw), y: Math.floor((e.clientY - r.top) * dpr * (p.sh || p.nh) / p.dh) };
 }
-function mflush() { mTimer = 0; mSent = performance.now(); toWin('M', mx + '|' + my + '|0|0'); }
-canvas.addEventListener('pointermove', (e) => {
-  if (!ready) return;
-  const [x, y] = mpos(e);
-  if (x === mx && y === my) return;
-  mx = x; my = y;
-  const gap = performance.now() - mSent, every = mDown ? 40 : 90;
-  if (gap >= every) mflush(); else if (!mTimer) mTimer = setTimeout(mflush, every - gap);
-});
+canvas.addEventListener('pointermove', (e) => { if (worker && ready) { const q = at(e); worker.postMessage({ t: 'm', x: q.x, y: q.y }); } });
 canvas.addEventListener('pointerdown', (e) => {
-  if (!ready || e.button > 2 || e.button === 1) return;
-  e.preventDefault(); canvas.setPointerCapture(e.pointerId);
-  [mx, my] = mpos(e); mDown = 1;
-  if (mTimer) { clearTimeout(mTimer); mTimer = 0; }
-  toWin('M', mx + '|' + my + '|' + (e.button === 2 ? 2 : 1) + '|1');
+  if (!worker || !ready || e.button === 1 || e.button > 2) return;
+  e.preventDefault(); screen.focus({ preventScroll: true });
+  try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+  const q = at(e); worker.postMessage({ t: 'b', x: q.x, y: q.y, bit: e.button === 2 ? 2 : 1, down: true });
 });
-canvas.addEventListener('pointerup', (e) => {
-  if (!ready || e.button > 2 || e.button === 1) return;
-  [mx, my] = mpos(e); mDown = 0;
-  if (mTimer) { clearTimeout(mTimer); mTimer = 0; }
-  toWin('M', mx + '|' + my + '|' + (e.button === 2 ? 2 : 1) + '|0');
-});
+canvas.addEventListener('pointerup', (e) => { if (worker && ready && e.button !== 1 && e.button <= 2) { const q = at(e); worker.postMessage({ t: 'b', x: q.x, y: q.y, bit: e.button === 2 ? 2 : 1, down: false }); } });
+canvas.addEventListener('pointercancel', () => { if (worker) worker.postMessage({ t: 'b', bit: 1, down: false }); });
 canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 screen.addEventListener('mousedown', () => setTimeout(() => screen.focus(), 0));
 screen.addEventListener('focus', render); screen.addEventListener('blur', render);
 $('ttgo').onclick = () => { const v = $('tt').value; if (v && ready && !busy) { toWin('T', v); toWin('Z'); $('tt').value = ''; } };
 $('tt').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); $('ttgo').click(); } });
 
-/* ---------------------------------------------------------------- boot */
-let t0 = 0, buildT = 0, bootT = 0, helloSeen = false, bundleBytes = null, tries = 0, frames = 0;
-/* DOSBox-X in WebAssembly sometimes traps while starting ("unreachable", "null function"): when it does, before
-   Windows has said hello, start a fresh one at once instead of leaving a black screen */
-function crashed(msg) {
-  if (!/unreachable|null function|RuntimeError|memory access out of bounds/i.test(String(msg || ''))) return;
-  if (helloSeen || !bundleBytes || tries >= 5) return;
-  setStatus('<b>The emulator stumbled starting up;</b> starting it again&hellip;', 'busy');
-  setTimeout(boot, 300);
-}
-window.addEventListener('error', (e) => crashed((e.error && e.error.message) || e.message));
-window.addEventListener('unhandledrejection', (e) => crashed(e.reason && (e.reason.message || e.reason)));
+/* ---------------------------------------------------------------- start: the worker resumes the snapshot */
+let t0 = 0, buildT = 0, bootT = 0, helloSeen = false, wd = 0, hb = { t: 0, dacAge: 0 }, paused = false;
 function render() {
   screen.classList.toggle('on', ready && document.activeElement === screen);
   $('touch').classList.toggle('on', ready);
   canvas.style.cursor = ready ? 'none' : '';
   if (ready) setStatus(busy ? '<b>Claude is working.</b> Esc stops it.' : (document.activeElement === screen ? (tab === 'Chat' ? '<b>Ready.</b> Type into the Find box; Enter sends. Alt+1..5 changes card.' : '<b>Card: ' + tab + '.</b> Alt+1 (or the Chat card) returns to the chat.') : '<b>Ready.</b> Click the screen to type.'), busy ? 'busy' : 'ok');
-  $('meta').textContent = ready ? ('booted in ' + bootT.toFixed(1) + ' s, built in ' + buildT.toFixed(1) + ' s' + (sock ? '' : ' \u00b7 connecting to Claude\u2026')) : '';
+  $('meta').textContent = ready ? ('ready in ' + buildT.toFixed(1) + ' s' + (sock ? '' : ' \u00b7 connecting to Claude\u2026')) : '';
 }
-async function fetchWithProgress(url, onp) {
-  const r = await fetch(url);
-  const total = +r.headers.get('content-length') || 0;
-  if (!r.body || !total) return new Uint8Array(await r.arrayBuffer());
-  const reader = r.body.getReader(), parts = []; let got = 0;
-  for (;;) { const { done, value } = await reader.read(); if (done) break; parts.push(value); got += value.length; onp(got / total); }
-  const out = new Uint8Array(got); let o = 0; for (const p of parts) { out.set(p, o); o += p.length; }
-  return out;
+function stop(text) {
+  clearInterval(wd);
+  if (worker) { worker.terminate(); worker = null; }
+  ready = false; phase = 'off'; busy = false;
+  if (sock) { try { sock.onclose = null; sock.close(); } catch (e) {} sock = null; }
+  canvas.pxSource = poster; if (window.pxfit) pxfit.draw(canvas);
+  $('veil').hidden = false; $('vbar').hidden = true; $('go').hidden = false; $('go').textContent = 'Restart';
+  $('vtext').textContent = text;
+  setStatus(text, ''); render();
 }
-async function boot() {
-  $('vtext').textContent = 'Starting DOSBox-X\u2026';
-  helloSeen = false; jsOff = 0; towin = ''; tries++; frames = 0;
-  if (ci) { try { await Promise.race([ci.exit(), new Promise((r) => setTimeout(r, 3000))]); } catch (e) {} ci = null; }
-  ci = await emulators.dosboxXDirect(bundleBytes);
-  FS = ci.transport.module.FS;
-  let img = null;
-  ci.events().onFrameSize((w, h) => { canvas.width = w; canvas.height = h; img = g.createImageData(w, h); });
-  ci.events().onFrame((rgb, rgba) => {
-    frames++;
-    if (!img || img.width !== ci.width()) { canvas.width = ci.width(); canvas.height = ci.height(); img = g.createImageData(canvas.width, canvas.height); }
-    if (rgba) img.data.set(rgba);
-    else if (rgb) { const d = img.data; for (let i = 0, j = 0; i < rgb.length; i += 3, j += 4) { d[j] = rgb[i]; d[j + 1] = rgb[i + 1]; d[j + 2] = rgb[i + 2]; d[j + 3] = 255; } }
-    g.putImageData(img, 0, 0);
-  });
-  const myTry = tries;
-  setTimeout(() => {      /* now and then DOSBox-X stops at its welcome screen: start it again */
-    if (!helloSeen && myTry === tries && tries < 4) { setStatus('<b>Windows did not start;</b> trying again&hellip;', 'busy'); boot(); }
-  }, 40000);
+function watchdog() {          /* the worker or the emulator stopped answering: stop, rather than hang the tab */
+  if (!worker || paused) return;
+  const now = performance.now();
+  if (!ready) { if (now - t0 > 120000) stop('It took too long to load. Check the connection, then press Restart.'); return; }
+  if (now - hb.t > 3000 || hb.dacAge > 3000) stop('Windows stopped answering, so it was stopped to keep your browser responsive. Press Restart to start it again.');
 }
-async function start() {
-  $('go').hidden = true; $('vbar').hidden = false;
-  $('vtext').textContent = 'Fetching Windows for Workgroups 3.11 and the emulator\u2026';
-  setStatus('Loading&hellip;', 'busy');
-  t0 = performance.now();
-  emulators.pathPrefix = ASSETS;
-  let wasmP = 0, bundleP = 0;
-  const upd = () => { $('vfill').style.width = Math.round((wasmP * 0.4 + bundleP * 0.6) * 100) + '%'; };
-  fetch(ASSETS + 'wdosbox-x.wasm').then(async (r) => { const t = +r.headers.get('content-length') || 1; const rd = r.body.getReader(); let got = 0; for (;;) { const { done, value } = await rd.read(); if (done) break; got += value.length; wasmP = Math.min(1, got / t); upd(); } }).catch(() => {});
-  const bundle = await fetchWithProgress(ASSETS + BUNDLE + '?v=suite1', (f) => { bundleP = f; upd(); });
-  bundleBytes = bundle;
-  await boot();
-  $('veil').hidden = true;
-  setStatus('<b>Booting</b> Windows for Workgroups 3.11&hellip;', 'busy');
-  bootT = 0;
-  (function loop() { pollWin(); if (!bootT && phase !== 'off') bootT = (performance.now() - t0) / 1000; setTimeout(loop, 30); })();
-  /* the line to Claude opens once Windows has said hello (nothing touches the emulator's files before that) */
+document.addEventListener('visibilitychange', () => {
+  if (!worker || !ready) return;
+  paused = document.hidden;
+  worker.postMessage({ t: 'pause', p: paused });
+  hb.t = performance.now(); hb.dacAge = 0;
+});
+function running() {           /* the snapshot was taken with the suite assembled: it is ready at once */
+  phase = 'ready'; ready = true; buildT = (performance.now() - t0) / 1000;
+  const d = new Date();
+  toWin('D', [d.getFullYear(), d.getMonth() + 1, d.getDate(), d.getHours(), d.getMinutes(), d.getSeconds()].join(' '));
+  banner(); status('ready'); render();
+  toWin('F');
+  connect();
   screen.focus();
+}
+function onWorker(e) {
+  const m = e.data;
+  if (m.t === 'frame') show(m.bitmap);
+  else if (m.t === 'lines') fromLines(m.s);
+  else if (m.t === 'hb') { hb = { t: performance.now(), dacAge: m.dacAge }; }
+  else if (m.t === 'progress') { $('vfill').style.width = Math.round(m.loaded / (m.total || 1) * 100) + '%'; }
+  else if (m.t === 'ready') { hb.t = performance.now(); $('veil').hidden = true; window.b311.ms = m.ms; running(); }
+  else if (m.t === 'error') stop('The emulator stopped (' + m.msg + '). Press Restart to start it again.');
+}
+function start() {
+  if (!window.crossOriginIsolated || typeof SharedArrayBuffer !== 'function') { stop('This browser cannot run it here (it needs SharedArrayBuffer). Try a current Chrome, Edge, Firefox or Safari.'); $('go').hidden = true; return; }
+  $('go').hidden = true; $('vbar').hidden = false; $('vfill').style.width = '0%';
+  $('vtext').textContent = 'Fetching Windows for Workgroups 3.11, already running, and the emulator\u2026';
+  setStatus('Loading&hellip;', 'busy');
+  t0 = performance.now(); hb.t = t0;
+  worker = new Worker(ASSETS + 'b31-worker.js?v=' + V);
+  worker.onmessage = onWorker;
+  worker.onerror = (e) => stop('The emulator stopped (' + (e.message || 'error') + '). Press Restart to start it again.');
+  worker.postMessage({ t: 'init', conf: CONF, files: FILES.map((f) => ({ name: f.name, size: f.size, url: new URL(ASSETS + f.name + '?v=' + V, location.href).href })) });
+  clearInterval(wd); wd = setInterval(watchdog, 500);
 }
 $('go').onclick = start;
 window.b311 = { toWin: (...a) => toWin(...a), state: () => ({ phase, ready, busy, bootT, buildT, usage, tab }),
-  files: () => { const r = (f) => { try { return Array.from(FS.readFile(f)).map((c) => String.fromCharCode(c)).join(''); } catch (e) { return '(' + e + ')'; } }; return { towin: r('B3/TOWIN.TXT').slice(-300), tojs: r('B3/TOJS.TXT').slice(-300) }; } };
+  files: () => ({ tojs: winLog }), stall: (ms) => worker && worker.postMessage({ t: 'stall', ms }) };
 })();
 </script>
 </body>

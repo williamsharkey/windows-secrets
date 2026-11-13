@@ -7,3 +7,12 @@
     Header set Cross-Origin-Embedder-Policy "require-corp"
   </IfModule>
 </Files>
+# basilisk-31-browser.html runs BASILISK 3.11 (Windows 3.11) on the same DOSBox Pure web engine: its threads share
+# memory too, so the page is cross-origin isolated. Everything it loads is on this site; its WebSocket to
+# live.williamsharkey.com is not affected by these headers. (puppetry/w31web)
+<Files "basilisk-31-browser.html">
+  <IfModule mod_headers.c>
+    Header set Cross-Origin-Opener-Policy "same-origin"
+    Header set Cross-Origin-Embedder-Policy "require-corp"
+  </IfModule>
+</Files>

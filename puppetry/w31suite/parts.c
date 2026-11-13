@@ -177,6 +177,7 @@ void SettingsSend(int force)
 {
     static char t[60];
     int e = GetScrollPos(sEffort, SB_CTL), n = GetScrollPos(sLength, SB_CTL);
+    if (e < 0) e = 0; if (e > 4) e = 4; if (n < 0) n = 0; if (n > 2) n = 2;
     wsprintf(t, "%s|%s|%s|%s", (LPSTR)Effort[e], (LPSTR)Length[n],
              (LPSTR)(SendMessage(bAsk, BM_GETCHECK, 0, 0L) ? "ask" : "auto"),
              (LPSTR)(SendMessage(bModel, BM_GETCHECK, 0, 0L) ? "sonnet" : "haiku"));

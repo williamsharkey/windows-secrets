@@ -7,7 +7,8 @@
  *    File Manager  its directory window on C:\B3\WORK
  *    Control Panel the Mouse applet's sliders and boxes: effort, answer length, asking, model
  *    Clock         the face in the corner;  Calculator  its display, for the bill
- *  The link to Claude is COM2 (server) or two files on C: (browser), picked at run time.
+ *  The link to Claude is COM2 (server), two files on C: (js-dos), or the BSYN card's ports (DOSBox Pure in the
+ *  browser: the same guest/host packets BASILISK 16 uses), picked at run time.
  *
  *  wcl -q -bt=windows -l=windows -ml -k16384 basilisk.c
  */
@@ -16,6 +17,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <direct.h>
+#include <conio.h>
+#include <dos.h>
 
 #define EOT 4
 #define SEP 0x1F
@@ -24,7 +27,7 @@ HINSTANCE hInst;
 HWND hHost, hNote, hText, hFind, hInput, hSend, hStop, hClock, hCardfile, hCard, hCalc, hBill;
 HWND hCardBox, hPlanNote, hPlan, hFm, hFmClient, hFmStatus, hCpl, hSet, hUsage;
 HWND sEffort, sLength, bAsk, bModel, tEffortWord, gEffort, gLength;
-int Browser, Tab = -1, cid = -1;
+int Browser, Bsyn, Tab = -1, cid = -1;
 HINSTANCE runInst;
 DWORD runEnd;
 char runId[16];
@@ -37,11 +40,38 @@ long linkIn;
 static char lbuf[8200];
 int lbn;
 
+/* the BSYN card (DOSBox Pure web engine): text goes out as report packets of up to 240 bytes (type 7 = more,
+   3 = the line ends), and comes in as events (type 8 = more, 4 = the line ends; words 1-2 an id, then bytes);
+   an event of type 6 is the host's pointer (x, y), which only the guest can place */
+#define BS_ARG 0x2C0
+#define BS_CMD 0x2C2
+#define BS_MAGIC 0x2C4
+static char bsOut[240];
+static int bsN;
+void BsPacket(int last)
+{
+    int i, n = (bsN + 1) / 2;
+    _disable();
+    outpw(BS_ARG, (WORD)(((last ? 3 : 7) << 8) | (n + 1)));
+    for (i = 0; i < bsN; i += 2) outpw(BS_ARG, (WORD)((BYTE)bsOut[i] | ((i + 1 < bsN ? (BYTE)bsOut[i + 1] : 0) << 8)));
+    outpw(BS_CMD, 22);
+    _enable();
+    bsN = 0;
+}
+void BsAdd(LPCSTR t, int n) { while (n--) { if (bsN == sizeof bsOut) BsPacket(0); bsOut[bsN++] = *t++; } }
+
 void LinkPut(char type, LPCSTR a, LPCSTR b, LPCSTR c)
 {
     static char sep[2] = { SEP, 0 }, t[2], e[2] = { EOT, 0 };
     t[0] = type;
-    if (Browser) {
+    if (Bsyn) {
+        bsN = 0;
+        BsAdd(t, 1);
+        if (a) BsAdd(a, lstrlen(a));
+        if (b) { BsAdd(sep, 1); BsAdd(b, lstrlen(b)); }
+        if (c) { BsAdd(sep, 1); BsAdd(c, lstrlen(c)); }
+        BsPacket(1);
+    } else if (Browser) {
         OFSTRUCT of;
         HFILE f = OpenFile("C:\\B3\\TOJS.TXT", &of, OF_WRITE | OF_SHARE_DENY_NONE);
         if (f == HFILE_ERROR) f = OpenFile("C:\\B3\\TOJS.TXT", &of, OF_CREATE | OF_WRITE);
@@ -65,7 +95,28 @@ void LinkPut(char type, LPCSTR a, LPCSTR b, LPCSTR c)
 void LinkPoll(void (*h)(char, LPSTR))
 {
     int n, i;
-    if (Browser) {
+    if (Bsyn) {                          /* events: the bytes join the buffer; a line's end is an EOT */
+        WORD w[140];
+        int k, j;
+        n = 0;
+        for (k = 0; k < 64 && lbn + n < (int)sizeof lbuf - 260; k++) {
+            int c;
+            _disable();
+            outpw(BS_CMD, 20);
+            c = inpw(BS_ARG);
+            for (j = 0; j < c; j++) { WORD x = inpw(BS_ARG); if (j < 140) w[j] = x; }
+            _enable();
+            if (c <= 0) break;
+            if ((w[0] >> 8) == 6 && c >= 3) { SetCursorPos((int)w[1], (int)w[2]); continue; }
+            if ((w[0] >> 8) != 4 && (w[0] >> 8) != 8) continue;
+            for (j = 3; j < c && j < 140; j++) {
+                BYTE lo = (BYTE)w[j], hi = (BYTE)(w[j] >> 8);
+                if (lo) lbuf[lbn + n++] = lo;
+                if (lo && hi) lbuf[lbn + n++] = hi;
+            }
+            if ((w[0] >> 8) == 4) lbuf[lbn + n++] = EOT;
+        }
+    } else if (Browser) {
         OFSTRUCT of;
         HFILE f = OpenFile("C:\\B3\\TOWIN.TXT", &of, OF_READ | OF_SHARE_DENY_NONE);
         if (f == HFILE_ERROR) return;
@@ -743,6 +794,16 @@ void Assemble(void)
 
 /* ================================================================ messages from the host */
 
+void SetClock(LPSTR p)                   /* "Y M D h m s": a machine resumed from a snapshot has the snapshot's time */
+{
+    union REGS r;
+    int v[6], i;
+    for (i = 0; i < 6 && *p; i++) { v[i] = atoi(p); while (*p && *p != ' ') p++; while (*p == ' ') p++; }
+    if (i < 6) return;
+    r.h.ah = 0x2B; r.x.cx = v[0]; r.h.dh = (BYTE)v[1]; r.h.dl = (BYTE)v[2]; intdos(&r, &r);
+    r.h.ah = 0x2D; r.h.ch = (BYTE)v[3]; r.h.cl = (BYTE)v[4]; r.h.dh = (BYTE)v[5]; r.h.dl = 0; intdos(&r, &r);
+}
+
 void Handle(char type, LPSTR p)
 {
     LPSTR a = p, b = NULL, c = NULL;
@@ -764,6 +825,7 @@ void Handle(char type, LPSTR p)
     case 'X': if (hStop) Press(hStop); break;
     case 'F': BringWindowToTop(hNote); SetActiveWindow(hNote); if (hInput && Tab == 0) SetFocus(hInput); break;
     case 'M': Mouse(p); break;
+    case 'D': SetClock(p); break;
     case 'w': Wheel(atoi(p)); break;
     case 'Q': Spy(); break;
     case '@': Mention(); break;
@@ -773,6 +835,25 @@ void Handle(char type, LPSTR p)
     case 'G': if (b) { char full[128]; FullPath(full, b); ReadBack(a, full); } break;
     case 'W': if (b && c) Write(a, b, c); break;
     }
+}
+
+void Sliders(void)                       /* the web engine presses the real mouse: the borrowed sliders' own
+                                            tracking reports to Control Panel's hidden dialog, so drive them here */
+{
+    static int down;
+    static char t[24];
+    POINT pt;
+    int k = GetAsyncKeyState(VK_LBUTTON), now = (k & 0x8000) != 0;
+    GetCursorPos(&pt);
+    if ((now || (k & 1)) && !down) {     /* pressed now, or pressed and let go since the last look (a quick click) */
+        HWND w = WindowFromPoint(pt);
+        if (w == sEffort || w == sLength) {
+            wsprintf(t, "%d|%d|1|1", pt.x, pt.y); Mouse(t);
+            if (!now && dragW) { wsprintf(t, "%d|%d|1|0", pt.x, pt.y); Mouse(t); }
+        }
+    } else if (now && dragW) { wsprintf(t, "%d|%d|0|0", pt.x, pt.y); Mouse(t); }
+    else if (!now && down && dragW) { wsprintf(t, "%d|%d|1|0", pt.x, pt.y); Mouse(t); }
+    down = now;
 }
 
 long FAR PASCAL __export HostProc(HWND h, UINT m, WPARAM w, LPARAM l)
@@ -792,6 +873,7 @@ long FAR PASCAL __export HostProc(HWND h, UINT m, WPARAM w, LPARAM l)
         Keep();
         if (Browser && (GetWindowLong(hNote, GWL_STYLE) & (WS_VSCROLL | WS_HSCROLL)))
             ShowScrollBar(hNote, SB_BOTH, FALSE);   /* Notepad keeps its bars on its frame; the column covers that edge */
+        if (Bsyn && Tab == 4) Sliders();
         busy = 0;
         return 0;
     }
@@ -805,7 +887,8 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE prev, LPSTR cmdline, int show)
     MSG m;
     OFSTRUCT of;
     hInst = hi;
-    Browser = OpenFile("C:\\B3\\TOWIN.TXT", &of, OF_EXIST) != HFILE_ERROR;
+    Bsyn = inpw(BS_MAGIC) == 0x5342;
+    Browser = Bsyn || OpenFile("C:\\B3\\TOWIN.TXT", &of, OF_EXIST) != HFILE_ERROR;
     memset(&wc, 0, sizeof wc);
     wc.lpfnWndProc = HostProc;
     wc.hInstance = hi;
@@ -820,7 +903,8 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE prev, LPSTR cmdline, int show)
     wc.lpszClassName = "B3Pane";
     RegisterClass(&wc);
     hHost = CreateWindow("Basilisk", "BASILISK", WS_OVERLAPPED, 0, 0, 0, 0, NULL, NULL, hi, NULL);
-    if (Browser) {
+    if (Bsyn) ;
+    else if (Browser) {
         HFILE f = OpenFile("C:\\B3\\TOWIN.TXT", &of, OF_READ | OF_SHARE_DENY_NONE);
         if (f != HFILE_ERROR) { linkIn = _llseek(f, 0L, 2); _lclose(f); }
     } else {
