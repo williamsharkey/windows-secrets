@@ -119,6 +119,12 @@ protected:
         const uint bit = ev.button == 1 ? 1 : ev.button == 3 ? 2 : 0;
         if (!bit) return false;
         if (ev.press) btn_ |= bit; else btn_ &= ~bit;
+        if (ev.press && bit == 1) {   // the click and its place, in case it is let go before Windows' next frame
+            bshm *S = sh_->S; const uint32_t w = S->click_w;
+            S->click_x[w % 4] = S->mouse_x; S->click_y[w % 4] = S->mouse_y;
+            __sync_synchronize();
+            S->click_w = w + 1;
+        }
         sh_->S->mouse_btn = btn_;
         sh_->S->mouse_seq++;
         return true;

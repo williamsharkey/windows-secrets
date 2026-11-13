@@ -37,6 +37,17 @@
 static Bit32u late_n, late_max, ontime_n;   /* scheduling statistics: armed starts/stops that came too late */
 
 struct BSBuf { std::vector<Bit8u> data; Bit32u cookie; Bit32u frames; };
+/* a drawn envelope: up to 8 breakpoints, time in DAC samples from the voice's start, level 0..1 (or pan -1..1);
+   linear between points, the last level holds */
+struct BSEnv { int n; Bit32u t[8]; float l[8]; };
+static float env_at(const BSEnv &e, Bit64u age)
+{
+	if (e.n <= 0) return 1.f;
+	if (age <= e.t[0]) return e.n == 1 || e.t[0] == 0 ? e.l[0] : e.l[0] * (float)age / (float)e.t[0];
+	for (int k = 1; k < e.n; k++)
+		if (age < e.t[k]) return e.l[k - 1] + (e.l[k] - e.l[k - 1]) * (float)(age - e.t[k - 1]) / (float)(e.t[k] - e.t[k - 1]);
+	return e.l[e.n - 1];
+}
 struct BSVoice {
 	bool on;               /* producing sound (or waiting for its start sample) */
 	Bit8u nch, bits;       /* source format */
@@ -57,6 +68,8 @@ struct BSVoice {
 	Bit32u env_a, env_d;   /* envelope: attack and decay in samples */
 	float env_s;           /* sustain level */
 	Bit64u age;            /* samples played since start (for the envelope) */
+	float pan;             /* -1 (left) .. 1 (right), the arm's; the pan envelope adds to it */
+	BSEnv ea, ep;          /* drawn envelopes (DNA v2 Ja / Jp), copied from the layer when the voice opens */
 	int owner;             /* logical channel that owns it, -1 = ghost (fading after reset) */
 };
 
@@ -68,7 +81,8 @@ static struct {
 	Bit16u chtask[BS_CH];
 	Bit64u dac;                    /* DAC samples produced so far */
 	/* arms: task -> (event id, rate, gain) for the next open / stop by that task */
-	struct Arm { Bit16u task; Bit32u id; Bit32u hz; float gain; Bit32u fade; bool stop; bool used; } arms[64];
+	struct Arm { Bit16u task; Bit32u id; Bit32u hz; float gain; float pan; int layer; Bit32u fade; bool stop; bool used; } arms[64];
+	BSEnv lenv_a[8], lenv_p[8];          /* the layers' envelopes (LENV), for voices armed with a layer */
 	Bit32u env_a, env_d; float env_s;   /* the envelope new voices get (ENV) */
 	/* host -> guest events, guest -> host reports */
 	std::deque<Bit16u> events, reports;
@@ -155,7 +169,7 @@ static void render(float *out, Bitu len)
 		BSVoice &v = bs.v[vi];
 		if (!v.on || v.paused) continue;
 		double step = (double)v.srate * v.rate * v.armrate * bs.master / BS_RATE;
-		float gl = v.voll * v.gain, gr = v.volr * v.gain;
+		const bool panning = v.pan != 0.f || v.ep.n > 0;
 		for (Bitu s = 0; s < len; s++) {
 			Bit64u t = bs.dac + s;
 			if (t < v.start_at) continue;
@@ -168,12 +182,19 @@ static void render(float *out, Bitu len)
 				fg = (float)v.fade_left / (float)(v.fade_len ? v.fade_len : 1);
 				if (--v.fade_left == 0) { v.on = false; v.q.clear(); break; }
 			}
-			if (v.env_a || v.env_d || v.env_s < 1.f) {
+			if (v.ea.n) fg *= env_at(v.ea, v.age);
+			else if (v.env_a || v.env_d || v.env_s < 1.f) {
 				float eg;
 				if (v.age < v.env_a) eg = (float)v.age / (float)v.env_a;
 				else if (v.age < (Bit64u)v.env_a + v.env_d) eg = 1.f - (1.f - v.env_s) * (float)(v.age - v.env_a) / (float)v.env_d;
 				else eg = v.env_s;
 				fg *= eg;
+			}
+			float gl = v.voll * v.gain, gr = v.volr * v.gain;
+			if (panning) {   /* pan: the voice's left/right volume, never in the buffer */
+				float p = v.pan + (v.ep.n ? env_at(v.ep, v.age) : 0.f);
+				p = p < -1.f ? -1.f : p > 1.f ? 1.f : p;
+				if (p > 0) gl *= 1.f - p; else gr *= 1.f + p;
 			}
 			v.age++;
 			BSBuf &b = v.q.front();
@@ -271,12 +292,17 @@ static void command(Bit16u c)
 		bs.chopen[ch] = true; bs.chtask[ch] = arg(0);
 		int a = find_arm(arg(0), false);
 		v.start_at = bs.dac;
-		v.env_a = 0; v.env_d = 0; v.env_s = 1.f; v.age = 0;
+		v.env_a = 0; v.env_d = 0; v.env_s = 1.f; v.age = 0; v.pan = 0; v.ea.n = 0; v.ep.n = 0;
 		if (a >= 0) {
 			v.voice_id = bs.arms[a].id; v.start_at = target_of(bs.arms[a].id);
 			v.armrate = (bs.arms[a].hz && v.srate) ? (float)bs.arms[a].hz / (float)v.srate : 1.f;
 			v.gain = bs.arms[a].gain; bs.arms[a].used = false;
 			v.env_a = bs.env_a; v.env_d = bs.env_d; v.env_s = bs.env_s;
+			v.pan = bs.arms[a].pan;
+			if (bs.arms[a].layer >= 0 && bs.arms[a].layer < 8) {
+				v.ea = bs.lenv_a[bs.arms[a].layer]; v.ep = bs.lenv_p[bs.arms[a].layer];
+				if (v.ea.n) { v.env_a = 0; v.env_d = 0; v.env_s = 1.f; }   /* a drawn envelope replaces A, D, S */
+			}
 		}
 		if (trace) fprintf(stderr, "bsyn open ch%d task %04x arm %d id %u start %llu dac %llu tgt_id %u tgt_at %llu\n", ch, arg(0), a, v.voice_id,
 			(unsigned long long)v.start_at, (unsigned long long)bs.dac, a >= 0 ? bs.tgt_id[v.voice_id & 4095] : 0, a >= 0 ? (unsigned long long)bs.tgt_at[v.voice_id & 4095] : 0ULL);
@@ -343,12 +369,27 @@ static void command(Bit16u c)
 		if (a >= 64) a = 0;
 		auto &A = bs.arms[a];
 		A.used = true; A.task = arg(0); A.id = arg32(1); A.stop = (c == 23);
-		if (c == 21) { A.hz = arg32(3); A.gain = arg(5) / 65535.f; }
+		if (c == 21) {
+			A.hz = arg32(3); A.gain = arg(5) / 65535.f;
+			/* v2: pan (0..200 = -100..100) and layer (0 = none, else layer + 1) */
+			A.pan = bs.args.size() > 6 ? ((int)arg(6) - 100) / 100.f : 0.f;
+			A.layer = bs.args.size() > 7 ? (int)arg(7) - 1 : -1;
+		}
 		else A.fade = (Bit32u)arg(3) * (BS_RATE / 1000);
 		break; }
 	case 22: /* REPORT words... */
 		for (Bit16u w : bs.args) bs.reports.push_back(w);
 		break;
+	case 29: { /* LENV layer kind(0 amp, 1 pan) n  t_ms l  t_ms l ...  (l: amp 0..100, pan 0..200 = -100..100) */
+		int L = arg(0), kind = arg(1), n = arg(2);
+		if (L < 0 || L >= 8) break;
+		BSEnv &e = kind ? bs.lenv_p[L] : bs.lenv_a[L];
+		e.n = n > 8 ? 8 : n;
+		for (int k = 0; k < e.n; k++) {
+			e.t[k] = (Bit32u)arg(3 + 2 * k) * (BS_RATE / 1000);
+			e.l[k] = kind ? ((int)arg(4 + 2 * k) - 100) / 100.f : arg(4 + 2 * k) / 100.f;
+		}
+		break; }
 	case 27: /* ENV attack_ms decay_ms sustain_pct */
 		bs.env_a = (Bit32u)arg(0) * (BS_RATE / 1000); bs.env_d = (Bit32u)arg(1) * (BS_RATE / 1000); bs.env_s = arg(2) / 100.f; break;
 	case 28: /* IDLE: the synth program has nothing to do: end this millisecond's CPU slice now (like HLT does), so
@@ -419,6 +460,7 @@ void DBPSerialize_BSYNTH(DBPArchive &ar)
 		for (int i = 0; i < BS_CH * 2; i++) bs.v[i] = BSVoice();
 		memset(bs.chopen, 0, sizeof bs.chopen);
 		memset(bs.arms, 0, sizeof bs.arms);
+		memset(bs.lenv_a, 0, sizeof bs.lenv_a); memset(bs.lenv_p, 0, sizeof bs.lenv_p);
 		bs.args.clear(); bs.results.clear(); bs.master = 1.f; bs.env_a = bs.env_d = 0; bs.env_s = 1.f;
 	}
 }

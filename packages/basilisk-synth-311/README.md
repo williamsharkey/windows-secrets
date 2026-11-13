@@ -14,6 +14,12 @@ Workgroups 3.11.
    - Delete Before/After
 
    The string also sets pools, harmony, unison, transpose and the envelope. The same DNA plays in the XP edition.
+4. **DNA v2 (1.2.0).**
+   - **Layers:** up to 8, each with its own start offset (`O`), pan (`Q`), and drawn amplitude and pan envelopes
+     (`Ja`, `Jp`).
+   - **Macros:** four, automatable, each mapped by the DNA onto layer genes.
+   - **Collages:** steps at a time in ms (`@t500Mglass_ping`).
+   - **The library disc:** 249 public-domain/CC0 sounds on drive L:, usable by name.
 
 ## Install
 
@@ -34,19 +40,44 @@ is the strongest free option, and the Windows plugin is unsigned. Hence the step
 ## Playing it
 
 - **The editor is Windows 3.11.** Click Sound Recorder's buttons, type a DNA into the DNA line (Enter applies it,
-  Esc puts it back), or use the panel:
-  - Sound: chimes, ding, ringin, ringout.
-  - Effects: Sound Recorder's commands, appended to the DNA.
-  - Undo and Clear.
-  - Layers and Harmony.
-  - Voices, Transpose, Unison and Level.
-  - Attack, Decay, Sustain and Release.
+  Esc puts it back), or use Windows' own controls:
+  - **Header:**
+    - Preset: a drop-down of all 71 programs, with < > to step.
+    - Sound: every sound, meaning C:\WINDOWS's six and the library's 249.
+    - The selected layer's Pan and Offset.
+    - Env: the layer's drawn envelope. < > picks a point, + adds, - deletes; then the point's time and level.
+    - Envelope: a seventeenth Sound Recorder whose green wave view draws that envelope.
+  - **Panel:**
+    - Sound: chimes, ding, ringin, ringout.
+    - Effects: Sound Recorder's commands, appended to the DNA.
+    - Undo and Clear.
+    - Layers and Harmony.
+    - Voices, Transpose, Unison and Level.
+    - Attack, Decay, Sustain and Release.
+    - Macro 1-4.
+  - **Keyboard strip:**
+    - Five octaves of keys (C2-C7). White keys are push buttons, black keys are black-rectangle statics.
+    - Bend and Mod scrollbars.
+    - Hold (latch).
+    - Keys turns on the computer keyboard: `a w s e d f t g y h u j k` play, `z` and `x` change octave.
+    - Click or drag over the keys to play. Incoming MIDI notes hold their keys down, and the wheels follow MIDI.
 
-  Each change rebuilds the recorders and becomes the plugin's sound, saved with your project.
-- **Factory sounds.** There are 16. They appear in the DAW's preset list (a VST3 program list, AU factory presets)
-  and in the plugin's "Current Program" parameter. User presets are the host's own: they save the DNA.
-- **Automatable parameters:** Attack, Decay, Sustain, Release, Velocity, Bend Range, Output Gain and Transpose.
-  They edit the DNA's globals.
+  Each change becomes the plugin's sound and is saved with your project. A change that Sound Recorder must build
+  is built in front of you:
+  - the recorder's row number lights up;
+  - its own status field names each command as it runs (Open, Echo, Insert ding, Seek 500 ms...).
+- **Programs.** There are 71 ("Category: Name"): BASILISK 16's own, then the shared library presets. They appear in
+  the DAW's preset list (a VST3 program list, AU factory presets) and in Windows' Preset drop-down. User presets are
+  the host's own: they save the DNA.
+- **Automatable parameters:**
+  - Attack, Decay, Sustain, Release, Velocity, Bend Range, Output Gain and Transpose edit the DNA's globals.
+  - Macro 1-4 move whatever the DNA maps them to (`m1L0,150`, `m12Q-100,100`, `m11Z50,200`, ...).
+  - The mod wheel (CC1) adds to Macro 1. Pitch bend uses the DNA's range.
+- **Sounds.** C:\WINDOWS has WfW 3.11's CHIMES, DING, RINGIN and RINGOUT, plus Windows 3.1's CHORD and TADA.
+  WfW 3.11's disks had dropped those two. Every other built-in NAME plays DING.
+  - The library disc (drive L:, `library.zip`) holds the shared library's sounds converted to 22050 Hz 16-bit mono,
+    which Sound Recorder 3.1 opens as they are. Sounds over 30 s are skipped.
+  - A DNA names them like built-in ones: `marimba_c4E#16`, `piano_upright_cs4#10T-1/glass_ping#6T12O15Q40L50`.
 - **Latency.** The plugin reports a fixed latency, which DAWs compensate for on playback. When you play live you
   hear it. It is 2880 samples at 48 kHz (60 ms) with blocks of up to 512 samples; larger host blocks add their
   length.
@@ -55,6 +86,8 @@ is the strongest free option, and the Windows plugin is unsigned. Hence the step
   playing is never interrupted.
   - Offline renders, where the host says so, wait for every build and for the assembly, so a render or a reloaded
     project comes out bit-identical every time.
+  - Live playback never waits. It is silent for the few seconds Windows takes to assemble.
+  - Idle recorders are rebuilt first. A recorder still sounding a note gets up to 1.5 s to finish it.
 - **CPU.** Each instance is an emulated PC. Measured on the build PC (x86-64), as a share of one core:
 
   | | Editor closed | Editor open |
@@ -87,7 +120,47 @@ MIDI -> plugin (voice allocator, packages/basilisk-synth/core)
 - **The snapshot.** The build froze the machine with the sixteen recorders open, and the plugin resumes from it.
   Resume takes about 0.03 s; the assembly then plays.
 
+## Batch rendering
+
+`tools/render311` renders a DNA plus notes to a WAV through the real machine, headless:
+- the machine resumes, Sound Recorder builds the DNA (no assembly animation), and the notes play through the
+  recorders exactly as the plugin plays them offline;
+- it is not paced by a clock, so it runs faster than real time.
+
+```
+render311 --machine DIR --core FILE --dna "DNA" (--midi in.mid | --score "t:note:vel:dur,...") --out out.wav [--tail S] [--bits 32]
+python3 tools/batch_render311.py JOBS.json --machine DIR [--render311 EXE] [--parallel K] [--out-dir OUT]
+```
+
+- JOBS.json is the XP edition's format: `[{"dna": "...", "score": "0:60:100:1.0,...", "out": "x.wav", "tail": 2}]`.
+- DIR is the bundle's `Contents/Resources/machine`.
+- The release has `render311.exe` (Windows) and `render311` (macOS, universal).
+- Renders on Linux and Windows are bit-identical.
+
 ## Tests (what was checked, and how)
+
+**Version 1.2.0 additions:** see PROGRESS.md for every number.
+- **BasiliskHost** (`tools/basilisk-host`) `--test`, Windows VST3:
+  - offline repeats bit-identical;
+  - state and `.vstpreset` reload bit-identical;
+  - real time: 50/50 notes heard, pitch within 2 cents;
+  - live program change at normal PC load: 50/50 notes, none dropped;
+  - two instances; no orphan processes.
+- **The editor, driven by posted clicks** (`--editor-script`):
+  - keys, a drag, Hold latching and releasing;
+  - the < > preset button, after which the state holds the new DNA.
+- **DNA v2 by measurement:**
+  - `O300` starts 300 ms late;
+  - `Q-100` and `Q100` are hard left and right;
+  - a drawn `Ja` gives the expected gain curve (0.54 at 600 ms against 0.57);
+  - a macro on `N` rebuilds.
+- **Batch:** all 33 BASILISK 16 programs, 214.5 s of audio in 18.9 s (8 at once, Linux).
+- **Assembly with the keyboard strip:** 5.37 s on Windows' clock.
+- **pluginval at strictness 10:** 25/25 for Windows VST3, macOS VST3 and macOS AU; `auval -strict` passes.
+- **render311:** bit-identical on Linux, Windows, macOS arm64 and macOS x86_64.
+- **Live safety:** `process()` never waits in real time (slowest call 14 ms). No inheritable handles. No temporary
+  folders left after unload.
+
 
 **Version 1.1.0 additions**
 - **REAPER 7.85** (Windows), running as a separate, isolated copy:
@@ -142,7 +215,9 @@ tools/mac_build.sh WORKDIR    # on a Mac, with WORKDIR/macsrc from the above: un
 | `dosbox-pure/` | the card and the patch, against `UPSTREAM.txt` |
 | `engine/` | the engine thread and the shared-memory block |
 | `plugin/` | DPF plugin and editor; `dpf.patch` against `DPF_UPSTREAM.txt` (VST3 program list, fewer MIDI-CC parameters, an offline-render flag for VST3 and AU) |
-| `tools/` | build scripts and test rigs |
+| `tools/` | build scripts, test rigs, `render311.cpp`, `batch_render311.py`, `make_library311.py`, `make_presets311.py` |
+| `presets/` | `b16.tsv`, BASILISK 16's own programs |
+| `machine-extra/` | Windows 3.1's CHORD.WAV and TADA.WAV, copied into C:\WINDOWS |
 
 ## Licences
 
@@ -151,4 +226,5 @@ tools/mac_build.sh WORKDIR    # on a Mac, with WORKDIR/macsrc from the above: un
 | DOSBox Pure | GPL-2.0-or-later. Source: https://codeberg.org/schelling/dosbox-pure, at the commit in `dosbox-pure/UPSTREAM.txt`, with `dosbox-pure.patch` and `bsynth.cpp`. |
 | DPF | ISC |
 | This plugin | GPL-2.0-or-later |
-| Windows for Workgroups 3.11 | © 1993 Microsoft, included as part of an art project, as in the BASILISK 3.11 download |
+| Windows for Workgroups 3.11, and Windows 3.1's CHORD.WAV and TADA.WAV | © 1992-1993 Microsoft, included as part of an art project, as in the BASILISK 3.11 download |
+| Library sounds (`library.zip`) | each sound's licence and source is in `\LIBRARY.TSV` (CC0 and public domain; see `packages/basilisk-synth/library`) |

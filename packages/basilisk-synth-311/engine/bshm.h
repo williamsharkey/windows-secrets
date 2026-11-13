@@ -43,7 +43,11 @@ typedef struct {
   volatile uint32_t offline;    /* host: rendering offline: never run ahead of host_r + lead on our own clock */
   volatile uint32_t grant_pad;
   volatile uint64_t grant_until; /* host: while it waits for Windows (offline), the engine may run up to here */
-  uint32_t reserved[25];
+  /* host: each left-button press, with where it was, so a press and release that arrive within one emulated frame
+     (a host posting clicks, a quick tap) still reach Windows as a click, at its own place */
+  volatile uint32_t click_w;
+  volatile int32_t click_x[4], click_y[4];
+  uint32_t reserved[16];
   bshm_ev ev[BSHM_EV];
   volatile uint16_t rep[BSHM_REP];
   float ring[BSHM_RING * 2];

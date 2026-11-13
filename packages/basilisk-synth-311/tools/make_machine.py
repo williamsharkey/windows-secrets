@@ -2,7 +2,10 @@
 """Build the machine the plugin resumes: drive.zip (the Windows for Workgroups 3.11 C: drive with BASILISK 16 installed, and the
 snapshot of it (sixteen Sound Recorders open, waiting for `go`).
 
-  make_machine.py WFW_DRIVE GUEST_BUILD_DIR CORE_SO OUT_DIR
+  make_machine.py WFW_DRIVE GUEST_BUILD_DIR CORE_SO OUT_DIR [--library LIBRARY.zip] [--folder]
+
+--library: the library disc (tools/make_library311.py), mounted as L:; the snapshot is made with it mounted, so the
+bundle must ship this same library.zip (and library.names.txt, the plugin's catalogue). Without it, an empty disc.
 
 WFW_DRIVE: an installed WfW 3.11 C: (the one in site/basilisk-31-browser/w31.jsdos, see README).
 The snapshot is made with the Linux build of the engine (tools/engine, built by build.sh); it loads on every OS."""
@@ -11,6 +14,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from bsdrv import Engine
 
 src, gout, core, out = sys.argv[1:5]
+library = sys.argv[sys.argv.index('--library') + 1] if '--library' in sys.argv else None   # the L: drive (make_library311.py)
 folder = '--folder' in sys.argv   # C: as a plain folder instead of drive.zip (for experiments)
 drive = os.path.join(out, 'drive')
 if os.path.exists(out): shutil.rmtree(out)
@@ -18,6 +22,9 @@ shutil.copytree(src, drive)
 for d in ('WATCOM', 'B3', '.jsdos'):
     shutil.rmtree(os.path.join(drive, d), ignore_errors=True)
 os.makedirs(os.path.join(drive, 'BS'), exist_ok=True)
+# Windows 3.1's CHORD.WAV and TADA.WAV (WfW 3.11's disks dropped them): `chord` and `tada` play their own files
+for f in ('CHORD.WAV', 'TADA.WAV'):
+    shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'machine-extra', f), os.path.join(drive, 'WINDOWS', f))
 for f in ('SYNTH.EXE', 'SYNHOOK.DLL'): shutil.copy(os.path.join(gout, f), os.path.join(drive, 'BS', f))
 shutil.copy(os.path.join(gout, 'BSYNTH.DRV'), os.path.join(drive, 'WINDOWS', 'SYSTEM', 'BSYNTH.DRV'))
 
@@ -54,6 +61,12 @@ if not folder:
   shutil.rmtree(drive)
 
 here = os.path.dirname(os.path.abspath(__file__))
+# the library disc, drive L: (an empty one if none is given: the snapshot needs the drive either way)
+if library:
+    shutil.copy(library, os.path.join(out, 'library.zip'))
+    names = os.path.splitext(library)[0] + '.names.txt'   # make_library311.py writes it next to the zip
+    if os.path.exists(names): shutil.copy(names, os.path.join(out, 'library.names.txt'))
+else: subprocess.run([sys.executable, os.path.join(here, 'make_library311.py'), os.path.join(out, 'library.zip'), '--manifest', '/nonexistent'], check=True)
 conf_name = 'w31-folder.conf.in' if folder else 'w31.conf.in'
 conf_in = open(os.path.join(here, '..', 'engine', conf_name)).read()
 shutil.copy(os.path.join(here, '..', 'engine', conf_name), os.path.join(out, 'w31.conf'))

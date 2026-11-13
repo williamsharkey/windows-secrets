@@ -1,0 +1,35 @@
+# category	name	DNA (packages/basilisk-synth/DNA.md). BASILISK 16's own programs, first in its program list and in \PRESETS.TSV;
+# then packages/basilisk-synth/library/presets/*.tsv. The NAMEs chimes, ding, ringin, ringout are C:\WINDOWS's; others are library sounds.
+BASILISK 16	Ding Piano	ding#16;R250
+BASILISK 16	Chime Octaves	chimesH0,12;R500
+BASILISK 16	Telephone Choir	ringinU3~12;A60S90R700
+BASILISK 16	Reverse Ding Swell	dingR;A10R300
+BASILISK 16	Echo Bells	chimesE+;R900
+BASILISK 16	Slow Ring Pad	ringout<<E;A400D300S80R1500
+BASILISK 16	Fifth Stack	dingH0,7,12;R300
+BASILISK 16	Major Ding	dingH0,4,7;R250
+BASILISK 16	Ding and Chimes	ding#8/chimes#8T12;R350
+BASILISK 16	Chopped Ring	ringin@50]>;R120
+BASILISK 16	Insert and Mix	dingIchimesMringin;R300
+BASILISK 16	Triple Echo Reverse	chimesEEER-;A20R1000
+BASILISK 16	Bass Ding	ding<T-12;R250
+BASILISK 16	Detuned Unison	dingU4~25;R300
+BASILISK 16	Ring Out Octaves	ringout>H0,12,24;R160
+BASILISK 16	Copy Paste Stutter	ding@30]CPPP;R160
+B16 Layers	Glass Piano	piano_upright_cs4#10T-1Q-20/glass_ping#6T12O15Q40L50;R400
+B16 Layers	Bowl Swell	singing_bowl_c#8Ja0,0.300,100.4000,50Q-50/singing_bowl_c#8T12O250Q50L60Ja0,0.800,100.4000,40;R1500
+B16 Layers	Marimba Echo	marimba_c4#10/marimba_c4E#6O180Q60L50;R300
+B16 Layers	Vibe Wide	epiano_yamaha_vibe#8Q-60/epiano_yamaha_vibe#8Q60O30T12L40;R500
+B16 Layers	Harp Stereo	harp_c5#8T-12Q-50/harp_c5>#8T-12Q50O60L60;R400
+B16 Pads	Cello Breath	cello_section_sus_c3#12T12Ja0,0.600,100.3000,70U2~10/spirit_breath#4O100L40Q-40;R1200
+B16 Pads	Choir Pan	choir_aah#16Ja0,0.500,100Jp0,-80.3000,80;R1200
+B16 Pads	Organ Ring	organ_hammond_m100_flute_c#12/ringout<<#4O200L50;A200R800
+B16 Bass	Pizz Thump	contrabass_pizz_e1#16T24Ja0,100.200,60.800,0;R200
+B16 Collage	Ding Thunder	ding@t200Mthunder_rumble#16;R400
+B16 Collage	Kalimba Train	kalimba_c4@t150Ikalimba_g5@t300Mglass_ping#16;R300
+B16 Collage	Chimes Bowl	chimes@t400Msinging_bowl_soft_hit@t900Ichimes>#16;R600
+B16 Macro	Bowl Morph	singing_bowl_c#8/crystal_bowl_g4#8O100;m1=50m11L0,150m12L150,0m2=0m12O0,1000
+B16 Macro	Echo Count	marimba_c4E#16;m1=0m11N0,4
+B16 Macro	Wide Glass	glass_ping#8/glass_ping>#8O40;m1=50m11Q0,-100m12Q0,100m11Z50,200
+B16 FX	Wind Sweep	wind_howling#16Jp0,-100.3000,100;R1500
+B16 Percussion	Glass Kit	glass_tap#4F/wine_glass_hit_hard#4FO20Q-60/soap_bubbles_pop#4FQ60/glass_clink#4FT-5;R80

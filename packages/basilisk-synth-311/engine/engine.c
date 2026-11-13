@@ -180,6 +180,7 @@ int bs_engine_run(bs_engine *e)
   uint64_t copied = 0, last_hr = 0, pace_beat = 0; double t_hr, t0, busy = 0, t_load = 0, t_beat_seen = 0;
   uint16_t rep[512]; int snap_now = 0;
   int32_t mx = -1, my = -1; uint32_t mseq = 0;
+  uint32_t click_r = S->click_w; int cphase = 0, cframes = 0;   /* the click queue: 1 to its place, 2 pressed, 3 held while the host holds, 4 released */
   cur = e;
   say(e, "engine: core %s conf %s state %s", e->core, e->conf, e->state);
   e->lib = DLOPEN(e->core);
@@ -226,15 +227,26 @@ int bs_engine_run(bs_engine *e)
       e->h_event(ev->w, (int)ev->n, ev->id, ev->at);
       barrier(); S->ev_r++;
     }
-    if (S->mouse_seq != mseq) {            /* the pointer: the guest moves it (absolute); buttons are the mouse's */
+    if (cphase == 0 && click_r != S->click_w) {   /* a click: to its place first, then pressed for 3 frames at least */
+      uint16_t w[3];
+      if (S->click_w - click_r > 4) click_r = S->click_w - 4;
+      mx = S->click_x[click_r % 4]; my = S->click_y[click_r % 4]; click_r++;
+      w[0] = (uint16_t)(0x0600 | 3); w[1] = (uint16_t)mx; w[2] = (uint16_t)my;
+      e->h_event(w, 3, 0, 0);
+      cphase = 1; cframes = 0;
+    }
+    /* the pointer: the guest moves it (absolute). Not while a click is going on, unless it is a held press that
+       nothing waits behind (a drag): a click's release must happen where it was pressed */
+    if (S->mouse_seq != mseq && (cphase == 0 || (cphase == 3 && click_r == S->click_w))) {
       mseq = S->mouse_seq;
       if (S->mouse_x != mx || S->mouse_y != my) {
         uint16_t w[3]; mx = S->mouse_x; my = S->mouse_y;
         w[0] = (uint16_t)(0x0600 | 3); w[1] = (uint16_t)mx; w[2] = (uint16_t)my;
         e->h_event(w, 3, 0, 0);
       }
-      e->btn = (int)S->mouse_btn;
     }
+    if (cphase == 3 && !(S->mouse_btn & 1)) { cphase = 4; cframes = 0; }   /* let go: a short release, then the next click */
+    e->btn = (cphase == 1 || cphase == 4 ? 0 : cphase == 2 ? 1 : (int)(S->mouse_btn & 1)) | (int)(S->mouse_btn & 2);
     while (S->key_r != S->key_w) {
       uint32_t kk = S->keys[S->key_r % BSHM_KEYS];
       if ((kk & 0xFFFF) < 512) e->held[kk & 0xFFFF] = (unsigned char)((kk >> 31) & 1);
@@ -280,6 +292,7 @@ int bs_engine_run(bs_engine *e)
       double a = now();
       e->c_run();
       busy += now() - a;
+      if (cphase && ++cframes >= (cphase == 2 ? 3 : 2)) { cphase = cphase == 1 ? 2 : cphase == 2 ? 3 : cphase == 4 ? 0 : cphase; cframes = 0; }
     } else nap(0.001);
     if (snap_now) {
       size_t sz = e->c_ssize(); void *b = malloc(sz);

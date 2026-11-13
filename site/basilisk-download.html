@@ -135,14 +135,29 @@ open BASILISK-3.11-macos-arm64.dmg</pre></td></tr>
 <div class="win" id="basilisk-16">
   <div class="cap"><span class="box"></span><span class="t">BASILISK 16 &mdash; an instrument made of sixteen Windows 3.11 Sound Recorders</span></div>
   <div class="body">
-    <img class="shot" src="basilisk-download/basilisk-16.png" width="1024" height="768" alt="BASILISK 16 in a DAW: sixteen Sound Recorder rows (status, green wave display, position, length, seek bar, Rewind, Forward, Play, Stop and Record), four of them playing, a DNA line, the effect and envelope panel, and the Windows Clock.">
+    <img class="shot" src="basilisk-download/basilisk-16.png" width="1024" height="768" alt="BASILISK 16 in a plugin host: sixteen Sound Recorder rows in two layer colours holding a piano and a glass sound, a header with Preset and Sound drop-downs, pan, offset and envelope controls and an envelope drawn by a seventeenth Sound Recorder, the DNA line and panel with four macros, the Windows Clock, and a five-octave keyboard of Windows buttons along the bottom with Bend and Mod scrollbars, Hold checked and four keys held down.">
     <p>A plugin instrument (VST3 for Windows and macOS, Audio Unit for macOS). Each copy runs its own Windows for Workgroups 3.11. When it loads, sixteen real Sound Recorders lose their menus and title bars and line up into one synthesizer, in under six seconds. Every note you play is played by Sound Recorder: the plugin picks a recorder, Windows presses its Play button, and Sound Recorder's own sound comes out of the emulated sound card into your DAW, at the pitch you played.</p>
-    <p>The sound is a <b>DNA</b>, a line of Sound Recorder commands run in order: <code>chimesE+;R900</code> loads CHIMES.WAV, adds an echo, turns it up, and releases over 900 ms. The commands are Sound Recorder's own menus: louder, softer, faster, slower, echo, reverse, copy and paste, insert or mix another sound, delete before or after a position. The DNA also sets harmony, unison, transpose, layers and the envelope. Change any of it in Windows with the panel, from the DAW's parameters, or with the 16 factory programs. Your DAW saves the DNA with the project.</p>
+    <p>The sound is a <b>DNA</b>, a line of Sound Recorder commands run in order: <code>chimesE+;R900</code> loads CHIMES.WAV, adds an echo, turns it up, and releases over 900 ms. The commands are Sound Recorder's own menus: louder, softer, faster, slower, echo, reverse, copy and paste, insert or mix another sound, delete before or after a position. The DNA also sets harmony, unison, transpose, layers and the envelope. Change any of it in Windows with the panel, from the DAW's parameters, or with the 71 programs. Your DAW saves the DNA with the project.</p>
+    <p><b>New in 1.2:</b></p>
+    <ul>
+      <li><b>Layered sounds.</b> Each layer has its own start offset, pan, and drawn volume and pan envelopes. A seventeenth Sound Recorder draws the selected layer&rsquo;s envelope in its green wave display.</li>
+      <li><b>Four macros.</b> They are automatable, and the DNA maps each one onto layer settings. The mod wheel adds to Macro 1.</li>
+      <li><b>A library disc.</b> 249 public-domain and CC0 sounds on drive L:, usable by name. Windows 3.1&rsquo;s CHORD and TADA are back in C:\WINDOWS.</li>
+      <li><b>A keyboard strip at the bottom, made of Windows 3.11 controls.</b>
+        <ul>
+          <li>Five octaves of push-button keys.</li>
+          <li>Bend and Mod scrollbars.</li>
+          <li>Hold, and the computer keyboard (a w s e d f&hellip;).</li>
+          <li>Incoming MIDI holds the keys down.</li>
+        </ul></li>
+      <li><b>Builds you can watch.</b> When a sound is rebuilt, each recorder&rsquo;s row lights up while it is being built, and its status field names each Sound Recorder command as it runs.</li>
+      <li><b>A batch renderer.</b> <code>render311</code> turns a DNA plus notes into a WAV through the real machine, faster than real time, with identical results on Windows, macOS and Linux.</li>
+    </ul>
     <div class="dl">
-      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-311-v1.1.0/BASILISK-16-windows-x64.zip"><b>Windows 10 / 11</b><span>VST3 &middot; x64 &middot; .zip &middot; <!--SIZE-b16win-->10 MB</span></a>
-      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-311-v1.1.0/BASILISK-16-macos-universal.zip"><b>macOS</b><span>VST3 + AU &middot; Apple silicon and Intel &middot; .zip &middot; <!--SIZE-b16mac-->24 MB</span></a>
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-311-v1.2.0/BASILISK-16-windows-x64.zip"><b>Windows 10 / 11</b><span>VST3 &middot; x64 &middot; .zip &middot; <!--SIZE-b16win-->100 MB</span></a>
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-311-v1.2.0/BASILISK-16-macos-universal.zip"><b>macOS</b><span>VST3 + AU &middot; Apple silicon and Intel &middot; .zip &middot; <!--SIZE-b16mac-->210 MB</span></a>
     </div>
-    <p class="note">Checksums and the patched DOSBox Pure source are on the <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-311-v1.1.0">release page</a>.</p>
+    <p class="note">Checksums, the patched DOSBox Pure source and the batch renderer are on the <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-311-v1.2.0">release page</a>.</p>
 
     <h2>Install</h2>
     <table>
@@ -152,10 +167,10 @@ open BASILISK-3.11-macos-arm64.dmg</pre></td></tr>
     </table>
 
     <h2>Good to know</h2>
-    <p>No account and no API key: this one never talks to Claude. The 16 factory sounds are in your DAW&rsquo;s preset list, and you can also type a DNA straight into Windows. A new sound is built while the old one keeps playing: Windows rebuilds one recorder at a time and plays your notes in between, so a preset change never interrupts you. Offline renders wait for the build and come out bit-identical every time, including after reloading the project. It reports a fixed latency of 60 ms, which DAWs compensate for on playback; you hear it when you play live. Each instance is an emulated PC that rests when it has nothing to do: about 13% of one core idle and 35% while playing, on the PC it was built on. Sixteen voices per instance; a seventeenth note steals the oldest.</p>
+    <p>No account and no API key: this one never talks to Claude. The 71 programs are in your DAW&rsquo;s preset list and in Windows&rsquo; Preset drop-down, and you can also type a DNA straight into Windows. A new sound is built while the old one keeps playing: Windows rebuilds one recorder at a time and plays your notes in between, so a preset change never interrupts you. Offline renders wait for the build and come out bit-identical every time, including after reloading the project; live playback never waits (it is silent for the few seconds Windows takes to assemble). It reports a fixed latency of 60 ms, which DAWs compensate for on playback; you hear it when you play live. Each instance is an emulated PC that rests when it has nothing to do: about 13% of one core idle and 35% while playing, on the PC it was built on. Sixteen voices per instance; a seventeenth note steals the oldest.</p>
 
     <h2>What is in it</h2>
-    <p class="note">Windows for Workgroups 3.11 (&copy; 1993 Microsoft), included as part of this art project. The emulator is <a href="https://codeberg.org/schelling/dosbox-pure">DOSBox Pure</a> (GPLv2 or later), with one addition: BSYN, an emulated 32-voice sound card, because Windows 3.11's Sound Blaster driver can only play one sound at a time. Its Windows 3.11 wave driver, the program that assembles the recorders, and the plugin (built with <a href="https://github.com/DISTRHO/DPF">DPF</a>) are in <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">packages/basilisk-synth-311</a>.</p>
+    <p class="note">Windows for Workgroups 3.11 and Windows 3.1&rsquo;s CHORD and TADA (&copy; 1992&ndash;1993 Microsoft), included as part of this art project. The emulator is <a href="https://codeberg.org/schelling/dosbox-pure">DOSBox Pure</a> (GPLv2 or later), with one addition: BSYN, an emulated 32-voice sound card, because Windows 3.11's Sound Blaster driver can only play one sound at a time. Its Windows 3.11 wave driver, the program that assembles the recorders, and the plugin (built with <a href="https://github.com/DISTRHO/DPF">DPF</a>) are in <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">packages/basilisk-synth-311</a>. The library sounds&rsquo; sources and licences are listed on the disc (\LIBRARY.TSV) and in <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth/library">packages/basilisk-synth/library</a>.</p>
   </div>
 </div>
 

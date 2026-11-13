@@ -30,6 +30,6 @@
 #define DISTRHO_PLUGIN_CLAP_FEATURES "instrument", "synthesizer", "sampler", "stereo"
 #define DISTRHO_PLUGIN_AU_TYPE aumu
 // VST3: map and list only the controllers it uses (sustain, all sound off, all notes off, pitch bend); patched DPF
-#define DPF_VST3_FEW_MIDI_CC 64, 120, 123, 129
+#define DPF_VST3_FEW_MIDI_CC 1, 64, 120, 123, 129   // mod wheel (adds to Macro 1), sustain, all off, pitch bend
 
 #endif

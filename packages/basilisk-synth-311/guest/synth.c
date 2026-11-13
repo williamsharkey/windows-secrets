@@ -17,12 +17,14 @@
 #include "bslink.h"
 
 #define NR 16
-#define ROW0 50
-#define ROWH 35
+#define ROW0 66      /* the header above: title, envelope, presets, library, pan, offset, envelope points */
+#define ROWH 30
 #define STRIPX 40
 #define STRIPW 924
-#define STRIPH 34
-#define PANEL 620
+#define STRIPH 30
+#define PANEL 550
+#define KBY 684      /* the keyboard strip: mod wheel, pitch bend, Hold, Keys, five octaves */
+#define ENVX 262
 #define NL 8
 #define NS 64
 
@@ -53,6 +55,10 @@
 
 HINSTANCE hInst;
 HWND hMain, hClock, hDna;
+HWND hEnvRec;          /* a seventeenth Sound Recorder: its green wave display draws the envelope */
+int envN[8], envT[8][8], envL[8][8];   /* the layers' amplitude envelopes as the host last sent them */
+static void show_envelope(void);
+static DWORD envWant;   /* the envelope view is redrawn when Windows is idle, 120 ms after the last change */
 /* One bank of sixteen. (A second, spare bank of sixteen was tried, to build a new DNA out of sight: Windows 3.11
    runs out of GDI resources at about 30 Sound Recorders, 4% free. So a new DNA is built in place, one recorder
    at a time, and notes keep being served between recorders; see build().) */
@@ -104,10 +110,58 @@ static int sound_index(const char *s, int n)
     for (i = 0; i < 35; i++) if ((int)strlen(names[i]) == n && !strncmp(names[i], s, n)) return i;
     return -1;
 }
-static const char *sound_file(int i)   /* Windows 3.11: only these four exist; every other NAME plays ding */
+/* DNA v2 library sounds (DNA.md 5.5): the library drive L: holds \LIBRARY.TSV (name, category, path, seconds,
+   source) and the WAVs. A name found there gets an index from 1000 on, into this small table for the build. */
+#define NLIB 32
+static char libPath[NLIB][72], libName[NLIB][33];
+static long libCs[NLIB], libRate[NLIB];
+static int nlib;
+static int lib_index(const char *name, int n)
 {
+    static char buf[1024]; static char line[400];
+    HFILE f; OFSTRUCT of; int got, ln = 0, k;
+    if (n > 32) return -1;
+    for (k = 0; k < nlib; k++) if ((int)strlen(libName[k]) == n && !strncmp(libName[k], name, n)) return 1000 + k;   /* this build's */
+    if (nlib >= NLIB) return -1;
+    f = OpenFile("L:\\LIBRARY.TSV", &of, OF_READ);
+    if (f == HFILE_ERROR) return -1;
+    while ((got = _lread(f, buf, sizeof buf)) > 0) {
+        int i;
+        for (i = 0; i < got; i++) {
+            char ch = buf[i];
+            if (ch == '\n' || ln >= (int)sizeof line - 1) {
+                line[ln] = 0; ln = 0;
+                if (!strncmp(line, name, n) && line[n] == '\t') {   /* name TAB category TAB path TAB seconds */
+                    char *c = strchr(line + n + 1, '\t'), *pth, *sec;
+                    if (!c) continue;
+                    pth = c + 1; sec = strchr(pth, '\t');
+                    if (sec) *sec++ = 0;
+                    k = nlib++;
+                    strcpy(libPath[k], "L:"); strncat(libPath[k], pth, 60);
+                    { char *cr = strchr(libPath[k], '\r'); if (cr) *cr = 0; }
+                    libCs[k] = sec ? (long)(atof(sec) * 100) : 100;
+                    libRate[k] = 22050;
+                    {   /* the rate from the WAV header */
+                        HFILE w = OpenFile(libPath[k], &of, OF_READ); BYTE h[64];
+                        if (w != HFILE_ERROR) { if (_lread(w, h, 64) == 64) libRate[k] = *(long *)(h + 24); _lclose(w); }
+                    }
+                    memcpy(libName[k], name, n); libName[k][n] = 0;
+                    _lclose(f);
+                    return 1000 + k;
+                }
+            } else if (ch != '\r') line[ln++] = ch;
+        }
+    }
+    _lclose(f);
+    return -1;
+}
+static const char *sound_file(int i)   /* C:\\WINDOWS: WfW 3.11's four, and 3.1's CHORD and TADA; every other NAME plays ding */
+{
+    if (i >= 1000) return libPath[i - 1000];
     switch (i) {
     case 0: return "C:\\WINDOWS\\CHIMES.WAV";
+    case 1: return "C:\\WINDOWS\\CHORD.WAV";
+    case 8: return "C:\\WINDOWS\\TADA.WAV";
     case 5: return "C:\\WINDOWS\\RINGIN.WAV";
     case 6: return "C:\\WINDOWS\\RINGOUT.WAV";
     }
@@ -115,17 +169,23 @@ static const char *sound_file(int i)   /* Windows 3.11: only these four exist; e
 }
 static int sound_cs(int i)   /* lengths in centiseconds, for the 30 s rule */
 {
-    switch (i) { case 0: return 72; case 5: return 90; case 6: return 47; }
+    if (i >= 1000) return (int)libCs[i - 1000];
+    switch (i) { case 0: return 72; case 1: return 113; case 5: return 90; case 6: return 47; case 8: return 126; }
     return 52;
 }
-static int sound_rate(int i) { return (i == 5 || i == 6) ? 11025 : 22050; }
+static int sound_rate(int i) { if (i >= 1000) return (int)libRate[i - 1000]; return (i == 5 || i == 6) ? 11025 : 22050; }
+static int sound_lookup(const char *s, int n)   /* the built-in table first, then the library (DNA.md 5.2) */
+{
+    int i = sound_index(s, n);
+    return i >= 0 ? i : lib_index(s, n);
+}
 
 typedef struct { char op; int arg; int sound; } STEP;
 typedef struct { int source; STEP st[NS]; int nst; int pool; int first, count; } LAYER;
 LAYER lay[NL];
 int nlay;
 
-static int isname(char c) { return (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'); }
+static int isname(char c) { return (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_'; }
 static int clampi(int v, int lo, int hi) { return v < lo ? lo : v > hi ? hi : v; }
 static int getint(const char **pp, int dflt)
 {
@@ -137,39 +197,86 @@ static int getint(const char **pp, int dflt)
     return (int)(neg ? -v : v);
 }
 
+/* DNA v2 macros (DNA.md 5.3): only N (repeat count of a layer's last step) changes what Sound Recorder builds;
+   the host does every other macro. Globals: mK=V sets macro K; mKLNmin,max maps it onto layer L's N (L 0 = all). */
+static void macro_repeats(const char *g)
+{
+    int mv[5] = {0, 0, 0, 0, 0}, i, L;
+    float nsum[NL]; int nmapped[NL];
+    const char *p;
+    for (i = 0; i < NL; i++) { nsum[i] = 0; nmapped[i] = 0; }
+    if (*g != ';') return;
+    for (p = g; *p; p++) if (p[0] == 'm' && p[1] >= '1' && p[1] <= '4' && p[2] == '=') { const char *q = p + 3; mv[p[1] - '0'] = clampi(getint(&q, 0), 0, 100); }
+    for (p = g; *p; p++) {
+        if (p[0] == 'm' && p[1] >= '1' && p[1] <= '4' && p[2] >= '0' && p[2] <= '8' && p[3] == 'N') {
+            const char *q = p + 4; int lo = getint(&q, 0), hi = lo, K = p[1] - '0';
+            if (*q == ',') { q++; hi = getint(&q, lo); }
+            L = p[2] - '0';
+            for (i = 0; i < nlay; i++) if (L == 0 || L - 1 == i) {
+                float v = lo + (hi - lo) * mv[K] / 100.f;
+                nsum[i] += nmapped[i] ? v - lo : v; nmapped[i]++;
+            }
+        }
+    }
+    for (i = 0; i < nlay; i++) if (nmapped[i] && lay[i].nst > 0) {   /* the last step, N times in all (0 = none) */
+        int n = clampi((int)(nsum[i] + 0.5f), 0, 8), k;
+        STEP last = lay[i].st[lay[i].nst - 1];
+        lay[i].nst--;
+        for (k = 0; k < n && lay[i].nst < NS; k++) lay[i].st[lay[i].nst++] = last;
+    }
+}
 static void dna_parse(const char *t)
 {
     const char *p = t;
     int i, k, left = NR, valid[NL], nv = 0, at = 0;
-    nlay = 0;
+    nlay = 0; nlib = 0;
+    for (i = 0; i < NL; i++) envN[i] = 0;
     while (*p && *p != ';') {
         LAYER L; const char *b = p;
         memset(&L, 0, sizeof L);
         while (isname(*p)) p++;
-        L.source = sound_index(b, (int)(p - b));
+        L.source = sound_lookup(b, (int)(p - b));
         while (*p && *p != '/' && *p != ';') {
             char c = *p++;
             switch (c) {
             case '+': case '-': case '>': case '<': case 'E': case 'R': case '[': case ']': case 'C': case 'P': case 'X':
                 if (L.nst < NS) { L.st[L.nst].op = c; L.nst++; }
                 break;
-            case '@': { int v = clampi(getint(&p, 0), 0, 99); if (L.nst < NS) { L.st[L.nst].op = '@'; L.st[L.nst].arg = v; L.nst++; } break; }
+            case '@':
+                if (*p == 't') { int v; p++; v = clampi(getint(&p, 0), 0, 30000); if (L.nst < NS) { L.st[L.nst].op = 't'; L.st[L.nst].arg = v; L.nst++; } }
+                else { int v = clampi(getint(&p, 0), 0, 99); if (L.nst < NS) { L.st[L.nst].op = '@'; L.st[L.nst].arg = v; L.nst++; } }
+                break;
             case 'I': case 'M': {
                 const char *q = p; int si;
                 while (isname(*p)) p++;
-                si = sound_index(q, (int)(p - q));
+                si = sound_lookup(q, (int)(p - q));
                 if (si >= 0 && L.nst < NS) { L.st[L.nst].op = c; L.st[L.nst].sound = si; L.nst++; }
                 break; }
             case '#': L.pool = clampi(getint(&p, 1), 1, NR); break;
             case 'T': case 'L': getint(&p, 0); break;
             case 'H': do { if (*p == ',') p++; getint(&p, 0); } while (*p == ','); break;
             case 'U': getint(&p, 1); if (*p == '~') { p++; getint(&p, 0); } break;
+            case 'O': case 'Q': getint(&p, 0); break;                          /* v2: offset, pan (the host's) */
+            case 'J': {                                                        /* v2: drawn envelope points */
+                int amp = *p != 'p', n = 0;
+                if (*p == 'a' || *p == 'p') p++;
+                while (n < 8 && ((*p >= '0' && *p <= '9') || *p == '-')) {
+                    int tt = getint(&p, 0), ll = 0;
+                    if (*p == ',') { p++; ll = getint(&p, 0); }
+                    if (amp && nlay < NL) { envT[nlay][n] = tt; envL[nlay][n] = ll; }
+                    n++;
+                    if (*p == '.') p++; else break;
+                }
+                while ((*p >= '0' && *p <= '9') || *p == ',' || *p == '.' || *p == '-') p++;
+                if (amp && nlay < NL) envN[nlay] = n;
+                break; }
             default: break;
             }
         }
         if (nlay < NL) lay[nlay++] = L;
         if (*p == '/') p++;
     }
+    macro_repeats(p);
     for (i = 0; i < nlay; i++) { lay[i].first = lay[i].count = 0; if (lay[i].source >= 0) valid[nv++] = i; }
     for (k = 0; k < nv; k++) {
         LAYER *L = &lay[valid[k]]; int later, cap, give, j;
@@ -195,9 +302,9 @@ static void dna_parse(const char *t)
 /* ================================================================ driving one Sound Recorder */
 typedef struct { int id; int x, y, w, h; } PART;
 static PART strip[] = {   /* wave display: Sound Recorder draws it at its own size, so it keeps that width */
-    {SR_STATUS, 4, 9, 80, 16}, {SR_WAVE, 88, 1, 133, 32}, {SR_POS, 228, 10, 66, 14}, {SR_LEN, 298, 10, 66, 14},
-    {SR_SCROLL, 370, 9, 270, 17}, {SR_REW, 648, 3, 52, 28}, {SR_FWD, 702, 3, 52, 28}, {SR_PLAY, 756, 3, 52, 28},
-    {SR_STOP, 810, 3, 52, 28}, {SR_REC, 864, 3, 52, 28}};
+    {SR_STATUS, 4, 7, 80, 16}, {SR_WAVE, 88, 1, 133, 28}, {SR_POS, 228, 8, 66, 14}, {SR_LEN, 298, 8, 66, 14},
+    {SR_SCROLL, 370, 6, 270, 17}, {SR_REW, 648, 1, 52, 28}, {SR_FWD, 702, 1, 52, 28}, {SR_PLAY, 756, 1, 52, 28},
+    {SR_STOP, 810, 1, 52, 28}, {SR_REC, 864, 1, 52, 28}};
 #define NPART (sizeof strip / sizeof strip[0])
 static int hidden[] = {300, 301, 304, 302, 305};
 
@@ -249,16 +356,60 @@ static void layout_strip(int r)   /* Sound Recorder re-lays its controls when it
         SetWindowPos(GetDlgItem(rw[r], strip[i].id), NULL, strip[i].x, strip[i].y, strip[i].w, strip[i].h, SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
+static void seek_ms(int r, int ms, int len_cs)   /* v2: the position slider to ms (clamped to the length) */
+{
+    HWND sb = GetDlgItem(rw[r], SR_SCROLL); int lo, hi, pos;
+    long len_ms = (long)len_cs * 10;
+    GetScrollRange(sb, SB_CTL, &lo, &hi);
+    if (len_ms <= 0) return;
+    if (ms > len_ms) ms = (int)len_ms;
+    pos = lo + (int)((long)(hi - lo) * ms / len_ms);
+    SendMessage(rw[r], WM_HSCROLL, SB_THUMBPOSITION, MAKELPARAM(pos, sb));
+    SendMessage(rw[r], WM_HSCROLL, SB_ENDSCROLL, MAKELPARAM(pos, sb));
+}
+
 static void pump(void)
 {
     MSG m;
     while (PeekMessage(&m, 0, 0, 0, PM_REMOVE)) { TranslateMessage(&m); DispatchMessage(&m); }
 }
 
+/* what Sound Recorder is doing, in its own status field (it shows the menu command being carried out) */
+static void op_label(int r, const char *t)
+{
+    HWND st = GetDlgItem(rw[r], SR_STATUS);
+    if (st) { SetWindowText(st, t); UpdateWindow(st); }
+}
+static const char *op_name(STEP *s, char *buf)
+{
+    switch (s->op) {
+    case '+': return "Louder"; case '-': return "Softer"; case '>': return "Faster"; case '<': return "Slower";
+    case 'E': return "Echo"; case 'R': return "Reverse"; case '[': return "Delete <"; case ']': return "Delete >";
+    case 'C': return "Copy"; case 'P': return "Paste"; case 'X': return "Paste mix";
+    case 'I': sprintf(buf, "Insert %.9s", s->sound >= 1000 ? libName[s->sound - 1000] : names[s->sound]); return buf;
+    case 'M': sprintf(buf, "Mix %.12s", s->sound >= 1000 ? libName[s->sound - 1000] : names[s->sound]); return buf;
+    case '@': sprintf(buf, "Seek %d%%", s->arg); return buf;
+    case 't': sprintf(buf, "Seek %d ms", s->arg); return buf;
+    }
+    return "";
+}
+int buildRow = -1;     /* the recorder being rebuilt (its number lights up) */
+static void light_row(int r)
+{
+    RECT b; int old = buildRow;
+    buildRow = r;
+    if (!hMain) return;
+    if (old >= 0) { SetRect(&b, 4, ROW0 + old * ROWH + 2, 36, ROW0 + old * ROWH + 30); InvalidateRect(hMain, &b, FALSE); }
+    if (r >= 0) { SetRect(&b, 4, ROW0 + r * ROWH + 2, 36, ROW0 + r * ROWH + 30); InvalidateRect(hMain, &b, FALSE); }
+    UpdateWindow(hMain);
+}
+
 /* one layer's steps, on one recorder; returns its final length in centiseconds */
 static int run_steps(int r, LAYER *L)
 {
     int i, len, clip, first_c = -1, needcopy = 0;
+    char lbl[32];
+    if (assembled) { sprintf(lbl, "Open %.10s", L->source >= 1000 ? libName[L->source - 1000] : names[L->source]); op_label(r, lbl); }
     bs_arm(rt[r], 0, 0, 0);            /* Sound Recorder plays a dropped file: that play is silent */
     drop_file(r, sound_file(L->source));
     {   /* it starts playing the dropped file a moment later: stop it as soon as it does */
@@ -286,6 +437,7 @@ static int run_steps(int r, LAYER *L)
         case 'X': case 'M': predict = len > clip ? len : clip; if (s->op == 'M' && sound_cs(s->sound) > predict) predict = sound_cs(s->sound); break;
         }
         if (predict > 3000) continue;                       /* the 30 s rule: both editions skip it */
+        if (assembled) op_label(r, op_name(s, lbl));
         switch (s->op) {
         case '+': menu(r, SR_VOLUP); break;
         case '-': menu(r, SR_VOLDN); break;
@@ -301,10 +453,12 @@ static int run_steps(int r, LAYER *L)
         case 'I': HookPending(sound_file(s->sound)); menu(r, SR_INSERT); break;
         case 'M': HookPending(sound_file(s->sound)); menu(r, SR_MIX); break;
         case '@': seek_pct(r, s->arg); break;
+        case 't': seek_ms(r, s->arg, len); break;
         }
         len = length_cs(r);
     }
     press(r, SR_REW);
+    if (assembled) op_label(r, "Stopped");
     return len;
 }
 
@@ -357,22 +511,32 @@ static void build(const char *dna)
     HookActive(TRUE);
     /* in place, one recorder at a time; between recorders the host's notes are served. A note on a recorder
        already rebuilt plays its new sound, at the pitch the host meant (see play_rec), so nothing goes silent */
-    for (i = 0; i < nlay; i++) {
-        LAYER *L = &lay[i];
-        int len = 0;
-        for (r = L->first; r < L->first + L->count; r++) {
-            int a = tb * NR + r;
-            stop_rec(a, 0, 1500);        /* an old note on it rings out (the card fades it over 1.5 s) */
-            rlayer[a] = i;
-            len = run_steps(a, L);
-            recRate[a] = sound_rate(L->source);
-            layout_strip(a);
-            poll_host();
-            pump();
-        }
-        layer_len[i] = len;
+    /* idle recorders first; a recorder still sounding a note goes last, and gets up to 1.5 s to finish it (notes are
+       served meanwhile), because loading the new sound stops whatever it plays */
+    {
+        int pass, done[NR];
+        for (r = 0; r < NR; r++) done[r] = 0;
+        for (pass = 0; pass < 2; pass++)
+            for (i = 0; i < nlay; i++) {
+                LAYER *L = &lay[i];
+                for (r = L->first; r < L->first + L->count; r++) {
+                    int a = tb * NR + r;
+                    if (done[r] || (pass == 0 && rplay[a])) continue;
+                    if (pass == 1) { DWORD tw = timeGetTime(); while (rplay[a] && timeGetTime() - tw < 1500) { if (!poll_host()) bs_idle(); pump(); } }
+                    stop_rec(a, 0, 1500);        /* an old note on it rings out (the card fades it over 1.5 s) */
+                    rlayer[a] = i;
+                    light_row(r);
+                    layer_len[i] = run_steps(a, L);
+                    recRate[a] = sound_rate(L->source);
+                    layout_strip(a);
+                    done[r] = 1;
+                    poll_host();
+                    pump();
+                }
+            }
     }
     HookActive(FALSE);
+    light_row(-1);
     for (r = 0; r < NALL; r++) hostRate[r] = recRate[r];   /* the host learns the new rates from the replies */
     lstrcpyn(dnaText, dna, sizeof dnaText);
     if (hDna) SetWindowText(hDna, dnaText);
@@ -387,7 +551,7 @@ static void build(const char *dna)
 }
 
 /* ================================================================ notes */
-static void play_rec(int r, DWORD id, DWORD hz, WORD vol)
+static void play_rec(int r, DWORD id, DWORD hz, WORD vol, int pan, int layer)
 {
     if (r < 0 || r >= NR) return;
     r = AR(r);
@@ -399,7 +563,7 @@ static void play_rec(int r, DWORD id, DWORD hz, WORD vol)
     t1 = timeGetTime();
     press(r, SR_REW);
     t2 = timeGetTime();
-    bs_arm(rt[r], id, hz, vol);
+    bs_arm2(rt[r], id, hz, vol, pan, layer < 0 ? rlayer[r] : layer);
     press(r, SR_PLAY);
     t3 = timeGetTime();
     if (t3 - t0 > 30) logf_("slow play rec %d: stop %ld rew %ld play %ld ms", r, t1 - t0, t2 - t1, t3 - t2);
@@ -432,6 +596,218 @@ static void set_time(int Y, int M, int D, int h, int m, int s)
 }
 
 
+static int mkGroup = -1, grpN[7];
+static BOOL listsWanted;
+static HWND grpWin[7][72];
+static void show_group(int g)
+{
+    int i;
+    for (i = 0; i < grpN[g]; i++) ShowWindow(grpWin[g][i], SW_SHOWNA);
+    UpdateWindow(hMain);
+}
+
+/* ================================================================ the keyboard strip (DNA.md 5.4) */
+/* Five octaves of keys along the bottom, a pitch bend and a mod wheel, Hold and Keys: Windows 3.11's own controls.
+   White keys are push buttons (pressed = the button's own pushed-in look), black keys are black-rectangle statics
+   (pressed = grey). The mouse and the computer keyboard play through the host (`key`), and the host shows what it
+   plays (`show`), so the keys go down for MIDI notes too. */
+#define KLO 36          /* C2 */
+#define KHI 96          /* C7 */
+#define KX0 138
+#define KWW 24          /* white key width */
+#define KWH 58          /* white key height */
+#define KBW 14
+#define KBH 35
+#define ID_HOLD 1151
+#define ID_KEYS 1152
+static HWND hKey[128], hBend, hMod, hHold, hKeysChk, hOctLbl;
+static BYTE hostDown[128], kbdDown[128], latched[128];
+static int mouseNote = -1, holdOn, keysOn, octBase = 60, modVal, bendVal;
+static WNDPROC oldBtnProc, oldStaticProc;
+static int is_black(int n) { int k = n % 12; return k == 1 || k == 3 || k == 6 || k == 8 || k == 10; }
+static int white_index(int n) { static const int w[12] = {0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6}; return (n / 12 - KLO / 12) * 7 + w[n % 12]; }
+static void key_rect(int n, RECT *r)
+{
+    if (is_black(n)) { int x = KX0 + (white_index(n) + 1) * KWW - KBW / 2; SetRect(r, x, KBY, x + KBW, KBY + KBH); }
+    else { int x = KX0 + white_index(n) * KWW; SetRect(r, x, KBY, x + KWW + 1, KBY + KWH); }
+}
+static void key_visual(int n)
+{
+    int down;
+    if (n < KLO || n > KHI || !hKey[n]) return;
+    down = hostDown[n] || kbdDown[n] || latched[n] || mouseNote == n;
+    if (is_black(n)) {
+        LONG st = GetWindowLong(hKey[n], GWL_STYLE), want = (st & ~0x1FL) | (down ? SS_GRAYRECT : SS_BLACKRECT);
+        if (st != want) { SetWindowLong(hKey[n], GWL_STYLE, want); InvalidateRect(hKey[n], NULL, TRUE); }
+    } else {   /* pushed in, with a dot on it */
+        SendMessage(hKey[n], BM_SETSTATE, down ? TRUE : FALSE, 0L);
+        SetWindowText(hKey[n], down ? "\x95" : "");
+    }
+}
+static void note_on(int n, int vel) { if (n < 0 || n > 127) return; latched[n] = 0; say("key %d %d", n, vel); }
+static void note_off(int n)
+{
+    if (n < 0 || n > 127) return;
+    if (holdOn) latched[n] = 1;          /* Hold: the note stays down until Hold is let go */
+    else say("key %d 0", n);
+}
+static int note_at(int x, int y, int *vel)
+{
+    int n;
+    if (y < KBY || y >= KBY + KWH || x < KX0) return -1;
+    *vel = 40 + 87 * (y - KBY) / KWH;   /* nearer the front of the key, louder */
+    if (y < KBY + KBH)
+        for (n = KLO; n <= KHI; n++) if (is_black(n)) { RECT r; key_rect(n, &r); if (x >= r.left && x < r.right) return n; }
+    for (n = KLO; n <= KHI; n++) if (!is_black(n)) { RECT r; key_rect(n, &r); if (x >= r.left && x < r.right - 1) return n; }
+    return -1;
+}
+static void kb_mouse(HWND h, LPARAM l, int up)
+{
+    POINT p; int n, vel = 100, old = mouseNote;
+    p.x = (short)LOWORD(l); p.y = (short)HIWORD(l);
+    ClientToScreen(h, &p); ScreenToClient(hMain, &p);
+    n = up ? -1 : note_at(p.x, p.y, &vel);
+    if (n == old) return;
+    mouseNote = n;
+    if (old >= 0) { if (!kbdDown[old]) note_off(old); key_visual(old); }
+    if (n >= 0) { note_on(n, vel); key_visual(n); }
+}
+long FAR PASCAL __export KeyProc(HWND h, UINT m, WPARAM w, LPARAM l)
+{
+    switch (m) {
+    case WM_NCHITTEST: return HTCLIENT;
+    case WM_LBUTTONDOWN: case WM_LBUTTONDBLCLK: SetCapture(h); kb_mouse(h, l, 0); return 0;
+    case WM_MOUSEMOVE: if (GetCapture() == h) kb_mouse(h, l, 0); return 0;
+    case WM_LBUTTONUP: if (GetCapture() == h) { ReleaseCapture(); kb_mouse(h, l, 1); } return 0;
+    }
+    return CallWindowProc((FARPROC)((GetWindowWord(h, GWW_ID) & 0x200) ? oldStaticProc : oldBtnProc), h, m, w, l);
+}
+static void hold_set(int on)
+{
+    int n;
+    holdOn = on;
+    if (on) return;
+    for (n = 0; n < 128; n++) if (latched[n]) { latched[n] = 0; if (!kbdDown[n] && mouseNote != n) say("key %d 0", n); key_visual(n); }
+}
+static void oct_label(void)
+{
+    static const char *nm[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+    char t[32];
+    sprintf(t, "z x: %s%d", nm[octBase % 12], octBase / 12 - 1);
+    if (hOctLbl) SetWindowText(hOctLbl, t);
+}
+static int computer_key(WPARAM vk, LPARAM l, int down)   /* a w s e d f t g y h u j k: C..C; z x: octave */
+{
+    static const char map[] = "AWSEDFTGYHUJK";
+    const char *p;
+    if (!keysOn) return 0;
+    if (down && (l & 0x40000000L)) return 1;            /* auto-repeat */
+    if (vk == 'Z' || vk == 'X') { if (down) { octBase += vk == 'Z' ? -12 : 12; if (octBase < 24) octBase = 24; if (octBase > 96) octBase = 96; oct_label(); } return 1; }
+    p = vk < 128 ? strchr(map, (int)vk) : NULL;
+    if (!p || !*p) return 0;
+    {
+        int n = octBase + (int)(p - map);
+        if (n > 127) return 1;
+        if (down && !kbdDown[n]) { kbdDown[n] = 1; note_on(n, 100); }
+        else if (!down && kbdDown[n]) { kbdDown[n] = 0; if (mouseNote != n) note_off(n); }
+        key_visual(n);
+    }
+    return 1;
+}
+static void kb_scroll(HWND sb, int code, int pos)
+{
+    int lo, hi, v;
+    if (sb != hBend && sb != hMod) return;
+    GetScrollRange(sb, SB_CTL, &lo, &hi);
+    v = GetScrollPos(sb, SB_CTL);
+    switch (code) {
+    case SB_LINEUP: v -= sb == hBend ? 512 : 4; break; case SB_LINEDOWN: v += sb == hBend ? 512 : 4; break;
+    case SB_PAGEUP: v -= sb == hBend ? 2048 : 16; break; case SB_PAGEDOWN: v += sb == hBend ? 2048 : 16; break;
+    case SB_THUMBTRACK: case SB_THUMBPOSITION: v = pos; break;
+    case SB_ENDSCROLL:
+        if (sb == hBend) { v = 0; break; }                /* the bend springs back */
+        return;
+    default: return;
+    }
+    if (v < lo) v = lo; if (v > hi) v = hi;
+    SetScrollPos(sb, SB_CTL, v, TRUE);
+    if (sb == hBend) { if (-v != bendVal) { bendVal = -v; say("bend %d", bendVal); } }   /* up = higher */
+    else if (127 - v != modVal) { modVal = 127 - v; say("cc 1 %d", modVal); }
+}
+static void kb_show(const char *what, const char *rest)    /* the host: incoming MIDI, for the eye only */
+{
+    if (!strcmp(what, "show")) {
+        int n = 0, v = 0;
+        sscanf(rest, "%d %d", &n, &v);
+        if (n >= 0 && n < 128) { hostDown[n] = v > 0; key_visual(n); }
+    } else if (!strcmp(what, "cc")) {
+        int c = 0, v = 0;
+        sscanf(rest, "%d %d", &c, &v);
+        if (c == 1 && hMod && GetCapture() != hMod) { modVal = v; SetScrollPos(hMod, SB_CTL, 127 - v, TRUE); }
+    } else if (!strcmp(what, "bend")) {
+        bendVal = atoi(rest);
+        if (hBend && GetCapture() != hBend) SetScrollPos(hBend, SB_CTL, -bendVal, TRUE);
+    }
+}
+static HWND mk(const char *cls, const char *text, DWORD st, int x, int y, int w, int h, int id);
+static void keyboard_create(void)   /* at boot, hidden */
+{
+    int n, g = mkGroup;
+    hBend = mk("SCROLLBAR", "", WS_VISIBLE | SBS_VERT, 4, KBY, 17, KWH, 1153);     /* the two wheels, full height */
+    SetScrollRange(hBend, SB_CTL, -8191, 8192, FALSE); SetScrollPos(hBend, SB_CTL, 0, TRUE);
+    hMod = mk("SCROLLBAR", "", WS_VISIBLE | SBS_VERT, 24, KBY, 17, KWH, 1154);
+    SetScrollRange(hMod, SB_CTL, 0, 127, FALSE); SetScrollPos(hMod, SB_CTL, 127, TRUE);
+    mk("STATIC", "Bend Mod", WS_VISIBLE, 46, KBY, 88, 14, -1);
+    hHold = mk("BUTTON", "Hold", WS_VISIBLE | BS_AUTOCHECKBOX, 46, KBY + 14, 80, 15, ID_HOLD);
+    hKeysChk = mk("BUTTON", "Keys", WS_VISIBLE | BS_AUTOCHECKBOX, 46, KBY + 29, 80, 15, ID_KEYS);
+    hOctLbl = mk("STATIC", "", WS_VISIBLE, 46, KBY + 44, 88, 14, -1);
+    oct_label();
+    mkGroup = -1;                      /* the keys are shown by keyboard_show's sweep */
+    for (n = KLO; n <= KHI; n++) {     /* whites, then blacks on top of them */
+        RECT r; int b = is_black(n);
+        key_rect(n, &r);
+        if (b) continue;
+        hKey[n] = mk("BUTTON", "", WS_CLIPSIBLINGS | BS_PUSHBUTTON, r.left, r.top, r.right - r.left, r.bottom - r.top, 0x100 | n);
+        {   /* the dot of a pressed key: big, low on the key (the text sits in the middle of the button) */
+            static HFONT dot;
+            if (!dot) dot = CreateFont(40, 0, 0, 0, FW_BOLD, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Arial");
+            SendMessage(hKey[n], WM_SETFONT, (WPARAM)dot, 0L);
+        }
+        if (!oldBtnProc) oldBtnProc = (WNDPROC)GetWindowLong(hKey[n], GWL_WNDPROC);
+        SetWindowLong(hKey[n], GWL_WNDPROC, (LONG)MakeProcInstance((FARPROC)KeyProc, hInst));
+    }
+    for (n = KLO; n <= KHI; n++) if (is_black(n)) {
+        RECT r; key_rect(n, &r);
+        hKey[n] = mk("STATIC", "", WS_CLIPSIBLINGS | SS_BLACKRECT, r.left, r.top, r.right - r.left, r.bottom - r.top, 0x300 | n);
+        if (!oldStaticProc) oldStaticProc = (WNDPROC)GetWindowLong(hKey[n], GWL_WNDPROC);
+        SetWindowLong(hKey[n], GWL_WNDPROC, (LONG)MakeProcInstance((FARPROC)KeyProc, hInst));
+        SetWindowPos(hKey[n], HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    }
+    mkGroup = g;
+}
+static void keyboard_show(void)     /* part of the assembly: wheels and switches, then the keys left to right */
+{
+    int n, failed = 0, late = 0;
+    show_group(6);
+    for (n = KLO; n <= KHI; n += 12) {   /* an octave at a time, left to right: one batch each (whites, then blacks on top) */
+        int k, pass;
+        for (pass = 0; pass < 2; pass++) {   /* the whites painted before the blacks arrive on them */
+            HDWP dw = BeginDeferWindowPos(7);
+            for (k = n; k < n + 12 && k <= KHI; k++)
+                if (is_black(k) == pass) dw = DeferWindowPos(dw, hKey[k], pass ? HWND_TOP : NULL, 0, 0, 0, 0,
+                                                             SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW | (pass ? 0 : SWP_NOZORDER));
+            if (!dw || !EndDeferWindowPos(dw)) { failed++;   /* (a batch can fail): one by one instead */
+                for (k = n; k < n + 12 && k <= KHI; k++) if (is_black(k) == pass) ShowWindow(hKey[k], SW_SHOWNA);
+            }
+            for (k = n; k < n + 12 && k <= KHI; k++) if (is_black(k) == pass) UpdateWindow(hKey[k]);
+        }
+        poll_host();
+    }
+    for (n = KLO; n <= KHI; n++) if (!IsWindowVisible(hKey[n])) { ShowWindow(hKey[n], SW_SHOWNA); late++; }
+    if (failed || late) logf_("keyboard: %d batches failed, %d keys shown late", failed, late);
+}
+
+
 /* ================================================================ the panel: editing the DNA from Windows */
 /* The panel's controls change the DNA text the same way the host's core does (packages/basilisk-synth/core):
    steps are appended to the layer, a gene or a global replaces its last occurrence. Windows rebuilds what it
@@ -445,6 +821,14 @@ static void set_time(int Y, int M, int D, int h, int m, int s)
 #define ID_HARM 1144
 #define ID_SB 1160         /* + scrollbar index */
 #define ID_VAL 1180        /* + value label index */
+#define ID_PRESET 1145     /* the preset browser (L:\\PRESETS.TSV) */
+#define ID_LIBRARY 1146    /* every sound: the four of C:\\WINDOWS and the library disc (L:\\LIBRARY.TSV) */
+#define ID_ENVPREV 1147    /* the drawn envelope's points: < > + - */
+#define ID_ENVNEXT 1148
+#define ID_ENVADD 1149
+#define ID_ENVDEL 1150
+#define ID_PRESETPREV 1155
+#define ID_PRESETNEXT 1156
 static const char *panelSounds[4] = {"chimes", "ding", "ringin", "ringout"};
 static const char *stepNames[10] = {"Louder", "Softer", "Faster", "Slower", "Echo", "Reverse", "Del <", "Del >", "Copy", "Paste"};
 static const char stepOps[10] = {'+', '-', '>', '<', 'E', 'R', '[', ']', 'C', 'P'};
@@ -453,10 +837,17 @@ static const char *harmGenes[6] = {"H0", "H0,12", "H0,7", "H0,4,7", "H0,3,7", "H
 typedef struct { const char *label; char letter; int lo, hi; BOOL global; } SLIDER;
 static SLIDER sliders[] = {
     {"Voices", '#', 1, 16, FALSE}, {"Transpose", 'T', -24, 24, FALSE}, {"Unison", 'U', 1, 8, FALSE}, {"Level", 'L', 0, 400, FALSE},
-    {"Attack", 'A', 0, 2000, TRUE}, {"Decay", 'D', 0, 2000, TRUE}, {"Sustain", 'S', 0, 100, TRUE}, {"Release", 'R', 0, 3000, TRUE}};
+    {"Attack", 'A', 0, 2000, TRUE}, {"Decay", 'D', 0, 2000, TRUE}, {"Sustain", 'S', 0, 100, TRUE}, {"Release", 'R', 0, 3000, TRUE},
+    /* v2 (DNA.md 5): the layer's pan and start offset; the selected envelope point's time and level; the four macros */
+    {"Pan", 'Q', -100, 100, FALSE}, {"Offset", 'O', 0, 4000, FALSE}, {"ms", 'e', 0, 4000, FALSE}, {"%", 'l', 0, 100, FALSE},
+    {"Macro 1", '1', 0, 100, TRUE}, {"Macro 2", '2', 0, 100, TRUE}, {"Macro 3", '3', 0, 100, TRUE}, {"Macro 4", '4', 0, 100, TRUE}};
+#define SL_PAN 8
+#define SL_ETIME 10
+#define SL_ELEVEL 11
+#define SL_MACRO 12
 #define NSL (sizeof sliders / sizeof sliders[0])
-static HWND hSb[NSL], hVal[NSL], hLayerLbl, hHarm;
-static int harmIdx;
+static HWND hSb[NSL], hVal[NSL], hLayerLbl, hHarm, hPreset, hLibrary, hEnvLbl;
+static int harmIdx, envPt;
 
 /* the span of layer i in dnaText (or of the globals, i = -1) */
 static void span(int li, int *b, int *e)
@@ -488,12 +879,18 @@ static int token(const char *p, int *len, char *letter)
     switch (c) {
     case '+': case '-': case '>': case '<': case 'E': case 'R': case '[': case ']': case 'C': case 'P': case 'X':
         *len = 1; return 's';
-    case '@': getint(&q, 0); *len = (int)(q - p); return 's';
+    case '@': if (*q == 't') q++; getint(&q, 0); *len = (int)(q - p); return 's';
     case 'I': case 'M': while (isname(*q)) q++; *len = (int)(q - p); return 's';
     case '#': case 'T': case 'L': getint(&q, 0); *len = (int)(q - p); return 'g';
     case 'H': do { if (*q == ',') q++; getint(&q, 0); } while (*q == ','); *len = (int)(q - p); return 'g';
     case 'U': getint(&q, 1); if (*q == '~') { q++; getint(&q, 0); } *len = (int)(q - p); return 'g';
     case 'F': *len = 1; return 'g';
+    case 'O': case 'Q': getint(&q, 0); *len = (int)(q - p); return 'g';
+    case 'J':                     /* v2 drawn envelope: Ja (letter 'J') and Jp (letter 'j') are separate genes */
+        if (*q == 'p') *letter = 'j';
+        if (*q == 'a' || *q == 'p') q++;
+        while ((*q >= '0' && *q <= '9') || *q == ',' || *q == '.' || *q == '-') q++;
+        *len = (int)(q - p); return 'g';
     }
     *len = 1; return 'x';
 }
@@ -550,6 +947,71 @@ static int global_value(char letter, int dflt)
     for (p = b; p < e; p++) if (dnaText[p] == letter) { const char *q = dnaText + p + 1; v = getint(&q, dflt); }
     return v;
 }
+/* v2 macros: mK=V among the globals */
+static int macro_value(int k)
+{
+    int b, e, p, v = 0;
+    span(-1, &b, &e);
+    for (p = b; p + 2 < e; p++) if (dnaText[p] == 'm' && dnaText[p + 1] == '0' + k && dnaText[p + 2] == '=') { const char *q = dnaText + p + 3; v = getint(&q, 0); }
+    return v;
+}
+static void macro_set(int k, int v)
+{
+    int b, e, p; char tok[16];
+    if (!strchr(dnaText, ';')) strcat(dnaText, ";");
+    span(-1, &b, &e);
+    for (p = b; p + 2 < e;) {
+        if (dnaText[p] == 'm' && dnaText[p + 1] == '0' + k && dnaText[p + 2] == '=') {
+            const char *q = dnaText + p + 3; int len;
+            getint(&q, 0); len = (int)(q - (dnaText + p));
+            splice(p, p + len, ""); e -= len; continue;
+        }
+        p++;
+    }
+    sprintf(tok, "m%d=%d", k, v);
+    span(-1, &b, &e); splice(e, e, tok);
+}
+/* v2 drawn envelope (Ja) of layer li as written in the DNA: n points of (ms, level %) */
+static int env_get(int li, int *t, int *l)
+{
+    int b, e, p, len, n = 0; char L;
+    span(li, &b, &e);
+    if (b < 0) return 0;
+    p = b; while (isname(dnaText[p])) p++;
+    while (p < e) {
+        int k = token(dnaText + p, &len, &L);
+        if (!k) break;
+        if (k == 'g' && L == 'J') {
+            const char *q = dnaText + p + 2;
+            n = 0;
+            while (n < 8 && ((*q >= '0' && *q <= '9') || *q == '-')) {
+                t[n] = getint(&q, 0); l[n] = 0;
+                if (*q == ',') { q++; l[n] = getint(&q, 0); }
+                n++;
+                if (*q == '.') q++; else break;
+            }
+        }
+        p += len;
+    }
+    return n;
+}
+static void env_put(int li, int n, const int *t, const int *l)
+{
+    char tok[120], *o = tok; int k;
+    if (n > 0) {
+        o += sprintf(o, "Ja");
+        for (k = 0; k < n; k++) o += sprintf(o, "%s%d,%d", k ? "." : "", t[k], l[k]);
+    }
+    *o = 0;
+    layer_edit(li, 0, 'J', tok);
+}
+/* a layer with no drawn envelope gets one shaped like A/D/S, so there is something to move */
+static int env_seed(int *t, int *l)
+{
+    int a = envA > 10 ? envA : 10, d = envD > 200 ? envD : 200;
+    t[0] = 0; l[0] = 0; t[1] = a; l[1] = 100; t[2] = a + d; l[2] = envS; t[3] = a + d + 600; l[3] = envS;
+    return 4;
+}
 static void harmony_from_dna(void)   /* the Harmony button follows the DNA's H gene for the selected layer */
 {
     int b, e, p, len, k; char L; static char t[64];
@@ -573,14 +1035,27 @@ static void panel_refresh(void)
     harmony_from_dna();
     if (hHarm) SetWindowText(hHarm, harmNames[harmIdx]);
     if (hDna) SetWindowText(hDna, dnaText);
-    for (i = 0; i < (int)NSL; i++) {
-        SLIDER *S = &sliders[i];
-        int dflt = S->letter == '#' ? (lay[selLayer].count ? lay[selLayer].count : 1) : S->letter == 'U' ? 1 : S->letter == 'L' ? 100 :
-                   S->letter == 'S' ? 100 : S->letter == 'R' ? 120 : 0;
-        int v = S->global ? global_value(S->letter, dflt) : gene_value(selLayer, S->letter, dflt);
-        SetScrollPos(hSb[i], SB_CTL, v, TRUE);
-        sprintf(t, "%d", v);
-        SetWindowText(hVal[i], t);
+    {
+        int et[8], el[8], en = env_get(selLayer, et, el);
+        if (envPt >= en) envPt = en ? en - 1 : 0;
+        for (i = 0; i < (int)NSL; i++) {
+            SLIDER *S = &sliders[i];
+            int dflt = S->letter == '#' ? (lay[selLayer].count ? lay[selLayer].count : 1) : S->letter == 'U' ? 1 : S->letter == 'L' ? 100 :
+                       S->letter == 'S' ? 100 : S->letter == 'R' ? 120 : 0;
+            int v;
+            if (!hSb[i]) continue;
+            if (S->letter >= '1' && S->letter <= '4') v = macro_value(S->letter - '0');
+            else if (S->letter == 'e') v = en ? et[envPt] : 0;
+            else if (S->letter == 'l') v = en ? el[envPt] : 0;
+            else v = S->global ? global_value(S->letter, dflt) : gene_value(selLayer, S->letter, dflt);
+            SetScrollPos(hSb[i], SB_CTL, v, TRUE);
+            sprintf(t, "%d", v);
+            if (hVal[i]) SetWindowText(hVal[i], t);
+        }
+        if (hEnvLbl) {
+            if (en) sprintf(t, "%d/%d %dms %d%%", envPt + 1, en, et[envPt], el[envPt]); else strcpy(t, "A/D/S");
+            SetWindowText(hEnvLbl, t);
+        }
     }
     sprintf(t, "Layer %d of %d", selLayer + 1, nlay);
     SetWindowText(hLayerLbl, t);
@@ -594,13 +1069,135 @@ static void edited(BOOL rebuild)
     else {
         envA = global_value('A', 0); envD = global_value('D', 0); envS = global_value('S', 100); envR = global_value('R', 120);
         bs_env((WORD)envA, (WORD)envD, (WORD)envS);
+        {
+            int i, t[8], l[8];
+            for (i = 0; i < nlay && i < NL; i++) {
+                int n = env_get(i, t, l), k;
+                envN[i] = n;
+                for (k = 0; k < n; k++) { envT[i][k] = t[k]; envL[i][k] = l[k]; }
+                bs_lenv(i, 0, n, t, l);
+            }
+        }
+        show_envelope();
     }
     panel_refresh();
 }
-static void panel_command(int id)
+static void read_lines(const char *path, void (*fn)(char *line, long off))   /* a text file on a disc, line by line */
+{
+    OFSTRUCT of; HFILE f = OpenFile(path, &of, OF_READ);
+    static char buf[512], ln[1100]; int n, i, m = 0; long off = 0, start = 0;
+    if (f == HFILE_ERROR) return;
+    while ((n = _lread(f, buf, sizeof buf)) > 0) {
+        poll_host();                     /* notes are served while a long list is read */
+        for (i = 0; i < n; i++, off++) {
+            char c = buf[i];
+            if (c == '\n') { ln[m] = 0; if (m && ln[m - 1] == '\r') ln[m - 1] = 0; fn(ln, start); m = 0; start = off + 1; }
+            else if (m < (int)sizeof ln - 1) ln[m++] = c;
+        }
+    }
+    if (m) { ln[m] = 0; fn(ln, start); }
+    _lclose(f);
+}
+static void add_preset(char *ln, long off)    /* category TAB name TAB DNA -> "Category: Name" (its DNA is re-read when picked) */
+{
+    char *a = strchr(ln, '\t'), *b, t[80]; int i;
+    if (!a || ln[0] == '#') return;
+    *a = 0; b = strchr(a + 1, '\t'); if (!b) return; *b = 0;
+    sprintf(t, "%.30s: %.44s", ln, a + 1);
+    i = (int)SendMessage(hPreset, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t);
+    if (i >= 0) SendMessage(hPreset, CB_SETITEMDATA, i, off);
+}
+static long wantOff; static char pickedDna[1100];
+static void pick_preset(char *ln, long off)
+{
+    char *a, *b;
+    if (off != wantOff) return;
+    a = strchr(ln, '\t'); b = a ? strchr(a + 1, '\t') : NULL;
+    if (b) lstrcpyn(pickedDna, b + 1, sizeof pickedDna);
+}
+static void add_sound(char *ln, long off)     /* name TAB category ... -> "category: name" */
+{
+    char *a = strchr(ln, '\t'), *b, t[80];
+    (void)off;
+    if (!a) return;
+    *a = 0; b = strchr(a + 1, '\t'); if (b) *b = 0;
+    sprintf(t, "%.20s: %.40s", a + 1, ln);
+    SendMessage(hLibrary, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t);
+}
+static void panel_lists(void)
+{
+    int i; char t[48];
+    SendMessage(hPreset, CB_RESETCONTENT, 0, 0L);
+    read_lines("L:\\PRESETS.TSV", add_preset);
+    SendMessage(hLibrary, CB_RESETCONTENT, 0, 0L);
+    for (i = 0; i < 4; i++) { sprintf(t, "windows: %s", panelSounds[i]); SendMessage(hLibrary, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t); }
+    read_lines("L:\\LIBRARY.TSV", add_sound);
+}
+static void combo_pick(int id)
+{
+    HWND cb = id == ID_PRESET ? hPreset : hLibrary;
+    int i = (int)SendMessage(cb, CB_GETCURSEL, 0, 0L), b, e;
+    char t[80], *nm;
+    if (i < 0 || building) return;
+    if (id == ID_PRESET) {
+        wantOff = SendMessage(cb, CB_GETITEMDATA, i, 0L); pickedDna[0] = 0;
+        read_lines("L:\\PRESETS.TSV", pick_preset);
+        if (pickedDna[0]) { lstrcpyn(dnaText, pickedDna, sizeof dnaText); selLayer = 0; envPt = 0; edited(TRUE); }
+        return;
+    }
+    SendMessage(cb, CB_GETLBTEXT, i, (LPARAM)(LPSTR)t);
+    nm = strstr(t, ": "); if (!nm) return; nm += 2;
+    span(selLayer, &b, &e);
+    if (b >= 0) { int p = b; while (isname(dnaText[p])) p++; splice(b, p, nm); edited(TRUE); }
+}
+static void panel_command(int id, int code)
 {
     int b, e;
+    if (id == ID_HOLD || id == ID_KEYS) {
+        int on = (int)SendMessage(id == ID_HOLD ? hHold : hKeysChk, BM_GETCHECK, 0, 0L);
+        if (id == ID_HOLD) hold_set(on);
+        else { keysOn = on; if (on) SetFocus(hMain); }
+        return;
+    }
+    if (id == ID_PRESET || id == ID_LIBRARY) {   /* a pick: when the list closes, or with the keys while it is shut */
+        HWND cb = id == ID_PRESET ? hPreset : hLibrary;
+        if (code == CBN_CLOSEUP || (code == CBN_SELCHANGE && !SendMessage(cb, CB_GETDROPPEDSTATE, 0, 0L))) {
+            static int last[2] = {-2, -2};
+            int i = (int)SendMessage(cb, CB_GETCURSEL, 0, 0L);
+            if (i != last[id - ID_PRESET] || code == CBN_SELCHANGE) { last[id - ID_PRESET] = i; combo_pick(id); }
+        }
+        return;
+    }
     if (building) return;
+    if (id == ID_PRESETPREV || id == ID_PRESETNEXT) {
+        int n = (int)SendMessage(hPreset, CB_GETCOUNT, 0, 0L), i = (int)SendMessage(hPreset, CB_GETCURSEL, 0, 0L);
+        if (n <= 0) return;
+        i = i < 0 ? 0 : (i + (id == ID_PRESETNEXT ? 1 : n - 1)) % n;
+        SendMessage(hPreset, CB_SETCURSEL, i, 0L);
+        combo_pick(ID_PRESET);
+        return;
+    }
+    if (id >= ID_ENVPREV && id <= ID_ENVDEL) {
+        int t[8], l[8], n = env_get(selLayer, t, l), k;
+        if (id == ID_ENVPREV) { if (n) envPt = (envPt + n - 1) % n; panel_refresh(); return; }
+        if (id == ID_ENVNEXT) { if (n) envPt = (envPt + 1) % n; panel_refresh(); return; }
+        if (id == ID_ENVADD) {
+            if (!n) { n = env_seed(t, l); envPt = 1; }
+            else if (n < 8) {
+                for (k = n; k > envPt + 1; k--) { t[k] = t[k - 1]; l[k] = l[k - 1]; }
+                t[envPt + 1] = envPt + 2 <= n ? (t[envPt] + t[envPt + 2]) / 2 : t[envPt] + 200;
+                l[envPt + 1] = l[envPt];
+                n++; envPt++;
+            }
+        } else {   /* delete the point (the last one deleted: back to A/D/S) */
+            if (!n) return;
+            for (k = envPt; k < n - 1; k++) { t[k] = t[k + 1]; l[k] = l[k + 1]; }
+            n--; if (envPt >= n && envPt) envPt--;
+        }
+        env_put(selLayer, n, t, l);
+        edited(FALSE);
+        return;
+    }
     if (id >= ID_SOUND && id < ID_SOUND + 4) {
         span(selLayer, &b, &e);
         if (b >= 0) { int p = b; while (isname(dnaText[p])) p++; splice(b, p, panelSounds[id - ID_SOUND]); edited(TRUE); }
@@ -613,8 +1210,10 @@ static void panel_command(int id)
     else if (id == ID_LAYERPREV || id == ID_LAYERNEXT) {
         selLayer += id == ID_LAYERNEXT ? 1 : -1;
         if (selLayer < 0) selLayer = nlay - 1; if (selLayer >= nlay) selLayer = 0;
+        envPt = 0;
         InvalidateRect(hMain, NULL, FALSE);
         panel_refresh();
+        show_envelope();
     } else if (id == ID_HARM) {
         harmIdx = (harmIdx + 1) % 6;
         SetWindowText(hHarm, harmNames[harmIdx]);
@@ -638,8 +1237,25 @@ static void panel_scroll(HWND sb, int code, int pos)
     }
     if (v < lo) v = lo; if (v > hi) v = hi;
     SetScrollPos(sb, SB_CTL, v, TRUE);
-    { char t[16]; sprintf(t, "%d", v); SetWindowText(hVal[i], t); }
+    if (hVal[i]) { char t[16]; sprintf(t, "%d", v); SetWindowText(hVal[i], t); }
     if (code == SB_THUMBTRACK) return;                  /* apply when the thumb is let go */
+    if (sliders[i].letter >= '1' && sliders[i].letter <= '4') {   /* a macro: N mappings make Sound Recorder rebuild */
+        macro_set(sliders[i].letter - '0', v);
+        edited(TRUE);
+        return;
+    }
+    if (sliders[i].letter == 'e' || sliders[i].letter == 'l') {   /* the selected point of the drawn envelope */
+        int t[8], l[8], n = env_get(selLayer, t, l);
+        if (!n) { n = env_seed(t, l); envPt = 1; }
+        if (sliders[i].letter == 'l') l[envPt] = v;
+        else {   /* points stay in time order */
+            int lo2 = envPt ? t[envPt - 1] : 0, hi2 = envPt + 1 < n ? t[envPt + 1] : 30000;
+            t[envPt] = v < lo2 ? lo2 : v > hi2 ? hi2 : v;
+        }
+        env_put(selLayer, n, t, l);
+        edited(FALSE);
+        return;
+    }
     if (sliders[i].global) global_set(sliders[i].letter, v);
     else {
         char tok[24];
@@ -666,12 +1282,17 @@ long FAR PASCAL __export DnaEditProc(HWND h, UINT m, WPARAM w, LPARAM l)
 }
 
 static HFONT panelFont;
+/* (Making the controls at boot, hidden, was tried: 140 hidden siblings slow every recorder's flight by a third.) */
 static HWND mk(const char *cls, const char *text, DWORD st, int x, int y, int w, int h, int id)
 {
-    HWND c = CreateWindow(cls, text, WS_CHILD | st, x, y, w, h, hMain, (HMENU)id, hInst, NULL);
+    HWND c;
+    if (mkGroup >= 0) st &= ~WS_VISIBLE;
+    c = CreateWindow(cls, text, WS_CHILD | st, x, y, w, h, hMain, (HMENU)id, hInst, NULL);
     SendMessage(c, WM_SETFONT, (WPARAM)panelFont, 0L);
+    if (mkGroup >= 0 && grpN[mkGroup] < 72) grpWin[mkGroup][grpN[mkGroup]++] = c;
     return c;
 }
+
 /* the panel appears in four groups, one after another */
 static void panel_create(int group)
 {
@@ -706,8 +1327,45 @@ static void panel_create(int group)
             hVal[i] = mk("STATIC", "", WS_VISIBLE, 484 + i * 120, PANEL + 74, 32, 14, ID_VAL + i);
         }
         break;
+    case 4:   /* the header: preset browser and every sound; pan, offset and the drawn envelope's points */
+        mk("STATIC", "Preset", WS_VISIBLE, 410, 7, 40, 14, -1);
+        hPreset = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, 452, 3, 214, 320, ID_PRESET);
+        mk("BUTTON", "<", WS_VISIBLE | BS_PUSHBUTTON, 669, 3, 17, 21, ID_PRESETPREV);   /* the previous / next program */
+        mk("BUTTON", ">", WS_VISIBLE | BS_PUSHBUTTON, 687, 3, 17, 21, ID_PRESETNEXT);
+        mk("STATIC", "Sound", WS_VISIBLE, 716, 7, 38, 14, -1);
+        hLibrary = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST | CBS_SORT, 756, 3, 262, 320, ID_LIBRARY);
+        listsWanted = TRUE;    /* filled at the first idle moment after the assembly */
+        for (i = SL_PAN; i < SL_PAN + 2; i++) {
+            int k = i - SL_PAN, x = 410 + k * 132, lw = k ? 40 : 26;
+            mk("STATIC", sliders[i].label, WS_VISIBLE, x, 31, lw, 14, -1);
+            hSb[i] = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, x + lw + 2, 31, 64, 14, ID_SB + i);
+            SetScrollRange(hSb[i], SB_CTL, sliders[i].lo, sliders[i].hi, FALSE);
+            hVal[i] = mk("STATIC", "", WS_VISIBLE, x + lw + 70, 31, 32, 14, ID_VAL + i);
+        }
+        mk("STATIC", "Env", WS_VISIBLE, 684, 31, 24, 14, -1);
+        mk("BUTTON", "<", WS_VISIBLE | BS_PUSHBUTTON, 708, 28, 17, 20, ID_ENVPREV);
+        mk("BUTTON", ">", WS_VISIBLE | BS_PUSHBUTTON, 726, 28, 17, 20, ID_ENVNEXT);
+        mk("BUTTON", "+", WS_VISIBLE | BS_PUSHBUTTON, 744, 28, 17, 20, ID_ENVADD);
+        mk("BUTTON", "-", WS_VISIBLE | BS_PUSHBUTTON, 762, 28, 17, 20, ID_ENVDEL);
+        hEnvLbl = mk("STATIC", "A/D/S", WS_VISIBLE, 783, 31, 86, 14, -1);
+        for (i = SL_ETIME; i <= SL_ELEVEL; i++) {   /* the point's time and level */
+            hSb[i] = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, i == SL_ETIME ? 870 : 946, 31, 72, 14, ID_SB + i);
+            SetScrollRange(hSb[i], SB_CTL, sliders[i].lo, sliders[i].hi, FALSE);
+        }
+        panel_refresh();
+        break;
+    case 5:   /* the four macros (automatable in the host; DNA.md 5.3) */
+        for (i = SL_MACRO; i < SL_MACRO + 4; i++) {
+            int k = i - SL_MACRO;
+            mk("STATIC", sliders[i].label, WS_VISIBLE, 8 + k * 216, PANEL + 116, 56, 14, -1);
+            hSb[i] = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, 66 + k * 216, PANEL + 116, 110, 14, ID_SB + i);
+            SetScrollRange(hSb[i], SB_CTL, sliders[i].lo, sliders[i].hi, FALSE);
+            hVal[i] = mk("STATIC", "", WS_VISIBLE, 180 + k * 216, PANEL + 116, 36, 14, ID_VAL + i);
+        }
+        panel_refresh();
+        break;
     case 3:
-        for (i = 4; i < (int)NSL; i++) {
+        for (i = 4; i < 8; i++) {
             int k = i - 4;
             mk("STATIC", sliders[i].label, WS_VISIBLE, 8 + k * 216, PANEL + 96, 60, 14, -1);
             hSb[i] = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, 66 + k * 216, PANEL + 96, 110, 14, ID_SB + i);
@@ -719,6 +1377,7 @@ static void panel_create(int group)
     }
     UpdateWindow(hMain);
 }
+
 
 /* ================================================================ assembly */
 typedef struct { RECT win; RECT part[NPART]; int stage; } FLY;
@@ -803,8 +1462,8 @@ static int poll_host(void);
 
 static void assemble(void)
 {
-    DWORD t0 = timeGetTime();
-    long gap = 185, first_extra = 220;   /* the first recorder is shown slowly; the rest follow */
+    DWORD t0 = timeGetTime(), tStart = t0; long stage[6];
+    long gap = 160, first_extra = 200;   /* the first recorder is shown slowly; the rest follow */
     int r, done = 0;
     RECT full;
     assembling = TRUE;
@@ -820,13 +1479,14 @@ static void assemble(void)
     }
     for (;;) {
         long t = (long)(timeGetTime() - t0);
-        long f = ease(t * 1000 / 350);
+        long f = ease(t * 1000 / 300);
         int w = 80 + (int)((long)(full.right - 80) * f / 1000), h = 60 + (int)((long)(full.bottom - 60) * f / 1000);
         SetWindowPos(hMain, NULL, (full.right - w) / 2, (full.bottom - h) / 2, w, h, SWP_NOZORDER | SWP_NOACTIVATE);
         UpdateWindow(hMain);
         poll_host();
         if (f >= 1000) break;
     }
+    stage[0] = timeGetTime() - tStart;
     /* the clock joins first: it glides over the recorders to the bottom right, then becomes part of BASILISK 16 */
     if (hClock) {
         RECT c, q, a; LONG st; DWORD t1; POINT o; int k;
@@ -836,7 +1496,7 @@ static void assemble(void)
         o.x = 1024 - 140; o.y = PANEL; ClientToScreen(hMain, &o);
         t1 = timeGetTime();
         for (;;) {
-            long f = ease((long)(timeGetTime() - t1) * 1000 / 380);
+            long f = ease((long)(timeGetTime() - t1) * 1000 / 300);
             lerp_rect(&q, &a, o.x, o.y, 132, 124, f);
             SetWindowPos(hClock, HWND_TOPMOST, q.left, q.top, q.right, q.bottom, SWP_NOACTIVATE);   /* above every recorder */
             UpdateWindow(hClock);
@@ -855,6 +1515,7 @@ static void assemble(void)
         UpdateWindow(hClock);
         (void)own;
     }
+    stage[1] = timeGetTime() - tStart;
     t0 = timeGetTime();
     for (r = 0; r < NR; r++) fly[r].stage = 0;
     while (done < NR) {
@@ -876,13 +1537,52 @@ static void assemble(void)
         poll_host();
         pump();
     }
+    stage[2] = timeGetTime() - tStart;
+    if (hEnvRec) {   /* the seventeenth recorder: everything but its wave display goes, and it glides to the header */
+        RECT c, q, a2; DWORD t1; POINT o; LONG st; HWND ch;
+        SetMenu(hEnvRec, NULL); DrawMenuBar(hEnvRec);
+        for (ch = GetWindow(hEnvRec, GW_CHILD); ch; ch = GetWindow(ch, GW_HWNDNEXT))
+            if (GetDlgCtrlID(ch) != SR_WAVE) ShowWindow(ch, SW_HIDE);
+        UpdateWindow(hEnvRec);
+        {   /* the wave display alone, at the window's corner */
+            HWND wv = GetDlgItem(hEnvRec, SR_WAVE);
+            SetWindowPos(wv, NULL, 0, 0, 133, 32, SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+        GetWindowRect(hEnvRec, &c);
+        st = GetWindowLong(hEnvRec, GWL_STYLE);
+        SetWindowLong(hEnvRec, GWL_STYLE, (st & ~(WS_CAPTION | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_DLGFRAME | WS_BORDER)) | WS_POPUP);
+        SetWindowPos(hEnvRec, HWND_TOPMOST, c.left, c.top, 133, 32, SWP_NOACTIVATE | SWP_FRAMECHANGED);
+        SetRect(&a2, c.left, c.top, c.left + 133, c.top + 32);
+        o.x = ENVX; o.y = 2; ClientToScreen(hMain, &o);
+        t1 = timeGetTime();
+        for (;;) {
+            long f = ease((long)(timeGetTime() - t1) * 1000 / 220);
+            lerp_rect(&q, &a2, o.x, o.y, 133, 32, f);
+            SetWindowPos(hEnvRec, HWND_TOPMOST, q.left, q.top, q.right, q.bottom, SWP_NOACTIVATE);
+            UpdateWindow(hEnvRec); UpdateWindow(hMain);
+            poll_host();
+            if (f >= 1000) break;
+        }
+        SetWindowPos(hEnvRec, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        ShowWindow(hEnvRec, SW_HIDE);
+        st = GetWindowLong(hEnvRec, GWL_STYLE);
+        SetWindowLong(hEnvRec, GWL_STYLE, (st & ~WS_POPUP) | WS_CHILD);
+        SetParent(hEnvRec, hMain);
+        SetWindowPos(hEnvRec, HWND_TOP, ENVX, 2, 133, 32, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+        UpdateWindow(hEnvRec);
+    }
+    stage[3] = timeGetTime() - tStart;
     {   /* the panel: four groups, one after another */
         int g; DWORD t2;
-        for (g = 0; g < 4; g++) {
+        for (g = 0; g < 6; g++) {
             panel_create(g);
             t2 = timeGetTime();
-            while (timeGetTime() - t2 < 45) { poll_host(); pump(); }
+            while (timeGetTime() - t2 < 10) { poll_host(); pump(); }
         }
+        stage[4] = timeGetTime() - tStart;
+        mkGroup = 6; keyboard_create(); mkGroup = -1;
+        stage[5] = timeGetTime() - tStart;
+        keyboard_show();
     }
     assembled = TRUE;
     assembling = FALSE;
@@ -904,25 +1604,77 @@ static void assemble(void)
         WORD z = 0; bs_report(1, &z, 0);
     }
     say("ready");
-    logf_("ready: free resources user %d%% gdi %d%%", GetFreeSystemResources(GFSR_USERRESOURCES), GetFreeSystemResources(GFSR_GDIRESOURCES));
+    show_envelope();
+    logf_("stages: grow %ld clock %ld recorders %ld envelope %ld panel %ld keys made %ld", stage[0], stage[1], stage[2], stage[3], stage[4], stage[5]);
+    logf_("ready: assembled in %ld ms (Windows' clock); free resources user %d%% gdi %d%%", (long)(timeGetTime() - tStart), GetFreeSystemResources(GFSR_USERRESOURCES), GetFreeSystemResources(GFSR_GDIRESOURCES));
     if (pendingDna[0]) { static char d[1100]; lstrcpy(d, pendingDna); pendingDna[0] = 0; build(d); }
+}
+
+/* ================================================================ the envelope, drawn by Sound Recorder */
+/* The selected layer's amplitude envelope (its drawn Ja, or else the global A/D/S/R) becomes a sound: a buzz whose
+   loudness follows the envelope, pasted into the seventeenth Sound Recorder, whose own wave display draws it. */
+static void show_envelope(void) { envWant = timeGetTime() | 1; }
+static void draw_envelope(void)
+{
+    static int busy;
+    int L = selLayer, n, k, t[12], l[12], total, N = 129;   /* Sound Recorder draws one sample per pixel: the whole envelope fits the 131-pixel view */
+    HGLOBAL h; BYTE FAR *w;
+    if (!hEnvRec || busy || building || !assembled) return;   /* headless renders: nobody is watching */
+    busy = 1;
+    if (L >= 0 && L < NL && envN[L] > 0) {
+        n = envN[L];
+        for (k = 0; k < n; k++) { t[k] = envT[L][k]; l[k] = envL[L][k]; }
+        if (t[0] > 0) { for (k = n; k > 0; k--) { t[k] = t[k - 1]; l[k] = l[k - 1]; } t[0] = 0; l[0] = 0; n++; }
+    } else {   /* A, D, S */
+        n = 0; t[n] = 0; l[n++] = envA ? 0 : 100; t[n] = envA; l[n++] = 100; t[n] = envA + envD; l[n++] = envS;
+    }
+    t[n] = t[n - 1] + (t[n - 1] / 3 > 150 ? t[n - 1] / 3 : 150); l[n] = l[n - 1]; n++;      /* held */
+    t[n] = t[n - 1] + envR; l[n] = 0; n++;                                                   /* release */
+    total = t[n - 1] > 0 ? t[n - 1] : 1;
+    h = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, 44 + N);
+    w = (BYTE FAR *)GlobalLock(h);
+    _fmemcpy(w, "RIFF", 4); *(DWORD FAR *)(w + 4) = 36 + N; _fmemcpy(w + 8, "WAVEfmt ", 8);
+    *(DWORD FAR *)(w + 16) = 16; *(WORD FAR *)(w + 20) = 1; *(WORD FAR *)(w + 22) = 1;
+    *(DWORD FAR *)(w + 24) = 22050; *(DWORD FAR *)(w + 28) = 22050; *(WORD FAR *)(w + 32) = 1; *(WORD FAR *)(w + 34) = 8;
+    _fmemcpy(w + 36, "data", 4); *(DWORD FAR *)(w + 40) = N;
+    for (k = 0; k < N; k++) {
+        long ms = (long)k * total / N; int j = 0, a;
+        while (j < n - 2 && ms >= t[j + 1]) j++;
+        a = t[j + 1] > t[j] ? l[j] + (int)((long)(l[j + 1] - l[j]) * (ms - t[j]) / (t[j + 1] - t[j])) : l[j + 1];
+        a = a * 120 / 100;
+        w[44 + k] = (BYTE)(128 + ((k & 1) ? a : -a));
+    }
+    GlobalUnlock(h);
+    if (OpenClipboard(hMain)) {
+        EmptyClipboard();
+        SetClipboardData(CF_WAVE, h);
+        CloseClipboard();
+        HookActive(TRUE);
+        SendMessage(hEnvRec, WM_COMMAND, SR_REW, MAKELPARAM(GetDlgItem(hEnvRec, SR_REW), BN_CLICKED));
+        SendMessage(hEnvRec, WM_COMMAND, SR_DELAFTER, 0L);     /* empty it (Sound Recorder asks; the hook says yes) */
+        SendMessage(hEnvRec, WM_COMMAND, SR_PASTE, 0L);        /* Paste Insert: the envelope */
+        SendMessage(hEnvRec, WM_COMMAND, SR_REW, MAKELPARAM(GetDlgItem(hEnvRec, SR_REW), BN_CLICKED));
+        HookActive(FALSE);
+    } else GlobalFree(h);
+    busy = 0;
 }
 
 /* ================================================================ host lines */
 static DWORD curId;
+
 static void host_line(char *s)
 {
     char *a = strchr(s, ' ');
     char *rest = a ? a + 1 : "";
     if (a) *a = 0;
-    if (!strcmp(s, "hi")) say("hi 1 311 %s", assembled ? "ready" : "wait");
+    if (!strcmp(s, "hi")) { int v = atoi(rest) >= 2 ? 2 : 1; say("hi %d 311 %s", v, assembled ? "ready" : "wait"); }
     else if (!strcmp(s, "go")) { if (!assembled) assemble(); else say("ready"); }
     else if (!strcmp(s, "dna")) build(rest);
     else if (!strcmp(s, "on")) {
-        int r = atoi(rest); char *p = strchr(rest, ' ');
-        DWORD hz = p ? atol(p + 1) : 0; WORD vol = 65535;
-        if (p) { p = strchr(p + 1, ' '); if (p) vol = (WORD)atol(p + 1); }
-        play_rec(r, curId, hz, vol);
+        /* on <rec> <rate> <vol> [<pan> [<delay_ms> [<layer>]]]: the host waits out delays and sends 0 */
+        long f[6] = {0, 0, 65535, 0, 0, -1}; int nf = 0; char *p = rest;
+        while (*p && nf < 6) { f[nf++] = atol(p); p = strchr(p, ' '); if (!p) break; p++; }
+        play_rec((int)f[0], curId, (DWORD)f[1], (WORD)f[2], (int)f[3], (int)f[5]);
     }
     else if (!strcmp(s, "off")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, envR); }
     else if (!strcmp(s, "cut")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, 5); }
@@ -930,7 +1682,24 @@ static void host_line(char *s)
     else if (!strcmp(s, "env")) {
         sscanf(rest, "%d %d %d %d", &envA, &envD, &envS, &envR);
         bs_env((WORD)envA, (WORD)envD, (WORD)envS);
+        show_envelope();
     }
+    else if (!strcmp(s, "lenv")) {   /* lenv <layer> <a|p> <t,l.t,l...|-> */
+        int L = atoi(rest), kind, n = 0, t[8], l[8]; char *p = strchr(rest, ' ');
+        if (p && L >= 0 && L < NL) {
+            kind = p[1] == 'p'; p = strchr(p + 1, ' ');
+            if (p && p[1] != '-') {
+                const char *q = p + 1;
+                while (*q && n < 8) {
+                    t[n] = getint(&q, 0); if (*q == ',') q++; l[n] = getint(&q, 0); n++;
+                    if (*q == '.') q++; else break;
+                }
+            }
+            bs_lenv(L, kind, n, t, l);
+            if (!kind) { envN[L] = n; memcpy(envT[L], t, sizeof t); memcpy(envL[L], l, sizeof l); show_envelope(); }
+        }
+    }
+    else if (!strcmp(s, "show") || !strcmp(s, "cc") || !strcmp(s, "bend")) kb_show(s, rest);
     else if (!strcmp(s, "sel")) { selLayer = atoi(rest); if (selLayer >= nlay || selLayer < 0) selLayer = 0; if (hMain) InvalidateRect(hMain, NULL, FALSE); panel_refresh(); }
     else if (!strcmp(s, "time")) {
         int Y, M, D, h, m, x;
@@ -977,6 +1746,9 @@ static void paint(HWND h)
     SetTextColor(dc, RGB(0, 0, 128));
     if (titleShown) TextOut(dc, 12, 10, "BASILISK 16", 11);
     SelectObject(dc, sm);
+    if (assembled) TextOut(dc, ENVX - 58, 12, "Envelope", 8);
+    SelectObject(dc, big);
+    SelectObject(dc, sm);
     SetTextColor(dc, RGB(0, 0, 0));
     if (assembled) {
         static const char *hdr[] = {"Status", "Wave", "Position", "Length", "Seek", "Rewind", "Forward", "Play", "Stop", "Record"};
@@ -987,8 +1759,12 @@ static void paint(HWND h)
         char t[4]; RECT b;
         int y = ROW0 + i * ROWH;
         int l = rlayer[AR(i)];
-        SetRect(&b, 6, y + 4, 34, y + 28);
-        if (l >= 0) {
+        SetRect(&b, 6, y + 3, 34, y + 27);
+        if (i == buildRow) {
+            HBRUSH br = CreateSolidBrush(RGB(255, 255, 0));
+            FillRect(dc, &b, br); DeleteObject(br);
+            SetTextColor(dc, RGB(0, 0, 0));
+        } else if (l >= 0) {
             HBRUSH br = CreateSolidBrush(layerColor[l % NL]);
             FillRect(dc, &b, br); DeleteObject(br);
             SetTextColor(dc, RGB(255, 255, 255));
@@ -1008,8 +1784,10 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
     switch (m) {
     case WM_PAINT: paint(h); return 0;
     case WM_HSCROLL: panel_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
+    case WM_VSCROLL: kb_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
+    case WM_KEYDOWN: case WM_KEYUP: if (computer_key(w, l, m == WM_KEYDOWN)) return 0; break;
     case WM_CTLCOLOR:                  /* the panel's labels sit on the window's grey */
-        if (HIWORD(l) == CTLCOLOR_STATIC) {
+        if (HIWORD(l) == CTLCOLOR_STATIC || HIWORD(l) == CTLCOLOR_BTN) {   /* (and the Hold / Keys boxes) */
             static HBRUSH face;
             if (!face) face = CreateSolidBrush(GetSysColor(COLOR_BTNFACE));
             SetBkColor((HDC)w, GetSysColor(COLOR_BTNFACE));
@@ -1018,7 +1796,7 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
         break;
     case WM_COMMAND: {
         int r;
-        if (w >= 1100 && w < 1200) { panel_command(w); return 0; }
+        if (w >= 1100 && w < 1200) { panel_command(w, HIWORD(l)); return 0; }
         /* a reparented recorder's buttons report to us: hand the click to its recorder */
         for (r = 0; r < NALL; r++) if (rw[r] && (HWND)LOWORD(l) && GetParent((HWND)LOWORD(l)) == rw[r]) {
             PostMessage(rw[r], WM_COMMAND, w, l);
@@ -1073,6 +1851,8 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
     pm = FindWindow("Progman", NULL);
     if (pm) ShowWindow(pm, SW_MINIMIZE);
     hClock = launch("CLOCK.EXE", SW_SHOWNOACTIVATE);
+    hEnvRec = launch("SOUNDREC.EXE C:\\WINDOWS\\DING.WAV", SW_SHOWNOACTIVATE);
+    if (hEnvRec) MoveWindow(hEnvRec, 700, 560, 320, 186, TRUE);
     if (hClock) { SendMessage(hClock, WM_COMMAND, 1, 0L); MoveWindow(hClock, 868, 8, 148, 160, TRUE); }   /* Settings > Analog */
     for (r = 0; r < NR; r++) {
         int c = r % 4, row = r / 4;
@@ -1105,7 +1885,11 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
             if (m.message == WM_QUIT) break;
             TranslateMessage(&m); DispatchMessage(&m);
         } else {
-            if (!poll_host()) bs_idle();
+            if (!poll_host()) {
+                if (listsWanted && assembled && !building) { listsWanted = FALSE; panel_lists(); }
+                else if (envWant && timeGetTime() - envWant > 120 && !building) { envWant = 0; draw_envelope(); }
+                else bs_idle();
+            }
         }
     }
     HookInstall(FALSE);

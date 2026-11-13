@@ -67,3 +67,22 @@ static void bs_env(WORD a, WORD d, WORD s)
 /* a text line to the host (DNA.md section 4), at most 250 characters */
 static void bs_line(const char *s) { bs_text(s); }
 static void bs_idle(void) { outpw(BS_CMD, 28); }   /* nothing to do: let the emulated CPU rest for this millisecond */
+/* v2: arm with pan (-100..100) and the layer whose drawn envelopes apply (-1 = none) */
+static void bs_arm2(HTASK task, DWORD id, DWORD hz, WORD gain, int pan, int layer)
+{
+    _disable();
+    bs_put((WORD)task); bs_put(LOWORD(id)); bs_put(HIWORD(id)); bs_put(LOWORD(hz)); bs_put(HIWORD(hz)); bs_put(gain);
+    bs_put((WORD)(pan + 100)); bs_put((WORD)(layer + 1));
+    outpw(BS_CMD, BSC_ARM);
+    _enable();
+}
+/* v2: a layer's drawn envelope (kind 0 amplitude, levels 0..100; 1 pan, levels -100..100), n breakpoints */
+static void bs_lenv(int layer, int kind, int n, const int *t, const int *l)
+{
+    int k;
+    _disable();
+    bs_put((WORD)layer); bs_put((WORD)kind); bs_put((WORD)n);
+    for (k = 0; k < n; k++) { bs_put((WORD)t[k]); bs_put((WORD)(kind ? l[k] + 100 : l[k])); }
+    outpw(BS_CMD, 29);
+    _enable();
+}

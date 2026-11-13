@@ -37,28 +37,11 @@ START_NAMESPACE_DISTRHO
 
 using namespace bsynth;
 
-enum { pAttack, pDecay, pSustain, pRelease, pVelocity, pBend, pGain, pTranspose, pCount };
+// (new parameters go at the end: hosts store automation by index)
+enum { pAttack, pDecay, pSustain, pRelease, pVelocity, pBend, pGain, pTranspose, pMacro1, pMacro2, pMacro3, pMacro4, pCount };
 static const char *const kGlobalLetter = "ADSRVBG";
 
-struct Preset { const char *name, *dna; };
-static const Preset kPresets[] = {
-    {"Ding Piano", "ding#16;R250"},
-    {"Chime Octaves", "chimesH0,12;R500"},
-    {"Telephone Choir", "ringinU3~12;A60S90R700"},
-    {"Reverse Ding Swell", "dingR;A10R300"},
-    {"Echo Bells", "chimesE+;R900"},
-    {"Slow Ring Pad", "ringout<<E;A400D300S80R1500"},
-    {"Fifth Stack", "dingH0,7,12;R300"},
-    {"Major Ding", "dingH0,4,7;R250"},
-    {"Ding and Chimes", "ding#8/chimes#8T12;R350"},
-    {"Chopped Ring", "ringin@50]>;R120"},
-    {"Insert and Mix", "dingIchimesMringin;R300"},
-    {"Triple Echo Reverse", "chimesEEER-;A20R1000"},
-    {"Bass Ding", "ding<T-12;R250"},
-    {"Detuned Unison", "dingU4~25;R300"},
-    {"Ring Out Octaves", "ringout>H0,12,24;R160"},
-    {"Copy Paste Stutter", "ding@30]CPPP;R160"},
-};
+#include "presets_gen.h"   // kPresets[]: "Category: Name" + DNA (tools/make_presets311.py; the same list as \\PRESETS.TSV in Windows)
 static constexpr uint32_t kPresetCount = sizeof(kPresets) / sizeof(kPresets[0]);
 
 static double nowSec()
@@ -67,8 +50,31 @@ static double nowSec()
     return duration<double>(steady_clock::now().time_since_epoch()).count();
 }
 
+// Windows: no inheritable handle may exist on these files, even for a moment: another plugin in the same host may
+// start a process (BASILISK SYNTH starts QEMU), which would inherit it and keep the core locked.
+static bool writeText(const std::string &path, const std::string &text)
+{
+#ifdef _WIN32
+    HANDLE h = CreateFileA(path.c_str(), GENERIC_WRITE, 0, nullptr /* not inheritable */, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (h == INVALID_HANDLE_VALUE) return false;
+    DWORD n = 0;
+    const BOOL ok = WriteFile(h, text.data(), (DWORD)text.size(), &n, nullptr);
+    CloseHandle(h);
+    return ok && n == text.size();
+#else
+    FILE *f = std::fopen(path.c_str(), "wb");
+    if (!f) return false;
+    const bool ok = std::fwrite(text.data(), 1, text.size(), f) == text.size();
+    std::fclose(f);
+    return ok;
+#endif
+}
+
 static bool copyFile(const std::string &from, const std::string &to)
 {
+#ifdef _WIN32
+    return CopyFileA(from.c_str(), to.c_str(), FALSE) != 0;
+#endif
     FILE *a = std::fopen(from.c_str(), "rb");
     if (!a) return false;
     FILE *b = std::fopen(to.c_str(), "wb");
@@ -103,6 +109,39 @@ static int processId()
 
 static std::atomic<int> gInstanceCounter{0};
 
+#ifdef _WIN32
+// Windows keeps a loaded DLL's file locked, and the core copy can outlive its instance for a moment (or for good, if
+// the host crashed). Every new instance removes the folders of processes that are gone.
+static void sweepTemp(const std::string &tmp)
+{
+    WIN32_FIND_DATAA fd;
+    HANDLE h = FindFirstFileA((tmp + "basilisk16-*").c_str(), &fd);
+    if (h == INVALID_HANDLE_VALUE) return;
+    do {
+        if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) continue;
+        const DWORD pid = (DWORD)std::strtoul(fd.cFileName + 11, nullptr, 10);
+        if (!pid || pid == GetCurrentProcessId()) continue;
+        HANDLE p = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pid);
+        if (p) {   // alive, and the same process (a reused pid started after the folder was made is not)
+            DWORD code = 0; FILETIME c, x, k, u;
+            bool alive = GetExitCodeProcess(p, &code) && code == STILL_ACTIVE;
+            if (alive && GetProcessTimes(p, &c, &x, &k, &u) && CompareFileTime(&c, &fd.ftCreationTime) > 0) alive = false;
+            CloseHandle(p);
+            if (alive) continue;
+        } else if (GetLastError() == ERROR_ACCESS_DENIED) continue;   // alive, someone else's
+        const std::string dir = tmp + fd.cFileName;
+        WIN32_FIND_DATAA f2;
+        HANDLE h2 = FindFirstFileA((dir + "\\*").c_str(), &f2);
+        if (h2 != INVALID_HANDLE_VALUE) {
+            do { if (!(f2.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) DeleteFileA((dir + "\\" + f2.cFileName).c_str()); } while (FindNextFileA(h2, &f2));
+            FindClose(h2);
+        }
+        RemoveDirectoryA(dir.c_str());
+    } while (FindNextFileA(h, &fd));
+    FindClose(h);
+}
+#endif
+
 class Basilisk16 : public Plugin
 {
 public:
@@ -121,6 +160,7 @@ public:
         bshm *S = sh_.S;
         S->magic = BSHM_MAGIC; S->version = BSHM_VERSION; S->rate = 48000; S->ring_len = BSHM_RING;
         S->lead = kLead; S->realtime = 0;
+        loadLibraryNames();
         setDna(kDefaultDna, false);
         updateLatency();
         if (!isDummyInstance()) start();
@@ -150,7 +190,7 @@ protected:
     const char *getMaker() const override { return "William Sharkey"; }
     const char *getHomePage() const override { return "https://williamsharkey.com/basilisk-download.html"; }
     const char *getLicense() const override { return "GPL-2.0-or-later"; }
-    uint32_t getVersion() const override { return d_version(1, 0, 0); }
+    uint32_t getVersion() const override { return d_version(1, 2, 0); }
 
     void initParameter(uint32_t i, Parameter &p) override
     {
@@ -164,6 +204,11 @@ protected:
         case pBend: p.name = "Bend Range"; p.symbol = "bend"; p.unit = "st"; p.ranges = ParameterRanges(2, 0, 24); p.hints |= kParameterIsInteger; break;
         case pGain: p.name = "Output Gain"; p.symbol = "gain"; p.unit = "dB"; p.ranges = ParameterRanges(0, -24, 12); p.hints |= kParameterIsInteger; break;
         case pTranspose: p.name = "Transpose"; p.symbol = "transpose"; p.unit = "st"; p.ranges = ParameterRanges(0, -24, 24); p.hints |= kParameterIsInteger; break;
+        case pMacro1: case pMacro2: case pMacro3: case pMacro4: {   // DNA v2 macros (DNA.md 5.3): what each moves is in the DNA
+            const int k = (int)(i - pMacro1) + 1;
+            p.name = String("Macro ") + String(k); p.symbol = String("macro") + String(k); p.unit = "%";
+            p.ranges = ParameterRanges(0, 0, 100); p.hints |= kParameterIsInteger;
+            break; }
         }
     }
 
@@ -218,7 +263,8 @@ protected:
         // Offline (a render), the plugin waits for whatever Windows is still doing, so renders are exact:
         // the machine resuming, the assembly, a DNA being built. Live it never waits (a new sound takes over
         // when it is built; until then the old one plays).
-        const bool offline = !testLive_ && (isProcessingOffline() || nowSec() - created_ < 3.0);
+        // (live, process() never waits: silence until Windows is ready, and a late block is played as it is)
+        const bool offline = !testLive_ && isProcessingOffline();
         S->offline = offline ? 1 : 0;
         bool waited = false;
         if (engine_ && offline && S->state < BS_RUNNING) {
@@ -262,34 +308,48 @@ protected:
             }
         }
         dacPos_ = anchor_ + (double)hcount_ * ratio;
+        // the keyboard strip in Windows (DNA.md 5.4): its keys and wheels play at the start of this block
+        MidiEvent kev[64]; uint32_t nk = 0;
+        for (uint32_t r = keyR_.load(), w = keyW_.load(std::memory_order_acquire); r != w && nk < 64; r++, nk++) {
+            const uint32_t k = keyQ_[r % kKeyQ];
+            kev[nk].frame = 0; kev[nk].size = 3;
+            kev[nk].data[0] = (uint8_t)(k >> 16); kev[nk].data[1] = (uint8_t)(k >> 8); kev[nk].data[2] = (uint8_t)k;
+            keyR_.store(r + 1);
+        }
         // the notes of this block: each one is stamped with the DAC sample at which it must sound
-        for (uint32_t i = 0; i < nev; i++) {
-            const uint8_t *d = ev[i].size > 4 ? ev[i].dataExt : ev[i].data;
-            if (ev[i].size < 2) continue;
-            const uint64_t at = (uint64_t)std::floor(anchor_ + (double)(hcount_ + ev[i].frame) * ratio) + kLatency48;
+        for (uint32_t i = 0; i < nk + nev; i++) {
+            const bool fromWindows = i < nk;
+            const MidiEvent &e = fromWindows ? kev[i] : ev[i - nk];
+            const uint8_t *d = e.size > 4 ? e.dataExt : e.data;
+            if (e.size < 2) continue;
+            const uint64_t at = (uint64_t)std::floor(anchor_ + (double)(hcount_ + e.frame) * ratio) + kLatency48;
             const uint8_t st = d[0] & 0xF0;
             Cmd c[kMaxCmds]; int n = 0;
-            if (st == 0x90 && ev[i].size >= 3 && d[2] > 0) n = voices_.noteOn(d[1], d[2], at, c);
-            else if (st == 0x80 || (st == 0x90 && ev[i].size >= 3)) n = voices_.noteOff(d[1], at, c);
-            else if (st == 0xB0 && ev[i].size >= 3) {
+            if (st == 0x90 && e.size >= 3 && d[2] > 0) { n = voices_.noteOn(d[1], d[2], at, c); if (!fromWindows) show(0, d[1], d[2]); }
+            else if (st == 0x80 || (st == 0x90 && e.size >= 3)) { n = voices_.noteOff(d[1], at, c); if (!fromWindows) show(0, d[1], 0); }
+            else if (st == 0xB0 && e.size >= 3) {
                 if (d[1] == 64) n = voices_.sustain(d[2] >= 64, at, c);
                 else if (d[1] == 120 || d[1] == 123) n = voices_.allOff(c);
-            } else if (st == 0xE0 && ev[i].size >= 3) {
+                else if (d[1] == 1) { cc1_ = d[2]; if (!fromWindows) show(1, 1, d[2]); }   // the mod wheel: adds to Macro 1
+            } else if (st == 0xE0 && e.size >= 3) {
                 const int v = (d[1] | (d[2] << 7)) - 8192;
                 voices_.bend(v / 8192.0);
+                if (!fromWindows) show(2, 0, (uint32_t)(v + 8192));
             }
             for (int k = 0; k < n; k++) {
                 char line[64];
+                uint64_t when = at;
+                if (c[k].kind == Cmd::On && c[k].delayMs) { when += (uint64_t)c[k].delayMs * 48; c[k].delayMs = 0; }   // O: a later stamp
                 proto::cmd(line, sizeof line, c[k]);
                 line[std::strlen(line) - 1] = 0;
-                sendLine(line, ++nextId_, at);
+                sendLine(line, ++nextId_, when);
                 if (trace_) std::fprintf(trace_, "%s id %u at %llu dacPos %.0f dac_w %llu late %u/%u max %u\n", line, nextId_,
-                                         (unsigned long long)at, dacPos_, (unsigned long long)S->dac_w, S->sched_late, S->sched_ontime, S->sched_latemax);
+                                         (unsigned long long)when, dacPos_, (unsigned long long)S->dac_w, S->sched_late, S->sched_ontime, S->sched_latemax);
             }
         }
         // wait for the machine if it is behind (offline rendering runs faster than real time)
         const double need = dacPos_ + frames * ratio + 3;
-        for (int k = 0; k < 400 && (double)S->dac_w < need && S->state != BS_FAILED && !S->quit && !quit_; k++) {
+        for (int k = 0; offline && k < 400 && (double)S->dac_w < need && S->state != BS_FAILED && !S->quit && !quit_; k++) {
             S->grant_until = (uint64_t)need > kLead ? (uint64_t)need - kLead : 0; S->host_beat++;   // waiting: the engine runs to `need`
             std::this_thread::sleep_for(std::chrono::microseconds(500));
         }
@@ -340,6 +400,29 @@ private:
     LayerInfo layerCache_[kMaxLayers];
     std::string cacheSig_;
     bool dnaToGuest_ = false;          // worker: send the DNA to Windows
+    bool lenvDirty_ = false;           // worker: send every layer's effective envelopes (lenv)
+    double lastParamEdit_ = 0;         // a DNA from parameters (automation) goes to Windows 300 ms after the last change
+    // the keyboard strip: Windows' keys to the audio thread, and incoming MIDI to Windows' keys (single producer and
+    // consumer each, no locks: kind << 24 | a << 16 | b for the display, status << 16 | data1 << 8 | data2 for keys)
+    static constexpr uint32_t kKeyQ = 256;
+    uint32_t keyQ_[kKeyQ] = {}, showQ_[kKeyQ] = {};
+    std::atomic<uint32_t> keyR_{0}, keyW_{0}, showR_{0}, showW_{0};
+    std::atomic<int> cc1_{0};          // the mod wheel (MIDI or Windows): added to Macro 1
+    int cc1Applied_ = 0;
+    void show(uint32_t kind, uint32_t a, uint32_t b)
+    {
+        const uint32_t w = showW_.load();
+        if (w - showR_.load() >= kKeyQ) return;
+        showQ_[w % kKeyQ] = kind << 24 | (a & 0xFF) << 16 | (b & 0xFFFF);
+        showW_.store(w + 1, std::memory_order_release);
+    }
+    void keyFromWindows(uint8_t st, uint8_t a, uint8_t b)
+    {
+        const uint32_t w = keyW_.load();
+        if (w - keyR_.load() >= kKeyQ) return;
+        keyQ_[w % kKeyQ] = (uint32_t)st << 16 | (uint32_t)a << 8 | b;
+        keyW_.store(w + 1, std::memory_order_release);
+    }
     bool inFlight_ = false;            // a DNA Windows is building (its `layer` replies are staged until `built`)
     Dna stagedDna_; std::string stagedSig_;
     LayerInfo stagedLayers_[kMaxLayers];
@@ -373,8 +456,8 @@ private:
     {
         std::string s;
         for (auto &L : d.layers) {
-            s += std::to_string(L.source) + ":" + std::to_string(L.first) + ":" + std::to_string(L.count) + ":";
-            for (auto &st : L.steps) { s += st.op; s += std::to_string(st.arg) + "." + std::to_string(st.sound); }
+            s += std::to_string(L.source) + L.sourceName + ":" + std::to_string(L.first) + ":" + std::to_string(L.count) + ":";
+            for (auto &st : L.steps) { s += st.op; s += std::to_string(st.arg) + "." + std::to_string(st.ms) + "." + std::to_string(st.sound) + st.name; }
             s += "|";
         }
         return s;
@@ -383,9 +466,11 @@ private:
     // a new DNA from a preset, the state, a parameter or (fromGuest) Windows itself
     void setDna(const std::string &text, bool toGuest, bool fromGuest = false)
     {
-        Dna d = parse(text);
+        const Dna written = parse(text);
+        Dna d = effective(written);      // what sounds: the macros' mapped genes, Z-scaled envelopes, N repeats
         std::lock_guard<std::mutex> l(mtx_);
-        dnaText_ = d.canonical;
+        dnaText_ = written.canonical;
+        lenvDirty_ = true;               // the card gets every layer's effective envelopes again
         if (toGuest && !fromGuest) dnaToGuest_ = true;
         const std::string sig = sigOf(d);
         if (sig == cacheSig_ || (cacheSig_.empty() && sig == sigOf(parse(kDefaultDna)))) {
@@ -404,8 +489,23 @@ private:
         }
         param_[pAttack] = (float)d.g.attack; param_[pDecay] = (float)d.g.decay; param_[pSustain] = (float)d.g.sustain;
         param_[pRelease] = (float)d.g.release; param_[pVelocity] = (float)d.g.velocity; param_[pBend] = (float)d.g.bendRange;
-        param_[pGain] = (float)d.g.gainDb; param_[pTranspose] = d.layers.empty() ? 0.f : (float)d.layers[0].transpose;
+        param_[pGain] = (float)d.g.gainDb; param_[pTranspose] = written.layers.empty() ? 0.f : (float)written.layers[0].transpose;
+        for (int k = 0; k < kMacros; k++) param_[pMacro1 + k] = (float)written.g.macro[k];
         paramsDirty_ = false;
+    }
+
+    // the DNA as it sounds: macros applied, the mod wheel added to Macro 1 (DNA.md 5.4). A mapped N follows the
+    // parameter only: the wheel never makes Sound Recorder rebuild.
+    Dna effective(const Dna &written)
+    {
+        const Dna base = applyMacros(written);
+        const int cc = cc1_.load();
+        cc1Applied_ = cc;
+        if (!cc) return base;
+        Dna w = written;
+        w.g.macro[0] = std::min(100, std::max(0, written.g.macro[0] + (cc * 100 + 63) / 127));
+        Dna d = applyMacros(w);
+        return sigOf(d) == sigOf(base) ? d : base;
     }
 
     bool inFlightAtomic() { std::lock_guard<std::mutex> l(mtx_); return inFlight_ || dnaToGuest_; }
@@ -473,6 +573,9 @@ private:
 #else
         const char *coreName = "dosbox_pure_libretro.dylib";
 #endif
+#ifdef _WIN32
+        sweepTemp(tempDir());
+#endif
         tmp_ = tempDir() + "basilisk16-" + std::to_string(processId()) + "-" + std::to_string(++gInstanceCounter);
 #ifdef _WIN32
         CreateDirectoryA(tmp_.c_str(), nullptr);
@@ -485,8 +588,8 @@ private:
         if (!copyFile(machine + coreName, coreCopy_)) { status("BASILISK 16: cannot copy the emulator core."); sh_.S->state = BS_FAILED; return; }
         {
             FILE *f = std::fopen((machine + "w31.conf").c_str(), "rb");
-            FILE *o = std::fopen(conf_.c_str(), "wb");
-            if (!f || !o) { if (f) std::fclose(f); if (o) std::fclose(o); status("BASILISK 16: cannot write the machine settings."); sh_.S->state = BS_FAILED; return; }
+            if (!f) { status("BASILISK 16: cannot read the machine settings."); sh_.S->state = BS_FAILED; return; }
+            std::string out;
             char line[1024];
             std::string mdir = machine.substr(0, machine.size() - 1);
 #ifdef _WIN32
@@ -498,9 +601,10 @@ private:
                 if (p != std::string::npos) s.replace(p, 9, "\"" + mdir + "\"");
                 const size_t q = s.find("@DRIVE@");
                 if (q != std::string::npos) s.replace(q, 7, "\"" + mdir + "/drive\"");
-                std::fputs(s.c_str(), o);
+                out += s;
             }
-            std::fclose(f); std::fclose(o);
+            std::fclose(f);
+            if (!writeText(conf_, out)) { status("BASILISK 16: cannot write the machine settings."); sh_.S->state = BS_FAILED; return; }
         }
         const char *logEnv = std::getenv("BASILISK16_LOG");
         status("Starting Windows for Workgroups 3.11...");
@@ -520,6 +624,9 @@ private:
     void cleanupTemp()
     {
         if (tmp_.empty()) return;
+#ifdef _WIN32
+        for (int k = 0; k < 20 && !DeleteFileA(coreCopy_.c_str()) && GetLastError() != ERROR_FILE_NOT_FOUND; k++) Sleep(25);   // the core may take a moment to unmap
+#endif
         std::remove(coreCopy_.c_str());
         std::remove(conf_.c_str());
 #ifdef _WIN32
@@ -530,6 +637,27 @@ private:
     }
 
     void status(const char *s) { std::snprintf(sh_.status, sizeof sh_.status, "%s", s); }
+
+    // the library disc's sound names (machine/library.names.txt, written with library.zip): a DNA may use them
+    void loadLibraryNames()
+    {
+        static std::once_flag once;
+        std::call_once(once, [this] {
+            const char *bundle = getBundlePath();
+            const char *res = bundle ? getResourcePath(bundle) : nullptr;
+            if (!res) return;
+            FILE *f = std::fopen((std::string(res) + "/machine/library.names.txt").c_str(), "rb");
+            if (!f) return;
+            std::vector<std::string> names; char line[256];
+            while (std::fgets(line, sizeof line, f)) {
+                std::string s = line;
+                while (!s.empty() && (s.back() == '\n' || s.back() == '\r' || s.back() == ' ')) s.pop_back();
+                if (!s.empty()) names.push_back(s);
+            }
+            std::fclose(f);
+            setLibrary(names);
+        });
+    }
 
     // ------------------------------------------------------------------ the worker: Windows' replies, hello, DNA
     void work()
@@ -569,24 +697,61 @@ private:
                 { std::lock_guard<std::mutex> l(mtx_); d = dnaText_; }
                 for (int i = 0; i < 7; i++) d = setGlobal(d, kGlobalLetter[i], (int)std::lround(param_[i].load()));
                 d = setLayerGene(d, 0, 'T', (int)std::lround(param_[pTranspose].load()));
+                {
+                    const Dna cur = parse(d);
+                    for (int k = 0; k < kMacros; k++) {
+                        const int v = (int)std::lround(param_[pMacro1 + k].load());
+                        if (v != cur.g.macro[k]) d = setMacro(d, k + 1, v);
+                    }
+                }
+                lastParamEdit_ = nowSec();
                 bool changed;
                 { std::lock_guard<std::mutex> l(mtx_); changed = d != dnaText_; }
                 if (changed) setDna(d, true);
             }
-            bool send = false; std::string d; Globals g;
+            if (cc1_.load() != cc1Applied_) {   // the mod wheel moved: the sound follows (no DNA to Windows)
+                std::string cur;
+                { std::lock_guard<std::mutex> l(mtx_); cur = dnaText_; }
+                setDna(cur, false, false);
+            }
+            for (uint32_t r = showR_.load(), w = showW_.load(std::memory_order_acquire); r != w && hello; r++) {
+                const uint32_t q = showQ_[r % kKeyQ], kind = q >> 24, a = (q >> 16) & 0xFF, b = q & 0xFFFF;
+                char t[48];
+                if (kind == 0) std::snprintf(t, sizeof t, "show %u %u", a, b);
+                else if (kind == 1) std::snprintf(t, sizeof t, "cc %u %u", a, b);
+                else std::snprintf(t, sizeof t, "bend %d", (int)b - 8192);
+                sendLine(t, 0, 0);
+                showR_.store(r + 1);
+            }
+            bool send = false, sendEnv = false; std::string d; Globals g; Dna eff;
             {
                 std::lock_guard<std::mutex> l(mtx_);
-                if (hello && dnaToGuest_ && !inFlight_) {
+                // automation: Windows hears the DNA 300 ms after the last change (the sound already follows: genes,
+                // pan, offsets and envelopes are the host's; only a repeat count N makes Sound Recorder rebuild)
+                const bool settled = nowSec() - lastParamEdit_ > 0.3 || isProcessingOffline();
+                if (hello && dnaToGuest_ && !inFlight_ && settled) {
                     send = true; dnaToGuest_ = false; d = dnaText_;
                     g = parse(d).g;
-                    if (sigOf(parse(d)) != cacheSig_) { inFlight_ = true; for (auto &c : stagedLayers_) c = LayerInfo(); }
+                    if (sigOf(applyMacros(parse(d))) != cacheSig_) { inFlight_ = true; for (auto &c : stagedLayers_) c = LayerInfo(); }
                 }
+                if (hello && lenvDirty_ && !send && !inFlight_) { sendEnv = true; lenvDirty_ = false; eff = effective(parse(dnaText_)); }
             }
             if (send) {
-                std::string line = "dna " + d;
+                std::string line = "dna " + d;   // as written: Windows shows it, and does N itself
                 building_ = true;
                 sendLine(line.c_str(), 0, 0);
                 char b[96]; proto::env(b, sizeof b, g); trimSend(b);
+                std::lock_guard<std::mutex> l(mtx_);
+                lenvDirty_ = true;
+            }
+            if (sendEnv) {   // after the DNA (Windows resets them when it parses one): the macro-applied envelopes
+                for (int i = 0; i < kMaxLayers; i++) {
+                    static const Env none;
+                    char b[160];
+                    const Layer *L = i < (int)eff.layers.size() ? &eff.layers[i] : nullptr;
+                    proto::lenv(b, sizeof b, i, 'a', L ? L->envA : none); trimSend(b);
+                    proto::lenv(b, sizeof b, i, 'p', L ? L->envP : none); trimSend(b);
+                }
             }
             // Windows' replies
             while (S->rep_r != S->rep_w) {
@@ -648,7 +813,12 @@ private:
             break; }
         case proto::Reply::End: { std::lock_guard<std::mutex> l(mtx_); pendEnds_.push_back(r.rec); break; }
         case proto::Reply::Edit: setDna(r.text, false, true); break;   // Windows already rebuilt; the host adopts it
-        default: break;
+        default: {   // the keyboard strip in Windows (DNA.md 5.4)
+            int a = 0, b = 0;
+            if (std::sscanf(line.c_str(), "key %d %d", &a, &b) == 2) keyFromWindows(b > 0 ? 0x90 : 0x80, (uint8_t)(a & 0x7F), (uint8_t)(b & 0x7F));
+            else if (std::sscanf(line.c_str(), "cc %d %d", &a, &b) == 2) keyFromWindows(0xB0, (uint8_t)(a & 0x7F), (uint8_t)(b & 0x7F));
+            else if (std::sscanf(line.c_str(), "bend %d", &a) == 1) { a += 8192; a = a < 0 ? 0 : a > 16383 ? 16383 : a; keyFromWindows(0xE0, (uint8_t)(a & 0x7F), (uint8_t)(a >> 7)); }
+            break; }
         }
     }
 

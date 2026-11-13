@@ -32,19 +32,23 @@ rm -rf "$W/wfw"; mkdir -p "$W/wfw"
 git -C "$REPO" show HEAD:site/basilisk-31-browser/w31.jsdos > "$W/w31.jsdos"
 python3 -c "import zipfile,sys;zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[2])" "$W/w31.jsdos" "$W/wfw"
 rm -rf "$W/wfw/.jsdos"
-BS311_ENGINE="$W/engine" BS311_OFFS="$W/offs" python3 "$PKG/tools/make_machine.py" "$W/wfw" "$W/gout" "$W/dosbox-pure/dosbox_pure_libretro.so" "$W/machine"
+# the library disc (drive L:): packages/basilisk-synth/library/sources, converted for Sound Recorder 3.1
+python3 "$PKG/tools/make_library311.py" "$W/library.zip"
+BS311_ENGINE="$W/engine" BS311_OFFS="$W/offs" python3 "$PKG/tools/make_machine.py" "$W/wfw" "$W/gout" "$W/dosbox-pure/dosbox_pure_libretro.so" "$W/machine" --library "$W/library.zip"
 
-# --- the Windows plugin
+# --- the Windows plugin (its program list: tools/make_presets311.py)
+python3 "$PKG/tools/make_presets311.py"
 (cd "$PKG/plugin" && make DPF_PATH="$W/DPF" DPF_TARGET_DIR="$W/win" DPF_BUILD_DIR="$W/obj-win" WINDOWS=true \
   CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ -j"$(nproc)" vst3 >/dev/null)
 M="$W/win/Basilisk16.vst3/Contents/Resources/machine"
 rm -rf "$M"; mkdir -p "$M"
 cp "$W/dbp-win/dosbox_pure_libretro.dll" "$W/machine/w31.conf" "$W/machine/w31.state" "$W/machine/drive.zip" "$M/"
+cp "$W/machine/library.zip" "$W/machine/library.names.txt" "$M/"
 
 # --- inputs for the Mac build
 rm -rf "$W/macsrc"; mkdir -p "$W/macsrc"
 cp -r "$W/dosbox-pure" "$W/macsrc/dosbox-pure"; rm -rf "$W/macsrc/dosbox-pure/build" "$W/macsrc/dosbox-pure"/*.so "$W/macsrc/dosbox-pure/.git"
 cp -r "$W/DPF" "$W/macsrc/DPF"; rm -rf "$W/macsrc/DPF/build" "$W/macsrc/DPF/.git"
 cp -r "$PKG" "$W/macsrc/pkg"; cp -r "$PKG/../basilisk-synth/core" "$W/macsrc/core"
-cp -r "$W/wfw" "$W/macsrc/wfw"; cp -r "$W/gout" "$W/macsrc/gout"
+cp -r "$W/wfw" "$W/macsrc/wfw"; cp -r "$W/gout" "$W/macsrc/gout"; cp "$W/library.zip" "$W/library.names.txt" "$W/macsrc/"
 echo "built: $W/win (Windows), $W/macsrc (copy to a Mac, run pkg/tools/mac_build.sh there)"
