@@ -1,0 +1,11 @@
+; BASILISK SYNTH Help (Windows XP edition). Build: python3 hlpc.py bsynth.hpj -o out/BSYNTH.HLP
+[OPTIONS]
+TITLE=BASILISK SYNTH Help
+COPYRIGHT=BASILISK SYNTH by William Sharkey. Windows XP and Sound Recorder are Microsoft's.
+CONTENTS=contents
+
+[FILES]
+bsynth.rtf
+
+[CONFIG]
+BrowseButtons()

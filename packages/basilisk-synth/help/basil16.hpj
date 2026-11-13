@@ -1,0 +1,11 @@
+; BASILISK 16 Help (Windows 3.11 edition). Build: python3 hlpc.py basil16.hpj -o out/BASIL16.HLP
+[OPTIONS]
+TITLE=BASILISK 16 Help
+COPYRIGHT=BASILISK 16 by William Sharkey. Windows 3.11 and Sound Recorder are Microsoft's.
+CONTENTS=contents
+
+[FILES]
+basil16.rtf
+
+[CONFIG]
+BrowseButtons()

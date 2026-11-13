@@ -1,0 +1,345 @@
+{\rtf1\ansi\deff0
+{\fonttbl{\f0\fswiss Helv;}{\f1\fmodern Courier;}}
+{\colortbl;\red0\green0\blue0;\red0\green0\blue128;}
+#{\footnote contents}${\footnote Contents for BASILISK SYNTH Help}+{\footnote main:000}K{\footnote contents;help;BASILISK SYNTH}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b BASILISK SYNTH Help\par
+\pard\sa60\li115\ri175\plain\f0\fs20 BASILISK SYNTH is an instrument for your DAW. Sixteen Windows XP Sound Recorders play your notes.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 To learn how to use Help, press F1.\par
+\pard\sb175\sa25\li115\ri175\plain\f0\fs20\b Getting Started\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb What BASILISK SYNTH Is}{\v what_is}\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb Playing the Instrument}{\v playing}\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb The Strips}{\v strips}\par
+\pard\sb175\sa25\li115\ri175\plain\f0\fs20\b Making Sounds\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb Presets}{\v presets}\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb The DNA}{\v dna}\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb Voices and Layers}{\v voices}\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb Effects and Edits}{\v effects}\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb The Sounds}{\v sounds}\par
+\pard\sb175\sa25\li115\ri175\plain\f0\fs20\b Using Windows\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb Minimizing the Synth to Use Windows}{\v minimize}\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb Menus and Panels}{\v menus}\par
+\pard\sb175\sa25\li115\ri175\plain\f0\fs20\b Reference\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb DNA Reference}{\v dna_ref}\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb Troubleshooting}{\v trouble}\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb Coming Next}{\v coming}\par
+\page
+#{\footnote what_is}${\footnote What BASILISK SYNTH Is}+{\footnote main:010}K{\footnote BASILISK SYNTH;Sound Recorder;Windows XP;emulator;machine;about}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b What BASILISK SYNTH Is\par
+\pard\sa60\li115\ri175\plain\f0\fs20 BASILISK SYNTH is a plugin instrument for a {\ul DAW}{\v term_daw}. It is a VST3 for Windows and macOS, and also an Audio Unit and a CLAP on macOS.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Each copy of the plugin runs its own Windows XP in an emulator. In that Windows XP, sixteen copies of Sound Recorder (sndrec32.exe) are open. The plugin calls each copy a {\ul recorder}{\v term_recorder}.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 When you play a note, the plugin chooses a recorder. That Sound Recorder plays its sound through the sound card of Windows XP, at the pitch of your note. The plugin sends that sound to your DAW. The plugin does not make a sound of its own.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The sound is a {\ul DNA}{\v term_dna}: a line of Sound Recorder commands. The plugin keeps the DNA in your project, so the project opens with the same sound.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b When you open the editor\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The editor shows the screen of Windows XP. The sixteen Sound Recorders lose their menu bars, title bars and unused buttons. Then they move into one column, a tape machine of sixteen {\uldb strips}{\v strips}. Task Manager and the Date and Time clock move in beside them. This takes about five seconds. The instrument can play after about one second.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b The first time\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The first time you load the plugin, it downloads the Windows XP machine (788 MB). It checks the file and unpacks it (930 MB). The editor shows the progress. After that, the machine starts in about one second.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 Windows:\tab {\f1 %LOCALAPPDATA%\\BASILISK SYNTH}\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 macOS:\tab {\f1 ~/Library/Application Support/BASILISK SYNTH}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 To remove the machine, delete that folder.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b See Also\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb Playing the Instrument}{\v playing}\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb The DNA}{\v dna}\par
+\page
+#{\footnote playing}${\footnote Playing the Instrument}+{\footnote main:020}K{\footnote playing;notes;MIDI;velocity;sustain pedal;pitch bend;parameters;latency;automation}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Playing the Instrument\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Put BASILISK SYNTH on an instrument track in your DAW and play MIDI notes. You do not have to open the editor.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b What the instrument uses\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab MIDI notes and their velocity.\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab The sustain pedal (CC64).\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Pitch bend. The bend applies when a note starts.\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab All Notes Off.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b DAW parameters\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Gain, Attack, Decay, Sustain, Release, Velocity, Bend Range and Transpose. You can automate all of them. Each one changes the {\ul DNA}{\v term_dna}.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Timing\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Each note goes through a whole emulated PC. The plugin tells the DAW a fixed {\ul latency}{\v term_latency} of 100 ms. The DAW moves the sound back by that amount on playback. When you play live, you hear the delay.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Each instrument has sixteen recorders. When all of them play, a new note takes the oldest one. See {\ul voice stealing}{\v term_steal}.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Sleep\par
+\pard\sa60\li115\ri175\plain\f0\fs20 When no note plays for four seconds and the editor is closed, the machine pauses. The next note or the DAW transport wakes it.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Offline renders\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Windows XP plays in real time, also during an offline render. A render sounds the same as a live bounce.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b To play one strip\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 1\tab Open the editor.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 2\tab Click the Play button of a strip. That recorder plays its sound at its own pitch.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 3\tab Click Stop to stop it.\par
+\page
+#{\footnote strips}${\footnote The Strips}+{\footnote main:030}K{\footnote strips;recorders;Play button;Stop button;wave display;position;length;slider;colors}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b The Strips\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Each strip is one real Sound Recorder, without its menu bar and title bar. There are sixteen strips, numbered 1 to 16.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Number\tab The number of the recorder. Its color shows the {\ul layer}{\v term_layer} that the recorder plays.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Play\tab Plays the sound of this recorder. During a note, Play stays down.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Stop\tab Stops this recorder.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Position\tab The time of the play position, in seconds.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Wave\tab The green wave display of Sound Recorder. It follows the sound.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Length\tab The length of the sound, in seconds.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Slider\tab The position slider. It moves while the recorder plays.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 A note can play more than one recorder. Harmony, unison and layers all add recorders to one note. See {\uldb Voices and Layers}{\v voices}.\par
+\page
+#{\footnote presets}${\footnote Presets}+{\footnote main:040}K{\footnote presets;factory presets;programs;saving sounds}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Presets\par
+\pard\sa60\li115\ri175\plain\f0\fs20 BASILISK SYNTH has 12 factory presets. They are in the preset list of your DAW. Each preset is a {\ul DNA}{\v term_dna}.\par
+\pard\sa35\li2275\ri175\fi-2160\tx2275\plain\f0\fs20\b Name\tab DNA\par
+\pard\sa35\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Chord Organ\tab {\f1 chord#10/ding>>E#6;A2D300S70R250}\par
+\pard\sa35\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Tada Brass\tab {\f1 tada@20[]#16;A5S100R300}\par
+\pard\sa35\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Ding Bells\tab {\f1 ding#8H0,12/xpding#8T12;R600}\par
+\pard\sa35\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Startup Pad\tab {\f1 startup<#16U2~8;A400D800S80R1200}\par
+\pard\sa35\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Reverse Chimes\tab {\f1 chimesR#12U2~6/ding>E#4;A30R500}\par
+\pard\sa35\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Logoff Strings\tab {\f1 logoff@40[#16U3~12;A250S90R900}\par
+\pard\sa35\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Error Pluck\tab {\f1 errorE#16;A0D250S0R150}\par
+\pard\sa35\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Recycle Perc\tab {\f1 recycle>>#8F/xprecycle#8T-12;R80}\par
+\pard\sa35\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Notify Choir\tab {\f1 notify<-E#16H0,7;A300S85R1000}\par
+\pard\sa35\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Critical Bass\tab {\f1 critstop<<#16T-12;A5D400S60R200}\par
+\pard\sa35\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Balloon Keys\tab {\f1 balloonMding#16H0,12;R300}\par
+\pard\sa60\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Shutdown Drone\tab {\f1 shutdown<R#16U3~15;A900S100R2000}\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Your own presets\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Save a preset with the preset menu of your DAW. The preset keeps the DNA, so it gives the same sound in each project. A preset from BASILISK 16, the Windows 3.11 edition, also plays here.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b To copy a sound as text\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 1\tab Open the editor.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 2\tab Select the text in the DNA box and press CTRL+C.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 3\tab To use a DNA, paste it into the DNA box and press ENTER.\par
+\page
+#{\footnote dna}${\footnote The DNA}+{\footnote main:050}K{\footnote DNA;recipe;Apply;Mutate;Undo;sound, changing}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b The DNA\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The whole sound of the instrument is one line of text, the DNA. Windows XP builds the sound from it with the real menu commands of Sound Recorder, in order from left to right. Because the order changes the result, there are very many different sounds.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Example:\par
+\pard\sa60\li395\ri175\plain\f1\fs20 chord#10/ding>>E#6;A2D300S70R250\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 chord#10}\tab Layer 1: chord.wav on 10 recorders.\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 /}\tab Starts the next {\ul layer}{\v term_layer}.\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 ding>>E#6}\tab Layer 2: ding.wav, Increase Speed two times, Add Echo, on 6 recorders.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 ;A2D300S70R250}\tab Globals: attack 2 ms, decay 300 ms, sustain 70%, release 250 ms. See {\ul envelope}{\v term_env}.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b To change the DNA\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 1\tab Open the editor.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 2\tab Type in the DNA box, then click Apply or press ENTER.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 \tab Or choose a command from the Edit, Effects, Voices or Layers menu. The command goes into the DNA of the selected layer.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 3\tab Windows XP builds the new sound. The DAW gets the new DNA.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b Mutate} makes one random change: a new step, a new source sound, a harmony, or a mixed-in sound. {\b Undo} goes back to the DNA before the last change.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Rules\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab A DNA has no spaces and is at most 1024 characters.\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Up to 8 layers, and up to 64 steps in each layer.\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab A step that makes a sound longer than 30 seconds is skipped.\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Unknown characters are skipped. A number out of range is set to the nearest limit.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab An unknown sound name makes that layer silent.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b See Also\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb DNA Reference}{\v dna_ref}\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb Effects and Edits}{\v effects}\par
+\page
+#{\footnote voices}${\footnote Voices and Layers}+{\footnote main:060}K{\footnote voices;layers;harmony;unison;transpose;recorders, number of;pool;Add Layer;Remove Layer}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Voices and Layers\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Layers\par
+\pard\sa60\li115\ri175\plain\f0\fs20 A {\ul layer}{\v term_layer} is one part of the sound. It has a source sound, its steps and its voice genes. Each note plays all layers at the same time. In the DNA, a slash ({\f1 /}) separates layers.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Each layer has its own recorders, its {\ul pool}{\v term_pool}. The strips show the color of their layer. To select a layer, click it in the Layers list. Menu commands change the selected layer.\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab {\b Layers > Add Layer} adds a layer with xpding.wav.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab {\b Layers > Remove Layer} removes the selected layer.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Voices\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The Voices menu changes how the recorders of the selected layer play.\par
+\pard\sa60\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Transpose\tab Up or down an octave ({\f1 T}). Range -48 to +48 semitones.\par
+\pard\sa60\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Harmony\tab Each note plays one voice for each interval ({\f1 H}). See {\ul harmony}{\v term_harmony}.\par
+\pard\sa60\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Unison\tab Each harmony voice becomes 1 to 3 voices, a little out of tune ({\f1 U}). See {\ul unison}{\v term_unison}.\par
+\pard\sa60\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 More Recorders\tab Gives the layer one more recorder ({\f1 #}).\par
+\pard\sa60\li2275\ri175\fi-2160\tx2275\plain\f0\fs20 Fewer Recorders\tab Gives the layer one less recorder.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The harmony choices are: Single note, Note + octave up, Note + octave down, Octaves both ways, Fifth, Major triad, Minor triad and Power stack.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b Note:} Harmony and unison use more recorders for each note. With many voices, notes take recorders from each other sooner.\par
+\page
+#{\footnote effects}${\footnote Effects and Edits}+{\footnote main:070}K{\footnote effects;Effects menu;Edit menu;echo;reverse;speed;volume;Insert File;Mix with File;Copy;Paste Insert;Paste Mix;Delete Before;Delete After;position}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Effects and Edits\par
+\pard\sa60\li115\ri175\plain\f0\fs20 These are the real commands of Sound Recorder. Each command adds a step to the DNA of the selected layer. Windows XP then runs the steps in Sound Recorder, in order.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Effects menu\par
+\pard\sa35\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Increase Volume (by 25%)\tab {\f1 +}\par
+\pard\sa35\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Decrease Volume\tab {\f1 -}\par
+\pard\sa35\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Increase Speed (by 100%)\tab {\f1 >}  Half the length, an octave up.\par
+\pard\sa35\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Decrease Speed\tab {\f1 <}  Two times the length, an octave down.\par
+\pard\sa35\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Add Echo\tab {\f1 E}\par
+\pard\sa60\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Reverse\tab {\f1 R}\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Edit menu\par
+\pard\sa35\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Copy\tab {\f1 C}  Copies the whole sound of the layer.\par
+\pard\sa35\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Paste Insert\tab {\f1 P}  Inserts the copy at the position.\par
+\pard\sa35\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Paste Mix\tab {\f1 X}  Mixes the copy in at the position.\par
+\pard\sa35\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Insert File\tab {\f1 I}{\f1\i name}  Inserts another sound at the position.\par
+\pard\sa35\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Mix with File\tab {\f1 M}{\f1\i name}  Mixes another sound in at the position.\par
+\pard\sa35\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Move Position To\tab {\f1 @}{\f1\i NN}  Moves the slider to NN% of the length.\par
+\pard\sa35\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Delete Before Current Position\tab {\f1 [}\par
+\pard\sa60\li3355\ri175\fi-3240\tx3355\plain\f0\fs20 Delete After Current Position\tab {\f1 ]}\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b The position\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The position starts at 0 when the source sound loads. Each step leaves it where Sound Recorder leaves it. Only {\f1 @} moves it on purpose. If Paste comes before Copy in a layer, the copy is the source sound as it loaded.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Example: {\f1 tada@20[]} keeps the middle of tada.wav: move to 20%, delete before, then delete after.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b See Also\par
+\pard\sa35\li395\ri175\plain\f0\fs20 {\uldb The Sounds}{\v sounds}\par
+\page
+#{\footnote sounds}${\footnote The Sounds}+{\footnote main:080}K{\footnote sounds;source sounds;Media folder;Sounds list;names of sounds}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b The Sounds\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Each layer starts from one of 35 sounds in {\f1 C:\\WINDOWS\\Media} on Windows XP. To choose the source of the selected layer, double-click a sound in the Sounds list.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 In the DNA, use the short name:\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 chimes}\tab chimes.wav\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 chord}\tab chord.wav\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 ding}\tab ding.wav\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 notify}\tab notify.wav\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 recycle}\tab recycle.wav\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 ringin}\tab ringin.wav\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 ringout}\tab ringout.wav\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 start}\tab start.wav\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 tada}\tab tada.wav\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The other 26 names stand for the files "Windows XP {\i name}.wav":\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 balloon}\tab Balloon\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 batcrit}\tab Battery Critical\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 batlow}\tab Battery Low\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 critstop}\tab Critical Stop\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 default}\tab Default\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 xpding}\tab Ding\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 error}\tab Error\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 exclaim}\tab Exclamation\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 hwfail}\tab Hardware Fail\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 hwin}\tab Hardware Insert\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 hwout}\tab Hardware Remove\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 infobar}\tab Information Bar\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 logoff}\tab Logoff Sound\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 logon}\tab Logon Sound\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 menu}\tab Menu Command\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 minimize}\tab Minimize\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 xpnotify}\tab Notify\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 popup}\tab Pop-up Blocked\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 print}\tab Print complete\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 xprecycle}\tab Recycle\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 restore}\tab Restore\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 xpringin}\tab Ringin\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 xpringout}\tab Ringout\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 shutdown}\tab Shutdown\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 startup}\tab Startup\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 xpstart}\tab Start\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The note that plays a sound at its own rate is the {\ul root note}{\v term_root}, middle C (60) unless the DNA sets another one.\par
+\page
+#{\footnote minimize}${\footnote Minimizing the Synth to Use Windows}+{\footnote main:090}K{\footnote minimize;restore;desktop;taskbar;Start menu;Windows XP, using;help, opening;F1}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Minimizing the Synth to Use Windows\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The synth window covers the whole screen of Windows XP. You can minimize it and use Windows XP as usual: open My Computer, Notepad, Paint or this Help. The instrument keeps playing while it is minimized.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b To minimize the synth\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab On the File menu, choose Minimize.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The taskbar comes back, with a BASILISK SYNTH button on it. The desktop shows the BASILISK SYNTH Help icon.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b To restore the synth\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Click the BASILISK SYNTH button on the taskbar.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The synth fills the screen again and the taskbar goes away.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b To open this Help\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab In the synth, press F1, or choose Contents from the Help menu.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab On the desktop, double-click {\b BASILISK SYNTH Help}.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b Note:} Windows XP in the synth has no network and no sound of its own: its system sounds are off, so they do not play into your music. When you remove the plugin from your project, this Windows XP stops. Changes to its files are not kept.\par
+\page
+#{\footnote menus}${\footnote Menus and Panels}+{\footnote main:100}K{\footnote menus;panels;Layers list;Sounds list;Task Manager;Date and Time;About}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Menus and Panels\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Menus\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 File\tab Apply DNA (ENTER), Mutate, Undo, Minimize.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Edit\tab Sound Recorder's Edit commands. See {\uldb Effects and Edits}{\v effects}.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Effects\tab Sound Recorder's Effects commands.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Voices\tab Transpose, harmony, unison and the number of recorders. See {\uldb Voices and Layers}{\v voices}.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Layers\tab Add Layer, Remove Layer.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Help\tab Contents (F1), About BASILISK SYNTH.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Panels\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 DNA\tab The DNA box, with Apply, Mutate and Undo.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Layers\tab The layers of the DNA. Click one to select it.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Sounds\tab Double-click a sound to make it the source of the selected layer.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 This machine\tab Task Manager's CPU and page-file graphs for this Windows XP.\par
+\pard\sa60\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 Date and Time\tab The clock and calendar of Windows XP. The plugin sets the clock when the machine starts.\par
+\page
+#{\footnote dna_ref}${\footnote DNA Reference}+{\footnote main:110}K{\footnote DNA;reference;steps;genes;globals;attack;decay;sustain;release;velocity;bend range;root note;gain;level;fixed pitch}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b DNA Reference\par
+\pard\sa60\li115\ri175\plain\f0\fs20 A DNA is: layer {\f1 /} layer {\f1 /} ... {\f1 ;} globals. Each layer is a sound name, then steps and voice genes in any order.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Steps (run in order)\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 +  -}\tab Increase / Decrease Volume\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 >  <}\tab Increase / Decrease Speed\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 E}\tab Add Echo\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 R}\tab Reverse\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 @}{\f1\i NN}\tab Move the position to NN% (0 to 99)\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 [  ]}\tab Delete Before / After Current Position\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 C  P  X}\tab Copy, Paste Insert, Paste Mix\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 I}{\f1\i name}\tab Insert File\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 M}{\f1\i name}\tab Mix with File\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Voice genes (the last one of each kind wins)\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 #}{\f1\i N}\tab Recorders for this layer, 1 to 16\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 T}{\f1\i N}\tab Transpose in semitones, -48 to +48\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 H}{\f1\i a,b,...}\tab Harmony intervals in semitones, up to 8\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 U}{\f1\i N}{\f1 ~}{\f1\i C}\tab Unison: N voices (1 to 8) over +/- C cents (0 to 100)\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 F}\tab Fixed pitch: always the file's own rate\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 L}{\f1\i N}\tab Layer level in %, 0 to 400\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Globals (after the semicolon)\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 A}{\f1\i N}\tab Attack in ms (default 0)\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 D}{\f1\i N}\tab Decay in ms (default 0)\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 S}{\f1\i N}\tab Sustain level in % (default 100)\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 R}{\f1\i N}\tab Release in ms (default 120)\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 B}{\f1\i N}\tab Pitch-bend range in semitones (default 2)\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 V}{\f1\i N}\tab Velocity sensitivity in % (default 100)\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 K}{\f1\i N}\tab Root MIDI note (default 60)\par
+\pard\sa35\li1555\ri175\fi-1440\tx1555\plain\f0\fs20 {\f1 G}{\f1\i N}\tab Output gain in dB (default 0)\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Recorders for each layer\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Each layer gets at least one recorder. Layers with {\f1 #} get their number first, in order. Layers without {\f1 #} share the rest equally.\par
+\page
+#{\footnote trouble}${\footnote Troubleshooting}+{\footnote main:120}K{\footnote troubleshooting;problems;no sound;download;silence;late notes;CPU;macOS, quarantine;DAW does not show the plugin}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Troubleshooting\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b The DAW does not show the plugin\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Windows: copy {\f1 BasiliskSynth.vst3} to {\f1 C:\\Program Files\\Common Files\\VST3}, then rescan plugins. macOS: the plugin is not notarized. Run this once in Terminal, then restart the DAW:\par
+\pard\sa60\li395\ri175\plain\f1\fs20 xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/*/BasiliskSynth.*\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b The first load stops or fails\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The first load downloads 788 MB. Make sure the computer is online and has about 2 GB free. If the download stops, remove the plugin, delete the BASILISK SYNTH folder (see {\uldb What BASILISK SYNTH Is}{\v what_is}) and load the plugin again.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b There is no sound\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Check that the track gets MIDI notes.\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Open the editor. If the strips do not move when you play, the machine did not start. Remove the plugin and add it again.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab A layer with an unknown sound name is silent. Check the DNA.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Notes sound late when I play live\par
+\pard\sa60\li115\ri175\plain\f0\fs20 This is the fixed {\ul latency}{\v term_latency} of 100 ms. Recorded MIDI plays on time, because the DAW compensates. Notes are close to the grid, not exact to the sample.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Some notes are cut short\par
+\pard\sa60\li115\ri175\plain\f0\fs20 All sixteen recorders were busy, so a new note took one. Use fewer harmony or unison voices, or shorter release.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b The computer gets busy\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Each instance is a whole emulated PC. It uses about one processor core while it plays and almost nothing while it sleeps. Close the editor when you do not need it; the machine then sleeps after four quiet seconds.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b I minimized the synth and cannot find it\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Click the BASILISK SYNTH button on the taskbar. See {\uldb Minimizing the Synth to Use Windows}{\v minimize}.\par
+\page
+#{\footnote coming}${\footnote Coming Next}+{\footnote main:130}K{\footnote coming next;DNA version 2;offsets;pan;envelopes;macros;library}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Coming Next\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The DNA format has a version 2. Its specification and the shared DNA code are written; the instruments do not use it yet. Version 2 only adds. Each DNA that works now keeps its meaning.\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab A start offset for each layer, so layers can start one after another.\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Pan for each layer, from left to right.\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Drawn volume and pan envelopes, with up to 8 points.\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Positions in milliseconds, for collages of several sounds.\par
+\pard\sa35\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Four macros for each sound, which the DAW can automate.\par
+\pard\sa60\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab A library disc with more Windows sounds and presets.\par
+\page
+#{\footnote term_dna}
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b DNA}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 One line of text that is the whole sound: layers of Windows sounds, each changed by Sound Recorder commands in order, and the settings for voices and the envelope.\par
+\page
+#{\footnote term_recorder}
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b recorder}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 One of the sixteen Sound Recorders in Windows XP. Each recorder holds one sound and plays one voice at a time.\par
+\page
+#{\footnote term_layer}
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b layer}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 One part of the sound, with its own source sound, steps and recorders. Each note plays all layers.\par
+\page
+#{\footnote term_pool}
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b pool}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The recorders that belong to one layer. Set the number with {\f1 #}, or with More Recorders and Fewer Recorders.\par
+\page
+#{\footnote term_harmony}
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b harmony}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Intervals in semitones that each note plays together. {\f1 H0,4,7} plays a major triad. {\f1 H0,12,-12} plays the note and an octave on each side.\par
+\page
+#{\footnote term_unison}
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b unison}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 More voices of the same note, each a few cents out of tune, for a wide sound. {\f1 U3~12} plays 3 voices over 12 cents up and down.\par
+\page
+#{\footnote term_env}
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b envelope}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 How the volume of a note changes: Attack (time to full volume), Decay (time to the sustain level), Sustain (the level while you hold the key) and Release (time to silence after you let go). The Sound Recorder hook sets the volume of each voice in steps of about 10 ms.\par
+\page
+#{\footnote term_latency}
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b latency}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The fixed delay between a note and its sound. The plugin tells the DAW the delay, and the DAW moves recorded parts back to the beat.\par
+\page
+#{\footnote term_steal}
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b voice stealing}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 When all recorders of a layer play, a new note stops the oldest one, with a 5 ms fade, and uses it.\par
+\page
+#{\footnote term_daw}
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b DAW}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 A digital audio workstation: the music program that loads the plugin, for example Ableton Live, Bitwig, Cubase, FL Studio, Logic Pro or REAPER.\par
+\page
+#{\footnote term_root}
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b root note}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The MIDI note that plays a sound at the rate it was recorded. Set it with {\f1 K} in the globals. The default is 60, middle C.\par
+\page
+}
