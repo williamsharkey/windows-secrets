@@ -98,3 +98,11 @@ If a lane names these differently, change `help.txt` and rebuild:
   - group "BASILISK 16", item "BASILISK 16 Help"
 - Both: keyboard Hold, PC keys / Keys, Bend, Mod, the four macros, and the preset counts (39 XP, 71 on 3.11), all as
   in the main READMEs on 2026-11-13.
+
+5. Recipes (topic `recipe`, context 20)
+---------------------------------------
+The topic describes DNA recipes (`design/PRESET-ENGINE-2.md` section 17 on branch `design/preset-engine-2`; code in
+`design/v3/recipe.cpp`). It is only true once the DNA box accepts a recipe as well as a DNA. That is planned for after
+the v1.2 releases. Until then, leave the topic out of the Contents, or ship it with the recipe code. The words and
+their spellings come from `recipe.cpp`; if they change there, change this topic too. The help text uses `...` and
+`-` where recipes show an ellipsis and an en dash, because the Windows 3.1 character set has neither.

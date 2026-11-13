@@ -12,6 +12,7 @@
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Presets}{\v presets}\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Making Sounds\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb The DNA}{\v dna}\par
+\pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Recipes: the DNA in Words}{\v recipe}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Effects and Edits}{\v effects}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Layers}{\v layers}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Envelopes}{\v envelopes}\par
@@ -145,7 +146,63 @@
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Effects and Edits}{\v effects}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Layers}{\v layers}\par
 \page
-#{\footnote effects}${\footnote Effects and Edits}+{\footnote main:080}K{\footnote steps;Effects;Edit;Increase Volume;Decrease Volume;Increase Speed;Decrease Speed;Add Echo;Reverse;Copy;Paste Insert;Paste Mix;Insert File;Mix with File;Delete Before;Delete After;position}
+#{\footnote recipe}${\footnote Recipes: the DNA in Words}+{\footnote main:080}K{\footnote recipe;words;DNA;readable;one-line;short form;trim;double;faster;slower;louder;softer;echo;reverse;cut before;cut after;insert;mix}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Recipes: the DNA in Words\par
+\pard\sa60\li115\ri175\plain\f0\fs20 A recipe is the DNA written in Sound Recorder's own words. It holds exactly the same sound: a recipe turns back into the same DNA, letter for letter. You can type a recipe wherever you can type a DNA.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Example\par
+\pard\sa60\li115\ri175\plain\f0\fs20 {\f1 ding>E/tada<<R+#4H0,12U2~9;A5R350} is, as a recipe:\par
+\pard\sa60\li115\ri175\plain\f0\fs20 {\f1 ding    faster, echo}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 {\f1 tada    slower \'d72, reverse, louder   4 recorders \'b7 notes +0 +12 \'b7 unison 2 \'b19\'a2}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 {\f1 env     attack 5ms \'b7 release 350ms}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Each layer has its own line. It starts with the sound's name. The steps follow, in order, then the voice settings. The {\f1 env} line holds the settings for the whole sound.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Three forms\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 Multi-line\tab One line per layer and an {\f1 env} line, as above. For reading and editing.\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 One-line\tab All on one line. A slash with a space on each side separates the layers; a bar with a space on each side comes before the settings for the whole sound.\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 Short\tab The one-line form with short words, for lists. If it is too long, it ends in an ellipsis (...). A short form that ends that way is only a preview and cannot be typed back.\par
+\pard\sa60\li115\ri175\plain\f0\fs20 The same sound in one line:\par
+\pard\sa60\li115\ri175\plain\f0\fs20 {\f1 ding faster echo / tada slower\'d72 reverse louder 4rec notes +0+12 unison 2\'b19\'a2 | atk 5ms rel 350ms}\par
+\pard\sa60\li115\ri175\plain\f0\fs20 And in the short form:\par
+\pard\sa60\li115\ri175\plain\f0\fs20 {\f1 ding fast echo / tada slowx2 rev loud 4r h+0+12 u2+-9c | a5 r350}\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Steps (the Effects and Edit commands)\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 faster, slower\tab Effects > Increase Speed, Decrease Speed (an octave up, an octave down)\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 louder, softer\tab Effects > Increase Volume, Decrease Volume\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 echo, reverse\tab Effects > Add Echo, Reverse\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 at 45%, at 250ms\tab Moves the position slider to 45 % of the length, or to 250 ms\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 cut before, cut after\tab Edit > Delete Before / After Current Position. {\f1 cut before 30%} moves the slider first.\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 copy, paste, mix paste\tab Edit > Copy, Paste Insert, Paste Mix\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 insert tada, mix chimes\tab Edit > Insert File..., Mix with File... with that sound\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 slower \'d72\tab The step two times. You can type x2 for \'d72.\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 trim 5-45%\tab Keeps 5 % to 45 % of the sound: cut after 45 %, then cut before. {\f1 trim 250-750ms} does the same in milliseconds.\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 double\tab Copy, then paste at the start: the sound twice in a row. {\f1 double \'d72} makes four.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Voice settings\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 4 recorders\tab How many recorders this layer has\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 transpose +7\tab Moves the layer up or down in semitones\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 notes +0 +12\tab Harmony: each note also sounds these intervals (here an octave)\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 unison 2 \'b19\'a2\tab Two voices for each note, spread over \'b19 cents\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 fixed pitch\tab The layer ignores the key and plays at its own speed\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 level 80%, pan L40, offset 120ms\tab The layer's volume, place left or right, and its delay after the note\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 amp env, pan env\tab A drawn envelope: points of time and level, such as {\f1 0:0,30:100,400:60}\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Settings for the whole sound\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 attack, decay, sustain, release\tab The envelope: {\f1 attack 5ms}, {\f1 sustain 70%}, {\f1 release 1.5s}\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 bend \'b112\tab Pitch bend range in semitones\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 velocity 80%\tab How much playing harder makes a note louder\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 root C4\tab The key that plays a sound at its own speed\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 gain -6dB\tab The output level\par
+\pard\sa30\li2215\ri175\fi-2100\tx2215\plain\f0\fs20 macro1 50%, m1 layer2 pan -100-100\tab Macro 1's value; what a macro moves and over which range\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Words of later versions\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Later versions add words such as {\f1 start 20%}, {\f1 mono}, {\f1 glide 80ms}, {\f1 keys C2-B3}, {\f1 grains ...}, {\f1 scale minor}, {\f1 seq ...} and {\f1 pad 36 ...}. A part this version cannot read is written in braces, such as {\f1 \{Dl3\}}. It is kept as it is.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Typing a recipe\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Upper and lower case are the same.\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab You can type x for \'d7, +- for \'b1, c for \'a2, and .. for the dash in a range.\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab The short words work too: fast, slow, loud, soft, rev, dbl, 4r, lv80, a5, r350.\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Commas and the \'b7 dots are only spacing.\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab If a word is not understood, the synth names the word and says what it expected there. The DNA does not change.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b See Also\par
+\pard\sa30\li395\ri175\plain\f0\fs20 {\uldb The DNA}{\v dna}\par
+\pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Effects and Edits}{\v effects}\par
+\pard\sa30\li395\ri175\plain\f0\fs20 {\uldb DNA Reference}{\v dna_ref}\par
+\page
+#{\footnote effects}${\footnote Effects and Edits}+{\footnote main:090}K{\footnote steps;Effects;Edit;Increase Volume;Decrease Volume;Increase Speed;Decrease Speed;Add Echo;Reverse;Copy;Paste Insert;Paste Mix;Insert File;Mix with File;Delete Before;Delete After;position}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Effects and Edits\par
 \pard\sa60\li115\ri175\plain\f0\fs20 Each {\ul step}{\v term_step} of a layer is one of Sound Recorder's own commands. The commands run in order on that layer's sound.\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Effects\par
@@ -172,7 +229,7 @@
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Collages}{\v collages}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb The Sounds}{\v sounds}\par
 \page
-#{\footnote layers}${\footnote Layers}+{\footnote main:090}K{\footnote layers;Add Layer;Remove Layer;recorders;pool;offset;pan;level;O;Q;L;#}
+#{\footnote layers}${\footnote Layers}+{\footnote main:100}K{\footnote layers;Add Layer;Remove Layer;recorders;pool;offset;pan;level;O;Q;L;#}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Layers\par
 \pard\sa60\li115\ri175\plain\f0\fs20 A sound can have up to 8 {\ul layers}{\v term_layer}. Each layer has its own source sound, its own steps and its own {\ul pool}{\v term_pool} of recorders. Every note plays all the layers at once. Layers are separated by {\f1 /} in the DNA.\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b To add or remove a layer\par
@@ -192,7 +249,7 @@
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Envelopes}{\v envelopes}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Harmony, Unison and Transpose}{\v voices}\par
 \page
-#{\footnote envelopes}${\footnote Envelopes}+{\footnote main:100}K{\footnote envelope;ADSR;attack;decay;sustain;release;drawn envelope;Ja;Jp;breakpoints;pan envelope}
+#{\footnote envelopes}${\footnote Envelopes}+{\footnote main:110}K{\footnote envelope;ADSR;attack;decay;sustain;release;drawn envelope;Ja;Jp;breakpoints;pan envelope}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Envelopes\par
 \pard\sa60\li115\ri175\plain\f0\fs20 An {\ul envelope}{\v term_envelope} shapes the volume of each note over time.\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Attack, decay, sustain and release\par
@@ -211,7 +268,7 @@
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Layers}{\v layers}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Macros and the Mod Wheel}{\v macros}\par
 \page
-#{\footnote voices}${\footnote Harmony, Unison and Transpose}+{\footnote main:110}K{\footnote harmony;chords;unison;detune;transpose;octave;voices;H;U;T}
+#{\footnote voices}${\footnote Harmony, Unison and Transpose}+{\footnote main:120}K{\footnote harmony;chords;unison;detune;transpose;octave;voices;H;U;T}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Harmony, Unison and Transpose\par
 \pard\sa60\li115\ri175\plain\f0\fs20 These genes say how a layer's recorders play each note.\par
 \pard\sa30\li1515\ri175\fi-1400\tx1515\plain\f0\fs20 {\f1 T}{\i N}\tab {\ul Transpose}{\v term_transpose} the layer by N semitones (-48 to 48).\par
@@ -227,7 +284,7 @@
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b See Also\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Layers}{\v layers}\par
 \page
-#{\footnote macros}${\footnote Macros and the Mod Wheel}+{\footnote main:120}K{\footnote macros;Macro 1;Macro 2;Macro 3;Macro 4;mod wheel;automation;m}
+#{\footnote macros}${\footnote Macros and the Mod Wheel}+{\footnote main:130}K{\footnote macros;Macro 1;Macro 2;Macro 3;Macro 4;mod wheel;automation;m}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Macros and the Mod Wheel\par
 \pard\sa60\li115\ri175\plain\f0\fs20 A sound has four {\ul macros}{\v term_macro}. Each macro is a knob for your DAW (Macro 1 to Macro 4) that moves one or more genes of the sound at once. The DNA says what each macro does.\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b In the DNA\par
@@ -250,7 +307,7 @@
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb The Keyboard, Bend and Mod Wheel}{\v keyboard}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb DNA Reference}{\v dna_ref}\par
 \page
-#{\footnote collages}${\footnote Collages}+{\footnote main:130}K{\footnote collage;Insert File;Mix with File;position;@t;cut-up}
+#{\footnote collages}${\footnote Collages}+{\footnote main:140}K{\footnote collage;Insert File;Mix with File;position;@t;cut-up}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Collages\par
 \pard\sa60\li115\ri175\plain\f0\fs20 A {\ul collage}{\v term_collage} is a sound made of other sounds. It uses the position and the Insert File and Mix with File commands.\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Example\par
@@ -263,7 +320,7 @@
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b See Also\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Effects and Edits}{\v effects}\par
 \page
-#{\footnote sounds}${\footnote The Sounds}+{\footnote main:140}K{\footnote sounds;source sounds;Media folder;library;library disc;names of sounds;WAV files}
+#{\footnote sounds}${\footnote The Sounds}+{\footnote main:150}K{\footnote sounds;source sounds;Media folder;library;library disc;names of sounds;WAV files}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b The Sounds\par
 \pard\sa60\li115\ri175\plain\f0\fs20 Each layer starts from a sound. Windows XP has 35 of them in C:\\WINDOWS\\Media. Use these short names in the DNA:\par
 \pard\sa30\li2815\ri175\fi-2700\tx2815\plain\f0\fs20 {\f1 chimes} {\f1 chord} {\f1 ding}\tab chimes.wav, chord.wav, ding.wav\par
@@ -295,7 +352,7 @@
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b See Also\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Collages}{\v collages}\par
 \page
-#{\footnote minimize}${\footnote Minimizing the Synth to Use Windows}+{\footnote main:150}K{\footnote minimize;restore;desktop;taskbar;using Windows;help, opening;F1}
+#{\footnote minimize}${\footnote Minimizing the Synth to Use Windows}+{\footnote main:160}K{\footnote minimize;restore;desktop;taskbar;using Windows;help, opening;F1}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Minimizing the Synth to Use Windows\par
 \pard\sa60\li115\ri175\plain\f0\fs20 The synth window covers the whole screen of Windows XP. You can minimize it and use Windows XP as usual: My Computer, Notepad, Paint, or this Help. The instrument keeps playing while it is minimized.\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b To minimize the synth\par
@@ -308,7 +365,7 @@
 \pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab On the desktop, double-click {\b BASILISK SYNTH Help}.\par
 \pard\sb40\sa60\li395\ri175\plain\f0\fs20 {\b Note:} The system sounds of this Windows are turned off, so they never play into your music. When you remove the plugin, this Windows stops, and changes to its files are not kept.\par
 \page
-#{\footnote menus}${\footnote Menus and Panels}+{\footnote main:160}K{\footnote menus;panels;DNA box;Library;Layers;Macros;Task Manager;Preset;Sound}
+#{\footnote menus}${\footnote Menus and Panels}+{\footnote main:170}K{\footnote menus;panels;DNA box;Library;Layers;Macros;Task Manager;Preset;Sound}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Menus and Panels\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Menus\par
 \pard\sa30\li2815\ri175\fi-2700\tx2815\plain\f0\fs20 File\tab Apply DNA, Mutate, Undo.\par
@@ -329,7 +386,7 @@
 \pard\sa30\li2815\ri175\fi-2700\tx2815\plain\f0\fs20 Keyboard\tab See {\uldb The Keyboard, Bend and Mod Wheel}{\v keyboard}.\par
 \pard\sa60\li115\ri175\plain\f0\fs20 Each change becomes the plugin's sound, and your project saves it.\par
 \page
-#{\footnote dna_ref}${\footnote DNA Reference}+{\footnote main:170}K{\footnote DNA;reference;steps;genes;globals;syntax;attack;decay;sustain;release;velocity;bend range;root note;gain}
+#{\footnote dna_ref}${\footnote DNA Reference}+{\footnote main:180}K{\footnote DNA;reference;steps;genes;globals;syntax;attack;decay;sustain;release;velocity;bend range;root note;gain}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b DNA Reference\par
 \pard\sa60\li115\ri175\plain\f0\fs20 A DNA is: {\i layer} {\f1 /} {\i layer} {\f1 /} ... {\f1 ;} {\i globals}. A layer is a sound name, then steps and genes in any order.\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Steps (run in order)\par
@@ -367,7 +424,7 @@
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb The DNA}{\v dna}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Glossary}{\v glossary}\par
 \page
-#{\footnote glossary}${\footnote Glossary}+{\footnote main:180}K{\footnote glossary;terms;definitions}
+#{\footnote glossary}${\footnote Glossary}+{\footnote main:190}K{\footnote glossary;terms;definitions}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Glossary\par
 \pard\sa60\li115\ri175\plain\f0\fs20 Click a term to see what it means.\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\ul breakpoint}{\v term_breakpoint}\par
@@ -398,7 +455,7 @@
 \pard\sa30\li395\ri175\plain\f0\fs20 {\ul unison}{\v term_unison}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\ul velocity}{\v term_velocity}\par
 \page
-#{\footnote trouble}${\footnote Troubleshooting}+{\footnote main:190}K{\footnote troubleshooting;problems;no sound;silent;late notes;latency;clicks;Windows looks wrong}
+#{\footnote trouble}${\footnote Troubleshooting}+{\footnote main:200}K{\footnote troubleshooting;problems;no sound;silent;late notes;latency;clicks;Windows looks wrong}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Troubleshooting\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b There is no sound\par
 \pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab The first time, the plugin downloads its machine. Wait until the editor shows the synth.\par

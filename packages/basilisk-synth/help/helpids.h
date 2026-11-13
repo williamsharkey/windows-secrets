@@ -21,4 +21,5 @@
 #define HELPID_DNA_REF 17
 #define HELPID_GLOSSARY 18
 #define HELPID_TROUBLE 19
+#define HELPID_RECIPE 20
 #endif
