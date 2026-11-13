@@ -1,0 +1,15 @@
+# Macro Swell: the mod wheel adds to Macro 1, which slows chord's envelope and swings ding's pan
+rec off
+go
+dna chord#8/ding>E#8O120Q40;m1=0m11Z50,300m12Q-100,100
+waitfor ready
+waitfor built
+sleep 0.5
+rec on
+sleep 0.3
+midi MID/macro-swell.mid
+sleep 0.5
+cc1 0 127 3.5
+sleep 4
+cc1 127 20 3.4
+sleep 5

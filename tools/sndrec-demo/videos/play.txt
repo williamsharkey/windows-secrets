@@ -1,0 +1,11 @@
+# Glass Piano (two layers: upright piano + glass ping), chords and a melody; keys go down as notes sound
+rec off
+go
+dna piano_upright_cs4#10T-1Q-20/glass_ping#6T12O15Q40L50;R400
+waitfor ready
+waitfor built
+sleep 0.5
+rec on
+sleep 0.3
+midi MID/glass-piano.mid
+sleep 9.6

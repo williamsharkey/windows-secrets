@@ -1,0 +1,8 @@
+# BASILISK 16 at load: Windows resumes, the sixteen Sound Recorders assemble, then the first preset plays
+sleep 0.5
+go
+dna ding#16;R250
+waitfor ready
+sleep 0.6
+midi MID/ding-piano.mid
+sleep 8.6

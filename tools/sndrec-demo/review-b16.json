@@ -1,0 +1,32 @@
+{
+ "_": "Listening notes on the BASILISK 16 1.2.0 demo renders. 'drop' removes an automatic flag that listening showed to be a false alarm; 'note' is shown on the page beside the preset.",
+ "chord-thump": {
+  "note": "Silent on Windows 3.11: after << the position is at the start, so ] (Delete After Current Position) deletes the whole sound and the layer is empty."
+ },
+ "critical-bass": {
+  "note": "critstop is an XP sound, so 3.11 plays DING. Slowed four times by <<, DING's short lead-in becomes about 0.4 s of silence, so short notes end before they sound."
+ },
+ "hardware-sub": {
+  "note": "hwin and hwout are XP sounds, so 3.11 plays DING. Slowed four times by <<, its lead-in becomes about 0.4 s of silence, so short notes end before they sound."
+ },
+ "bowl-swell": {
+  "note": "The singing_bowl_c layers are very quiet: about -48 LUFS before the demo's normalizing."
+ },
+ "echo-count": {
+  "note": "Macro 1 steps the echo count (N), so Windows rebuilds the recorders. In this offline render the chords that land during each rebuild (at 3 s and 5 s) are dropped."
+ },
+ "macro-echoes": {
+  "note": "Macro 1 steps the echo count (N), so Windows rebuilds the recorders. In this offline render the chords that land as each rebuild starts (at 2 s and 4 s) are dropped."
+ },
+ "thunder-thrush": {
+  "drop": [
+   "note onsets silent"
+  ]
+ },
+ "telephone-choir": {
+  "drop": [
+   "late notes"
+  ],
+  "note": "The renderer reported 3 of its notes started late on the emulated card (unison: 9 voices per chord note); not audible here."
+ }
+}

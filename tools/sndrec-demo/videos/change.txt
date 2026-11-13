@@ -1,0 +1,19 @@
+# A preset change while playing: Kalimba Glass -> Choir Pad; Windows rebuilds the recorders one at a time in view
+rec off
+go
+dna kalimba_c4#10/glass_ping#6T12O15Q40L60;R300
+waitfor ready
+waitfor built
+sleep 0.5
+rec on
+sleep 0.3
+midi MID/kalimba-glass.mid
+sleep 5.6
+midi MID/kalimba-glass.mid
+sleep 0.9
+dna choir_aah#12Ja0,0.400,100.3000,80Q-30/choir_aahE#4T12O80Q30L50;R900
+sleep 4.8
+waitfor built
+sleep 0.3
+midi MID/choir-pad.mid
+sleep 10.6
