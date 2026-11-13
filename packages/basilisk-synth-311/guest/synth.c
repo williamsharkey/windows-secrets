@@ -1730,7 +1730,11 @@ static void calc_prepare(void)
 {
     HDC sdc, mdc, kdc; POINT o = {0, 0}; int i; COLORREF bg;
     hCalc = launch("CALC.EXE", SW_SHOWNOACTIVATE);
-    if (!hCalc) { logf_("no Calculator: plain numbers"); return; }
+    if (!hCalc) {   /* loud: the strips would show plain digits instead of Calculator's keys */
+        logf_("ERROR: CALC.EXE did not start (is C:\\WINDOWS\\CALC.EXE on the drive?): the strips show plain digits");
+        say("error calculator: CALC.EXE did not start");
+        return;
+    }
     SendMessage(hCalc, WM_COMMAND, 305, 0L);                                                 /* View > Scientific */
     SendMessage(hCalc, WM_COMMAND, 124, MAKELPARAM(GetDlgItem(hCalc, 124), BN_CLICKED));      /* Hex */
     SetWindowPos(hCalc, HWND_TOP, CALCX, CALCY, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
@@ -1750,6 +1754,7 @@ static void calc_prepare(void)
             }
         }
         logf_("Calculator painted: %d of %d keys outlined after %d looks", ok, NDIG, tries);
+        if (ok < NDIG) { logf_("ERROR: Calculator's keys were not all on screen: the pictures may be wrong"); say("error calculator: %d of %d keys outlined", ok, NDIG); }
     }
     for (i = 0; i < NDIG; i++) {
         int x = o.x + digKX[i], y = o.y + digKY[i], px, py;
