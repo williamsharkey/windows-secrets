@@ -1,0 +1,416 @@
+{
+  "id": "leisure",
+  "category": "Leisure Accessories Pack (pack-plan #10)",
+  "pack": {
+    "plan_id": "leisure",
+    "plan_title": "Leisure Accessories Pack",
+    "title": "Leisure Accessories Pack",
+    "subtitle": "Background music for the executive lounge",
+    "edition": "Lobby Series, Volume 3",
+    "version": "3.0",
+    "date": "1996-03-18",
+    "label": "LEISURE3",
+    "label_long": "Leisure Accessories Vol 3",
+    "sources": {
+      "plan": "leisure"
+    }
+  },
+  "maker": {
+    "name": "Makai Lounge Music Services, Ltd.",
+    "short": "Makai Lounge",
+    "kind": "1996 Honolulu hospitality background-music supplier (hotels, airlines, cruise lines)",
+    "year": 1996,
+    "place": "Honolulu, Hawaii, USA",
+    "contact": [
+      "Makai Lounge Music Services, Ltd.",
+      "1650 Kalaniwai Avenue, Suite 1210",
+      "Honolulu, HI 96899",
+      "Programming desk (808) 555-0131",
+      "Fax (808) 555-0132",
+      "Licensing: lounge-licensing@makailounge-hi.com"
+    ],
+    "people": [
+      [
+        "Leilani Fairbanks-Oduya",
+        "music director"
+      ],
+      [
+        "Bertrand Okamura",
+        "programming and lobby schedules"
+      ],
+      [
+        "The Makai Lounge Players",
+        "sounds"
+      ]
+    ],
+    "voice": "smooth, hospitable, a little grand; speaks of guests, ambience, lobbies and in-flight programmes"
+  },
+  "look": {
+    "palette": "adaptive48",
+    "dither": "fs",
+    "pixel": 1,
+    "aa": true,
+    "ink": "#f0dca0",
+    "paper": "#0b3d3a",
+    "accent": "#c89a3a",
+    "accent2": "#0b3d3a",
+    "fonts": {
+      "display": "palabi.ttf",
+      "body": "pala.ttf",
+      "mono": "cour.ttf",
+      "black": "palab.ttf",
+      "script": "palai.ttf"
+    },
+    "art": {
+      "bg": "aero/sky-orange-and-yellow-clouds-cover-t-s2138.jpg",
+      "back": "aero/ocean-life-green-sea-turtle-s3117.jpg",
+      "mark": "aero/objects/shell-thesaurus-conchyliorum-or-mo-s5112-01.png",
+      "object": "aero/objects/bird-loddigesia-mirabilis-gould-t-s5120-01.png"
+    },
+    "focus": {
+      "bg": [
+        0.5,
+        0.5
+      ]
+    },
+    "title": {
+      "style": "gold",
+      "colors": [
+        "#fff4c0",
+        "#e8c060",
+        "#a87818",
+        "#2a1a05"
+      ],
+      "font": "display",
+      "text": "Leisure Accessories"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#0b3d3a"
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0,
+          0.25,
+          1,
+          0.84
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0,
+          1,
+          0.25
+        ],
+        "c": "#0b3d3a"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.245,
+          1,
+          0.255
+        ],
+        "c": "#c89a3a"
+      },
+      {
+        "t": "text",
+        "s": "MAKAI LOUNGE  •  LOBBY SERIES",
+        "font": "body",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.045
+        ],
+        "anchor": "mm",
+        "c": "#c89a3a",
+        "spacing": 3
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.125
+        ],
+        "size": 0.1,
+        "maxw": 0.9
+      },
+      {
+        "t": "text",
+        "s": "P A C K",
+        "font": "black",
+        "size": 0.04,
+        "pos": [
+          0.5,
+          0.205
+        ],
+        "anchor": "mm",
+        "c": "#f0dca0"
+      },
+      {
+        "t": "pic",
+        "key": "mark",
+        "box": [
+          0.7,
+          0.6,
+          0.95,
+          0.82
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.84,
+          1,
+          1
+        ],
+        "c": "#0b3d3a"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.835,
+          1,
+          0.845
+        ],
+        "c": "#c89a3a"
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "script",
+        "size": 0.042,
+        "pos": [
+          0.5,
+          0.885
+        ],
+        "anchor": "mm",
+        "c": "#f0dca0",
+        "maxw": 0.9
+      },
+      {
+        "t": "text",
+        "s": "Volume 3  •  licensed for hotels, lounges and in-flight programmes",
+        "font": "body",
+        "size": 0.026,
+        "pos": [
+          0.5,
+          0.945
+        ],
+        "anchor": "mm",
+        "c": "#c89a3a",
+        "maxw": 0.92
+      }
+    ],
+    "spine_bg": "#0b3d3a",
+    "spine_ink": "#c89a3a",
+    "spine_title": "#f0dca0",
+    "back_bg": "#f4ecd8",
+    "back_ink": "#1a2a28",
+    "back_head": "#0b3d3a",
+    "bullet": "• ",
+    "req_head": "PROGRAMME REQUIREMENTS",
+    "posterize_final": false,
+    "render_post": null
+  },
+  "box": {
+    "type": "jewel",
+    "price": [
+      "$24.95",
+      "lobby licence"
+    ],
+    "sticker": {
+      "bg": "#f4ecd8",
+      "ink": "#0b3d3a",
+      "shape": "rect",
+      "font": "palab.ttf"
+    },
+    "burst": null,
+    "features": [
+      "Vibraphone, steel guitar and bird-call textures",
+      "Lobby, lounge and in-flight programmes",
+      "Licensed for public performance in your property"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "full",
+    "base": "#d8d8d8",
+    "label": "full",
+    "ring": "MAKAI LOUNGE MUSIC SERVICES LTD. * LOBBY SERIES VOLUME 3 * FOR LICENSED PROPERTIES ONLY *",
+    "ring_ink": "#f0dca0",
+    "front": [
+      {
+        "t": "fill",
+        "c": "#0b3d3a"
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0,
+          0.62,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.615,
+          1,
+          0.625
+        ],
+        "c": "#c89a3a"
+      },
+      {
+        "t": "text",
+        "s": "MAKAI LOUNGE",
+        "font": "body",
+        "size": 0.035,
+        "pos": [
+          0.5,
+          0.13
+        ],
+        "anchor": "mm",
+        "c": "#c89a3a",
+        "spacing": 3
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.25
+        ],
+        "size": 0.08,
+        "maxw": 0.66
+      },
+      {
+        "t": "text",
+        "s": "Lobby Series, Volume 3",
+        "font": "script",
+        "size": 0.04,
+        "pos": [
+          0.5,
+          0.33
+        ],
+        "anchor": "mm",
+        "c": "#f0dca0"
+      },
+      {
+        "t": "pic",
+        "key": "mark",
+        "box": [
+          0.14,
+          0.42,
+          0.3,
+          0.58
+        ]
+      },
+      {
+        "t": "text",
+        "s": "Licensed Properties Only",
+        "font": "body",
+        "size": 0.024,
+        "pos": [
+          0.76,
+          0.5
+        ],
+        "anchor": "mm",
+        "c": "#c89a3a"
+      }
+    ]
+  },
+  "icon": {
+    "motif": "palm",
+    "colors": [
+      "#00a050",
+      "#e0c080",
+      "#ffd040",
+      "#40a0e0"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENCE.TXT",
+    "hlp": "LEISURE.HLP",
+    "pdf": "LOBBY3.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "corporate",
+    "rtf": "PROGRAM.RTF",
+    "wri": null,
+    "splash": "LEISURE.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#1a2a28",
+    "accent": "#0b3d3a",
+    "paper": "#f4ecd8",
+    "band": "#0b3d3a",
+    "band2": "#c89a3a",
+    "line1": "Programme Guide for Licensed Properties",
+    "heads": {
+      "Introduction": "Welcome",
+      "Getting Started": "Setting the Mood",
+      "The Presets": "The Programme",
+      "note": "From the Music Director",
+      "License": "Your Property Licence"
+    }
+  },
+  "hlp": {
+    "font": "Times New Roman",
+    "family": "roman",
+    "title_color": "#0b3d3a"
+  },
+  "text": {
+    "tagline": "For the executive lounge.",
+    "blurb": "Vibraphone glow, steel-guitar swells, bird calls and the soft clink of the bar. Volume 3 of the Lobby Series brings the islands to your lobby, lounge or cabin. Licensed for public performance in your property.",
+    "intro": [
+      "Aloha, and welcome to the Leisure Accessories Pack, Volume 3 of the Makai Lounge Lobby Series. For eleven years our programmes have played in hotel lobbies, cocktail lounges and aircraft cabins across the Pacific.",
+      "This volume brings our lounge instruments to the Sound Recorder synthesizers: vibraphone, steel guitar, marimba, bird calls and the warm textures of an evening by the water. Each preset has been chosen to sit gently beneath conversation."
+    ],
+    "maker_note": [
+      "A guest should never notice the music, only that the evening felt good. Every sound in this programme was played at conversation level in our listening room on Kalaniwai Avenue before it was approved.",
+      "Mahalo for choosing Makai Lounge.",
+      "Leilani Fairbanks-Oduya, Music Director"
+    ],
+    "install": [
+      "Insert the Lobby Series disc. In the Library tab, the disc appears as LEISURE3.",
+      "Choose a preset from one of the folders and double-click it to load it.",
+      "For suggested schedules, see PLAYLIST.TXT. The programme guide is PROGRAM.RTF (WordPad) and LOBBY3.PDF."
+    ],
+    "license": [
+      "MAKAI LOUNGE PROPERTY LICENCE",
+      "This disc is licensed to one property (one hotel, one lounge, one aircraft type or one vessel). Within that property you may play music made with these presets in public, at any hour, without further fees.",
+      "You may not resell or duplicate this disc. Additional properties: please call the programming desk for our group rates.",
+      "Makai Lounge Music Services, Ltd. warrants the disc against defects for ninety (90) days."
+    ],
+    "copyright": "Copyright (C) 1996 Makai Lounge Music Services, Ltd., Honolulu. All rights reserved.",
+    "files": {
+      "PLAYLIST.TXT": [
+        "|SUGGESTED SCHEDULE FOR LOBBIES (local time)",
+        "|",
+        "|  06:00  Sunrise: soft mallets and bird calls",
+        "|  11:00  Late morning: steel guitar, light",
+        "|  16:00  Sunset lounge: vibraphone and textures",
+        "|  21:00  Evening bar: the full programme, low",
+        "|  01:00  Night: textures only",
+        "Volume should sit just below conversation. If guests raise their voices, the music is too loud."
+      ]
+    }
+  }
+}

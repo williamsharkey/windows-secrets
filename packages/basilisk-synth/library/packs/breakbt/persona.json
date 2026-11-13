@@ -1,0 +1,124 @@
+{
+  "id": "breakbt",
+  "category": "Breakbeat Resource Kit (pack-plan #4)",
+  "pack": {
+    "plan_id": "breakbeat-resource",
+    "plan_title": "Breakbeat Resource Kit",
+    "title": "Breakbeat Resource Kit",
+    "subtitle": "every break your network will ever need",
+    "edition": "CSC-007",
+    "version": "1.0",
+    "date": "1998-02-21",
+    "label": "CSC007_BRK",
+    "label_long": "CSC-007 Breakbeat Resource Kit",
+    "sources": {"plan": "breakbeat-resource"}
+  },
+  "maker": {
+    "name": "Chopshop Crew",
+    "short": "CSC",
+    "kind": "early-internet IRC crew",
+    "year": 1998,
+    "place": "#chopshop on SpliceNet IRC (members in Bristol, Toronto, Melbourne)",
+    "contact": ["IRC: #chopshop on SpliceNet (irc.splicenet.org port 6667)", "ftp: ftp.chopshop-crew.org /pub/csc  (anon, ratio 1:3)", "mail: crew@chopshop-crew.org", "pgp key on request"],
+    "people": [["r0ller", "chops, timestretch, packing"], ["dubplate_dan", "basses, the reese"], ["k1nk", "break edits, nfo"], ["vox_mira", "vocal chops"], ["cscBot", "keeps the channel open"]],
+    "voice": "terse IRC crew: lowercase, timestamps, handles, 'respect due', anti-commercial, ascii"
+  },
+  "look": {
+    "palette": ["#000000", "#001a00", "#003300", "#006600", "#00aa00", "#33ff33", "#99ff99", "#ccffcc", "#ffffff", "#ffcc00"],
+    "dither": "bayer2",
+    "pixel": 3,
+    "aa": false,
+    "ink": "#33ff33",
+    "paper": "#000000",
+    "accent": "#33ff33",
+    "accent2": "#ffcc00",
+    "fonts": {"display": "impact.ttf", "black": "impact.ttf", "body": "lucon.ttf", "mono": "lucon.ttf", "hand": "comicbd.ttf"},
+    "art": {"bg": "global/cgi-greenwireframeobjectsrenderedi.png", "back": "books/oscilloscope-trace-photo.png", "mark": "global/marks/mk-antenna-radio-signal.png", "object": "books/punched-tape-telegraph-code.png"},
+    "focus": {"bg": [0.5, 0.5]},
+    "title": {"style": "outline", "colors": ["#33ff33", "#003300"], "font": "display", "text": "BREAKBEAT", "spacing": 4},
+    "front": [
+      {"t": "fill", "c": "#000000"},
+      {"t": "lines", "items": ["[23:41] <r0ller> new kit is packed. 110 hits", "[23:41] <dubplate_dan> reese is in BASS\\", "[23:42] <k1nk> break edits r in KITS\\ dont tell anyone", "[23:42] * cscBot sets mode +m #chopshop", "[23:43] <r0ller> burning 50 cdr. thats it. no more"], "font": "mono", "size": 0.028, "pos": [0.04, 0.04], "c": "#00aa00", "step": 1.25},
+      {"t": "pic", "key": "bg", "box": [0, 0.27, 1, 0.78], "tint": ["#000000", "#33ff33"]},
+      {"t": "pattern", "kind": "scanlines", "box": [0, 0.27, 1, 0.78], "cols": ["#001a00"]},
+      {"t": "word", "pos": [0.5, 0.42], "size": 0.17, "maxw": 0.94},
+      {"t": "text", "s": "RESOURCE KIT", "font": "display", "size": 0.08, "pos": [0.5, 0.56], "anchor": "mm", "c": "#ffffff", "spacing": 6, "stroke": [2, "#000000"]},
+      {"t": "rect", "box": [0, 0.8, 1, 1], "c": "#001a00"},
+      {"t": "text", "s": "-= chopshop crew =-   csc-007   02/98", "font": "mono", "size": 0.034, "pos": [0.5, 0.85], "anchor": "mm", "c": "#33ff33"},
+      {"t": "text", "s": "#chopshop @ splicenet  :: not for sale ::", "font": "mono", "size": 0.03, "pos": [0.5, 0.92], "anchor": "mm", "c": "#99ff99"},
+      {"t": "stamp", "s": "LIMITED 50 CD-R", "pos": [0.78, 0.71], "w": 0.42, "h": 0.08, "c": "#ffcc00", "rot": 10, "font": "impact.ttf"}
+    ],
+    "spine_bg": "#000000",
+    "spine_ink": "#00aa00",
+    "spine_title": "#33ff33",
+    "back_bg": "#000000",
+    "back_ink": "#99ff99",
+    "back_head": "#33ff33",
+    "back_tint": ["#000000", "#33ff33"],
+    "bullet": "> ",
+    "req_head": "WHAT U NEED",
+    "posterize_final": true,
+    "render_post": null
+  },
+  "box": {
+    "type": "jewel",
+    "price": ["FREE", "CD-R"],
+    "sticker": {"bg": "#33ff33", "ink": "#000000", "shape": "rect", "font": "lucon.ttf"},
+    "burst": null,
+    "features": ["23 break kits, basses and chops", "jungle / dnb / big beat / electro / footwork", "never sell this. trade it."],
+    "barcode": false
+  },
+  "disc": {"style": "cdr", "base": "#3a8a6a", "label": "sticker", "pic": "bg", "paper": "#f4f4ec", "lines": ["CSC-007  BREAKBEAT KIT", "chopshop crew  02/98  #23 of 50"], "inks": ["#000000", "#008800"], "side": ["NOT", "4 SALE"], "ring": "CHOPSHOP CREW * #CHOPSHOP @ SPLICENET * CSC-007 * RESPECT DUE * TRADE DONT SELL *", "ring_ink": "#003300"},
+  "icon": {"motif": "record", "colors": ["#33ff33", "#000000", "#404040", "#000000"]},
+  "files": {
+    "readme": "nfo",
+    "readme_txt": true,
+    "nfo": "CSC007.NFO",
+    "diz": true,
+    "license": "TRADE.TXT",
+    "hlp": "BREAKKIT.HLP",
+    "pdf": "CSC007.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "zine",
+    "rtf": null,
+    "wri": null,
+    "splash": "CSC007.BMP",
+    "splash_bpp": 4,
+    "splash_size": [640, 480]
+  },
+  "pdf": {"ink": "#001a00", "accent": "#008800", "paper": "#f0fff0", "cover_title": "breakbeat resource kit", "line1": "csc-007 :: the manual nobody reads :: #chopshop",
+          "heads": {"Introduction": "the kit", "Getting Started": "usage", "The Presets": "tracklist", "License": "trade rules", "note": "respect due"}},
+  "hlp": {"font": "Courier New", "family": "modern", "title_color": "#008000", "link_note": "the real info is in CSC007.NFO."},
+  "text": {
+    "tagline": "every break your network will ever need",
+    "blurb": "csc-007. jungle, drum and bass, big beat, electro and footwork chops for the sound recorder synths. cut by the chopshop crew on irc. 50 cd-rs, numbered. trade it, never sell it.",
+    "intro": [
+      "csc-007 is our seventh release and the first one on cd-r. it is a kit of breaks, reeses, stabs and vocal chops for the sound recorder synths: jungle at 170, big beat at 130, electro and some footwork for the americans in the channel.",
+      "every chop was cut by hand in sound recorder over about four months of late nights. no samplers were harmed."
+    ],
+    "maker_note": [
+      "respect due to everybody who idles in #chopshop, to the ops who keep the bots alive, and to the pirate stations we taped in 94.",
+      "we do this for free. if you see csc releases on a shareware cd for money, tell the channel.",
+      "-- k1nk for csc"
+    ],
+    "install": [
+      "insert disc. library tab shows it as CSC007_BRK.",
+      "bass, kits, vocals, stabs, pads, fx. double click a .bsp to load.",
+      "need help? /join #chopshop. no lamers."
+    ],
+    "license": [
+      "TRADE RULES",
+      "this is a free release. copy it, trade it, upload it to your ftp. keep the nfo with it.",
+      "never sell it. never put it on a commercial sample cd.",
+      "use the chops in your tunes, free. shout csc if you like."
+    ],
+    "diz": ["▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄", "-= chopshop crew =-", "[ csc-007 breakbeat resource kit ]", "jungle dnb bigbeat electro footwork", "breaks basses chops for the sound", "recorder synths. 50 numbered cd-rs.", "trade it. never sell it.", "/join #chopshop @ splicenet", "▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀"],
+    "nfo_logo": "CSC 007",
+    "nfo_quote": "the breaks belong to whoever is still dancing.",
+    "greets_note": "respect due (channels and crews):",
+    "greets": ["#junglelist and the late shift", "rinseout crew (melb)", "the backroom tape club", "dj frostbyte for the 1994 tapes", "everyone who seeded the ftp at 2400 baud", "cscBot, who never sleeps"],
+    "files": {
+      "IRCLOG.TXT": ["|Session Start: Sat Feb 21 23:30:02 1998", "|[23:41] <r0ller> new kit is packed. 110 hits planned, 23 done", "|[23:41] <dubplate_dan> reese is in BASS\\ go easy on the low end", "|[23:42] <k1nk> break edits are in KITS\\ dont tell anyone", "|[23:42] * cscBot sets mode +m #chopshop", "|[23:43] <r0ller> burning 50 cd-r. thats it. numbered. no repress", "|[23:44] <vox_mira> my chops better be on track 1", "|[23:45] <r0ller> they are on every track mira", "|Session Close: Sun Feb 22 02:10:44 1998"]
+    }
+  }
+}

@@ -1,0 +1,354 @@
+{
+  "id": "workstn",
+  "category": "Professional Workstation Classics (pack-plan #13)",
+  "pack": {
+    "plan_id": "workstation-classics",
+    "plan_title": "Professional Workstation Classics",
+    "title": "Professional Workstation Classics",
+    "subtitle": "Big-Studio Sounds at a Small Price",
+    "edition": "Value Series",
+    "version": "1.0",
+    "date": "2000-05-15",
+    "label": "PWCLASSICS",
+    "label_long": "Pro Workstation Classics",
+    "sources": {
+      "plan": "workstation-classics"
+    }
+  },
+  "maker": {
+    "name": "Thriftline Software, Inc.",
+    "short": "Thriftline",
+    "kind": "2000 budget software label (clamshell packs on office-superstore pegboards)",
+    "year": 2000,
+    "place": "Paramus Heights, New Jersey, USA",
+    "contact": [
+      "Thriftline Software, Inc.",
+      "200 Route 17 North, Unit 9",
+      "Paramus Heights, NJ 07699",
+      "Customer Service 1-888-555-0119 (recorded help 24 hrs)",
+      "http://www.thriftline-sw.com"
+    ],
+    "people": [
+      [
+        "Thriftline Sound Lab",
+        "sound programming"
+      ]
+    ],
+    "voice": "loud, exclamation marks, value claims, compatibility promises, catalogue of other cheap titles"
+  },
+  "look": {
+    "palette": "adaptive64",
+    "dither": "fs",
+    "pixel": 1,
+    "aa": true,
+    "ink": "#ffffff",
+    "paper": "#d00000",
+    "accent": "#d00000",
+    "accent2": "#ffe000",
+    "fonts": {
+      "display": "impact.ttf",
+      "body": "arial.ttf",
+      "mono": "cour.ttf",
+      "black": "impact.ttf",
+      "bold": "arialbd.ttf"
+    },
+    "art": {
+      "bg": "global/cgi-arc-1991-ac91-0397-1r.jpg",
+      "back": "global/cgi-arc-1991-ac91-0397-1r.jpg",
+      "mark": "global/marks/mk-star-colourful-star-shape.png",
+      "object": "global/marks/mk-pc-monitor-icon.png"
+    },
+    "title": {
+      "style": "outline",
+      "colors": [
+        "#ffe000",
+        "#000000"
+      ],
+      "font": "display",
+      "text": "WORKSTATION"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#d00000"
+      },
+      {
+        "t": "pattern",
+        "kind": "rays",
+        "box": [
+          0,
+          0.08,
+          1,
+          0.75
+        ],
+        "cols": [
+          "#e83030"
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0,
+          1,
+          0.08
+        ],
+        "c": "#ffe000"
+      },
+      {
+        "t": "text",
+        "s": "THRIFTLINE  VALUE SERIES",
+        "font": "bold",
+        "size": 0.034,
+        "pos": [
+          0.5,
+          0.04
+        ],
+        "anchor": "mm",
+        "c": "#d00000",
+        "maxw": 0.9
+      },
+      {
+        "t": "text",
+        "s": "PROFESSIONAL",
+        "font": "display",
+        "size": 0.07,
+        "pos": [
+          0.5,
+          0.15
+        ],
+        "anchor": "mm",
+        "c": "#ffffff",
+        "stroke": [
+          3,
+          "#000000"
+        ],
+        "spacing": 2
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.25
+        ],
+        "size": 0.13,
+        "maxw": 0.94
+      },
+      {
+        "t": "text",
+        "s": "CLASSICS",
+        "font": "display",
+        "size": 0.07,
+        "pos": [
+          0.5,
+          0.35
+        ],
+        "anchor": "mm",
+        "c": "#ffffff",
+        "stroke": [
+          3,
+          "#000000"
+        ],
+        "spacing": 6
+      },
+      {
+        "t": "pic",
+        "key": "object",
+        "box": [
+          0.1,
+          0.42,
+          0.62,
+          0.74
+        ]
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.76,
+          0.56
+        ],
+        "size": 0.42,
+        "rot": -8
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.76,
+          1,
+          1
+        ],
+        "c": "#ffe000"
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "black",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.79
+        ],
+        "anchor": "mm",
+        "c": "#000000",
+        "maxw": 0.92
+      },
+      {
+        "t": "lines",
+        "src": "features",
+        "bullet": "* ",
+        "font": "bold",
+        "size": 0.027,
+        "pos": [
+          0.07,
+          0.83
+        ],
+        "c": "#d00000",
+        "step": 1.3
+      },
+      {
+        "t": "text",
+        "s": "CD-ROM",
+        "font": "black",
+        "size": 0.03,
+        "pos": [
+          0.93,
+          0.965
+        ],
+        "anchor": "rm",
+        "c": "#000000"
+      }
+    ],
+    "spine_bg": "#ffe000",
+    "spine_ink": "#d00000",
+    "spine_title": "#000000",
+    "back_bg": "#ffffff",
+    "back_ink": "#000000",
+    "back_head": "#d00000",
+    "bullet": "* ",
+    "req_head": "MINIMUM REQUIREMENTS",
+    "posterize_final": false,
+    "render_post": null
+  },
+  "box": {
+    "type": "dvd",
+    "price": [
+      "3 for",
+      "$10"
+    ],
+    "sticker": {
+      "bg": "#ffe000",
+      "ink": "#d00000",
+      "shape": "round",
+      "font": "impact.ttf"
+    },
+    "burst": [
+      "100%",
+      "COMPATIBLE!"
+    ],
+    "burst_fill": "#ffe000",
+    "burst_ink": "#d00000",
+    "features": [
+      "Leads, basses, pads and plucks",
+      "Sounds like the expensive stuff!",
+      "Works with BASILISK 16 and BASILISK SYNTH"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "silk",
+    "ink": "#d00000",
+    "ink2": "#ffe000",
+    "ring": "THRIFTLINE SOFTWARE INC. * VALUE SERIES * PROFESSIONAL WORKSTATION CLASSICS * NOT FOR INDIVIDUAL RESALE IF SOLD AS PART OF A BUNDLE *",
+    "ring_ink": "#000000",
+    "mark_text": "VALUE",
+    "tint_mark": false
+  },
+  "icon": {
+    "motif": "workstation",
+    "colors": [
+      "#ffe000",
+      "#000000",
+      "#c0c0c0",
+      "#d00000"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENSE.TXT",
+    "hlp": "PWCLASS.HLP",
+    "pdf": "MANUAL.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "corporate",
+    "rtf": null,
+    "wri": null,
+    "splash": "PWCLASS.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#000000",
+    "accent": "#d00000",
+    "paper": "#ffffff",
+    "band": "#d00000",
+    "band2": "#ffe000",
+    "line1": "Quick Manual - Value Series",
+    "heads": {
+      "Introduction": "Thank You for Buying Thriftline!",
+      "Getting Started": "Easy as 1-2-3!",
+      "The Presets": "Sound List",
+      "note": "More Great Values!",
+      "License": "License"
+    }
+  },
+  "hlp": {
+    "font": "Arial",
+    "family": "swiss",
+    "title_color": "#d00000"
+  },
+  "text": {
+    "tagline": "The sounds of the leading software, re-engineered for your desktop!",
+    "blurb": "Why pay hundreds for big-studio synth software? Professional Workstation Classics gives you the leads, basses, pads and plucks the pros use, re-engineered for the Sound Recorder synthesizers. 100% compatible!",
+    "intro": [
+      "Thank you for buying a Thriftline Value Series title! Professional Workstation Classics brings you the sounds of today's most popular studio software, re-engineered from the sounds already on your computer.",
+      "No expensive upgrades. No complicated setup. Just insert the disc and play!"
+    ],
+    "maker_note": [
+      "Thriftline Value Series titles are available at office superstores, computer stores and drugstores everywhere. Collect them all!",
+      "Also available: Business Fonts 1000!, Clip Art Mega Pack, Home Lawyer Forms and Typing Coach Jr. See CATALOG.TXT on this disc.",
+      "Thriftline Software, Inc."
+    ],
+    "install": [
+      "Insert the disc. In the Library tab, the disc appears as PWCLASSICS.",
+      "Open a folder and double-click any sound to load it. That's it!",
+      "Questions? See the Help file (PWCLASS.HLP) or call our 24-hour recorded help line."
+    ],
+    "license": [
+      "THRIFTLINE SOFTWARE, INC. LICENSE",
+      "You may use this software on one computer. Sounds you make with it are yours to use in any music.",
+      "This product is sold \"as is\". Thriftline's liability is limited to the purchase price.",
+      "Thriftline Software is not affiliated with any other software company. All other names are trademarks of their owners. Professional Workstation Classics contains no software or sounds from any other company: every sound was made from scratch with Sound Recorder."
+    ],
+    "copyright": "(C) 2000 Thriftline Software, Inc. Value Series is a trademark of Thriftline Software, Inc.",
+    "files": {
+      "CATALOG.TXT": [
+        "|THRIFTLINE VALUE SERIES - COLLECT THEM ALL!",
+        "|============================================",
+        "|  TL-101  Business Fonts 1000!",
+        "|  TL-114  Clip Art Mega Pack (25,000 images!)",
+        "|  TL-120  Home Lawyer Forms",
+        "|  TL-133  Typing Coach Jr.",
+        "|  TL-140  Solitaire Plus 75",
+        "|  TL-152  Professional Workstation Classics  <-- you are here",
+        "|  TL-153  Greeting Card Studio Deluxe",
+        "Look for the yellow and red packs at a store near you. Any 3 for $10 where marked."
+      ]
+    }
+  }
+}

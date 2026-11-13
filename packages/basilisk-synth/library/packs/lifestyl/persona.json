@@ -1,0 +1,323 @@
+{
+  "id": "lifestyl",
+  "category": "Lifestyle Aesthetics Pack (pack-plan 2.2)",
+  "pack": {
+    "title": "Lifestyle Aesthetics Pack",
+    "subtitle": "Mall. Lobby. Aquarium. Startup.",
+    "edition": "Gold Edition",
+    "version": "2.0",
+    "date": "2002-04-26",
+    "label": "LIFESTYLE",
+    "label_long": "Lifestyle Aesthetics Gold",
+    "sources": {
+      "aesthetic": true
+    },
+    "plan_id": "lifestyle-aesthetics",
+    "plan_title": "Lifestyle Aesthetics Pack"
+  },
+  "maker": {
+    "name": "Meridian Interactive K.K.",
+    "name_ja": "メリディアン・インタラクティブ株式会社",
+    "short": "Meridian",
+    "kind": "Tokyo corporate edition (K.K.)",
+    "year": 2002,
+    "place": "Shibuya-ku, Tokyo, Japan",
+    "contact": [
+      "Meridian Interactive K.K.  Customer Support Center",
+      "TEL 03-5550-0120 (weekdays 10:00-17:00)",
+      "FAX 03-5550-0121",
+      "http://www.meridian-ikk.co.jp/garden/"
+    ],
+    "people": [
+      [
+        "Sound Design Group 2",
+        "presets"
+      ],
+      [
+        "Kenji Arimura",
+        "producer"
+      ],
+      [
+        "Yuki Sonoda",
+        "art direction"
+      ]
+    ],
+    "distributor": "Distributed in Europe by Euphonia Datensysteme AG, Zurich.",
+    "voice": "polite, bright, a little formal; bilingual English and Japanese"
+  },
+  "look": {
+    "palette": "adaptive64",
+    "dither": "fs",
+    "pixel": 1,
+    "aa": true,
+    "ink": "#00264d",
+    "paper": "#e8f9ff",
+    "accent": "#2a8fd6",
+    "accent2": "#7ed321",
+    "fonts": {
+      "display": "trebucbd.ttf",
+      "body": "tahoma.ttf",
+      "mono": "lucon.ttf",
+      "ja": "msgothic.ttc"
+    },
+    "art": {
+      "bg": "aero/water-a-drop-s3134.jpg",
+      "back": "aero/sky-beautiful-clouds-s2117.jpg",
+      "mark": "global/marks/mk-sphere-blue-sphere.png",
+      "object": "aero/objects/butterfly-illustrations-of-new-species-s580-01.png"
+    },
+    "title": {
+      "style": "gloss",
+      "colors": [
+        "#7fd3ff",
+        "#2a8fd6",
+        "#004a8a"
+      ],
+      "font": "display",
+      "text": "Lifestyle Aesthetics"
+    },
+    "focus": {
+      "bg": [
+        0.5,
+        0.5
+      ]
+    },
+    "front": [
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0,
+          0,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "pattern",
+        "kind": "bubbles",
+        "box": [
+          0,
+          0.35,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.06,
+          1,
+          0.32
+        ],
+        "c": "#ffffffc8"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.13
+        ],
+        "size": 0.075,
+        "maxw": 0.88
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "body",
+        "size": 0.032,
+        "pos": [
+          0.5,
+          0.205
+        ],
+        "anchor": "mm",
+        "c": "#00264d",
+        "aa": true
+      },
+      {
+        "t": "text",
+        "s": "暮らしのサウンド・コレクション",
+        "font": "ja",
+        "size": 0.026,
+        "pos": [
+          0.5,
+          0.265
+        ],
+        "anchor": "mm",
+        "c": "#2a8fd6",
+        "aa": true
+      },
+      {
+        "t": "pic",
+        "key": "mark",
+        "box": [
+          0.05,
+          0.78,
+          0.2,
+          0.9
+        ]
+      },
+      {
+        "t": "text",
+        "s": "{edition}",
+        "font": "display",
+        "size": 0.04,
+        "pos": [
+          0.94,
+          0.39
+        ],
+        "anchor": "rm",
+        "c": "#ffd700",
+        "aa": true,
+        "stroke": [
+          2,
+          "#7a3a00"
+        ]
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.8,
+          0.6
+        ],
+        "size": 0.27
+      },
+      {
+        "t": "text",
+        "s": "{maker}",
+        "font": "display",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.97
+        ],
+        "anchor": "mb",
+        "c": "#ffffff",
+        "aa": true
+      }
+    ],
+    "spine_bg": "#2a8fd6",
+    "spine_ink": "#ffffff",
+    "back_bg": "#e8f9ff",
+    "back_ink": "#00264d",
+    "back_head": "#2a8fd6",
+    "bullet": "■ "
+  },
+  "box": {
+    "type": "dvd",
+    "obi": {
+      "title": "ライフスタイル・サウンド",
+      "head": "新発売",
+      "top": "#2a8fd6",
+      "bottom": "#7ed321",
+      "ink": "#00264d"
+    },
+    "price": [
+      "¥3,800",
+      "(税別)"
+    ],
+    "burst": [
+      "NEW!",
+      "Gold",
+      "Edition"
+    ],
+    "burst_fill": "#ffd700",
+    "burst_ink": "#7a3a00",
+    "features": [
+      "101 presets: mall, lobby, aquarium, startup",
+      "Water, glass, slush and late-night signal",
+      "Bilingual manual (PDF)"
+    ],
+    "barcode": true,
+    "sticker": {
+      "bg": "#e60012",
+      "ink": "#ffffff",
+      "font": "ja",
+      "pos": [
+        0.8,
+        0.07
+      ]
+    }
+  },
+  "disc": {
+    "style": "full",
+    "base": "#dff4ff",
+    "label": "full",
+    "ring": "MERIDIAN INTERACTIVE K.K. * LIFESTYLE AESTHETICS PACK GOLD * MI-2002-LAP *",
+    "ring_ink": "#00264d"
+  },
+  "icon": {
+    "motif": "droplet",
+    "colors": [
+      "#2a8fd6",
+      "#7fd3ff",
+      "#ffffff",
+      "#00264d"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "readme_ja": "README_J.TXT",
+    "license": "LICENSE.TXT",
+    "hlp": "LIFESTYL.HLP",
+    "pdf": "MANUAL.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "corporate_ja",
+    "rtf": null,
+    "wri": null,
+    "splash": "LIFESTYL.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "hlp": {
+    "font": "Tahoma",
+    "family": "swiss",
+    "title_color": "#2a8fd6"
+  },
+  "text": {
+    "tagline": "Mall. Lobby. Aquarium. Startup.",
+    "tagline_ja": "暮らしに、透明なサウンドを。",
+    "blurb": "A hundred and one presets for the moods of modern life: the shopping-mall atrium, the hotel lobby, the aquarium, the moment your computer starts. Designed in Tokyo by Sound Design Group 2.",
+    "intro": [
+      "Thank you for choosing the Lifestyle Aesthetics Pack, Gold Edition. This collection brings the fresh feeling of clean glass, clear water and quiet lobbies to your desktop music.",
+      "The presets are arranged in ten moods: Mall, Lobby, Aqua, Glass, Startup, Utopia, Slush, Late Night, Signal and Funk. Each one was designed by the Sound Design Group 2 at Meridian Interactive."
+    ],
+    "intro_ja": [
+      "このたびは「ライフスタイル・エステティクス・パック ゴールド・エディション」をお買い上げいただき、誠にありがとうございます。",
+      "ショッピングモール、ホテルのロビー、水族館。毎日の風景を、あなたのデスクトップ・ミュージックにお届けします。"
+    ],
+    "maker_note": [
+      "We wanted to make sounds that feel like a clean screen after you wipe it. Every sound in this collection began as a system sound: a ding, a chime, a click. We slowed them, layered them and let them ring.",
+      "We hope the Lifestyle Aesthetics Pack brings a little clear water to your day.",
+      "Sound Design Group 2, Meridian Interactive K.K., Tokyo"
+    ],
+    "install": [
+      "Insert the disc. In the Library tab, the disc appears as the CD-ROM drive LIFESTYLE.",
+      "Open a mood folder (Mall, Aqua, Glass ...) and double-click a preset to load it.",
+      "To read the manual, open MANUAL.PDF."
+    ],
+    "license": [
+      "MERIDIAN INTERACTIVE K.K. END USER LICENSE AGREEMENT",
+      "This is a legal agreement between you and Meridian Interactive K.K. (\"Meridian\"). By using the software on this disc you agree to these terms.",
+      "1. GRANT. Meridian grants you the right to use the presets on one computer. You may use sounds you make with the presets in your own music, broadcasts and presentations, royalty free.",
+      "2. RESTRICTIONS. You may not rent, lease or resell the presets as a sound collection.",
+      "3. NO WARRANTY. The software is provided \"as is\". Meridian is not liable for any damages.",
+      "4. This agreement is governed by the laws of Japan. The Tokyo District Court has jurisdiction."
+    ],
+    "copyright": "Copyright (C) 2002 Meridian Interactive K.K. All rights reserved. 無断複製禁止",
+    "nfo_logo": null,
+    "ja_title": "「ライフスタイル・エステティクス・パック」ゴールド・エディション  お読みください",
+    "install_ja": [
+      "1. CD-ROMをセットしてください。Libraryタブに LIFESTYLE ドライブが表示されます。",
+      "2. フォルダのプリセットをダブルクリックしてください。"
+    ]
+  },
+  "pdf": {
+    "line1": "User's Guide  /"
+  }
+}

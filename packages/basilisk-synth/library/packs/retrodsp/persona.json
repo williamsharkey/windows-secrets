@@ -1,0 +1,408 @@
+{
+  "id": "retrodsp",
+  "category": "Retro Display Properties (pack-plan #7)",
+  "pack": {
+    "plan_id": "retro-display",
+    "plan_title": "Retro Display Properties",
+    "title": "Retro Display Properties",
+    "subtitle": "Adjust your colour depth to 1985",
+    "edition": "PC Version 1.0",
+    "version": "1.0",
+    "date": "1991-09-09",
+    "label": "RETRODSP10",
+    "label_long": "Retro Display Properties 1.0",
+    "sources": {
+      "plan": "retro-display"
+    }
+  },
+  "maker": {
+    "name": "Northshore Pixelworks",
+    "short": "NSP",
+    "kind": "1991 Vancouver graphics-utility shareware house, porting its home-computer screen hacks to the PC",
+    "year": 1991,
+    "place": "North Vancouver, British Columbia, Canada",
+    "contact": [
+      "Northshore Pixelworks",
+      "Box 220, Station B",
+      "North Vancouver, B.C.  V7L 9Z9",
+      "Canada",
+      "Pixelworks BBS (604) 555-0163  2400/9600 baud",
+      "GEnie: NSPIXEL"
+    ],
+    "people": [
+      [
+        "Darren Okafor-Lindgren",
+        "code, ports, colour cycling"
+      ],
+      [
+        "Sylvie Tremblay-Ross",
+        "palettes, the sunset"
+      ],
+      [
+        "Ray Haddad",
+        "sounds, registration desk"
+      ]
+    ],
+    "voice": "excited, technical, proud of the port; loves colour cycling, raster bars and palette tricks; Canadian spelling"
+  },
+  "look": {
+    "palette": "vga16",
+    "dither": "bayer4",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#ffffff",
+    "paper": "#000000",
+    "accent": "#ff00ff",
+    "accent2": "#00ffff",
+    "fonts": {
+      "display": "ariblk.ttf",
+      "body": "lucon.ttf",
+      "mono": "lucon.ttf",
+      "black": "ariblk.ttf",
+      "type": "cour.ttf"
+    },
+    "art": {
+      "bg": "global/earth-sts-67-sunset-and-earth-limb-v.jpg",
+      "back": "global/cgi-greenwireframeobjectsrenderedi.png",
+      "mark": "global/marks/mk-planet-ringed-planet.png",
+      "object": "global/marks/mk-sphere-blue-sphere.png"
+    },
+    "title": {
+      "style": "chrome",
+      "colors": [
+        "#ffffff",
+        "#00ffff",
+        "#0000ff",
+        "#ff00ff",
+        "#000000"
+      ],
+      "font": "display",
+      "text": "RETRO DISPLAY",
+      "spacing": 2
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#000000"
+      },
+      {
+        "t": "grad",
+        "box": [
+          0,
+          0.1,
+          1,
+          0.58
+        ],
+        "stops": [
+          "#000000",
+          "#000080",
+          "#800080",
+          "#ff00ff"
+        ]
+      },
+      {
+        "t": "pattern",
+        "kind": "stars",
+        "box": [
+          0,
+          0.1,
+          1,
+          0.45
+        ],
+        "cols": [
+          "#ffffff",
+          "#00ffff",
+          "#ffff00"
+        ]
+      },
+      {
+        "t": "pattern",
+        "kind": "sun",
+        "box": [
+          0.33,
+          0.17,
+          0.67,
+          0.62
+        ],
+        "cols": [
+          "#ffff00",
+          "#ff0000"
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.58,
+          1,
+          1
+        ],
+        "c": "#000000"
+      },
+      {
+        "t": "pattern",
+        "kind": "grid",
+        "box": [
+          0,
+          0.58,
+          1,
+          0.9
+        ],
+        "cols": [
+          "#00ffff"
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0,
+          1,
+          0.1
+        ],
+        "c": "#000080"
+      },
+      {
+        "t": "text",
+        "s": "NORTHSHORE PIXELWORKS  presents",
+        "font": "body",
+        "size": 0.04,
+        "pos": [
+          0.04,
+          0.05
+        ],
+        "anchor": "lm",
+        "c": "#ffff00",
+        "maxw": 0.6
+      },
+      {
+        "t": "text",
+        "s": "PC v1.0",
+        "font": "body",
+        "size": 0.04,
+        "pos": [
+          0.96,
+          0.05
+        ],
+        "anchor": "rm",
+        "c": "#00ffff",
+        "maxw": 0.3
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.66
+        ],
+        "size": 0.15,
+        "maxw": 0.86
+      },
+      {
+        "t": "text",
+        "s": "P R O P E R T I E S",
+        "font": "display",
+        "size": 0.07,
+        "pos": [
+          0.5,
+          0.78
+        ],
+        "anchor": "mm",
+        "c": "#ff00ff",
+        "stroke": [
+          2,
+          "#000000"
+        ]
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.86,
+          0.3
+        ],
+        "size": 0.3,
+        "rot": -10
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.89,
+          1,
+          1
+        ],
+        "c": "#000080"
+      },
+      {
+        "t": "text",
+        "s": "{tagline}",
+        "font": "body",
+        "size": 0.04,
+        "pos": [
+          0.5,
+          0.945
+        ],
+        "anchor": "mm",
+        "c": "#ffffff"
+      }
+    ],
+    "spine_bg": "#000080",
+    "spine_ink": "#ffffff",
+    "spine_title": "#ff00ff",
+    "back_bg": "#000000",
+    "back_ink": "#ffffff",
+    "back_head": "#00ffff",
+    "bullet": "> ",
+    "req_head": "WHAT YOU NEED",
+    "posterize_final": true,
+    "render_post": "vga16"
+  },
+  "box": {
+    "type": "bigbox",
+    "shape": "landscape",
+    "price": [
+      "CDN $29",
+      "registered"
+    ],
+    "sticker": {
+      "bg": "#00ffff",
+      "ink": "#000080",
+      "shape": "rect",
+      "font": "ariblk.ttf"
+    },
+    "burst": [
+      "16",
+      "COLOURS!"
+    ],
+    "burst_fill": "#ffff00",
+    "burst_ink": "#ff0000",
+    "features": [
+      "Sunset pads, grid basses and neon leads",
+      "Ported from our home-computer demos",
+      "Registered users get the Palette Disk"
+    ],
+    "barcode": false
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "silk",
+    "ink": "#800080",
+    "ink2": "#00a0c0",
+    "ring": "NORTHSHORE PIXELWORKS * RETRO DISPLAY PROPERTIES * PC VERSION 1.0 * REGISTERED COPY * MADE IN NORTH VANCOUVER *",
+    "ring_ink": "#000080",
+    "mark_text": "VGA",
+    "tint_mark": false
+  },
+  "icon": {
+    "motif": "monitor",
+    "colors": [
+      "#ffff00",
+      "#000000",
+      "#c0c0c0",
+      "#000080"
+    ]
+  },
+  "files": {
+    "readme": "shareware",
+    "readme_txt": true,
+    "diz": true,
+    "license": "REGISTER.TXT",
+    "hlp": "RETRODSP.HLP",
+    "pdf": "RETRODSP.PDF",
+    "pdf_size": "letter",
+    "pdf_style": "zine",
+    "rtf": null,
+    "wri": "RETRODSP.WRI",
+    "splash": "RETRODSP.BMP",
+    "splash_bpp": 4,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#101010",
+    "accent": "#c000c0",
+    "paper": "#ffffff",
+    "line1": "program manual / pc version 1.0 / northshore pixelworks",
+    "cover_title": "retro display",
+    "heads": {
+      "Introduction": "READ.ME first",
+      "Getting Started": "Loading a palette",
+      "The Presets": "The palettes (presets)",
+      "note": "From the Pixelworks crew",
+      "License": "The fine print"
+    }
+  },
+  "hlp": {
+    "font": "Arial",
+    "family": "swiss",
+    "title_color": "#800080"
+  },
+  "register": {
+    "price": 29.0,
+    "shipping": 4.0,
+    "foreign_shipping": 6.0,
+    "tax_state": "British Columbia",
+    "tax_rate": 0.06,
+    "bonus": "the Palette Disk (eight extra colour-cycled screen hacks) and a printed manual",
+    "site": "Schools and user groups: write for our club price."
+  },
+  "text": {
+    "tagline": "Adjust your colour depth to 1985.",
+    "blurb": "Sunset pads, grid basses, neon leads and chrome arpeggios, ported from our home-computer demos to the PC. Sixteen colours have never sounded this wide.",
+    "intro": [
+      "RETRO DISPLAY PROPERTIES started life as a colour-cycling sunset demo on our old home computers. When we ported it to the PC, the sunset needed a soundtrack, and the soundtrack turned into this disc.",
+      "Every preset is named after a display trick: raster bars, copper skies, palette fades and the scrolling grid. Load one, hold a chord, and watch your 16 colours glow."
+    ],
+    "maker_note": [
+      "RETRO DISPLAY PROPERTIES is SHAREWARE. Try it for 30 days. If you keep using it, register it for only CDN $29 (US $25). Registered users get the Palette Disk and a printed manual.",
+      "This is our first PC release. We spent three months making the VGA sunset look as good as it did on the old machines. Please call the BBS and tell us how it runs on your card!",
+      "Darren, Sylvie and Ray, Northshore Pixelworks"
+    ],
+    "install": [
+      "Put the disc in. In the Library tab the disc shows up as RETRODSP10.",
+      "The presets are in folders by type (PADS, LEADS, BASS ...). Double-click a .BSP file to load it.",
+      "Best with the display set to 16 colours. Really!"
+    ],
+    "history": [
+      [
+        "1.0",
+        "1991-09-09",
+        "First PC release. Sixteen colours. Sunset, grid and stars."
+      ],
+      [
+        "0.9",
+        "1991-06-30",
+        "Beta for BBS testers only. Thanks, gang!"
+      ]
+    ],
+    "vendor": [
+      "Sysops and disk vendors: you may copy and distribute RETRO DISPLAY PROPERTIES if:",
+      "1. All files stay together, unchanged.",
+      "2. You charge no more than $5 for the disk (CDN or US).",
+      "3. You tell people it is SHAREWARE and that they must register with Northshore Pixelworks.",
+      "Magazine cover disks: please call us first, we love to say yes."
+    ],
+    "license": [],
+    "diz": [
+      "RETRO DISPLAY PROPERTIES v1.0",
+      "--------------------------------------------",
+      "Sunset pads, grid basses and neon leads",
+      "for the Sound Recorder synthesizers.",
+      "Ported from our home-computer demos.",
+      "16 colours! Colour cycling! The grid!",
+      "SHAREWARE CDN $29 / US $25",
+      "NORTHSHORE PIXELWORKS  (604) 555-0163"
+    ],
+    "files": {
+      "PORTING.TXT": [
+        "|NOTES ON THE PC PORT",
+        "|====================",
+        "The original sunset demo cycled 32 palette entries every frame. VGA in 16-colour mode gives us 16, so the sky now uses an ordered dither between two colours per band. We think it looks better. Sylvie is not sure.",
+        "The grid scrolls by redrawing only the horizontal lines. On a 12 MHz 286 it runs at about 20 frames per second, which we are proud of.",
+        "The sounds are a different story: there is no sound chip to port, so every preset was rebuilt from the system sounds with Sound Recorder. Ray did all of them in one long weekend."
+      ]
+    }
+  }
+}

@@ -1,0 +1,418 @@
+{
+  "id": "kitmgr",
+  "category": "Kit Manager 98 (pack-plan #12)",
+  "pack": {
+    "plan_id": "kit-manager",
+    "plan_title": "Kit Manager 98",
+    "title": "Kit Manager 98",
+    "subtitle": "Drum Kit Utility for Sound Recorder Synthesizers",
+    "edition": "Release 1.02",
+    "version": "1.02",
+    "date": "1998-08-24",
+    "label": "KITMGR98",
+    "label_long": "Kit Manager 98 Release 1.02",
+    "sources": {
+      "plan": "kit-manager"
+    }
+  },
+  "maker": {
+    "name": "Fennwick Systems Corporation",
+    "short": "Fennwick",
+    "kind": "1998 system-utilities vendor (disk tools, memory managers, uninstallers)",
+    "year": 1998,
+    "place": "Beaverton Ridge, Oregon, USA",
+    "contact": [
+      "Fennwick Systems Corporation",
+      "9100 SW Tualatin Ridge Drive",
+      "Beaverton Ridge, OR 97099",
+      "Sales 1-800-555-0144",
+      "Technical Support (503) 555-0145 (M-F 7am-6pm PT)",
+      "http://www.fennwicksys.com/kitmgr"
+    ],
+    "people": [
+      [
+        "Fennwick Audio Utilities Team",
+        "kits and mapping"
+      ],
+      [
+        "Fennwick QA Lab",
+        "compatibility testing"
+      ]
+    ],
+    "voice": "confident utility-software marketing: fast, safe, automatic, no restart; numbered steps; product-line cross-sells"
+  },
+  "look": {
+    "palette": "web216",
+    "dither": "bayer4",
+    "pixel": 1,
+    "aa": true,
+    "ink": "#000000",
+    "paper": "#ffd400",
+    "accent": "#000000",
+    "accent2": "#ffd400",
+    "fonts": {
+      "display": "ariblk.ttf",
+      "body": "arial.ttf",
+      "mono": "cour.ttf",
+      "black": "ariblk.ttf",
+      "bold": "arialbd.ttf",
+      "ui": "tahoma.ttf"
+    },
+    "art": {
+      "bg": "global/chip-grc-2015-c-00598.jpg",
+      "back": "global/cgi-arc-1997-ac97-0105-1.jpg",
+      "mark": "global/marks/mk-chip-cpu.png",
+      "object": "global/marks/mk-key-computer-keyboard-key.png"
+    },
+    "title": {
+      "style": "shadow",
+      "colors": [
+        "#000000",
+        "#b89000"
+      ],
+      "font": "display",
+      "text": "Kit Manager"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#ffd400"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0,
+          1,
+          0.12
+        ],
+        "c": "#000000"
+      },
+      {
+        "t": "text",
+        "s": "FENNWICK",
+        "font": "black",
+        "size": 0.05,
+        "pos": [
+          0.05,
+          0.06
+        ],
+        "anchor": "lm",
+        "c": "#ffd400",
+        "spacing": 2
+      },
+      {
+        "t": "text",
+        "s": "SYSTEM UTILITIES SERIES",
+        "font": "bold",
+        "size": 0.026,
+        "pos": [
+          0.95,
+          0.06
+        ],
+        "anchor": "rm",
+        "c": "#ffffff",
+        "spacing": 1
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.05,
+          0.155
+        ],
+        "size": 0.1,
+        "maxw": 0.56,
+        "anchor": "lt"
+      },
+      {
+        "t": "text",
+        "s": "98",
+        "font": "black",
+        "size": 0.19,
+        "pos": [
+          0.97,
+          0.115
+        ],
+        "anchor": "ra",
+        "c": "#000000"
+      },
+      {
+        "t": "text",
+        "s": "Map any drum to any key.",
+        "font": "bold",
+        "size": 0.036,
+        "pos": [
+          0.05,
+          0.345
+        ],
+        "anchor": "la",
+        "c": "#000000"
+      },
+      {
+        "t": "text",
+        "s": "Restart not required.",
+        "font": "bold",
+        "size": 0.036,
+        "pos": [
+          0.05,
+          0.39
+        ],
+        "anchor": "la",
+        "c": "#000000"
+      },
+      {
+        "t": "window",
+        "box": [
+          0.06,
+          0.46,
+          0.94,
+          0.81
+        ],
+        "title": "Kit Manager 98 - [HOUSE01.BSP]",
+        "font": "mono",
+        "size": 0.026,
+        "c": "#000000",
+        "lines": [
+          "Pad  Key  Sound            Choke  Vel",
+          "---  ---  ---------------  -----  ---",
+          " 1   C1   kick (tada)       -     100",
+          " 2   D1   snare (chord)     -      90",
+          " 3   F#1  hat closed (ding) A      70",
+          " 4   A#1  hat open (ding)   A      80",
+          " 5   C#2  clap (ringin)     -      95",
+          "[ Auto-Map ]  [ Test Kit ]  [ Save ]"
+        ]
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.84,
+          0.45
+        ],
+        "size": 0.22,
+        "rot": 6
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.84,
+          1,
+          1
+        ],
+        "c": "#000000"
+      },
+      {
+        "t": "lines",
+        "src": "features",
+        "bullet": "• ",
+        "font": "bold",
+        "size": 0.028,
+        "pos": [
+          0.05,
+          0.865
+        ],
+        "c": "#ffd400",
+        "step": 1.35
+      }
+    ],
+    "spine_bg": "#000000",
+    "spine_ink": "#ffffff",
+    "spine_title": "#ffd400",
+    "back_bg": "#ffffff",
+    "back_ink": "#000000",
+    "back_head": "#000000",
+    "bullet": "• ",
+    "window": {
+      "bar": "#000080",
+      "bar2": "#1084d0",
+      "face": "#c0c0c0"
+    },
+    "posterize_final": false,
+    "render_post": null
+  },
+  "box": {
+    "type": "bigbox",
+    "shape": "big",
+    "price": [
+      "$39.95",
+      "upgrade $19.95"
+    ],
+    "sticker": {
+      "bg": "#ffffff",
+      "ink": "#c00000",
+      "shape": "rect",
+      "font": "arialbd.ttf"
+    },
+    "burst": [
+      "NO",
+      "RESTART!"
+    ],
+    "burst_fill": "#c00000",
+    "burst_ink": "#ffffff",
+    "features": [
+      "27 genre kits + 6 classic machine kits",
+      "Auto-Map assigns every pad in seconds",
+      "Velocity and round-robin variants"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "full",
+    "base": "#d8d8d8",
+    "label": "full",
+    "ring": "FENNWICK SYSTEMS CORPORATION * KIT MANAGER 98 * RELEASE 1.02 * CD KEY ON BACK OF CASE *",
+    "ring_ink": "#000000",
+    "front": [
+      {
+        "t": "fill",
+        "c": "#ffd400"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.62,
+          1,
+          1
+        ],
+        "c": "#000000"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.23
+        ],
+        "size": 0.09,
+        "maxw": 0.5
+      },
+      {
+        "t": "text",
+        "s": "98",
+        "font": "black",
+        "size": 0.09,
+        "pos": [
+          0.5,
+          0.32
+        ],
+        "anchor": "mm",
+        "c": "#000000"
+      },
+      {
+        "t": "text",
+        "s": "FENNWICK SYSTEM UTILITIES",
+        "font": "bold",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.7
+        ],
+        "anchor": "mm",
+        "c": "#ffd400"
+      },
+      {
+        "t": "text",
+        "s": "Release 1.02   Disc 1 of 1",
+        "font": "body",
+        "size": 0.026,
+        "pos": [
+          0.5,
+          0.76
+        ],
+        "anchor": "mm",
+        "c": "#ffffff"
+      }
+    ]
+  },
+  "icon": {
+    "motif": "drum",
+    "colors": [
+      "#ffd400",
+      "#000000",
+      "#ffffff",
+      "#c0a000"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENSE.TXT",
+    "hlp": "KITMGR.HLP",
+    "pdf": "KITMGR.PDF",
+    "pdf_size": "letter",
+    "pdf_style": "corporate",
+    "rtf": null,
+    "wri": null,
+    "splash": "KITMGR.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#000000",
+    "accent": "#000000",
+    "paper": "#ffd400",
+    "band": "#000000",
+    "band2": "#ffd400",
+    "line1": "User's Guide  -  Release 1.02",
+    "heads": {
+      "Introduction": "Welcome to Kit Manager 98",
+      "Getting Started": "Quick Start in 3 Steps",
+      "The Presets": "Kit Reference",
+      "note": "From the Kit Manager Team",
+      "License": "License Agreement"
+    }
+  },
+  "hlp": {
+    "font": "Arial",
+    "family": "swiss",
+    "title_color": "#000080"
+  },
+  "text": {
+    "tagline": "Map any drum to any key. Restart not required.",
+    "blurb": "Kit Manager 98 puts every drum on the right key, automatically. 27 genre kits, 6 classic machine kits and velocity variants, all built from the sounds already on your computer. Fast. Safe. Automatic.",
+    "intro": [
+      "Thank you for choosing Kit Manager 98 from Fennwick Systems, the makers of PlatterTune and MemPilot. Kit Manager 98 brings the speed and safety of Fennwick utilities to your drum programming.",
+      "Each kit maps one drum to each key, with choke groups, velocity layers and round-robin variants. Kit Manager 98 needs no installation, changes no system files and never asks you to restart."
+    ],
+    "maker_note": [
+      "We built Kit Manager 98 the way we build all Fennwick utilities: it must be fast, it must be safe, and it must never require a restart.",
+      "Look for other titles in the Fennwick System Utilities Series at your software retailer: PlatterTune 98, MemPilot Plus and UnClutter Deluxe.",
+      "The Kit Manager 98 Team, Fennwick Systems Corporation"
+    ],
+    "install": [
+      "Insert the Kit Manager 98 CD-ROM. In the Library tab, the disc appears as KITMGR98.",
+      "Open the Kits folder and double-click any kit to load it. Each key now plays a different drum.",
+      "Kits need the v3 kit mode of the synthesizer. For support, see SUPPORT.TXT."
+    ],
+    "license": [
+      "FENNWICK SYSTEMS CORPORATION SOFTWARE LICENSE AGREEMENT",
+      "PLEASE READ THIS AGREEMENT BEFORE USING THE SOFTWARE. Using the software means that you accept these terms.",
+      "1. LICENSE. You may use one copy of Kit Manager 98 on one computer at a time. Music you create with the kits is yours.",
+      "2. UPGRADES. If this is an upgrade, you must own a qualifying Fennwick product.",
+      "3. LIMITED WARRANTY. Fennwick warrants the CD-ROM against defects for 90 days. Fennwick's entire liability is replacement of the disc.",
+      "4. YEAR 2000. Kit Manager 98 stores no dates and is Year 2000 ready.",
+      "PlatterTune, MemPilot, UnClutter and Kit Manager are trademarks of Fennwick Systems Corporation."
+    ],
+    "copyright": "Copyright (C) 1998 Fennwick Systems Corporation. All rights reserved.",
+    "files": {
+      "SUPPORT.TXT": [
+        "|KIT MANAGER 98 TECHNICAL SUPPORT",
+        "|================================",
+        "Before you call, please have your CD key (on the back of the jewel case) and your release number (Help, About) ready.",
+        "|Phone:  (503) 555-0145, Monday to Friday, 7am-6pm Pacific",
+        "|Fax-back documents: (503) 555-0146, request document 4410 for the Kit Manager FAQ",
+        "|Web:    http://www.fennwicksys.com/support",
+        "Q: The kits play the wrong drum on some keys.  A: Load the kit again from the Kits folder. Kit Manager 98 never changes your other presets.",
+        "Q: Do I need to restart?  A: No. Never."
+      ],
+      "CDKEY.TXT": [
+        "|Your CD key is printed on the sticker on the back of the jewel case.",
+        "|Keep it in a safe place. Fennwick Support cannot replace a lost CD key."
+      ]
+    }
+  }
+}

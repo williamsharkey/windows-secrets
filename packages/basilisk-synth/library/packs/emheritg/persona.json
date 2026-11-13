@@ -1,0 +1,354 @@
+{
+  "id": "emheritg",
+  "category": "Electromechanical Heritage (pack-plan 2.2)",
+  "pack": {
+    "title": "ELEKTROMECHANIK",
+    "subtitle": "Electromechanical Heritage",
+    "edition": "Studio Serie 2, Version 2.0",
+    "version": "2.0",
+    "date": "1996-10-07",
+    "label": "KL_EM_V2",
+    "label_long": "KL Elektromechanik 2.0",
+    "sources": {
+      "electromech": true
+    },
+    "folders": {
+      "Mallets": "MALLETS",
+      "Bells": "GLOCKEN",
+      "Leads": "LEADS",
+      "Plucks": "ZUPF",
+      "Pads": "FLAECHEN",
+      "Bass": "BASS",
+      "Drones": "DRONES",
+      "Keys": "TASTEN",
+      "Texture": "TEXTUR",
+      "*": "DIVERSES"
+    },
+    "plan_id": "electromech",
+    "plan_title": "Electromechanical Heritage"
+  },
+  "maker": {
+    "name": "Kessler & Lohrmann Studiotechnik GmbH",
+    "short": "K&L",
+    "kind": "German GmbH studio line",
+    "year": 1996,
+    "place": "Bielefeld, Germany",
+    "contact": [
+      "Kessler & Lohrmann Studiotechnik GmbH",
+      "Postfach 10 04 47",
+      "D-33504 Bielefeld",
+      "Tel. 0521 / 555 01 70, Fax 0521 / 555 01 79",
+      "InfoLane: GO KLSTUDIO"
+    ],
+    "people": [
+      [
+        "Dipl.-Ing. Uwe Brachvogel",
+        "Klangentwicklung / sound design"
+      ],
+      [
+        "Helga Kessler",
+        "Geschaeftsfuehrung"
+      ],
+      [
+        "Studio B, Bielefeld",
+        "Aufnahme / recording"
+      ]
+    ],
+    "voice": "exact, dry, bilingual German first; specifications and DIN paper sizes"
+  },
+  "look": {
+    "palette": [
+      "#1a1a1a",
+      "#4a4a4a",
+      "#8a8a8a",
+      "#c8c8c4",
+      "#ecebe6",
+      "#ff6a00",
+      "#b84a00",
+      "#ffffff"
+    ],
+    "dither": "atkinson",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#1a1a1a",
+    "paper": "#c8c8c4",
+    "accent": "#ff6a00",
+    "accent2": "#4a4a4a",
+    "fonts": {
+      "display": "arialbd.ttf",
+      "body": "arial.ttf",
+      "mono": "cour.ttf",
+      "black": "ariblk.ttf"
+    },
+    "art": {
+      "bg": "books/telharmonium-console-1897.png",
+      "back": "books/patent-us1113149-sheet1.png",
+      "mark": "books/neets-transistor-schematic-symbol.png",
+      "object": "books/objects/tyndall-sound-wheatstone-s-apparatus-for-compounding-v.png"
+    },
+    "render_post": null,
+    "title": {
+      "style": "flat",
+      "colors": [
+        "#1a1a1a"
+      ],
+      "font": "black",
+      "spacing": 1
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#c8c8c4"
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0.47,
+          0.3,
+          1,
+          0.86
+        ],
+        "tint": [
+          "#1a1a1a",
+          "#c8c8c4"
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0,
+          1,
+          0.1
+        ],
+        "c": "#1a1a1a"
+      },
+      {
+        "t": "text",
+        "s": "K&L STUDIO SERIE",
+        "font": "display",
+        "size": 0.045,
+        "pos": [
+          0.04,
+          0.05
+        ],
+        "anchor": "lm",
+        "c": "#ffffff",
+        "spacing": 2
+      },
+      {
+        "t": "text",
+        "s": "2",
+        "font": "black",
+        "size": 0.08,
+        "pos": [
+          0.96,
+          0.05
+        ],
+        "anchor": "rm",
+        "c": "#ff6a00"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.04,
+          0.13,
+          0.055,
+          0.62
+        ],
+        "c": "#ff6a00"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.07,
+          0.13
+        ],
+        "size": 0.09,
+        "maxw": 0.86,
+        "anchor": "lt"
+      },
+      {
+        "t": "lines",
+        "items": [
+          "Klang aus Relais, Glocken",
+          "und Fernschreibern.",
+          "",
+          "Sound from relays, bells",
+          "and teleprinters.",
+          "",
+          "40 Klangprogramme"
+        ],
+        "font": "body",
+        "size": 0.033,
+        "pos": [
+          0.08,
+          0.33
+        ],
+        "c": "#1a1a1a",
+        "step": 1.3
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.14,
+          0.79
+        ],
+        "size": 0.24
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.9,
+          1,
+          1
+        ],
+        "c": "#1a1a1a"
+      },
+      {
+        "t": "text",
+        "s": "{maker}",
+        "font": "display",
+        "size": 0.032,
+        "pos": [
+          0.04,
+          0.95
+        ],
+        "anchor": "lm",
+        "c": "#ffffff"
+      },
+      {
+        "t": "text",
+        "s": "CD-ROM",
+        "font": "display",
+        "size": 0.032,
+        "pos": [
+          0.96,
+          0.95
+        ],
+        "anchor": "rm",
+        "c": "#ff6a00"
+      }
+    ],
+    "spine_bg": "#1a1a1a",
+    "spine_ink": "#ffffff",
+    "spine_title": "#ff6a00",
+    "back_bg": "#ecebe6",
+    "back_ink": "#1a1a1a",
+    "back_head": "#b84a00",
+    "back_tint": [
+      "#1a1a1a",
+      "#ecebe6"
+    ],
+    "bullet": "■ ",
+    "req_head": "SYSTEMVORAUSSETZUNGEN / REQUIREMENTS"
+  },
+  "box": {
+    "type": "bigbox",
+    "shape": "landscape",
+    "price": [
+      "DM 79,-",
+      "inkl. MwSt."
+    ],
+    "burst": [
+      "NEU",
+      "Version 2.0"
+    ],
+    "burst_fill": "#ff6a00",
+    "burst_ink": "#ffffff",
+    "features": [
+      "40 Klangprogramme / 40 programs",
+      "Relais, Glocken, Fernschreiber",
+      "Handbuch deutsch/englisch"
+    ],
+    "barcode": true,
+    "sticker": {
+      "bg": "#ffffff",
+      "ink": "#000000"
+    }
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "silk",
+    "ring": "KESSLER & LOHRMANN STUDIOTECHNIK GMBH * STUDIO SERIE 2 * ELEKTROMECHANIK * MADE IN GERMANY *",
+    "ink": "#1a1a1a",
+    "ink2": "#ff6a00"
+  },
+  "icon": {
+    "motif": "relay",
+    "colors": [
+      "#ff6a00",
+      "#1a1a1a",
+      "#c8c8c4",
+      "#ffffff"
+    ]
+  },
+  "files": {
+    "readme": "german",
+    "readme_txt": true,
+    "liesmich": "LIESMICH.TXT",
+    "license": "LIZENZ.TXT",
+    "hlp": "KLEM2.HLP",
+    "pdf": "HANDBUCH.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "swiss",
+    "rtf": "HANDBUCH.RTF",
+    "wri": null,
+    "splash": "KLEM2.BMP",
+    "splash_bpp": 4,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "hlp": {
+    "font": "Arial",
+    "family": "swiss",
+    "title_color": "#b84a00"
+  },
+  "text": {
+    "tagline": "Klang aus Relais, Glocken und Fernschreibern.",
+    "tagline_en": "Sound from relays, bells and teleprinters.",
+    "blurb": "Forty programs built from the machines of the telephone exchange and the office: relays, ringers, teleprinters, motors. Measured, tuned and documented in Bielefeld.",
+    "blurb_de": "Vierzig Klangprogramme aus den Maschinen der Vermittlungsstelle und des Bueros: Relais, Wecker, Fernschreiber, Motoren. Gemessen, gestimmt und dokumentiert in Bielefeld.",
+    "intro": [
+      "ELEKTROMECHANIK 2.0 is the second disc of the K&L Studio Serie. It contains forty programs for the Sound Recorder synthesizers BASILISK 16 and BASILISK SYNTH.",
+      "Every program is built from the sound of an electromechanical machine: relays, selector switches, bells, teleprinters, motors and transformers. Each program was tuned against a reference tone of 440 Hz."
+    ],
+    "intro_de": [
+      "ELEKTROMECHANIK 2.0 ist die zweite CD der K&L Studio Serie. Sie enthaelt vierzig Klangprogramme fuer die Sound-Recorder-Synthesizer BASILISK 16 und BASILISK SYNTH.",
+      "Jedes Programm beruht auf dem Klang einer elektromechanischen Maschine: Relais, Waehler, Wecker, Fernschreiber, Motoren und Transformatoren. Alle Programme sind auf den Kammerton 440 Hz gestimmt."
+    ],
+    "maker_note": [
+      "Version 2.0 replaces version 1.0 of March 1996. Changes: four new programs, all programs re-tuned, the manual is now bilingual.",
+      "A machine that has worked for forty years has a voice. We wanted to keep these voices before the last exchanges are switched to digital.",
+      "Dipl.-Ing. Uwe Brachvogel, Klangentwicklung"
+    ],
+    "install": [
+      "Insert the CD. In the Library tab the CD appears as drive KL_EM_V2.",
+      "The programs are in folders by type (GLOCKEN, LEADS, FLAECHEN, ...). Double-click a program to load it.",
+      "System requirements: BASILISK 16 (16 Bit) or BASILISK SYNTH (32 Bit)."
+    ],
+    "install_de": [
+      "CD einlegen. Im Library-Register erscheint die CD als Laufwerk KL_EM_V2.",
+      "Die Programme liegen nach Art sortiert in Ordnern (GLOCKEN, LEADS, FLAECHEN, ...). Doppelklick laedt ein Programm.",
+      "Systemvoraussetzungen: BASILISK 16 (16 Bit) oder BASILISK SYNTH (32 Bit)."
+    ],
+    "license": [
+      "LIZENZVERTRAG / LICENCE AGREEMENT",
+      "1. Kessler & Lohrmann Studiotechnik GmbH (K&L) raeumt Ihnen das nicht ausschliessliche Recht ein, die Klangprogramme dieser CD auf einem Arbeitsplatz zu nutzen. / K&L grants you a non-exclusive right to use the programs of this CD at one workstation.",
+      "2. Mit den Programmen erzeugte Musik duerfen Sie ohne weitere Lizenzgebuehren veroeffentlichen. / You may publish music made with the programs with no further licence fee.",
+      "3. Die Weitergabe der CD oder ihrer Inhalte als Klangsammlung ist untersagt. / You may not pass on the CD or its contents as a sound collection.",
+      "4. Gewaehrleistung nach den gesetzlichen Bestimmungen. Gerichtsstand ist Bielefeld. / Warranty as required by law. Place of jurisdiction: Bielefeld."
+    ],
+    "copyright": "(c) 1996 Kessler & Lohrmann Studiotechnik GmbH, Bielefeld. Alle Rechte vorbehalten.",
+    "nfo_logo": null
+  },
+  "pdf": {
+    "line1": "Handbuch / Manual  -  Studio Serie 2  -  Version 2.0",
+    "foot": "KESSLER & LOHRMANN STUDIOTECHNIK GMBH  -  BIELEFELD"
+  }
+}

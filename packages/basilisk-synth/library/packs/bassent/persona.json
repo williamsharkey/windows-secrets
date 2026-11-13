@@ -1,0 +1,348 @@
+{
+  "id": "bassent",
+  "category": "Bass Enterprise Edition (pack-plan #5)",
+  "pack": {
+    "plan_id": "bass-enterprise",
+    "plan_title": "Bass Enterprise Edition",
+    "title": "Bass Enterprise Edition",
+    "subtitle": "Low-end infrastructure for medium and large businesses.",
+    "edition": "LFS012CD",
+    "version": "1.0",
+    "date": "1999-10-11",
+    "label": "LFS012CD",
+    "label_long": "LFS012 Bass Enterprise",
+    "sources": {
+      "plan": "bass-enterprise"
+    }
+  },
+  "maker": {
+    "name": "Lowfold Sound System Ltd",
+    "short": "Lowfold",
+    "kind": "London UK-garage label turned limited company",
+    "year": 1999,
+    "place": "Peckham, London SE15, England",
+    "contact": [
+      "Lowfold Sound System Ltd",
+      "Unit 4, Copeland Yard Arches",
+      "London SE15 4XZ",
+      "Tel 0171 555 0121  Fax 0171 555 0122",
+      "info@lowfold-sound.co.uk",
+      "Registered in England No. 3555012"
+    ],
+    "people": [
+      [
+        "Desmond 'Dez' Okafor-Hale",
+        "director, basslines"
+      ],
+      [
+        "Tash Mendoza",
+        "director, A&R"
+      ],
+      [
+        "Studio 2, Copeland Yard",
+        "cutting and mastering"
+      ]
+    ],
+    "voice": "deadpan London: short sentences, dry jokes about being a 'proper company' now, catalogue numbers, UK spelling"
+  },
+  "look": {
+    "palette": [
+      "#000000",
+      "#1a1a1a",
+      "#404040",
+      "#808080",
+      "#b0b0b0",
+      "#d0d0d0",
+      "#f2f2f2",
+      "#ffffff",
+      "#ff2a00"
+    ],
+    "dither": "bayer8",
+    "pixel": 2,
+    "aa": true,
+    "ink": "#000000",
+    "paper": "#f2f2f2",
+    "accent": "#ff2a00",
+    "accent2": "#808080",
+    "fonts": {
+      "display": "framd.ttf",
+      "black": "ariblk.ttf",
+      "body": "framd.ttf",
+      "mono": "cour.ttf",
+      "italic": "framdit.ttf"
+    },
+    "art": {
+      "bg": "global/atrium-phillips-exeter-library-atrium.jpg",
+      "back": "global/airport-dulles-airport-terminal.jpg",
+      "mark": "global/marks/mk-ring-10-concentric-circles-in-bla.png",
+      "object": "global/marks/mk-ring-10-concentric-circles-in-bla.png"
+    },
+    "focus": {
+      "bg": [
+        0.5,
+        0.3
+      ]
+    },
+    "title": {
+      "style": "flat",
+      "colors": [
+        "#000000"
+      ],
+      "font": "black",
+      "text": "BASS",
+      "spacing": 6
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#f2f2f2"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0,
+          1,
+          0.06
+        ],
+        "c": "#000000"
+      },
+      {
+        "t": "text",
+        "s": "LOWFOLD SOUND SYSTEM LTD",
+        "font": "display",
+        "size": 0.022,
+        "pos": [
+          0.05,
+          0.03
+        ],
+        "anchor": "lm",
+        "c": "#ffffff",
+        "spacing": 3
+      },
+      {
+        "t": "text",
+        "s": "LFS012CD",
+        "font": "display",
+        "size": 0.022,
+        "pos": [
+          0.95,
+          0.03
+        ],
+        "anchor": "rm",
+        "c": "#ff2a00",
+        "spacing": 2
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0.05,
+          0.1,
+          0.95,
+          0.56
+        ],
+        "tint": [
+          "#000000",
+          "#f2f2f2"
+        ]
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.05,
+          0.6
+        ],
+        "size": 0.13,
+        "maxw": 0.9,
+        "anchor": "lt"
+      },
+      {
+        "t": "text",
+        "s": "ENTERPRISE EDITION",
+        "font": "display",
+        "size": 0.045,
+        "pos": [
+          0.05,
+          0.76
+        ],
+        "anchor": "lm",
+        "c": "#000000",
+        "spacing": 4
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.05,
+          0.795,
+          0.95,
+          0.8
+        ],
+        "c": "#000000"
+      },
+      {
+        "t": "lines",
+        "items": [
+          "Wobble. Growl. Sub. Reese.",
+          "Organ bass. Two-step. Speed garage."
+        ],
+        "font": "italic",
+        "size": 0.026,
+        "pos": [
+          0.05,
+          0.82
+        ],
+        "c": "#404040",
+        "step": 1.35
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.93,
+          1,
+          1
+        ],
+        "c": "#b0b0b0"
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "display",
+        "size": 0.02,
+        "pos": [
+          0.5,
+          0.965
+        ],
+        "anchor": "mm",
+        "c": "#000000",
+        "maxw": 0.92
+      }
+    ],
+    "spine_bg": "#000000",
+    "spine_ink": "#b0b0b0",
+    "spine_title": "#ffffff",
+    "back_bg": "#f2f2f2",
+    "back_ink": "#1a1a1a",
+    "back_head": "#000000",
+    "back_tint": [
+      "#000000",
+      "#d0d0d0"
+    ],
+    "bullet": "- ",
+    "req_head": "OPERATING REQUIREMENTS",
+    "posterize_final": false,
+    "render_post": null
+  },
+  "box": {
+    "type": "dvd",
+    "price": [
+      "£12.99",
+      "LFS012CD"
+    ],
+    "sticker": {
+      "bg": "#ffffff",
+      "ink": "#000000",
+      "shape": "rect",
+      "font": "framd.ttf"
+    },
+    "burst": null,
+    "features": [
+      "10 basses for the whole organisation",
+      "Dubstep, UK garage, 2-step, speed garage",
+      "Approved by the board of directors"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d0d0d0",
+    "label": "silk",
+    "ink": "#000000",
+    "ink2": "#ff2a00",
+    "mark_text": "LFS012",
+    "ring": "LOWFOLD SOUND SYSTEM LTD * LFS012CD * BASS ENTERPRISE EDITION * MADE IN ENGLAND *",
+    "ring_ink": "#000000"
+  },
+  "icon": {
+    "motif": "speaker",
+    "colors": [
+      "#404040",
+      "#000000",
+      "#b0b0b0",
+      "#f2f2f2"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENCE.TXT",
+    "hlp": "LFS012.HLP",
+    "pdf": "LFS012.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "swiss",
+    "rtf": null,
+    "wri": null,
+    "splash": "LFS012.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#1a1a1a",
+    "accent": "#000000",
+    "paper": "#ffffff",
+    "line1": "Operator's Manual  -  Enterprise Edition  -  LFS012CD",
+    "foot": "LOWFOLD SOUND SYSTEM LTD  -  LONDON SE15",
+    "heads": {
+      "Introduction": "Introduction",
+      "Getting Started": "Deployment",
+      "The Presets": "Assets",
+      "License": "Licence",
+      "note": "From the Directors"
+    }
+  },
+  "hlp": {
+    "font": "Arial",
+    "family": "swiss",
+    "title_color": "#000000"
+  },
+  "text": {
+    "tagline": "Low-end infrastructure for medium and large businesses.",
+    "blurb": "Lowfold's first release as a limited company. Ten basses for the sound recorder synths: wobble, growl, sub, reese and organ bass, built for UK garage, 2-step, speed garage and the heavy stuff after midnight.",
+    "intro": [
+      "Bass Enterprise Edition is LFS012, the twelfth Lowfold release and the first since we became a proper company with a registered office and a fax machine.",
+      "It holds ten bass presets for the sound recorder synths. Wobbles, growls, subs, a reese and an organ bass. They were built for 2-step and speed garage at 130 to 140 and tested on a rig in a railway arch."
+    ],
+    "maker_note": [
+      "We started Lowfold on a pirate frequency in 1995. We are now Lowfold Sound System Ltd. The accountant says this is progress. The neighbours disagree.",
+      "Big up the arch, the late shift and anyone still carrying dubplates on the night bus.",
+      "Dez and Tash, Directors"
+    ],
+    "install": [
+      "Insert the disc. In the Library tab it appears as LFS012CD.",
+      "Open the Bass folder. Double-click a preset to load it.",
+      "Turn the subs up. Then down a bit. Neighbours."
+    ],
+    "license": [
+      "LICENCE",
+      "Lowfold Sound System Ltd licenses you to use these presets on one computer. Tracks you make with them are yours. No royalties. No paperwork.",
+      "You may not copy this disc or sell the presets as a sound library. All rights of the producer and of the owner of the work reserved.",
+      "Lowfold Sound System Ltd accepts no liability for damage to speakers, windows or tenancy agreements."
+    ],
+    "copyright": "(P) & (C) 1999 Lowfold Sound System Ltd. Made in England.",
+    "files": {
+      "DISCOG.TXT": [
+        "|LOWFOLD DISCOGRAPHY",
+        "|LFS001   Dez O.   'Night Bus Dub' 12\"            1996",
+        "|LFS004   Tash M.  'Copeland Yard' EP 12\"          1997",
+        "|LFS009   various  'Arches Vol. 1' 2x12\"          1998",
+        "|LFS011   Dez O.   'Pressure Point' 12\" (white)   1999",
+        "|LFS012CD Lowfold  Bass Enterprise Edition (CD)   1999",
+        "White labels from the shop on Rye Lane while they last."
+      ]
+    }
+  }
+}

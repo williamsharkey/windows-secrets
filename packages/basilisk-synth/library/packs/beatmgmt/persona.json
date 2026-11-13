@@ -1,0 +1,457 @@
+{
+  "id": "beatmgmt",
+  "category": "Beat Management Console (pack-plan #6)",
+  "pack": {
+    "plan_id": "beat-management",
+    "plan_title": "Beat Management Console",
+    "title": "Beat Management Console",
+    "subtitle": "Centralised administration of the boom and the bap.",
+    "edition": "Cover CD 14",
+    "version": "1.0",
+    "date": "1998-11-26",
+    "label": "CRCD14",
+    "label_long": "Computer Rhythm Cover CD 14",
+    "sources": {
+      "plan": "beat-management"
+    }
+  },
+  "maker": {
+    "name": "Computer Rhythm magazine",
+    "short": "CR",
+    "kind": "1998 computer-music magazine cover CD",
+    "year": 1998,
+    "place": "Hollingworth Periodicals Ltd, Bath, England",
+    "contact": [
+      "Computer Rhythm, Hollingworth Periodicals Ltd",
+      "30 Kingsmead Square, Bath BA1 2XX",
+      "Editorial 01225 555 0140",
+      "Subscriptions hotline 01225 555 0141",
+      "Faulty discs: Disc Returns, CR14, PO Box 155, Bath BA1 1XX",
+      "crweb: http://www.computer-rhythm.co.uk"
+    ],
+    "people": [
+      [
+        "Rob Ashdown-Pike",
+        "editor"
+      ],
+      [
+        "Fiona Garrity",
+        "disc editor"
+      ],
+      [
+        "the CR reviews desk",
+        "presets"
+      ]
+    ],
+    "voice": "UK magazine cover-mount hype: FREE!, WORTH £30!, page references, 'turn to page 42', exclamation marks, cheeky"
+  },
+  "look": {
+    "palette": "web216",
+    "dither": "bayer4",
+    "pixel": 1,
+    "aa": false,
+    "ink": "#000000",
+    "paper": "#ffcc00",
+    "accent": "#cc0000",
+    "accent2": "#0033cc",
+    "fonts": {
+      "display": "impact.ttf",
+      "black": "ariblk.ttf",
+      "body": "verdana.ttf",
+      "bold": "verdanab.ttf",
+      "mono": "cour.ttf",
+      "italic": "verdanai.ttf"
+    },
+    "art": {
+      "bg": "global/comp-mission-operations-control-roo.jpg",
+      "back": "global/expo-1965-world-s-fair-view-from-u.jpg",
+      "mark": "global/marks/mk-cd-compact-discs.png",
+      "object": "books/objects/phonautograph-1909.png"
+    },
+    "focus": {
+      "bg": [
+        0.5,
+        0.5
+      ]
+    },
+    "title": {
+      "style": "outline",
+      "colors": [
+        "#ffffff",
+        "#000000"
+      ],
+      "font": "display",
+      "text": "BEAT MANAGEMENT CONSOLE"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#ffcc00"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0,
+          1,
+          0.16
+        ],
+        "c": "#cc0000"
+      },
+      {
+        "t": "text",
+        "s": "COMPUTER RHYTHM",
+        "font": "display",
+        "size": 0.085,
+        "pos": [
+          0.04,
+          0.08
+        ],
+        "anchor": "lm",
+        "c": "#ffffff",
+        "spacing": 1,
+        "maxw": 0.68
+      },
+      {
+        "t": "text",
+        "s": "ISSUE 14",
+        "font": "black",
+        "size": 0.04,
+        "pos": [
+          0.96,
+          0.055
+        ],
+        "anchor": "rm",
+        "c": "#ffcc00"
+      },
+      {
+        "t": "text",
+        "s": "DEC 1998",
+        "font": "black",
+        "size": 0.035,
+        "pos": [
+          0.96,
+          0.11
+        ],
+        "anchor": "rm",
+        "c": "#ffffff"
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0.05,
+          0.25,
+          0.7,
+          0.62
+        ],
+        "frame": "line",
+        "c": "#000000",
+        "rot": -4
+      },
+      {
+        "t": "pic",
+        "key": "object",
+        "box": [
+          0.55,
+          0.42,
+          0.97,
+          0.78
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.18,
+          1,
+          0.255
+        ],
+        "c": "#000000"
+      },
+      {
+        "t": "text",
+        "s": "FREE! COVER CD - WORTH £30!",
+        "font": "display",
+        "size": 0.06,
+        "pos": [
+          0.5,
+          0.218
+        ],
+        "anchor": "mm",
+        "c": "#ffcc00",
+        "maxw": 0.94
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.71
+        ],
+        "size": 0.075,
+        "maxw": 0.94
+      },
+      {
+        "t": "lines",
+        "items": [
+          "FULL PACK: 20 hip-hop presets!",
+          "Boom bap, lo-fi, trap and trip-hop",
+          "Turn to page 42 for the walkthrough"
+        ],
+        "font": "bold",
+        "size": 0.033,
+        "pos": [
+          0.05,
+          0.79
+        ],
+        "c": "#000000",
+        "step": 1.3,
+        "bullet": "+ "
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.86,
+          0.47
+        ],
+        "size": 0.26
+      },
+      {
+        "t": "pattern",
+        "kind": "tape",
+        "box": [
+          0.1,
+          0.03,
+          0.9,
+          0.97
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.95,
+          1,
+          1
+        ],
+        "c": "#000000"
+      },
+      {
+        "t": "text",
+        "s": "Do not remove the disc from the magazine in the shop. Faulty? See FAULTY.TXT",
+        "font": "body",
+        "size": 0.02,
+        "pos": [
+          0.5,
+          0.975
+        ],
+        "anchor": "mm",
+        "c": "#ffffff",
+        "maxw": 0.94
+      }
+    ],
+    "spine_bg": "#cc0000",
+    "spine_ink": "#ffffff",
+    "spine_title": "#ffcc00",
+    "back_bg": "#ffffff",
+    "back_ink": "#000000",
+    "back_head": "#cc0000",
+    "bullet": "+ ",
+    "posterize_final": true,
+    "render_post": null
+  },
+  "box": {
+    "type": "mailer",
+    "price": [
+      "£4.95",
+      "with CD"
+    ],
+    "sticker": {
+      "bg": "#ffffff",
+      "ink": "#cc0000",
+      "shape": "round",
+      "font": "impact.ttf"
+    },
+    "burst": [
+      "FULL",
+      "PACK!",
+      "Worth £30"
+    ],
+    "burst_fill": "#0033cc",
+    "burst_ink": "#ffffff",
+    "features": [
+      "20 boom-bap, lo-fi, trap and trip-hop presets",
+      "Exclusive to Computer Rhythm readers",
+      "Walkthrough on page 42"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "full",
+    "base": "#d8d8d8",
+    "label": "full",
+    "ring": "COMPUTER RHYTHM * COVER CD 14 * DECEMBER 1998 * NOT FOR SALE SEPARATELY *",
+    "ring_ink": "#000000",
+    "front": [
+      {
+        "t": "fill",
+        "c": "#ffcc00"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.12,
+          1,
+          0.3
+        ],
+        "c": "#cc0000"
+      },
+      {
+        "t": "text",
+        "s": "COMPUTER RHYTHM",
+        "font": "display",
+        "size": 0.08,
+        "pos": [
+          0.5,
+          0.21
+        ],
+        "anchor": "mm",
+        "c": "#ffffff"
+      },
+      {
+        "t": "text",
+        "s": "COVER CD 14",
+        "font": "black",
+        "size": 0.045,
+        "pos": [
+          0.2,
+          0.5
+        ],
+        "anchor": "mm",
+        "c": "#000000"
+      },
+      {
+        "t": "text",
+        "s": "DEC 98",
+        "font": "black",
+        "size": 0.045,
+        "pos": [
+          0.8,
+          0.5
+        ],
+        "anchor": "mm",
+        "c": "#cc0000"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.74
+        ],
+        "size": 0.06,
+        "maxw": 0.7
+      },
+      {
+        "t": "text",
+        "s": "Not for sale separately",
+        "font": "bold",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.82
+        ],
+        "anchor": "mm",
+        "c": "#000000"
+      }
+    ]
+  },
+  "icon": {
+    "motif": "faders",
+    "colors": [
+      "#cc0000",
+      "#000000",
+      "#c0c0c0",
+      "#ffcc00"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENSE.TXT",
+    "hlp": "CRCD14.HLP",
+    "pdf": "CRCD14.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "corporate",
+    "rtf": null,
+    "wri": null,
+    "splash": "CRCD14.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#000000",
+    "accent": "#cc0000",
+    "paper": "#ffffff",
+    "band": "#cc0000",
+    "band2": "#ffcc00",
+    "line1": "Cover CD Guide  -  Issue 14  -  December 1998",
+    "heads": {
+      "Introduction": "On Your Cover CD",
+      "Getting Started": "Using the Disc",
+      "The Presets": "The Full Pack",
+      "License": "Terms of Use",
+      "note": "From the Disc Editor"
+    }
+  },
+  "hlp": {
+    "font": "Verdana",
+    "family": "swiss",
+    "title_color": "#cc0000"
+  },
+  "text": {
+    "tagline": "Centralised administration of the boom and the bap.",
+    "blurb": "FREE with Computer Rhythm issue 14: the FULL Beat Management Console pack, worth £30! Twenty hip-hop presets for the sound recorder synths: boom bap, lo-fi, trap and trip-hop. Exclusive to CR readers.",
+    "intro": [
+      "Welcome to Cover CD 14! This month we have something special: the complete Beat Management Console pack, worth £30 in the shops, FREE to every Computer Rhythm reader.",
+      "Twenty presets of dusty keys, 808s, bells and vinyl texture for the sound recorder synths. Our reviews desk gave it 9/10 last issue. Turn to page 42 for the step-by-step walkthrough, and page 46 for our beat-making masterclass."
+    ],
+    "maker_note": [
+      "Every month we try to put something on the disc that we would pay for ourselves. This month it was easy.",
+      "Send us your beats! The best tracks made with the pack go on Cover CD 16. See page 98 for how to send them in.",
+      "Fiona Garrity, Disc Editor"
+    ],
+    "install": [
+      "Insert the Cover CD. In the Library tab it appears as the drive CRCD14.",
+      "Open a folder (Keys, Bass, Bells and the rest) and double-click a preset.",
+      "Stuck? Ring the reader helpline (weekdays 10am-4pm) or see page 42."
+    ],
+    "license": [
+      "TERMS OF USE",
+      "The Beat Management Console pack is supplied free to readers of Computer Rhythm for their own use. Music made with it is yours.",
+      "This disc is not for sale separately. You may not copy it or upload its contents.",
+      "Hollingworth Periodicals Ltd has checked this disc for viruses but cannot accept responsibility for any damage, loss or disruption. Always back up your work."
+    ],
+    "copyright": "(C) 1998 Hollingworth Periodicals Ltd. Computer Rhythm is published 13 times a year.",
+    "files": {
+      "FAULTY.TXT": [
+        "|FAULTY DISC?",
+        "If your Cover CD does not work, first check it in another drive. If it is faulty, put it in an envelope with a note of your name and address and send it to:",
+        "|    Disc Returns, CR14, PO Box 155, Bath BA1 1XX",
+        "We will send you a new one within 28 days. Do not send it to the editorial office."
+      ],
+      "CONTENTS.TXT": [
+        "|COMPUTER RHYTHM COVER CD 14 - CONTENTS",
+        "|  \\KEYS, \\BASS, \\BELLS ... Beat Management Console FULL PACK (page 42)",
+        "|  CRCD14.HLP                 the disc guide as a help file",
+        "|  CRCD14.PDF                 the disc guide to print (A5)",
+        "|  CRCD14.BMP                 this month's desktop wallpaper",
+        "|  README.TXT, LICENSE.TXT    please read",
+        "Next month on Cover CD 15: the Retro Display demo, 40 minutes of tutorial audio, and the readers' tracks."
+      ]
+    }
+  }
+}

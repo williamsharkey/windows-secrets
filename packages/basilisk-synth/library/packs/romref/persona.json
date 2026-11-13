@@ -1,0 +1,438 @@
+{
+  "id": "romref",
+  "category": "ROM Reference Library (pack-plan 2.2)",
+  "pack": {
+    "plan_id": "rom-reference",
+    "plan_title": "ROM Reference Library",
+    "title": "ROM Reference Library",
+    "subtitle": "The great workstations, archived",
+    "edition": "Volumes 1-3 on one disc",
+    "version": "1.0",
+    "date": "1994-02-14",
+    "label": "HAA_CD0094",
+    "label_long": "HAA ROM Reference 1-3",
+    "sources": {
+      "targets": [
+        "*"
+      ]
+    },
+    "folders": {
+      "rompler-emu": "SAMPLERS",
+      "rompler-roland": "DIGITAL",
+      "rompler-korg": "WORKSTN",
+      "rompler-yamaha": "FM",
+      "rompler-kurzweil-ensoniq": "WAVETBL",
+      "softsynth-pad-texture": "SOFTPADS",
+      "aesthetic-y2k-corporate": "Y2K",
+      "aesthetic-frutiger-aero": "AQUA",
+      "lofi-vaporwave": "LOFI",
+      "arps-plucks": "ARPS",
+      "bells-mallets": "BELLS",
+      "brass-stabs": "BRASS",
+      "risers-fx": "FX",
+      "vocal-choir": "VOCALS",
+      "world": "WORLD",
+      "keys": "KEYS",
+      "pads": "PADS",
+      "bass": "BASS",
+      "leads": "LEADS",
+      "strings": "STRINGS",
+      "drones": "DRONES"
+    },
+    "rename": {
+      "style Deep Sub": "Deep Sub",
+      "Acid 303 Squelch": "Acid Squelch",
+      "808 Sub Boom": "Sub Boom",
+      "M1 House Bass Organ Bass": "House Organ Bass",
+      "Synth Brass Pad (Vangelis)": "Synth Brass Pad",
+      "D-50 Pizzagogo": "Pizza Go-Go",
+      "D-50 Breathy Chiffer": "Breathy Chiffer",
+      "U-20 Piano Strings": "Piano Strings Layer",
+      "JV-1080 Velo Strings": "Velocity Strings",
+      "JV Pulse Arp": "Pulse Arp",
+      "Sound Canvas Fantasia Halo": "Fantasia Halo",
+      "SC-55 Choir Aahs": "Module Choir Aahs",
+      "SC-55 Voice Oohs": "Module Voice Oohs",
+      "SC-55 Square Lead GM Ocarina": "Square Ocarina Lead",
+      "MT-32 Fantasy Bell": "Fantasy Bell",
+      "MT-32 Slap Bass": "LA Slap Bass",
+      "XV Supersaw Pad": "Supersaw Pad",
+      "JD-800 Glass Voices": "Glass Voices",
+      "Alpha Juno Hoover": "Hoover",
+      "E.PIANO 1": "FM E.Piano",
+      "BASS 1 Solid Bass": "Solid FM Bass",
+      "TUB BELLS": "FM Tub Bells",
+      "Koto": "FM Koto",
+      "TX81Z Lately Bass": "Four-Op Bass",
+      "TX81Z FB-01 Wood Piano": "Four-Op Wood Piano",
+      "SY77 SY99 Pacific Rim": "Pacific Rim",
+      "Harmonica Flute 1": "FM Harmonica Flute",
+      "Motif Montage Full Grand sparkle": "Sparkle Grand",
+      "Strings ballad": "Ballad EP Strings",
+      "Square Lead (Chip GM 81)": "Square Chip Lead",
+      "Mono Saw Lead (Minimoog)": "Mono Saw Lead",
+      "Pan-Flute Lead (Zamfir)": "Pan-Flute Lead",
+      "Emulator Choir Arr": "Sampler Choir Arr",
+      "Emulator Marcato Strings": "Sampler Marcato Strings",
+      "Proteus Pizzicato": "Module Pizzicato",
+      "Proteus 2 Orchestral Tutti": "Orchestral Tutti",
+      "Proteus World Kalimba": "Module Kalimba",
+      "Planet Phatt Hip-Hop Kit": "Phat Hip-Hop Kit",
+      "MoPhatt Fat Bass": "Phat Fat Bass",
+      "Orbit Dance Stab": "Dance Stab",
+      "Vintage Keys": "Vintage Module Keys",
+      "Vintage Keys Flute": "Vintage Module Flute",
+      "Emulator III Grand": "Sampler Grand",
+      "Proteus 3 Ethnic Gamelan": "Module Gamelan",
+      "Emulator Orchestra Hit": "Sampler Orchestra Hit",
+      "Factory Bowed Glass": "Bowed Glass",
+      "Factory Music Box": "Sampled Music Box",
+      "World Duduk": "Duduk",
+      "World Ethnic Vox": "Ethnic Vox",
+      "Synth Strings 1 (GM 51)": "Synth Strings 1",
+      "GM Choir Aahs": "Choir Aahs",
+      "Arr1 Choir Hit": "Choir Hit",
+      "Space Choir Aah (Vangelis)": "Space Choir Aah",
+      "Mirage Grit Piano": "8-Bit Grit Piano",
+      "ESQ-1 Digital Pad": "Digital Wave Pad",
+      "VFX Digital Piano Ice": "Ice Digital Piano",
+      "K2000 Hollow Pad Pad Glass": "Hollow Glass Pad",
+      "K250 Stereo Grand": "Stereo Grand",
+      "Mirage Choir": "8-Bit Choir",
+      "EPS Orchestra Stab": "Sampler Orchestra Stab",
+      "M1 Piano 16": "Workstation Piano",
+      "M1 Organ 2": "Workstation Organ",
+      "M1 Universe": "Universe Pad",
+      "M1 Fretless": "Workstation Fretless",
+      "M1 Lore Choir": "Lore Choir",
+      "Wavestation Glass Pad": "Vector Glass Pad",
+      "Wavestation Ocean Bed": "Vector Ocean Bed",
+      "Triton Pop Piano Strings": "Pop Piano Strings",
+      "Triton Hip-Hop Pluck": "Hip-Hop Pluck",
+      "M1 Bell Pole": "Bell Pole",
+      "Fantasia": "Fantasia Pad",
+      "Digital Native Dance": "Native Dance",
+      "Staccato Heaven": "Staccato Heaven Pad"
+    },
+    "rename_note": "data.py does not read pack.rename yet: these placeholder names carry instrument model names or real people; apply this map after clean_name()"
+  },
+  "maker": {
+    "name": "Halvorsen Audio Archives",
+    "short": "HAA",
+    "kind": "1994 professional sample-CD label for studios and post houses",
+    "year": 1994,
+    "place": "Burbank, California, USA",
+    "contact": [
+      "Halvorsen Audio Archives",
+      "3301 West Magnolia Court, Studio C",
+      "Burbank, CA 91599",
+      "Tel (818) 555-0158   Fax (818) 555-0159",
+      "Dealer and studio orders only"
+    ],
+    "people": [
+      [
+        "Erik Halvorsen",
+        "producer, archivist"
+      ],
+      [
+        "Monica Day-Oyelaran",
+        "programming"
+      ],
+      [
+        "Studio C, Burbank",
+        "recording and mastering"
+      ]
+    ],
+    "voice": "terse, technical, catalogue-style; specifications, catalogue numbers, part numbers; for professionals only"
+  },
+  "look": {
+    "palette": [
+      "#000000",
+      "#ffffff",
+      "#c0c0c0",
+      "#808080",
+      "#404040",
+      "#40c060",
+      "#a0e0b0"
+    ],
+    "dither": "bayer8",
+    "pixel": 1,
+    "aa": true,
+    "ink": "#ffffff",
+    "paper": "#000000",
+    "accent": "#40c060",
+    "accent2": "#c0c0c0",
+    "fonts": {
+      "display": "arial.ttf",
+      "body": "arial.ttf",
+      "mono": "cour.ttf",
+      "black": "arialbd.ttf",
+      "cond": "framd.ttf"
+    },
+    "art": {
+      "bg": "books/oscilloscope-trace-photo.png",
+      "back": "books/lissajous-figures-set.png",
+      "mark": "global/marks/mk-ring-10-concentric-circles-in-bla.png",
+      "object": "books/objects/phonautograph-1909.png"
+    },
+    "title": {
+      "style": "flat",
+      "colors": [
+        "#ffffff"
+      ],
+      "font": "black",
+      "text": "ROM REFERENCE",
+      "spacing": 3
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#000000"
+      },
+      {
+        "t": "text",
+        "s": "HALVORSEN AUDIO ARCHIVES",
+        "font": "black",
+        "size": 0.034,
+        "pos": [
+          0.06,
+          0.07
+        ],
+        "anchor": "lm",
+        "c": "#c0c0c0",
+        "spacing": 2,
+        "maxw": 0.6
+      },
+      {
+        "t": "text",
+        "s": "HAA-CD 0094",
+        "font": "mono",
+        "size": 0.034,
+        "pos": [
+          0.94,
+          0.07
+        ],
+        "anchor": "rm",
+        "c": "#40c060"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.06,
+          0.11,
+          0.94,
+          0.113
+        ],
+        "c": "#808080"
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0.06,
+          0.15,
+          0.94,
+          0.6
+        ],
+        "tint": [
+          "#000000",
+          "#a0e0b0"
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.06,
+          0.15,
+          0.94,
+          0.6
+        ],
+        "outline": "#404040",
+        "w": 1
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.06,
+          0.65
+        ],
+        "size": 0.085,
+        "maxw": 0.88,
+        "anchor": "lt"
+      },
+      {
+        "t": "text",
+        "s": "L I B R A R Y",
+        "font": "body",
+        "size": 0.05,
+        "pos": [
+          0.06,
+          0.76
+        ],
+        "anchor": "la",
+        "c": "#40c060"
+      },
+      {
+        "t": "text",
+        "s": "{edition}",
+        "font": "body",
+        "size": 0.034,
+        "pos": [
+          0.06,
+          0.845
+        ],
+        "anchor": "la",
+        "c": "#c0c0c0"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.06,
+          0.9,
+          0.94,
+          0.903
+        ],
+        "c": "#808080"
+      },
+      {
+        "t": "text",
+        "s": "PROFESSIONAL SOUND LIBRARY  •  CD-ROM  •  FOR SOUND RECORDER SYNTHESIZERS",
+        "font": "body",
+        "size": 0.024,
+        "pos": [
+          0.06,
+          0.935
+        ],
+        "anchor": "lm",
+        "c": "#808080",
+        "maxw": 0.88
+      }
+    ],
+    "spine_bg": "#000000",
+    "spine_ink": "#808080",
+    "spine_title": "#ffffff",
+    "back_bg": "#000000",
+    "back_ink": "#c0c0c0",
+    "back_head": "#40c060",
+    "back_tint": [
+      "#000000",
+      "#a0e0b0"
+    ],
+    "bullet": "- ",
+    "req_head": "FORMAT",
+    "posterize_final": false,
+    "render_post": null
+  },
+  "box": {
+    "type": "jewel",
+    "price": [
+      "$199",
+      "list"
+    ],
+    "sticker": {
+      "bg": "#ffffff",
+      "ink": "#000000",
+      "shape": "rect",
+      "font": "arialbd.ttf"
+    },
+    "burst": null,
+    "features": [
+      "198 programs across 21 categories",
+      "Programmed from the great workstations of 1985-1994",
+      "Licence-free for commercial productions"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "silk",
+    "ink": "#000000",
+    "ring": "HALVORSEN AUDIO ARCHIVES * HAA-CD 0094 * ROM REFERENCE LIBRARY VOLUMES 1-3 * (P)(C) 1994 * MADE IN USA *",
+    "ring_ink": "#000000",
+    "mark_text": "HAA 0094"
+  },
+  "icon": {
+    "motif": "chip",
+    "colors": [
+      "#40c060",
+      "#808080",
+      "#c0c0c0",
+      "#000000"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENCE.TXT",
+    "hlp": "HAA0094.HLP",
+    "pdf": "HAA0094.PDF",
+    "pdf_size": "letter",
+    "pdf_style": "swiss",
+    "rtf": null,
+    "wri": null,
+    "splash": "HAA0094.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#1a1a1a",
+    "accent": "#1a1a1a",
+    "paper": "#ffffff",
+    "line1": "Program Reference  -  HAA-CD 0094  -  Volumes 1-3",
+    "foot": "HALVORSEN AUDIO ARCHIVES  -  BURBANK, CALIFORNIA",
+    "heads": {
+      "Introduction": "About This Library",
+      "Getting Started": "Loading",
+      "The Presets": "Program Index",
+      "note": "Production Notes",
+      "License": "Licence"
+    }
+  },
+  "hlp": {
+    "font": "Arial",
+    "family": "swiss",
+    "title_color": "#000000"
+  },
+  "text": {
+    "tagline": "The great workstations, archived.",
+    "blurb": "198 programs that reference the classic workstations, samplers and synthesizers of 1985 to 1994, programmed from scratch for the Sound Recorder synthesizers. Volumes 1, 2 and 3 of the ROM Reference series on one disc.",
+    "intro": [
+      "HAA-CD 0094 collects Volumes 1, 2 and 3 of the ROM Reference series: 198 programs that reference the factory sounds of the workstations and samplers found in professional studios between 1985 and 1994.",
+      "No sample or program from any instrument maker was used. Every program was built from the operating-system sounds with Sound Recorder, then compared by ear against the reference in Studio C."
+    ],
+    "maker_note": [
+      "Programs are sorted by category. Names describe the sound, not the instrument it references. A cross-reference sheet is available to registered studios on request.",
+      "Halvorsen Audio Archives libraries are used in film, television and game post-production. Ask your dealer for the full HAA catalogue.",
+      "E. Halvorsen, Producer"
+    ],
+    "install": [
+      "Load HAA-CD 0094. In the Library tab the disc appears as HAA_CD0094.",
+      "Programs are in one directory per category. Double-click a program file (.BSP) to load it.",
+      "The program index is HAA0094.PDF and PRESETS.TSV."
+    ],
+    "license": [
+      "HALVORSEN AUDIO ARCHIVES LICENCE",
+      "The purchaser may use the programs on this disc in commercial and non-commercial productions without further fees.",
+      "The programs may not be resold, lent or distributed as a library, in whole or in part, on any medium.",
+      "One licence per facility. Multi-room facilities: contact HAA."
+    ],
+    "copyright": "(P)(C) 1994 Halvorsen Audio Archives. All rights reserved. Unauthorised duplication is a violation of applicable laws.",
+    "files": {
+      "SPECS.TXT": [
+        "|HAA-CD 0094  ROM REFERENCE LIBRARY  VOLUMES 1-3",
+        "|",
+        "|Programs ........ 198",
+        "|Categories ...... 21",
+        "|Format .......... BASILISK program (.BSP, one line of DNA)",
+        "|Sources ......... operating-system sounds only",
+        "|Reference ....... A = 440 Hz",
+        "|Mastered ........ Studio C, Burbank, January 1994",
+        "|Catalogue no. ... HAA-CD 0094 (replaces HAA-CD 0091, 0092, 0093)"
+      ]
+    }
+  }
+}

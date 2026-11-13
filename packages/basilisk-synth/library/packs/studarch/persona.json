@@ -1,0 +1,473 @@
+{
+  "id": "studarch",
+  "category": "Studio Instruments Archive (pack-plan #14)",
+  "pack": {
+    "plan_id": "instruments-archive",
+    "plan_title": "Studio Instruments Archive",
+    "title": "Studio Instruments Archive",
+    "subtitle": "Every keyboard in the building, catalogued",
+    "edition": "School and Home Edition",
+    "version": "1.0",
+    "date": "1995-08-21",
+    "label": "STUDARCH",
+    "label_long": "Studio Instruments Archive",
+    "sources": {
+      "plan": "instruments-archive"
+    }
+  },
+  "maker": {
+    "name": "Bramblewood Learning Media",
+    "short": "Bramblewood",
+    "kind": "1995 educational CD-ROM publisher (encyclopedias and 'discovery' titles for schools and homes)",
+    "year": 1995,
+    "place": "St. Paul, Minnesota, USA",
+    "contact": [
+      "Bramblewood Learning Media",
+      "Discovery Shelf Series",
+      "455 Wabasha Commons, St. Paul, MN 55199",
+      "Orders and school pricing 1-800-555-0171",
+      "Teacher hotline (612) 555-0172",
+      "Online: keyword BRAMBLEWOOD on most online services"
+    ],
+    "people": [
+      [
+        "Dr. Annika Strand-Mbeki",
+        "series editor, music"
+      ],
+      [
+        "Paul Ventresca",
+        "sound producer"
+      ],
+      [
+        "The Bramblewood Teacher Panel",
+        "lesson plans"
+      ]
+    ],
+    "voice": "warm, instructive, a little wondrous; addresses students and teachers; 'Did you know?' boxes; grade levels"
+  },
+  "look": {
+    "palette": [
+      "#0a2a5a",
+      "#d8b45a",
+      "#f0e6c8",
+      "#1a1a1a",
+      "#ffffff",
+      "#8a2a2a",
+      "#a08040",
+      "#e8d8a8",
+      "#6a6050"
+    ],
+    "dither": "fs",
+    "pixel": 1,
+    "aa": true,
+    "ink": "#1a1a1a",
+    "paper": "#0a2a5a",
+    "accent": "#8a2a2a",
+    "accent2": "#d8b45a",
+    "fonts": {
+      "display": "palab.ttf",
+      "body": "times.ttf",
+      "mono": "cour.ttf",
+      "black": "palab.ttf",
+      "italic": "palai.ttf",
+      "caps": "timesbd.ttf"
+    },
+    "art": {
+      "bg": "books/psm-1873-figures-of-vibrating-plates.png",
+      "back": "books/psm-1873-figures-of-vibrating-plates.png",
+      "mark": "global/marks/mk-globe-de-aertsche-globe-fix-remix.png",
+      "object": "books/objects/tyndall-sound-the-double-siren--helmholtz---engraving.png"
+    },
+    "title": {
+      "style": "gold",
+      "colors": [
+        "#fff4d0",
+        "#e8c870",
+        "#a07828",
+        "#1a0f02"
+      ],
+      "font": "display",
+      "text": "Studio Instruments"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#0a2a5a"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.035,
+          0.035,
+          0.965,
+          0.965
+        ],
+        "outline": "#d8b45a",
+        "w": 4
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.05,
+          0.05,
+          0.95,
+          0.95
+        ],
+        "outline": "#d8b45a",
+        "w": 1
+      },
+      {
+        "t": "text",
+        "s": "THE  DISCOVERY  SHELF",
+        "font": "caps",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.09
+        ],
+        "anchor": "mm",
+        "c": "#d8b45a",
+        "spacing": 2
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.17
+        ],
+        "size": 0.09,
+        "maxw": 0.84
+      },
+      {
+        "t": "text",
+        "s": "A R C H I V E",
+        "font": "display",
+        "size": 0.05,
+        "pos": [
+          0.5,
+          0.245
+        ],
+        "anchor": "mm",
+        "c": "#f0e6c8"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.2,
+          0.3,
+          0.8,
+          0.74
+        ],
+        "c": "#f0e6c8",
+        "outline": "#d8b45a",
+        "w": 3
+      },
+      {
+        "t": "pic",
+        "key": "object",
+        "box": [
+          0.23,
+          0.32,
+          0.77,
+          0.72
+        ],
+        "tint": [
+          "#1a1a1a",
+          "#f0e6c8"
+        ],
+        "pal": [
+          "#1a1a1a",
+          "#f0e6c8",
+          "#8a8070"
+        ]
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "italic",
+        "size": 0.036,
+        "pos": [
+          0.5,
+          0.79
+        ],
+        "anchor": "mm",
+        "c": "#f0e6c8",
+        "maxw": 0.84
+      },
+      {
+        "t": "pill",
+        "s": "Ages 10 to adult",
+        "font": "caps",
+        "size": 0.03,
+        "pos": [
+          0.3,
+          0.875
+        ],
+        "bg": "#8a2a2a",
+        "c": "#ffffff",
+        "outline": "#d8b45a"
+      },
+      {
+        "t": "text",
+        "s": "CD-ROM for home and school",
+        "font": "body",
+        "size": 0.028,
+        "pos": [
+          0.72,
+          0.875
+        ],
+        "anchor": "mm",
+        "c": "#d8b45a"
+      },
+      {
+        "t": "text",
+        "s": "Bramblewood Learning Media",
+        "font": "italic",
+        "size": 0.026,
+        "pos": [
+          0.5,
+          0.925
+        ],
+        "anchor": "mm",
+        "c": "#d8b45a"
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.83,
+          0.33
+        ],
+        "size": 0.24,
+        "rot": 10
+      }
+    ],
+    "spine_bg": "#0a2a5a",
+    "spine_ink": "#d8b45a",
+    "spine_title": "#f0e6c8",
+    "back_bg": "#f0e6c8",
+    "back_ink": "#1a1a1a",
+    "back_head": "#0a2a5a",
+    "back_tint": [
+      "#1a1a1a",
+      "#f0e6c8"
+    ],
+    "bullet": "• ",
+    "req_head": "FOR CLASSROOM AND HOME COMPUTERS",
+    "posterize_final": false,
+    "render_post": null
+  },
+  "box": {
+    "type": "mailer",
+    "price": [
+      "$29.95",
+      "school price $19.95"
+    ],
+    "sticker": {
+      "bg": "#ffffff",
+      "ink": "#0a2a5a",
+      "shape": "rect",
+      "font": "timesbd.ttf"
+    },
+    "burst": [
+      "Teacher's",
+      "Guide",
+      "inside!"
+    ],
+    "burst_fill": "#d8b45a",
+    "burst_ink": "#0a2a5a",
+    "features": [
+      "Pianos, strings, brass and bells, catalogued",
+      "'Did you know?' notes on every instrument",
+      "Lesson plans for grades 5 to 12"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "full",
+    "base": "#d8d8d8",
+    "label": "full",
+    "ring": "BRAMBLEWOOD LEARNING MEDIA * THE DISCOVERY SHELF * STUDIO INSTRUMENTS ARCHIVE * SCHOOL AND HOME EDITION *",
+    "ring_ink": "#d8b45a",
+    "front": [
+      {
+        "t": "fill",
+        "c": "#0a2a5a"
+      },
+      {
+        "t": "text",
+        "s": "THE  DISCOVERY  SHELF",
+        "font": "caps",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.14
+        ],
+        "anchor": "mm",
+        "c": "#d8b45a"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.22
+        ],
+        "size": 0.07,
+        "maxw": 0.6
+      },
+      {
+        "t": "text",
+        "s": "ARCHIVE",
+        "font": "display",
+        "size": 0.045,
+        "pos": [
+          0.5,
+          0.29
+        ],
+        "anchor": "mm",
+        "c": "#f0e6c8"
+      },
+      {
+        "t": "text",
+        "s": "CD-ROM",
+        "font": "caps",
+        "size": 0.04,
+        "pos": [
+          0.2,
+          0.5
+        ],
+        "anchor": "mm",
+        "c": "#d8b45a"
+      },
+      {
+        "t": "text",
+        "s": "School and Home Edition",
+        "font": "italic",
+        "size": 0.032,
+        "pos": [
+          0.5,
+          0.72
+        ],
+        "anchor": "mm",
+        "c": "#f0e6c8"
+      },
+      {
+        "t": "text",
+        "s": "Bramblewood Learning Media",
+        "font": "body",
+        "size": 0.028,
+        "pos": [
+          0.5,
+          0.78
+        ],
+        "anchor": "mm",
+        "c": "#d8b45a"
+      }
+    ]
+  },
+  "icon": {
+    "motif": "book",
+    "colors": [
+      "#0a2a5a",
+      "#000000",
+      "#d8b45a",
+      "#8a2a2a"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENSE.TXT",
+    "hlp": "STUDARCH.HLP",
+    "pdf": "TEACHER.PDF",
+    "pdf_size": "letter",
+    "pdf_style": "report",
+    "rtf": null,
+    "wri": "STUDARCH.WRI",
+    "splash": "STUDARCH.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#1a1a1a",
+    "accent": "#0a2a5a",
+    "paper": "#ffffff",
+    "foot": "Permission is granted to copy this guide for classroom use."
+  },
+  "hlp": {
+    "font": "Times New Roman",
+    "family": "roman",
+    "title_color": "#0a2a5a"
+  },
+  "text": {
+    "tagline": "Every keyboard in the building, catalogued.",
+    "blurb": "Step inside a recording studio and meet its instruments: pianos, strings, brass, bells and more. Each sound comes with notes on how the real instrument works, and a Teacher's Guide brings it all into the classroom.",
+    "abstract": "This Teacher's Guide accompanies the Studio Instruments Archive CD-ROM in the Discovery Shelf Series. It explains how each family of instruments makes its sound, and how the presets on the disc imitate them with nothing more than the sounds already on a school computer. Four lessons for grades 5 to 12 are included.",
+    "sections": [
+      [
+        "How Instruments Make Sound",
+        "Every instrument has something that vibrates: a string, a column of air, a bar of metal or wood. Did you know? The double siren in the picture on the cover was built in the nineteenth century to count vibrations, by blowing air through spinning disks with holes in them."
+      ],
+      [
+        "Lesson 1: The Keyboard Family",
+        "Students load three piano presets and describe the differences in attack and decay. Ask: why does a piano note fade, while an organ note does not?"
+      ],
+      [
+        "Lesson 2: Strings and Brass",
+        "Students compare a bowed string preset with a brass preset. Which one starts softly? Which one has a 'buzz'? Draw the loudness of each note over time."
+      ],
+      [
+        "Lesson 3: Bells and Mallets",
+        "Students strike bell and mallet presets and listen for the 'ring'. Discuss: why do bells sound out of tune when you play chords on them?"
+      ],
+      [
+        "Lesson 4: Build Your Own",
+        "Using the DNA line shown in the Help file, students change one number in a preset and describe what changed. This is how sound designers work!"
+      ]
+    ],
+    "references": [
+      "Bramblewood Learning Media, 'Discovering Sound', Discovery Shelf Series, 1994.",
+      "Bramblewood Learning Media, 'The Orchestra Room', Discovery Shelf Series, 1995."
+    ],
+    "intro": [
+      "Welcome to the Studio Instruments Archive, part of the Discovery Shelf Series from Bramblewood Learning Media.",
+      "In a recording studio there are many instruments: grand pianos, electric pianos, strings, brass, bells and more. This disc catalogues them for you, and lets you play each one with the Sound Recorder synthesizer on your own computer."
+    ],
+    "maker_note": [
+      "Our Discovery Shelf titles are written with teachers, for students. Every sound on this disc was tested in real classrooms by the Bramblewood Teacher Panel.",
+      "We hope your students discover how much music hides inside a computer.",
+      "Dr. Annika Strand-Mbeki, Series Editor"
+    ],
+    "install": [
+      "Insert the Studio Instruments Archive disc. In the Library tab, the disc appears as STUDARCH.",
+      "Open a folder (KEYS, STRINGS, BRASS ...) and double-click an instrument to play it.",
+      "Teachers: the Teacher's Guide is TEACHER.PDF; a short version is TEACHER.TXT."
+    ],
+    "license": [
+      "BRAMBLEWOOD LEARNING MEDIA SINGLE-STATION LICENSE",
+      "You may use this disc on one computer at a time, at home or in one classroom. Lab packs and site licenses for schools are available: call 1-800-555-0171.",
+      "Teachers may copy the Teacher's Guide for their own students.",
+      "The disc is warranted against defects for one year. Bramblewood's liability is limited to replacing the disc."
+    ],
+    "copyright": "Copyright (c) 1995 Bramblewood Learning Media. Discovery Shelf is a trademark of Bramblewood Learning Media.",
+    "files": {
+      "TEACHER.TXT": [
+        "|TEACHER'S NOTES - STUDIO INSTRUMENTS ARCHIVE",
+        "|============================================",
+        "|Grade levels: 5 to 12.  Time: four lessons of 40 minutes.",
+        "Before class: check that the synthesizer opens and that the disc appears as STUDARCH in the Library tab. Headphones are recommended for lab use.",
+        "Lesson 1, the keyboard family. Lesson 2, strings and brass. Lesson 3, bells and mallets. Lesson 4, build your own sound. Full lesson plans and worksheets are in TEACHER.PDF.",
+        "Did you know? Each preset is one line of text called its DNA. Students can read it in the Help file and change one number at a time."
+      ],
+      "LABPACK.TXT": [
+        "|LAB PACKS AND SITE LICENSES",
+        "|  5-station lab pack ......... $79.95",
+        "|  10-station lab pack ........ $139.95",
+        "|  Building site license ...... call 1-800-555-0171",
+        "Purchase orders from schools and libraries are welcome."
+      ]
+    }
+  }
+}

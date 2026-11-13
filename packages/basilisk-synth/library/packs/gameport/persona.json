@@ -1,0 +1,347 @@
+{
+  "id": "gameport",
+  "category": "Game Port Sound Set (pack-plan #11)",
+  "pack": {
+    "title": "Game Port Sound Set",
+    "subtitle": "joystick not included",
+    "version": "1.0",
+    "date": "1995-08-14",
+    "label": "GAMEPORT_SL",
+    "label_long": "Game Port Sound Set (SL)",
+    "sources": {
+      "plan": "game-port"
+    },
+    "plan_id": "game-port",
+    "plan_title": "Game Port Sound Set"
+  },
+  "maker": {
+    "name": "Static Lagoon",
+    "short": "SL",
+    "kind": "BBS demoscene group",
+    "year": 1995,
+    "place": "Baltimore, Maryland, USA",
+    "contact": [
+      "The Static Lagoon BBS  (410) 555-0147  28.8k  24hrs",
+      "Node 2  (410) 555-0148  14.4k  midnight-6am",
+      "FidoNet 1:261/5550"
+    ],
+    "people": [
+      [
+        "pastelghost",
+        "sounds, NFO, packing"
+      ],
+      [
+        "Cassette Mike",
+        "tapes and the 4-track"
+      ],
+      [
+        "MODEMCHILD",
+        "ANSI and the sysop"
+      ],
+      [
+        "veronica2600",
+        "label art, cutting the inserts"
+      ]
+    ],
+    "voice": "lowercase, elite, warm; talks about malls at closing time"
+  },
+  "look": {
+    "palette": [
+      "#000000",
+      "#1a0a2e",
+      "#3d1a5c",
+      "#7a2a8c",
+      "#ff71ce",
+      "#ffb3e6",
+      "#01cdfe",
+      "#b967ff",
+      "#05ffa1",
+      "#fffb96",
+      "#ffffff",
+      "#5a5a7a",
+      "#2a6a8a",
+      "#ff9a6a",
+      "#a0ffe6",
+      "#d0d0e0"
+    ],
+    "dither": "bayer4",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#ffffff",
+    "paper": "#1a0a2e",
+    "accent": "#ff71ce",
+    "accent2": "#01cdfe",
+    "fonts": {
+      "display": "impact.ttf",
+      "body": "lucon.ttf",
+      "mono": "lucon.ttf",
+      "hand": "comic.ttf"
+    },
+    "art": {
+      "bg": "global/cgi-greenwireframeobjectsrenderedi.png",
+      "back": "global/comp-arc-1986-ac86-0583-12.jpg",
+      "mark": "global/marks/mk-star-colourful-star-shape.png",
+      "object": "aero/tropical-49-palms-oasis-s3102.jpg"
+    },
+    "render_post": "web216",
+    "title": {
+      "style": "chrome",
+      "colors": [
+        "#fffb96",
+        "#ff71ce",
+        "#b967ff",
+        "#01cdfe",
+        "#1a0a2e"
+      ],
+      "font": "display",
+      "spacing": 2,
+      "text": "GAME PORT"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#1a0a2e"
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0,
+          0.22,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "pattern",
+        "kind": "scanlines",
+        "box": [
+          0,
+          0.22,
+          1,
+          1
+        ],
+        "cols": [
+          "#1a0a2e"
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0,
+          1,
+          0.22
+        ],
+        "c": "#1a0a2e"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.1
+        ],
+        "size": 0.15,
+        "maxw": 0.92
+      },
+      {
+        "t": "text",
+        "s": "sound set  ·  {subtitle}",
+        "font": "body",
+        "size": 0.035,
+        "pos": [
+          0.5,
+          0.2
+        ],
+        "anchor": "mm",
+        "c": "#ffb3e6",
+        "lower": true
+      },
+      {
+        "t": "pic",
+        "key": "object",
+        "box": [
+          0.06,
+          0.55,
+          0.46,
+          0.88
+        ],
+        "frame": "polaroid",
+        "caption": "the arcade, 2am",
+        "rot": -7
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.78,
+          0.42
+        ],
+        "size": 0.3
+      },
+      {
+        "t": "text",
+        "s": "static lagoon",
+        "font": "hand",
+        "size": 0.05,
+        "pos": [
+          0.95,
+          0.9
+        ],
+        "anchor": "rb",
+        "c": "#05ffa1"
+      },
+      {
+        "t": "text",
+        "s": "sl-11  ·  1995",
+        "font": "hand",
+        "size": 0.04,
+        "pos": [
+          0.95,
+          0.96
+        ],
+        "anchor": "rb",
+        "c": "#fffb96"
+      }
+    ],
+    "spine_bg": "#1a0a2e",
+    "spine_ink": "#ffffff",
+    "spine_title": "#ff71ce",
+    "back_bg": "#1a0a2e",
+    "back_ink": "#ffffff",
+    "back_head": "#ff71ce",
+    "bullet": "* ",
+    "posterize_final": true
+  },
+  "box": {
+    "type": "jewel",
+    "price": [
+      "SWAP MEET",
+      "$5"
+    ],
+    "burst": [
+      "ELITE",
+      "RELEASE"
+    ],
+    "burst_fill": "#05ffa1",
+    "burst_ink": "#1a0a2e",
+    "features": [
+      "pixel leads, buzz basses, chip arps",
+      "made on a 486 with a joystick in the game port",
+      "spread it: copy this disc"
+    ],
+    "barcode": false,
+    "sticker": {
+      "bg": "#ffeb3b",
+      "ink": "#000000",
+      "shape": "round"
+    }
+  },
+  "disc": {
+    "style": "cdr",
+    "base": "#c9a64a",
+    "label": "sticker",
+    "ring": "STATIC LAGOON * GAME PORT SOUND SET * SPREAD THIS DISC *",
+    "lines": [
+      "game port sound set",
+      "static lagoon  8/95"
+    ],
+    "inks": [
+      "#3d1a5c",
+      "#ff2a9d"
+    ],
+    "side": [
+      "DO NOT",
+      "SELL!!"
+    ],
+    "ring_ink": "#2a1a3a"
+  },
+  "icon": {
+    "motif": "joystick",
+    "colors": [
+      "#ff71ce",
+      "#1a0a2e",
+      "#01cdfe",
+      "#fffb96"
+    ]
+  },
+  "files": {
+    "readme": "nfo",
+    "nfo": "SL_GPSS.NFO",
+    "diz": true,
+    "readme_txt": true,
+    "license": "LICENSE.TXT",
+    "hlp": "GAMEPORT.HLP",
+    "pdf": "GPZINE.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "zine",
+    "rtf": null,
+    "wri": null,
+    "splash": "GAMEPORT.BMP",
+    "splash_bpp": 4,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "hlp": {
+    "font": "Courier New",
+    "family": "modern",
+    "title_color": "#7a2a8c",
+    "link_note": "the help file is plain on purpose. the NFO is the real readme."
+  },
+  "text": {
+    "tagline": "joystick not included",
+    "blurb": "chip leads, buzz basses and arcade arps for the sound recorder synths. made by static lagoon at 2am with a joystick still plugged into the game port.",
+    "intro": [
+      "game port sound set is our chiptune pack. every preset sounds like a cartridge left in the console too long: square leads, buzzing basses, little arpeggios, the bleep when you lose a life.",
+      "mike built the arps by looping slices of the ding until they buzzed at the right pitch. veronica named every sound after a level we never finished."
+    ],
+    "maker_note": [
+      "this is our second sound release, after the ansi packs and the music disks. call the board and leave a note in the game port message base.",
+      "spread this disc. copy it for your friends. upload it to your board. do not sell it. if somebody sold you this, they owe you five dollars.",
+      "-- pastelghost / sl"
+    ],
+    "install": [
+      "put the disc in. open the library tab. the pack shows up as a cd drive called GAMEPORT_SL.",
+      "double-click a preset in any folder to load it.",
+      "no installer. no registry. no strings."
+    ],
+    "license": [
+      "GAME PORT SOUND SET IS FREEWARE.",
+      "you can copy this disc and give it away, upload it to any bbs, put it on a shareware cd. keep all the files together and do not change them.",
+      "you can not sell it on its own. a cd-rom compilation can charge for the disc, not for our stuff.",
+      "use the sounds in your own music, any way you like, no credit needed (credit is nice).",
+      "there is no warranty. if your joystick drifts, it was already drifting."
+    ],
+    "greets": [
+      "pastel riot",
+      "the neon gutter bbs",
+      "vhskids",
+      "everyone on node 2 at 3am",
+      "the security guard at the plaza who let us record the fountain",
+      "cassette mike's mom, for the 486"
+    ],
+    "greets_note": "greets fly out to:",
+    "nfo_logo": "GAME PORT",
+    "nfo_quote": "insert coin to continue",
+    "diz": [
+      "▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄",
+      "[ game port sound set ]",
+      "-= static lagoon =-",
+      "chip leads, buzz basses, arps",
+      "for the sound recorder synths.",
+      "freeware. spread this disc.",
+      "call (410) 555-0147",
+      "▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀"
+    ]
+  },
+  "pdf": {
+    "cover_title": "game port",
+    "line1": "zine #2 / static lagoon / free, steal this",
+    "heads": {
+      "The Presets": "the sounds",
+      "Introduction": "hi.",
+      "Getting Started": "how to"
+    }
+  }
+}

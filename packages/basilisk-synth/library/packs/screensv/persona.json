@@ -1,0 +1,332 @@
+{
+  "id": "screensv",
+  "category": "Ambient Screen Saver Collection (pack-plan #8)",
+  "pack": {
+    "title": "Ambient Screen Saver Collection",
+    "subtitle": "Desktop Comfort Audio",
+    "edition": "Millennium Edition",
+    "version": "2000",
+    "date": "1999-11-29",
+    "label": "AMBIENT2000",
+    "label_long": "Ambient Screen Saver 2000",
+    "sources": {
+      "plan": "screen-saver"
+    },
+    "plan_id": "screen-saver",
+    "plan_title": "Ambient Screen Saver Collection"
+  },
+  "maker": {
+    "name": "Corvane Business Systems, Inc.",
+    "short": "Corvane",
+    "kind": "corporate presentation-software bundle",
+    "year": 1999,
+    "place": "Lake Orion Hills, Michigan, USA",
+    "contact": [
+      "Corvane Business Systems, Inc.",
+      "4400 Commerce Parkway, Suite 300",
+      "Lake Orion Hills, MI 48399",
+      "Sales 1-800-555-0177  Support (248) 555-0102",
+      "http://www.corvane-biz.com/podium"
+    ],
+    "people": [
+      [
+        "Corvane Media Group",
+        "audio production"
+      ]
+    ],
+    "voice": "upbeat marketing; benefits, solutions, leverage; trademark-heavy boilerplate (fictional)"
+  },
+  "look": {
+    "palette": "web216",
+    "dither": "bayer4",
+    "pixel": 1,
+    "aa": true,
+    "ink": "#ffffff",
+    "paper": "#000060",
+    "accent": "#ffcc00",
+    "accent2": "#1084d0",
+    "fonts": {
+      "display": "ariblk.ttf",
+      "body": "arial.ttf",
+      "mono": "cour.ttf",
+      "italic": "arialbi.ttf"
+    },
+    "art": {
+      "bg": "global/earth-sts-36-night-earth-observation.jpg",
+      "back": "aero/aurora-northern-lights-s226.jpg",
+      "mark": "global/marks/mk-swoosh-interlocking-geometric-desig.png",
+      "object": "global/marks/mk-globe-world-globe-with-mesh.png"
+    },
+    "render_post": null,
+    "title": {
+      "style": "gold",
+      "colors": [
+        "#fff4c0",
+        "#ffcc00",
+        "#b07800",
+        "#000030"
+      ],
+      "font": "display",
+      "text": "Ambient Screen Saver"
+    },
+    "front": [
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0,
+          0.14,
+          1,
+          0.84
+        ]
+      },
+      {
+        "t": "grad",
+        "box": [
+          0,
+          0,
+          1,
+          0.16
+        ],
+        "stops": [
+          "#000060",
+          "#1084d0"
+        ]
+      },
+      {
+        "t": "text",
+        "s": "CORVANE",
+        "font": "display",
+        "size": 0.038,
+        "pos": [
+          0.05,
+          0.05
+        ],
+        "anchor": "lm",
+        "c": "#ffffff",
+        "spacing": 3,
+        "aa": true
+      },
+      {
+        "t": "text",
+        "s": "Desktop Comfort Series",
+        "font": "italic",
+        "size": 0.025,
+        "pos": [
+          0.05,
+          0.1
+        ],
+        "anchor": "lm",
+        "c": "#ffcc00",
+        "aa": true
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.25
+        ],
+        "size": 0.07,
+        "maxw": 0.92
+      },
+      {
+        "t": "text",
+        "s": "COLLECTION",
+        "font": "display",
+        "size": 0.05,
+        "pos": [
+          0.5,
+          0.33
+        ],
+        "anchor": "mm",
+        "c": "#ffffff",
+        "aa": true,
+        "stroke": [
+          2,
+          "#000060"
+        ],
+        "spacing": 4
+      },
+      {
+        "t": "window",
+        "box": [
+          0.08,
+          0.42,
+          0.6,
+          0.72
+        ],
+        "title": "Display Properties",
+        "key": "back"
+      },
+      {
+        "t": "grad",
+        "box": [
+          0,
+          0.84,
+          1,
+          1
+        ],
+        "stops": [
+          "#1084d0",
+          "#000060"
+        ]
+      },
+      {
+        "t": "lines",
+        "src": "features",
+        "font": "body",
+        "size": 0.025,
+        "pos": [
+          0.06,
+          0.87
+        ],
+        "c": "#ffffff",
+        "step": 1.35,
+        "bullet": "* ",
+        "aa": true
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.8,
+          0.6
+        ],
+        "size": 0.27
+      },
+      {
+        "t": "text",
+        "s": "{edition}",
+        "font": "italic",
+        "size": 0.038,
+        "pos": [
+          0.95,
+          0.79
+        ],
+        "anchor": "rm",
+        "c": "#ffcc00",
+        "aa": true,
+        "stroke": [
+          2,
+          "#000060"
+        ]
+      }
+    ],
+    "spine_bg": "#000060",
+    "spine_ink": "#ffffff",
+    "spine_title": "#ffcc00",
+    "back_bg": "#000060",
+    "back_ink": "#ffffff",
+    "back_head": "#ffcc00",
+    "bullet": "■ ",
+    "window": {
+      "bar": "#000080",
+      "bar2": "#1084d0",
+      "face": "#c0c0c0"
+    }
+  },
+  "box": {
+    "type": "bigbox",
+    "shape": "big",
+    "price": [
+      "$49.95",
+      "SRP"
+    ],
+    "burst": [
+      "PROTECTS",
+      "YOUR",
+      "MONITOR"
+    ],
+    "burst_fill": "#ffcc00",
+    "burst_ink": "#000060",
+    "features": [
+      "Presentation-ready ambient beds",
+      "Pads, drones, bells and textures",
+      "Royalty-free for business use"
+    ],
+    "barcode": true,
+    "sticker": {
+      "bg": "#ff3030",
+      "ink": "#ffffff",
+      "pos": [
+        0.84,
+        0.2
+      ]
+    }
+  },
+  "disc": {
+    "style": "full",
+    "base": "#000060",
+    "label": "full",
+    "ring": "CORVANE BUSINESS SYSTEMS, INC. * AMBIENT SCREEN SAVER COLLECTION * DISC 1 OF 1 * Y2K COMPLIANT *",
+    "ring_ink": "#ffffff"
+  },
+  "icon": {
+    "motif": "monitor",
+    "colors": [
+      "#ffffff",
+      "#000000",
+      "#c0c0c0",
+      "#000060"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "EULA.TXT",
+    "hlp": "AMBIENT.HLP",
+    "pdf": "AMBIENT.PDF",
+    "pdf_size": "letter",
+    "pdf_style": "corporate",
+    "rtf": "QSTART.RTF",
+    "wri": null,
+    "splash": "AMBIENT.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "hlp": {
+    "font": "Arial",
+    "family": "swiss",
+    "title_color": "#000080"
+  },
+  "text": {
+    "tagline": "Protects your monitor and your nervous system.",
+    "blurb": "Calm your workplace. The Ambient Screen Saver Collection delivers presentation-ready ambient audio: pads, drones, bells and textures for lobbies, kiosks, waiting rooms and the quiet moments between meetings. Royalty-free for all your business communications.",
+    "intro": [
+      "Welcome to the Ambient Screen Saver Collection, Millennium Edition, part of the Corvane Desktop Comfort Series. These sounds were designed to play while your screen saver runs: calm, slow and never distracting.",
+      "All sounds are royalty-free for business use. Leverage them in lobbies, trade-show kiosks, training videos and on-hold systems."
+    ],
+    "maker_note": [
+      "At Corvane, we believe a calm workplace is a productive workplace. The Ambient Screen Saver Collection is part of the Corvane Desktop Comfort Series, trusted by thousands of organizations.",
+      "This product has been tested for Year 2000 compliance. See Y2K.TXT on this disc.",
+      "Corvane Media Group"
+    ],
+    "install": [
+      "Insert the CD-ROM. In the Library tab, the disc appears as AMBIENT2000.",
+      "Open a folder and double-click a sound to load it.",
+      "For the Quick Start Guide, open QSTART.RTF in WordPad. The full User's Guide is AMBIENT.PDF."
+    ],
+    "license": [
+      "CORVANE BUSINESS SYSTEMS, INC. END-USER LICENSE AGREEMENT",
+      "IMPORTANT: READ CAREFULLY. By installing, copying or otherwise using the SOFTWARE PRODUCT, you agree to be bound by the terms of this EULA.",
+      "1. GRANT OF LICENSE. Corvane grants you a non-exclusive license to use the SOFTWARE PRODUCT on a single computer. Sounds created with the SOFTWARE PRODUCT may be used royalty-free in business presentations, video, kiosks and web pages.",
+      "2. RESTRICTIONS. You may not resell, rent or redistribute the SOFTWARE PRODUCT as a sound library.",
+      "3. LIMITED WARRANTY. Corvane warrants that the media will be free from defects for ninety (90) days from the date of purchase.",
+      "4. YEAR 2000. The SOFTWARE PRODUCT stores no dates and is Year 2000 compliant.",
+      "Desktop Comfort Series and Ambient Screen Saver Collection are trademarks of Corvane Business Systems, Inc."
+    ],
+    "y2k": [
+      "YEAR 2000 COMPLIANCE STATEMENT",
+      "The Ambient Screen Saver Collection does not read, store, compare or calculate dates. It will operate correctly before, during and after January 1, 2000, and in the leap year 2000.",
+      "Tested by Corvane Quality Assurance, November 1999."
+    ],
+    "copyright": "Copyright (C) 1999 Corvane Business Systems, Inc. All rights reserved.",
+    "nfo_logo": null
+  },
+  "pdf": {
+    "band": "#000060",
+    "band2": "#ffcc00"
+  }
+}

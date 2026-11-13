@@ -1,0 +1,399 @@
+{
+  "id": "trance2k",
+  "category": "Trance Connectivity Kit 2000 (pack-plan #3)",
+  "pack": {
+    "plan_id": "trance-connectivity",
+    "plan_title": "Trance Connectivity Kit 2000",
+    "title": "Trance Connectivity Kit 2000",
+    "subtitle": "Connects your hands to the ceiling.",
+    "edition": "v2.0 FINAL",
+    "version": "2.0",
+    "date": "1999-07-04",
+    "label": "TRANCEKIT2K",
+    "label_long": "Trance Connectivity Kit 2000",
+    "sources": {
+      "plan": "trance-connectivity"
+    }
+  },
+  "maker": {
+    "name": "StarLite Productions",
+    "short": "DJ StarLite",
+    "kind": "1999 homepage webring kid",
+    "year": 1999,
+    "place": "Lakeport, Michigan, USA (my bedroom)",
+    "contact": [
+      "DJ StarLite (Kevin M.), age 15",
+      "e-mail: djstarlite2000@starmail-1999.net",
+      "homepage: http://www.hometownpages.net/Nebula/Orbit/2049/",
+      "UIN# 31555014",
+      "member of the Euphoria Trance Webring"
+    ],
+    "people": [
+      [
+        "DJ StarLite",
+        "presets, homepage, everything"
+      ],
+      [
+        "my sister Jen",
+        "drew the star on the CD"
+      ],
+      [
+        "xX_Lazer_Xx",
+        "beta tester"
+      ]
+    ],
+    "voice": "excited teenager, ~*~ sparkles ~*~, ALL CAPS hype, lots of !!!, 'plz sign my guestbook'"
+  },
+  "look": {
+    "palette": "web216",
+    "dither": "fs",
+    "pixel": 1,
+    "aa": false,
+    "ink": "#ffffff",
+    "paper": "#000033",
+    "accent": "#ff00ff",
+    "accent2": "#00ffff",
+    "fonts": {
+      "display": "comicbd.ttf",
+      "black": "comicbd.ttf",
+      "body": "verdana.ttf",
+      "hand": "comic.ttf",
+      "mono": "cour.ttf",
+      "bold": "verdanab.ttf"
+    },
+    "art": {
+      "bg": "aero/aurora-northern-lights-s226.jpg",
+      "back": "global/earth-sts-36-night-earth-observation.jpg",
+      "mark": "global/marks/mk-star-colourful-star-shape.png",
+      "object": "global/marks/mk-sparkle-clean-sparkle-stars.png"
+    },
+    "focus": {
+      "bg": [
+        0.5,
+        0.4
+      ]
+    },
+    "title": {
+      "style": "rainbow",
+      "colors": [
+        "#ff0000",
+        "#ff9900",
+        "#ffff00",
+        "#00ff00",
+        "#00ffff",
+        "#ff00ff",
+        "#000000"
+      ],
+      "font": "display",
+      "text": "TRANCE"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#000033"
+      },
+      {
+        "t": "pattern",
+        "kind": "stars",
+        "box": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "cols": [
+          "#ffffff",
+          "#ffff66",
+          "#66ffff",
+          "#ff99ff"
+        ]
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0,
+          0.5,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "text",
+        "s": "~*~ DJ StarLite presents ~*~",
+        "font": "hand",
+        "size": 0.045,
+        "pos": [
+          0.5,
+          0.06
+        ],
+        "anchor": "mm",
+        "c": "#ffff66"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.18
+        ],
+        "size": 0.17,
+        "maxw": 0.94
+      },
+      {
+        "t": "text",
+        "s": "CONNECTIVITY KIT 2000!!!",
+        "font": "display",
+        "size": 0.06,
+        "pos": [
+          0.5,
+          0.31
+        ],
+        "anchor": "mm",
+        "c": "#00ffff",
+        "maxw": 0.92,
+        "stroke": [
+          2,
+          "#000033"
+        ]
+      },
+      {
+        "t": "pic",
+        "key": "mark",
+        "box": [
+          0.03,
+          0.36,
+          0.2,
+          0.52
+        ]
+      },
+      {
+        "t": "pill",
+        "s": "~*~ Euphoria Trance Webring member ~*~",
+        "font": "bold",
+        "size": 0.03,
+        "pos": [
+          0.55,
+          0.42
+        ],
+        "bg": "#000000",
+        "c": "#ff99ff",
+        "outline": "#ff00ff"
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.82,
+          0.68
+        ],
+        "size": 0.28
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.04,
+          0.83,
+          0.5,
+          0.95
+        ],
+        "c": "#ffff00",
+        "outline": "#000000",
+        "w": 2
+      },
+      {
+        "t": "pattern",
+        "kind": "checker",
+        "box": [
+          0.05,
+          0.845,
+          0.49,
+          0.87
+        ],
+        "cols": [
+          "#000000"
+        ]
+      },
+      {
+        "t": "text",
+        "s": "UNDER CONSTRUCTION",
+        "font": "bold",
+        "size": 0.03,
+        "pos": [
+          0.27,
+          0.905
+        ],
+        "anchor": "mm",
+        "c": "#000000"
+      },
+      {
+        "t": "text",
+        "s": "best heard at 128kbps",
+        "font": "hand",
+        "size": 0.03,
+        "pos": [
+          0.96,
+          0.96
+        ],
+        "anchor": "rm",
+        "c": "#ffffff",
+        "stroke": [
+          1,
+          "#000033"
+        ]
+      }
+    ],
+    "spine_bg": "#000033",
+    "spine_ink": "#ffff66",
+    "spine_title": "#ff00ff",
+    "back_bg": "#000033",
+    "back_ink": "#ffffff",
+    "back_head": "#ff00ff",
+    "bullet": "*~ ",
+    "posterize_final": true,
+    "render_post": "web216"
+  },
+  "box": {
+    "type": "jewel",
+    "price": [
+      "$5 or a",
+      "postcard!"
+    ],
+    "sticker": {
+      "bg": "#ff99ff",
+      "ink": "#000033",
+      "shape": "round",
+      "font": "hand"
+    },
+    "burst": [
+      "Y2K",
+      "READY!!"
+    ],
+    "burst_fill": "#ffff00",
+    "burst_ink": "#ff0000",
+    "features": [
+      "7 TRANCE presets (uplifting, prog, hard!!)",
+      "made in 1 summer on my moms PC",
+      "plz sign my guestbook!!!"
+    ],
+    "barcode": false
+  },
+  "disc": {
+    "style": "cdr",
+    "base": "#c9b45a",
+    "label": "sticker",
+    "pic": "bg",
+    "paper": "#ffffff",
+    "lines": [
+      "TRANCE KIT 2000",
+      "DJ StarLite * july 99 * v2 FINAL"
+    ],
+    "inks": [
+      "#c000c0",
+      "#0000c0"
+    ],
+    "side": [
+      "dont",
+      "scratch!!"
+    ],
+    "ring": "~*~ STARLITE PRODUCTIONS ~*~ TRANCE CONNECTIVITY KIT 2000 ~*~ FREE!! ~*~",
+    "ring_ink": "#2a1a3a"
+  },
+  "icon": {
+    "motif": "star",
+    "colors": [
+      "#ffff00",
+      "#000000",
+      "#ffffff",
+      "#6600cc"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENSE.TXT",
+    "hlp": "TRANCE2K.HLP",
+    "pdf": "TRANCE2K.PDF",
+    "pdf_size": "letter",
+    "pdf_style": "zine",
+    "rtf": null,
+    "wri": null,
+    "splash": "TRANCE2K.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#000033",
+    "accent": "#cc00cc",
+    "paper": "#fff8ff",
+    "cover_title": "trance kit 2000!!",
+    "line1": "the official manual ~*~ by DJ StarLite ~*~ v2.0 FINAL",
+    "heads": {
+      "Introduction": "~*~ WELCOME!!! ~*~",
+      "Getting Started": "how 2 use it",
+      "The Presets": "the presets (all 7!!)",
+      "License": "the rules (plz read)",
+      "note": "shoutouts"
+    }
+  },
+  "hlp": {
+    "font": "Comic Sans MS",
+    "family": "script",
+    "title_color": "#cc00cc"
+  },
+  "text": {
+    "tagline": "Connects your hands to the ceiling!!!",
+    "blurb": "THE ULTIMATE TRANCE PRESETS!!! 7 uplifting, progressive and hard trance presets for your Sound Recorder synth. Made by DJ StarLite over one whole summer. FREE for everyone (but plz send a postcard!!).",
+    "intro": [
+      "HI and WELCOME to Trance Connectivity Kit 2000!!! This is my second preset pack and it is WAY better than the first one. There are 7 trance presets: big supersaw leads, gated pads and a pluck that sounds like the ceiling is coming down.",
+      "I made these over the whole summer of 1999 on my mom's PC (166 MHz with MMX!!). If you make a song with them PLZ e-mail me an MP3 and I will put it on my homepage."
+    ],
+    "maker_note": [
+      "Shoutouts to everyone in the Euphoria Trance Webring, xX_Lazer_Xx for beta testing, and my sister Jen for drawing the star on the CD.",
+      "This CD is Y2K READY. I checked.",
+      "PLZ SIGN MY GUESTBOOK!!! ~*~ DJ StarLite ~*~"
+    ],
+    "install": [
+      "put the CD in. in the Library tab it shows up as TRANCEKIT2K.",
+      "open a folder (Leads, Pads, Plucks...) and double click a preset.",
+      "turn it UP!!!"
+    ],
+    "license": [
+      "THE RULES",
+      "1. this is FREE. you can copy it for your friends.",
+      "2. do NOT sell it. if you paid for this, you got ripped off.",
+      "3. you can use the sounds in your songs, just say DJ StarLite somewhere (pretty plz).",
+      "4. if your computer explodes it is not my fault."
+    ],
+    "copyright": "(c) 1999 DJ StarLite / StarLite Productions. all rights reserved i guess.",
+    "files": {
+      "README.TXT": [
+        "|~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~",
+        "|        TRANCE CONNECTIVITY KIT 2000   v2.0 FINAL",
+        "|              by DJ StarLite  (StarLite Productions)",
+        "|~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~",
+        "HI!!! thanks for getting my preset pack. there are 7 TRANCE presets on this CD for the sound recorder synth. they are in the folders Leads, Pads, Plucks and the rest.",
+        "HOW TO USE: put the CD in, go to the Library tab, it is called TRANCEKIT2K. double click a preset. thats it!!",
+        "OTHER STUFF ON THIS CD: TRANCE2K.HLP (help file), TRANCE2K.PDF (the manual, you need a PDF reader), WEBRING.TXT (the webring!!), GUESTBK.TXT (plz sign it), TRANCE2K.BMP (a wallpaper i made).",
+        "|plz sign my guestbook:  http://www.hometownpages.net/Nebula/Orbit/2049/",
+        "|e-mail: djstarlite2000@starmail-1999.net    UIN# 31555014",
+        "|~*~ this CD is Y2K READY ~*~ best heard at 128kbps ~*~"
+      ],
+      "WEBRING.TXT": [
+        "|  <<  PREV  |  EUPHORIA TRANCE WEBRING  |  NEXT  >>",
+        "|           [ random site ]   [ list all 47 sites ]",
+        "This site is a member of the Euphoria Trance Webring, the BIGGEST ring of trance homepages on the net (47 sites!!).",
+        "Want to join? Your homepage must be about trance, have a guestbook, and NO bad words. E-mail the ringmaster at ringmaster@euphoriaring.net."
+      ],
+      "GUESTBK.TXT": [
+        "|GUESTBOOK (printed from my homepage, 6/30/99)",
+        "|---------------------------------------------",
+        "|xX_Lazer_Xx: the hard lead is SICK!!! cant wait for v2",
+        "|trancegurl86: <3 <3 <3 the pads",
+        "|Mike from Ohio: cool site. how do i get the sounds in my tracker?",
+        "|DJ StarLite: thx everyone!!! v2 is out NOW on CD"
+      ]
+    }
+  }
+}

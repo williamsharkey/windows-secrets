@@ -1,0 +1,492 @@
+{
+  "id": "workgrp",
+  "category": "Workgroup House Edition (pack-plan #1)",
+  "pack": {
+    "plan_id": "workgroup-house",
+    "plan_title": "Workgroup House Edition",
+    "title": "Workgroup House Edition",
+    "subtitle": "Four-on-the-floor productivity for the whole department.",
+    "edition": "Online Edition",
+    "version": "1.0",
+    "date": "1997-09-22",
+    "label": "WORKHOUSE97",
+    "label_long": "Workgroup House Edition",
+    "sources": {
+      "plan": "workgroup-house"
+    }
+  },
+  "maker": {
+    "name": "Velvetline Multimedia, Inc.",
+    "short": "Velvetline",
+    "kind": "keyword-era multimedia company",
+    "year": 1997,
+    "place": "Reston, Virginia, USA",
+    "contact": [
+      "Velvetline Multimedia, Inc.",
+      "11950 Sunrise Commons Drive, Suite 210",
+      "Reston, VA 20199",
+      "Orders 1-800-555-0163  Help Line (703) 555-0164",
+      "Online: Keyword WORKGROUP",
+      "http://www.velvetline-mm.com/house/"
+    ],
+    "people": [
+      [
+        "The Velvetline Groove Team",
+        "presets and production"
+      ],
+      [
+        "Dana Whitfield-Oyelaran",
+        "executive producer"
+      ],
+      [
+        "Marcus Ebbesen",
+        "multimedia design"
+      ]
+    ],
+    "voice": "breathless 1997 online hype: keywords, 'cyber', 'interactive', 'surf', exclamation marks, free trial hours"
+  },
+  "look": {
+    "palette": "web216",
+    "dither": "bayer4",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#ffffff",
+    "paper": "#2a0a4a",
+    "accent": "#ffd200",
+    "accent2": "#00a5a5",
+    "fonts": {
+      "display": "ariblk.ttf",
+      "black": "ariblk.ttf",
+      "body": "verdana.ttf",
+      "bold": "verdanab.ttf",
+      "mono": "cour.ttf",
+      "italic": "verdanai.ttf"
+    },
+    "art": {
+      "bg": "global/comp-arc-1987-ac87-0093-16.jpg",
+      "back": "global/expo-pa-convention-center-1993.jpg",
+      "mark": "global/marks/mk-earth-mouse-and-earth.png",
+      "object": "global/marks/mk-speaker-button-sound-on.png"
+    },
+    "focus": {
+      "bg": [
+        0.5,
+        0.5
+      ]
+    },
+    "title": {
+      "style": "chrome",
+      "colors": [
+        "#ffffff",
+        "#ffd200",
+        "#ff8a00",
+        "#2a0a4a"
+      ],
+      "font": "display",
+      "text": "Workgroup House"
+    },
+    "front": [
+      {
+        "t": "grad",
+        "box": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "stops": [
+          "#2a0a4a",
+          "#4b1f7a",
+          "#00a5a5"
+        ]
+      },
+      {
+        "t": "pattern",
+        "kind": "rays",
+        "box": [
+          0,
+          0,
+          1,
+          0.6
+        ],
+        "cols": [
+          "#3a1260"
+        ]
+      },
+      {
+        "t": "text",
+        "s": "VELVETLINE MULTIMEDIA presents",
+        "font": "bold",
+        "size": 0.026,
+        "pos": [
+          0.5,
+          0.045
+        ],
+        "anchor": "mm",
+        "c": "#ffffff",
+        "spacing": 1
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.13
+        ],
+        "size": 0.1,
+        "maxw": 0.92
+      },
+      {
+        "t": "text",
+        "s": "E D I T I O N",
+        "font": "black",
+        "size": 0.04,
+        "pos": [
+          0.5,
+          0.215
+        ],
+        "anchor": "mm",
+        "c": "#00ffff"
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0.1,
+          0.27,
+          0.9,
+          0.66
+        ],
+        "frame": "bevel"
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.83,
+          0.3
+        ],
+        "size": 0.26
+      },
+      {
+        "t": "pill",
+        "s": "Keyword: WORKGROUP",
+        "font": "bold",
+        "size": 0.032,
+        "pos": [
+          0.5,
+          0.715
+        ],
+        "bg": "#ffd200",
+        "c": "#2a0a4a",
+        "outline": "#000000"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.08,
+          0.77,
+          0.32,
+          0.83
+        ],
+        "c": "#c0c0c0",
+        "outline": "#000000",
+        "w": 2
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.38,
+          0.77,
+          0.62,
+          0.83
+        ],
+        "c": "#c0c0c0",
+        "outline": "#000000",
+        "w": 2
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.68,
+          0.77,
+          0.92,
+          0.83
+        ],
+        "c": "#c0c0c0",
+        "outline": "#000000",
+        "w": 2
+      },
+      {
+        "t": "text",
+        "s": "PLAY",
+        "font": "bold",
+        "size": 0.028,
+        "pos": [
+          0.2,
+          0.8
+        ],
+        "anchor": "mm",
+        "c": "#000080"
+      },
+      {
+        "t": "text",
+        "s": "MIX",
+        "font": "bold",
+        "size": 0.028,
+        "pos": [
+          0.5,
+          0.8
+        ],
+        "anchor": "mm",
+        "c": "#000080"
+      },
+      {
+        "t": "text",
+        "s": "CONNECT",
+        "font": "bold",
+        "size": 0.028,
+        "pos": [
+          0.8,
+          0.8
+        ],
+        "anchor": "mm",
+        "c": "#000080"
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "italic",
+        "size": 0.024,
+        "pos": [
+          0.5,
+          0.875
+        ],
+        "anchor": "mm",
+        "c": "#ffffff",
+        "maxw": 0.92
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.92,
+          1,
+          1
+        ],
+        "c": "#000000"
+      },
+      {
+        "t": "text",
+        "s": "Interactive CD-ROM  *  {maker}",
+        "font": "bold",
+        "size": 0.024,
+        "pos": [
+          0.5,
+          0.96
+        ],
+        "anchor": "mm",
+        "c": "#ffd200",
+        "maxw": 0.94
+      }
+    ],
+    "spine_bg": "#4b1f7a",
+    "spine_ink": "#ffffff",
+    "spine_title": "#ffd200",
+    "back_bg": "#2a0a4a",
+    "back_ink": "#ffffff",
+    "back_head": "#ffd200",
+    "bullet": "> ",
+    "posterize_final": true,
+    "render_post": null
+  },
+  "box": {
+    "type": "bigbox",
+    "shape": "big",
+    "price": [
+      "$29.95",
+      "CD-ROM"
+    ],
+    "sticker": {
+      "bg": "#ffd200",
+      "ink": "#000000",
+      "shape": "rect"
+    },
+    "burst": [
+      "ONLINE",
+      "EDITION!"
+    ],
+    "burst_fill": "#ff2a6d",
+    "burst_ink": "#ffffff",
+    "features": [
+      "20 house presets for the whole office",
+      "Deep, classic and French house",
+      "Includes 50 FREE hours online!"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "full",
+    "base": "#c8c8d0",
+    "label": "full",
+    "ring": "VELVETLINE MULTIMEDIA * WORKGROUP HOUSE EDITION * ONLINE EDITION * KEYWORD: WORKGROUP *",
+    "ring_ink": "#ffffff",
+    "front": [
+      {
+        "t": "grad",
+        "box": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "stops": [
+          "#4b1f7a",
+          "#00a5a5"
+        ]
+      },
+      {
+        "t": "pattern",
+        "kind": "rays",
+        "box": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "cols": [
+          "#5a2a8a"
+        ]
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.22
+        ],
+        "size": 0.1,
+        "maxw": 0.7
+      },
+      {
+        "t": "text",
+        "s": "EDITION",
+        "font": "black",
+        "size": 0.05,
+        "pos": [
+          0.5,
+          0.305
+        ],
+        "anchor": "mm",
+        "c": "#00ffff"
+      },
+      {
+        "t": "pill",
+        "s": "Keyword: WORKGROUP",
+        "font": "bold",
+        "size": 0.035,
+        "pos": [
+          0.5,
+          0.72
+        ],
+        "bg": "#ffd200",
+        "c": "#2a0a4a"
+      },
+      {
+        "t": "text",
+        "s": "{maker}",
+        "font": "bold",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.8
+        ],
+        "anchor": "mm",
+        "c": "#ffffff"
+      }
+    ]
+  },
+  "icon": {
+    "motif": "monitor",
+    "colors": [
+      "#ffd200",
+      "#000000",
+      "#c0c0c0",
+      "#2a0a4a"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENSE.TXT",
+    "hlp": "WORKHSE.HLP",
+    "pdf": "WORKHSE.PDF",
+    "pdf_size": "letter",
+    "pdf_style": "corporate",
+    "rtf": "READFRST.RTF",
+    "wri": null,
+    "splash": "WORKHSE.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#1a1a2a",
+    "accent": "#4b1f7a",
+    "paper": "#ffffff",
+    "band": "#2a0a4a",
+    "band2": "#ffd200",
+    "line1": "Online Edition  -  Interactive User's Guide",
+    "heads": {
+      "Introduction": "Welcome to the Party!",
+      "Getting Started": "Getting Started in 3 Easy Steps",
+      "The Presets": "What's on the Disc",
+      "License": "License Agreement",
+      "note": "A Note from the Groove Team"
+    }
+  },
+  "hlp": {
+    "font": "Verdana",
+    "family": "swiss",
+    "title_color": "#4b1f7a"
+  },
+  "text": {
+    "tagline": "Four-on-the-floor productivity for the whole department.",
+    "blurb": "Bring the dance floor to your desktop! Twenty deep, classic and French house presets, made for teams that groove together. Plus: 50 FREE hours on the InfoLane online service and our exclusive Keyword WORKGROUP area!",
+    "intro": [
+      "Welcome to Workgroup House Edition, the first interactive house music collection for the networked office! Twenty presets of deep, classic and French house are ready to play on your Sound Recorder synthesizer. No samplers. No studio. Just point, click and groove!",
+      "Workgroup House Edition is also your passport to the Velvetline online area. Use Keyword WORKGROUP to download new presets every month, chat with other house heads in the Groove Room, and enter our monthly Mix Contest."
+    ],
+    "maker_note": [
+      "At Velvetline Multimedia, we believe the information superhighway should have a beat. Workgroup House Edition is the result of six months of late nights by the Groove Team, and we think it is our best CD-ROM yet.",
+      "See you online!",
+      "The Velvetline Groove Team"
+    ],
+    "install": [
+      "Insert the Workgroup House Edition CD-ROM. In the Library tab, it appears as the drive WORKHOUSE97.",
+      "Open a folder (Bass, Keys, Stabs and more) and double-click any preset to load it.",
+      "To go online, see FREEHRS.TXT for your 50 free hours, then use Keyword WORKGROUP."
+    ],
+    "license": [
+      "VELVETLINE MULTIMEDIA, INC. LICENSE AGREEMENT",
+      "You may use Workgroup House Edition on one computer at a time. Music you make with the presets is yours, royalty-free, for any purpose, including office parties.",
+      "You may not copy this CD-ROM except for one backup copy. The online trial offer is limited to one per household and requires a credit card. Hourly charges apply after the trial period.",
+      "THE SOFTWARE IS PROVIDED AS IS. VELVETLINE IS NOT RESPONSIBLE FOR LOST PRODUCTIVITY."
+    ],
+    "copyright": "Copyright (C) 1997 Velvetline Multimedia, Inc. All rights reserved.",
+    "files": {
+      "FREEHRS.TXT": [
+        "|=================================================",
+        "|  50 FREE HOURS ON THE INFOLANE ONLINE SERVICE!",
+        "|=================================================",
+        "Try the InfoLane online service FREE for 50 hours in your first month! Get e-mail, chat rooms, news, games and the Velvetline area, all for one low monthly price after your trial.",
+        "To sign up, run the InfoLane setup from the InfoLane folder of your trial disk, or call 1-800-555-0165 for a free trial disk. Have your credit card ready. Your registration number is WGH-97-0117-5546.",
+        "Free hours must be used in the first calendar month. Phone charges may apply."
+      ],
+      "ONLINE.TXT": [
+        "VELVETLINE ONLINE",
+        "Keyword WORKGROUP takes you to the Workgroup House area. There you can download Preset of the Month, chat in the Groove Room every Thursday at 9 pm Eastern, and enter the Mix Contest.",
+        "On the World Wide Web: http://www.velvetline-mm.com/house/ (best viewed with a 4.0 browser at 800x600)."
+      ]
+    }
+  }
+}

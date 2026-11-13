@@ -1,0 +1,286 @@
+{
+  "id": "diagnost",
+  "category": "Experimental Diagnostics Suite (pack-plan #9)",
+  "pack": {
+    "title": "DIAGNOSTICS",
+    "subtitle": "An Experimental Suite of Error Sounds",
+    "edition": "Technical Report WCCM-TR-94-07",
+    "version": "1.0",
+    "date": "1994-05-20",
+    "label": "WCCM_TR9407",
+    "label_long": "WCCM TR-94-07 Diagnostics",
+    "sources": {
+      "plan": "diagnostics"
+    },
+    "plan_id": "diagnostics",
+    "plan_title": "Experimental Diagnostics Suite"
+  },
+  "maker": {
+    "name": "Wendmoor Center for Computer Music",
+    "short": "WCCM",
+    "kind": "university computer-music lab",
+    "year": 1994,
+    "place": "Department of Music, Wendmoor University",
+    "contact": [
+      "Wendmoor Center for Computer Music (WCCM)",
+      "Department of Music, Halloway Hall 214",
+      "Wendmoor University",
+      "anonymous ftp: ftp.wccm.wendmoor.edu  /pub/drifts",
+      "e-mail: drifts@wccm.wendmoor.edu"
+    ],
+    "people": [
+      [
+        "M. Okonkwo-Reyes",
+        "principal investigator"
+      ],
+      [
+        "T. Lindqvist",
+        "graduate research assistant"
+      ],
+      [
+        "the WCCM studio class of spring 1994",
+        "listening tests"
+      ]
+    ],
+    "voice": "academic, careful, numbered sections, citations, plain ASCII"
+  },
+  "look": {
+    "palette": [
+      "#141414",
+      "#f2efe6"
+    ],
+    "dither": "bayer8",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#141414",
+    "paper": "#f2efe6",
+    "accent": "#141414",
+    "accent2": "#141414",
+    "fonts": {
+      "display": "times.ttf",
+      "body": "times.ttf",
+      "mono": "cour.ttf",
+      "bold": "timesbd.ttf"
+    },
+    "art": {
+      "bg": "books/oscilloscope-trace-photo.png",
+      "back": "books/neets-six-waveform-screens-a-f-probe-compensation.png",
+      "mark": "books/objects/chladni-1787-fig12-star.png",
+      "object": "books/neets-dual-trace-oscilloscope-front-panel.png"
+    },
+    "render_post": null,
+    "title": {
+      "style": "flat",
+      "colors": [
+        "#141414"
+      ],
+      "font": "display",
+      "spacing": 6
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#f2efe6"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.12
+        ],
+        "size": 0.11,
+        "maxw": 0.8
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "display",
+        "size": 0.042,
+        "pos": [
+          0.5,
+          0.22
+        ],
+        "anchor": "mm",
+        "c": "#141414",
+        "maxw": 0.9
+      },
+      {
+        "t": "text",
+        "s": "{edition}",
+        "font": "mono",
+        "size": 0.032,
+        "pos": [
+          0.5,
+          0.29
+        ],
+        "anchor": "mm",
+        "c": "#141414"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.1,
+          0.32,
+          0.9,
+          0.323
+        ],
+        "c": "#141414"
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0.11,
+          0.36,
+          0.89,
+          0.86
+        ],
+        "tint": [
+          "#141414",
+          "#f2efe6"
+        ],
+        "frame": "line",
+        "c": "#141414"
+      },
+      {
+        "t": "stamp",
+        "s": "RESEARCH COPY",
+        "pos": [
+          0.7,
+          0.76
+        ],
+        "w": 0.5,
+        "h": 0.09
+      },
+      {
+        "t": "text",
+        "s": "{maker}",
+        "font": "display",
+        "size": 0.032,
+        "pos": [
+          0.5,
+          0.95
+        ],
+        "anchor": "mm",
+        "c": "#141414"
+      }
+    ],
+    "spine_bg": "#f2efe6",
+    "spine_ink": "#141414",
+    "back_bg": "#f2efe6",
+    "back_ink": "#141414",
+    "back_head": "#141414",
+    "back_tint": [
+      "#141414",
+      "#f2efe6"
+    ],
+    "bullet": "- "
+  },
+  "box": {
+    "type": "jewel",
+    "price": [
+      "NOT FOR",
+      "RESALE"
+    ],
+    "burst": null,
+    "features": [
+      "twelve error sounds, measured",
+      "glitch, grain and broken bells",
+      "with the technical report"
+    ],
+    "barcode": false,
+    "sticker": {
+      "bg": "#ffffff",
+      "ink": "#000000"
+    }
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#e0e0e0",
+    "label": "silk",
+    "ring": "WENDMOOR CENTER FOR COMPUTER MUSIC * TECHNICAL REPORT WCCM-TR-94-07 * NOT FOR RESALE *",
+    "ink": "#141414"
+  },
+  "icon": {
+    "motif": "scope",
+    "colors": [
+      "#00ff00",
+      "#000000",
+      "#004000",
+      "#002000"
+    ]
+  },
+  "files": {
+    "readme": "academic",
+    "readme_txt": true,
+    "license": "COPYING.TXT",
+    "hlp": "DIAGNOST.HLP",
+    "pdf": "TR9407.PDF",
+    "pdf_size": "letter",
+    "pdf_style": "report",
+    "rtf": null,
+    "wri": null,
+    "splash": "DIAGNOST.BMP",
+    "splash_bpp": 4,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "hlp": {
+    "font": "Times New Roman",
+    "family": "roman",
+    "title_color": "#000000"
+  },
+  "text": {
+    "tagline": "Finds errors. Plays them back in time.",
+    "blurb": "A suite of experimental presets built from error and warning sounds, with a technical report on rhythmic errors: stutters, grains and broken bells made with Sound Recorder alone.",
+    "abstract": "We describe a set of presets that turn system error sounds into rhythmic and tonal material. The method uses only the thirteen editing commands of Sound Recorder: trimming, reversal, speed change, echo and mixing. We show that very short trims of a warning sound, doubled and mixed at offsets, give stutters that listeners hear as deliberate rhythm, and that speed round-trips give a reproducible digital roughness. A listening test with 14 students compares the presets.",
+    "intro": [
+      "This disc accompanies Technical Report WCCM-TR-94-07. It holds the presets of the Experimental Diagnostics Suite: glitches, percussion, bells, leads and grain pads made from system sounds.",
+      "The presets are offered for teaching and research. Each one is a single line of DNA; the report explains the methods."
+    ],
+    "maker_note": [
+      "This work was supported in part by a teaching-innovation grant of Wendmoor University. We thank the students of the spring 1994 studio class, who listened to more drones than anyone should.",
+      "Comments and corrections are welcome by e-mail. Later versions of the report and the presets will be placed on the anonymous ftp server."
+    ],
+    "install": [
+      "Mount the disc. In the Library tab it appears as the drive WCCM_TR9407.",
+      "Presets are in folders by role. Each preset is a one-line text file (.BSP) holding its DNA; double-click it to load it.",
+      "The report is TR9407.PDF (PostScript Level 2 source available on request)."
+    ],
+    "sections": [
+      [
+        "Introduction",
+        "An error sound is designed to interrupt. It is short, bright and unmistakable. This report asks whether the same properties make error sounds good raw material for rhythmic music, using nothing beyond the editing commands of a simple sound recorder."
+      ],
+      [
+        "Method",
+        "Each preset starts from a trim of a system sound, often shorter than 30 ms. Copy and Paste double the trim into a stutter; Increase and Decrease Speed in pairs lower the effective sample rate; echo at short delays adds comb colouring. Layers are offset by fractions of a beat."
+      ],
+      [
+        "Results",
+        "In a listening test (n = 14), stutters built from the chord sound were rated the most musical and speed round-trips the most \"broken\". Listeners placed the bell presets closest to conventional instruments."
+      ],
+      [
+        "Discussion",
+        "The method is limited by the 30-second limit of the recorder and by the 8-bit sources. Within those limits the error sounds give a rich, repeatable palette for glitch music."
+      ]
+    ],
+    "references": [
+      "[1] Okonkwo-Reyes, M. 'Granular methods without a granular engine.' WCCM-TR-93-02, 1993.",
+      "[2] Lindqvist, T. 'Beating rates and perceived motion in sustained tones.' MA thesis, Wendmoor University, 1994.",
+      "[3] Okonkwo-Reyes, M. and Lindqvist, T. 'Sound Recorder as a teaching instrument.' Proc. Midwest Computer Music Workshop, 1993."
+    ],
+    "license": [
+      "Copyright (c) 1994 Wendmoor Center for Computer Music. All rights reserved.",
+      "Permission to use, copy and distribute these presets and the report for teaching and research, without fee, is granted, provided that this notice appears in all copies.",
+      "Commercial use of the presets themselves (resale as a sound collection) needs written permission. Music made with the presets is yours.",
+      "THE PRESETS ARE PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND."
+    ],
+    "nfo_logo": null
+  },
+  "pdf": {
+    "foot": "Distribution unlimited for teaching and research."
+  }
+}

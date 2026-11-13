@@ -1,0 +1,401 @@
+{
+  "id": "techsrv",
+  "category": "Techno Server 4.0 (pack-plan #2)",
+  "pack": {
+    "plan_id": "techno-server",
+    "plan_title": "Techno Server 4.0",
+    "title": "Techno Server 4.0",
+    "subtitle": "Mission-critical repetition, now with dub delay.",
+    "edition": "Bundle Edition",
+    "version": "4.0",
+    "date": "1997-03-18",
+    "label": "TECHSRV40",
+    "label_long": "Techno Server 4.0 Bundle",
+    "sources": {
+      "plan": "techno-server"
+    }
+  },
+  "maker": {
+    "name": "Jadewave Electronics Co., Ltd.",
+    "short": "Jadewave",
+    "kind": "Taiwanese OEM sound-card bundle disc",
+    "year": 1997,
+    "place": "Hsinchu Science Park, Taiwan",
+    "contact": [
+      "Jadewave Electronics Co., Ltd.",
+      "No. 18, Innovation Road 5, Hsinchu Science Park, Taiwan R.O.C.",
+      "TEL: 886-3-555-0158  FAX: 886-3-555-0159",
+      "E-mail: support@jadewave-elec.com.tw",
+      "BBS: 886-3-555-0157 (N,8,1)"
+    ],
+    "people": [
+      [
+        "Jadewave Audio R&D Dept.",
+        "sound program"
+      ],
+      [
+        "JW-3216 Driver Team",
+        "driver and setup"
+      ]
+    ],
+    "voice": "OEM translated English: enthusiastic, slightly awkward, lots of 'Most', 'Enjoy', 'powerful', model numbers"
+  },
+  "look": {
+    "palette": [
+      "#ffffff",
+      "#e8e8e8",
+      "#c0c0c0",
+      "#9a9a9a",
+      "#606060",
+      "#202020",
+      "#000000",
+      "#d40000",
+      "#ff4040",
+      "#8a0000",
+      "#0040a0",
+      "#4080e0",
+      "#ffd000",
+      "#00a040"
+    ],
+    "dither": "fs",
+    "pixel": 1,
+    "aa": false,
+    "ink": "#202020",
+    "paper": "#ffffff",
+    "accent": "#d40000",
+    "accent2": "#0040a0",
+    "fonts": {
+      "display": "arialbd.ttf",
+      "black": "ariblk.ttf",
+      "body": "arial.ttf",
+      "mono": "cour.ttf",
+      "zh": "msjh.ttc",
+      "italic": "arialbi.ttf"
+    },
+    "art": {
+      "bg": "global/chip-grc-2015-c-00598.jpg",
+      "back": "global/comp-drive-fan-of-the-naca-s-icing.jpg",
+      "mark": "global/marks/mk-chip-cpu.png",
+      "object": "global/marks/mk-bolt-lightning-bolt.png"
+    },
+    "focus": {
+      "bg": [
+        0.55,
+        0.4
+      ]
+    },
+    "title": {
+      "style": "shadow",
+      "colors": [
+        "#d40000",
+        "#9a9a9a"
+      ],
+      "font": "black"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#ffffff"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0,
+          1,
+          0.11
+        ],
+        "c": "#202020"
+      },
+      {
+        "t": "text",
+        "s": "JADEWAVE",
+        "font": "black",
+        "size": 0.06,
+        "pos": [
+          0.04,
+          0.055
+        ],
+        "anchor": "lm",
+        "c": "#ffffff",
+        "spacing": 3
+      },
+      {
+        "t": "text",
+        "s": "翡翠波電子",
+        "font": "zh",
+        "size": 0.045,
+        "pos": [
+          0.355,
+          0.058
+        ],
+        "anchor": "lm",
+        "c": "#ff4040",
+        "aa": true
+      },
+      {
+        "t": "text",
+        "s": "JW-3216 PnP 16-bit Audio Card",
+        "font": "display",
+        "size": 0.035,
+        "pos": [
+          0.96,
+          0.055
+        ],
+        "anchor": "rm",
+        "c": "#c0c0c0"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.11,
+          1,
+          0.135
+        ],
+        "c": "#d40000"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.27,
+          0.25
+        ],
+        "size": 0.13,
+        "maxw": 0.5
+      },
+      {
+        "t": "text",
+        "s": "BUNDLE EDITION - NOT FOR RETAIL SALE",
+        "font": "display",
+        "size": 0.03,
+        "pos": [
+          0.27,
+          0.35
+        ],
+        "anchor": "mm",
+        "c": "#d40000"
+      },
+      {
+        "t": "lines",
+        "items": [
+          "Most powerful techno sound!",
+          "16 professional dance programs",
+          "Enjoy the studio quality at home",
+          "Dub delay, acid and minimal",
+          "Plug and Play - Easy Setup!"
+        ],
+        "bullet": "> ",
+        "font": "display",
+        "size": 0.03,
+        "pos": [
+          0.04,
+          0.42
+        ],
+        "c": "#202020",
+        "step": 1.45
+      },
+      {
+        "t": "window",
+        "box": [
+          0.54,
+          0.18,
+          0.96,
+          0.76
+        ],
+        "title": "Setup - TS 4.0",
+        "key": "bg"
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.9,
+          0.74
+        ],
+        "size": 0.25
+      },
+      {
+        "t": "grad",
+        "box": [
+          0,
+          0.82,
+          1,
+          1
+        ],
+        "stops": [
+          "#e8e8e8",
+          "#9a9a9a"
+        ]
+      },
+      {
+        "t": "text",
+        "s": "For BASILISK 16 / BASILISK SYNTH  -  CD-ROM",
+        "font": "display",
+        "size": 0.034,
+        "pos": [
+          0.04,
+          0.88
+        ],
+        "anchor": "lm",
+        "c": "#202020"
+      },
+      {
+        "t": "text",
+        "s": "Made in Taiwan R.O.C.",
+        "font": "body",
+        "size": 0.028,
+        "pos": [
+          0.96,
+          0.95
+        ],
+        "anchor": "rm",
+        "c": "#202020"
+      },
+      {
+        "t": "text",
+        "s": "Specifications subject to change without notice.",
+        "font": "body",
+        "size": 0.022,
+        "pos": [
+          0.04,
+          0.95
+        ],
+        "anchor": "lm",
+        "c": "#606060"
+      }
+    ],
+    "spine_bg": "#ffffff",
+    "spine_ink": "#202020",
+    "spine_title": "#d40000",
+    "back_bg": "#ffffff",
+    "back_ink": "#202020",
+    "back_head": "#d40000",
+    "bullet": "* ",
+    "window": {
+      "bar": "#000080",
+      "bar2": "#1084d0",
+      "face": "#c0c0c0"
+    },
+    "posterize_final": true,
+    "render_post": null
+  },
+  "box": {
+    "type": "bigbox",
+    "shape": "landscape",
+    "price": [
+      "OEM",
+      "BUNDLE"
+    ],
+    "sticker": {
+      "bg": "#ffffff",
+      "ink": "#d40000",
+      "shape": "rect"
+    },
+    "burst": [
+      "NEW!",
+      "Ver 4.0"
+    ],
+    "burst_fill": "#ffd000",
+    "burst_ink": "#d40000",
+    "features": [
+      "16 techno programs: Detroit, minimal, dub",
+      "Bundled with JW-3216 PnP Audio Card",
+      "Free technical support by BBS and e-mail"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "silk",
+    "ink": "#202020",
+    "ink2": "#d40000",
+    "mark_text": "OEM",
+    "ring": "JADEWAVE ELECTRONICS CO., LTD. * TECHNO SERVER 4.0 * BUNDLE EDITION * NOT FOR RETAIL SALE * MADE IN TAIWAN *"
+  },
+  "icon": {
+    "motif": "chip",
+    "colors": [
+      "#d40000",
+      "#000000",
+      "#c0c0c0",
+      "#404040"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENSE.TXT",
+    "hlp": "TECHSRV.HLP",
+    "pdf": "TECHSRV.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "corporate",
+    "rtf": null,
+    "wri": null,
+    "splash": "TECHSRV.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#202020",
+    "accent": "#d40000",
+    "paper": "#ffffff",
+    "band": "#202020",
+    "band2": "#d40000",
+    "line1": "User's Manual  (Bundle Edition, Rev. A)",
+    "heads": {
+      "Introduction": "1. Product Introduction",
+      "Getting Started": "2. Installation Procedure",
+      "The Presets": "3. Program List",
+      "License": "5. Warranty and License",
+      "note": "4. Notice"
+    }
+  },
+  "hlp": {
+    "font": "Arial",
+    "family": "swiss",
+    "title_color": "#d40000"
+  },
+  "text": {
+    "tagline": "Most powerful techno sound for your PC!",
+    "blurb": "Techno Server 4.0 is the most powerful techno program set for Sound Recorder synthesizer. With 16 professional programs of Detroit, minimal and dub techno, you can enjoy the studio quality at your home. Bundled with JW-3216 PnP Audio Card.",
+    "intro": [
+      "Thank you for purchase of JW-3216 PnP 16-bit Audio Card. This CD-ROM contains Techno Server 4.0 Bundle Edition, the most powerful techno program set for Sound Recorder synthesizer.",
+      "Techno Server 4.0 have 16 professional programs of Detroit, minimal and dub techno. Each program is carefully designed by Jadewave Audio R&D Department to make the best performance with your new audio card. Please enjoy the mission-critical repetition!"
+    ],
+    "maker_note": [
+      "This Bundle Edition is only for the user of Jadewave audio products. It is not for retail sale. For the full version Techno Server 4.0 Professional with 64 programs, please contact your dealer.",
+      "Jadewave Electronics Co., Ltd. reserve the right to change the specifications without notice. All trademarks are property of their owner.",
+      "Jadewave Audio R&D Dept."
+    ],
+    "install": [
+      "Please insert the CD-ROM disc into CD-ROM drive. In the Library tab, the disc will appear as drive TECHSRV40.",
+      "Open the folder (Bass, Stabs, Perc etc.) and double click the program file to load. Programs are loaded automatically.",
+      "If the sound is not output, please check the JW-3216 driver is installed correctly (see DRIVER.TXT)."
+    ],
+    "license": [
+      "LIMITED WARRANTY AND LICENSE",
+      "Jadewave Electronics Co., Ltd. warrant this CD-ROM disc to be free from defect in material and workmanship for 90 days from the date of purchase of the audio card.",
+      "This software is licensed to use only with Jadewave audio products. Copy of this CD-ROM for other purpose is prohibited.",
+      "Jadewave is not liable for any damage caused by use of this software, including loss of data or loss of party."
+    ],
+    "copyright": "Copyright (C) 1997 Jadewave Electronics Co., Ltd. All rights reserved.",
+    "files": {
+      "DRIVER.TXT": [
+        "|JW-3216 PnP 16-bit Audio Card - Driver Notes (Rev. A, 1997/03)",
+        "1. The JW-3216 is Plug and Play card. When the system find new hardware, please insert this CD-ROM and select the INF from the DRIVER folder of the floppy disk supplied.",
+        "2. Default setting: I/O 220h, IRQ 5, DMA 1, High DMA 5, MPU-401 330h. If conflict happen, please change in Device Manager.",
+        "3. For the DOS game, please run JWINIT.EXE in AUTOEXEC.BAT (on the floppy disk).",
+        "4. Techno Server 4.0 do not need any driver: programs are played by the Sound Recorder synthesizer."
+      ],
+      "WARRANTY.TXT": [
+        "|WARRANTY REGISTRATION",
+        "Please fill the warranty card in the box and send to your dealer within 14 days. Without the card, warranty service may not be provided.",
+        "|Model: JW-3216     Serial No.: ____________     Date of purchase: ____________"
+      ]
+    }
+  }
+}

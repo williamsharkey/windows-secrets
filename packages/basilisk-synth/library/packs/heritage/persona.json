@@ -1,0 +1,286 @@
+{
+  "id": "heritage",
+  "category": "Windows 3.x Heritage Edition (pack-plan #15)",
+  "pack": {
+    "plan_id": "heritage",
+    "plan_title": "Windows 3.x Heritage Edition",
+    "title": "Heritage Edition 3.x",
+    "subtitle": "Every style from six little sounds",
+    "edition": "Version 2.1",
+    "version": "2.1",
+    "date": "1993-11-02",
+    "label": "HERITAGE21",
+    "label_long": "Heritage Edition 3.x v2.1",
+    "sources": {
+      "heritage": true
+    }
+  },
+  "maker": {
+    "name": "Pemberton Software",
+    "short": "PSW",
+    "kind": "1993 shareware author",
+    "year": 1993,
+    "place": "Haddon Springs, Ohio, USA",
+    "contact": [
+      "Gerald T. Pemberton",
+      "Pemberton Software",
+      "P.O. Box 4471",
+      "Haddon Springs, OH 45899-4471",
+      "InfoLane: 71655,1203",
+      "Pemberton Software Support BBS (614) 555-0186"
+    ],
+    "people": [
+      [
+        "Gerald T. Pemberton",
+        "author"
+      ],
+      [
+        "Doris Pemberton",
+        "testing, order desk"
+      ]
+    ],
+    "voice": "friendly, wordy, a retired band teacher; capital letters for emphasis; shareware-association notices"
+  },
+  "look": {
+    "palette": "vga16",
+    "dither": "bayer4",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#000080",
+    "paper": "#c0c0c0",
+    "accent": "#800000",
+    "accent2": "#008080",
+    "fonts": {
+      "display": "timesbd.ttf",
+      "body": "times.ttf",
+      "mono": "cour.ttf",
+      "type": "cour.ttf",
+      "black": "timesbd.ttf"
+    },
+    "art": {
+      "bg": "books/telharmonium-console-1897.png",
+      "back": "books/objects/engraving-bewick-blackbird.png",
+      "mark": "global/marks/mk-floppy-floppy-disc-drive-icon.png",
+      "object": "books/objects/engraving-bewick-blackbird.png"
+    },
+    "title": {
+      "style": "extrude",
+      "colors": [
+        "#ffff00",
+        "#800000"
+      ],
+      "font": "display"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#c0c0c0"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0,
+          1,
+          0.21
+        ],
+        "c": "#000080"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.095
+        ],
+        "size": 0.11,
+        "maxw": 0.92
+      },
+      {
+        "t": "text",
+        "s": "{subtitle} - {edition}",
+        "font": "body",
+        "size": 0.033,
+        "pos": [
+          0.5,
+          0.18
+        ],
+        "anchor": "mm",
+        "c": "#ffffff",
+        "maxw": 0.9
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0.08,
+          0.27,
+          0.92,
+          0.74
+        ],
+        "frame": "bevel"
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.82,
+          0.3
+        ],
+        "size": 0.27
+      },
+      {
+        "t": "lines",
+        "items": [
+          "Gerald T. Pemberton",
+          "Pemberton Software",
+          "P.O. Box 4471",
+          "Haddon Springs, OH 45899-4471"
+        ],
+        "font": "type",
+        "size": 0.033,
+        "pos": [
+          0.08,
+          0.79
+        ],
+        "c": "#000000",
+        "step": 1.25
+      }
+    ],
+    "spine_bg": "#000080",
+    "spine_ink": "#ffffff",
+    "spine_title": "#ffff00",
+    "back_bg": "#c0c0c0",
+    "back_ink": "#000000",
+    "back_head": "#800000",
+    "bullet": "* ",
+    "posterize_final": true,
+    "window": {
+      "bar": "#000080",
+      "bar2": "#000080",
+      "face": "#c0c0c0"
+    },
+    "render_post": "vga16"
+  },
+  "box": {
+    "type": "mailer",
+    "price": [
+      "SHAREWARE",
+      "$15"
+    ],
+    "sticker": {
+      "bg": "#ff8c00",
+      "ink": "#000000",
+      "shape": "round"
+    },
+    "burst": [
+      "REGISTERED",
+      "VERSION"
+    ],
+    "burst_fill": "#ff0000",
+    "burst_ink": "#ffffff",
+    "features": [
+      "Presets that use only the six classic sounds",
+      "House, techno, ambient, chip and more",
+      "Free updates by mail"
+    ],
+    "barcode": false
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#e8e8e8",
+    "label": "silk",
+    "ink": "#000080",
+    "ring": "PEMBERTON SOFTWARE * HERITAGE EDITION 3.X * REGISTERED VERSION * THANK YOU FOR SUPPORTING SHAREWARE *"
+  },
+  "icon": {
+    "motif": "floppy",
+    "colors": [
+      "#000080",
+      "#000000",
+      "#c0c0c0",
+      "#404040"
+    ]
+  },
+  "files": {
+    "readme": "shareware",
+    "readme_txt": true,
+    "diz": true,
+    "license": "REGISTER.TXT",
+    "hlp": "HERITAGE.HLP",
+    "pdf": "HERITAGE.PDF",
+    "pdf_size": "letter",
+    "pdf_style": "typewriter",
+    "rtf": null,
+    "wri": "HERITAGE.WRI",
+    "splash": "HERITAGE.BMP",
+    "splash_bpp": 4,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "hlp": {
+    "font": "Times New Roman",
+    "family": "roman",
+    "title_color": "#000080"
+  },
+  "register": {
+    "price": 15.0,
+    "shipping": 3.0,
+    "foreign_shipping": 5.0,
+    "tax_state": "Ohio",
+    "tax_rate": 0.055,
+    "bonus": "the BONUS disk of extra registrations and the printed manual",
+    "site": "Site licenses: $5.00 per computer for 10 or more."
+  },
+  "text": {
+    "tagline": "Sixteen bits of history. Eight of them audible.",
+    "blurb": "Every style of music, made from only the six sounds that came with your 3.1 system: the chimes, the chord, the ding, the ta-da and the two ring sounds. Easy to use. Free updates for registered users!",
+    "intro": [
+      "Welcome to HERITAGE EDITION 3.x! Every preset on this disc is made from the six sounds that come with your computer: CHIMES, CHORD, DING, TADA, RINGIN and RINGOUT. Nothing else! You do not need any extra sound files.",
+      "I taught school band for 31 years, and I always told my students that a good musician can play anything on anything. This disc is my proof. There is house music, techno, organ, bells and even a little video-game music, all from six system sounds."
+    ],
+    "maker_note": [
+      "HERITAGE EDITION is SHAREWARE. That means you can try it FREE for 30 days. If you like it and keep using it, you MUST register. Registration is only $15.00.",
+      "When you register you get the BONUS disk with extra registrations, a printed manual, and free updates by mail. You also get my thanks, and you help me keep writing programs!",
+      "Thank you for trying Heritage Edition. Please write to me with your ideas. I answer every letter.",
+      "Gerald T. Pemberton"
+    ],
+    "install": [
+      "Put the disc in your CD-ROM drive. In the Library tab of the synthesizer, the disc shows up as HERITAGE21.",
+      "Double-click any preset (*.BSP) in one of the directories to load it.",
+      "That is all! There is nothing to install on your hard disk."
+    ],
+    "history": [
+      [
+        "2.1",
+        "1993-11-02",
+        "More presets. Fixed the tuning of the TADA bass."
+      ],
+      [
+        "2.0",
+        "1993-06-15",
+        "Now on CD-ROM as well as 3.5\" disk. Added the help file."
+      ],
+      [
+        "1.1",
+        "1993-02-01",
+        "Better bells. New order form."
+      ],
+      [
+        "1.0",
+        "1992-12-24",
+        "First release, a Christmas present to all of you."
+      ]
+    ],
+    "vendor": [
+      "Shareware distributors, BBS sysops and user groups may copy and distribute HERITAGE EDITION, as long as:",
+      "1. All files are distributed together, unchanged.",
+      "2. You charge no more than $6.00 for the disk.",
+      "3. You say clearly that this is SHAREWARE and that users must register with the author.",
+      "CD-ROM compilations: please send me a copy of your disc.",
+      "This program is produced by a member of a shareware authors association, which wants to make sure that the shareware principle works for you. If you cannot resolve a dispute with the author, write to the association's ombudsman."
+    ],
+    "license": [],
+    "files": {}
+  }
+}
