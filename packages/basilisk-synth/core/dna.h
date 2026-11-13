@@ -8,13 +8,24 @@ namespace bsynth {
 constexpr int kRecorders = 16, kMaxLayers = 8, kMaxSteps = 64, kMaxHarmony = 8, kMaxDnaBytes = 1024;
 constexpr int kMaxBufferMs = 30000;   // a step that would make a buffer longer than this is skipped (both sides)
 
-// The Media sounds (section 2.4), in table order. index 0..34.
+// The sounds both editions carry (section 2.4), in table order: XP's 35 Media sounds (index 0..34), then the six
+// Windows 3.x recordings under edition-qualified names (w31*, 35..40), then XP's six colliding legacy files under
+// edition-qualified names (wxp*, 41..46). Indices never change; new names are appended.
 extern const char *const kSoundNames[];
-extern const char *const kSoundFilesXP[];
-constexpr int kSoundCount = 35;
+extern const char *const kSoundFilesXP[];     // relative to C:\WINDOWS\Media on XP
+extern const char *const kSoundFiles311[];    // absolute on Windows 3.11
+constexpr int kSoundCount = 47;
 int soundIndex(const std::string &name);          // -1 if unknown
-// Windows 3.11 edition: only chimes, ding, ringin, ringout exist in C:\WINDOWS; every other NAME plays ding.
-const char *soundFile311(int index);               // "C:\\WINDOWS\\DING.WAV" etc.
+const char *soundFile311(int index);               // kSoundFiles311[index]
+// Which recordings a name stands for (section 2.4): bare names mean the playing edition's own recording when both
+// editions have one (chimes chord ding ringin ringout tada); w31* is always Windows 3.x's, wxp* and XP-only names
+// always XP's; library names are the disc's.
+enum SoundOrigin { kOriginNative = 1, kOrigin31 = 2, kOriginXP = 4, kOriginLibrary = 8 };
+int soundOrigin(const std::string &name);         // one SoundOrigin bit (0: unknown)
+struct Dna;
+int dnaOrigins(const Dna &d);                     // the OR of every source and I/M name's origin
+// "Only this Windows' own sounds" (the preset browsers' filter): no library sound, and nothing of the other edition
+inline bool ownSounds(int origins, bool xpEdition) { return !(origins & (kOriginLibrary | (xpEdition ? kOrigin31 : kOriginXP))); }
 
 struct Step {
     char op = 0;          // + - > < E R @ [ ] C P X I M

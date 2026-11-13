@@ -11,7 +11,9 @@ const char *const kSoundNames[kSoundCount] = {
     "chimes", "chord", "ding", "notify", "recycle", "ringin", "ringout", "start", "tada",
     "balloon", "batcrit", "batlow", "critstop", "default", "xpding", "error", "exclaim", "hwfail",
     "hwin", "hwout", "infobar", "logoff", "logon", "menu", "minimize", "xpnotify", "popup", "print",
-    "xprecycle", "restore", "xpringin", "xpringout", "shutdown", "startup", "xpstart"};
+    "xprecycle", "restore", "xpringin", "xpringout", "shutdown", "startup", "xpstart",
+    "w31chimes", "w31chord", "w31ding", "w31ringin", "w31ringout", "w31tada",
+    "wxpchimes", "wxpchord", "wxpding", "wxpringin", "wxpringout", "wxptada"};
 const char *const kSoundFilesXP[kSoundCount] = {
     "chimes.wav", "chord.wav", "ding.wav", "notify.wav", "recycle.wav", "ringin.wav", "ringout.wav", "start.wav", "tada.wav",
     "Windows XP Balloon.wav", "Windows XP Battery Critical.wav", "Windows XP Battery Low.wav", "Windows XP Critical Stop.wav",
@@ -20,7 +22,24 @@ const char *const kSoundFilesXP[kSoundCount] = {
     "Windows XP Information Bar.wav", "Windows XP Logoff Sound.wav", "Windows XP Logon Sound.wav",
     "Windows XP Menu Command.wav", "Windows XP Minimize.wav", "Windows XP Notify.wav", "Windows XP Pop-up Blocked.wav",
     "Windows XP Print complete.wav", "Windows XP Recycle.wav", "Windows XP Restore.wav", "Windows XP Ringin.wav",
-    "Windows XP Ringout.wav", "Windows XP Shutdown.wav", "Windows XP Startup.wav", "Windows XP Start.wav"};
+    "Windows XP Ringout.wav", "Windows XP Shutdown.wav", "Windows XP Startup.wav", "Windows XP Start.wav",
+    "W31\\CHIMES.WAV", "W31\\CHORD.WAV", "W31\\DING.WAV", "W31\\RINGIN.WAV", "W31\\RINGOUT.WAV", "W31\\TADA.WAV",
+    "chimes.wav", "chord.wav", "ding.wav", "ringin.wav", "ringout.wav", "tada.wav"};
+// Windows 3.11: its own six in C:\WINDOWS; XP's, converted to PCM SOUNDREC opens, in C:\XPSOUNDS as X<index>.WAV
+const char *const kSoundFiles311[kSoundCount] = {
+    "C:\\WINDOWS\\CHIMES.WAV", "C:\\WINDOWS\\CHORD.WAV", "C:\\WINDOWS\\DING.WAV", "C:\\XPSOUNDS\\X03.WAV",
+    "C:\\XPSOUNDS\\X04.WAV", "C:\\WINDOWS\\RINGIN.WAV", "C:\\WINDOWS\\RINGOUT.WAV", "C:\\XPSOUNDS\\X07.WAV",
+    "C:\\WINDOWS\\TADA.WAV", "C:\\XPSOUNDS\\X09.WAV", "C:\\XPSOUNDS\\X10.WAV", "C:\\XPSOUNDS\\X11.WAV",
+    "C:\\XPSOUNDS\\X12.WAV", "C:\\XPSOUNDS\\X13.WAV", "C:\\XPSOUNDS\\X14.WAV", "C:\\XPSOUNDS\\X15.WAV",
+    "C:\\XPSOUNDS\\X16.WAV", "C:\\XPSOUNDS\\X17.WAV", "C:\\XPSOUNDS\\X18.WAV", "C:\\XPSOUNDS\\X19.WAV",
+    "C:\\XPSOUNDS\\X20.WAV", "C:\\XPSOUNDS\\X21.WAV", "C:\\XPSOUNDS\\X22.WAV", "C:\\XPSOUNDS\\X23.WAV",
+    "C:\\XPSOUNDS\\X24.WAV", "C:\\XPSOUNDS\\X25.WAV", "C:\\XPSOUNDS\\X26.WAV", "C:\\XPSOUNDS\\X27.WAV",
+    "C:\\XPSOUNDS\\X28.WAV", "C:\\XPSOUNDS\\X29.WAV", "C:\\XPSOUNDS\\X30.WAV", "C:\\XPSOUNDS\\X31.WAV",
+    "C:\\XPSOUNDS\\X32.WAV", "C:\\XPSOUNDS\\X33.WAV", "C:\\XPSOUNDS\\X34.WAV",
+    "C:\\WINDOWS\\CHIMES.WAV", "C:\\WINDOWS\\CHORD.WAV", "C:\\WINDOWS\\DING.WAV", "C:\\WINDOWS\\RINGIN.WAV",
+    "C:\\WINDOWS\\RINGOUT.WAV", "C:\\WINDOWS\\TADA.WAV",
+    "C:\\XPSOUNDS\\X00.WAV", "C:\\XPSOUNDS\\X01.WAV", "C:\\XPSOUNDS\\X02.WAV", "C:\\XPSOUNDS\\X05.WAV",
+    "C:\\XPSOUNDS\\X06.WAV", "C:\\XPSOUNDS\\X08.WAV"};
 
 static std::vector<std::string> g_library;
 void setLibrary(const std::vector<std::string> &names) { g_library = names; }
@@ -32,14 +51,15 @@ int soundIndex(const std::string &name)
     return -1;
 }
 
-const char *soundFile311(int i)
+const char *soundFile311(int i) { return i >= 0 && i < kSoundCount ? kSoundFiles311[i] : kSoundFiles311[2]; }
+
+int soundOrigin(const std::string &name)
 {
-    switch (i) {
-    case 0: return "C:\\WINDOWS\\CHIMES.WAV";
-    case 5: return "C:\\WINDOWS\\RINGIN.WAV";
-    case 6: return "C:\\WINDOWS\\RINGOUT.WAV";
-    default: return "C:\\WINDOWS\\DING.WAV";
-    }
+    int i = soundIndex(name);
+    if (i < 0) return inLibrary(name) ? kOriginLibrary : 0;
+    if (i == 0 || i == 1 || i == 2 || i == 5 || i == 6 || i == 8) return kOriginNative;   // chimes chord ding ringin ringout tada
+    if (i >= 35 && i <= 40) return kOrigin31;
+    return kOriginXP;
 }
 
 static int clampi(int v, int lo, int hi) { return v < lo ? lo : v > hi ? hi : v; }
@@ -311,6 +331,16 @@ Dna parse(const std::string &in)
 }
 
 std::string canonical(const std::string &t) { return parse(t).canonical; }
+
+int dnaOrigins(const Dna &d)
+{
+    int o = 0;
+    for (auto &L : d.layers) {
+        if (!L.sourceName.empty()) o |= soundOrigin(L.sourceName);
+        for (auto &st : L.steps) if ((st.op == 'I' || st.op == 'M') && !st.name.empty()) o |= soundOrigin(st.name);
+    }
+    return o;
+}
 
 std::string setGlobal(const std::string &dna, char c, int v)
 {
