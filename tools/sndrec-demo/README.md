@@ -29,7 +29,7 @@ python3 tools/sndrec-demo/phrases.py $W/presets311.h $W/b16
 python3 $W/rel311/x/batch/batch_render311.py $W/b16/jobs.json --machine $M --core CORE.so --render311 render311 --parallel 6 --out-dir $W/b16
 python3 tools/sndrec-demo/macro_bh.py $W/b16 /mnt/c/SOMEWHERE              # BasiliskHost.exe + Basilisk16.vst3 copied there
 python3 tools/sndrec-demo/encode.py $W/b16 $W/site/sndrec/audio/b16 b16 --review tools/sndrec-demo/review-b16.json
-python3 tools/sndrec-demo/site_data.py site/sndrec/presets.json b16=$W/b16
+python3 tools/sndrec-demo/site_data.py site/sndrec/presets.json b16=$W/b16@$M   # @machine: drive.zip, library.zip for the sound badges
 ```
 
 Videos: build `demo311` against the tag's sources (the includes are relative to a checkout root):
