@@ -184,21 +184,21 @@ The whole sound of the instrument is one line of text, the DNA. Windows builds t
 %keys recipe;words;DNA;readable;one-line;short form;trim;double;faster;slower;louder;softer;echo;reverse;cut before;cut after;insert;mix
 %map 20
 %col 2100
-A recipe is the DNA written in Sound Recorder's own words. It holds exactly the same sound: a recipe turns back into the same DNA, letter for letter. You can type a recipe wherever you can type a DNA.
+A recipe is the DNA written in Sound Recorder's own words. It holds exactly the same sound: a recipe turns back into the same DNA, letter for letter. A recipe uses only keys that are on every keyboard, so you can type it.
 ## Example
 `ding>E/tada<<R+#4H0,12U2~9;A5R350` is, as a recipe:
-`ding    faster, echo`
-`tada    slower ×2, reverse, louder   4 recorders · notes +0 +12 · unison 2 ±9¢`
-`env     attack 5ms · release 350ms`
+`ding     faster, echo`
+`tada     slower x2, reverse, louder   4 recorders  notes +0 +12  unison 2 +-9c`
+`env      attack 5ms  release 350ms`
 Each layer has its own line. It starts with the sound's name. The steps follow, in order, then the voice settings. The `env` line holds the settings for the whole sound.
 ## Three forms
 | Multi-line | One line per layer and an `env` line, as above. For reading and editing. |
 | One-line | All on one line. A slash with a space on each side separates the layers; a bar with a space on each side comes before the settings for the whole sound. |
-| Short | The one-line form with short words, for lists. If it is too long, it ends in an ellipsis (...). A short form that ends that way is only a preview and cannot be typed back. |
+| Short | The one-line form with short words, for lists. If it is too long, it ends in three dots (...). A short form that ends that way is only a preview and cannot be typed back. |
 The same sound in one line:
-`ding faster echo / tada slower×2 reverse louder 4rec notes +0+12 unison 2±9¢ | atk 5ms rel 350ms`
+`ding faster echo / tada slower x2 reverse louder 4rec notes +0 +12 unison 2 +-9c | atk 5ms rel 350ms`
 And in the short form:
-`ding fast echo / tada slowx2 rev loud 4r h+0+12 u2+-9c | a5 r350`
+`ding fast echo / tada slow x2 rev loud 4r h+0 +12 u2+-9c | a5 r350`
 ## Steps (the Effects and Edit commands)
 | faster, slower | Effects > Increase Speed, Decrease Speed (an octave up, an octave down) |
 | louder, softer | Effects > Increase Volume, Decrease Volume |
@@ -207,20 +207,20 @@ And in the short form:
 | cut before, cut after | Edit > Delete Before / After Current Position. `cut before 30%` moves the slider first. |
 | copy, paste, mix paste | Edit > Copy, Paste Insert, Paste Mix |
 | insert tada, mix chimes | Edit > Insert File..., Mix with File... with that sound |
-| slower ×2 | The step two times. You can type x2 for ×2. |
+| slower x2 | The step two times |
 | trim 5-45% | Keeps 5 % to 45 % of the sound: cut after 45 %, then cut before. `trim 250-750ms` does the same in milliseconds. |
-| double | Copy, then paste at the start: the sound twice in a row. `double ×2` makes four. |
+| double | Copy, then paste at the start: the sound twice in a row. `double x2` makes four. |
 ## Voice settings
 | 4 recorders | How many recorders this layer has |
 | transpose +7 | Moves the layer up or down in semitones |
 | notes +0 +12 | Harmony: each note also sounds these intervals (here an octave) |
-| unison 2 ±9¢ | Two voices for each note, spread over ±9 cents |
+| unison 2 +-9c | Two voices for each note, spread over plus or minus 9 cents |
 | fixed pitch | The layer ignores the key and plays at its own speed |
 | level 80%, pan L40, offset 120ms | The layer's volume, place left or right, and its delay after the note |
 | amp env, pan env | A drawn envelope: points of time and level, such as `0:0,30:100,400:60` |
 ## Settings for the whole sound
 | attack, decay, sustain, release | The envelope: `attack 5ms`, `sustain 70%`, `release 1.5s` |
-| bend ±12 | Pitch bend range in semitones |
+| bend +-12 | Pitch bend range in semitones |
 | velocity 80% | How much playing harder makes a note louder |
 | root C4 | The key that plays a sound at its own speed |
 | gain -6dB | The output level |
@@ -229,10 +229,10 @@ And in the short form:
 Later versions add words such as `start 20%`, `mono`, `glide 80ms`, `keys C2-B3`, `grains ...`, `scale minor`, `seq ...` and `pad 36 ...`. A part this version cannot read is written in braces, such as `{Dl3}`. It is kept as it is.
 ## Typing a recipe
 - Upper and lower case are the same.
-- You can type x for ×, +- for ±, c for ¢, and .. for the dash in a range.
+- Spaces, commas and line breaks only separate words. Two spaces or one: both are fine.
 - The short words work too: fast, slow, loud, soft, rev, dbl, 4r, lv80, a5, r350.
-- Commas and the · dots are only spacing.
-- If a word is not understood, the synth names the word and says what it expected there. The DNA does not change.
+- If a word is not understood, the synth selects the word and says what it expected there. The DNA does not change.
+> **Note:** Outside Windows, the plugin's editor and the web site print a recipe with a few typeset signs: a times sign for x, a plus-minus sign for +-, a cent sign for c, a long dash in ranges and a dot between voice settings. When you click into a recipe to edit it, or copy it, you get the plain form shown here.
 ## See Also
 + [The DNA](dna)
 + [Effects and Edits](effects)
