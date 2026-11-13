@@ -7,7 +7,7 @@ real Windows Sound Recorders running inside an emulated Windows machine. This fi
 - the guest program in Windows XP (`synth.exe` plus `srhook.dll`),
 - the Windows 3.11 edition, which must accept the same DNA and speak the same protocol.
 
-Anything not written here is an implementation detail. Version: `1`. Both sides announce it in `hi`.
+Anything not written here is an implementation detail. Version: `2` (section 5 lists what v2 adds; v1 strings are unchanged in meaning). Both sides announce it in `hi`.
 
 ## 1. The machine
 
@@ -211,6 +211,91 @@ It is clamped to the range 2000–192000 Hz. Notes outside that range sound at t
   - Every line costs a few hundred microseconds on the link.
   - The plugin reports a fixed latency to the host and delays the captured XP audio by that latency minus the
     measured trigger time, so notes line up in the DAW.
+
+## 5. DNA v2 (round 3): layering, offsets, pan, drawn envelopes, macros, collages, libraries
+
+v2 only adds; every v1 string means exactly what it meant before. Both sides announce `hi 2` / `hi 2 <edition>
+<state>` once they speak v2; a v1 peer simply ignores what it does not know (DNA.md 2.5: unknown characters are
+skipped), so a v2 DNA on a v1 machine plays as its v1 subset.
+
+### 5.1 More layering: up to 6 recorders per note
+
+A "sound" is still the whole DNA; each layer is one part of it. A note sounds every layer at once (each layer: one
+voice per harmony interval per unison voice, from its own pool), so one note can sound 1 to 16 recorders. The new
+genes make layers independent parts rather than copies:
+
+| Gene | Meaning | Range | Default |
+|---|---|---|---|
+| `O`N | start offset: this layer starts N ms after the note | 0..4000 | `O0` |
+| `Q`N | pan, -100 (left) .. 0 .. 100 (right); applied as the voice's left/right volume, never baked into the buffer | -100..100 | `Q0` |
+| `L`N | (v1) level %; never baked in | 0..400 | `L100` |
+| `Ja`t,l.t,l... | amplitude envelope: up to 8 breakpoints, time ms from the voice's start (after its offset) and level 0..100 %. Linear between points; the last level holds while the key is held; then the global release R ramps to 0. A layer with `Ja` ignores the global A, D and S. | t 0..20000 | none |
+| `Jp`t,l.t,l... | pan envelope, breakpoints as above with l = -100..100, added to `Q` (clamped) | | none |
+
+Breakpoint times must not decrease (a smaller one is raised to the previous); more than 8 points: the rest are
+ignored. Canonical form: `Ja0,0.30,100.400,60` (no `+` signs, no repeated points).
+
+### 5.2 Positions, collages and library sounds
+
+| Step | Meaning |
+|---|---|
+| `@t`N | move the position slider to N ms (clamped to the length); v1 `@NN` (percent) stays |
+| `I`NAME, `M`NAME | (v1) Insert File / Mix with File at the position; NAME may now be a library sound |
+
+NAME is now `[a-z0-9_]+` (v1 names never contain `_`). Resolution: the edition's built-in sound table (2.4) first,
+then the library catalogue of the machine's library disc (5.5). Unknown names: as v1 (layer silent / step skipped).
+Collages are just steps: `tada@t300Mding@t900Ichimes>` loads tada, mixes ding in at 300 ms, inserts chimes at
+900 ms, then doubles the speed of the whole result.
+
+### 5.3 Macros: four per sound, automatable
+
+Globals (after `;`) gain lowercase `m` tokens:
+
+| Token | Meaning |
+|---|---|
+| `m`K`=`V | macro K (1..4) is at V % (0..100); the plugin's "Macro K" parameter (automatable) |
+| `m`K`L`P`min,max` | macro K moves parameter P of layer L (1..8, or 0 = every layer) linearly from min (macro 0 %) to max (100 %) |
+
+P is one of: `O` offset ms, `Q` pan, `L` level %, `T` transpose (semitones, rounded), `C` unison spread cents,
+`Z` envelope time scale % (100 = as written; scales every `Ja`/`Jp` time), `N` repeat count of the layer's last
+step (0..8; changes the buffer, so the guest rebuilds that layer - the host waits 300 ms after the last change).
+Any number of mappings; several on one parameter add up (each contributes its value minus its min, the first one
+its min). A mapped value replaces the written gene while the macro is mapped. Example:
+`chord#8/ding>E#8O120Q40;m1=0m11Z50,300m12Q-100,100` - macro 1 slows chord's envelope and swings ding's pan.
+
+### 5.4 Wire additions (guest link)
+
+Host -> guest:
+
+| Line | Meaning |
+|---|---|
+| `hi 2` | as `hi 1`, announcing v2 |
+| `on <rec> <rate> <vol> [<pan> [<delay_ms> [<layer>]]]` | optional trailing fields; old parsers read the first three. pan -100..100 (default 0); delay_ms: start this many ms later (an edition may also let the host do the waiting and send 0); layer: which layer's envelope applies (default: the recorder's layer) |
+| `lenv <layer> <a\|p> <t,l.t,l...>` | the effective envelope of a layer after macros (`-` = none). Sent after each `dna` and whenever a macro changes one; the guest uses the latest. |
+| `lib <path>` | (optional) the library disc was (re)inserted at <path>; the guest rereads its catalogue |
+
+Guest -> host: unchanged (`edit` carries v2 DNA when the visitor edits envelopes, offsets, pan or macros in Windows).
+
+### 5.5 The library disc
+
+Extra sounds and the preset library ride on a disc image the plugin inserts after the machine resumes (XP: an
+ISO 9660 + Joliet image in the virtual CD drive, QMP `blockdev-change-medium`; 3.11: its own extra drive). Layout:
+
+```
+\LIBRARY.TSV          one line per sound:  name <TAB> category <TAB> path-on-disc <TAB> seconds <TAB> source/licence
+\PRESETS.TSV          one line per preset: category <TAB> name <TAB> DNA
+\<category>\<name>.WAV
+```
+
+Names are unique across the disc; categories are free text (`Bells`, `Voices`, `Machines`, ...). The same
+PRESETS.TSV feeds the plugin's program list ("Category: Name") and the browser inside Windows.
+
+### 5.6 Batch rendering
+
+`tools/batch_render.py JOBS.json --plugin <bundle> --parallel K` renders DNA + MIDI score -> WAV through the real
+machine (a VST3 host per job, the plugin's own VM). Jobs: `[{"dna": "...", "score": "t:note:vel:dur,...",
+"out": "x.wav", "seconds": 4}]`. Rendering is real time per VM (the emulated sound card runs on the virtual clock);
+throughput comes from K VMs in parallel (default: cores / 2, at most 6 on this PC).
 
 ## Appendix: the Windows 3.11 edition (BASILISK 16, packages/basilisk-synth-311)
 
