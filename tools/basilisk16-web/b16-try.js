@@ -80,7 +80,7 @@
       worker.onmessage = onWorker;
       worker.onerror = function (e) { fail('The emulator stopped: ' + (e.message || 'error')); };
       worker.postMessage({ t: 'init', conf: DATA.conf, lead: CFG.lead, layers: DATA.layers, libraryNames: DATA.libraryNames,
-        libraryUrl: new URL(base + 'library.zip', location.href).href, librarySize: DATA.librarySize, libraryChunk: 262144,
+        relDrag: DATA.relDrag, libraryUrl: new URL(base + 'library.zip', location.href).href, librarySize: DATA.librarySize, libraryChunk: 262144,
         files: CFG.files.map(function (f) { return { name: f.name, size: f.size, url: base + f.name + '?v=' + CFG.v }; }) });
       clearInterval(wd); wd = setInterval(watchdog, 500);
     }).catch(function (e) { fail('It could not start: ' + e.message); });

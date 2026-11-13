@@ -25,7 +25,10 @@ presets = re.findall(r'\{"((?:[^"\\]|\\.)*)", "((?:[^"\\]|\\.)*)"\}', src)
 state = json.load(open(os.path.join(W, 'out', 'state.json')))
 data = {'conf': open(os.path.join(W, 'machine', 'w31.conf')).read(), 'layers': state['layers'],
         'libraryNames': open(os.path.join(LIB, 'library.names.txt')).read(), 'presets': presets,
-        'librarySize': os.path.getsize(os.path.join(LIB, 'library.zip'))}
+        'librarySize': os.path.getsize(os.path.join(LIB, 'library.zip')),
+        # a card with PTRGET (BSYNTH.DRV moves the pointer itself at interrupt time, with mouse_event) needs no
+        # relative-motion help for drags (web_engine.c); older cards do
+        'relDrag': 'PTRGET' not in open(os.path.join(W, 'src', 'packages', 'basilisk-synth-311', 'dosbox-pure', 'bsynth.cpp')).read()}
 open(os.path.join(OUT, 'b16-data.json'), 'w').write(json.dumps(data, separators=(',', ':')))
 files = []
 for n in ('b16.wasm', 'w31web.state', 'drive.zip'):
