@@ -176,6 +176,7 @@ int main(int argc, char **argv)
 {
     const char *mode = argc > 1 ? argv[1] : "t1";
     char t[64];
+    if (!strcmp(mode, "dump") && argc > 2) { dump(argv[2]); return 0; }   /* one file per call: the agent posts at most ~100 KB well */
     CreateThread(NULL, 0, answer, NULL, 0, NULL);
     wav("C:\\p\\t1s.wav", RATE, 0);
     wav("C:\\p\\t8s.wav", RATE * 8, 0);
@@ -217,7 +218,7 @@ int main(int argc, char **argv)
         step("C:\\p\\imp.wav", "C:\\p\\e1.wav", "E");
         step("C:\\p\\imp.wav", "C:\\p\\e2.wav", "EE");
         step("C:\\p\\sine1s.wav", "C:\\p\\px.wav", "CzhX");       /* copy, seek 50 %, paste mix */
-        step("C:\\p\\sine1s.wav", "C:\\p\\mf.wav", "hM");         /* seek 50 %, mix with a 2 s file */
+        if (argc > 2) step("C:\\p\\sine1s.wav", "C:\\p\\mf.wav", "hM");   /* seek 50 %, mix with a 2 s file (fx M) */
         step("C:\\p\\noise.wav", "C:\\p\\du.wav", "<>");
         step("C:\\p\\noise.wav", "C:\\p\\ud.wav", "><");
         step("C:\\p\\noise.wav", "C:\\p\\dduu.wav", "<<>>");
@@ -228,6 +229,7 @@ int main(int argc, char **argv)
         dump("C:\\p\\e1.wav"); dump("C:\\p\\e2.wav"); dump("C:\\p\\px.wav"); dump("C:\\p\\mf.wav");
         dump("C:\\p\\du.wav"); dump("C:\\p\\ud.wav"); dump("C:\\p\\dduu.wav"); dump("C:\\p\\uudd.wav");
         dump("C:\\p\\d.wav"); dump("C:\\p\\u.wav");
+        printf("FXDONE\n");
     }
     return 0;
 }

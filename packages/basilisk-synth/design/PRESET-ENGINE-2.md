@@ -87,10 +87,10 @@ revision is listed at the end of this section.
    all handles of all processes, and it persists. Today's srhook envelopes and pan therefore interfere between
    voices. Every XP feature that fades (crossfade, choke, grains, envelopes, pan) needs srhook to stream its PCM
    in chunks with software gain. This is the new **phase 0** and the main XP risk: it changes the fast path.
-2. **XP changes act only after the queued audio** (80 ms with a 4 x 20 ms ring; 4 x 10 ms starves under TCG). So
+2. **XP changes act only after the queued audio** (up to 120 ms with the 6 x 20 ms ring that several streams need; 4 x 10 ms starves under TCG). So
    rate changes must be planned ahead. The host already sends every event early by the reported latency (170 ms
    Linux, 280 ms Windows), which is enough; live bend from the Windows strip is the exception (it is late anyway).
-3. **kmixer starts a new handle on a 10 ms grid** (T5, the pair test). It is correctable: `waveOutGetPosition`
+3. **kmixer starts a new handle on a 10 ms grid** (T5, the pair test). It is corrected (measured): `waveOutGetPosition`
    shows the offset exactly (in 12 of 12 trials the position difference of two streams equalled the audio lag:
    0, 10.0 or 19.95 ms), so srhook moves a new stream's not yet queued frames by it before the handover.
 4. **XP CPU under TCG** (T4): each playing handle costs about 0.6 % of the guest; at 16 handles, 1 ms dropouts
@@ -127,7 +127,7 @@ Every design choice below rests on this table. "Exact" means sample-exact.
 | Change the pitch of a sounding voice | No live rate on AC97 (`waveOutSetPlaybackRate` is not supported). A rate change needs another handle at the new rate: open 8-15 ms (up to 105 ms the first time a rate is used after boot). See the streamed swap in 5.3. | `BSC_SETRATE`: applies at the next 1 ms mixer chunk, phase-continuous, no click (residual -91 dBFS). Range 1/65536 to 65535x, no clamp. |
 | Read the play position | `waveOutGetPosition` on the handle (bytes). | `BSC_GETPOS` (frames). |
 | Level and pan | **`waveOutSetVolume` is one device-wide Wave volume** (all handles, all processes; it persists; measured). Per-voice level and pan need software gain on the samples (5.3). | Per-voice card volume. |
-| Envelope | Today srhook ramps the (global) Wave volume in 5 ms steps: voices interfere. With the streamed gain of 5.3: per voice, per sample, but a change sounds only after the queued audio (80 ms). | The card's per-voice ADSR, per sample. |
+| Envelope | Today srhook ramps the (global) Wave volume in 5 ms steps: voices interfere. With the streamed gain of 5.3: per voice, per sample, but a change sounds only after the queued audio (up to 120 ms). | The card's per-voice ADSR, per sample. |
 | Buffer edits | The real Effects and Edit menu commands (DNA steps). A rebuild takes about 1 s. | The same commands in SOUNDREC. |
 | Voices | 16 recorders. One recorder process can open more than one handle. Each playing handle costs about 0.6 % of the guest under TCG; from 16 handles, 1 ms dropouts appear (T4). kmixer starts a new handle on a 10 ms grid (T5). | 16 recorders, 32 card voices. About 30 SOUNDREC windows exhaust GDI. Play to sound 0-3 ms; 100 sample-exact plays per second with 16 recorders (T6). |
 | Host link | COM1 text lines. Each line costs a few hundred microseconds. Keep it below about 300 lines per second. | Card mailbox ports. Each line can carry an event id with a DAC sample number. |
@@ -172,12 +172,14 @@ Two consequences:
    (`guest/synth.c` in both editions) skip unknown characters in the same way. Their global parsers react only to
    `A D S R B V K G`, which v3 tokens never contain.
 
-**Known loss:** a v2 plugin rewrites a DNA to its canonical form, and that form drops v3 tokens. So a v2 plugin
-that saves a v3 preset loses the v3 part. Rule for v3 core: keep any unknown token of the shape in rule 4 as it is.
-This rule protects v4.
+**Known loss (1.1 only):** the 1.1 plugin rewrites a DNA to its canonical form, and that form drops v3 tokens. So
+1.1 saving a v3 preset loses the v3 part. From v1.2 on, core keeps unknown tokens (DNA.md 5.7, on `main`), and
+v3 keeps unknown tokens and unknown subkeys too (rule 4). This protects v4.
 
 **Macros (v2 5.3) gain parameters.** A v3 macro parameter letter must not be `A D S R B V K G` or `m`. The reason:
-when v2 core rejects an unknown parameter letter, it reads that letter again as a global. Proposed letters:
+1.1's core, after rejecting an unknown parameter letter, reads that letter again as a global (v1.2's core consumes
+the whole token, DNA.md 5.7; the XP guest's global parser still reacts to those letters). Letters (parsed and
+applied by `parse3`/`applyMacros3` in `design/v3/`):
 
 | Letter | Parameter | Unit |
 |---|---|---|
@@ -363,32 +365,34 @@ not work as written:
 | A ring of 4 x 10 ms starves under TCG: kmixer fills a starved stream with exactly 10.0 ms of silence | 254 holes in 20 s; 4 x 20 ms, 8 x 10 ms, 16 x 10 ms: none |
 | Swaps closer together than the queued audio (a fifth in 4 steps over 100 ms, each swap acting at once) | clicks at -8 dB, broken pitch: a gain change acts only after the 80 ms already queued |
 | `waveOutOpen` at a rate | 8-15 ms; the first open of a new rate after boot up to 105 ms |
+| The start offset is visible: `waveOutGetPosition(A) - waveOutGetPosition(B)` 120 ms after both started | equalled the audio lag in 12 of 12 trials (0, 10.0 or 19.95 ms) |
+| Planned staircase, all streams started together, positions corrected, ring 6 x 20 ms | a fifth in 4 steps over 100 ms: -50.2 dB; an octave in 12 steps over 400 ms: -53.5 dB, the pitch trace 0 -> 1200 cents in clean 100-cent steps; corrections applied 0-60 ms (multiples of 10 ms) |
+| The same with a 4 x 20 ms ring and 5-13 streams under host load | dropouts every ~90 ms (one stream starving): the ring must be 6 x 20 ms (120 ms) when several streams run |
 
 **The design that follows from it (phase 0, XP only):**
 
 1. **srhook streams.** Instead of one `waveOutWrite` of the whole buffer, the note thread streams the recorder's
-   own PCM to its handle in chunks (a ring of 4 x 20 ms), opened stereo. It multiplies every sample by the voice's
+   own PCM to its handle in chunks (a ring of 6 x 20 ms; 4 x 20 ms is enough for one stream), opened stereo. It multiplies every sample by the voice's
    gain (velocity, envelope, release, choke) and pan. This fixes today's global-volume interference too. Onset
    latency does not change (the first chunks go out at once); a gain change sounds after the queued audio (at most
-   80 ms).
+   120 ms).
 2. **A swap is planned in frames, ahead of time.** The host sends every event early by the reported latency (170 ms
-   Linux, 280 ms Windows), which is longer than the 80 ms queue plus Lb. So srhook gets a `rate` line with the time
+   Linux, 280 ms Windows), which is longer than the 120 ms queue plus Lb. So srhook gets a `rate` line with the time
    it must be heard, and plans the handover at that time: A's ramp-down starts at the frame A plays then; B is
    started now at gain 0 from the source frame that makes it reach the same point at the handover, then ramps up.
    Both ramps are in the samples: 10 ms (-50 dB) by default, 20 ms for exposed sounds (-55 dB).
-3. **The 10 ms start grid** is the remaining error (a +-5 ms offset between A and B, a short comb during the 10 ms
-   crossfade on dense sounds; on pitched sounds at different rates it is a small time jump, not audible on
-   sustained tones). To remove it: keep the cache's handles streaming continuously (silence when unused), and
-   re-gain them instead of restarting them; a handle that never restarts keeps a fixed offset. Planned (T3b).
+3. **The 10 ms start grid is corrected.** kmixer starts a stream on its 10 ms grid, but `waveOutGetPosition`
+   shows the offset exactly. So after starting B (at gain 0), srhook reads both positions and moves B's not yet
+   queued frames by the difference before the handover. Measured: corrections of 0-60 ms were applied and the
+   handovers were clean.
 4. **Glides, wow, scoop:** srhook gets the whole curve (`rate` with a glide time, `lmod`), so it plans the staircase:
    one handover per step, each step at least 40 ms apart, up to 4 handles per recorder (cache by rate, LRU). Rates
    are quantized to 2 cents for the cache.
 5. **Prewarm:** at boot each recorder opens and closes its handle at the rates it will need first (the first open of
    a rate costs up to 105 ms).
 
-Status of the measurement: points 1 and 2 are measured (above). The planned staircase (`xp_stream plan`) is
-written; its first runs had dropouts from the test pump (see 12, T3); the quality figure of a full glide is the
-first thing to finish in phase 0.
+Status: all points are measured in `design/proto/xp_stream.c` (modes `xfade`, `pair`, `plan`, `choke`), a test
+program, not srhook. Phase 0 moves the same logic into srhook.
 
 ### 5.4 Unison, detune and stacking
 
@@ -425,7 +429,7 @@ bend and the keyboard strip's `bend` (DNA.md 5.4).
 |---|---|---|
 | `N` modes in core (host only) | S | low |
 | `rate` on 3.11 (`BSC_SETRATE` exists; add "rate by task", DAC-stamped) | S | low |
-| XP phase 0: srhook streams with software gain and pan (also fixes v1.x envelope/pan interference) | M (4-6 days) | medium: CPU under TCG, release timing (+80 ms) |
+| XP phase 0: srhook streams with software gain and pan (also fixes v1.x envelope/pan interference) | M (4-6 days) | medium: CPU under TCG, release timing (+120 ms) |
 | `rate` on XP (planned handovers, cache by rate) | M (4-6 days) | medium: the 10 ms start grid |
 | `S` and `Y` (host only, except `Ss`, which is the v2 delay field) | S | low |
 
@@ -522,7 +526,7 @@ Example: `startup#12Gp.4j.15z80~160n50c20e2s.25v6Gw.6;A300R1500q0` is a slow clo
   per recorder). Starting a handle per grain does not work well: kmixer starts a handle on its 10 ms grid (T5: 82 %
   of 50 ms grain intervals came out 50 ms, the rest 40 or 60), and the handle volume is global. Inside a stream a
   grain starts at an exact frame and its shape is in the samples. The loop runs in srhook's time-critical thread
-  (`timeBeginPeriod(1)`; write lateness mean 1-2 ms, max 24-29 ms with 4 handles, which the 80 ms ring absorbs).
+  (`timeBeginPeriod(1)`; write lateness mean 1-2 ms, max 24-29 ms with 4 handles, which the ring absorbs).
   The strip's slider jumps to each grain's position, so the strips show the cloud.
 - **3.11:** the host schedules each grain as an `on` line with an event id and a DAC sample. The card starts it
   exactly. **T6:** one Play costs 2-4 ms in the guest and sounds 0-3 ms later; with 16 recorders sounding, 100
@@ -918,21 +922,20 @@ Made in dev VMs of this lane's own, never in a machine another session runs:
 |---|---|
 | T1 position step | **Both editions: the position control's range is 0..10000 for every length** (XP trackbar 1 s and 8 s; 3.11 scroll bar 1-8 s). A seek lands within 0.5 frame of round(pos * N / 10000): XP measured by Delete After + Save (24 seeks, 1 s and 8 s: every kept length = the asked frame, rounded); 3.11 by the start of playback (80 seeks, max 0.023 ms). The guests seek in 1/1000 today (XP `SYO_SEEK`, 3.11 `seek_ms`, which also uses the rounded displayed length). |
 | T2 XP window | 10 windows of white noise written from frame `from` to `to`: each starts at its frame and is exactly `to - from` long (a constant analysis offset of 10.5 frames and +20 frames from the 1 ms envelope, the same in all 10; spread within 1 frame). |
-| T3 XP swap | See 5.3: Wave volume global; Lb 38 / 44 / 52 ms (sd 4.5-4.9) for rings 4x20 / 8x10 / 16x10 ms; streams started together: 0 or 10 ms apart; swap error after calibration mean 0.9, sd 5.2, max 11 ms; hard swap click -12 dB, 10 ms software crossfade -50.5..-52.5 dB, 20 ms -55.5 dB; ring 4x10 ms starves (254 holes of exactly 10.0 ms in 20 s); unplanned staircases click (-8 dB). The planned staircase (`xp_stream plan`) is written; its first runs showed test-pump dropouts every ~90 ms with 5 streams (see below), so its quality number is still open. |
+| T3 XP swap | See 5.3: Wave volume global; Lb 38 / 44 / 52 ms (sd 4.5-4.9) for rings 4x20 / 8x10 / 16x10 ms; streams started together: 0 or 10 ms apart; swap error after calibration mean 0.9, sd 5.2, max 11 ms; hard swap click -12 dB, 10 ms software crossfade -50.5..-52.5 dB, 20 ms -55.5 dB; ring 4x10 ms starves (254 holes of exactly 10.0 ms in 20 s); unplanned staircases click (-8 dB). Streams started together are 0, 10 or 20 ms apart, and `waveOutGetPosition` shows it exactly (12 of 12); planned and corrected staircases with a 6 x 20 ms ring: a fifth in 4 steps / 100 ms -50.2 dB, an octave in 12 steps / 400 ms -53.5 dB (clean 100-cent steps); with a 4 x 20 ms ring and 5-13 streams, dropouts every ~90 ms. |
 | T3 3.11 set rate | `BSC_SETRATE` on a sounding voice: applies at the next 48-sample (1 ms) chunk; phase-continuous (a 1.5x step leaves -91 dBFS max residual on a -6 dBFS sine); host line to change 1-18 ms (median 1; not DAC-stamped); a glide of 100 x 10 ms steps is a clean 12-cent staircase; rate range 1/65536..65535x, no clamp; rate 0 freezes the voice; no anti-alias filter (Hermite). The guest cannot tell which card channel a recorder uses: a "set rate by task" command is needed. |
 | T4 XP kmixer | Guest idle (GetSystemTimes) with k extra playing handles: 0: 95.6 %, 16: 85.7 %, 32: 76.0 %, 48: 52.9 %. 1 ms dropouts in the output: 13 / 31 / 57 in 6 s at 16 / 32 / 48 handles. `waveOutOpen`: 8-15 ms warm, up to 105 ms the first time a rate is used; 48 handles open without failure. |
 | T5 XP grain jitter | 200 grains of 30 ms every 50 ms (Sleep(1) loop): onsets on a 10 ms grid: 82 % of intervals 50 ms, the rest 40 or 60; local residual sd 2.7 ms (one handle, reset each time) / 3.4 ms (4 handles at 4 rates). Write lateness mean 1.0 / 1.4 ms, max 2.6 / 24 ms. |
 | T6 3.11 plays | One Play 2-4 ms in the guest, sound 0-3 ms later. Guest loop: 200 / s with one recorder, 380 / s round-robin over 16, all sounded. Plugin path (`on` with DAC stamps): one recorder on time up to 200 / s; 16 sounding recorders on time at 100 / s (146 of 150 exact, max 5.7 ms late), 150-200 / s p90 11-19 ms late. |
 | T7 XP mine game | `C:\WINDOWS\system32\winmine.exe` is in the image (119,808 bytes, 2008). The documented addresses hold: width 0x01005334, height 0x01005338, mines 0x01005330, board 0x01005340, rows of 32 bytes, border 0x10. Codes confirmed: 0x0F hidden, 0x8F hidden mine, 0x40+n open, 0x0E flag (0x8E on a mine), 0x0D question mark, 0x8A mine shown, 0xCC the hit mine, 0x0B wrong flag; after a win every mine shows as a flag (0x8E). Posted mouse messages dig and flag (WM_LBUTTON/WM_RBUTTON DOWN+UP at (12 + 16x + 8, 55 + 16y + 8)); clicks after a loss are ignored; New Game via the Game menu (ids 510 New, 521-523 levels). Levels 9x9 / 16x16 / 30x16. Reading an Expert board: 0.31 ms. |
 | T8 3.11 mine game | `WINMINE.EXE` present (27,776 bytes). Board at DGROUP:0x440 (DGROUP = the instance handle), rows of 32 bytes, border 0x10; the same codes as XP. Settings at 0x258 level, 0x25A mines, 0x25C height, 0x25E width; game 0x3C6 width, 0x3C8 height, 0x3EA mines, 0x43A mines left; 0x016 state (1 live, 0x10 over); 0x03C face (0, 2 lost, 3 won); 0x03E first click done; 0x37C cells open; 0x384 timer. **Beginner is 8 x 8** (10 mines) on 3.1. Clicks must be posted (a best-time win opens a modal dialog). |
-| Echo, lengths, speed (aesthetic presets) | 3.11: Add Echo = **one** repeat at **150.0 ms**, gain **0.25** (-12 dB), dry unchanged, no feedback; twice: 0.5 at 150 ms + 0.0625 at 300 ms. Length never grows with Echo (the tail is cut). Paste Mix / Mix with File: new length = max(old, position + inserted); mixing is a plain sum with hard clipping. `<` doubles by inserting neighbour averages; `>` drops every other sample with no filter. **`<>` is bit-identical to the source** (not a filter). **`><`** = decimate + linear interpolation: -1 dB at 2.36 kHz, -3 dB at 4.0 kHz, -6 dB at 5.5 kHz, -10 dB at 6.8 kHz, -20 dB at 8.7 kHz (fs 22050; halve for 11025), with strong aliasing (11025 - f: -32 dB at 1 kHz, -12 dB at 3.6 kHz, almost full level above 5.5 kHz): a "darken and grit", not a clean low-pass. XP: XPFX. |
+| Echo, lengths, speed (aesthetic presets) | 3.11: Add Echo = **one** repeat at **150.0 ms**, gain **0.25** (-12 dB), dry unchanged, no feedback; twice: 0.5 at 150 ms + 0.0625 at 300 ms. Length never grows with Echo (the tail is cut). Paste Mix / Mix with File: new length = max(old, position + inserted); mixing is a plain sum with hard clipping. `<` doubles by inserting neighbour averages; `>` drops every other sample with no filter. **`<>` is bit-identical to the source** (not a filter). **`><`** = decimate + linear interpolation: -1 dB at 2.36 kHz, -3 dB at 4.0 kHz, -6 dB at 5.5 kHz, -10 dB at 6.8 kHz, -20 dB at 8.7 kHz (fs 22050; halve for 11025), with strong aliasing (11025 - f: -32 dB at 1 kHz, -12 dB at 3.6 kHz, almost full level above 5.5 kHz): a "darken and grit", not a clean low-pass. **XP (sndrec32, the same tests): identical.** Echo: one tap at 150.0 ms x0.250; twice: x0.500 at 150 ms + x0.062 at 300 ms; length unchanged. Paste Mix of a 1 s copy at 50 % of 1 s: 1.5 s (max(old, position + clip)). `<` doubles, `>` halves the length. `<>` and `<<>>` are bit-identical to the source. `><` (2 s white noise, coherent gain): 0 dB to 2 kHz, -3.2 dB at 4 kHz, -6 at 5 kHz, -10 at 7 kHz, -22 at 9 kHz, coherence only about 0.5 (the rest is aliasing); `>><<`: -4 dB at 2 kHz, -10 at 3 kHz, -19 at 4 kHz, -39 at 5 kHz, coherence 0.1-0.3: mostly alias grit. Mix with File on XP was not measured (the probe could not drive its file dialog). **For the aesthetic presets:** `<E>` (LONG-ECHO) makes the echo 75 ms, not longer (the 150 ms tap is halved by `>`); `>E<` makes it 300 ms. An echo never rings past the end, so "add silence, then echo" is needed. `<>` does nothing; use `><` / `>><<` for a dark, gritty tone. |
 | TK1 choke | XP, software gain on a stream (440 Hz sine): hard cut (waveOutReset) -10.8 dB HF peak re the sine; 5 ms fade -49.9 dB (fall 4.4 ms); 10 ms -54.7 dB (8.2 ms); 20 ms -58.0 dB (16.1 ms). 3.11: the card release is per sample (from 1 ms); not separately measured. |
 | TK2 retrigger | XP: reset + write on the same handle every 50 ms: the new hit starts on the 10 ms grid (as T5, sd 2.7 ms local); absolute start after a write about 38-52 ms (T3's Lb). 3.11: Stop + Play 2-4 ms, sound 0-3 ms later (T6). |
 | TK3, TK4, TK5, TL1-TL5 | Not yet measured (they need the phase 0 srhook and the kit and pack code). |
 
-Still to measure, first in phase 0: the quality of a planned staircase glide on XP (T3b; the test pump starved
-with 5 parallel streams, a ~10 ms hole every ~90 ms, which must be separated from kmixer CPU), and whether
-continuous re-gained streams remove the 10 ms start grid.
+Still to measure in phase 0: the same inside srhook with 16 recorders at once (CPU under TCG, with the 6 x 20 ms
+rings), and wow over minutes (handle churn in the cache).
 
 Measurement list (kept for reference):
 
@@ -1000,6 +1003,12 @@ Status on `main` (2026-11-13) of the notes in the first version of this spec, an
    short sounds (DING: 0.524 s shown as 0.52; `@t400` near 403 ms). Use the real frame count.
 6. **New, 3.11:** Beginner in the 3.1 mine game is 8 x 8 (10 mines), not 9 x 9.
 7. **New, visualizers:** `vis <state>` in `design/VISUALIZERS.md` collides with v2's `vis <0|1>` (DNA.md 5.4).
+8. **New, aesthetic presets** (`design/AESTHETIC-PRESETS.md`, measured on both editions, section 12): Add Echo is
+   one tap at 150 ms x0.25 and never lengthens the buffer; `<E>` gives a 75 ms echo (the doc says longer), `>E<`
+   300 ms; `<>` is bit-identical (no filter); `><` and `>><<` darken with strong aliasing. That doc's `W`N wow gene
+   is `Yd` here (v3 `W` is the window), its strum `Hs` is `Ss`, its round robin `Y` is `Sg` groups, its `Ja!3` loop
+   and `O`Nb beat offset need sign-free v3 tokens (proposal: a `D` layer token, `Dl3` loop the last 3 points, `Db4`
+   offset in 1/16 beats).
 
 ---
 
