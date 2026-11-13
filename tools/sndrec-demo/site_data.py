@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """Merge encode.py's manifest.json files into the page's preset list, with the source sounds of every preset.
 
-    site_data.py OUT.json EDITION=RENDER_DIR[@MACHINE_DIR] [...]
+    site_data.py OUT.json EDITION=RENDER_DIR[@MACHINE_DIR] [...] [--recipe-cli recipe_cli]
+
+--recipe-cli: recipe_cli.cpp built against the recipe converter (design/v3/recipe.{h,cpp}, PRESET-ENGINE-2.md 17);
+each preset then gets `rec`: the one-line and multi-line recipes, exactly as the converter writes them, checked to
+round-trip. A kit (pads in the globals) also gets its pads one per line, for the page's summary and disclosure.
 
 MACHINE_DIR (BASILISK 16: the release bundle's Contents/Resources/machine) supplies drive.zip, to measure the
 C:\\WINDOWS sounds, and library.zip's LIBRARY.TSV, the library disc as it ships (path, seconds, credit).
@@ -123,6 +127,29 @@ def sound_table_311(machine, names, cat, research):
     return tab
 
 
+def recipes(cli, dnas, names_file):
+    import subprocess
+    r = subprocess.run([cli] + ([names_file] if names_file else []), input='\n'.join(dnas) + '\n', capture_output=True, text=True, check=True)
+    out = {}
+    for line in r.stdout.splitlines():
+        x = json.loads(line)
+        if not x['ok']: sys.exit('recipe does not round-trip: ' + x['dna'])
+        rec = {'one': x['one'], 'lines': x['lines']}
+        env = x['lines'][-1] if x['lines'] and x['lines'][-1].startswith('env ') else None
+        if env and ' · pad ' in ' · ' + env.split(None, 1)[1]:
+            # a kit: the converter writes each pad as a "pad ..." phrase in the env line; list them one per line
+            parts = [p for p in env.split(None, 1)[1].split(' · ')]
+            pads = [p for p in parts if p.startswith('pad ')]
+            rest = [p for p in parts if not p.startswith('pad ')]
+            nums = set()
+            for pd in pads:
+                m = re.match(r'pad (\d+)(?:\u2013(\d+))?', pd)
+                if m: nums.add(int(m.group(1)))   # a pad, or a pitched range of keys, by its first key
+            rec['kit'] = {'pads': pads, 'n': len(nums), 'layers': x['lines'][:-1], 'env': 'env     ' + ' · '.join(rest) if rest else None}
+        out[x['dna']] = rec
+    return out
+
+
 def pack(ed, cat):
     if ed == 'b16':
         if cat == 'BASILISK 16': return '3.11 originals'
@@ -134,16 +161,21 @@ def pack(ed, cat):
 def main():
     out = {'editions': {}}
     cat, research = catalog(), research_roots()
-    for arg in sys.argv[2:]:
+    args = sys.argv[2:]
+    cli = None
+    if '--recipe-cli' in args:
+        i = args.index('--recipe-cli'); cli = args[i + 1]; del args[i:i + 2]
+    for arg in args:
         ed, rest = arg.split('=', 1)
         d, _, machine = rest.partition('@')
         rows = json.load(open(d + '/manifest.json'))
         names = []
         for r in rows: names += [n for n in dna_names(r['dna']) if n not in names]
         sounds = sound_table_311(machine, names, cat, research) if ed == 'b16' and machine else {}
+        recs = recipes(cli, [r['dna'] for r in rows], os.path.join(machine, 'library.names.txt') if machine else None) if cli else {}
         out['editions'][ed] = {'plugin': PLUGIN.get(ed, ed), 'sounds': sounds, 'presets': [{
             'n': r['i'], 'cat': r['cat'].replace('B16 ', '') if r['cat'] != 'BASILISK 16' else 'Classic', 'program': r['cat'] + ': ' + r['name'],
-            'pack': pack(ed, r['cat']), 'name': r['name'], 'dna': r['dna'], 'phrase': r['phrase'], 'src': dna_names(r['dna']),
+            'pack': pack(ed, r['cat']), 'name': r['name'], 'dna': r['dna'], 'phrase': r['phrase'], 'src': dna_names(r['dna']), 'rec': recs.get(r['dna']),
             'file': ('sndrec/audio/%s/%s' % (ed, r['file'])) if r['file'] else None, 'sec': r['render_seconds'],
             'wave': [round(x * 100) for x in r['wave']], 'flags': [f for f in r['flags'] if not f.startswith('hot')],
             'hot': next((f for f in r['flags'] if f.startswith('hot')), None), 'note': r.get('note'),
