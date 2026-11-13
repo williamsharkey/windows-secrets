@@ -8,3 +8,4 @@ __pycache__/
 site/sndrec/audio/
 site/sndrec/video/*.mp4
 site/sndrec/video/*.webm
+site/sndrec/pxv/

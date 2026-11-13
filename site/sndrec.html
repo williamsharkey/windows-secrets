@@ -42,18 +42,10 @@ p { margin: 0 0 10px; }
 code { font: 13px "Fixedsys Excelsior", "Lucida Console", ui-monospace, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
 .note { font-size: 13.5px; color: var(--muted); }
 /* video */
-.screen { background: var(--scr); border: 2px solid; border-color: var(--lo) var(--hi) var(--hi) var(--lo); }
-.screen { max-width: 1028px; margin: 0 auto; }
-.screen video { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; background: var(--scr); }
-.vids { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
-.vids figure { margin: 0; }
 figcaption { font-size: 13.5px; color: var(--muted); margin-top: 6px; }
 /* features */
 .feat { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 14px 22px; }
 .feat div { border-top: 1px solid var(--face); padding-top: 8px; }
-.help { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 16px; margin: 10px 0; }
-.help figure { margin: 0; }
-.help img { width: 100%; height: auto; display: block; border: 1px solid var(--ink); }
 table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 6px 0 10px; }
 td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var(--face); vertical-align: top; }
 /* preset browser */
@@ -77,6 +69,22 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
 .meta { min-width: 0; }
 .nm { display: flex; align-items: center; gap: 8px; min-width: 0; height: 22px; }
 .nm .t { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; min-width: 3em; }
+/* pixel-exact screen captures and screenshots: pxfit.js sizes them in whole device pixels */
+.pxbox { position: relative; display: flex; justify-content: flex-start; align-items: flex-start; background: var(--scr); padding: 0; line-height: 0; }
+.pxbox.pximg { background: transparent; }
+.pxbox canvas, .pxbox img { display: block; image-rendering: pixelated; image-rendering: crisp-edges; flex: none; }
+.pxbox canvas:focus-visible { outline: 2px dotted #fff; outline-offset: -3px; }
+.pxbig { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 64px; height: 48px; font-size: 26px; line-height: 1; cursor: pointer;
+  background: var(--face); color: var(--ink); border: 1px solid var(--ink); box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo); }
+.pxp.pxon .pxbig, .pxp.pxloaded .pxbig { display: none; }
+.pxstatus { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; color: #fff; font-size: 13px; line-height: 1.4; margin: 0; text-shadow: 0 0 3px #000; }
+.pxctl { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0 4px; }
+.pxctl .btn { margin: 0; min-width: 64px; }
+.pxtime { font: 12px "Lucida Console", ui-monospace, monospace; min-width: 8.5em; }
+.pxseek { flex: 1 1 160px; min-width: 120px; }
+.pxloop { font-size: 13px; white-space: nowrap; }
+.pxclips { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 0 0 6px; }
+.pxcap { margin: 0 0 6px; }
 /* source-sound badges: one line in the empty space between the name and the waveform; overflow folds into +N */
 .srcs { flex: 1 0 30px; min-width: 30px; display: flex; justify-content: center; gap: 4px; overflow: hidden; }
 .src { flex: none; display: inline-flex; align-items: stretch; height: 18px; padding: 0; margin: 0; cursor: help; font: 11px/16px inherit; font-family: inherit;
@@ -138,9 +146,10 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .packs td:first-child { white-space: nowrap; font-weight: 700; }
 .dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-.dl img { width: 100%; height: auto; display: block; border: 1px solid var(--ink); }
 @media (max-width: 600px) {
   .body { padding: 12px 12px 14px; } h1 { font-size: 20px; } .lede { font-size: 15px; }
+  /* captures edge to edge, so a 3x phone shows every Windows pixel 1:1 */
+  .pxbox { width: 100vw; margin-left: calc(50% - 50vw); }
   .row { grid-template-columns: 40px minmax(0, 1fr); }
   .wave { grid-column: 2; grid-row: 2; }
   /* the recipe gets the whole width; Copy DNA sits in the free cell under the play button */
@@ -161,31 +170,16 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
   <div class="body">
     <h1>Sixteen Sound Recorders, one instrument</h1>
     <p class="lede">BASILISK 16 and BASILISK SYNTH are instrument plugins for your DAW. Each one runs a real old Windows inside the plugin, opens sixteen copies of Sound Recorder, and plays your notes on them. Every sound is built with Sound Recorder's own menu commands. The plugin never makes a sound of its own, and everything on this page was recorded from it.</p>
-    <div class="screen"><video id="hero" controls preload="metadata" playsinline poster="sndrec/video/b16-assembly.png" aria-label="BASILISK 16 loading: sixteen Windows 3.11 Sound Recorders assemble into one synthesizer, then play">
-      <source src="sndrec/video/b16-assembly.webm" type='video/webm; codecs="vp09.01.10.08, opus"'>
-      <source src="sndrec/video/b16-assembly.mp4" type="video/mp4">
-    </video></div>
-    <p class="note" style="margin-top:6px">BASILISK 16 loading in a DAW: Windows for Workgroups 3.11 resumes, its sixteen Sound Recorders lose their title bars and line up, and the first preset plays. The picture is the plugin's own window and the sound is its output, captured together.</p>
-    <p><a class="btn" href="#presets">Hear the presets</a><a class="btn" href="sndrec-download.html">Download</a><a class="btn" href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-311-v1.2.0">BASILISK 16 1.2.0 release</a></p>
-  </div>
-</div>
-
-<div class="win">
-  <div class="cap"><span class="box"></span><span class="t">In use</span></div>
-  <div class="body">
-    <h2>See it play</h2>
-    <div class="vids">
-      <figure><div class="screen"><video controls preload="none" playsinline poster="sndrec/video/b16-play.png" aria-label="Glass Piano playing chords and a melody; the keys go down as notes sound">
-        <source src="sndrec/video/b16-play.webm" type='video/webm; codecs="vp09.01.10.08, opus"'><source src="sndrec/video/b16-play.mp4" type="video/mp4"></video></div>
-        <figcaption><b>Playing.</b> Glass Piano: an upright piano and a glass ping on two layers. Each MIDI note presses Play on a recorder, and its key goes down in Windows.</figcaption></figure>
-      <figure><div class="screen"><video controls preload="none" playsinline poster="sndrec/video/b16-change.png" aria-label="A preset change while playing: Windows rebuilds the recorders one at a time">
-        <source src="sndrec/video/b16-change.webm" type='video/webm; codecs="vp09.01.10.08, opus"'><source src="sndrec/video/b16-change.mp4" type="video/mp4"></video></div>
-        <figcaption><b>Changing preset while playing.</b> Kalimba Glass becomes Choir Pad. Sound Recorder rebuilds the recorders one at a time; the row being built lights yellow, and the old sound keeps playing until the new one is ready.</figcaption></figure>
-      <figure><div class="screen"><video controls preload="none" playsinline poster="sndrec/video/b16-macro.png" aria-label="The mod wheel moving Macro 1 on Macro Swell">
-        <source src="sndrec/video/b16-macro.webm" type='video/webm; codecs="vp09.01.10.08, opus"'><source src="sndrec/video/b16-macro.mp4" type="video/mp4"></video></div>
-        <figcaption><b>The mod wheel.</b> On Macro Swell, the wheel (the Mod scroll bar, bottom left) adds to Macro 1, which stretches chord's envelope and swings ding's echo across the stereo field.</figcaption></figure>
+    <div class="pxp" id="hero">
+      <div class="pxclips" role="group" aria-label="Clip">
+        <button type="button" class="chip pxclip" aria-pressed="true">Loading</button><button type="button" class="chip pxclip" aria-pressed="false">Playing</button><button type="button" class="chip pxclip" aria-pressed="false">Preset change</button><button type="button" class="chip pxclip" aria-pressed="false">Mod wheel</button>
+      </div>
+      <div class="pxbox"><canvas width="1024" height="768" data-px="1024x768" data-px-note="hero-note" tabindex="0" aria-label="BASILISK 16"></canvas><button type="button" class="pxbig" aria-label="Play">&#9654;</button><p class="pxstatus" hidden></p></div>
+      <div class="pxctl"><button type="button" class="btn pxplay" aria-pressed="false">Play</button><span class="pxtime">0:00</span><input class="pxseek" type="range" min="0" max="15" step="0.001" value="0" aria-label="Position"><label class="pxloop"><input type="checkbox"> Loop</label></div>
+      <p class="pxcap note"></p>
+      <p class="note pxnote" id="hero-note" hidden></p>
     </div>
-    <p class="note" style="margin-top:10px">These are captures of the emulated screen and the plugin's audio from the same run, frame by frame, at the editor's own 1024&times;768. A BASILISK SYNTH (Windows XP) set follows its 1.2 release.</p>
+    <p><a class="btn" href="#presets">Hear the presets</a><a class="btn" href="sndrec-download.html">Download</a><a class="btn" href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-311-v1.2.0">BASILISK 16 1.2.0 release</a></p>
   </div>
 </div>
 
@@ -207,11 +201,12 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
 
     <h2 style="margin-top:18px">Windows Help, the old way</h2>
     <p>Each instrument has a help file for its own Windows' help viewer: WINHELP.EXE in Windows 3.11, winhlp32 in XP. It has a contents page, Search, glossary popups, the strips and panels explained, and a full DNA reference. It is compiled from plain text by a small WinHelp compiler written for this project, without Microsoft's tools. These are screenshots of it in the real Windows 3.11 viewer. The help files are written and tested and will ship in the next releases of both plugins.</p>
-    <div class="help">
-      <figure><a href="sndrec/help/contents.png"><img src="sndrec/help/contents.png" width="682" height="500" loading="lazy" alt="BASILISK 16 Help contents in Windows 3.11's WINHELP.EXE: Getting Started, Making Sounds, Using Windows and Reference topics"></a><figcaption>Contents</figcaption></figure>
-      <figure><a href="sndrec/help/strips.png"><img src="sndrec/help/strips.png" width="682" height="400" loading="lazy" alt="The Strips topic: what each column of a Sound Recorder strip shows"></a><figcaption>The Strips</figcaption></figure>
-      <figure><a href="sndrec/help/search.png"><img src="sndrec/help/search.png" width="682" height="420" loading="lazy" alt="WinHelp's Search dialog listing keywords such as minimize, Mix with File and offsets"></a><figcaption>Search</figcaption></figure>
-      <figure><a href="sndrec/help/minimize.png"><img src="sndrec/help/minimize.png" width="682" height="400" loading="lazy" alt="The topic on minimizing the synth to use Windows, with the steps to open the help"></a><figcaption>Using Windows around the synth</figcaption></figure>
+    <div class="pxg" id="helpg">
+      <div class="pxclips" role="group" aria-label="Help topic">
+        <button type="button" class="chip" aria-pressed="true" data-src="sndrec/help/contents.png" data-size="682x500" data-alt="BASILISK 16 Help contents in Windows 3.11's WINHELP.EXE: Getting Started, Making Sounds, Using Windows and Reference topics">Contents</button><button type="button" class="chip" aria-pressed="false" data-src="sndrec/help/strips.png" data-size="682x400" data-alt="The Strips topic: what each column of a Sound Recorder strip shows">The Strips</button><button type="button" class="chip" aria-pressed="false" data-src="sndrec/help/search.png" data-size="682x420" data-alt="WinHelp's Search dialog listing keywords such as minimize, Mix with File and offsets">Search</button><button type="button" class="chip" aria-pressed="false" data-src="sndrec/help/minimize.png" data-size="682x400" data-alt="The topic on minimizing the synth to use Windows">Using Windows</button>
+      </div>
+      <div class="pxbox pximg"><img src="sndrec/help/contents.png" width="682" height="500" data-px="682x500" data-px-note="help-note" loading="lazy" alt="BASILISK 16 Help contents in Windows 3.11's WINHELP.EXE: Getting Started, Making Sounds, Using Windows and Reference topics"></div>
+      <p class="note pxnote" id="help-note" hidden></p>
     </div>
   </div>
 </div>
@@ -291,14 +286,12 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
   <div class="cap"><span class="box"></span><span class="t">Download</span></div>
   <div class="body">
     <h2>Get them</h2>
-    <p>BASILISK 16's download is complete: the plugin, Windows 3.11 and its Sound Recorders, the library disc and the batch renderer, with nothing else to install or find. BASILISK SYNTH 1.2 ships the same way, with Windows XP built in.</p>
+    <p>BASILISK 16's download is complete: the plugin, Windows 3.11 and its Sound Recorders, the library disc and the batch renderer, with nothing else to install or find. BASILISK SYNTH 1.2.0 ships the same way, with Windows XP built in.</p>
     <div class="dl">
-      <div><img src="basilisk-download/basilisk-16.png" alt="BASILISK 16: sixteen Windows 3.11 Sound Recorders and Clock arranged into one synthesizer" loading="lazy">
-        <h3 style="margin-top:8px">BASILISK 16 1.2.0</h3><p>Windows 3.11's SOUNDREC.EXE. VST3 for Windows and macOS, and AU on macOS.</p>
+      <div><h3>BASILISK 16 1.2.0</h3><p>Windows 3.11's SOUNDREC.EXE. VST3 for Windows and macOS, and AU on macOS.</p>
         <p><a class="btn" href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-311-v1.2.0">Release 1.2.0</a></p></div>
-      <div><img src="basilisk-download/basilisk-synth.png" alt="BASILISK SYNTH: sixteen Windows XP Sound Recorders lined up as one synthesizer, with a keyboard along the bottom" loading="lazy">
-        <h3 style="margin-top:8px">BASILISK SYNTH 1.1</h3><p>Windows XP's sndrec32.exe. VST3 for Windows and macOS, and AU and CLAP on macOS. Version 1.2 is on its way.</p>
-        <p><a class="btn" href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.1.0">Release 1.1</a></p></div>
+      <div><h3>BASILISK SYNTH 1.2.0</h3><p>Windows XP's sndrec32.exe. VST3 for Windows and macOS, and AU and CLAP on macOS.</p>
+        <p><a class="btn" href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.2.0">Release 1.2.0</a></p></div>
     </div>
     <p><a class="btn" href="sndrec-download.html">All downloads and install steps</a><a class="btn" href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">Source</a></p>
     <p class="note">Windows XP, Windows for Workgroups 3.11, their sounds and Sound Recorder are Microsoft's, included as part of this art project. The Windows images came from Windows for Workgroups 3.11 and Windows XP Professional SP3 as preserved by the <a href="https://archive.org/details/wfw311-disk">Internet Archive</a>. The library disc's sounds are public domain and CC0; each one's source is listed on the disc. The emulators are <a href="https://www.qemu.org/">QEMU</a> and DOSBox Pure (GPLv2), and the plugins are built with <a href="https://github.com/DISTRHO/DPF">DPF</a>.</p>
@@ -308,6 +301,32 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
 </div>
 <audio id="player" preload="none"></audio>
 <div id="pop" role="tooltip"></div>
+<script src="sndrec/pxfit.js"></script>
+<script src="sndrec/pxplayer.js"></script>
+<script>
+(function () {
+  'use strict';
+  // the screen captures (tools/sndrec-demo/pxv.py from demo311's lossless frames): exact pixels, audio-clock sync
+  var clips = [
+    {base: 'sndrec/pxv/b16-assembly', seconds: 15.1, title: 'BASILISK 16 loading: sixteen Windows 3.11 Sound Recorders assemble into one synthesizer, then play',
+     caption: '<b>Loading.</b> Windows for Workgroups 3.11 resumes, its sixteen Sound Recorders lose their title bars and line up, and the first preset plays.'},
+    {base: 'sndrec/pxv/b16-play', seconds: 9.9, title: 'Glass Piano playing chords and a melody; the keys go down as notes sound',
+     caption: '<b>Playing.</b> Glass Piano: an upright piano and a glass ping on two layers. Each MIDI note presses Play on a recorder, and its key goes down in Windows.'},
+    {base: 'sndrec/pxv/b16-change', seconds: 22.5, title: 'A preset change while playing: Windows rebuilds the recorders one at a time',
+     caption: '<b>Changing preset while playing.</b> Kalimba Glass becomes Choir Pad. Sound Recorder rebuilds the recorders one at a time; the row being built lights yellow, and the old sound keeps playing until the new one is ready.'},
+    {base: 'sndrec/pxv/b16-macro', seconds: 9.8, title: 'The mod wheel moving Macro 1 on Macro Swell',
+     caption: '<b>The mod wheel.</b> On Macro Swell, the wheel (the Mod scroll bar, bottom left) adds to Macro 1, which stretches chord\'s envelope and swings ding\'s echo across the stereo field.'}];
+  window.heroPlayer = new PxPlayer(document.getElementById('hero'), clips);
+  // the help gallery
+  var g = document.getElementById('helpg'), shot = function () { return g.querySelector('[data-px]'); };
+  [].forEach.call(g.querySelectorAll('.chip'), function (b) {
+    b.addEventListener('click', function () {
+      [].forEach.call(g.querySelectorAll('.chip'), function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+      pxfit.setImage(shot(), b.getAttribute('data-src'), b.getAttribute('data-size'), b.getAttribute('data-alt'));
+    });
+  });
+})();
+</script>
 <script>
 (function () {
   'use strict';
@@ -511,13 +530,8 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
   }
   player.addEventListener('ended', stop);
   player.addEventListener('play', tick);
-  function pauseVideos() { [].forEach.call(document.querySelectorAll('video'), function (v) { if (!v.paused) v.pause(); }); }
-  [].forEach.call(document.querySelectorAll('video'), function (v) {
-    v.addEventListener('play', function () {
-      stop();
-      [].forEach.call(document.querySelectorAll('video'), function (o) { if (o !== v && !o.paused) o.pause(); });
-    });
-  });
+  function pauseVideos() { if (window.PxPlayer) PxPlayer.pauseAll(); }
+  window.onPxPlay = function () { stop(); };   // a capture playing stops the preset player
 
   function copy(text, b) {
     function ok() { var t = b.textContent; b.textContent = 'Copied'; setTimeout(function () { b.textContent = t; }, 1200); }

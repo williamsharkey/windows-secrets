@@ -29,7 +29,14 @@ a { color: var(--link); }
 h1 { font-size: 22px; margin: 0 0 6px; }
 h2 { font-size: 16px; margin: 18px 0 6px; }
 p { margin: 0 0 10px; }
-.shot { width: 100%; height: auto; display: block; border: 1px solid var(--ink); margin: 6px 0 14px; image-rendering: auto; }
+.shot { margin: 6px 0 14px; }
+/* screenshots at a whole number of device pixels per Windows pixel, never resampled (sndrec/pxfit.js) */
+.pxbox { display: flex; justify-content: flex-start; align-items: flex-start; line-height: 0; }
+.pxbox canvas, .pxbox img { display: block; flex: none; image-rendering: pixelated; image-rendering: crisp-edges; }
+.pxbox img { max-width: 100%; height: auto; }
+/* wider than the text column when the window allows, so a 1024-pixel screenshot fits at 1:1 on a 1x screen */
+.pxbox.shot { width: min(1040px, 100vw - 32px); margin-left: calc(50% - min(520px, 50vw - 16px)); }
+@media (max-width: 600px) { .pxbox { width: 100vw; margin-left: calc(50% - 50vw); } }   /* edge to edge: a 3x phone shows every pixel 1:1 */
 .dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 10px 0 6px; }
 .dl a { display: block; text-decoration: none; color: var(--ink); background: var(--face); border: 1px solid var(--ink); border-radius: 3px;
   box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo); padding: 10px 12px; }
@@ -66,9 +73,9 @@ th { font-weight: 700; }
 <div class="win" id="basilisk-16">
   <div class="cap"><span class="box"></span><span class="t">BASILISK 16 &mdash; an instrument made of sixteen Windows 3.11 Sound Recorders</span></div>
   <div class="body">
-    <img class="shot" src="basilisk-download/basilisk-16.png" width="1024" height="768" alt="BASILISK 16 in a plugin host: sixteen Sound Recorder rows in two layer colours holding a piano and a glass sound, a header with Preset and Sound drop-downs, pan, offset and envelope controls and an envelope drawn by a seventeenth Sound Recorder, the DNA line and panel with four macros, the Windows Clock, and a five-octave keyboard of Windows buttons along the bottom with Bend and Mod scrollbars, Hold checked and four keys held down.">
+    <div class="pxbox shot"><img data-px="1024x768" src="basilisk-download/basilisk-16.png" width="1024" height="768" alt="BASILISK 16 in a plugin host: sixteen Sound Recorder rows in two layer colours holding a piano and a glass sound, a header with Preset and Sound drop-downs, pan, offset and envelope controls and an envelope drawn by a seventeenth Sound Recorder, the DNA line and panel with four macros, the Windows Clock, and a five-octave keyboard of Windows buttons along the bottom with Bend and Mod scrollbars, Hold checked and four keys held down."></div>
     <p>A plugin instrument (VST3 for Windows and macOS, Audio Unit for macOS). Each copy runs its own Windows for Workgroups 3.11. When it loads, sixteen real Sound Recorders lose their menus and title bars and line up into one synthesizer, in under six seconds. Every note you play is played by Sound Recorder: the plugin picks a recorder, Windows presses its Play button, and Sound Recorder's own sound comes out of the emulated sound card into your DAW, at the pitch you played.</p>
-    <p>The sound is a <b>DNA</b>, a line of Sound Recorder commands run in order: <code>chimesE+;R900</code> loads CHIMES.WAV, adds an echo, turns it up, and releases over 900 ms. The commands are Sound Recorder's own menus: louder, softer, faster, slower, echo, reverse, copy and paste, insert or mix another sound, delete before or after a position. The DNA also sets harmony, unison, transpose, layers and the envelope. Change any of it in Windows with the panel, from the DAW's parameters, or with the 72 programs. Your DAW saves the DNA with the project.</p>
+    <p>The sound is a <b>DNA</b>, a line of Sound Recorder commands run in order: <code>chimesE+;R900</code> loads CHIMES.WAV, adds an echo, turns it up, and releases over 900 ms. The commands are Sound Recorder's own menus: louder, softer, faster, slower, echo, reverse, copy and paste, insert or mix another sound, delete before or after a position. The DNA also sets harmony, unison, transpose, layers and the envelope. Change any of it in Windows with the panel, from the DAW's parameters, or with the 76 programs. Your DAW saves the DNA with the project.</p>
     <p><b>New in 1.2:</b></p>
     <ul>
       <li><b>Layered sounds.</b> Each layer has its own start offset, pan, and drawn volume and pan envelopes. A seventeenth Sound Recorder draws the selected layer&rsquo;s envelope in its green wave display.</li>
@@ -84,7 +91,9 @@ th { font-weight: 700; }
       <li><b>Builds you can watch.</b> When a sound is rebuilt, each recorder&rsquo;s row lights up while it is being built, and its status field names each Sound Recorder command as it runs.</li>
       <li><b>1.2.1:</b>
         <ul>
-          <li>Chord Thump, Critical Bass and Hardware Sub sound again, now with Windows 3.1 sounds.</li>
+          <li>XP&rsquo;s sounds are on Windows 3.11&rsquo;s drive, converted for its Sound Recorder: a DNA that names <code>startup</code> or <code>critstop</code> plays XP&rsquo;s own file, no longer DING. The preset browser in Windows filters [All] [W3.11] [XP].</li>
+          <li>Chord Thump, Critical Bass and Hardware Sub sound on every note.</li>
+          <li>Windows&rsquo; screen is drawn pixel for pixel, at 1&times;, 2&times; or 3&times;, never smoothed, on any Windows scaling and on Retina Macs.</li>
           <li>Bowl Swell is audible.</li>
           <li>No program peaks above full scale.</li>
           <li>Macro-driven rebuilds keep every note in offline renders.</li>
@@ -106,7 +115,7 @@ th { font-weight: 700; }
     </table>
 
     <h2>Good to know</h2>
-    <p>No account and no API key: this one never talks to Claude. The 72 programs are in your DAW&rsquo;s preset list and in Windows&rsquo; Preset drop-down, and you can also type a DNA straight into Windows. A new sound is built while the old one keeps playing: Windows rebuilds one recorder at a time and plays your notes in between, so a preset change never interrupts you. Offline renders wait for the build and come out bit-identical every time, including after reloading the project; live playback never waits (it is silent for the few seconds Windows takes to assemble). It reports a fixed latency of 60 ms, which DAWs compensate for on playback; you hear it when you play live. Each instance is an emulated PC that rests when it has nothing to do: about 13% of one core idle and 35% while playing, on the PC it was built on. Sixteen voices per instance; a seventeenth note steals the oldest.</p>
+    <p>No account and no API key: this one never talks to Claude. The 76 programs are in your DAW&rsquo;s preset list and in Windows&rsquo; Preset drop-down, and you can also type a DNA straight into Windows. A new sound is built while the old one keeps playing: Windows rebuilds one recorder at a time and plays your notes in between, so a preset change never interrupts you. Offline renders wait for the build and come out bit-identical every time, including after reloading the project; live playback never waits (it is silent for the few seconds Windows takes to assemble). It reports a fixed latency of 60 ms, which DAWs compensate for on playback; you hear it when you play live. Each instance is an emulated PC that rests when it has nothing to do: about 13% of one core idle and 35% while playing, on the PC it was built on. Sixteen voices per instance; a seventeenth note steals the oldest.</p>
 
     <h2>What is in it</h2>
     <p class="note">Windows for Workgroups 3.11 and Windows 3.1&rsquo;s CHORD and TADA (&copy; 1992&ndash;1993 Microsoft), included as part of this art project. The emulator is <a href="https://codeberg.org/schelling/dosbox-pure">DOSBox Pure</a> (GPLv2 or later), with one addition: BSYN, an emulated 32-voice sound card, because Windows 3.11's Sound Blaster driver can only play one sound at a time. Its Windows 3.11 wave driver, the program that assembles the recorders, and the plugin (built with <a href="https://github.com/DISTRHO/DPF">DPF</a>) are in <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">packages/basilisk-synth-311</a>. The library sounds&rsquo; sources and licences are listed on the disc (\LIBRARY.TSV) and in <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth/library">packages/basilisk-synth/library</a>.</p>
@@ -116,7 +125,7 @@ th { font-weight: 700; }
 <div class="win" id="basilisk-synth">
   <div class="cap"><span class="box"></span><span class="t">BASILISK SYNTH &mdash; an instrument made of sixteen Windows XP Sound Recorders</span></div>
   <div class="body">
-    <img class="shot" src="basilisk-download/basilisk-synth.png" width="1024" height="768" loading="lazy" alt="BASILISK SYNTH 1.2: Windows XP with sixteen Sound Recorder strips in a column, colour-coded by layer; under them the envelope editor (eight upright sliders and a Task Manager style graph) and a keyboard of push buttons with bend and mod sliders; beside them the DNA box, the layers, the library browser, Task Manager's CPU graphs, four macro sliders and the clock.">
+    <div class="pxbox shot"><img data-px="1024x768" src="basilisk-download/basilisk-synth.png" width="1024" height="768" loading="lazy" alt="BASILISK SYNTH 1.2: Windows XP with sixteen Sound Recorder strips in a column, colour-coded by layer; under them the envelope editor (eight upright sliders and a Task Manager style graph) and a keyboard of push buttons with bend and mod sliders; beside them the DNA box, the layers, the library browser, Task Manager's CPU graphs, four macro sliders and the clock."></div>
     <p>A plugin instrument: VST3 for Windows and macOS, plus Audio Unit and CLAP on macOS. Each copy runs its own Windows XP. Open the editor and sixteen real <code>sndrec32.exe</code> windows come apart on XP's desktop and line up into one tape machine, one visible change at a time: menu bar, then title bar, then the buttons they don't need, then the glide into place (about five seconds; it can already play after one). Task Manager's CPU graphs, the clock, four macro sliders and a keyboard of real push buttons follow. Every note you play is played by one of those Sound Recorders, through XP's own sound card, and that sound is what reaches your DAW. Inside each Sound Recorder a small DLL streams its own sound to the card, at the note's pitch, with the note's level, pan and envelope applied.</p>
     <p>The sound is a <b>DNA</b> line, the same format as BASILISK 16. It lists layers of XP's own sounds (ding, chord, tada, the XP startup and shutdown sounds, 35 in all), each run through Sound Recorder's Effects and Edit menus in order. It also sets harmony, unison, transpose and the envelope, and since 1.2 each layer's offset from the note, its pan and a drawn envelope, collages (mix or insert another sound at a position) and four macros you can automate. A library disc in XP's CD drive adds 510 public-domain sounds (instruments, glass and bells, nature, machines, office, water). <code>chord#10/ding&gt;&gt;E#6;A2D300S70R250</code> is a chord on ten recorders over a sped-up, echoed ding on six. Edit it inside XP (menus, the envelope sliders, the library browser, Mutate) and watch each step being picked from that recorder's own menu, play it from XP's keyboard, use the DAW's parameters, or start from the 39 factory programs (Keys, Bells, Pads, Bass, Plucks, Percussion, Collage, FX, Macro, Brass, Library). Your DAW saves it with the project.</p>
     <div class="dl">
@@ -141,5 +150,6 @@ th { font-weight: 700; }
 </div>
 </div>
 <nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">Windows Secrets</a><i>&middot;</i><a href="inside-windows.html">Inside Windows</a><i>&middot;</i><a href="tribute.html">Tribute</a><i>&middot;</i><a href="basilisk.html">BASILISK</a><i>&middot;</i><a href="basilisk-term.html">BASILISK III</a><i>&middot;</i><a href="basilisk-31.html">BASILISK 3.11</a><i>&middot;</i><a href="xp-live.html">Live</a><i>&middot;</i><a href="puppetry.html">Window Puppetry</a><i>&middot;</i><a href="valentine-xp.html">XP Valentine</a><i>&middot;</i><a href="valentine-31.html">Valentine 3.11</a><i>&middot;</i><a href="basilisk-31-browser.html">3.11 in your browser</a><i>&middot;</i><a href="basilisk-download.html">Download</a><i>&middot;</i><a href="sndrec.html">Synths</a><i>&middot;</i><b>Synth downloads</b></nav>
+<script src="sndrec/pxfit.js"></script>
 </body>
 </html>

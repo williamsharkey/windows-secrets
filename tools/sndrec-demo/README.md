@@ -14,7 +14,8 @@ again. Work in a Linux folder (here `W=~/sndrec-demo`), not on C:.
 | `site_data.py` | Merges the editions' manifests into `site/sndrec/presets.json`, which the page reads. |
 | `demo311.cpp` | The video capture for BASILISK 16: `render311` with the screen on. Same engine, snapshot and shared core; it plays the plugin's part (hello and assembly, `dna`, stamped notes, `show` for the keys, `cc 1` for the mod wheel, a preset change that keeps the old sound until `built`) and grabs the emulated screen every 1/30 s of DAC time, so picture and sound stay in step. |
 | `videos/*.txt` | The four video scripts (`MID` stands for the folder of `phrases.py`'s MIDI files). |
-| `encode_videos.sh` | Lossless capture -> H.264 MP4 (4:2:0, CRF 8) and VP9 WebM (4:4:4, crisp pixels), audio levelled to -16 LUFS. |
+| `pxv.py` | Lossless capture -> the page's pixel-exact format: frame 0 and every later frame's changed 16x16-cell rectangles packed into PNG atlases (exact palette PNGs, no colour-management chunks), plus a binary index (`.pxv`). `pxv.py verify` decodes it and compares every frame with the capture, byte for byte. Played by `site/sndrec/pxplayer.js` on a canvas, scaled by whole device pixels by `site/sndrec/pxfit.js`, following its `.m4a` audio track's clock. |
+| `encode_videos.sh` | (superseded by pxv.py) the old H.264/VP9 encode. |
 
 BASILISK 16 (1.2.0)
 -------------------
@@ -43,10 +44,14 @@ for s in assembly play change macro; do
   sed "s#MID#$W/b16/mid#" tools/sndrec-demo/videos/$s.txt > $s.txt
   demo311 --machine $M --core CORE.so --script $s.txt --video $s.mkv --audio $s.wav
 done
-OUT=$W/site/sndrec/video tools/sndrec-demo/encode_videos.sh b16 assembly play change macro
+for s in assembly play change macro; do
+  python3 tools/sndrec-demo/pxv.py encode $s.mkv $W/site/sndrec/pxv b16-$s --poster $([ $s = assembly ] && echo 400 || echo 60)
+  python3 tools/sndrec-demo/pxv.py verify $W/site/sndrec/pxv b16-$s $s.mkv          # must say 0 differ
+  # audio: levelled to -16 LUFS as in encode_videos.sh, then AAC 128 kbps -> $W/site/sndrec/pxv/b16-$s.m4a
+done
 ```
 
-The posters (`site/sndrec/video/*.png`, in git) are frame 400 of assembly and frame 60 of the others.
+The captures (`site/sndrec/pxv/`, about 2 MB for the four 3.11 clips against 5.9 MB of MP4) are not in git.
 
 Deploy: copy `site/sndrec.html` and `site/sndrec/` to the web host's `html/live/`, then compare md5 over HTTPS.
 
