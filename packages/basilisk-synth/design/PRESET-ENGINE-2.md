@@ -6,6 +6,9 @@ Status: **proposal**. Branch `design/preset-engine-2`. This file does not change
 - Do not merge any part of it into `DNA.md` or `core/` until both v1.2 releases ship.
 - The prototypes are in `design/proto/`. They use `core/` read-only.
 - "XP" is BASILISK SYNTH (`packages/basilisk-synth`). "3.11" is BASILISK 16 (`packages/basilisk-synth-311`).
+- Owner decision: the plugins ship with their Windows images built in (no bring-your-own image). Every sound a
+  preset uses comes from the built-in machine image or from the built-in library disc (DNA.md 5.5): the tape and
+  kit sources included. Nothing is extracted from a user's own Windows.
 
 The rule of the product stays the same: a real Sound Recorder plays every note. The plugin only sends
 instructions. Each section below maps each wish to a thing that Sound Recorder, its sound card handle or the 3.11
@@ -28,6 +31,7 @@ Contents:
 13. The prototypes
 14. Notes for the v2 lane
 15. Wish 8: kit mode (percussion kits)
+16. The Library tab: sound packs as real discs
 
 ---
 
@@ -424,13 +428,31 @@ jitter. A grain layer can take the whole pool. The UI shows the stream count bes
 
 The whole editor is the inside of Windows. So the tabs are real Windows controls in `synth.exe`.
 
-- **XP:** a real Tab control (`SysTabControl32`) on top of the right-hand column (x 606-1016). The 16 strips stay
-  on the left on every tab: they show the voices, the grains and the sequencer notes. The Main tab is the column of
-  today without change. The column moves down 22 px for the tab row; there is room (it ends at y 742 of 768).
+**The screen today (main, v1.2 work in progress), which the tabs must fit around:**
+
+| Edition | Strips | Under the strips | Right column / panel |
+|---|---|---|---|
+| XP (`guest/synth.c`) | 16 rows of 34 px, x 30-592, y 6-550 | envelope editor y 551-634, **keyboard strip y 636-746** (DNA.md 5.4) | x 606-1016: DNA, Layers, Sounds, Task Manager CPU, **Macros** (y 510-742) and the clock |
+| 3.11 (`synth.c`) | 16 rows of 30 px from y 66 | panel y 550-682 (DNA, Sound/Effects, Layer, Harmony, sliders, the four macro sliders) | **keyboard strip y 684-768** |
+
+- **XP:** a real Tab control (`SysTabControl32`) on top of the right-hand column (x 606-1016). The strips, the
+  envelope editor and the keyboard strip stay on every tab: the strips show the voices, the grains and the
+  sequencer notes, and the keyboard shows what plays. The Main tab is the column of today without change (with
+  its Macros frame). The column moves down 22 px for the tab row: it then ends at y 764 of 768, so the Main page
+  must lose 18 px somewhere (the Sounds frame can).
 - **3.11:** Windows 3.11 has no tab control. A row of push buttons acts as the tabs; the button of the open page
-  stays down (`BM_SETSTATE`), as in some 3.11 Control Panel dialogs. The pages use the 3.11 controls: buttons,
-  check boxes, edit fields and horizontal scroll bars as sliders. The pages live in the panel under the strips
-  (y 620-768).
+  stays down (`BM_SETSTATE`), as in some 3.11 Control Panel dialogs. The tab buttons sit at the right end of the
+  DNA row (the DNA edit field shrinks from 830 to about 520 px). The Main page is today's panel; every other page
+  replaces the panel rows below the DNA row (y 580-682, 1024 x 102 px). The keyboard strip (y 684-768) stays.
+- **Pages that need the whole screen** (the Visualizers tab of `design/VISUALIZERS.md`, the Expert mine board)
+  cover the strips while they are open; the sound does not use the windows, so nothing stops.
+- **Tab ids** (shared with the visualizer and artwork designs): `main`, `voices`, `play`, `grains`, `seq`, `kit`,
+  `lib`, `vis`, `look`. On XP, 9 tabs do not fit in one row of 410 px: the tab control uses `TCS_MULTILINE` (two
+  rows, 44 px) or the less used tabs (`vis`, `look`) go behind a `>>` page. On 3.11: two rows of small buttons.
+- **Wire:** the tabs live inside Windows, so the guest tells the host: guest -> host `tab <id>` when the visitor
+  opens a page (the visualizer design needs this to start and stop its frames); host -> guest `tab <id>` opens a
+  page (for example the plugin's own "show Sequencer" menu). Not `vis`: v2 already uses `vis <0|1>` for build
+  visibility (DNA.md 5.4), so the visualizer design must rename its `vis <state>` line (for example `scene`).
 
 ### 8.1 XP mockups (the right-hand column, 410 x 740 px)
 
@@ -545,20 +567,23 @@ bar shows the random range, and the thumb shows the last value used.
  [Load] [Audition] [Save As...]
 ```
 
-The Library tab holds the v2 browser that the v2 lane builds now. This proposal only moves it into a tab.
+The Library tab holds the v2 browser that the v2 lane builds now. This proposal moves it into a tab, and section 16
+turns the tab into real drives: each sound pack is a disc in a CD drive, managed with Explorer (XP) or File Manager
+(3.11).
 
-### 8.2 3.11 page sketch (panel, 1024 x 148 px)
+### 8.2 3.11 page sketch (panel rows under the DNA row, 1024 x 102 px)
 
 ```
- [Main] [Voices] [Playback] [Grains] [Sequencer] [Library]     <- push buttons; the open one stays down
+ DNA [ding>E#4Ws.2~.4       ]  [Main][Voices][Play][Grains][Seq][Kit][Lib]  <- push buttons; the open one stays down
  Playback  Layer [<] 2 [>]
  Start  <|||||[]||||||||>  .20  [x] Random to <||||||[]|||||>  .40
  End    <||||||||||||||[]>  1.0  Length <|||[]||||||> .10-.30   Tape [8000] ms
  Wow    <||[]||||||||||||>  6 c  Rate <||[]|||> 0.6 Hz        Scoop <|[]|||> 15 c
 ```
 
-The 3.11 Sequencer page needs room for the game. On that page the strips get narrower (the seek scroll bar and the
-status text get shorter), and the mine game sits to the right of them.
+The 3.11 Sequencer page needs room for the game (Expert: 30 x 16 cells of 16 px = about 500 x 330 px with its
+frame). On that page the strips get narrower (the seek scroll bar and the status text get shorter), and the mine
+game sits to the right of them, over strips 1-16's right half.
 
 ### 8.3 Effort and risk
 
@@ -959,3 +984,84 @@ ignores the others hears everything).
 Effort: **M** for the core and host (pads, choke, segments, buses on the plugin side); **S** per guest for `seg`
 and `choke`; **M** for the Kit tab on each edition. Risks: XP choke fades depend on the streamed gain path (5.3);
 3.11 retrigger speed (T6); multi-out on XP (TK4).
+
+---
+
+## 16. The Library tab: sound packs as real discs
+
+Owner idea (2026-11-13): manage preset sections and sound packs with the real Explorer and drive UI: discs that
+load and unload, CD-ROM icons, right-click actions. Packs ship **built in**, inside the plugin, as disc images
+(no downloads, no images of the user's own; section 0 status note).
+
+### 16.1 The model
+
+- A **pack** is one disc image: on XP an ISO 9660 + Joliet image (as the library disc of DNA.md 5.5), on 3.11 an
+  ISO for DOSBox Pure. Its root holds `\PACK.INF` (id, title, version, author, licence, description), `\AUTORUN.INF`
+  (label and icon), `\LIBRARY.TSV`, `\PRESETS.TSV` and the sound folders, as DNA.md 5.5.
+- **Insert / Eject** are QMP commands on a virtual CD drive: `blockdev-change-medium` and `eject` (XP); a DOSBox
+  Pure disc swap (3.11). The built-in library disc stays inserted on its own drive (XP: the CD drive of today; it
+  gets the letter `L:`).
+- **The DNA does not name packs.** Sound NAMEs are unique across all packs (DNA.md 5.2), and the plugin carries
+  every pack's catalogue, so it knows which pack holds each NAME. A preset needs the packs of its NAMEs; the
+  plugin state also stores them under the key `packs` (ids, for the UI), and `PRESETS.TSV` gets a pack column. So
+  a DNA stays portable and needs no new token.
+- **Loading a preset** whose pack is not inserted: the plugin inserts it into a free drive (the least recently used
+  pack drive if none is free; never `L:`, never a drive whose sounds a recorder's current buffer needs for a
+  rebuild), waits for the guest's `lib <n> <path>` (DNA.md 5.4), then sends the `dna`.
+
+### 16.2 XP: Explorer
+
+- The Library tab hosts a real Explorer view of **My Computer** (a shell view window, `SHCreateShellFolderView` /
+  an `explorer.exe /e,` window made a child of the tab page, as the donor pages are today). One CD-ROM drive per
+  inserted pack, with its volume label and the icon from its `AUTORUN.INF`.
+- The real shell context menu of a drive: Open, Explore, **Eject**, Properties. Eject in Explorer is a real media
+  eject: QEMU reports `DEVICE_TRAY_MOVED`; the plugin sees it and updates its state. Properties shows the volume;
+  the pack's own metadata is `PACK.INF` shown in a property page of `synth.exe` ("Pack" page) or opened in Notepad.
+- Inside a drive: the preset folders (one per category) and the presets as small files (`*.bsp`, one line: the
+  DNA). Double-click loads one (the file type is registered to `synth.exe`, which sends `edit`). Dragging a preset
+  onto the synth window loads it too (`WM_DROPFILES`).
+- **Insert:** a "Packs" menu in the tab (and the plugin's own menu) lists the built-in packs not inserted; picking
+  one sends `pack insert <id>` (guest -> host) and the host does the QMP insert.
+- Optional: AutoPlay asks "Load presets from this disc" on insert (an AutoPlay handler registered to `synth.exe`).
+  Off by default: AutoPlay is slow under TCG (TL4).
+
+### 16.3 3.11: File Manager
+
+- The Library tab page opens **File Manager** (`WINFILE.EXE`) as a child window, as Task Manager is on XP. Its
+  drive bar shows one CD drive per pack (MSCDEX drive letters); the drive icons are File Manager's own CD icon.
+- File Manager has no Eject: the synth's own **Disk** menu on the page (Insert pack..., Eject drive X:) does it, and
+  the host swaps the image in DOSBox Pure. After a swap the page refreshes File Manager (Window > Refresh, F5).
+- Pack metadata: `PACK.TXT` opens in Notepad. Presets are `*.BSP` files; File > Associate links them to
+  `SYNTH.EXE`, so a double-click loads one.
+
+### 16.4 Wire
+
+| Direction | Line | Meaning |
+|---|---|---|
+| guest -> host | `pack insert <id>` / `pack eject <drive>` | the visitor asked for it in Windows |
+| host -> guest | `pack <drive> <id> <label>` / `pack <drive> -` | a disc is now in that drive / the drive is empty (after the QMP command or a tray event) |
+| guest -> host | `lib <n> <path>` | (v2, DNA.md 5.4) the catalogue read from the disc |
+
+### 16.5 Rules
+
+- A recorder's built buffer stays in Sound Recorder's memory, so ejecting a disc never silences a sound that is
+  already built. But a **rebuild** (a new DNA, a macro on `N`, a reload) needs the source. So the host refuses to
+  eject a disc that the current DNA uses (the Explorer eject is undone by re-inserting at once, with a message on
+  the page), or offers to switch to another preset first.
+- Snapshot rule: the drives (devices) are part of the machine; adding drives means a new machine build. Media can
+  change after resume (the library disc already does this).
+
+### 16.6 Limits and measurements
+
+| Test | What | Expected / why |
+|---|---|---|
+| TL1 | How many CD drives each machine can have. XP: IDE has 4 slots (disk = primary master, today's CD = secondary master), so 2 more IDE CD drives; more as USB CD drives (`usb-storage`, removable, XP's in-box driver). 3.11: DOSBox drive letters D:-Z: via MSCDEX. | XP: 3 IDE + some USB; 3.11: many |
+| TL2 | Insert and eject latency: QMP command to the drive showing in Explorer / File Manager, and to `lib` | target under 2 s |
+| TL3 | Explorer stability under repeated swaps (100 insert/eject cycles with the Library page open) | no hang, no "drive not ready" dialog left open |
+| TL4 | AutoPlay cost under TCG | decide if the prompt is on |
+| TL5 | A rebuild after its disc is ejected (must be refused, 16.5) and the auto-insert on preset load | correct order, no silent layer |
+
+Effort: **M** (XP Explorer embedding and the QMP side), **M** (3.11 File Manager page and DOSBox swaps). Risk:
+medium (Explorer inside the synth window under TCG; drive count on XP). Phase: with or after the Library tab
+(phase 7, section 11).
+

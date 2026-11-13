@@ -36,6 +36,7 @@ typedef struct {
     const short *src; int pos, end, base;   /* next source frame to queue; frame of the stream's first sample */
     double g, gStep; int rampLeft, zeroLeft, holdLeft, stopAfter;   /* gain now, per-frame step, frames left in the ramp */
     double panL, panR;
+    int srcOff, outAt, outFade;    /* plan mode: source frame = srcOff + pos; at pos == outAt a fade-out of outFade starts */
     WAVEHDR hdr[NQ]; short *buf[NQ]; int chunk;
 } V;
 #define MAXV 48
@@ -85,6 +86,7 @@ static int fill(V *v, int i)
     if (n > v->end - v->pos) n = v->end - v->pos;
     for (k = 0; k < n; k++) {
         double s;
+        if (v->outAt >= 0 && v->pos == v->outAt && v->outFade > 0) { v->rampLeft = v->outFade; v->gStep = -v->g / v->outFade; v->stopAfter = 1; v->holdLeft = 0; }
         if (v->zeroLeft > 0) { v->zeroLeft--; s = 0; }
         else {
             if (v->holdLeft > 0) v->holdLeft--;
@@ -94,7 +96,7 @@ static int fill(V *v, int i)
                 if (v->g > 1) v->g = 1;
                 if (!v->rampLeft) v->g = v->stopAfter ? 0 : 1;
             }
-            s = v->src[v->pos] * v->g;
+            { int si = v->srcOff + v->pos; s = si >= 0 && si < SR * SECS ? v->src[si] * v->g : 0; }
         }
         o[2 * k] = (short)(s * v->panL); o[2 * k + 1] = (short)(s * v->panR);
         v->pos++;
@@ -133,7 +135,7 @@ static void vstart(V *v, const short *src, int from, int zero, int fade, double 
     int i;
     vstop(v);
     v->src = src; v->pos = v->base = from < 0 ? 0 : from; v->end = SR * SECS;
-    v->panL = pl; v->panR = pr; v->stopAfter = 0; v->holdLeft = 0;
+    v->panL = pl; v->panR = pr; v->stopAfter = 0; v->holdLeft = 0; v->srcOff = 0; v->outAt = -1; v->outFade = 0;
     v->zeroLeft = zero > 0 ? zero : 0;                  /* frames played at gain 0 before the ramp starts */
     if (fade > 0) { v->g = 0; v->rampLeft = fade; v->gStep = 1.0 / fade; }
     else { v->g = 1; v->rampLeft = 0; }
@@ -241,6 +243,91 @@ int main(int argc, char **argv)
             Sleep(500);
             EnterCriticalSection(&cs); vstop(b); vstop(a); LeaveCriticalSection(&cs);
             Sleep(300);
+        }
+    } else if (!strcmp(mode, "pair")) {
+        /* two streams started in the same instant (one critical section), the same source frame: A left, B right.
+           The L/R lag is their relative start error: what a pre-planned swap depends on (B's absolute start
+           latency cancels). semis: B's rate (0: same rate; then the lag is exact). */
+        nv = 2;
+        for (i = 0; i < n; i++) {
+            V *a = cached(SR, NULL, &o), *b = cached(SR + 1, a, &o);
+            EnterCriticalSection(&cs);
+            vstart(a, noise, SR * (i % 4), 0, 0, 1, 0);
+            vstart(b, noise, SR * (i % 4), 0, 0, 0, 1);
+            LeaveCriticalSection(&cs);
+            Sleep(120);
+            {   /* can the guest see the 10 ms start offset? both positions read in one critical section */
+                int pa, pb;
+                EnterCriticalSection(&cs); pa = played(a); pb = played(b); LeaveCriticalSection(&cs);
+                printf("%.1f pair trial %d posA %d posB %d diff %.2f ms\n", now(), i, pa, pb, (pa - pb) * 1000.0 / SR);
+            }
+            Sleep(380);
+            EnterCriticalSection(&cs); vstop(a); vstop(b); LeaveCriticalSection(&cs);
+            Sleep(300);
+        }
+    } else if (!strcmp(mode, "plan")) {
+        /* a PRE-PLANNED staircase glide (what srhook would do for a glide, scoop or wow it knows in advance):
+           stream k plays rate r_k; all streams start in the same instant; stream k is at gain 0 until its handover
+           time H_k, fades in over fadeMs while stream k-1 fades out, and the source position is continuous:
+           P_k = P_(k-1) + (H_k - H_(k-1)) * r_(k-1). Every stream's own start latency is the same, so it cancels.
+           args: n semis glideMs steps fadeMs holdMs (holdMs: time at the first pitch before the glide) */
+        double semis = argc > 3 ? atof(argv[3]) : 7, gms = argc > 4 ? atof(argv[4]) : 100, hold = argc > 7 ? atof(argv[7]) : 300;
+        int steps = argc > 5 ? atoi(argv[5]) : 4, fadeMs = argc > 6 ? atoi(argv[6]) : 10, k;
+        nv = steps + 1;
+        for (i = 0; i < n; i++) {
+            V *v[33];
+            double H[34], P[34], r[33];
+            for (k = 0; k <= steps; k++) {
+                r[k] = SR * pow(2.0, semis * k / steps / 12.0);
+                v[k] = cached((int)(r[k] + 0.5), NULL, &o);
+                H[k] = k == 0 ? 0 : hold + gms * (k - 1) / (steps > 1 ? steps - 1 : 1) * (steps > 1 ? 1 : 0);
+            }
+            H[steps + 1] = 1e9;
+            P[0] = 0;
+            for (k = 1; k <= steps; k++) P[k] = P[k - 1] + (H[k] - H[k - 1]) / 1000.0 * r[k - 1];
+            EnterCriticalSection(&cs);
+            for (k = 0; k <= steps; k++) {
+                /* stream k's frame at time t (ms from the common start): (t) * r_k / 1000; it must hold source
+                   frame P_k at H_k, so it starts at S_k = P_k - H_k * r_k / 1000 and is silent until H_k */
+                double S = P[k] - H[k] * r[k] / 1000.0;
+                int fade = (int)(fadeMs * r[k] / 1000), zero = (int)(H[k] * r[k] / 1000.0 + 0.5);
+                int len = k < steps ? (int)((H[k + 1] - H[k]) * r[k] / 1000.0 + 0.5) : SR * 6;
+                if (k == 0) zero = 0;
+                if (k == 0) { zero = 0; fade = 0; }
+                vstop(v[k]);
+                v[k]->panL = v[k]->panR = 1; v[k]->stopAfter = 0; v[k]->end = SR * SECS;
+                v[k]->pos = v[k]->base = 0;                 /* restart the stream: frame index 0 = the common start */
+                v[k]->src = sine; v[k]->srcOff = (int)floor(S);
+                v[k]->zeroLeft = zero; v[k]->g = k == 0 ? 1 : 0;
+                v[k]->rampLeft = fade; v[k]->gStep = fade ? 1.0 / fade : 0;
+                v[k]->holdLeft = 0;
+                v[k]->outAt = k < steps ? zero + len : -1;   /* its frame at H_(k+1): where its fade-out starts */
+                v[k]->outFade = k < steps ? (int)(fadeMs * r[k] / 1000) : 0;
+            }
+            for (k = 0; k <= steps; k++) { int q; v[k]->active = 1; for (q = 0; q < NQ; q++) fill(v[k], q); }
+            LeaveCriticalSection(&cs);
+            printf("%.1f plan trial %d steps %d\n", now(), i, steps);
+            Sleep((DWORD)(hold + gms + 800));
+            EnterCriticalSection(&cs); for (k = 0; k <= steps; k++) vstop(v[k]); LeaveCriticalSection(&cs);
+            Sleep(300);
+        }
+    } else if (!strcmp(mode, "choke")) {
+        /* TK1: a sine plays 400 ms, then is choked: fadeMs > 0 ramps the software gain down from the first unqueued
+           frame; fadeMs == 0 is waveOutReset (a hard cut, what srhook can do without per-voice gain) */
+        int fadeMs = argc > 3 ? atoi(argv[3]) : 10;
+        nv = 2;
+        for (i = 0; i < n; i++) {
+            V *a = cached(SR, NULL, &o);
+            EnterCriticalSection(&cs); vstart(a, sine, 0, 0, 0, 1, 1); LeaveCriticalSection(&cs);
+            Sleep(400 + (i * 13) % 40);
+            EnterCriticalSection(&cs);
+            if (fadeMs > 0) { int f = a->rate * fadeMs / 1000; a->holdLeft = 0; a->rampLeft = f; a->gStep = -a->g / f; a->stopAfter = 1; }
+            else vstop(a);
+            LeaveCriticalSection(&cs);
+            printf("%.1f choke trial %d fade %d\n", now(), i, fadeMs);
+            Sleep(400);
+            EnterCriticalSection(&cs); vstop(a); LeaveCriticalSection(&cs);
+            Sleep(200);
         }
     } else if (!strcmp(mode, "glide")) {
         double semis = argc > 3 ? atof(argv[3]) : 7, ms = argc > 4 ? atof(argv[4]) : 100, Lb = argc > 7 ? atof(argv[7]) : 0;

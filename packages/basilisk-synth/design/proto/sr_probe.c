@@ -116,22 +116,25 @@ static void dump(const char *path)
     printf("END\n");
     fclose(f);
 }
-/* answer the Open dialog of Mix with File: type the name, press Open */
-static DWORD WINAPI answer(LPVOID name)
+/* Sound Recorder's dialogs, answered the way srhook answers them: the Open dialog of Mix with File gets the file
+   name; a message box ("All data after the position ... will be deleted. Continue?") gets OK. */
+static const char *mixName = "C:\\p\\sine2s.wav";
+static DWORD WINAPI answer(LPVOID unused)
 {
-    int i;
-    for (i = 0; i < 100; i++) {
+    for (;;) {
         HWND d = FindWindowA("#32770", NULL);
         DWORD pid = 0;
         if (d) GetWindowThreadProcessId(d, &pid);
-        if (d && pid == pi.dwProcessId) {
-            Sleep(300);
-            SetDlgItemTextA(d, 0x47C, (const char *)name);       /* the file name combo (cmb13) */
-            SetDlgItemTextA(d, 0x480, (const char *)name);       /* edt1 (older layout) */
+        if (d && pi.dwProcessId && pid == pi.dwProcessId) {
+            Sleep(200);
+            if (GetDlgItem(d, 0x47C) || GetDlgItem(d, 0x480)) {
+                SetDlgItemTextA(d, 0x47C, mixName);       /* the file name combo (cmb13) */
+                SetDlgItemTextA(d, 0x480, mixName);       /* edt1 (older layout) */
+            }
             PostMessageA(d, WM_COMMAND, IDOK, 0);
-            return 1;
+            Sleep(300);
         }
-        Sleep(100);
+        Sleep(50);
     }
     return 0;
 }
@@ -151,7 +154,7 @@ static void step(const char *src, const char *dst, const char *ops)   /* copy sr
         if (*o == 'X') cmd(SR_PASTE_MIX);
         if (*o == 'h') seek_permille(500);
         if (*o == 'z') seek_permille(0);
-        if (*o == 'M') { CreateThread(NULL, 0, answer, (LPVOID)"C:\\p\\sine2s.wav", 0, NULL); cmd(SR_MIXFILE); Sleep(1500); }
+        if (*o == 'M') { cmd(SR_MIXFILE); Sleep(1500); }
     }
     text(SR_LEN, t);
     cmd(SR_SAVE);
@@ -164,6 +167,7 @@ int main(int argc, char **argv)
 {
     const char *mode = argc > 1 ? argv[1] : "t1";
     char t[64];
+    CreateThread(NULL, 0, answer, NULL, 0, NULL);
     wav("C:\\p\\t1s.wav", RATE, 0);
     wav("C:\\p\\t8s.wav", RATE * 8, 0);
     wav("C:\\p\\imp.wav", RATE, 1);

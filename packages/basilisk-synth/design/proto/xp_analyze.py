@@ -96,6 +96,25 @@ def residual(x):
         len(lags), lags.mean(), lags.std(), lags.min(), lags.max(), np.median(np.abs(lags))))
 
 
+def choke(x):
+    """TK1: each burst of a 440 Hz sine ends with a choke; the HF (>3 kHz) peak in its last 30 ms, in dB re the sine,
+    and the fall time from 90 % to 10 % of the level"""
+    m = x.mean(1)
+    b, a = signal.butter(6, 3000, 'high', fs=FS)
+    hf = signal.filtfilt(b, a, m)
+    e = env(m, 1)
+    res = []
+    for s, t in segments(e > 0.02, int(0.2 * FS), int(0.005 * FS)):
+        lvl = np.median(e[s:t])
+        tail = slice(max(s, t - int(0.03 * FS)), min(len(m), t + int(0.01 * FS)))
+        peak = np.abs(hf[tail]).max()
+        k90 = t - np.argmax(e[s:t][::-1] > 0.9 * lvl)
+        fall = (t - k90) / FS * 1000
+        res.append((20 * np.log10(peak / (lvl * np.sqrt(2)) + 1e-12), fall))
+    r = np.array(res)
+    print('n %d  HF peak at the end: median %.1f dB re the sine (worst %.1f)   fall 90%%->off median %.1f ms' % (len(r), np.median(r[:, 0]), r[:, 0].max(), np.median(r[:, 1])))
+
+
 def pitch_track(m, hop_ms=2, win_ms=20):
     """instantaneous frequency of a near-sine: analytic-signal phase derivative, smoothed"""
     b, a = signal.butter(2, [150, 2000], 'band', fs=FS)
@@ -219,5 +238,5 @@ if __name__ == '__main__':
     mk = markers(x)
     if len(mk) >= 2:
         x = x[mk[0] + int(0.05 * FS):mk[-1]]
-    {'align': lambda: align(x), 'residual': lambda: residual(x), 'click': lambda: click(x), 'freq': lambda: freq(x, sys.argv[3] if len(sys.argv) > 3 else None),
+    {'align': lambda: align(x), 'residual': lambda: residual(x), 'choke': lambda: choke(x), 'click': lambda: click(x), 'freq': lambda: freq(x, sys.argv[3] if len(sys.argv) > 3 else None),
      'onsets': lambda: onsets(x), 'window': lambda: window(x, sys.argv[3]), 'gaps': lambda: gaps(x)}[mode]()
