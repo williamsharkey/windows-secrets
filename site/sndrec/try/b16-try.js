@@ -3,7 +3,7 @@
 // pressed. The machine runs in a worker; the page only forwards the pointer, the keys and MIDI, and watches it.
 (function () {
   'use strict';
-  var CFG = /*CONFIG*/{"v":"cefe3c5eb6","files":[{"name":"b16.wasm","size":2512410,"gz":1029817},{"name":"w31web.state","size":5854046,"gz":1354210},{"name":"drive.zip","size":3362093,"gz":3362093}],"lead":2048}/*END*/;
+  var CFG = /*CONFIG*/{"v":"f115dcb90e","files":[{"name":"b16.wasm","size":2512843,"gz":1029941},{"name":"w31web.state","size":5848612,"gz":1388626},{"name":"drive.zip","size":3363161,"gz":3363161}],"lead":2048}/*END*/;
   var DATA = null;   // b16-data.json, fetched on the click: the machine's settings, the library's names, the presets
   var root = document.getElementById('b16try');
   if (!root) return;
@@ -80,7 +80,7 @@
       worker.onmessage = onWorker;
       worker.onerror = function (e) { fail('The emulator stopped: ' + (e.message || 'error')); };
       worker.postMessage({ t: 'init', conf: DATA.conf, lead: CFG.lead, layers: DATA.layers, libraryNames: DATA.libraryNames,
-        libraryUrl: new URL(base + 'library.zip', location.href).href, librarySize: DATA.librarySize, libraryChunk: 262144,
+        relDrag: DATA.relDrag, libraryUrl: new URL(base + 'library.zip', location.href).href, librarySize: DATA.librarySize, libraryChunk: 262144,
         files: CFG.files.map(function (f) { return { name: f.name, size: f.size, url: base + f.name + '?v=' + CFG.v }; }) });
       clearInterval(wd); wd = setInterval(watchdog, 500);
     }).catch(function (e) { fail('It could not start: ' + e.message); });

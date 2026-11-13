@@ -86,6 +86,7 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
     const ok = M.ccall('b16_start', 'number', ['string', 'string', 'string', 'string', 'number', 'string'],
                        ['/machine/w31.conf', '/machine/w31web.state', '', '', m.lead || 2048, m.libraryNames || '']);
     if (!ok) throw new Error('the engine did not start');
+    if (m.relDrag === false) M._b16_relscale(0);   // (the guest's driver moves the pointer during drags itself)
     (m.layers || []).forEach((L, i) => { if (L[0]) M._b16_layer(i, L[1], L[2], L[3], L[4]); });
     const o = M._b16_layout() >> 2, h32 = new Int32Array(M.wasmMemory.buffer);
     lay = {}; ['state', 'quit', 'host_beat', 'engine_beat', 'dac_w', 'host_r', 'realtime', 'vid_seq', 'vid_w', 'vid_h', 'vid_want',
