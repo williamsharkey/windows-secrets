@@ -1,20 +1,19 @@
 # BASILISK 16: status
 
-v1.0.0 is released. Round 2 is aiming at v1.1.0; it fixes the 1.0 shortfalls, and there is still no plugin-made
-sound.
+v1.1.0 is released (basilisk-synth-311-v1.1.0, commit 948ce56). There is still no plugin-made sound, by design.
 
 ## Round 2
 
 | # | Item | Status |
 |---|---|---|
-| 2 | Presets in hosts | DONE in patched DPF (`dpf.patch`, to be written) |
+| 2 | Presets in hosts | DONE in patched DPF (`plugin/dpf.patch`); AU factory presets verified with auval |
 | 1 | A reloaded project must render like the original | DONE (4/5 bit-identical) |
 | 3 | Seamless preset change | DONE (rolling in-place rebuild) |
 | 4 | Assembly | DONE |
 | 5 | Mac zip drive | DONE (DOSBox Pure UB fixed) |
 | 6 | Typing into Windows | DONE |
 | 7 | CPU | DONE |
-| 8 | Signing | TODO |
+| 8 | Signing | DONE: no identity; macOS ad-hoc, Windows unsigned, stated on the page and in the README |
 | 9 | Harmony button | DONE |
 
 **2. Presets in hosts.** The patched DPF VST3 wrapper:
