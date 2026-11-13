@@ -14,6 +14,9 @@ typedef struct bs_engine bs_engine;
 bs_engine *bs_engine_start(bshm *S, const char *core, const char *conf, const char *state, const char *make_state, const char *log);
 void bs_engine_stop(bs_engine *e);           /* sets quit, joins the thread, unloads the core */
 int bs_engine_run(bs_engine *e);             /* the loop itself (the thread body), for engine_main.c */
+/* hand an event straight to the card (any thread; the card locks itself): the guest sees it at once, even in the
+   middle of an emulated frame. Returns 0 if the machine is not running yet (then use the bshm event ring). */
+int bs_engine_event(bs_engine *e, const uint16_t *w, int n, uint32_t id, uint64_t at);
 bs_engine *bs_engine_new(bshm *S, const char *core, const char *conf, const char *state, const char *make_state, const char *log);
 #ifdef __cplusplus
 }

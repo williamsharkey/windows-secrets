@@ -20,6 +20,7 @@
 #define DISTRHO_PLUGIN_WANT_FULL_STATE 1
 #define DISTRHO_PLUGIN_WANT_DIRECT_ACCESS 1
 #define DISTRHO_PLUGIN_WANT_MIDI_INPUT 1
+#define DISTRHO_PLUGIN_WANT_TIMEPOS 1
 #define DISTRHO_PLUGIN_WANT_PARAMETER_VALUE_CHANGE_REQUEST 1
 #define DISTRHO_UI_USE_NANOVG 0
 #define DISTRHO_UI_USER_RESIZABLE 1
@@ -28,5 +29,7 @@
 #define DISTRHO_PLUGIN_VST3_CATEGORIES "Instrument|Synth|Sampler"
 #define DISTRHO_PLUGIN_CLAP_FEATURES "instrument", "synthesizer", "sampler", "stereo"
 #define DISTRHO_PLUGIN_AU_TYPE aumu
+// VST3: map and list only the controllers it uses (sustain, all sound off, all notes off, pitch bend); patched DPF
+#define DPF_VST3_FEW_MIDI_CC 64, 120, 123, 129
 
 #endif

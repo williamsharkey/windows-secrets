@@ -23,9 +23,9 @@ for a in arm64 x86_64; do
   cc -O2 -arch $a -o "engine-$a" basilisk-synth-311/engine/engine.c basilisk-synth-311/engine/engine_main.c -Ibasilisk-synth-311/engine
   cc -O2 -arch $a -o "offs-$a" -Ibasilisk-synth-311/engine basilisk-synth-311/tools/offs.c
   BS311_ENGINE="$W/engine-$a" BS311_OFFS="$W/offs-$a" arch -$a /usr/bin/python3 basilisk-synth-311/tools/make_machine.py \
-    "$W/wfw" "$W/gout" "$W/dosbox_pure_libretro.dylib" "$W/machine-$a" --folder
+    "$W/wfw" "$W/gout" "$W/dosbox_pure_libretro.dylib" "$W/machine-$a"
 done
-diff -r machine-arm64/drive machine-x86_64/drive
+cmp machine-arm64/drive.zip machine-x86_64/drive.zip
 cd "$W/out"
 for b in Basilisk16.vst3 Basilisk16.component; do
   M="$b/Contents/Resources/machine"
@@ -34,7 +34,7 @@ for b in Basilisk16.vst3 Basilisk16.component; do
   cp "$W/machine-arm64/w31.conf" "$M/"
   cp "$W/machine-arm64/w31.state" "$M/w31-arm64.state"
   cp "$W/machine-x86_64/w31.state" "$M/w31-x86_64.state"
-  cp -R "$W/machine-arm64/drive" "$M/drive"
+  cp "$W/machine-arm64/drive.zip" "$M/"
   codesign --force --deep -s - "$b"
 done
 ls -la "$W/out"

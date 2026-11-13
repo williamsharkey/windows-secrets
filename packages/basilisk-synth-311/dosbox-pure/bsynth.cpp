@@ -21,6 +21,7 @@
 #include "paging.h"
 #include "pic.h"
 #include "setup.h"
+#include "cpu.h"
 #include <math.h>
 #include <string.h>
 #include <mutex>
@@ -350,6 +351,12 @@ static void command(Bit16u c)
 		break;
 	case 27: /* ENV attack_ms decay_ms sustain_pct */
 		bs.env_a = (Bit32u)arg(0) * (BS_RATE / 1000); bs.env_d = (Bit32u)arg(1) * (BS_RATE / 1000); bs.env_s = arg(2) / 100.f; break;
+	case 28: /* IDLE: the synth program has nothing to do: end this millisecond's CPU slice now (like HLT does), so
+	            an idle Windows costs the host almost nothing; time, timers and the DAC go on as before */
+		CPU_IODelayRemoved += CPU_Cycles;
+		CPU_Cycles = 0; CPU_CycleLeft = 0;
+		bs.args.clear();
+		return;
 	case 24: bs.master = arg32(0) / 65536.f; if (bs.master <= 0) bs.master = 1.f; break;
 	case 25: { /* DACNOW -> 4 words */
 		Bit64u d = bs.dac; for (int i = 0; i < 4; i++) bs.results.push_back((Bit16u)(d >> (16 * i))); break; }

@@ -17,7 +17,8 @@ Workgroups 3.11.
 
 ## Install
 
-The plugin is unsigned.
+Nothing is signed with a developer identity, because none is available. The macOS bundles are ad-hoc signed, which
+is the strongest free option, and the Windows plugin is unsigned. Hence the steps below.
 
 **Windows**
 - Copy `Basilisk16.vst3` (the whole folder) to `C:\Program Files\Common Files\VST3`.
@@ -32,7 +33,8 @@ The plugin is unsigned.
 
 ## Playing it
 
-- **The editor is Windows 3.11.** Click Sound Recorder's buttons, or use the panel:
+- **The editor is Windows 3.11.** Click Sound Recorder's buttons, type a DNA into the DNA line (Enter applies it,
+  Esc puts it back), or use the panel:
   - Sound: chimes, ding, ringin, ringout.
   - Effects: Sound Recorder's commands, appended to the DNA.
   - Undo and Clear.
@@ -41,15 +43,27 @@ The plugin is unsigned.
   - Attack, Decay, Sustain and Release.
 
   Each change rebuilds the recorders and becomes the plugin's sound, saved with your project.
-- **Factory sounds.** There are 16, from the DAW's program list ("Current Program").
+- **Factory sounds.** There are 16. They appear in the DAW's preset list (a VST3 program list, AU factory presets)
+  and in the plugin's "Current Program" parameter. User presets are the host's own: they save the DNA.
 - **Automatable parameters:** Attack, Decay, Sustain, Release, Velocity, Bend Range, Output Gain and Transpose.
   They edit the DNA's globals.
-- **Latency.** The plugin reports a fixed latency of 2560 samples at 48 kHz (53 ms). DAWs compensate for it on
-  playback. When you play live you hear it.
-- **Rebuilds.** A new DNA takes Windows a moment to rebuild. The plugin waits for it, so offline renders are exact;
-  live, a preset change costs a moment of silence.
-- **CPU.** Each instance is an emulated PC. Measured: about 10–18 % of one core on an Apple M-series Mac, and about
-  20–40 % on the build PC (x86-64).
+- **Latency.** The plugin reports a fixed latency, which DAWs compensate for on playback. When you play live you
+  hear it. It is 2880 samples at 48 kHz (60 ms) with blocks of up to 512 samples; larger host blocks add their
+  length.
+- **Rebuilds.** A new DNA is built in place, one recorder at a time, while the old sound keeps playing. Notes are
+  served between recorders and come out at the right pitch. The new sound takes over when Windows is done, so
+  playing is never interrupted.
+  - Offline renders, where the host says so, wait for every build and for the assembly, so a render or a reloaded
+    project comes out bit-identical every time.
+- **CPU.** Each instance is an emulated PC. Measured on the build PC (x86-64), as a share of one core:
+
+  | | Editor closed | Editor open |
+  |---|---|---|
+  | Idle | 13 % | 18 % |
+  | Playing | 33–38 % | |
+
+  When Windows has nothing to do, the synth program tells the emulated card, which ends the CPU's millisecond
+  slice, the way HLT does.
 
 ## How the sound gets out
 
@@ -74,6 +88,16 @@ MIDI -> plugin (voice allocator, packages/basilisk-synth/core)
   Resume takes about 0.03 s; the assembly then plays.
 
 ## Tests (what was checked, and how)
+
+**Version 1.1.0 additions**
+- **REAPER 7.85** (Windows), running as a separate, isolated copy:
+  - 16 presets are listed and selectable;
+  - 77 parameters instead of 2093;
+  - a saved project reloaded and rendered five times was bit-identical to the original, five out of five;
+  - live, on the Dummy Audio device at 48 kHz, all 28 notes sounded across a preset change at 3.15 s, none late;
+  - a DNA typed into the editor's Windows became the plugin's saved state.
+- **The same MIDI render** was bit-identical on Windows, macOS arm64 and macOS x86_64 under Rosetta.
+- **Two Plugalyzer runs** were bit-identical, with 0 late notes.
 
 **Assembly**
 - `tools/anim.py` captures frames of the assembly and builds a contact sheet. Each frame was checked by eye for
@@ -117,7 +141,7 @@ tools/mac_build.sh WORKDIR    # on a Mac, with WORKDIR/macsrc from the above: un
 | `guest/` | `SYNTH.EXE`, `SYNHOOK.DLL`, `BSYNTH.DRV` (Win16 C) |
 | `dosbox-pure/` | the card and the patch, against `UPSTREAM.txt` |
 | `engine/` | the engine thread and the shared-memory block |
-| `plugin/` | DPF plugin and editor |
+| `plugin/` | DPF plugin and editor; `dpf.patch` against `DPF_UPSTREAM.txt` (VST3 program list, fewer MIDI-CC parameters, an offline-render flag for VST3 and AU) |
 | `tools/` | build scripts and test rigs |
 
 ## Licences

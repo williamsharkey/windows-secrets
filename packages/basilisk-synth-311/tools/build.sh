@@ -8,13 +8,13 @@ PKG=$(cd "$(dirname "$0")/.." && pwd)
 REPO=$(cd "$PKG/../.." && pwd)
 W=${1:?workdir}; mkdir -p "$W"; W=$(cd "$W" && pwd)
 DBP_COMMIT=$(cat "$PKG/dosbox-pure/UPSTREAM.txt")
-DPF_COMMIT=4238e1c
+DPF_COMMIT=$(cat "$PKG/plugin/DPF_UPSTREAM.txt")
 
 # --- tools and sources
 [ -d "$W/ow" ] || { mkdir -p "$W/ow"; (cd "$W/ow" && gh release download Current-build -R open-watcom/open-watcom-v2 -p ow-snapshot.tar.xz && tar xf ow-snapshot.tar.xz && rm ow-snapshot.tar.xz); }
 [ -d "$W/dosbox-pure" ] || { git clone -q https://codeberg.org/schelling/dosbox-pure.git "$W/dosbox-pure"; (cd "$W/dosbox-pure" && git checkout -q "$DBP_COMMIT" && git apply "$PKG/dosbox-pure/dosbox-pure.patch"); }
 cp "$PKG/dosbox-pure/bsynth.cpp" "$W/dosbox-pure/src/hardware/bsynth.cpp"
-[ -d "$W/DPF" ] || { git clone -q --recursive https://github.com/DISTRHO/DPF.git "$W/DPF"; (cd "$W/DPF" && git checkout -q $DPF_COMMIT && git submodule update -q --init --recursive); }
+[ -d "$W/DPF" ] || { git clone -q --recursive https://github.com/DISTRHO/DPF.git "$W/DPF"; (cd "$W/DPF" && git checkout -q $DPF_COMMIT && git submodule update -q --init --recursive && git apply "$PKG/plugin/dpf.patch"); }
 
 # --- the guest
 sh "$PKG/guest/build.sh" "$W/ow" "$W/gout"

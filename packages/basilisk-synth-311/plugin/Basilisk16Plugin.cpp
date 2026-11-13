@@ -110,7 +110,13 @@ public:
         : Plugin(pCount, kPresetCount, 1)
     {
         created_ = nowSec();
+        testLive_ = std::getenv("BASILISK16_TEST_LIVE") != nullptr;   // test: take the live path in an offline host
         if (const char *d = std::getenv("BASILISK16_TEST_DUMP_DAC")) if (*d && !isDummyInstance()) dump_ = std::fopen(d, "wb");
+        if (const char *d = std::getenv("BASILISK16_TRACE")) if (*d && !isDummyInstance()) {
+            std::string f = std::string(d) + "/trace-" + std::to_string(processId()) + "-" + std::to_string(gInstanceCounter.load() + 1) + ".txt";
+            trace_ = std::fopen(f.c_str(), "w");
+            if (trace_) setvbuf(trace_, nullptr, _IONBF, 0);
+        }
         sh_.S = (bshm *)std::calloc(1, sizeof(bshm));
         bshm *S = sh_.S;
         S->magic = BSHM_MAGIC; S->version = BSHM_VERSION; S->rate = 48000; S->ring_len = BSHM_RING;
@@ -128,6 +134,7 @@ public:
         engine_ = nullptr;
         cleanupTemp();
         if (dump_) std::fclose(dump_);
+        if (trace_) std::fclose(trace_);
         std::free(sh_.S);
     }
 
@@ -198,7 +205,7 @@ protected:
 
     void sampleRateChanged(double) override { updateLatency(); }
     void bufferSizeChanged(uint32_t) override { updateLatency(); }
-    void activate() override { dacPos_ = -1; }
+    void activate() override { anchor_ = -1; }
 
     void run(const float **, float **out, uint32_t frames, const MidiEvent *ev, uint32_t nev) override
     {
@@ -208,24 +215,58 @@ protected:
         audioAlive_ = nowSec();
         const double sr = getSampleRate(), ratio = 48000.0 / sr;
         housekeeping();
-        // a host that renders right after creating us (a command-line renderer) waits for the machine to resume
-        if (engine_ && S->state < BS_RUNNING && nowSec() - created_ < 3.0)
-            for (int k = 0; k < 3000 && S->state < BS_RUNNING && !quit_; k++) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        // Offline (a render), the plugin waits for whatever Windows is still doing, so renders are exact:
+        // the machine resuming, the assembly, a DNA being built. Live it never waits (a new sound takes over
+        // when it is built; until then the old one plays).
+        const bool offline = !testLive_ && (isProcessingOffline() || nowSec() - created_ < 3.0);
+        S->offline = offline ? 1 : 0;
+        bool waited = false;
+        if (engine_ && offline && S->state < BS_RUNNING) {
+            for (int k = 0; k < 20000 && S->state < BS_RUNNING && S->state != BS_FAILED && !quit_; k++) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            waited = true;
+        }
         if (S->state < BS_RUNNING || S->state == BS_FAILED) {
             std::memset(L, 0, frames * sizeof(float)); std::memset(R, 0, frames * sizeof(float));
             return;
         }
         S->realtime = 1;
-        // Windows is rebuilding the recorders (a new DNA): notes would be dropped, so wait for it (a preset change
-        // costs a moment of silence; an offline render stays exact)
-        for (int k = 0; k < 5000 && building_ && S->state != BS_FAILED && !S->quit && !quit_; k++)
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        if (dacPos_ < 0 || (double)S->dac_w > dacPos_ + BSHM_RING / 2) dacPos_ = (double)S->dac_w;   // (re)sync
+        if (offline && S->state >= BS_RUNNING && (!ready_ || building_ || inFlightAtomic())) {
+            // the engine may run on while we wait (Windows needs the time); its sound in that stretch is skipped
+            // (also the assembly: until it is done, Windows serves notes only between animation frames)
+            for (int k = 0; k < 30000 && (!ready_ || building_ || inFlightAtomic()) && S->state != BS_FAILED && !S->quit && !quit_; k++) {
+                S->grant_until = S->dac_w + 48000; S->host_beat++;
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
+            S->grant_until = 0;
+            housekeeping();
+            waited = true;
+        }
+        // The host's samples map onto the card's DAC samples from an integer anchor: DAC position = anchor + n * ratio.
+        // The anchor is reset when the host's transport starts, so a render (or a replay) always stamps its notes on
+        // the same DAC samples and resamples with the same phase: identical output every time.
+        {
+            const TimePosition &tp = getTimePosition();
+            const double cur = anchor_ < 0 ? -1 : anchor_ + (double)hcount_ * ratio;
+            const bool start = tp.playing && !wasPlaying_;
+            wasPlaying_ = tp.playing;
+            if (anchor_ < 0 || start || ratio != lastRatio_) {
+                // a fresh, integer anchor (never behind what the engine already made, else notes would be late)
+                double a = cur < 0 ? (double)S->dac_w : std::ceil(cur);
+                if ((double)S->dac_w > a + kLead) a = (double)S->dac_w - kLead;
+                anchor_ = std::floor(a); hcount_ = 0; lastRatio_ = ratio;
+            } else if (waited || (double)S->dac_w > cur + kLead + 24000) {
+                // the engine ran on (we waited, or the host stalled): jump forward a whole number of DAC samples,
+                // so the resampling phase, and with it the output, stays the same as if nothing had happened
+                const double jump = std::ceil((double)S->dac_w - kLead - cur);
+                if (jump > 0) anchor_ += jump;
+            }
+        }
+        dacPos_ = anchor_ + (double)hcount_ * ratio;
         // the notes of this block: each one is stamped with the DAC sample at which it must sound
         for (uint32_t i = 0; i < nev; i++) {
             const uint8_t *d = ev[i].size > 4 ? ev[i].dataExt : ev[i].data;
             if (ev[i].size < 2) continue;
-            const uint64_t at = (uint64_t)(dacPos_ + ev[i].frame * ratio) + kLatency48;
+            const uint64_t at = (uint64_t)std::floor(anchor_ + (double)(hcount_ + ev[i].frame) * ratio) + kLatency48;
             const uint8_t st = d[0] & 0xF0;
             Cmd c[kMaxCmds]; int n = 0;
             if (st == 0x90 && ev[i].size >= 3 && d[2] > 0) n = voices_.noteOn(d[1], d[2], at, c);
@@ -242,16 +283,21 @@ protected:
                 proto::cmd(line, sizeof line, c[k]);
                 line[std::strlen(line) - 1] = 0;
                 sendLine(line, ++nextId_, at);
+                if (trace_) std::fprintf(trace_, "%s id %u at %llu dacPos %.0f dac_w %llu late %u/%u max %u\n", line, nextId_,
+                                         (unsigned long long)at, dacPos_, (unsigned long long)S->dac_w, S->sched_late, S->sched_ontime, S->sched_latemax);
             }
         }
         // wait for the machine if it is behind (offline rendering runs faster than real time)
         const double need = dacPos_ + frames * ratio + 3;
-        for (int k = 0; k < 400 && (double)S->dac_w < need && S->state != BS_FAILED && !S->quit && !quit_; k++)
+        for (int k = 0; k < 400 && (double)S->dac_w < need && S->state != BS_FAILED && !S->quit && !quit_; k++) {
+            S->grant_until = (uint64_t)need > kLead ? (uint64_t)need - kLead : 0; S->host_beat++;   // waiting: the engine runs to `need`
             std::this_thread::sleep_for(std::chrono::microseconds(500));
+        }
+        S->grant_until = 0;
         if ((double)S->dac_w < need) S->underruns++;
         const float g = gain_;
         for (uint32_t i = 0; i < frames; i++) {
-            const double p = dacPos_;
+            const double p = anchor_ + (double)(hcount_ + i) * ratio;
             const int64_t k = (int64_t)std::floor(p);
             const float f = (float)(p - (double)k);
             if ((double)(k + 2) >= (double)S->dac_w) { L[i] = R[i] = 0.f; }
@@ -265,8 +311,9 @@ protected:
                 }
             }
             if (dump_) { float d2[2] = {S->ring[(uint32_t)((uint64_t)k % BSHM_RING) * 2], S->ring[(uint32_t)((uint64_t)k % BSHM_RING) * 2 + 1]}; std::fwrite(d2, 4, 2, dump_); }
-            dacPos_ += ratio;
         }
+        hcount_ += frames;
+        dacPos_ = anchor_ + (double)hcount_ * ratio;
         S->host_r = (uint64_t)std::max(0.0, dacPos_ - 4);
     }
 
@@ -274,7 +321,9 @@ private:
     // the card runs at 48 kHz; the engine keeps kLead DAC samples ahead of the host, and every note is stamped
     // kLatency48 samples ahead: enough for Windows to press Play before the card gets there
     static constexpr uint32_t kLead = 1024;
-    static constexpr uint32_t kLatency48 = kLead + 1536;
+    // The latency covers what the engine may already have made beyond the host (its lead, plus up to two emulated
+    // frames of ~672 samples) plus the host's block, plus time for Windows to press Play: so no note is ever late.
+    uint32_t kLatency48 = kLead + 1536;
 
     Basilisk16Shared sh_;
     bs_engine *engine_ = nullptr;
@@ -291,21 +340,34 @@ private:
     LayerInfo layerCache_[kMaxLayers];
     std::string cacheSig_;
     bool dnaToGuest_ = false;          // worker: send the DNA to Windows
+    bool inFlight_ = false;            // a DNA Windows is building (its `layer` replies are staged until `built`)
+    Dna stagedDna_; std::string stagedSig_;
+    LayerInfo stagedLayers_[kMaxLayers];
 
     std::atomic<float> param_[pCount];
     std::atomic<bool> paramsDirty_{false};
     std::atomic<bool> building_{false};
+    std::atomic<bool> ready_{false};       // Windows has assembled the instrument
     std::atomic<double> audioAlive_{0};
     double created_ = 0;
-    FILE *dump_ = nullptr;     // test: BASILISK16_TEST_DUMP_DAC=file writes the card's DAC samples behind each output sample
+    bool testLive_ = false;
+    FILE *dump_ = nullptr;
+    FILE *trace_ = nullptr;    // test: BASILISK16_TRACE=dir writes each note's stamps (one file per instance)     // test: BASILISK16_TEST_DUMP_DAC=file writes the card's DAC samples behind each output sample
 
     // audio thread only
     Voices voices_{48000};
-    double dacPos_ = -1;
+    double dacPos_ = -1, anchor_ = -1, lastRatio_ = 0;
+    uint64_t hcount_ = 0;
+    bool wasPlaying_ = false;
     uint32_t nextId_ = 0;
     float gain_ = 1.f;
 
-    void updateLatency() { setLatency((uint32_t)std::lround(kLatency48 * getSampleRate() / 48000.0)); }
+    void updateLatency()
+    {
+        const uint32_t block48 = (uint32_t)std::ceil(getBufferSize() * 48000.0 / getSampleRate());
+        kLatency48 = std::max<uint32_t>(kLead + 1536, block48 + 2 * 672 + 1024);
+        setLatency((uint32_t)std::lround(kLatency48 * getSampleRate() / 48000.0));
+    }
 
     static std::string sigOf(const Dna &d)
     {
@@ -324,21 +386,29 @@ private:
         Dna d = parse(text);
         std::lock_guard<std::mutex> l(mtx_);
         dnaText_ = d.canonical;
-        dnaForAudio_ = d;
-        dnaPending_ = true;
         if (toGuest && !fromGuest) dnaToGuest_ = true;
         const std::string sig = sigOf(d);
-        if (sig != cacheSig_) {
-            for (auto &c : layerCache_) c = LayerInfo();
-            // the snapshot's machine holds DING in all sixteen recorders: the default plays before Windows replies
-            if (sig == sigOf(parse(kDefaultDna))) layerCache_[0] = LayerInfo{0, 16, 22050, 11466, true};
+        if (sig == cacheSig_ || (cacheSig_.empty() && sig == sigOf(parse(kDefaultDna)))) {
+            // the recorders already hold this sound (only genes or globals differ): the audio adopts it now.
+            // (At first the snapshot's machine holds DING in all sixteen: the default plays before Windows replies.)
+            if (cacheSig_.empty()) layerCache_[0] = LayerInfo{0, 16, 22050, 11466, true};
             cacheSig_ = sig;
+            dnaForAudio_ = d;
+            dnaPending_ = true;
+        } else {
+            // Sound Recorder must rebuild: the audio keeps the old sound until Windows says `built`, so notes never
+            // stop sounding (Windows rebuilds one recorder at a time and serves notes in between)
+            stagedDna_ = d; stagedSig_ = sig;
+            for (auto &c : stagedLayers_) c = LayerInfo();
+            if (fromGuest) inFlight_ = true;   // Windows is already building it
         }
         param_[pAttack] = (float)d.g.attack; param_[pDecay] = (float)d.g.decay; param_[pSustain] = (float)d.g.sustain;
         param_[pRelease] = (float)d.g.release; param_[pVelocity] = (float)d.g.velocity; param_[pBend] = (float)d.g.bendRange;
         param_[pGain] = (float)d.g.gainDb; param_[pTranspose] = d.layers.empty() ? 0.f : (float)d.layers[0].transpose;
         paramsDirty_ = false;
     }
+
+    bool inFlightAtomic() { std::lock_guard<std::mutex> l(mtx_); return inFlight_ || dnaToGuest_; }
 
     // audio thread, start of every block: adopt what the worker prepared (never waits for it)
     void housekeeping()
@@ -370,15 +440,19 @@ private:
         do {
             const int m = len - pos > 240 ? 240 : len - pos;
             const bool last = pos + m >= len;
-            if (S->ev_w - S->ev_r >= BSHM_EV) break;
-            bshm_ev &e = S->ev[S->ev_w % BSHM_EV];
             const int words = 3 + (m + 1) / 2;
-            e.w[0] = (uint16_t)(((last ? 4 : 8) << 8) | words);
-            e.w[1] = (uint16_t)(last ? id : 0); e.w[2] = (uint16_t)((last ? id : 0) >> 16);
+            uint16_t w[136];
+            w[0] = (uint16_t)(((last ? 4 : 8) << 8) | words);
+            w[1] = (uint16_t)(last ? id : 0); w[2] = (uint16_t)((last ? id : 0) >> 16);
             for (int k = 0; k < (m + 1) / 2; k++) {
                 const uint8_t a = (uint8_t)text[pos + 2 * k], b = 2 * k + 1 < m ? (uint8_t)text[pos + 2 * k + 1] : 0;
-                e.w[3 + k] = (uint16_t)(a | (b << 8));
+                w[3 + k] = (uint16_t)(a | (b << 8));
             }
+            // straight to the card when the machine runs (no wait for the engine's next loop); else the ring
+            if (S->ev_w == S->ev_r && bs_engine_event(engine_, w, words, last ? id : 0, last ? at : 0)) { pos += m; continue; }
+            if (S->ev_w - S->ev_r >= BSHM_EV) break;
+            bshm_ev &e = S->ev[S->ev_w % BSHM_EV];
+            std::memcpy(e.w, w, sizeof(uint16_t) * words);
             e.n = (uint32_t)words; e.id = last ? id : 0; e.at = last ? at : 0;
             __sync_synchronize();
             S->ev_w++;
@@ -502,7 +576,11 @@ private:
             bool send = false; std::string d; Globals g;
             {
                 std::lock_guard<std::mutex> l(mtx_);
-                if (hello && dnaToGuest_) { send = true; dnaToGuest_ = false; d = dnaText_; g = dnaForAudio_.g; }
+                if (hello && dnaToGuest_ && !inFlight_) {
+                    send = true; dnaToGuest_ = false; d = dnaText_;
+                    g = parse(d).g;
+                    if (sigOf(parse(d)) != cacheSig_) { inFlight_ = true; for (auto &c : stagedLayers_) c = LayerInfo(); }
+                }
             }
             if (send) {
                 std::string line = "dna " + d;
@@ -546,14 +624,26 @@ private:
     {
         proto::Reply r = proto::parse(line);
         switch (r.kind) {
-        case proto::Reply::Ready: status(""); break;
-        case proto::Reply::Built: building_ = false; break;
+        case proto::Reply::Ready: status(""); ready_ = true; break;
+        case proto::Reply::Built: {
+            std::lock_guard<std::mutex> l(mtx_);
+            if (inFlight_) {   // the new sound is in the recorders: the audio switches to it now
+                dnaForAudio_ = stagedDna_; cacheSig_ = stagedSig_;
+                for (int i = 0; i < kMaxLayers; i++) layerCache_[i] = stagedLayers_[i];
+                dnaPending_ = true;
+                inFlight_ = false;
+            }
+            building_ = false;
+            break; }
         case proto::Reply::Layer: {
             std::lock_guard<std::mutex> l(mtx_);
             if (r.layer >= 0 && r.layer < kMaxLayers) {
                 LayerInfo li{r.first, r.count, r.rate, r.frames, true};
-                layerCache_[r.layer] = li;
-                pendLayers_.push_back(li); pendLayerIdx_.push_back(r.layer);
+                if (inFlight_) stagedLayers_[r.layer] = li;
+                else {
+                    layerCache_[r.layer] = li;
+                    pendLayers_.push_back(li); pendLayerIdx_.push_back(r.layer);
+                }
             }
             break; }
         case proto::Reply::End: { std::lock_guard<std::mutex> l(mtx_); pendEnds_.push_back(r.rec); break; }

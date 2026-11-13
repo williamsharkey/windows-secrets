@@ -136,6 +136,10 @@ protected:
         if (!sh_ || !sh_->S) return false;
         uint k = ev.key, rk = 0;
         if (k >= 'A' && k <= 'Z') k += 32;
+        {   // a shifted character arrives as itself; Windows 3.11 gets the key under it (the Shift key is already down)
+            static const char shifted[] = "~!@#$%^&*()_+{}|:\"<>?", base[] = "`1234567890-=[]\\;',./";
+            for (int i = 0; shifted[i]; i++) if (k == (uint)(unsigned char)shifted[i]) { k = (uint)(unsigned char)base[i]; break; }
+        }
         if (k >= 32 && k < 127) rk = k;
         else switch (k) {
             case kKeyBackspace: rk = RK_BACKSPACE; break; case kKeyTab: rk = RK_TAB; break;

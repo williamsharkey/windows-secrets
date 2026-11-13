@@ -1,0 +1,336 @@
+diff --git a/distrho/DistrhoPlugin.hpp b/distrho/DistrhoPlugin.hpp
+index 8570f9e..f092be3 100644
+--- a/distrho/DistrhoPlugin.hpp
++++ b/distrho/DistrhoPlugin.hpp
+@@ -116,6 +116,12 @@ public:
+     */
+     bool isSelfTestInstance() const noexcept;
+ 
++   /**
++      True while the host renders offline (VST3 process mode offline, AU kAudioUnitProperty_OfflineRender):
++      the plugin may then block in run() for as long as it needs. (patched DPF)
++    */
++    bool isProcessingOffline() const noexcept;
++
+ #if DISTRHO_PLUGIN_WANT_TIMEPOS
+    /**
+       Get the current host transport time position.@n
+diff --git a/distrho/src/DistrhoPlugin.cpp b/distrho/src/DistrhoPlugin.cpp
+index e2ffadb..1e25b78 100644
+--- a/distrho/src/DistrhoPlugin.cpp
++++ b/distrho/src/DistrhoPlugin.cpp
+@@ -117,6 +117,11 @@ bool Plugin::isSelfTestInstance() const noexcept
+     return pData->isSelfTest;
+ }
+ 
++bool Plugin::isProcessingOffline() const noexcept
++{
++    return pData->isOffline;
++}
++
+ #if DISTRHO_PLUGIN_WANT_TIMEPOS
+ const TimePosition& Plugin::getTimePosition() const noexcept
+ {
+diff --git a/distrho/src/DistrhoPluginAU.cpp b/distrho/src/DistrhoPluginAU.cpp
+index 919faa7..9db087b 100644
+--- a/distrho/src/DistrhoPluginAU.cpp
++++ b/distrho/src/DistrhoPluginAU.cpp
+@@ -689,6 +689,12 @@ public:
+             return kAudioUnitErr_InvalidProperty;
+            #endif
+ 
++        case kAudioUnitProperty_OfflineRender:
++            DISTRHO_SAFE_ASSERT_UINT_RETURN(inScope == kAudioUnitScope_Global, inScope, kAudioUnitErr_InvalidScope);
++            outDataSize = sizeof(UInt32);
++            outWritable = true;
++            return noErr;
++
+         case kAudioUnitProperty_PresentPreset:
+             DISTRHO_SAFE_ASSERT_UINT_RETURN(inScope == kAudioUnitScope_Global, inScope, kAudioUnitErr_InvalidScope);
+             DISTRHO_SAFE_ASSERT_UINT_RETURN(inElement == 0, inElement, kAudioUnitErr_InvalidElement);
+@@ -1063,6 +1069,10 @@ public:
+             return noErr;
+        #endif
+ 
++        case kAudioUnitProperty_OfflineRender:
++            *static_cast<UInt32*>(outData) = fPlugin.isProcessingOffline() ? 1 : 0;
++            return noErr;
++
+         case kAudioUnitProperty_PresentPreset:
+            #if DISTRHO_PLUGIN_WANT_PROGRAMS
+             if (fCurrentProgram >= 0)
+@@ -1511,6 +1521,11 @@ public:
+             // nothing to do
+             return noErr;
+ 
++        case kAudioUnitProperty_OfflineRender:
++            DISTRHO_SAFE_ASSERT_UINT_RETURN(inDataSize == sizeof(UInt32), inDataSize, kAudioUnitErr_InvalidPropertyValue);
++            fPlugin.setProcessingOffline(*static_cast<const UInt32*>(inData) != 0);
++            return noErr;
++
+         case kAudioUnitProperty_PresentPreset:
+             DISTRHO_SAFE_ASSERT_UINT_RETURN(inScope == kAudioUnitScope_Global, inScope, kAudioUnitErr_InvalidScope);
+             DISTRHO_SAFE_ASSERT_UINT_RETURN(inElement == 0, inElement, kAudioUnitErr_InvalidElement);
+diff --git a/distrho/src/DistrhoPluginInternal.hpp b/distrho/src/DistrhoPluginInternal.hpp
+index d0bef80..3ec33f8 100644
+--- a/distrho/src/DistrhoPluginInternal.hpp
++++ b/distrho/src/DistrhoPluginInternal.hpp
+@@ -143,6 +143,7 @@ void snprintf_u32(char* const dst, const uint32_t value, const size_t size)
+ struct Plugin::PrivateData {
+     const bool canRequestParameterValueChanges;
+     const bool isDummy;
++    bool isOffline;
+     const bool isSelfTest;
+     bool isProcessing;
+ 
+@@ -188,6 +189,7 @@ struct Plugin::PrivateData {
+     PrivateData() noexcept
+         : canRequestParameterValueChanges(d_nextCanRequestParameterValueChanges),
+           isDummy(d_nextPluginIsDummy),
++          isOffline(false),
+           isSelfTest(d_nextPluginIsSelfTest),
+           isProcessing(false),
+ #if DISTRHO_PLUGIN_NUM_INPUTS+DISTRHO_PLUGIN_NUM_OUTPUTS > 0
+@@ -947,6 +949,18 @@ public:
+ 
+     // -------------------------------------------------------------------
+ 
++    void setProcessingOffline(const bool offline) noexcept
++    {
++        DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr,);
++        fData->isOffline = offline;
++    }
++
++    bool isProcessingOffline() const noexcept
++    {
++        DISTRHO_SAFE_ASSERT_RETURN(fData != nullptr, false);
++        return fData->isOffline;
++    }
++
+     bool isActive() const noexcept
+     {
+         return fIsActive;
+diff --git a/distrho/src/DistrhoPluginVST3.cpp b/distrho/src/DistrhoPluginVST3.cpp
+index 7295c89..7ad5cbe 100644
+--- a/distrho/src/DistrhoPluginVST3.cpp
++++ b/distrho/src/DistrhoPluginVST3.cpp
+@@ -53,6 +53,7 @@
+ #include "travesty/edit_controller.h"
+ #include "travesty/factory.h"
+ #include "travesty/host.h"
++#include "travesty/unit.h"
+ 
+ #include <map>
+ #include <string>
+@@ -582,6 +583,11 @@ class PluginVst3
+    #endif // DISTRHO_PLUGIN_WANT_MIDI_INPUT
+ 
+ public:
++   #if DISTRHO_PLUGIN_WANT_PROGRAMS
++    // for the unit info (program list) interface
++    uint32_t getProgramCountForUnitInfo() const noexcept { return fPlugin.getProgramCount(); }
++    const char* getProgramNameForUnitInfo(const uint32_t i) const noexcept { return fPlugin.getProgramName(i); }
++   #endif
+     PluginVst3(v3_host_application** const host, const bool isComponent)
+         : fPlugin(this, writeMidiCallback, requestParameterValueChangeCallback, nullptr),
+           fComponentHandler(nullptr),
+@@ -1349,7 +1355,7 @@ public:
+         const bool active = fPlugin.isActive();
+         fPlugin.deactivateIfNeeded();
+ 
+-        // TODO process_mode can be V3_REALTIME, V3_PREFETCH, V3_OFFLINE
++        fPlugin.setProcessingOffline(setup->process_mode == V3_OFFLINE);
+ 
+         fPlugin.setSampleRate(setup->sample_rate, true);
+         fPlugin.setBufferSize(setup->max_block_size, true);
+@@ -1665,15 +1671,38 @@ public:
+     // ----------------------------------------------------------------------------------------------------------------
+     // v3_edit_controller interface calls
+ 
++   #if DISTRHO_PLUGIN_WANT_MIDI_INPUT && defined(DPF_VST3_FEW_MIDI_CC)
++    // Only the controllers the plugin uses are mapped and listed (16 channels x DPF_VST3_FEW_MIDI_CC), instead of
++    // 16 x 130 hidden parameters that some hosts list anyway.
++    static constexpr const int kFewCC[] = { DPF_VST3_FEW_MIDI_CC };
++    static constexpr const int kFewCCCount = sizeof(kFewCC) / sizeof(kFewCC[0]);
++    static int32_t paramIdOfIndex(const int32_t index) noexcept
++    {
++        if (index < kVst3InternalParameterMidiCC_start) return index;
++        if (index < kVst3InternalParameterMidiCC_start + 16 * kFewCCCount)
++        {
++            const int32_t k = index - kVst3InternalParameterMidiCC_start;
++            return kVst3InternalParameterMidiCC_start + (k / kFewCCCount) * 130 + kFewCC[k % kFewCCCount];
++        }
++        return index - kVst3InternalParameterMidiCC_start - 16 * kFewCCCount + kVst3InternalParameterCount;
++    }
++    int32_t getParameterCount() const noexcept
++    {
++        return static_cast<int32_t>(kVst3InternalParameterMidiCC_start + 16 * kFewCCCount + fParameterCount);
++    }
++   #else
++    static int32_t paramIdOfIndex(const int32_t index) noexcept { return index; }
+     int32_t getParameterCount() const noexcept
+     {
+         return fVst3ParameterCount;
+     }
++   #endif
+ 
+-    v3_result getParameterInfo(const int32_t rindex, v3_param_info* const info) const noexcept
++    v3_result getParameterInfo(const int32_t pindex, v3_param_info* const info) const noexcept
+     {
+         std::memset(info, 0, sizeof(v3_param_info));
+-        DISTRHO_SAFE_ASSERT_RETURN(rindex >= 0, V3_INVALID_ARG);
++        DISTRHO_SAFE_ASSERT_RETURN(pindex >= 0, V3_INVALID_ARG);
++        const int32_t rindex = paramIdOfIndex(pindex);
+ 
+         // TODO hash the parameter symbol
+         info->param_id = rindex;
+@@ -3425,6 +3454,14 @@ struct dpf_midi_mapping : v3_midi_mapping_cpp {
+         DISTRHO_SAFE_ASSERT_INT_RETURN(bus == 0, bus, V3_FALSE);
+         DISTRHO_SAFE_ASSERT_INT_RETURN(channel >= 0 && channel < 16, channel, V3_FALSE);
+         DISTRHO_SAFE_ASSERT_INT_RETURN(cc >= 0 && cc < 130, cc, V3_FALSE);
++       #ifdef DPF_VST3_FEW_MIDI_CC
++        {
++            static constexpr const int few[] = { DPF_VST3_FEW_MIDI_CC };
++            bool used = false;
++            for (const int c : few) if (c == cc) used = true;
++            if (! used) return V3_FALSE;
++        }
++       #endif
+ 
+         *id = kVst3InternalParameterMidiCC_start + channel * 130 + cc;
+         return V3_TRUE;
+@@ -3434,6 +3471,97 @@ struct dpf_midi_mapping : v3_midi_mapping_cpp {
+ };
+ #endif // DISTRHO_PLUGIN_WANT_MIDI_INPUT
+ 
++#if DISTRHO_PLUGIN_WANT_PROGRAMS
++// --------------------------------------------------------------------------------------------------------------------
++// dpf_unit_info: the factory programs as a VST3 program list on the root unit, so hosts list them as presets
++
++struct dpf_unit_info : v3_unit_information_cpp {
++    ScopedPointer<PluginVst3>* vst3p;
++
++    dpf_unit_info(ScopedPointer<PluginVst3>* const v)
++        : vst3p(v)
++    {
++        query_interface = query_interface_unit_info;
++        ref = dpf_static_ref;
++        unref = dpf_static_unref;
++        unit.get_unit_count = get_unit_count;
++        unit.get_unit_info = get_unit_info;
++        unit.get_program_list_count = get_program_list_count;
++        unit.get_program_list_info = get_program_list_info;
++        unit.get_program_name = get_program_name;
++        unit.get_program_info = get_program_info;
++        unit.has_program_pitch_names = has_program_pitch_names;
++        unit.get_program_pitch_name = get_program_pitch_name;
++        unit.get_selected_unit = get_selected_unit;
++        unit.select_unit = select_unit;
++        unit.get_unit_by_bus = get_unit_by_bus;
++        unit.set_unit_program_data = set_unit_program_data;
++    }
++
++    static PluginVst3* plugin(void* const self)
++    {
++        dpf_unit_info* const u = *static_cast<dpf_unit_info**>(self);
++        return u->vst3p != nullptr ? u->vst3p->get() : nullptr;
++    }
++
++    static v3_result V3_API query_interface_unit_info(void* const self, const v3_tuid iid, void** const iface)
++    {
++        if (v3_tuid_match(iid, v3_funknown_iid) || v3_tuid_match(iid, v3_unit_information_iid))
++        {
++            *iface = self;
++            return V3_OK;
++        }
++        *iface = nullptr;
++        return V3_NO_INTERFACE;
++    }
++
++    static int32_t V3_API get_unit_count(void*) { return 1; }
++
++    static v3_result V3_API get_unit_info(void*, const int32_t idx, v3_unit_info* const info)
++    {
++        DISTRHO_SAFE_ASSERT_RETURN(idx == 0, V3_INVALID_ARG);
++        std::memset(info, 0, sizeof(v3_unit_info));
++        info->id = 0;
++        info->parent_unit_id = -1;
++        strncpy_utf16(info->name, "Root", 128);
++        info->program_list_id = 1;
++        return V3_OK;
++    }
++
++    static int32_t V3_API get_program_list_count(void*) { return 1; }
++
++    static v3_result V3_API get_program_list_info(void* const self, const int32_t idx, v3_program_list_info* const info)
++    {
++        PluginVst3* const p = plugin(self);
++        DISTRHO_SAFE_ASSERT_RETURN(idx == 0 && p != nullptr, V3_INVALID_ARG);
++        std::memset(info, 0, sizeof(v3_program_list_info));
++        info->id = 1;
++        strncpy_utf16(info->name, "Factory", 128);
++        info->programCount = static_cast<int32_t>(p->getProgramCountForUnitInfo());
++        return V3_OK;
++    }
++
++    static v3_result V3_API get_program_name(void* const self, const int32_t list, const int32_t i, v3_str_128 name)
++    {
++        PluginVst3* const p = plugin(self);
++        DISTRHO_SAFE_ASSERT_RETURN(list == 1 && p != nullptr, V3_INVALID_ARG);
++        DISTRHO_SAFE_ASSERT_RETURN(i >= 0 && static_cast<uint32_t>(i) < p->getProgramCountForUnitInfo(), V3_INVALID_ARG);
++        strncpy_utf16(name, p->getProgramNameForUnitInfo(static_cast<uint32_t>(i)), 128);
++        return V3_OK;
++    }
++
++    static v3_result V3_API get_program_info(void*, int32_t, int32_t, const char*, v3_str_128) { return V3_NOT_IMPLEMENTED; }
++    static v3_result V3_API has_program_pitch_names(void*, int32_t, int32_t) { return V3_FALSE; }
++    static v3_result V3_API get_program_pitch_name(void*, int32_t, int32_t, int16_t, v3_str_128) { return V3_NOT_IMPLEMENTED; }
++    static int32_t V3_API get_selected_unit(void*) { return 0; }
++    static v3_result V3_API select_unit(void*, int32_t) { return V3_OK; }
++    static v3_result V3_API get_unit_by_bus(void*, int32_t, int32_t, int32_t, int32_t, int32_t* const unit) { *unit = 0; return V3_OK; }
++    static v3_result V3_API set_unit_program_data(void*, int32_t, int32_t, v3_bstream**) { return V3_NOT_IMPLEMENTED; }
++
++    DISTRHO_PREVENT_HEAP_ALLOCATION
++};
++#endif
++
+ // --------------------------------------------------------------------------------------------------------------------
+ // dpf_edit_controller
+ 
+@@ -3457,6 +3585,10 @@ struct dpf_edit_controller : v3_edit_controller_cpp {
+     v3_host_application** hostApplicationFromComponentInitialize;
+    #endif
+     v3_host_application** hostApplicationFromInitialize;
++   #if DISTRHO_PLUGIN_WANT_PROGRAMS
++    dpf_unit_info unitInfo;
++    dpf_unit_info* unitInfoPtr;
++   #endif
+ 
+    #if DPF_VST3_USES_SEPARATE_CONTROLLER
+     dpf_edit_controller(v3_host_application** const hostApp)
+@@ -3475,6 +3607,10 @@ struct dpf_edit_controller : v3_edit_controller_cpp {
+           hostApplicationFromComponentInitialize(nullptr),
+          #endif
+           hostApplicationFromInitialize(nullptr)
++         #if DISTRHO_PLUGIN_WANT_PROGRAMS
++        , unitInfo(&vst3),
++          unitInfoPtr(&unitInfo)
++         #endif
+     {
+         d_debug("dpf_edit_controller() with hostApplication %p", hostApplicationFromFactory);
+ 
+@@ -3537,6 +3673,14 @@ struct dpf_edit_controller : v3_edit_controller_cpp {
+     {
+         dpf_edit_controller* const controller = *static_cast<dpf_edit_controller**>(self);
+ 
++       #if DISTRHO_PLUGIN_WANT_PROGRAMS
++        if (v3_tuid_match(iid, v3_unit_information_iid))
++        {
++            *iface = &controller->unitInfoPtr;
++            return V3_OK;
++        }
++       #endif
++
+         if (v3_tuid_match(iid, v3_funknown_iid) ||
+             v3_tuid_match(iid, v3_plugin_base_iid) ||
+             v3_tuid_match(iid, v3_edit_controller_iid))

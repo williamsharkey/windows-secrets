@@ -1,3 +1,22 @@
+diff --git a/dosbox_pure_libretro.cpp b/dosbox_pure_libretro.cpp
+index ea24d45..2bf6da5 100644
+--- a/dosbox_pure_libretro.cpp
++++ b/dosbox_pure_libretro.cpp
+@@ -989,7 +989,13 @@ static DOS_Drive* DBP_Mount(unsigned image_index = 0, bool unmount_existing = tr
+ 			error_type = "ZIP";
+ 			goto TRY_DIRECTORY;
+ 		}
+-		DBP_SetDriveLabelFromContentPath(drive, path, letter, path_file, ext);
++		// (IMGMOUNT -t zip sets ext to a literal "ZIP", not a pointer into path: the label code subtracts the two
++		// pointers, which is undefined and crashed the x86_64 macOS build; label from the path's own extension then)
++		{
++			const char* label_ext = ext;
++			if (label_ext < path_file || label_ext > path + strlen(path)) { label_ext = strrchr(path_file, '.'); label_ext = (label_ext ? label_ext + 1 : path + strlen(path)); }
++			DBP_SetDriveLabelFromContentPath(drive, path, letter, path_file, label_ext);
++		}
+ 		if ((boot && letter == 'C') || no_register_just_get_drive) return drive;
+ 	}
+ 	else if (!strcasecmp(ext, "IMG") || !strcasecmp(ext, "IMA") || !strcasecmp(ext, "VHD") || !strcasecmp(ext, "JRC"))
 diff --git a/src/dbp_serialize.cpp b/src/dbp_serialize.cpp
 index 8c3c343..e56a254 100644
 --- a/src/dbp_serialize.cpp

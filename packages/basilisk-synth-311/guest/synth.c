@@ -53,11 +53,20 @@
 
 HINSTANCE hInst;
 HWND hMain, hClock, hDna;
-HWND rw[NR];          /* the recorders' main windows */
-HTASK rt[NR];
-BOOL rplay[NR];       /* we pressed Play and it has not stopped yet */
-int rlayer[NR];
-BOOL assembled, building;
+/* One bank of sixteen. (A second, spare bank of sixteen was tried, to build a new DNA out of sight: Windows 3.11
+   runs out of GDI resources at about 30 Sound Recorders, 4% free. So a new DNA is built in place, one recorder
+   at a time, and notes keep being served between recorders; see build().) */
+#define NB 1
+#define NALL (NR * NB)
+HWND rw[NALL];        /* the recorders' main windows */
+HTASK rt[NALL];
+BOOL rplay[NALL];     /* we pressed Play and it has not stopped yet */
+int rlayer[NALL];
+int bank;             /* the active bank */
+long recRate[NALL];   /* the sample rate of what each recorder holds now */
+long hostRate[NALL];  /* the rate the host believes it holds (its last `layer` reply) */
+#define AR(r) (bank * NR + (r))
+BOOL assembled, building, titleShown;
 char dnaText[1100] = "ding#16;R120";
 int envA, envD, envS = 100, envR = 120;
 int selLayer;
@@ -315,67 +324,91 @@ static void signature(char *out)    /* what Sound Recorder has to do: sources, s
 }
 static char pendingDna[1100];
 static BOOL assembling;
+static int poll_host(void);
+static void layer_replies(void)
+{
+    int i;
+    for (i = 0; i < nlay; i++)
+        if (lay[i].count) say("layer %d %d %d %d %ld", i, lay[i].first, lay[i].count, sound_rate(lay[i].source), (long)layer_len[i] * sound_rate(lay[i].source) / 100);
+        else say("layer %d %d 0 0 0", i, lay[i].first);
+}
 static void build(const char *dna)
 {
     DWORD t0 = timeGetTime();
-    int i, r;
-    static char sig[1400];
-    if (assembling) { lstrcpyn(pendingDna, dna, sizeof pendingDna); return; }   /* after the assembly */
+    int i, r, tb;
+    static char sig[1400], next[1100], mine[1100];
+    /* during the assembly, or while a build runs (notes are served between its steps), the newest DNA waits */
+    if (assembling || building) { lstrcpyn(pendingDna, dna, sizeof pendingDna); return; }
+    lstrcpyn(mine, dna, sizeof mine);    /* dna points into the host-line buffer, which notes reuse during the build */
+    dna = mine;
     dna_parse(dna);
     signature(sig);
     if (!strcmp(sig, lastSig)) {        /* only voice genes or globals changed: Sound Recorder has nothing to do */
         lstrcpyn(dnaText, dna, sizeof dnaText);
         if (hDna) SetWindowText(hDna, dnaText);
-        for (i = 0; i < nlay; i++)
-            if (lay[i].count) say("layer %d %d %d %d %ld", i, lay[i].first, lay[i].count, sound_rate(lay[i].source), (long)layer_len[i] * sound_rate(lay[i].source) / 100);
-            else say("layer %d %d 0 0 0", i, lay[i].first);
+        layer_replies();
         if (selLayer >= nlay) selLayer = 0;
         panel_refresh();
         say("built 0");
         return;
     }
-    for (r = 0; r < NR; r++) stop_rec(r, 0, 5);
     building = TRUE;
-    lstrcpyn(dnaText, dna, sizeof dnaText);
-    if (hDna) SetWindowText(hDna, dnaText);
-    dna_parse(dna);
+    tb = bank;
     HookActive(TRUE);
-    for (r = 0; r < NR; r++) rlayer[r] = -1;
+    /* in place, one recorder at a time; between recorders the host's notes are served. A note on a recorder
+       already rebuilt plays its new sound, at the pitch the host meant (see play_rec), so nothing goes silent */
     for (i = 0; i < nlay; i++) {
         LAYER *L = &lay[i];
         int len = 0;
         for (r = L->first; r < L->first + L->count; r++) {
-            rlayer[r] = i;
-            len = run_steps(r, L);
-            layout_strip(r);
+            int a = tb * NR + r;
+            stop_rec(a, 0, 1500);        /* an old note on it rings out (the card fades it over 1.5 s) */
+            rlayer[a] = i;
+            len = run_steps(a, L);
+            recRate[a] = sound_rate(L->source);
+            layout_strip(a);
+            poll_host();
             pump();
         }
         layer_len[i] = len;
-        if (L->count) say("layer %d %d %d %d %ld", i, L->first, L->count, sound_rate(L->source), (long)len * sound_rate(L->source) / 100);
-        else say("layer %d %d 0 0 0", i, L->first);
     }
     HookActive(FALSE);
-    building = FALSE;
+    for (r = 0; r < NALL; r++) hostRate[r] = recRate[r];   /* the host learns the new rates from the replies */
+    lstrcpyn(dnaText, dna, sizeof dnaText);
+    if (hDna) SetWindowText(hDna, dnaText);
     strcpy(lastSig, sig);
+    building = FALSE;
+    layer_replies();
     if (hMain) InvalidateRect(hMain, NULL, FALSE);
     if (selLayer >= nlay) selLayer = 0;
     panel_refresh();
     say("built %ld", (long)(timeGetTime() - t0));
+    if (pendingDna[0]) { lstrcpy(next, pendingDna); pendingDna[0] = 0; build(next); }
 }
 
 /* ================================================================ notes */
 static void play_rec(int r, DWORD id, DWORD hz, WORD vol)
 {
-    if (r < 0 || r >= NR || !rw[r] || building) return;
+    if (r < 0 || r >= NR) return;
+    r = AR(r);
+    if (!rw[r]) return;
+    if (hostRate[r] && recRate[r] && hostRate[r] != recRate[r]) hz = hz * recRate[r] / hostRate[r];   /* rebuilt mid-change */
+    {
+    DWORD t0 = timeGetTime(), t1, t2, t3;
     if (rplay[r] || is_playing(r)) { bs_armstop(rt[r], id, 5); press(r, SR_STOP); }
+    t1 = timeGetTime();
     press(r, SR_REW);
+    t2 = timeGetTime();
     bs_arm(rt[r], id, hz, vol);
     press(r, SR_PLAY);
+    t3 = timeGetTime();
+    if (t3 - t0 > 30) logf_("slow play rec %d: stop %ld rew %ld play %ld ms", r, t1 - t0, t2 - t1, t3 - t2);
+    }
     rplay[r] = TRUE;
 }
-static void stop_rec(int r, DWORD id, int fade_ms)
+static void stop_rec(int r, DWORD id, int fade_ms)   /* r: an absolute recorder (bank * NR + row) */
 {
-    if (r < 0 || r >= NR || !rw[r]) return;
+    if (r < 0 || r >= NALL || !rw[r]) return;
     if (rplay[r] || is_playing(r)) {
         bs_armstop(rt[r], id, (WORD)fade_ms);
         press(r, SR_STOP);
@@ -387,7 +420,7 @@ static void watch_ends(void)
     static DWORD last; int r;
     if (timeGetTime() - last < 25) return;
     last = timeGetTime();
-    for (r = 0; r < NR; r++) if (rplay[r] && !is_playing(r)) { rplay[r] = FALSE; say("end %d", r); }
+    for (r = 0; r < NR; r++) if (rplay[AR(r)] && !is_playing(AR(r))) { rplay[AR(r)] = FALSE; say("end %d", r); }
 }
 
 /* ================================================================ the clock: the host's time after a resume */
@@ -517,10 +550,28 @@ static int global_value(char letter, int dflt)
     for (p = b; p < e; p++) if (dnaText[p] == letter) { const char *q = dnaText + p + 1; v = getint(&q, dflt); }
     return v;
 }
+static void harmony_from_dna(void)   /* the Harmony button follows the DNA's H gene for the selected layer */
+{
+    int b, e, p, len, k; char L; static char t[64];
+    t[0] = 0; harmIdx = 0;
+    span(selLayer, &b, &e);
+    if (b < 0) return;
+    p = b; while (isname(dnaText[p])) p++;
+    while (p < e) {
+        int kind = token(dnaText + p, &len, &L);
+        if (!kind) break;
+        if (kind == 'g' && L == 'H' && len < (int)sizeof t) { memcpy(t, dnaText + p, len); t[len] = 0; }
+        p += len;
+    }
+    for (k = 0; k < 6; k++) if (!strcmp(t, harmGenes[k])) harmIdx = k;
+    if (t[0] && !strcmp(t, "H0")) harmIdx = 0;
+}
 static void panel_refresh(void)
 {
     int i; char t[48];
     if (!hSb[0]) return;
+    harmony_from_dna();
+    if (hHarm) SetWindowText(hHarm, harmNames[harmIdx]);
     if (hDna) SetWindowText(hDna, dnaText);
     for (i = 0; i < (int)NSL; i++) {
         SLIDER *S = &sliders[i];
@@ -599,6 +650,21 @@ static void panel_scroll(HWND sb, int code, int pos)
     edited(sliders[i].letter == '#');                    /* pool sizes are Sound Recorder's business; the rest is not */
 }
 
+/* the DNA line can be typed into: Enter applies it (Windows rebuilds and tells the host), Esc puts it back */
+static WNDPROC oldDnaProc;
+long FAR PASCAL __export DnaEditProc(HWND h, UINT m, WPARAM w, LPARAM l)
+{
+    if (m == WM_KEYDOWN && w == VK_RETURN) {
+        static char t[1100];
+        GetWindowText(h, t, sizeof t);
+        if (t[0] && !building) { lstrcpyn(dnaText, t, sizeof dnaText); edited(TRUE); }
+        return 0;
+    }
+    if (m == WM_KEYDOWN && w == VK_ESCAPE) { SetWindowText(h, dnaText); return 0; }
+    if (m == WM_CHAR && (w == '\r' || w == 27)) return 0;
+    return CallWindowProc((FARPROC)oldDnaProc, h, m, w, l);
+}
+
 static HFONT panelFont;
 static HWND mk(const char *cls, const char *text, DWORD st, int x, int y, int w, int h, int id)
 {
@@ -614,7 +680,10 @@ static void panel_create(int group)
     switch (group) {
     case 0:
         mk("STATIC", "DNA", WS_VISIBLE, 8, PANEL + 6, 30, 16, -1);
-        hDna = mk("EDIT", dnaText, WS_VISIBLE | WS_BORDER | ES_READONLY | ES_AUTOHSCROLL, 40, PANEL + 2, 830, 22, 1099);
+        hDna = mk("EDIT", dnaText, WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 40, PANEL + 2, 830, 22, 1099);
+        SendMessage(hDna, EM_LIMITTEXT, 1024, 0L);
+        oldDnaProc = (WNDPROC)GetWindowLong(hDna, GWL_WNDPROC);
+        SetWindowLong(hDna, GWL_WNDPROC, (LONG)MakeProcInstance((FARPROC)DnaEditProc, hInst));
         break;
     case 1:
         mk("STATIC", "Sound", WS_VISIBLE, 8, PANEL + 36, 40, 16, -1);
@@ -730,12 +799,12 @@ static void step_fly(int r, long ms)   /* ms since this recorder's turn began */
     }
 }
 
-static void poll_host(void);
+static int poll_host(void);
 
 static void assemble(void)
 {
     DWORD t0 = timeGetTime();
-    long gap = 200, first_extra = 260;   /* the first recorder is shown slowly; the rest follow */
+    long gap = 185, first_extra = 220;   /* the first recorder is shown slowly; the rest follow */
     int r, done = 0;
     RECT full;
     assembling = TRUE;
@@ -767,9 +836,9 @@ static void assemble(void)
         o.x = 1024 - 140; o.y = PANEL; ClientToScreen(hMain, &o);
         t1 = timeGetTime();
         for (;;) {
-            long f = ease((long)(timeGetTime() - t1) * 1000 / 450);
+            long f = ease((long)(timeGetTime() - t1) * 1000 / 380);
             lerp_rect(&q, &a, o.x, o.y, 132, 124, f);
-            SetWindowPos(hClock, HWND_TOP, q.left, q.top, q.right, q.bottom, SWP_NOACTIVATE);
+            SetWindowPos(hClock, HWND_TOPMOST, q.left, q.top, q.right, q.bottom, SWP_NOACTIVATE);   /* above every recorder */
             UpdateWindow(hClock);
             for (k = 0; k < NR; k++) UpdateWindow(rw[k]);
             UpdateWindow(hMain);
@@ -777,6 +846,7 @@ static void assemble(void)
             if (f >= 1000) break;
         }
         st = GetWindowLong(hClock, GWL_STYLE);
+        SetWindowPos(hClock, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
         ShowWindow(hClock, SW_HIDE);
         SetMenu(hClock, NULL);
         SetWindowLong(hClock, GWL_STYLE, (st & ~(WS_POPUP | WS_CAPTION | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_DLGFRAME)) | WS_CHILD | WS_BORDER);
@@ -794,7 +864,13 @@ static void assemble(void)
             long start = r == 0 ? 0 : first_extra + r * gap;
             long ms = t - start;
             if (r == 0) ms = ms * 10 / 18;                      /* the first one at half speed: see what happens */
-            if (ms >= 0 && fly[r].stage < 4) step_fly(r, ms);
+            if (ms >= 0 && fly[r].stage < 4) {
+                step_fly(r, ms);
+                if (r == 0 && fly[0].stage >= 4 && !titleShown) {   /* the title, once the first recorder has left it */
+                    RECT tr; SetRect(&tr, 0, 0, 300, ROW0 - 16); titleShown = TRUE;
+                    InvalidateRect(hMain, &tr, TRUE); UpdateWindow(hMain);
+                }
+            }
             if (fly[r].stage >= 4) done++;
         }
         poll_host();
@@ -805,18 +881,30 @@ static void assemble(void)
         for (g = 0; g < 4; g++) {
             panel_create(g);
             t2 = timeGetTime();
-            while (timeGetTime() - t2 < 60) { poll_host(); pump(); }
+            while (timeGetTime() - t2 < 45) { poll_host(); pump(); }
         }
     }
     assembled = TRUE;
     assembling = FALSE;
     for (r = 0; r < NR; r++) layout_strip(r);
+    for (r = 0; NB > 1 && r < NR; r++) {   /* a spare bank (NB 2) would take the same rows, hidden */
+        HWND w = rw[NR + r]; LONG st;
+        if (!w) continue;
+        SetMenu(w, NULL);
+        st = GetWindowLong(w, GWL_STYLE);
+        st &= ~(WS_POPUP | WS_CAPTION | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_BORDER | WS_DLGFRAME | WS_OVERLAPPED | WS_VISIBLE);
+        SetWindowLong(w, GWL_STYLE, st | WS_CHILD | WS_CLIPSIBLINGS);
+        SetParent(w, hMain);
+        SetWindowPos(w, HWND_BOTTOM, STRIPX, ROW0 + r * ROWH, STRIPW, STRIPH, SWP_NOACTIVATE | SWP_HIDEWINDOW);
+        layout_strip(NR + r);
+    }
     InvalidateRect(hMain, NULL, TRUE);
     UpdateWindow(hMain);
     {
         WORD z = 0; bs_report(1, &z, 0);
     }
     say("ready");
+    logf_("ready: free resources user %d%% gdi %d%%", GetFreeSystemResources(GFSR_USERRESOURCES), GetFreeSystemResources(GFSR_GDIRESOURCES));
     if (pendingDna[0]) { static char d[1100]; lstrcpy(d, pendingDna); pendingDna[0] = 0; build(d); }
 }
 
@@ -836,9 +924,9 @@ static void host_line(char *s)
         if (p) { p = strchr(p + 1, ' '); if (p) vol = (WORD)atol(p + 1); }
         play_rec(r, curId, hz, vol);
     }
-    else if (!strcmp(s, "off")) stop_rec(atoi(rest), curId, envR);
-    else if (!strcmp(s, "cut")) stop_rec(atoi(rest), curId, 5);
-    else if (!strcmp(s, "panic")) { int r; for (r = 0; r < NR; r++) stop_rec(r, 0, 5); }
+    else if (!strcmp(s, "off")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, envR); }
+    else if (!strcmp(s, "cut")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, 5); }
+    else if (!strcmp(s, "panic")) { int r; for (r = 0; r < NALL; r++) stop_rec(r, 0, 5); }
     else if (!strcmp(s, "env")) {
         sscanf(rest, "%d %d %d %d", &envA, &envD, &envS, &envR);
         bs_env((WORD)envA, (WORD)envD, (WORD)envS);
@@ -850,14 +938,14 @@ static void host_line(char *s)
     }
 }
 
-static void poll_host(void)
+static int poll_host(void)   /* returns how many events it handled */
 {
     static WORD e[140];
     static char acc[1200]; static int accn;
-    int n, k;
+    int n, k, handled = 0;
     while ((n = bs_event(e, 140)) > 0) {
         int ty = e[0] >> 8;
-        if (ty == 6 && n >= 3) { SetCursorPos(e[1], e[2]); continue; }   /* the host's pointer */
+        if (ty == 6 && n >= 3) { SetCursorPos(e[1], e[2]); handled++; continue; }   /* the host's pointer */
         if (ty == 4 || ty == 8) {
             for (k = 3; k < n && accn < (int)sizeof acc - 2; k++) { acc[accn++] = (char)(e[k] & 0xFF); acc[accn++] = (char)(e[k] >> 8); }
             if (ty == 4) {
@@ -866,8 +954,10 @@ static void poll_host(void)
                 host_line(acc);
             }
         }
+        handled++;
     }
     watch_ends();
+    return handled;
 }
 
 /* ================================================================ the window */
@@ -885,7 +975,7 @@ static void paint(HWND h)
     SetBkMode(dc, TRANSPARENT);
     of = SelectObject(dc, big);
     SetTextColor(dc, RGB(0, 0, 128));
-    TextOut(dc, 12, 10, "BASILISK 16", 11);
+    if (titleShown) TextOut(dc, 12, 10, "BASILISK 16", 11);
     SelectObject(dc, sm);
     SetTextColor(dc, RGB(0, 0, 0));
     if (assembled) {
@@ -896,7 +986,7 @@ static void paint(HWND h)
     for (i = 0; i < NR; i++) {
         char t[4]; RECT b;
         int y = ROW0 + i * ROWH;
-        int l = rlayer[i];
+        int l = rlayer[AR(i)];
         SetRect(&b, 6, y + 4, 34, y + 28);
         if (l >= 0) {
             HBRUSH br = CreateSolidBrush(layerColor[l % NL]);
@@ -930,7 +1020,7 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
         int r;
         if (w >= 1100 && w < 1200) { panel_command(w); return 0; }
         /* a reparented recorder's buttons report to us: hand the click to its recorder */
-        for (r = 0; r < NR; r++) if (rw[r] && (HWND)LOWORD(l) && GetParent((HWND)LOWORD(l)) == rw[r]) {
+        for (r = 0; r < NALL; r++) if (rw[r] && (HWND)LOWORD(l) && GetParent((HWND)LOWORD(l)) == rw[r]) {
             PostMessage(rw[r], WM_COMMAND, w, l);
             return 0;
         }
@@ -990,13 +1080,22 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
         if (!rw[r]) { logf_("recorder %d did not start", r); continue; }
         rt[r] = GetWindowTask(rw[r]);
         rlayer[r] = 0;
+        recRate[r] = hostRate[r] = 22050;
         MoveWindow(rw[r], 12 + c * 214 + row * 18, 18 + row * 176 + c * 10, 320, 186, TRUE);
+        pump();
+    }
+    for (r = NR; r < NALL; r++) {        /* the spare bank: the same recorders, out of sight until a DNA needs them */
+        rw[r] = launch("SOUNDREC.EXE C:\\WINDOWS\\DING.WAV", SW_SHOWNOACTIVATE);
+        if (!rw[r]) { logf_("recorder %d did not start", r); continue; }
+        ShowWindow(rw[r], SW_HIDE);
+        rt[r] = GetWindowTask(rw[r]);
+        rlayer[r] = 0;
         pump();
     }
     dna_parse(dnaText);
     signature(lastSig);
     { int i; for (i = 0; i < nlay; i++) layer_len[i] = 52; }
-    logf_("SYNTH up: %d recorders", NR);
+    logf_("SYNTH up: %d recorders, free resources: user %d%% gdi %d%%", NALL, GetFreeSystemResources(GFSR_USERRESOURCES), GetFreeSystemResources(GFSR_GDIRESOURCES));
     {   /* idle: the engine may freeze the machine here (the snapshot) */
         WORD z = 0; bs_report(2, &z, 0);
     }
@@ -1006,7 +1105,7 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
             if (m.message == WM_QUIT) break;
             TranslateMessage(&m); DispatchMessage(&m);
         } else {
-            poll_host();
+            if (!poll_host()) bs_idle();
         }
     }
     HookInstall(FALSE);

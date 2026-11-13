@@ -107,6 +107,23 @@ class Engine:
             if len(c) % 2: c += b'\0'
             words = [id & 0xFFFF, id >> 16] + list(struct.unpack('<%dH' % (len(c) // 2), c))
             self.event(4 if k == len(chunks) - 1 else 8, words, id if k == len(chunks) - 1 else 0, at)
+    KEYS = {'enter': 13, 'esc': 27, 'backspace': 8, 'tab': 9, 'home': 278, 'end': 279, 'lshift': 304, 'left': 276, 'right': 275, 'delete': 127}
+    SHIFTED = {'>': '.', '<': ',', '#': '3', '@': '2', '~': '`', ':': ';', '+': '='}
+    def key(self, code, down):
+        w = self.u32('key_w')
+        struct.pack_into('<I', self.m, OFF['keys'] + (w % 64) * 4, (0x80000000 if down else 0) | code)
+        self.u32('key_w', w + 1)
+    def tap(self, name_or_code, dt=0.04):
+        code = self.KEYS.get(name_or_code, name_or_code) if isinstance(name_or_code, str) else name_or_code
+        if isinstance(code, str): code = ord(code)
+        self.key(code, True); time.sleep(dt); self.key(code, False); time.sleep(dt)
+    def type(self, text, dt=0.04):
+        for ch in text:
+            if ch in self.SHIFTED or ch.isupper():
+                base = self.SHIFTED.get(ch, ch.lower())
+                self.key(304, True); time.sleep(dt); self.tap(ord(base), dt); self.key(304, False); time.sleep(dt)
+            else:
+                self.tap(ord(ch), dt)
     def mouse(self, x, y, btn=0):
         struct.pack_into('<iiI', self.m, OFF['mouse_x'], x, y, btn); self.u32('mouse_seq', self.u32('mouse_seq') + 1)
     def close(self):

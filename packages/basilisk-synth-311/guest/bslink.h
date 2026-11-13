@@ -66,3 +66,4 @@ static void bs_env(WORD a, WORD d, WORD s)
 }
 /* a text line to the host (DNA.md section 4), at most 250 characters */
 static void bs_line(const char *s) { bs_text(s); }
+static void bs_idle(void) { outpw(BS_CMD, 28); }   /* nothing to do: let the emulated CPU rest for this millisecond */

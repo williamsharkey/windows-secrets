@@ -40,7 +40,10 @@ typedef struct {
   volatile uint32_t underruns;  /* host: count */
   char error[128];
   volatile uint32_t sched_ontime, sched_late, sched_latemax;   /* engine: the card's scheduling statistics */
-  uint32_t reserved[29];
+  volatile uint32_t offline;    /* host: rendering offline: never run ahead of host_r + lead on our own clock */
+  volatile uint32_t grant_pad;
+  volatile uint64_t grant_until; /* host: while it waits for Windows (offline), the engine may run up to here */
+  uint32_t reserved[25];
   bshm_ev ev[BSHM_EV];
   volatile uint16_t rep[BSHM_REP];
   float ring[BSHM_RING * 2];

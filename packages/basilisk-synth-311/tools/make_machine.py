@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from bsdrv import Engine
 
 src, gout, core, out = sys.argv[1:5]
-folder = '--folder' in sys.argv   # macOS: C: as a folder (DOSBox Pure's zip drive crashes in the x86_64 Mac build)
+folder = '--folder' in sys.argv   # C: as a plain folder instead of drive.zip (for experiments)
 drive = os.path.join(out, 'drive')
 if os.path.exists(out): shutil.rmtree(out)
 shutil.copytree(src, drive)
@@ -41,11 +41,15 @@ edit(os.path.join(drive, 'WINDOWS', 'WIN.INI'), winini)
 import zipfile
 if not folder:
   z = zipfile.ZipFile(os.path.join(out, 'drive.zip'), 'w', zipfile.ZIP_DEFLATED, compresslevel=9)
+  def add(path, name):   # fixed dates: the same inputs give the same zip on every machine (the snapshots must match it)
+    zi = zipfile.ZipInfo(name, date_time=(1993, 11, 8, 3, 11, 0))
+    if name.endswith('/'): zi.external_attr = 0o40755 << 16 | 0x10; z.writestr(zi, b'')
+    else: zi.compress_type = zipfile.ZIP_DEFLATED; zi.external_attr = 0o644 << 16; z.writestr(zi, open(path, 'rb').read())
   for root, dirs, files in sorted(os.walk(drive)):
     dirs.sort()
     rel = os.path.relpath(root, drive)
-    for d in dirs: z.write(os.path.join(root, d), (os.path.join(rel, d) if rel != '.' else d) + '/')
-    for f in sorted(files): z.write(os.path.join(root, f), os.path.join(rel, f) if rel != '.' else f)
+    for d in dirs: add(os.path.join(root, d), (os.path.join(rel, d) if rel != '.' else d).replace(os.sep, '/') + '/')
+    for f in sorted(files): add(os.path.join(root, f), (os.path.join(rel, f) if rel != '.' else f).replace(os.sep, '/'))
   z.close()
   shutil.rmtree(drive)
 

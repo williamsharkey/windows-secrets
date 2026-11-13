@@ -29,6 +29,7 @@ struct bs_engine {
   FILE *log;
   void *lib;
   int btn;
+  unsigned char held[512];     /* keys the host holds down (the core checks, and releases keys nobody holds) */
   retro_keyboard_event_t kbcb;
 #ifdef _WIN32
   HANDLE thread;
@@ -109,6 +110,8 @@ static bool env(unsigned cmd, void *data)
   case RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION: *(unsigned *)data = 0; return true;
   case RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK: if (cur) cur->kbcb = ((struct retro_keyboard_callback *)data)->callback; return true;
   case RETRO_ENVIRONMENT_GET_THROTTLE_STATE: {
+    /* unthrottled, one emulated frame per retro_run: the engine paces itself. (Claiming a slower display to make
+       DOSBox Pure skip drawing was tried: it then emulates ten frames per call, and the pacing gets too coarse.) */
     struct retro_throttle_state *t = data; t->mode = RETRO_THROTTLE_UNBLOCKED; t->rate = 0; return true; }
   case RETRO_ENVIRONMENT_SET_VARIABLES: case RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME: case RETRO_ENVIRONMENT_SET_GEOMETRY:
   case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO: return true;
@@ -132,6 +135,7 @@ static void poll_(void) {}
 static int16_t istate(unsigned port, unsigned dev, unsigned idx, unsigned id)
 {
   (void)idx;
+  if (cur && !port && dev == RETRO_DEVICE_KEYBOARD) return id < 512 ? cur->held[id] : 0;
   if (!cur || port || dev != RETRO_DEVICE_MOUSE) return 0;
   if (id == RETRO_DEVICE_ID_MOUSE_LEFT) return cur->btn & 1;
   if (id == RETRO_DEVICE_ID_MOUSE_RIGHT) return (cur->btn >> 1) & 1;
@@ -173,7 +177,7 @@ int bs_engine_run(bs_engine *e)
 {
   bshm *S = e->S;
   size_t n;
-  uint64_t copied = 0, last_hr = 0; double t_hr, t0, busy = 0, t_load = 0;
+  uint64_t copied = 0, last_hr = 0, pace_beat = 0; double t_hr, t0, busy = 0, t_load = 0, t_beat_seen = 0;
   uint16_t rep[512]; int snap_now = 0;
   int32_t mx = -1, my = -1; uint32_t mseq = 0;
   cur = e;
@@ -233,6 +237,7 @@ int bs_engine_run(bs_engine *e)
     }
     while (S->key_r != S->key_w) {
       uint32_t kk = S->keys[S->key_r % BSHM_KEYS];
+      if ((kk & 0xFFFF) < 512) e->held[kk & 0xFFFF] = (unsigned char)((kk >> 31) & 1);
       if (e->kbcb) e->kbcb((kk >> 31) & 1, kk & 0xFFFF, 0, (uint16_t)((kk >> 16) & 0x7FFF));
       S->key_r++;
     }
@@ -263,8 +268,14 @@ int bs_engine_run(bs_engine *e)
     /* pacing: keep the DAC `lead` frames ahead of what the host consumed; when the host's audio clock is not
        running (no audio device, the DAW stopped processing), run at real time by our own clock */
     if (S->host_r != last_hr) { last_hr = S->host_r; t_hr = t; }
-    if (S->realtime && t - t_hr < 0.2) target = S->host_r + S->lead;
-    else target = last_hr + (uint64_t)((t - t_hr) * S->rate) + S->lead;
+    if (S->host_beat != pace_beat) { pace_beat = S->host_beat; t_beat_seen = t; }
+    if (S->offline || (S->realtime && t - t_beat_seen < 0.2)) {
+      /* the host is processing (it beats every block, and while it waits for us): its pace exactly, plus what it
+         grants while it waits for Windows */
+      uint64_t base = S->host_r > S->grant_until ? S->host_r : S->grant_until;
+      target = base + S->lead;
+    }
+    else target = last_hr + (uint64_t)((t - t_hr) * S->rate) + S->lead;   /* no audio from the host: real time */
     if (copied < target) {
       double a = now();
       e->c_run();
@@ -288,6 +299,13 @@ out:
   e->c_unload(); e->c_deinit();
   cur = NULL;
   return 0;
+}
+
+int bs_engine_event(bs_engine *e, const uint16_t *w, int n, uint32_t id, uint64_t at)
+{
+  if (!e || !e->h_event || e->S->state < BS_RUNNING || e->S->state == BS_FAILED || e->S->quit) return 0;
+  e->h_event(w, n, id, at);
+  return 1;
 }
 
 #ifdef _WIN32
