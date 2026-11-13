@@ -158,6 +158,33 @@ open BASILISK-3.11-macos-arm64.dmg</pre></td></tr>
     <p class="note">Windows for Workgroups 3.11 (&copy; 1993 Microsoft), included as part of this art project. The emulator is <a href="https://codeberg.org/schelling/dosbox-pure">DOSBox Pure</a> (GPLv2 or later), with one addition: BSYN, an emulated 32-voice sound card, because Windows 3.11's Sound Blaster driver can only play one sound at a time. Its Windows 3.11 wave driver, the program that assembles the recorders, and the plugin (built with <a href="https://github.com/DISTRHO/DPF">DPF</a>) are in <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">packages/basilisk-synth-311</a>.</p>
   </div>
 </div>
+
+<div class="win" id="basilisk-synth">
+  <div class="cap"><span class="box"></span><span class="t">BASILISK SYNTH &mdash; an instrument made of sixteen Windows XP Sound Recorders</span></div>
+  <div class="body">
+    <img class="shot" src="basilisk-download/basilisk-synth.png" width="1024" height="768" loading="lazy" alt="BASILISK SYNTH: Windows XP with sixteen Sound Recorder strips in a column (Play, Stop, Position, the green wave, Length and the slider), some playing, colour-coded by layer; beside them the DNA box, the layers, XP's sounds, Task Manager's CPU graphs and the Date and Time clock and calendar.">
+    <p>A plugin instrument: VST3 for Windows and macOS, plus Audio Unit and CLAP on macOS. Each copy runs its own Windows XP. Open the editor and sixteen real <code>sndrec32.exe</code> windows come apart on XP's desktop and line up into one tape machine, one visible change at a time: menu bar, then title bar, then the buttons they don't need, then the glide into place (about ten seconds; it can already play after one). Task Manager's CPU graphs and the Date and Time clock follow. Every note you play is played by one of those Sound Recorders, through XP's own sound card, and that sound is what reaches your DAW. Pitch comes from XP's mixer: the recorder opens the sound card at the note's sample rate.</p>
+    <p>The sound is a <b>DNA</b> line, the same format as BASILISK 16. It lists layers of XP's own sounds (ding, chord, tada, the XP startup and shutdown sounds, 35 in all), each run through Sound Recorder's Effects and Edit menus in order. It also sets harmony, unison, transpose and the envelope. <code>chord#10/ding&gt;&gt;E#6;A2D300S70R250</code> is a chord on ten recorders over a sped-up, echoed ding on six. Edit it inside XP (Effects, Edit, Voices, Layers, Mutate), with the DAW's parameters, or start from the 12 factory programs. Your DAW saves it with the project.</p>
+    <div class="dl">
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-v1.0.0/BASILISK-SYNTH-windows-x64.zip"><b>Windows 10 / 11</b><span>VST3 &middot; x64 &middot; .zip &middot; <!--SIZE-bswin-->47 MB</span></a>
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-v1.0.0/BASILISK-SYNTH-macos.dmg"><b>macOS</b><span>VST3 + AU + CLAP &middot; Apple silicon and Intel &middot; .dmg &middot; <!--SIZE-bsmac-->95 MB</span></a>
+    </div>
+    <p class="note">Plus the XP machine, which the plugin fetches by itself the first time: <code>basilisk-synth-machine-1.tar.xz</code>, 788 MB (930 MB unpacked), checked against its SHA-256. All files are on the <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.0.0">release page</a>.</p>
+
+    <h2>Install</h2>
+    <table>
+      <tr><th>Windows</th><td>Unzip and copy the <b>BasiliskSynth.vst3</b> folder to <code>C:\Program Files\Common Files\VST3</code>, then rescan plugins. It is an instrument called BASILISK SYNTH. The first time you load it, it fetches the machine and shows the progress in its window.</td></tr>
+      <tr><th>macOS</th><td>Open the .dmg and copy <b>BasiliskSynth.vst3</b> to <code>~/Library/Audio/Plug-Ins/VST3</code>, <b>BasiliskSynth.component</b> to <code>~/Library/Audio/Plug-Ins/Components</code>, and <b>BasiliskSynth.clap</b> to <code>~/Library/Audio/Plug-Ins/CLAP</code>. They are not notarized, so run this once in Terminal, then restart the DAW:
+        <pre>xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/*/BasiliskSynth.*</pre></td></tr>
+    </table>
+
+    <h2>Good to know</h2>
+    <p>Notes go through a whole emulated PC, so this is not a tight instrument. It reports a fixed latency (<!--LAT-win-->370 ms on Windows, <!--LAT-mac-->200 ms on macOS), which DAWs compensate for on playback. Even so, notes land within tens of milliseconds of the grid rather than on the sample, which is part of its character. Offline renders wait for Windows and play it in real time, so they come out the same as a live bounce. XP never really idles under emulation, so a running instance uses a good share of a core or two. It goes to sleep after four quiet seconds with its editor closed, and wakes on the next note or when the transport plays. Sixteen voices per instance; a seventeenth note steals the oldest, with a 5 ms fade.</p>
+
+    <h2>What is in it</h2>
+    <p class="note">Windows XP, its sounds and Sound Recorder (&copy; Microsoft), included as part of this art project. The emulator is <a href="https://www.qemu.org/">QEMU</a> (GPLv2), with no window of its own: the plugin draws XP's screen and sends your mouse and keys in. XP's AC97 sound goes into a pipe the plugin reads. Inside XP, a small program assembles the recorders, and a DLL in each Sound Recorder sets the note's rate and envelope. Both are compiled in XP with tcc. The plugin is built with <a href="https://github.com/DISTRHO/DPF">DPF</a>. Sources are in <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth">packages/basilisk-synth</a>.</p>
+  </div>
+</div>
 </div>
 <nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">Windows Secrets</a><i>&middot;</i><a href="inside-windows.html">Inside Windows</a><i>&middot;</i><a href="tribute.html">Tribute</a><i>&middot;</i><a href="basilisk.html">BASILISK</a><i>&middot;</i><a href="basilisk-term.html">BASILISK III</a><i>&middot;</i><a href="basilisk-31.html">BASILISK 3.11</a><i>&middot;</i><a href="xp-live.html">Live</a><i>&middot;</i><a href="puppetry.html">Window Puppetry</a><i>&middot;</i><a href="valentine-xp.html">XP Valentine</a><i>&middot;</i><a href="valentine-31.html">Valentine 3.11</a><i>&middot;</i><a href="basilisk-31-browser.html">3.11 in your browser</a><i>&middot;</i><b>Download</b></nav>
 </body>

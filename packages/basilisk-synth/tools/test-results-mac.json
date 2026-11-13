@@ -1,0 +1,71 @@
+{
+  "pitch": {
+    "notes": 10,
+    "heard": 10,
+    "max_cents_off": 3.6,
+    "cents": [
+      0.0,
+      3.1,
+      1.9,
+      1.4,
+      -0.5,
+      3.6,
+      -2.1,
+      -1.8,
+      -1.7,
+      0.5
+    ]
+  },
+  "timing": {
+    "reported_latency_ms": 240.0,
+    "onset_error_median_ms": -41.6,
+    "onset_error_spread_ms": 76.8,
+    "onset_error_std_ms": 23.5
+  },
+  "steal_clicks": {
+    "notes": 20,
+    "recorders": 2,
+    "sample_jumps_over_40x_local": 0,
+    "max_ratio": 13.6,
+    "peak": 0.213
+  },
+  "determinism": {
+    "same_dna_twice_envelope_corr": 0.999,
+    "peaks": [
+      0.139,
+      0.139
+    ]
+  },
+  "state": {
+    "state_bytes": 216,
+    "state_has_dna": true,
+    "reloaded_vs_original_envelope_corr": 0.997
+  },
+  "offline": {
+    "host_line": "rendered 15.1 s of audio in 15.2 s (offline)",
+    "wall_s": 19.6,
+    "peak": 0.127
+  },
+  "instances": {
+    "peaks": [
+      0.271,
+      0.26
+    ],
+    "max_qemu_during": 2,
+    "qemu_after": 0
+  },
+  "sleep_wake": {
+    "slept": true,
+    "woke": true,
+    "peak_after_wake": 0.126
+  },
+  "kill_qemu": {
+    "audible_seconds": [
+      12.0,
+      18.0
+    ],
+    "render_seconds": 24.5,
+    "note": "notes were scheduled until 22.5 s; QEMU was killed about 6 s into them"
+  },
+  "qemu_left": 0
+}
