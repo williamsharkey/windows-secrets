@@ -12,13 +12,13 @@ page-file graphs and the Date and Time clock and calendar move in beside them.
 
 Download
 --------
-https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.0.0
+https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.1.0
 
 | File | Contents |
 |---|---|
 | `BASILISK-SYNTH-windows-x64.zip` (47 MB) | `BasiliskSynth.vst3`. Copy it to `C:\Program Files\Common Files\VST3`. |
 | `BASILISK-SYNTH-macos.dmg` (95 MB) | `BasiliskSynth.vst3`, `.component` and `.clap`, universal (Apple Silicon and Intel). Copy them to `~/Library/Audio/Plug-Ins/VST3`, `Components` and `CLAP`. |
-| `basilisk-synth-machine-1.tar.xz` | The XP machine. You don't download it yourself: the plugin fetches it once, on first use. |
+| `basilisk-synth-machine-2.tar.xz` | The XP machine. You don't download it yourself: the plugin fetches it once, on first use. |
 
 - **First use:** the plugin downloads the machine (788 MB), checks its SHA-256 and unpacks it (930 MB). It uses the
   curl and tar that come with Windows 10/11 and macOS, and its editor shows the progress.
@@ -85,31 +85,46 @@ How the sound gets out of XP
 - **Voice allocation:** the voice allocator (`core/voices.cpp`) gives each note a free recorder from its layer's
   pool. If none is free, it takes the oldest, cutting it with a 5 ms fade.
 
-Timing and tests
-----------------
-Measured through a real VST3 host (`tools/testhost`, `tools/run_tests.py`; results in `tools/test-results-*.json`):
+Timing and tests (v1.1)
+-----------------------
+Measured through a real VST3 host (`tools/testhost`, `tools/run_tests.py`; `tools/test-results-*.json`):
 
-|                                         | Windows 11 (QEMU 11.1)        | macOS, Apple silicon (QEMU 11.1) |
-|-----------------------------------------|-------------------------------|----------------------------------|
-| plugin load -> XP running               | 0.9 s                         | 0.12 s                           |
-| plugin load -> ready for sound          | 1.2 s (guest answers on COM1) | 0.3 s                            |
-| plugin load -> assembly finished        | 11.5 s                        | 11.3 s                           |
-| reported latency                        | 370 ms                        | 200 ms                           |
-| onset vs grid after compensation        | median +28 ms, std 82 ms      | median -42 ms, std 24 ms         |
-| pitch error, 10 notes over 3 octaves    | max 5.2 cents                 | max 3.6 cents                    |
-| clicks when 20 notes steal 2 recorders  | none                          | none                             |
-| same DNA twice (envelope correlation)   | 0.986                         | 0.999                            |
-| state saved -> reloaded (correlation)   | 0.992                         | 0.997                            |
-| offline render, 15.1 s                  | 15.8 s, correct audio         | 15.2 s, correct audio            |
-| two instances                           | both play, 2 QEMUs, 0 after   | both play, 2 QEMUs, 0 after      |
-| sleep after 4 s, wake on a note         | yes                           | yes                              |
-| QEMU killed mid-phrase                  | output silent from that moment| output silent from that moment   |
-| pluginval, strictness 10                | SUCCESS (25 test groups)      | SUCCESS (25 test groups)         |
+|                                          | Windows 11 (QEMU 11.1)            | macOS, Apple silicon (QEMU 11.1)  | v1.0 (Win / mac)          |
+|------------------------------------------|-----------------------------------|-----------------------------------|---------------------------|
+| plugin load -> ready for sound           | ~1.1 s                            | ~0.3 s                            | 1.2 / 0.3 s               |
+| plugin load -> assembly finished         | 5.6-6.1 s                         | 4.4-4.5 s                         | 11.5 / 11.3 s             |
+| reported latency                         | 100 ms                            | 100 ms                            | 370 / 200 ms              |
+| note timing after compensation (std)     | about +-25 ms (std ~20)                       | about +-8 ms (std ~5)                       | 82 / 24 ms                |
+| pitch error, 10 notes over 3 octaves     | max 7 cents                       | max 5.5 cents                     | 5.2 / 3.6 cents           |
+| same DNA twice (envelope correlation)    | 0.982-0.992                       | 0.995-0.996                            | 0.986 / 0.999             |
+| state saved -> reloaded                  | 0.988-0.991                       | 0.993-0.995                            | 0.992 / 0.997             |
+| emulator CPU, awake, nothing playing     | ~50% of a core                    | ~20% of a core                    | ~200% / ~190%             |
+| emulator CPU, asleep                     | ~3%                               | ~2%                               | same                      |
+| emulator CPU, playing 3 notes a second   | ~100% of a core                   | ~100% of a core                   | ~200%+                    |
+| clicks on voice steals                   | none                              | none                              | none                      |
+| offline render, two instances, sleep/wake, QEMU killed -> silence | pass   | pass                              | pass                      |
+| pluginval strictness 10                  | SUCCESS                           | SUCCESS (VST3); auval PASS (AU)   | SUCCESS / SUCCESS         |
 
-The last-but-one row is the proof that the sound is XP's: the plugin has no other source. Under the Linux QEMU 6.2
-used to build the machine the same assembly takes 3.4 s and notes land within +-9 ms of each other (114 ms median);
-QEMU 11 on Windows and macOS is slower at XP's window painting and much less regular in its audio timing. Inside XP,
-Sound Recorder's own Play handling takes 30-300 ms before it opens the sound card (logged as `log open` lines).
+Timing spread is for every note but the first after a quiet spell and the 4x-speed top note, whose onset the
+analysis misreads (+70 to +118 ms in every run). Two things it still cannot do: notes are not sample-accurate, and on
+a busy Windows machine some mid-assembly frames still show a strip being reshaped before every part has repainted.
+
+What changed for 1.1:
+- **A fast play path inside each Sound Recorder.** Sound Recorder's own Play took 30-300 ms before it opened the card.
+  Now srhook.dll keeps a card handle open per recorder and a time-critical thread starts the recorder's own sound
+  (the file Sound Recorder saved and reopened: its buffer, its effects) the moment synth.exe sets the recorder's
+  event; the handle is reopened only when the note's rate changes. The strip still shows the note: Play held down,
+  slider, position and green wave following the sound.
+- **QEMU's sound comes in 11 ms pieces, not 23** (96 kHz instead of 44.1 kHz; QEMU's wav writer buffers 4 KB), and
+  Windows no longer throttles the windowless QEMU's timers (power throttling off for that process).
+- **XP's idle loop halts.** XP's PoIdle finds no processor idle handler on this machine and returns, so the idle loop
+  spun at full speed on every virtual CPU. The machine state is saved with PoIdle patched to `sti; hlt; ret` (what
+  HalProcessorIdle does). With 2 vCPUs XP then woke a halted CPU only on the next clock tick, so the machine is now
+  1 vCPU with single-threaded TCG, which is also the fastest for the assembly.
+- **The assembly** is a quick wave (menu bar, frame, unused buttons) and then one strip at a time reshapes where it
+  stands and glides whole into place; a moving strip carries its own pixels, so frames are not half drawn. At the
+  end every strip is snapped exactly into place.
+- The guest's COM1 is overlapped I/O (a stalled write no longer blocks reads).
 
 The machine
 -----------
@@ -124,7 +139,7 @@ The machine
   - On macOS, a watchdog does the same.
 - **Sleep:** XP never truly idles under emulation; its idle loop spins about 75% of a core per virtual CPU. So the
   machine is paused after 4 quiet seconds (no note sounding, editor closed) and wakes for the next note.
-- **Hardware:** the virtual machine has 2 vCPUs, 512 MB, AC97 and no network to the outside (`restrict=on`).
+- **Hardware:** the virtual machine has 1 vCPU, 512 MB, AC97 and no network to the outside (`restrict=on`).
 
 What's inside
 -------------

@@ -25,7 +25,7 @@ import sys
 import time
 
 PKG = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-NAME = 'machine-1'
+NAME = 'machine-2'
 
 
 def qmp(path, cmd, args=None, timeout=600):
@@ -41,6 +41,40 @@ def qmp(path, cmd, args=None, timeout=600):
         if 'return' in r or 'error' in r:
             s.close()
             return r
+
+
+class Gdb:
+    """just enough of QEMU's gdbstub to patch guest memory (the VM stops while attached)"""
+    def __init__(self, port):
+        self.s = socket.create_connection(('127.0.0.1', port)); self.s.settimeout(10)
+        self.cmd('qSupported'); self.cmd('?')
+    def _recv(self):
+        buf = b''
+        while True:
+            c = self.s.recv(1)
+            if c == b'$':
+                while True:
+                    c = self.s.recv(1)
+                    if c == b'#':
+                        self.s.recv(2); self.s.sendall(b'+'); return buf.decode()
+                    buf += c
+    def cmd(self, p):
+        self.s.sendall(('$%s#%02x' % (p, sum(p.encode()) & 255)).encode())
+        r = self._recv()
+        while p[0] in 'mM' and r[:1] in ('T', 'S'):
+            r = self._recv()
+        return r
+    def read(self, a, n): return bytes.fromhex(self.cmd('m%x,%x' % (a, n)))
+    def write(self, a, d): return self.cmd('M%x,%x:%s' % (a, len(d), d.hex()))
+    def detach(self): self.s.sendall(b'$D#44'); self.s.close()
+
+
+# XP's idle loop (KiIdleLoop -> PoIdle) never halts on this machine: no processor idle handler is installed, so PoIdle
+# returns and the loop spins, ~75-100% of a host core per virtual CPU under TCG. PoIdle becomes "sti; hlt; ret" (what
+# HalProcessorIdle does) in the running kernel, and the machine state is saved with it: idle drops to ~8% per vCPU.
+POIDLE = 0x804fb840
+POIDLE_WAS = bytes.fromhex('8bff5356578bf164')
+POIDLE_NOW = bytes.fromhex('fbf4c3')
 
 
 def main():
@@ -63,7 +97,7 @@ def main():
     qmps, coms = os.path.join(work, 'qmp.sock'), os.path.join(work, 'com1.sock')
     # the plugin's devices, exactly (Machine.cpp); only the host ends differ
     args = pre + [os.path.join(q, 'bin', 'qemu-system-i386'), '-name', 'BASILISK SYNTH', '-nodefaults', '-no-user-config',
-                  '-M', 'pc-i440fx-6.2', '-m', '512', '-smp', '2', '-cpu', 'qemu32',
+                  '-M', 'pc-i440fx-6.2', '-m', '512', '-smp', '1', '-cpu', 'qemu32',
                   '-drive', 'file=%s,format=qcow2,if=ide,index=0,cache=writeback' % disk,
                   '-vga', 'cirrus', '-device', 'rtl8139,netdev=n0,mac=52:54:00:12:34:56',
                   '-netdev', 'user,id=n0,restrict=on,net=10.0.2.0/24',
@@ -73,7 +107,7 @@ def main():
                   '-device', 'AC97,audiodev=snd0',
                   '-chardev', 'socket,id=ser0,path=%s,server=on,wait=off' % coms, '-serial', 'chardev:ser0',
                   '-vnc', 'unix:%s' % os.path.join(work, 'vnc.sock'),
-                  '-qmp', 'unix:%s,server=on,wait=off' % qmps]
+                  '-qmp', 'unix:%s,server=on,wait=off' % qmps, '-gdb', 'tcp:127.0.0.1:1239']
     log = open(os.path.join(work, 'qemu.log'), 'w')
     p = subprocess.Popen(args, env=env, stdout=log, stderr=subprocess.STDOUT)
     t0 = time.time()
@@ -108,6 +142,14 @@ def main():
         sys.exit('synth.exe never answered')
     print('synth.exe answered after %.0fs; settling %.0fs' % (time.time() - t0, a.settle), flush=True)
     time.sleep(a.settle)
+    g = Gdb(1239)
+    was = g.read(POIDLE, len(POIDLE_WAS))
+    if was != POIDLE_WAS:
+        sys.exit('PoIdle is not where expected: %s' % was.hex())
+    g.write(POIDLE, POIDLE_NOW)
+    print('PoIdle patched:', g.read(POIDLE, 4).hex(), flush=True)
+    g.detach()
+    time.sleep(5)
     qmp(qmps, 'screendump', {'filename': os.path.join(a.out, 'machine-before-go.ppm')})
     c.close()
     state_path = os.path.join(a.out, 'state.mig')
@@ -144,7 +186,7 @@ def main():
         f.write('// the Windows XP machine this build of BASILISK SYNTH resumes (written by tools/make_machine.py)\n#pragma once\n')
         f.write('#define BSYNTH_MACHINE_NAME "%s"\n' % NAME)
         f.write('#define BSYNTH_MACHINE_URL "https://github.com/williamsharkey/windows-secrets/releases/download/'
-                'basilisk-synth-v1.0.0/basilisk-synth-%s.tar.xz"\n' % NAME)
+                'basilisk-synth-v1.1.0/basilisk-synth-%s.tar.xz"\n' % NAME)
         f.write('#define BSYNTH_MACHINE_BYTES %dLL\n' % os.path.getsize(tarball))
         f.write('#define BSYNTH_MACHINE_UNPACKED %dLL\n' % unpacked)
         f.write('#define BSYNTH_MACHINE_SHA256 "%s"\n' % h.hexdigest())

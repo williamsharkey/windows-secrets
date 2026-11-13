@@ -17,6 +17,12 @@
 #define SYO_STRIP 8    /* lose the title bar and frame and become a child of the synth window, staying where it is */
 #define SYO_DROP 9     /* the buttons a strip does not need (<<, >>, Record) drop away one at a time */
 #define SYO_FLY 10     /* glide to s[i].fly (synth client coords) over lParam ms, parts sliding into a row */
+#define SYO_MORPH 11   /* where it stands, become a strip (s[i].fly w x h): the parts slide into a row; lParam ms */
+#define SYO_GLIDE 12   /* the finished strip glides to s[i].fly x,y, whole (its painted bits move with it); lParam ms */
+#define SYO_LOADPCM 13 /* read s[i].pcmfile (the file this Sound Recorder just opened) for the fast play path */
+#define SYO_VISUAL 14  /* show the note playing: Play held down, the slider and wave following the sound */
+#define SYO_SNAP 15    /* exactly into place now: the strip at s[i].fly, its parts in their row (end of the assembly) */
+#define SY_NOTE_EV "BasiliskSynthNote%d"   /* auto-reset event per recorder: a note to play now (s[i].rate, vol) */
 #define SYE_END 100    /* the recorder stopped (end of sound or Stop) */
 #define SYE_OPEN 101   /* the sound card was opened (lParam: ms since the play request) */
 
@@ -61,7 +67,9 @@ typedef struct {
     volatile LONG t_open;     /* GetTickCount() at waveOutOpen */
     volatile LONG opens;      /* how many times the card was opened */
     volatile LONG fly[4];     /* SYO_FLY target: x, y, w, h */
-    volatile LONG t_post;     /* GetTickCount() when synth.exe posted the last play */
+    volatile LONG t_post;     /* GetTickCount() when synth.exe asked for the last note */
+    volatile LONG cut;        /* 1: end the note now (a 5 ms ramp) */
+    WCHAR pcmfile[260];       /* SYO_LOADPCM: the Sound Recorder's own file */
     WCHAR file[260];          /* the next Open/Save/Insert/Mix dialog answers with this file */
 } SySlot;
 

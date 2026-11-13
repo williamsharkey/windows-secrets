@@ -121,7 +121,47 @@ In the plugin (scale test, ding#16): pitch within 6 cents on all 10 notes; onset
 Windows zip (47 MB), macOS dmg (95 MB, universal VST3/AU/CLAP), machine-1 tar.xz (788 MB). Tests: README "Timing and
 tests" and tools/test-results-{win,mac}.json; pluginval strictness 10 SUCCESS on both.
 
-## Open
+## Round 2 (v1.1.0) plan, 2026-11-13
+No native/reference sound mode, ever (user). Targets: assembly <= 6 s on shipped Win/mac QEMU 11; latency and jitter
+down (fast play path inside each sndrec32: a primed waveOut triggered by an event, Sound Recorder's own saved buffer as
+the source, its UI driven by seeks); XP's idle loop halting (patch the running kernel's PoIdle before saving the state,
+via the gdbstub); real-DAW tests in a separate portable REAPER (Windows: never touch the user's REAPER at
+C:\Users\willi\BASILISK-plugins\REAPER, pid 8168); auval via a GUI-session launchctl asuser; no partial frames
+(strips reshape in place, then glide as a whole with copied bits); ad-hoc signing stated plainly.
+
+## Round 2 findings
+- Idle: XP's PoIdle finds no idle handler and returns; KiIdleLoop spins. Patching PoIdle to "sti; hlt; ret" (in RAM,
+  via the gdbstub, before the state is saved) takes idle from ~97% to ~8% of a core per vCPU. With 2 vCPUs the
+  scheduler then wakes halted CPUs only on the next tick (it expects them to poll), so assembly got slower (6.6 s);
+  with 1 vCPU there is no cross-CPU wake and the assembly is the fastest yet (3.0 s on Linux QEMU 6.2). -> 1 vCPU.
+- Fast play path in srhook: an event per recorder wakes a TIME_CRITICAL thread that plays the recorder's own saved
+  file on a card handle kept open (reopened only when the rate changes); the strip's Play button, slider, position and
+  wave follow via TB_THUMBTRACK seeks. Linux: trigger -> sound 90 ms median (was 114), the rest in 20 ms steps = QEMU's
+  4 KB wav buffer at 44.1 kHz s16 -> now 96 kHz s32 (5 ms per buffer) and a 25 ms jitter buffer.
+- Choreography: a quick wave of menu/frame/button changes, then one strip at a time reshapes in place and glides whole
+  (pure moves carry painted pixels; only one mover at a time). WS_EX_COMPOSITED broke Sound Recorder's statics: not used.
+- Guest COM writer: a synchronous COM handle serializes reads and writes, so an endless write blocked reads (deadlock
+  in make_machine); writes now time out at 40 ms and continue.
+
+## Round 2 status (2026-11-13, before -> after)
+- Assembly, plugin load -> ready: Windows 11.5 s -> 5.6-6.1 s; macOS 11.3 s -> 4.4-4.5 s (1 vCPU, idle patch,
+  single-threaded TCG tb-size 1024, sequential reshape+glide, "go" sent with the first COM1 lines, VNC <= 30 fps).
+- Latency / spread (middle notes of a scale): Windows 370 ms / std 82 -> ~100 ms reported, spread ~+-25 ms;
+  macOS 200 ms / std 24 -> 100 ms, spread ~+-8 ms. Path: event -> srhook note thread -> primed waveOut (open
+  0-16 ms) -> AC97 -> QEMU wav at 96 kHz (192 kHz is silently capped at 96) -> 50/40 ms playout buffer.
+- CPU of the emulator: idle awake Windows ~200% -> ~50%, macOS ~190% -> ~20%; playing ~1 core; asleep ~2-5%.
+- Determinism (envelope corr): Windows 0.986 -> 0.982-0.992 (run to run), macOS 0.999 -> 0.995-0.996.
+- pluginval strictness 10 SUCCESS on both; auval PASS via a GUI-session LaunchAgent (tools: ~/bsynth/guirun.sh).
+- REAPER: Windows test aborted after my first launch ran inside the user's REAPER and quit it (REAPER forwards to a
+  running instance unless -newinst; "start reaper.exe" may also resolve via App Paths to the user's install).
+  Portable REAPER (own folder, full path, -newinst) then never scanned plugins; macOS portable REAPER never ran its
+  startup script (probably a first-run dialog; a LaunchAgent cannot screenshot). Not achieved.
+- Partial frames: much reduced (one mover at a time, pure moves), final state snapped and clean; mid-assembly frames
+  under a CPU-bound guest still show strips being reshaped or not yet repainted on Windows.
+- Bug found by the two-instance test: both instances drew the same VNC port (per-thread rand); fixed with ephemeral
+  ports.
+
+## Open (v1.0.0)
 - Assembly takes ~11 s under QEMU 11 (Windows, macOS) vs 3.4 s under Linux QEMU 6.2; sound is ready after 0.3-1.2 s.
 - Timing jitter on Windows (std ~80-95 ms); most of it is Sound Recorder's own Play path (30-300 ms before
   waveOutOpen) plus QEMU 11's audio timing. Ideas: keep each recorder's card open between notes of the same rate.

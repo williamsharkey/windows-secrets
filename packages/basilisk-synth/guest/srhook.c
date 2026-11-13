@@ -8,15 +8,19 @@
      - runs synth.exe's requests on Sound Recorder's own thread, so the program never sees anything unusual
    Build (in XP): tcc -shared -o srhook.dll srhook.c -luser32 */
 #include <windows.h>
+#include <stdlib.h>
 #include "mm.h"
 #include "synthshm.h"
 
 #define WAVE_FORMAT_QUERY 1
+#define WHDR_DONE_ 1
+#define TIME_BYTES_ 4
 #define TBM_GETPOS (WM_USER)
 #define TBM_GETRANGEMAX (WM_USER + 2)
 #define TBM_SETPOS (WM_USER + 5)
 #define TB_THUMBPOSITION 4
 #define TB_ENDTRACK 8
+#define TB_THUMBTRACK 5
 
 typedef struct {
     DWORD lStructSize; HWND hwndOwner; HINSTANCE hInstance; LPCWSTR lpstrFilter; LPWSTR lpstrCustomFilter;
@@ -45,7 +49,24 @@ static HWAVEOUT cur;          /* the open sound card handle, while playing */
 static DWORD t0, t_rel;       /* note start; release start (0 while held) */
 static LONG lvl_rel;          /* level when the release began */
 static int rel_ms, stopping;
-static volatile int cut, pending;
+static volatile int pending;
+
+/* the fast play path: this Sound Recorder's own sound (the file it opened, which it saved itself) on a card handle it
+   keeps open, started the instant synth.exe signals - Sound Recorder's Play takes 30-300 ms before it opens the card */
+typedef MMRESULT (WINAPI *P_HDR)(HWAVEOUT, LPWAVEHDR, UINT);
+typedef MMRESULT (WINAPI *P_RESET)(HWAVEOUT);
+typedef struct { UINT wType; union { DWORD ms, sample, cb, ticks; } u; DWORD pad[2]; } MMT;
+typedef MMRESULT (WINAPI *P_POS)(HWAVEOUT, MMT *, UINT);
+static P_HDR w_prep, w_unprep, w_write;
+static P_RESET w_reset;
+static P_POS w_pos;
+static char *pcm;
+static DWORD pcm_len;
+static WAVEFORMATEX pcm_fmt;
+static HWAVEOUT fh;           /* the fast path's handle, kept open between notes */
+static DWORD fh_rate;
+static WAVEHDR fhdr;
+static HANDLE note_ev;
 
 static void done(int op, LONG arg)
 {
@@ -84,17 +105,21 @@ static DWORD WINAPI env_thread(LPVOID p)
         if (cur && !stopping) {
             DWORD now = GetTickCount();
             LONG l;
-            if (!t_rel && (!S->gate || cut)) {     /* the note was let go (or cut) */
+            if (!t_rel && (!S->gate || S->cut)) {     /* the note was let go (or cut) */
                 lvl_rel = S->level;
-                rel_ms = cut ? 5 : (shm->env_r > 0 ? shm->env_r : 1);
+                rel_ms = S->cut ? 5 : (shm->env_r > 0 ? shm->env_r : 1);
                 t_rel = now;
             }
             l = env_level(now);
             apply_vol(l);
-            if (t_rel && l == 0) {
+            if (cur == fh && fh && (fhdr.dwFlags & WHDR_DONE_)) {        /* the fast path's sound ran out */
+                cur = 0; S->playing = 0; S->level = 0;
+                done(SYE_END, 0);
+            } else if (t_rel && l == 0) {
                 stopping = 1;
-                PostMessageW((HWND)S->hwnd, WM_COMMAND, MAKEWPARAM(SR_STOP, BN_CLICKED),
-                             (LPARAM)GetDlgItem((HWND)S->hwnd, SR_STOP));
+                if (cur == fh && fh) { w_reset(fh); cur = 0; S->playing = 0; S->level = 0; done(SYE_END, 0); }
+                else PostMessageW((HWND)S->hwnd, WM_COMMAND, MAKEWPARAM(SR_STOP, BN_CLICKED),
+                                  (LPARAM)GetDlgItem((HWND)S->hwnd, SR_STOP));
             }
         }
         LeaveCriticalSection(&cs);
@@ -239,29 +264,49 @@ static RECT in_parent(HWND h)
 static double ease(double x) { return x <= 0 ? 0 : x >= 1 ? 1 : x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) * (-2 * x + 2) * (-2 * x + 2) / 2; }
 static int lerp(int a, int b, double x) { return a + (int)((b - a) * x + (b > a ? 0.5 : -0.5)); }
 
+static int glide_only;      /* SYO_GLIDE: the window moves whole; its parts stay put inside it */
+static int morphing;        /* a SYO_MORPH is still under way */
+static void finish_morph(HWND w)
+{
+    int k;
+    SetWindowPos(w, NULL, w1.left, w1.top, w1.right - w1.left, w1.bottom - w1.top, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+    for (k = 0; k < 10; k++) {
+        RECT *b = &shm->kid_final[k];
+        if (kid[k]) SetWindowPos(kid[k], NULL, b->left, b->top, b->right - b->left, b->bottom - b->top, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+    }
+    RedrawWindow(w, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+    morphing = 0;
+}
 static void CALLBACK fly_tick(HWND w, UINT m, UINT_PTR id, DWORD now)
 {
     double x = ease((double)(GetTickCount() - a_t0) / a_dur);
     HDWP dw;
     int k;
-    SetWindowPos(w, NULL, lerp(w0.left, w1.left, x), lerp(w0.top, w1.top, x), lerp(w0.right - w0.left, w1.right - w1.left, x),
-                 lerp(w0.bottom - w0.top, w1.bottom - w1.top, x), SWP_NOZORDER | SWP_NOACTIVATE);
-    dw = BeginDeferWindowPos(10);
-    for (k = 0; k < 10; k++) {
-        /* the parts lag the panel a little, one after another, so the row assembles left to right */
-        double y = ease(((double)(GetTickCount() - a_t0) - k * 22) / (a_dur - 10 * 22));
-        RECT *b = &shm->kid_final[k];
-        if (kid[k]) dw = DeferWindowPos(dw, kid[k], NULL, lerp(k0[k].left, b->left, y), lerp(k0[k].top, b->top, y),
-                                        lerp(k0[k].right - k0[k].left, b->right - b->left, y), lerp(k0[k].bottom - k0[k].top, b->bottom - b->top, y),
-                                        SWP_NOZORDER | SWP_NOACTIVATE);
+    if (glide_only) {
+        /* a pure move: Windows carries the strip's painted pixels along, so no frame is ever half drawn */
+        SetWindowPos(w, NULL, lerp(w0.left, w1.left, x), lerp(w0.top, w1.top, x), 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+    } else {
+        SetWindowPos(w, NULL, lerp(w0.left, w1.left, x), lerp(w0.top, w1.top, x), lerp(w0.right - w0.left, w1.right - w1.left, x),
+                     lerp(w0.bottom - w0.top, w1.bottom - w1.top, x), SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+        dw = BeginDeferWindowPos(10);
+        for (k = 0; k < 10; k++) {
+            /* the parts lag one another a little, so the row assembles left to right */
+            double y = ease(((double)(GetTickCount() - a_t0) - k * 18) / (a_dur - 10 * 18));
+            RECT *b = &shm->kid_final[k];
+            if (kid[k]) dw = DeferWindowPos(dw, kid[k], NULL, lerp(k0[k].left, b->left, y), lerp(k0[k].top, b->top, y),
+                                            lerp(k0[k].right - k0[k].left, b->right - b->left, y), lerp(k0[k].bottom - k0[k].top, b->bottom - b->top, y),
+                                            SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+        }
+        EndDeferWindowPos(dw);
+        /* everything moved without drawing; now one complete repaint */
+        RedrawWindow(w, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+        if (GetParent(w)) RedrawWindow(GetParent(w), NULL, NULL, RDW_UPDATENOW);
     }
-    EndDeferWindowPos(dw);
-    RedrawWindow(w, NULL, NULL, RDW_UPDATENOW | RDW_ALLCHILDREN);   /* every part painted before the next step */
     if (x >= 1) {
         KillTimer(w, T_FLY);
-        /* landed: every part painted once more, whole (a label moved mid-repaint can be left blank) */
+        if (!glide_only) morphing = 0;
         RedrawWindow(w, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
-        done(SYO_FLY, 0);
+        done(glide_only ? SYO_GLIDE : SYO_MORPH, 0);
     }
 }
 
@@ -298,6 +343,119 @@ static void strip(void)
     UpdateWindow(w);
 }
 
+
+/* ---------------------------------------------------------------- the fast play path */
+static void load_pcm(void)
+{
+    HANDLE f = CreateFileW(S->pcmfile, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+    DWORD sz, got, i;
+    char *b;
+    EnterCriticalSection(&cs);
+    if (fh) { w_reset(fh); w_unprep(fh, &fhdr, sizeof fhdr); real_close(fh); fh = 0; if (cur == fh) cur = 0; }
+    free(pcm); pcm = NULL; pcm_len = 0;
+    LeaveCriticalSection(&cs);
+    if (f == INVALID_HANDLE_VALUE) return;
+    sz = GetFileSize(f, NULL);
+    b = (char *)malloc(sz + 8);
+    ReadFile(f, b, sz, &got, NULL);
+    CloseHandle(f);
+    /* RIFF: the fmt and data chunks; plain PCM only (what Sound Recorder saves) */
+    if (got < 44 || memcmp(b, "RIFF", 4)) { free(b); return; }
+    for (i = 12; i + 8 <= got;) {
+        DWORD n = *(DWORD *)(b + i + 4);
+        if (!memcmp(b + i, "fmt ", 4) && n >= 16) { memcpy(&pcm_fmt, b + i + 8, 16); pcm_fmt.cbSize = 0; }
+        if (!memcmp(b + i, "data", 4)) {
+            if (n > got - i - 8) n = got - i - 8;
+            EnterCriticalSection(&cs);
+            pcm = (char *)malloc(n + 4);
+            memcpy(pcm, b + i + 8, n);
+            pcm_len = n - n % (pcm_fmt.nBlockAlign ? pcm_fmt.nBlockAlign : 1);
+            if (pcm_fmt.wFormatTag != 1) { free(pcm); pcm = NULL; pcm_len = 0; }
+            LeaveCriticalSection(&cs);
+            break;
+        }
+        i += 8 + n + (n & 1);
+    }
+    free(b);
+}
+
+static DWORD WINAPI note_thread(LPVOID p)
+{
+    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+    for (;;) {
+        DWORD rate;
+        WaitForSingleObject(note_ev, INFINITE);
+        rate = S->rate > 0 ? (DWORD)S->rate : 0;
+        EnterCriticalSection(&cs);
+        if (!pcm) {      /* nothing loaded: let Sound Recorder play it the ordinary way */
+            LeaveCriticalSection(&cs);
+            PostMessageA((HWND)S->hwnd, msg_op, SYO_PLAY, 0);
+            continue;
+        }
+        if (!rate) rate = pcm_fmt.nSamplesPerSec;
+        if (fh) {                               /* stop what this recorder was playing */
+            w_reset(fh);
+            w_unprep(fh, &fhdr, sizeof fhdr);
+            if (fh_rate != rate) { real_close(fh); fh = 0; }
+        }
+        if (!fh) {                              /* the card, at the note's rate: kmixer resamples */
+            WAVEFORMATEX g = pcm_fmt;
+            g.nSamplesPerSec = rate;
+            g.nAvgBytesPerSec = rate * g.nBlockAlign;
+            if (real_open(&fh, WAVE_MAPPER, &g, 0, 0, 0)) fh = 0;
+            fh_rate = rate;
+        }
+        if (fh) {
+            cur = fh;
+            t0 = GetTickCount();
+            t_rel = 0;
+            stopping = 0;
+            S->cut = 0;
+            S->t_open = t0;
+            S->opens++;
+            S->playing = 1;
+            apply_vol(env_level(t0));
+            memset(&fhdr, 0, sizeof fhdr);
+            fhdr.lpData = pcm;
+            fhdr.dwBufferLength = pcm_len;
+            w_prep(fh, &fhdr, sizeof fhdr);
+            w_write(fh, &fhdr, sizeof fhdr);
+        }
+        LeaveCriticalSection(&cs);
+        if (fh) {
+            done(SYE_OPEN, (LONG)(t0 - S->t_post));
+            PostMessageA((HWND)S->hwnd, msg_op, SYO_VISUAL, 0);
+        }
+    }
+    return 0;
+}
+
+/* the strip shows the note as Sound Recorder would: Play held down, the slider, position and green wave following */
+#define T_VIS 0xB53
+static void CALLBACK vis_tick(HWND w, UINT m, UINT_PTR id, DWORD now)
+{
+    HWND play = GetDlgItem(w, SR_PLAY), tb = GetDlgItem(w, SR_TRACK);
+    MMT mt;
+    LONG mx, pos;
+    int on;
+    EnterCriticalSection(&cs);
+    on = cur == fh && fh && S->playing;
+    mt.wType = TIME_BYTES_;
+    mt.u.cb = 0;
+    if (on) w_pos(fh, &mt, sizeof mt);
+    LeaveCriticalSection(&cs);
+    mx = (LONG)SendMessageW(tb, TBM_GETRANGEMAX, 0, 0);
+    pos = pcm_len ? (LONG)((double)mx * (mt.u.cb > pcm_len ? pcm_len : mt.u.cb) / pcm_len) : 0;
+    if (on) {
+        SendMessageW(tb, TBM_SETPOS, TRUE, pos);
+        SendMessageW(w, WM_HSCROLL, MAKEWPARAM(TB_THUMBTRACK, pos), (LPARAM)tb);
+    } else {
+        SendMessageW(play, BM_SETSTATE, FALSE, 0);
+        SendMessageW(w, WM_HSCROLL, MAKEWPARAM(TB_ENDTRACK, 0), (LPARAM)tb);
+        KillTimer(w, T_VIS);
+    }
+}
+
 static void seek(LONG permille)
 {
     HWND w = (HWND)S->hwnd, tb = GetDlgItem(w, SR_TRACK);
@@ -317,7 +475,7 @@ static void run_op(int op, LONG arg)
 {
     switch (op) {
     case SYO_PLAY:
-        cut = 0;
+        S->cut = 0;
         if (S->playing) { stopping = 1; cmd(SR_STOP); }
         cmd(SR_REW);
         S->t_req = GetTickCount();
@@ -325,7 +483,7 @@ static void run_op(int op, LONG arg)
         cmd(SR_PLAY);
         break;
     case SYO_OFF: break;                  /* gate is already 0: the envelope thread releases */
-    case SYO_CUT: cut = 1; break;
+    case SYO_CUT: S->cut = 1; break;
     case SYO_STOP: if (S->playing) cmd(SR_STOP); break;
     case SYO_CMD:
         S->answer = 1;
@@ -335,6 +493,28 @@ static void run_op(int op, LONG arg)
     case SYO_SEEK: seek(arg); break;
     case SYO_NOMENU: SetMenu((HWND)S->hwnd, NULL); UpdateWindow((HWND)S->hwnd); break;
     case SYO_STRIP: strip(); break;
+    case SYO_LOADPCM: load_pcm(); break;
+    case SYO_SNAP: {
+        int k;
+        HWND w = (HWND)S->hwnd;
+        if (!kid[0]) find_kids();
+        KillTimer(w, T_FLY);
+        morphing = 0;
+        SetWindowPos(w, NULL, S->fly[0], S->fly[1], S->fly[2], S->fly[3], SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+        for (k = 0; k < 10; k++) {
+            RECT *b = &shm->kid_final[k];
+            if (kid[k]) SetWindowPos(kid[k], NULL, b->left, b->top, b->right - b->left, b->bottom - b->top, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
+        }
+        for (k = 10; k < 13; k++) if (kid[k]) ShowWindow(kid[k], SW_HIDE);
+        RedrawWindow(w, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+        break;
+    }
+    case SYO_VISUAL: {
+        HWND w = (HWND)S->hwnd;
+        SendMessageW(GetDlgItem(w, SR_PLAY), BM_SETSTATE, TRUE, 0);
+        SetTimer(w, T_VIS, 50, vis_tick);
+        return;
+    }
     case SYO_DROP: {
         int k;
         if (!kid[0]) find_kids();
@@ -343,15 +523,22 @@ static void run_op(int op, LONG arg)
         SetTimer((HWND)S->hwnd, T_DROP, 25, drop_tick);
         return;
     }
-    case SYO_FLY: {
+    case SYO_FLY:
+    case SYO_MORPH:
+    case SYO_GLIDE: {
         int k;
         if (!kid[0]) find_kids();
+        if (op == SYO_GLIDE && morphing) { KillTimer((HWND)S->hwnd, T_FLY); finish_morph((HWND)S->hwnd); }   /* a slow machine */
         for (k = 0; k < 10; k++) if (kid[k]) k0[k] = in_parent(kid[k]);
         w0 = in_parent((HWND)S->hwnd);
-        SetRect(&w1, S->fly[0], S->fly[1], S->fly[0] + S->fly[2], S->fly[1] + S->fly[3]);
+        glide_only = op == SYO_GLIDE;
+        morphing = op != SYO_GLIDE;
+        if (op == SYO_MORPH) SetRect(&w1, w0.left, w0.top, w0.left + S->fly[2], w0.top + S->fly[3]);
+        else if (op == SYO_GLIDE) SetRect(&w1, S->fly[0], S->fly[1], S->fly[0] + (w0.right - w0.left), S->fly[1] + (w0.bottom - w0.top));
+        else SetRect(&w1, S->fly[0], S->fly[1], S->fly[0] + S->fly[2], S->fly[1] + S->fly[3]);
         a_dur = arg > 50 ? arg : 50;
         a_t0 = GetTickCount();
-        SetTimer((HWND)S->hwnd, T_FLY, 25, fly_tick);   /* ~40 fps asked; each frame drawn whole */
+        SetTimer((HWND)S->hwnd, T_FLY, 20, fly_tick);
         return;
     }
     }
@@ -391,6 +578,19 @@ static void attach(void)
     LoadLibraryA("winmm.dll");
     LoadLibraryA("comdlg32.dll");
     setvol = (P_SETVOL)GetProcAddress(GetModuleHandleA("winmm.dll"), "waveOutSetVolume");
+    w_prep = (P_HDR)GetProcAddress(GetModuleHandleA("winmm.dll"), "waveOutPrepareHeader");
+    w_unprep = (P_HDR)GetProcAddress(GetModuleHandleA("winmm.dll"), "waveOutUnprepareHeader");
+    w_write = (P_HDR)GetProcAddress(GetModuleHandleA("winmm.dll"), "waveOutWrite");
+    w_reset = (P_RESET)GetProcAddress(GetModuleHandleA("winmm.dll"), "waveOutReset");
+    w_pos = (P_POS)GetProcAddress(GetModuleHandleA("winmm.dll"), "waveOutGetPosition");
+    {
+        typedef UINT (WINAPI *TBP)(UINT);
+        TBP tbp = (TBP)GetProcAddress(GetModuleHandleA("winmm.dll"), "timeBeginPeriod");
+        char evn[64];
+        if (tbp) tbp(1);                       /* 1 ms Sleep for the envelope */
+        wsprintfA(evn, SY_NOTE_EV, slot);
+        note_ev = OpenEventA(SYNCHRONIZE | EVENT_MODIFY_STATE, FALSE, evn);
+    }
     patch("winmm.dll", "waveOutOpen", (void *)my_open, (void **)&real_open);
     patch("winmm.dll", "waveOutClose", (void *)my_close, (void **)&real_close);
     patch("comdlg32.dll", "GetOpenFileNameW", (void *)my_ofn, (void **)&real_ofn);
@@ -398,6 +598,7 @@ static void attach(void)
     patch("user32.dll", "MessageBoxW", (void *)my_mb, (void **)&real_mb);
     is_rec = 1;
     CreateThread(NULL, 0, env_thread, NULL, 0, NULL);
+    if (note_ev) CreateThread(NULL, 0, note_thread, NULL, 0, NULL);
 }
 
 BOOL WINAPI DllMain(HINSTANCE h, DWORD why, LPVOID r)

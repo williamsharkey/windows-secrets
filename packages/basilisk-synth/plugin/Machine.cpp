@@ -444,6 +444,7 @@ void Machine::start()
 void Machine::send(const char *line)
 {
     touch();
+    if (line[0] == 'o' && line[1] == 'n') lastOn_.store(now());
     Line l;
     snprintf(l.s, sizeof l.s, "%s", line);
     out_.push(l);
@@ -614,7 +615,10 @@ bool Machine::launch()
         fail("Could not prepare this instance's disk (qemu-img).");
         return false;
     }
-    portQmp_ = free_port(); portCom_ = free_port(); portMig_ = free_port(); portVnc_ = free_port(5900);
+    portQmp_ = free_port(); portCom_ = free_port(); portMig_ = free_port();
+    // VNC wants a display number (port - 5900): take an ephemeral port the system hands out (unique per instance;
+    // rand() is per-thread in the C runtime, so two instances starting together drew the same "random" port)
+    do { portVnc_ = free_port(); } while (portVnc_ && portVnc_ < 5900);
     // the sound: QEMU writes a wav "file" that is really a pipe this instance reads
 #ifdef _WIN32
     pipePath_ = std::string("\\\\.\\pipe\\") + tag + "-audio";
@@ -627,14 +631,14 @@ bool Machine::launch()
 #endif
     auto esc = [](std::string s) { std::string o; for (char c : s) { o += c; if (c == ',') o += ','; } return o; };
     std::vector<std::string> a = {qemu, "-name", "BASILISK SYNTH", "-nodefaults", "-no-user-config", "-M", "pc-i440fx-6.2",
-        "-m", "512", "-smp", "2", "-cpu", "qemu32",
+        "-m", "512", "-smp", "1", "-cpu", "qemu32",
         "-drive", "file=" + esc(overlay_) + ",format=qcow2,if=ide,index=0,cache=writeback",
         "-vga", "cirrus", "-device", "rtl8139,netdev=n0,mac=52:54:00:12:34:56",
         "-netdev", "user,id=n0,restrict=on,net=10.0.2.0/24",
         "-usb", "-device", "usb-tablet", "-rtc", "base=localtime", "-display", "none", "-boot", "menu=off",
         "-L", mdir + SEP + "fw", "-L", share,
-        "-accel", "tcg,thread=multi,tb-size=256",
-        "-audiodev", "wav,id=snd0,path=" + esc(pipePath_) + ",out.frequency=44100,out.channels=2,out.format=s16",
+        "-accel", getenv("BSYNTH_ACCEL") ? getenv("BSYNTH_ACCEL") : "tcg,thread=single,tb-size=1024",   // one vCPU: single-threaded TCG is ~10% faster
+        "-audiodev", "wav,id=snd0,path=" + esc(pipePath_) + ",out.frequency=96000,out.channels=2,out.format=s16",
         "-device", "AC97,audiodev=snd0",
         "-chardev", "socket,id=ser0,host=127.0.0.1,port=" + std::to_string(portCom_) + ",server=on,wait=off",
         "-serial", "chardev:ser0",
@@ -666,6 +670,15 @@ bool Machine::launch()
     CloseHandle(lf);
     if (!ok) { fail("Could not start QEMU."); return false; }
     AssignProcessToJobObject(job_, pi.hProcess);
+    {
+        // QEMU has no visible window, and Windows 11 then ignores its 1 ms timer request and throttles it as a
+        // background process: its audio and timers would run on 15.6 ms ticks. Opt it out of both.
+        struct { ULONG Version, ControlMask, StateMask; } pt = {1, 0x1 | 0x4, 0};
+        typedef BOOL (WINAPI *SPI)(HANDLE, int, LPVOID, DWORD);
+        SPI spi = (SPI)GetProcAddress(GetModuleHandleA("kernel32.dll"), "SetProcessInformation");
+        if (spi) spi(pi.hProcess, 4 /* ProcessPowerThrottling */, &pt, sizeof pt);
+        SetPriorityClass(pi.hProcess, ABOVE_NORMAL_PRIORITY_CLASS);
+    }
     ResumeThread(pi.hThread);
     CloseHandle(pi.hThread);
     proc_ = pi.hProcess;
@@ -845,6 +858,7 @@ void Machine::linkLoop()
 // ------------------------------------------------------------------ the sound
 void Machine::audioLoop()
 {
+    dbgArrival_ = getenv("BSYNTH_LOG_ARRIVAL") != nullptr;
     std::vector<uint8_t> raw(1 << 15);
     std::vector<float> f(1 << 15);
     size_t skip = 44;   // the wav header QEMU writes first
@@ -873,7 +887,7 @@ void Machine::audioLoop()
         while (m) {
             carry[have++] = *p8++;
             m--;
-            if (have == 4) {
+            if (have == 4) {   // s16 stereo at 96 kHz: QEMU's 4 KB write buffer fills every 11 ms, not every 23 (QEMU stops at 96 kHz)
                 int16_t L = (int16_t)(carry[0] | carry[1] << 8), R = (int16_t)(carry[2] | carry[3] << 8);
                 f[2 * frames] = L / 32768.f;
                 f[2 * frames + 1] = R / 32768.f;
@@ -883,12 +897,19 @@ void Machine::audioLoop()
             }
         }
         if (frames) audio.write(f.data(), frames);
+        if (dbgArrival_) {   // BSYNTH_LOG_ARRIVAL: when each note's first loud sample reaches the plugin
+            double on = lastOn_.load();
+            float pk = 0;
+            for (size_t i = 0; i < 2 * frames; i++) pk = f[i] > pk ? f[i] : -f[i] > pk ? -f[i] : pk;
+            if (on > armed_ && pk > 0.02f) { log("arrival %.1f ms", (now() - on) * 1000); armed_ = on; }
+        }
     }
 }
 
 // ------------------------------------------------------------------ the screen (RFB 3.8, Raw + CopyRect)
 void Machine::vncLoop()
 {
+    dumpDir_ = getenv("BSYNTH_DUMP_FRAMES");
     intptr_t s = tcp_connect(portVnc_, 10000, &stopping_);
     if (s < 0) return;
     char ver[12];
@@ -924,7 +945,13 @@ void Machine::vncLoop()
     {
         bool incremental = false;
         std::vector<uint8_t> row;
+        double lastReq = 0;
         while (!stopping_) {
+            // at most ~30 screen updates a second: every one is work on QEMU's main thread, which the emulated CPU
+            // shares (single-threaded TCG), and the eye does not need more for XP
+            double wait = 0.033 - (now() - lastReq);
+            if (wait > 0) sleep_ms((int)(wait * 1000));
+            lastReq = now();
             uint8_t req[10] = {3, (uint8_t)incremental, 0, 0, 0, 0, (uint8_t)(kW >> 8), (uint8_t)(kW & 255), (uint8_t)(kH >> 8), (uint8_t)(kH & 255)};
             { std::lock_guard<std::mutex> g(vncSendMu_); if (!send_all(s, req, 10)) break; }
             incremental = true;
@@ -981,6 +1008,16 @@ void Machine::vncLoop()
                     // XP never changes its size here
                 } else goto done;
                 std::lock_guard<std::mutex> g(fbMu_);
+                if (dumpDir_ && now() - lastDump_ > 0.1) {   // BSYNTH_DUMP_FRAMES=dir: the screen as PPM, for checking frames
+                    lastDump_ = now();
+                    char fn[600];
+                    snprintf(fn, sizeof fn, "%s%c%06d.ppm", dumpDir_, SEP, (int)((lastDump_ - resumedAt.load()) * 1000));
+                    if (FILE *pf = fopen(fn, "wb")) {
+                        fprintf(pf, "P6\n%d %d\n255\n", kW, kH);
+                        for (size_t q = 0; q < fb_.size(); q += 4) fwrite(&fb_[q], 1, 3, pf);
+                        fclose(pf);
+                    }
+                }
                 if (x < dx0_) dx0_ = x;
                 if (y < dy0_) dy0_ = y;
                 if (x + w > dx1_) dx1_ = x + w > kW ? kW : x + w;

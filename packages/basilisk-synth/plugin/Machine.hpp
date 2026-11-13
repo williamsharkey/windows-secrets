@@ -46,11 +46,11 @@ private:
 
 struct Line { char s[96]; };
 
-// XP's sound, 44.1 kHz stereo float, written by the pipe reader, read by the audio thread.
+// XP's sound, 96 kHz stereo float, written by the pipe reader, read by the audio thread.
 // The writer never waits: if the audio thread falls far behind, the oldest audio is dropped.
 class AudioRing {
 public:
-    static constexpr size_t kSize = 1 << 17;   // ~3 s
+    static constexpr size_t kSize = 1 << 19;   // ~5.4 s at 96 kHz
     void write(const float *lr, size_t frames)
     {
         uint64_t w = w_.load(std::memory_order_relaxed);
@@ -61,7 +61,7 @@ public:
     float L(uint64_t i) const { return l_[i & (kSize - 1)]; }
     float R(uint64_t i) const { return r_[i & (kSize - 1)]; }
 private:
-    float l_[kSize] = {}, r_[kSize] = {};
+    std::vector<float> l_ = std::vector<float>(kSize), r_ = std::vector<float>(kSize);
     std::atomic<uint64_t> w_{0};
 };
 
@@ -118,7 +118,10 @@ private:
 
     std::thread main_, audio_, vnc_;
     std::atomic<bool> stopping_{false};
-    std::atomic<double> lastTouch_{0};
+    std::atomic<double> lastTouch_{0}, lastOn_{0};
+    double armed_ = 0, lastDump_ = 0;
+    const char *dumpDir_ = nullptr;
+    bool dbgArrival_ = false;
     std::mutex mu_;
     std::string error_, status_;
 

@@ -195,8 +195,8 @@ protected:
         // sounding notes, and a playing transport, keep XP awake (waking costs the first note some time)
         if (voices_.activeCount(sampleClock_) > 0 || getTimePosition().playing) machine_.touch();
 
-        // XP's sound, 44.1 kHz from the machine, resampled to the host rate with a gentle drift correction
-        const double target = kJitterMs * 44.1;              // frames kept in hand
+        // XP's sound, 96 kHz from the machine, resampled to the host rate with a gentle drift correction
+        const double target = kJitterMs * 96.0;              // frames kept in hand
         uint64_t w = machine_.audio.written();
         double gain = std::pow(10.0, params_[kGain].load() / 20.0) * std::pow(10.0, globalGainDb_.load() / 20.0);
         if (!primed_) {
@@ -204,11 +204,13 @@ protected:
             if (w >= unprimedAt_ + (uint64_t)target) { pos_ = (double)w - target; primed_ = true; ratioTrim_ = 1.0; }
         } else {
             double avail = (double)w - pos_;
-            if (avail < 4) { primed_ = false; unprimedAt_ = w; }                       // the stream stopped (XP asleep)
+            if (avail < minAvail_) minAvail_ = avail;
+            if (avail > maxAvail_) maxAvail_ = avail;
+            if (avail < 4) { primed_ = false; unprimedAt_ = w; unprimes_++; }          // the stream stopped (XP asleep)
             else if (avail > target * 4) pos_ = (double)w - target;                     // far behind: catch up
             else ratioTrim_ = 0.999 * ratioTrim_ + 0.001 * (1.0 + 0.02 * (avail - target) / target);
         }
-        double step = 44100.0 / sr_ * (primed_ ? ratioTrim_ : 1.0);
+        double step = 96000.0 / sr_ * (primed_ ? ratioTrim_ : 1.0);
         for (uint32_t i = 0; i < frames; i++) {
             if (!primed_ || pos_ + 3 >= (double)w) { L[i] = R[i] = 0; continue; }
             uint64_t k = (uint64_t)pos_;
@@ -249,9 +251,9 @@ private:
     enum { kGain, kAttack, kDecay, kSustain, kRelease, kVelocity, kBend, kTranspose, kParamCount };
     // measured: MIDI in -> first sample of that note in XP's stream, plus the jitter buffer (README: Timing)
 #ifdef _WIN32
-    static constexpr int kLatencyMs = 370, kJitterMs = 45;
+    static constexpr int kLatencyMs = 100, kJitterMs = 50;
 #else
-    static constexpr int kLatencyMs = 200, kJitterMs = 45;
+    static constexpr int kLatencyMs = 100, kJitterMs = 40;
 #endif
 
     struct LayerMsg { int layer, first, count, rate, frames; };
@@ -329,8 +331,13 @@ private:
             }
             if (Machine::now() - lastLog > 2 && machine_.phase == Machine::Running) {
                 lastLog = Machine::now();
-                Machine::log("audio: %llu frames in, primed %d, notes sent %d", (unsigned long long)machine_.audio.written(), (int)primed_, sentNotes_.load());
+                Machine::log("audio: %llu frames in, primed %d, notes sent %d, buffer %.1f..%.1f ms, restarts %d", (unsigned long long)machine_.audio.written(), (int)primed_, sentNotes_.load(),
+                             minAvail_ / 96.0, maxAvail_ / 96.0, unprimes_.load());
+                minAvail_ = 1e9; maxAvail_ = 0;
             }
+            // "go" leaves with the first lines on COM1, without waiting for the guest's hello
+            if (wantGo_ && !sentGo && machine_.phase == Machine::Running) { machine_.send("go\n"); sentGo = true; }
+            if (wantGo_ && !machine_.ready) machine_.touch();     // awake until the assembly is done
             if (!machine_.linked) { sentDna = false; continue; }
             if (!sentDna || dnaDirty_.exchange(false)) {
                 Dna d;
@@ -347,7 +354,6 @@ private:
                 globalGainDb_ = (float)d.g.gainDb;
                 sentDna = true;
             }
-            if (wantGo_ && !sentGo) { machine_.send("go\n"); sentGo = true; }
         }
     }
 
@@ -361,7 +367,8 @@ private:
     std::atomic<bool> quit_{false}, paramsDirty_{false}, dnaDirty_{false}, wantGo_{false};
     std::atomic<float> params_[kParamCount] = {{0}, {0}, {0}, {100}, {120}, {100}, {2}, {0}};
     std::atomic<float> globalGainDb_{0};
-    std::atomic<int> sentNotes_{0};
+    std::atomic<int> sentNotes_{0}, unprimes_{0};
+    double minAvail_ = 1e9, maxAvail_ = 0;
     mutable std::mutex mu_;
     std::string dna_, pendingEdit_;
     Dna parsed_;

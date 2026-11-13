@@ -20,8 +20,8 @@ import numpy as np
 from scipy.io import wavfile
 
 MODE = sys.argv[1] if len(sys.argv) > 1 else 'win'
-WIN_DIR = r'C:\Users\willi\synthtest'
-WSL_DIR = '/mnt/c/Users/willi/synthtest'
+WIN_DIR = r'C:\Users\willi\bsynth-test'
+WSL_DIR = '/mnt/c/Users/willi/bsynth-test'
 MAC = 'primary-mac'
 MAC_DIR = '~/bsynth/test'
 results = {}
@@ -33,14 +33,14 @@ def render(name, args, timeout=300):
         # through a .bat: quotes in arguments do not survive WSL -> cmd.exe intact
         bat = os.path.join(WSL_DIR, 'run_%s.bat' % name)
         with open(bat, 'w') as f:
-            f.write('@echo off\r\ncd /d %s\r\nset BSYNTH_MACHINE_DIR=%s\\machine-1\r\nbsynth-host.exe BasiliskSynth.vst3 %s.wav %s\r\n'
+            f.write('@echo off\r\ncd /d %s\r\nset BSYNTH_MACHINE_DIR=%s\\machine-2\r\nbsynth-host.exe BasiliskSynth.vst3 %s.wav %s\r\n'
                     % (WIN_DIR, WIN_DIR, name, ' '.join(args)))
         out = subprocess.run(['cmd.exe', '/c', 'run_%s.bat' % name], capture_output=True, text=True, timeout=timeout, cwd=WSL_DIR).stdout
         path = os.path.join(WSL_DIR, name + '.wav')
     else:
         args = [a.strip('"') for a in args]
         q = ' '.join("'%s'" % a if ' ' in a or ';' in a or '#' in a else a for a in args)
-        out = subprocess.run(['ssh', MAC, 'cd %s && BSYNTH_MACHINE_DIR=$HOME/bsynth/test/machine-1 ../bsynth-host '
+        out = subprocess.run(['ssh', MAC, 'cd %s && BSYNTH_MACHINE_DIR=$HOME/bsynth/test/machine-2 ../bsynth-host '
                               'BasiliskSynth.vst3 %s.wav %s' % (MAC_DIR, name, q)], capture_output=True, text=True, timeout=timeout).stdout
         path = '/tmp/bsyn-%s.wav' % name
         subprocess.run(['scp', '-q', '%s:%s/%s.wav' % (MAC, MAC_DIR, name), path])
@@ -110,7 +110,7 @@ def test_scale():
     errs = [e for n, t, e, hz in rows if e is not None]
     results['pitch'] = {'notes': len(rows), 'heard': len(errs), 'max_cents_off': round(float(np.max(np.abs(cents))), 1),
                         'cents': [round(c, 1) for c in cents]}
-    results['timing'] = {'reported_latency_ms': lat, 'onset_error_median_ms': round(float(np.median(errs)), 1),
+    results['timing'] = {'reported_latency_ms': lat, 'per_note_ms': [round(e, 1) for e in errs], 'onset_error_median_ms': round(float(np.median(errs)), 1),
                          'onset_error_spread_ms': round(float(np.max(errs) - np.min(errs)), 1),
                          'onset_error_std_ms': round(float(np.std(errs)), 1)}
 
@@ -200,8 +200,8 @@ def test_sleep_wake_and_kill():
     # 1) quiet for 14 s (the machine pauses after 4 s), then notes: they must still sound (it wakes)
     score = '0:60:100:0.5,1:64:100:0.5'
     out, x, sr = render('t_wake', ['--dna', '"ding#16;R150"', '--score', score, '--warmup', '14', '--tail', '2'])
-    log = open(os.path.join(WSL_DIR, 'machine-1', 'plugin.log')).read() if MODE == 'win' else subprocess.run(
-        ['ssh', MAC, 'cat %s/machine-1/plugin.log' % MAC_DIR], capture_output=True, text=True).stdout
+    log = open(os.path.join(WSL_DIR, 'machine-2', 'plugin.log')).read() if MODE == 'win' else subprocess.run(
+        ['ssh', MAC, 'cat %s/machine-2/plugin.log' % MAC_DIR], capture_output=True, text=True).stdout
     tail = log[-3000:]
     results['sleep_wake'] = {'slept': 'asleep' in tail, 'woke': 'woke' in tail,
                              'peak_after_wake': round(float(np.abs(x[int(14 * sr):]).max()), 3)}
@@ -230,7 +230,9 @@ def test_sleep_wake_and_kill():
 
 
 if __name__ == '__main__':
+    only = sys.argv[2].split(',') if len(sys.argv) > 2 else None
     for t in [test_scale, test_steal, test_determinism_and_state, test_offline, test_instances, test_sleep_wake_and_kill]:
+        if only and t.__name__ not in only: continue
         try:
             t()
         except Exception as e:

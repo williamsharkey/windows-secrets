@@ -133,17 +133,29 @@ static void send_line(const char *fmt, ...)
 }
 static DWORD WINAPI tx_thread(LPVOID p)
 {
-    static char b[16384];
+    /* writes time out after 40 ms and continue with what is left: a synchronous COM handle serializes its reads and
+       writes, so a write that waited forever would also stop the reads that unstick it */
+    static char b[32768];
+    int n = 0, off = 0;
     for (;;) {
-        int n;
-        DWORD w;
-        WaitForSingleObject(tx_ev, 500);
+        DWORD w = 0;
+        if (off >= n) {
+            WaitForSingleObject(tx_ev, 500);
+            n = off = 0;
+        }
         EnterCriticalSection(&com_cs);
-        n = txn;
-        memcpy(b, txq, n);
-        txn = 0;
+        if (txn && n + txn <= (int)sizeof b) { memcpy(b + n, txq, txn); n += txn; txn = 0; }
         LeaveCriticalSection(&com_cs);
-        if (n && com != INVALID_HANDLE_VALUE) WriteFile(com, b, n, &w, NULL);
+        if (off < n && com != INVALID_HANDLE_VALUE) {
+            static OVERLAPPED ov;
+            if (!ov.hEvent) ov.hEvent = CreateEventA(NULL, TRUE, FALSE, NULL);
+            ResetEvent(ov.hEvent);
+            if (!WriteFile(com, b + off, n - off, &w, &ov) && GetLastError() == ERROR_IO_PENDING)
+                GetOverlappedResult(com, &ov, &w, TRUE);
+            off += (int)w;
+            if (!w) Sleep(5);
+        }
+        if (off >= n) { n = off = 0; }
     }
     return 0;
 }
@@ -152,7 +164,9 @@ static void open_com(void)
 {
     DCB d;
     COMMTIMEOUTS t;
-    com = CreateFileA("\\\\.\\COM1", GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    /* overlapped: reads and writes run side by side (a synchronous handle serializes them, and a stalled write then
+       starves the reads that would unstick it) */
+    com = CreateFileA("\\\\.\\COM1", GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
     if (com == INVALID_HANDLE_VALUE) { logf_("no COM1 (%lu)", GetLastError()); return; }
     memset(&d, 0, sizeof d);
     d.DCBlength = sizeof d;
@@ -166,7 +180,7 @@ static void open_com(void)
     t.ReadIntervalTimeout = MAXDWORD;      /* return what is there ... */
     t.ReadTotalTimeoutMultiplier = MAXDWORD;
     t.ReadTotalTimeoutConstant = 200;      /* ... or wait up to 200 ms for the first byte */
-    t.WriteTotalTimeoutConstant = 0;       /* the writer thread may wait as long as it takes */
+    t.WriteTotalTimeoutConstant = 40;      /* the writer thread retries what did not go */
     SetCommTimeouts(com, &t);
 }
 
@@ -429,6 +443,25 @@ static DWORD WINAPI build_thread(LPVOID p)
     for (r = 0; r < SY_NREC; r++) if (rec[r].layer < 0) {     /* unused recorders: an empty tape */
         rec_op(r, SYO_CMD, SR_NEW, 4000);
     }
+    /* each recorder's own file, read by its fast play path (the same bytes Sound Recorder holds); only where the
+       recorder's sound changed */
+    {
+        static char loaded[SY_NREC][620];
+        int posted[SY_NREC];
+        for (r = 0; r < SY_NREC; r++) {
+            char path[MAX_PATH], key[620];
+            posted[r] = 0;
+            if (rec[r].layer >= 0) sprintf(path, "C:\\synth\\layer%d.wav", rec[r].layer);
+            else path[0] = 0;
+            sprintf(key, "%s|%s", path, rec[r].layer >= 0 ? D.l[rec[r].layer].key : "");
+            if (!strcmp(key, loaded[r])) continue;
+            strcpy(loaded[r], key);
+            MultiByteToWideChar(CP_ACP, 0, path, -1, shm->s[r].pcmfile, 260);
+            rec_op(r, SYO_LOADPCM, 0, 0);
+            posted[r] = 1;
+        }
+        for (r = 0; r < SY_NREC; r++) if (posted[r]) WaitForSingleObject(ev_done[r], 4000);
+    }
     shm->env_a = D.a; shm->env_d = D.d; shm->env_s = D.s; shm->env_r = D.r;
     built_dna = D;
     lstrcpynA(built_text, text, sizeof built_text);
@@ -454,6 +487,8 @@ static void start_build(const char *text, int from_edit)
 }
 
 /* ---------------------------------------------------------------- the lines from the plugin */
+static HANDLE note_ev[SY_NREC];
+/* notes go straight to each Sound Recorder's note thread (srhook.c): an event, no window message */
 static void note_line(char *l)
 {
     int r, rate, vol;
@@ -462,18 +497,18 @@ static void note_line(char *l)
         shm->s[r].rate = rate;
         shm->s[r].vol = vol < 0 ? 0 : vol > 65535 ? 65535 : vol;
         shm->s[r].gate = 1;
+        shm->s[r].cut = 0;
         shm->s[r].t_post = GetTickCount();
-        PostMessageA(rec[r].w, msg_op, SYO_PLAY, 0);
+        SetEvent(note_ev[r]);
     } else if (sscanf(l, "off %d", &r) == 1) {
         if (r < 0 || r >= SY_NREC) return;
         shm->s[r].gate = 0;
-        PostMessageA(rec[r].w, msg_op, SYO_OFF, 0);
     } else if (sscanf(l, "cut %d", &r) == 1) {
         if (r < 0 || r >= SY_NREC) return;
         shm->s[r].gate = 0;
-        PostMessageA(rec[r].w, msg_op, SYO_CUT, 0);
+        shm->s[r].cut = 1;
     } else if (!strncmp(l, "panic", 5)) {
-        for (r = 0; r < SY_NREC; r++) { shm->s[r].gate = 0; PostMessageA(rec[r].w, msg_op, SYO_CUT, 0); }
+        for (r = 0; r < SY_NREC; r++) { shm->s[r].gate = 0; shm->s[r].cut = 1; }
     }
 }
 
@@ -484,7 +519,16 @@ static DWORD WINAPI com_thread(LPVOID p)
     DWORD got, i;
     for (;;) {
         if (com == INVALID_HANDLE_VALUE) { Sleep(1000); continue; }
-        if (!ReadFile(com, buf, sizeof buf, &got, NULL)) { Sleep(50); continue; }
+        {
+            static OVERLAPPED ov;
+            if (!ov.hEvent) ov.hEvent = CreateEventA(NULL, TRUE, FALSE, NULL);
+            ResetEvent(ov.hEvent);
+            got = 0;
+            if (!ReadFile(com, buf, sizeof buf, &got, &ov)) {
+                if (GetLastError() != ERROR_IO_PENDING) { Sleep(50); continue; }
+                if (!GetOverlappedResult(com, &ov, &got, TRUE)) { Sleep(50); continue; }
+            }
+        }
         for (i = 0; i < got; i++) {
             char c = buf[i];
             if (c == '\r') continue;
@@ -933,8 +977,7 @@ static LRESULT CALLBACK wnd_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
         int r = (int)wp, op = (int)(lp & 255);
         if (r >= 0 && r < SY_NREC) {
             if (op == SYE_END) { if (assembled) send_line("end %d", r); }
-            else if (op == SYE_OPEN) send_line("log open %d %ld %ld", r,
-                                           shm->s[r].t_req - shm->s[r].t_post, (LONG)(lp >> 8));
+            else if (op == SYE_OPEN) send_line("log open %d %ld", r, (LONG)(lp >> 8));   /* ms from the line to the card */
             else if (op != SYE_OPEN) { SetEvent(ev_done[r]); if (building) logf_("  done %d op %d", r, op); }
         }
         return 0;
@@ -1097,6 +1140,11 @@ typedef struct { int t, kind, r, done; } Ev;
 #define EV_PORT 7       /* r: 0 Task Manager, 1 Date and Time: the page moves into its port */
 #define EV_PORTFLY 8
 #define EV_TRAY 9
+#define EV_MORPH 10
+#define EV_GLIDE 11
+#define MORPH_MS 100
+#define GLIDE_MS 120
+#define STEP_MS 70
 static Ev ev[160];
 static int nev;
 static void add_ev(int t, int kind, int r) { ev[nev].t = t; ev[nev].kind = kind; ev[nev].r = r; ev[nev].done = 0; nev++; }
@@ -1145,6 +1193,13 @@ static void run_ev(Ev *e)
         rec_op(r, SYO_FLY, FLY_MS, 0);
         break;
     }
+    case EV_MORPH: {
+        RECT st = strip_rect(r);
+        shm->s[r].fly[0] = st.left; shm->s[r].fly[1] = st.top; shm->s[r].fly[2] = st.right - st.left; shm->s[r].fly[3] = st.bottom - st.top;
+        rec_op(r, SYO_MORPH, MORPH_MS, 0);
+        break;
+    }
+    case EV_GLIDE: rec_op(r, SYO_GLIDE, GLIDE_MS, 0); break;
     case EV_LBL: ShowWindow(w_lbl[r], SW_SHOWNA); UpdateWindow(w_lbl[r]); break;
     case EV_PANEL: {
         HWND p[] = {w_dna, w_apply, w_mutate, w_undo, w_layers, w_sounds};
@@ -1153,7 +1208,20 @@ static void run_ev(Ev *e)
         break;
     }
     case EV_PORT: page_to_port(r); break;
-    case EV_PORTFLY: gl[r].dur = 500; gl[r].on = 1; break;
+    case EV_PORTFLY: gl[r].dur = 420; gl[r].on = 1; break;
+    }
+}
+
+/* wait for an event on the window's own thread, still handling messages (the "done" replies come as messages) */
+static void wait_pump(HANDLE h, DWORD ms)
+{
+    DWORD end = GetTickCount() + ms;
+    for (;;) {
+        MSG m;
+        LONG left = (LONG)(end - GetTickCount());
+        if (left <= 0) return;
+        if (MsgWaitForMultipleObjects(1, &h, FALSE, (DWORD)left, QS_ALLINPUT) == WAIT_OBJECT_0) return;
+        while (PeekMessageA(&m, NULL, 0, 0, PM_REMOVE)) { TranslateMessage(&m); DispatchMessageA(&m); }
     }
 }
 
@@ -1168,11 +1236,16 @@ void assemble(void)
     memcpy(shm->kid_final, kid_final, sizeof kid_final[0] * 10);
     add_ev(0, EV_TRAY, 0);
     for (r = 0; r < SY_NREC; r++) {
-        int a = 80 + r * 90;
-        add_ev(a, EV_NOMENU, r);            /* its menu bar goes */
-        add_ev(a + 70, EV_STRIP, r);        /* its title bar and frame go */
-        add_ev(a + 130, EV_DROP, r);        /* Record, >> and << drop off */
-        add_ev(a + 330, EV_FLY, r);         /* it glides to its row, parts sliding into line */
+        /* a wave across the desktop: each loses its menu bar, then its frame, then the buttons it won't need ... */
+        int a = 30 + r * 28;
+        add_ev(a, EV_NOMENU, r);
+        add_ev(a + 50, EV_STRIP, r);
+        add_ev(a + 100, EV_DROP, r);
+        /* ... then one at a time (only one strip ever moves while the next one reshapes, so every window has the
+           time to repaint what a moving one uncovers): its parts slide into a row where it stands, and the finished
+           strip glides to its place */
+        add_ev(620 + r * STEP_MS, EV_MORPH, r);
+        add_ev(620 + r * STEP_MS + MORPH_MS + 10, EV_GLIDE, r);
     }
     end = 0x7fffffff;
     /* the synth window comes up under everything: an empty case, the same colour as the parts */
@@ -1190,7 +1263,7 @@ void assemble(void)
             for (i = 0; i < nev; i++) if (!ev[i].done && t >= ev[i].t) {
                 ev[i].done = 1;
                 run_ev(&ev[i]);
-                if (ev[i].kind == EV_FLY) flying[ev[i].r] = 1;
+                if (ev[i].kind == EV_GLIDE) flying[ev[i].r] = 1;
                 if (ev[i].kind == EV_PORTFLY) gl[ev[i].r].t0 = t;
             }
             for (r = 0; r < SY_NREC; r++) if (flying[r] == 1 && WaitForSingleObject(ev_done[r], 0) == WAIT_OBJECT_0) {
@@ -1198,12 +1271,13 @@ void assemble(void)
                 ShowWindow(w_lbl[r], SW_SHOWNA); UpdateWindow(w_lbl[r]);
             }
             /* the borrowed pages move in once every strip has landed: nothing flies over them after that */
-            if (!phase_b && (landed == SY_NREC || t > 6000)) {
+            /* the borrowed pages move in as the last strip leaves their side of the screen */
+            if (!phase_b && (landed >= SY_NREC - 1 || t > 6000)) {
                 phase_b = 1;
                 add_ev(t, EV_PORT, 0); add_ev(t + 30, EV_PORTFLY, 0);
-                add_ev(t + 110, EV_PORT, 1); add_ev(t + 140, EV_PORTFLY, 1);
-                for (i = 0; i < 6; i++) add_ev(t + 300 + i * 45, EV_PANEL, i);
-                end = t + 680;
+                add_ev(t + 90, EV_PORT, 1); add_ev(t + 120, EV_PORTFLY, 1);
+                for (i = 0; i < 6; i++) add_ev(t + 240 + i * 35, EV_PANEL, i);
+                end = t + 560;
             }
             for (i = 0; i < 2; i++) if (gl[i].on && gl[i].h) {
                 double x = ease((double)(t - gl[i].t0) / gl[i].dur);
@@ -1225,10 +1299,15 @@ void assemble(void)
             Sleep(10);
         }
     }
-    for (r = 0; r < SY_NREC; r++) WaitForSingleObject(ev_done[r], 1500);    /* the last flights */
+    for (r = 0; r < SY_NREC; r++) wait_pump(ev_done[r], 1500);    /* the last flights */
     SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_NORMAL);
-    for (r = 0; r < SY_NREC; r++)       /* the strips, painted whole once more now that nothing moves */
-        RedrawWindow(rec[r].w, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+    /* every strip exactly in place (a recorder that missed a step on a slow machine is put right), painted whole */
+    for (r = 0; r < SY_NREC; r++) {
+        RECT st = strip_rect(r);
+        shm->s[r].fly[0] = st.left; shm->s[r].fly[1] = st.top; shm->s[r].fly[2] = st.right - st.left; shm->s[r].fly[3] = st.bottom - st.top;
+        rec_op(r, SYO_SNAP, 0, 0);
+    }
+    for (r = 0; r < SY_NREC; r++) wait_pump(ev_done[r], 1500);
     /* one settling repaint of the borrowed pages (their group boxes are transparent and missed some erases) */
     SetForegroundWindow(win);
     SetFocus(w_dna);
@@ -1267,7 +1346,12 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp_, LPSTR cmd, int show)
     shm->env_s = 100; shm->env_r = 120;
     msg_op = RegisterWindowMessageA(SY_MSG);
     msg_done = RegisterWindowMessageA(SY_DONE);
-    for (r = 0; r < SY_NREC; r++) ev_done[r] = CreateEventA(NULL, TRUE, FALSE, NULL);
+    for (r = 0; r < SY_NREC; r++) {
+        char n[64];
+        ev_done[r] = CreateEventA(NULL, TRUE, FALSE, NULL);
+        sprintf(n, SY_NOTE_EV, r);
+        note_ev[r] = CreateEventA(NULL, FALSE, FALSE, n);
+    }
     for (i = 0; i < NSND; i++) { int rate, fr; media_path(path, i); snd_ms[i] = wav_info(path, &rate, &fr) && rate ? (int)((double)fr * 1000 / rate) : 1000; }
     make_window();
     shm->synth_hwnd = (LONG)win;

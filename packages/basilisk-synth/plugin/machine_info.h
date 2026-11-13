@@ -1,7 +1,7 @@
 // the Windows XP machine this build of BASILISK SYNTH resumes (written by tools/make_machine.py)
 #pragma once
-#define BSYNTH_MACHINE_NAME "machine-1"
-#define BSYNTH_MACHINE_URL "https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-v1.0.0/basilisk-synth-machine-1.tar.xz"
-#define BSYNTH_MACHINE_BYTES 787831108LL
-#define BSYNTH_MACHINE_UNPACKED 930556152LL
-#define BSYNTH_MACHINE_SHA256 "1e590408d54c1265057f595b6626e2cc63f107ba255387d3473e0d618bc540a1"
+#define BSYNTH_MACHINE_NAME "machine-2"
+#define BSYNTH_MACHINE_URL "https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-v1.1.0/basilisk-synth-machine-2.tar.xz"
+#define BSYNTH_MACHINE_BYTES 787573560LL
+#define BSYNTH_MACHINE_UNPACKED 931837124LL
+#define BSYNTH_MACHINE_SHA256 "1dff70f45ed2428c3e0828076be4e649b699711d6a72ba7e8e8180e140e84ffd"
