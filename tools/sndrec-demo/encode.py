@@ -67,6 +67,8 @@ def main():
     mp = os.path.join(a.render, 'macro.json')
     macro = json.load(open(mp)) if os.path.exists(mp) else {}
     review = json.load(open(a.review)) if a.review else {}
+    sp = os.path.join(a.render, 'sources.json')   # demos kept from an earlier release's take, and why
+    sources = json.load(open(sp)) if os.path.exists(sp) else {}
     man = []
     for row in rows:
         wavp = os.path.join(a.render, 'wav', row['slug'] + '.wav')
@@ -116,7 +118,7 @@ def main():
             env = np.abs(m) * g
             n = len(env) // 64
             wave_bars = [round(float(min(1.0, env[k * n:(k + 1) * n].max())), 3) for k in range(64)]
-        man.append(dict(row, edition=a.edition, renderer=a.macro_renderer if mac else a.renderer,
+        man.append(dict(row, edition=a.edition, renderer=sources.get(row['slug']) or (a.macro_renderer if mac else a.renderer),
                         macro_curve=mac['curve'] if mac else None, file=os.path.basename(mp3) if 'silent' not in flags else None,
                         mono=mono, peak_dbfs=round(20 * np.log10(peak + 1e-12), 1), rms_dbfs=round(20 * np.log10(rms + 1e-12), 1),
                         lufs_render=I_before, lufs_out=I_after, gain_db=round(gain_db, 1), onsets=len(ons), heard=heard,

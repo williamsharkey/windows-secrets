@@ -2,6 +2,7 @@
 """Merge encode.py's manifest.json files into the page's preset list, with the source sounds of every preset.
 
     site_data.py OUT.json EDITION=RENDER_DIR[@MACHINE_DIR] [...] [--recipe-cli recipe_cli]
+    (env SNDREC_DRIVE311=BASILISK 16's drive.zip: measure the Windows 3.x files that BASILISK SYNTH 1.2.1 also carries)
 
 --recipe-cli: recipe_cli.cpp built against the recipe converter (design/v3/recipe.{h,cpp}, PRESET-ENGINE-2.md 17);
 each preset then gets `rec`: the one-line and multi-line recipes, exactly as the converter writes them, checked to
@@ -206,18 +207,34 @@ class Iso:
         self.f.seek(ext * 2048); return self.f.read(size)
 
 
-def sound_table_xp(machine, names, cat, research):
+def sound_table_xp(machine, names, cat, research, drive311=None):
+    """BASILISK SYNTH's sounds (DNA.md 2.4, from 1.2.1: one name, one file): XP's C:\\WINDOWS\\Media, its W31 folder
+    for the 3.x recordings (measured from BASILISK 16's identical files when drive311 is given), the library disc."""
     tab = {}
     iso = Iso(os.path.join(machine, 'library.iso'))
+    knames, kxp, k311 = core_tables()
+    d311 = zipfile.ZipFile(drive311) if drive311 else None
     tsv = {}
     for line in iso.read('LIBRARY.TSV').decode('utf-8', 'replace').splitlines():
         p = line.split('\t')
         if len(p) >= 5 and not line.startswith('#'): tsv[p[0]] = p
     for n in names:
-        if n in XP_NAMES:
-            f = XP_NAMES[n]; r = find_research(research, f, 'XP') or {}
-            tab[n] = {'o': 'xp', 'file': f, 'path': 'C:\\WINDOWS\\Media\\' + f, 'dur': r.get('duration'), 'fmt': r.get('format'),
-                      'root': r.get('root'), 'what': r.get('character'), 'from': 'Windows XP'}
+        if n in knames:
+            i = knames.index(n); f = kxp[i]; path = 'C:\\WINDOWS\\Media\\' + f
+            if f.startswith('W31\\'):   # the Windows 3.x recordings, as they are
+                base = f.split('\\')[-1]; dur = fmt = None
+                if d311: dur, fmt = wav_facts(d311.read('WINDOWS/' + base))
+                r = find_research(research, base, 'Workgroups' if i in (0, 2) else '3.1 /') or {}
+                o = '311' if i in (0, 2) else '31'
+                frm = 'Windows for Workgroups 3.11' if o == '311' else 'Windows 3.1'
+                tab[n] = {'o': o, 'd': display_name(n), 'file': base, 'path': path, 'dur': dur or r.get('duration'),
+                          'fmt': fmt or r.get('format'), 'root': r.get('root'), 'what': r.get('character'), 'from': frm + ' (carried in XP\'s Media\\W31)'}
+            else:
+                r = find_research(research, f, 'XP') or {}
+                o = 'both' if i in (5, 6) else 'xp'
+                tab[n] = {'o': o, 'd': display_name(n), 'file': f, 'path': path, 'dur': r.get('duration'), 'fmt': r.get('format'),
+                          'root': r.get('root'), 'what': r.get('character'),
+                          'from': 'Windows XP, byte-identical to Windows 3.11\'s copy' if o == 'both' else 'Windows XP'}
         elif n in tsv:
             p = tsv[n]; e = cat.get(n, {})
             lic = e.get('license', p[4].split(', ')[-1]); syn = bool(e.get('synth_method'))
@@ -253,7 +270,8 @@ def main():
         rows = json.load(open(d + '/manifest.json'))
         names = []
         for r in rows: names += [n for n in dna_names(r['dna']) if n not in names]
-        sounds = {} if not machine else sound_table_311(machine, names, cat, research) if ed == 'b16' else sound_table_xp(machine, names, cat, research)
+        drive311 = os.environ.get('SNDREC_DRIVE311')   # BASILISK 16's drive.zip: to measure the 3.x files XP carries
+        sounds = {} if not machine else sound_table_311(machine, names, cat, research) if ed == 'b16' else sound_table_xp(machine, names, cat, research, drive311)
         names_file = None
         if machine and os.path.exists(os.path.join(machine, 'library.names.txt')): names_file = os.path.join(machine, 'library.names.txt')
         elif machine and ed == 'xp':   # the XP disc's names, for the recipe converter

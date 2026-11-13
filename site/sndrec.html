@@ -202,7 +202,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
       <div><h3>Keyboard, Mod and Bend</h3><p>Five octaves of Windows push-button keys, Bend and Mod scroll bars, and Hold. Turn on Keys to play from the computer keyboard. Incoming MIDI holds the keys down and moves the wheels.</p></div>
       <div><h3>Sound you can watch being built</h3><p>A new sound is built in front of you with Sound Recorder's own menus: Increase Speed, Add Echo, Reverse, Insert File, Mix with File, Copy and Paste. The recorder's row lights up and its status line names each command as it runs.</p></div>
       <div><h3>The library disc</h3><p>249 public-domain and CC0 sounds (pianos, bells, choirs, bowls, birds, weather, machines) on a drive of their own, used by name: <code>marimba_c4E#16</code>. Collages mix and insert them at any time in a sound: <code>ding@t200Mthunder_rumble</code>.</p></div>
-      <div><h3>Presets everywhere</h3><p>76 programs in BASILISK 16 (39 in BASILISK SYNTH), in your DAW's preset list and in a Preset drop-down inside Windows. Saving a preset saves its DNA, so a sound copied from this page pastes straight into the editor.</p></div>
+      <div><h3>Presets everywhere</h3><p>76 programs in BASILISK 16 (43 in BASILISK SYNTH), in your DAW's preset list and in a Preset drop-down inside Windows. Saving a preset saves its DNA, so a sound copied from this page pastes straight into the editor.</p></div>
       <div><h3>Batch rendering</h3><p><code>render311</code> renders a DNA plus a MIDI file to a WAV through the real machine, faster than real time and bit-identical on Windows, macOS and Linux. The preset demos below were made with it, except the six macro presets, which were rendered by the VST3 in a test host with Macro 1 automated.</p></div>
     </div>
 
@@ -231,7 +231,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
       <div><h3><span class="mk m311">3.11</span><span class="mk m31">3.1</span><span class="mk mxp">XP</span>Original: the sounds</h3>
         <p>The Windows sounds are the files of the Windows install itself:</p>
         <ul><li>BASILISK 16: CHIMES, DING, RINGIN and RINGOUT from Windows for Workgroups 3.11, plus CHORD and TADA from Windows 3.1 (3.11's disks had dropped them). Since 1.2.1 it also carries XP's sound files, converted to PCM that Sound Recorder 3.1 opens, so one name means one file in both instruments: <code>ding</code> is the 3.x recording, <code>ding-xp</code> XP's.</li>
-        <li>BASILISK SYNTH: the 35 sounds in XP's C:\WINDOWS\Media.</li></ul>
+        <li>BASILISK SYNTH: the 35 sounds in XP's C:\WINDOWS\Media, and since 1.2.1 the Windows 3.x recordings too, so one name means one file in both.</li></ul>
         <p style="margin-top:6px"><span class="mk mcc0">CC0</span> <span class="mk mpd">PD</span> The library disc is added material: 249 CC0 and public-domain recordings, each credited on the disc (hover a badge in the preset list). For 3.11 they are converted to 22050 Hz 16-bit mono so Sound Recorder 3.1 can open them.</p></div>
       <div><h3>Ours: playing notes</h3>
         <ul><li>The voice allocator: which recorder plays which note</li><li>Note pitch, transpose, harmony and unison voices, velocity, pitch bend</li><li>Layer levels, pan and start offsets, the ADSR and drawn envelopes</li><li>The four macros and the mod wheel</li><li>The assembled screen: our program in Windows strips the real recorders of their menus and title bars, lines them up, and adds panels and a keyboard built from Windows' own controls</li></ul></div>
@@ -243,7 +243,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
 <b>3.11 </b> SOUNDREC.EXE: waveOutOpen / waveOutWrite of its own buffer
 <i>ours </i> BSYNTH.DRV -&gt; BSYN card (in DOSBox Pure): rate, volume, pan, envelope -&gt; 48 kHz
 <i>ours </i> plugin: fixed latency, resampled to your session's rate, Output Gain -&gt; DAW</div>
-    <p><b>BASILISK SYNTH (Windows XP).</b> A small DLL of ours is loaded into each sndrec32 process. When a note comes, it plays that recorder's own saved sound (its buffer, with its effects): it streams it to a sound-card handle opened once at 48 kHz, and applies the note's pitch itself, as a 16.16 fixed-point step through the sound with linear interpolation (integer arithmetic only: floating point is slow in the emulator), and the velocity, level, pan and envelope, on the samples, inside XP. Before 1.2 it opened the card at the note's own rate so that XP's mixer resampled, and shaped notes with XP's per-stream volume, which turned out to be one volume for the whole card on this XP.</p>
+    <p><b>BASILISK SYNTH (Windows XP).</b> A small DLL of ours is loaded into each sndrec32 process. When a note comes, it plays that recorder's own saved sound (its buffer, with its effects): it streams it to a sound-card handle opened once at 48 kHz, and applies the note's pitch itself, as a 16.16 fixed-point step through the sound, with linear interpolation in fixed point (integer arithmetic only: floating point is slow in the emulator), and the velocity, level, pan and envelope, on the samples, inside XP. Before 1.2 it opened the card at the note's own rate so that XP's mixer resampled, and shaped notes with XP's per-stream volume, which turned out to be one volume for the whole card on this XP.</p>
     <div class="chain" role="img" aria-label="BASILISK SYNTH note path: MIDI, the plugin's voice allocator, our synth.exe signals the recorder, sndrec32.exe's own saved sound, our srhook.dll inside it applies pitch, velocity, level, pan and envelope, XP's mixer and sound card in QEMU, the plugin's output"><i>ours </i> MIDI -&gt; plugin: voice allocator, pitch, pan, envelope
 <i>ours </i> synth.exe (in Windows): signals recorder n
 <b>XP   </b> sndrec32.exe: its own saved sound, with its effects
@@ -287,7 +287,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
       </div>
       <p class="note" id="ednote"></p>
       <ul class="list" id="list"></ul>
-      <p class="soon" id="soon" hidden>BASILISK SYNTH 1.2 is being finished. Its preset demos, recorded the same way from Windows XP's Sound Recorder, will appear here when it is released. Until then, <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.1.0">BASILISK SYNTH 1.1</a> is available.</p>
+      <p class="soon" id="soon" hidden>No demos for this plugin yet.</p>
       <noscript><p>The preset players need JavaScript. The recordings are MP3 files in <a href="sndrec/audio/b16/">sndrec/audio/b16/</a>.</p></noscript>
     </div>
   </div>
@@ -297,12 +297,12 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
   <div class="cap"><span class="box"></span><span class="t">Download</span></div>
   <div class="body">
     <h2>Get them</h2>
-    <p>BASILISK 16's download is complete: the plugin, Windows 3.11 and its Sound Recorders, the library disc and the batch renderer, with nothing else to install or find. BASILISK SYNTH 1.2.0 ships the same way, with Windows XP built in.</p>
+    <p>BASILISK 16's download is complete: the plugin, Windows 3.11 and its Sound Recorders, the library disc and the batch renderer, with nothing else to install or find. BASILISK SYNTH 1.2.1 ships the same way, with Windows XP built in.</p>
     <div class="dl">
       <div><h3>BASILISK 16 1.2.1</h3><p>Windows 3.11's SOUNDREC.EXE. VST3 for Windows and macOS, and AU on macOS.</p>
         <p><a class="btn" href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-311-v1.2.1">Release 1.2.1</a></p></div>
-      <div><h3>BASILISK SYNTH 1.2.0</h3><p>Windows XP's sndrec32.exe. VST3 for Windows and macOS, and AU and CLAP on macOS.</p>
-        <p><a class="btn" href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.2.0">Release 1.2.0</a></p></div>
+      <div><h3>BASILISK SYNTH 1.2.1</h3><p>Windows XP's sndrec32.exe. VST3 for Windows and macOS, and AU and CLAP on macOS.</p>
+        <p><a class="btn" href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.2.1">Release 1.2.1</a></p></div>
     </div>
 <!-- b16-try: begin. "Try it online": BASILISK 16 in the browser (tools/basilisk16-web; files in sndrec/try/). Keep this block together. -->
 <style>
@@ -329,6 +329,19 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
 #b16try .b16stat { max-width: 1028px; margin: 4px auto 0; height: 1.55em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 #b16try button:disabled, #b16try select:disabled { opacity: .55; cursor: default; }
 #b16try [hidden] { display: none !important; }
+/* the controls drawn with Windows 3.11's own pixels (b16-ui.js): canvases at k x k device pixels per pixel */
+#b16try .b16b, #b16try .b16icon { padding: 0; margin: 0; border: 0; background: none; line-height: 0; cursor: pointer; flex: none; }
+#b16try .b16b:focus, #b16try .b16icon:focus { outline: none; }
+#b16try .b16b:disabled { cursor: default; }
+#b16try canvas.b16label, #b16try .b16b canvas, #b16try .b16icon canvas, #b16try .b16meter, #b16try .b16dlg canvas, #b16try .b16drop canvas { display: block; image-rendering: crisp-edges; image-rendering: pixelated; }
+#b16try .b16slots { max-width: 1028px; margin: 6px auto 0; overflow: hidden; }   /* its height is set before the first paint */
+#b16try .b16icons { display: flex; gap: 0; overflow-x: auto; overflow-y: hidden; background: #fff; border: 1px solid var(--ink); }
+#b16try .b16row { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; margin-top: 4px; }
+#b16try .b16row .b16label { margin-left: 6px; flex: none; }
+#b16try .b16dlg { position: absolute; z-index: 5; }
+#b16try .b16dlginput { position: absolute; opacity: 0; border: 0; padding: 0; margin: 0; font-size: 16px; }
+#b16try .b16dlgbtns { position: absolute; display: flex; }
+#b16try .b16drop { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 32, .35); z-index: 4; pointer-events: none; }
 </style>
 <div id="b16try" data-state="idle">
   <h2>Try it online</h2>
@@ -337,6 +350,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     <div class="pxbox pximg b16box"><img id="b16screen" src="sndrec/try/poster.png" width="1024" height="768" data-px="1024x768" data-px-note="b16-pxnote"
       alt="BASILISK 16 in Windows for Workgroups 3.11: sixteen Sound Recorders in rows, the DNA line, the panel, Clock and a five-octave keyboard"></div>
     <script>window.pxfit && pxfit.fit(document.getElementById('b16screen'))</script>
+    <div class="b16drop" hidden><canvas></canvas></div>
     <div class="b16over">
       <div class="b16card">
         <button class="btn b16go" type="button">Try BASILISK 16 online</button>
@@ -347,6 +361,17 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     </div>
   </div>
   <p class="note pxnote" id="b16-pxnote"></p>
+  <div class="b16slots" aria-label="Saved synth states">
+    <div class="b16icons" role="listbox" aria-label="Saved states: double-click or Enter loads one"></div>
+    <div class="b16row"></div>
+  </div>
+  <script>
+  /* the row of saved states keeps its height from the first paint (its icons and buttons are drawn in device pixels,
+     k = max(1, round(devicePixelRatio)) per Windows pixel, so their size in CSS pixels depends on the screen) */
+  (function () { var k = Math.max(1, Math.round(window.devicePixelRatio || 1)), u = k / (window.devicePixelRatio || 1);
+    var s = document.querySelector('#b16try .b16slots'), i = s.querySelector('.b16icons');
+    i.style.height = (52 * u + 2) + 'px'; s.style.height = (52 * u + 2 + 4 + 23 * u + 18) + 'px'; })();
+  </script>
   <div class="b16tools">
     <button class="btn b16stop" type="button" disabled>Stop</button>
     <button class="btn b16midi" type="button" disabled aria-pressed="false">Enable Web MIDI</button>
@@ -359,7 +384,8 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
   <p class="note b16mobile" hidden>Best on a desktop or laptop computer: it needs a mouse, a keyboard and a fast processor.</p>
   <p class="note">BASILISK SYNTH (XP edition): download only. Its Windows XP machine is about 1 GB and needs a fast virtual PC, which a browser cannot run in real time.</p>
 </div>
-<script src="sndrec/try/b16-try.js?v=3f8a5b0eb1" defer></script>
+<script src="sndrec/try/b16-ui.js?v=6db837fac5" defer></script>
+<script src="sndrec/try/b16-try.js?v=6db837fac5" defer></script>
 <!-- b16-try: end -->
     <p><a class="btn" href="sndrec-download.html">All downloads and install steps</a><a class="btn" href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">Source</a></p>
     <p class="note">Windows XP, Windows for Workgroups 3.11, their sounds and Sound Recorder are Microsoft's, included as part of this art project. The Windows images came from Windows for Workgroups 3.11 and Windows XP Professional SP3 as preserved by the <a href="https://archive.org/details/wfw311-disk">Internet Archive</a>. The library disc's sounds are public domain and CC0; each one's source is listed on the disc. The emulators are <a href="https://www.qemu.org/">QEMU</a> and DOSBox Pure (GPLv2), and the plugins are built with <a href="https://github.com/DISTRHO/DPF">DPF</a>.</p>
@@ -385,11 +411,11 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
      caption: '<b>The mod wheel.</b> On Macro Swell, the wheel (the Mod scroll bar, bottom left) adds to Macro 1, which stretches chord\'s envelope and swings ding\'s echo across the stereo field.'},
     // BASILISK SYNTH 1.2.0: bsynth-host --editor --shots, the editor window's own pixels every 1/30 s on the audio clock
     {base: 'sndrec/pxv/xp-assembly', seconds: 20.1, title: 'BASILISK SYNTH loading: Windows XP wakes and its sixteen Sound Recorders assemble, then Chord Organ plays',
-     caption: '<b>BASILISK SYNTH loading.</b> Windows XP wakes inside the plugin, its sixteen Sound Recorders line up beside the DNA box, the library browser, Task Manager\'s graphs and the macros, and Chord Organ plays.'},
+     caption: '<b>BASILISK SYNTH loading</b> (1.2.0). Windows XP wakes inside the plugin, its sixteen Sound Recorders line up beside the DNA box, the library browser, Task Manager\'s graphs and the macros, and Chord Organ plays.'},
     {base: 'sndrec/pxv/xp-play', seconds: 10.5, title: 'Wide Chimes playing on BASILISK SYNTH',
-     caption: '<b>BASILISK SYNTH playing.</b> Wide Chimes: three layers of chimes.wav and ding.wav, panned left and right. Each note plays one recorder\'s own saved sound, and its key goes down.'},
+     caption: '<b>BASILISK SYNTH playing</b> (1.2.0). Wide Chimes: three layers of chimes.wav and ding.wav, panned left and right. Each note plays one recorder\'s own saved sound, and its key goes down.'},
     {base: 'sndrec/pxv/xp-change', seconds: 18.7, title: 'A preset change on BASILISK SYNTH: Windows XP rebuilds the recorders',
-     caption: '<b>BASILISK SYNTH changing preset.</b> Kalimba Glass becomes Choir Pad mid-phrase. XP rebuilds the recorders with Sound Recorder\'s own commands, Open dialog and all; here the new sound took about 4.5 s, and the notes in between were silent.'}];
+     caption: '<b>BASILISK SYNTH changing preset</b> (1.2.0). Kalimba Glass becomes Choir Pad mid-phrase. XP rebuilds the recorders with Sound Recorder\'s own commands, Open dialog and all; here the new sound took about 4.5 s, and the notes in between were silent.'}];
   window.heroPlayer = new PxPlayer(document.getElementById('hero'), clips);
   // the help gallery
   var g = document.getElementById('helpg'), shot = function () { return g.querySelector('[data-px]'); };
@@ -642,7 +668,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     if (!E) { countEl.textContent = ''; return; }
     var all = E.presets;
     document.getElementById('ednote').innerHTML = ed === 'xp'
-      ? 'BASILISK SYNTH 1.2.0 (Windows XP), 39 programs. In 1.2.0 the names <code>ding</code>, <code>chimes</code>, <code>chord</code> and <code>tada</code> are XP\'s own files (from 1.2.1 they are written <code>ding-xp</code> and so on). XP\'s timing is not sample-accurate, so its renders differ a little run to run; each demo is the best of up to four takes.'
+      ? 'BASILISK SYNTH 1.2.1 (Windows XP), 43 programs. XP\'s timing is not sample-accurate, so its renders differ a little run to run; each demo is the best of up to four takes. Demos marked as 1.2.0 takes are of programs 1.2.1 only renamed (XP\'s own <code>ding.wav</code> became <code>ding-xp</code>): the same files.'
       : 'BASILISK 16 1.2.1 (Windows 3.11), 76 programs, rendered with <code>render311</code>, which gives the same result on every run.';
     // DNA.md 2.4: a preset is XP when it uses any XP file, else W3.11 (library sounds do not count)
     all.forEach(function (p) { p.edl = p.ed === 'xp' ? 'XP' : 'W3.11'; });

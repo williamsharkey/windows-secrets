@@ -1,34 +1,37 @@
 {
- "_": "Listening notes on the BASILISK SYNTH 1.2.0 demo renders (best of up to four takes each; XP renders are not bit-identical run to run). 'drop' removes an automatic flag that listening showed to be a false alarm; 'note' is shown on the page.",
- "chord-thump": {
-  "note": "Silent in 1.2.0: after << the position is at the start, so ] (Delete After Current Position) deletes the whole sound and the layer is empty. Silent in all four takes. BASILISK 16 1.2.1 changed this preset.",
-  "drop": [
-   "very quiet"
-  ]
- },
- "critical-bass": {
-  "note": "Only 3 or 4 of the 16 notes sound in every take: critstop slowed four times by << has a long quiet lead-in, so short notes end before they sound. BASILISK 16 1.2.1 trims it (@t40[).",
-  "drop": [
-   "very quiet"
-  ]
- },
- "glass-steps": {
-  "note": "Its quietest notes (velocity 84 on a soft, short-envelope sound) barely sound; 8 of 10 note onsets were clearly heard in the best of four takes.",
-  "drop": [
-   "very quiet"
-  ]
- },
+ "_": "Listening notes on the BASILISK SYNTH 1.2.1 demos (best of several takes each; XP renders are not bit-identical run to run). 'drop' removes an automatic flag that listening showed to be a false alarm or only informative; 'note' is shown on the page.",
  "click-harp": {
-  "note": "A quiet preset; one of its 32 arpeggio notes was not clearly heard in the best of four takes.",
   "drop": [
    "very quiet"
-  ]
+  ],
+  "note": "A quiet preset; one of its 32 arpeggio notes is not clearly heard. This is the 1.2.0 take (the DNA is unchanged): the best of six 1.2.1 takes lost 5 notes."
  },
  "recycle-perc": {
-  "note": "A quiet preset; 2 of its 26 hits were not clearly heard in the best of four takes.",
   "drop": [
    "very quiet"
-  ]
+  ],
+  "note": "A quiet preset; 2 of its 26 hits are not clearly heard in the best of six takes."
+ },
+ "macro-echoes": {
+  "note": "Macro 1 steps the echo count (N), so Windows rebuilds the recorders; chords that land during a rebuild are dropped (2 of 8 in the best of seven takes)."
+ },
+ "logoff-strings": {
+  "drop": [
+   "very quiet"
+  ],
+  "note": "A quiet preset: about -46 LUFS before the demo's levelling."
+ },
+ "hardware-sub": {
+  "drop": [
+   "very quiet"
+  ],
+  "note": "A quiet preset: about -45 LUFS before the demo's levelling."
+ },
+ "print-spooler": {
+  "drop": [
+   "very quiet"
+  ],
+  "note": "A quiet preset: about -40 LUFS before the demo's levelling."
  },
  "shutdown-drone": {
   "drop": [
@@ -48,34 +51,16 @@
    "very quiet"
   ]
  },
- "macro-echoes": {
-  "note": "Macro 1 steps the echo count (N), so Windows rebuilds the recorders; chords that land during a rebuild are dropped (3 of 8 in every one of four takes).",
-  "drop": [
-   "very quiet"
-  ]
- },
- "macro-layers": {
-  "note": "One of its 8 chords was not clearly heard in the best of four takes (Macro 1 moves the layers' levels and the second layer's offset).",
-  "drop": [
-   "very quiet"
-  ]
- },
- "logoff-strings": {
+ "chord-thump": {
   "drop": [
    "very quiet"
   ],
-  "note": "A quiet preset: about -46 LUFS before the demo's levelling."
+  "note": "A quiet preset (about -42 LUFS before the demo's levelling). Silent in 1.2.0; in 1.2.1 every note plays."
  },
- "hardware-sub": {
+ "3-1-chord-pad": {
   "drop": [
    "very quiet"
   ],
-  "note": "A quiet preset: about -45 LUFS before the demo's levelling."
- },
- "print-spooler": {
-  "drop": [
-   "very quiet"
-  ],
-  "note": "A quiet preset: about -40 LUFS before the demo's levelling."
+  "note": "A quiet preset: about -39 LUFS before the demo's levelling."
  }
 }
