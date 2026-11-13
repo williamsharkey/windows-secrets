@@ -1,7 +1,9 @@
 // recipe_cli: DNA -> recipe for sndrec.html, with the tested converter (packages/basilisk-synth/design/v3/recipe.{h,cpp},
 // PRESET-ENGINE-2.md section 17, branch design/preset-engine-2). One DNA per stdin line; per DNA one JSON line out:
-//   {"dna": ..., "lines": [multi-line form, one string per line], "one": one-line form, "ok": round-trips}
-// "ok" checks fromRecipe(toRecipe(dna)) for both forms against the one-line form's own parse, as the branch's tests do.
+//   {"dna": ..., "lines": [...], "one": "...", "plines": [...], "pone": "...", "ok": ...}
+// lines/one: the ASCII recipe (toRecipe; multi-line form one string per line, then the one-line form); plines/pone:
+// prettify() of them, the display form (section 17.1b). "ok": both forms parse back to the same canonical DNA, the
+// pretty forms asciify() back exactly, and the ASCII forms are bytes 0x20-0x7E only.
 //   g++ -std=c++17 -O2 -I<core> -I<v3> recipe_cli.cpp <v3>/{recipe,dna3,engine3}.cpp <core>/dna.cpp -o recipe_cli
 //   recipe_cli [library.names.txt] < dnas.txt
 #include "recipe.h"
@@ -36,16 +38,22 @@ int main(int argc, char **argv)
         if (dna.empty()) continue;
         const std::string lines = bsynth3::toRecipe(dna, bsynth3::RecipeForm::Lines);
         const std::string one = bsynth3::toRecipe(dna, bsynth3::RecipeForm::OneLine);
+        const std::string plines = bsynth3::prettify(lines), pone = bsynth3::prettify(one);
         std::string a, b;
-        const bool ok = bsynth3::fromRecipe(lines, a) && bsynth3::fromRecipe(one, b) && a == b;
-        std::cout << "{\"dna\":" << js(dna) << ",\"lines\":[";
-        size_t p = 0; bool first = true;
-        while (p <= lines.size()) {
-            size_t q = lines.find('\n', p); if (q == std::string::npos) q = lines.size();
-            if (q > p) { std::cout << (first ? "" : ",") << js(lines.substr(p, q - p)); first = false; }
-            p = q + 1;
-        }
-        std::cout << "],\"one\":" << js(one) << ",\"canonical\":" << js(b) << ",\"ok\":" << (ok ? "true" : "false") << "}\n";
+        bool ok = bsynth3::fromRecipe(lines, a) && bsynth3::fromRecipe(one, b) && a == b &&
+                  bsynth3::asciify(plines) == lines && bsynth3::asciify(pone) == one;
+        for (unsigned char c : lines + one) if (c != '\n' && (c < 0x20 || c > 0x7E)) ok = false;
+        auto arr = [](const std::string &t) {
+            std::string o = "["; size_t p = 0; bool first = true;
+            while (p <= t.size()) {
+                size_t q = t.find('\n', p); if (q == std::string::npos) q = t.size();
+                if (q > p) { o += (first ? "" : ",") + js(t.substr(p, q - p)); first = false; }
+                p = q + 1;
+            }
+            return o + "]";
+        };
+        std::cout << "{\"dna\":" << js(dna) << ",\"lines\":" << arr(lines) << ",\"one\":" << js(one) << ",\"plines\":" << arr(plines)
+                  << ",\"pone\":" << js(pone) << ",\"canonical\":" << js(b) << ",\"ok\":" << (ok ? "true" : "false") << "}\n";
     }
     return 0;
 }

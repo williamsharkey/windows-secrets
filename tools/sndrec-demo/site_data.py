@@ -134,18 +134,25 @@ def recipes(cli, dnas, names_file):
     for line in r.stdout.splitlines():
         x = json.loads(line)
         if not x['ok']: sys.exit('recipe does not round-trip: ' + x['dna'])
-        rec = {'one': x['one'], 'lines': x['lines']}
-        env = x['lines'][-1] if x['lines'] and x['lines'][-1].startswith('env ') else None
-        if env and ' · pad ' in ' · ' + env.split(None, 1)[1]:
-            # a kit: the converter writes each pad as a "pad ..." phrase in the env line; list them one per line
-            parts = [p for p in env.split(None, 1)[1].split(' · ')]
-            pads = [p for p in parts if p.startswith('pad ')]
-            rest = [p for p in parts if not p.startswith('pad ')]
+        # ASCII (toRecipe: what is copied and typed) and pretty (prettify: what is shown), PRESET-ENGINE-2.md 17.1b
+        rec = {'one': x['one'], 'lines': x['lines'], 'pone': x['pone'], 'plines': x['plines']}
+        env, penv = (x['lines'][-1], x['plines'][-1]) if x['lines'] and x['lines'][-1].startswith('env ') else (None, None)
+        if env and re.search(r'(^|  )pad \d', env.split(None, 1)[1]):
+            # a kit: the converter writes each pad as a "pad ..." phrase in the env line (ASCII: two spaces between
+            # phrases, pretty: " · "); list them one per line, in both forms
+            parts = list(zip(env.split(None, 1)[1].split('  '), penv.split(None, 1)[1].split(' \u00b7 ')))
+            if any(len(a.split('  ')) != 1 for a, _ in parts) or len(env.split(None, 1)[1].split('  ')) != len(penv.split(None, 1)[1].split(' \u00b7 ')):
+                sys.exit('kit phrases do not line up: ' + x['dna'])
+            pads = [pp for pp in parts if pp[0].startswith('pad ')]
+            rest = [pp for pp in parts if not pp[0].startswith('pad ')]
             nums = set()
-            for pd in pads:
-                m = re.match(r'pad (\d+)(?:\u2013(\d+))?', pd)
+            for pd, _ in pads:
+                m = re.match(r'pad (\d+)', pd)
                 if m: nums.add(int(m.group(1)))   # a pad, or a pitched range of keys, by its first key
-            rec['kit'] = {'pads': pads, 'n': len(nums), 'layers': x['lines'][:-1], 'env': 'env     ' + ' · '.join(rest) if rest else None}
+            rec['kit'] = {'n': len(nums), 'pads': [a for a, _ in pads], 'ppads': [b for _, b in pads],
+                          'layers': x['lines'][:-1], 'players': x['plines'][:-1],
+                          'env': ('env      ' + '  '.join(a for a, _ in rest)) if rest else None,
+                          'penv': ('env      ' + ' \u00b7 '.join(b for _, b in rest)) if rest else None}
         out[x['dna']] = rec
     return out
 

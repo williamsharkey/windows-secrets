@@ -125,6 +125,9 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
   font: 12px/1.45 "Lucida Console", Consolas, "DejaVu Sans Mono", Menlo, ui-monospace, monospace; }
 .rec .ln { white-space: pre-wrap; overflow-wrap: anywhere; }
 .rec .one { white-space: nowrap; }
+.rec.ascii .one { white-space: pre-wrap; overflow-wrap: anywhere; }
+.rec.ascii { background: #ffffe8; }
+.rec:focus-visible { outline: 1px dotted var(--ink); outline-offset: 1px; }
 .rec .ln.env { color: #404040; }
 .rec details summary { cursor: pointer; white-space: pre-wrap; overflow-wrap: anywhere; }
 .rec details[open] summary { margin-bottom: 2px; }
@@ -374,24 +377,64 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
   }
   // recipes: the converter's one-line form if it fits the cell's width in its own font, else its lines
   var meas = document.createElement('canvas').getContext('2d');
-  function fitRec(box) {
+  // Recipes (PRESET-ENGINE-2.md 17.1b): shown pretty; selecting, focusing or double-clicking one turns it into its ASCII
+  // form, which is what is typed and copied. Both forms come from the converter (toRecipe, prettify) at build time.
+  function recHTML(r, asc, one) {
+    function ln(t, cls) { return '<div class="ln' + (cls ? ' ' + cls : '') + '">' + esc(t) + '</div>'; }
+    if (r.kit) {
+      var lay = asc ? r.kit.layers : r.kit.players, env = asc ? r.kit.env : r.kit.penv, pads = asc ? r.kit.pads : r.kit.ppads;
+      var srcs = r.kit.layers.map(function (l) { return l.split(/\s+/)[0]; });
+      return '<details' + (asc ? ' open' : '') + '><summary>kit ' + (asc ? '' : '\u00b7 ') + r.kit.n + ' pads ' + (asc ? '' : '\u00b7 ') + esc(srcs.join(', ')) + '</summary>' +
+        lay.map(function (l) { return ln(l); }).join('') + (env ? ln(env, 'env') : '') + pads.map(function (l) { return ln(l, 'pad'); }).join('') + '</details>';
+    }
+    if (one) return ln(asc ? r.one : r.pone, 'one');
+    return (asc ? r.lines : r.plines).map(function (l) { return ln(l, /^env\s/.test(l) ? 'env' : ''); }).join('');
+  }
+  function fitRec(box) {   // the one-line form if its pretty text fits the cell in its own font, else a line per layer
     var r = box._p.rec, cs = getComputedStyle(box);
     var w = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     meas.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
-    if (r.kit) {
-      if (box._kit) return;   // a kit: a summary, its lines behind a disclosure triangle
-      var srcs = r.kit.layers.map(function (l) { return l.split(/\s+/)[0]; });
-      var body = r.kit.layers.concat(r.kit.env ? [r.kit.env] : []).map(function (l) { return '<div class="ln">' + esc(l) + '</div>'; }).join('') +
-        r.kit.pads.map(function (l) { return '<div class="ln pad">' + esc(l) + '</div>'; }).join('');
-      box.innerHTML = '<details><summary>kit \u00b7 ' + r.kit.n + ' pads \u00b7 ' + esc(srcs.join(', ')) + '</summary>' + body + '</details>';
-      box._kit = true; return;
-    }
-    var one = meas.measureText(r.one).width <= w;
-    if (box._mode === (one ? 1 : 2)) return;
-    box._mode = one ? 1 : 2;
-    box.innerHTML = one ? '<div class="ln one">' + esc(r.one) + '</div>'
-      : r.lines.map(function (l) { return '<div class="ln' + (/^env\s/.test(l) ? ' env' : '') + '">' + esc(l) + '</div>'; }).join('');
+    var one = !r.kit && meas.measureText(r.pone).width <= w;
+    if (box._one === one && box._drawn) return;
+    box._one = one; setRec(box, !!box._asc, true);
   }
+  function setRec(box, asc, force) {
+    if (!force && !!box._asc === asc) return;
+    var open = box.querySelector('details') && box.querySelector('details').open;
+    box._asc = asc; box._drawn = true;
+    box.classList.toggle('ascii', asc);
+    box.innerHTML = recHTML(box._p.rec, asc, box._one);
+    if (open) box.querySelector('details').open = true;
+  }
+  function recOf(n) { while (n && n.nodeType !== 1) n = n.parentNode; return n && n.closest ? n.closest('.rec') : null; }
+  list.addEventListener('mousedown', function (e) { var b = recOf(e.target); if (b && !(e.target.closest && e.target.closest('summary'))) setRec(b, true); });
+  list.addEventListener('focusin', function (e) { if (e.target.classList && e.target.classList.contains('rec')) setRec(e.target, true); });
+  list.addEventListener('focusout', function (e) { var b = e.target.classList && e.target.classList.contains('rec') ? e.target : null; if (b) setTimeout(revertRecs, 0); });
+  function revertRecs() {   // back to pretty when nothing in it is selected or focused
+    var sel = window.getSelection(), r = sel.rangeCount && !sel.isCollapsed ? sel.getRangeAt(0) : null;
+    [].forEach.call(document.querySelectorAll('.rec.ascii'), function (b) {
+      if (document.activeElement === b || (r && r.intersectsNode(b))) return;
+      setRec(b, false);
+    });
+  }
+  document.addEventListener('selectionchange', function () {
+    var sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) { revertRecs(); return; }
+    var r = sel.getRangeAt(0), a = recOf(sel.anchorNode), f = recOf(sel.focusNode);
+    // a recipe wholly inside a selection that spans rows: switch it too (its own text is not a boundary of the range)
+    [].forEach.call(list.querySelectorAll('.rec:not(.ascii)'), function (b) { if (b !== a && b !== f && r.intersectsNode(b)) setRec(b, true); });
+  });
+  // copy: always ASCII. Selections in recipes already are; a recipe the selection only enters at its far end is still
+  // pretty, so its symbols go back through the converter's own substitution (17.1: × x, ± +-, ¢ c, – -, " · " two spaces, … ...)
+  document.addEventListener('copy', function (e) {
+    var sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) return;
+    var r = sel.getRangeAt(0), hit = [].some.call(document.querySelectorAll('.rec'), function (b) { return r.intersectsNode(b); });
+    if (!hit) return;
+    var t = sel.toString().replace(/ \u00b7 /g, '  ').replace(/\u00d7/g, 'x').replace(/\u00b1/g, '+-').replace(/\u00a2/g, 'c')
+      .replace(/\u2013/g, '-').replace(/\u2026/g, '...').replace(/\u2192/g, '->').replace(/\u00b7/g, '-');
+    e.clipboardData.setData('text/plain', t); e.preventDefault();
+  });
   function fitAll() {
     [].forEach.call(document.querySelectorAll('.srcs'), fit);
     [].forEach.call(document.querySelectorAll('.rec'), fitRec);
@@ -539,7 +582,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
       }
       var dna = el('div', 'dna');
       var code = p.rec ? el('div', 'rec') : el('code', null, esc(p.dna));
-      if (p.rec) { code._p = p; code.setAttribute('aria-label', 'Recipe of ' + p.name); }
+      if (p.rec) { code._p = p; code.tabIndex = 0; code.setAttribute('aria-label', 'Recipe of ' + p.name + ' (focus for the typable form): ' + p.rec.one); }
       var cp = el('button', 'btn copy', 'Copy DNA'); cp.type = 'button'; cp.title = p.dna; cp.setAttribute('aria-label', 'Copy the DNA of ' + p.name + ': ' + p.dna);
       cp.addEventListener('click', function () { copy(p.dna, cp); });
       dna.appendChild(code); dna.appendChild(cp);
