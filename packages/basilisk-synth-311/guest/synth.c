@@ -542,6 +542,7 @@ static int poll_host(void);
 static void dig_watch(void);
 static void dig_refresh_all(void);
 static void kb_repaint(void);
+static void btn_text(HWND b, const char *t);
 static void layer_replies(void)
 {
     int i;
@@ -1195,7 +1196,7 @@ static void panel_refresh(void)
     dig_refresh_all();   /* the selected layer's keys show the focus rectangle */
     if (!hSb[0]) return;
     harmony_from_dna();
-    if (hHarm) SetWindowText(hHarm, harmNames[harmIdx]);
+    if (hHarm) btn_text(hHarm, harmNames[harmIdx]);
     if (hDna) SetWindowText(hDna, dnaText);
     {
         int et[8], el[8], en = env_get(selLayer, et, el);
@@ -1215,7 +1216,7 @@ static void panel_refresh(void)
             if (hVal[i]) SetWindowText(hVal[i], t);
         }
         if (hEnvLbl) {
-            if (en) sprintf(t, "%d/%d %dms %d%%", envPt + 1, en, et[envPt], el[envPt]); else strcpy(t, "A/D/S");
+            if (en) sprintf(t, "Point %d of %d", envPt + 1, en); else strcpy(t, "No points");
             SetWindowText(hEnvLbl, t);
         }
     }
@@ -1411,7 +1412,7 @@ static void panel_command(int id, int code)
         show_envelope();
     } else if (id == ID_HARM) {
         harmIdx = (harmIdx + 1) % 6;
-        SetWindowText(hHarm, harmNames[harmIdx]);
+        btn_text(hHarm, harmNames[harmIdx]);
         layer_edit(selLayer, 0, 'H', harmGenes[harmIdx]);
         edited(FALSE);
     }
@@ -1488,6 +1489,31 @@ static HWND mk(const char *cls, const char *text, DWORD st, int x, int y, int w,
     return c;
 }
 
+/* Push buttons sized to their text: the text with one space on each side (Windows 3.1 drops what a glyph draws
+   left of where a string starts, so a leading space keeps a W whole), plus the button's frame. Windows centres it.
+   Labels are as wide as their text. */
+static int text_w(const char *t)
+{
+    HDC dc = GetDC(hMain); HFONT of = SelectObject(dc, panelFont);
+    DWORD e = GetTextExtent(dc, t, lstrlen(t));
+    SelectObject(dc, of); ReleaseDC(hMain, dc);
+    return LOWORD(e);
+}
+/* Measured (8x crops): Windows 3.1 draws a push button's text 1.5 px left of its face's centre; a leading space
+   (which also keeps a W's left edge) moves it half a space right, so " text" sits centred within 1 px. The button
+   is as wide as " text " plus its frame: one space of padding each side. */
+static void padded(const char *t, char *out) { out[0] = ' '; lstrcpy(out + 1, t); }
+#define BTN_FRAME 6   /* the push button's border and bevel, both sides together */
+static int btn_w(const char *t) { char p[64]; padded(t, p); lstrcat(p, " "); return text_w(p) + BTN_FRAME; }
+static HWND mkbtn(const char *t, int x, int y, int h, int id, int *w)
+{
+    char p[64]; padded(t, p);
+    *w = btn_w(t);
+    return mk("BUTTON", p, WS_VISIBLE | BS_PUSHBUTTON, x, y, *w, h, id);
+}
+static void btn_text(HWND b, const char *t) { char p[64]; padded(t, p); SetWindowText(b, p); }
+static HWND mklbl(const char *t, int x, int y, int h, int *w) { *w = text_w(t) + 2; return mk("STATIC", t, WS_VISIBLE, x, y, *w, h, -1); }
+
 /* the panel appears in four groups, one after another */
 static void panel_create(int group)
 {
@@ -1502,19 +1528,27 @@ static void panel_create(int group)
         SetWindowLong(hDna, GWL_WNDPROC, (LONG)MakeProcInstance((FARPROC)DnaEditProc, hInst));
         break;
     case 1:
-        mk("STATIC", "Sound", WS_VISIBLE, 8, PANEL + 36, 40, 16, -1);
-        for (i = 0; i < 4; i++) mk("BUTTON", panelSounds[i], WS_VISIBLE | BS_PUSHBUTTON, 50 + i * 62, PANEL + 32, 60, 24, ID_SOUND + i);
-        mk("STATIC", "Effects", WS_VISIBLE, 306, PANEL + 36, 46, 16, -1);
-        for (i = 0, x = 354; i < 10; i++, x += 52) mk("BUTTON", stepNames[i], WS_VISIBLE | BS_PUSHBUTTON, x, PANEL + 32, 50, 24, ID_STEP + i);
+        {
+            int w;
+            x = 8; mklbl("Sound", x, PANEL + 36, 16, &w); x += w + 4;
+            for (i = 0; i < 4; i++) { mkbtn(panelSounds[i], x, PANEL + 32, 24, ID_SOUND + i, &w); x += w + 2; }
+            x += 10; mklbl("Effects", x, PANEL + 36, 16, &w); x += w + 4;
+            for (i = 0; i < 10; i++) { mkbtn(stepNames[i], x, PANEL + 32, 24, ID_STEP + i, &w); x += w + 2; }
+        }
         break;
     case 2:
-        mk("BUTTON", "<", WS_VISIBLE | BS_PUSHBUTTON, 8, PANEL + 62, 22, 24, ID_LAYERPREV);
-        hLayerLbl = mk("STATIC", "Layer 1 of 1", WS_VISIBLE | SS_CENTER, 32, PANEL + 66, 86, 16, -1);
-        mk("BUTTON", ">", WS_VISIBLE | BS_PUSHBUTTON, 120, PANEL + 62, 22, 24, ID_LAYERNEXT);
-        mk("BUTTON", "Undo", WS_VISIBLE | BS_PUSHBUTTON, 150, PANEL + 62, 50, 24, ID_UNDO);
-        mk("BUTTON", "Clear", WS_VISIBLE | BS_PUSHBUTTON, 202, PANEL + 62, 50, 24, ID_CLEAR);
-        mk("STATIC", "Harmony", WS_VISIBLE, 262, PANEL + 66, 54, 16, -1);
-        hHarm = mk("BUTTON", harmNames[harmIdx], WS_VISIBLE | BS_PUSHBUTTON, 318, PANEL + 62, 70, 24, ID_HARM);
+        {
+            int w, k, hw = 0;
+            x = 8; mkbtn("<", x, PANEL + 62, 24, ID_LAYERPREV, &w); x += w + 2;
+            hLayerLbl = mk("STATIC", "Layer 1 of 1", WS_VISIBLE | SS_CENTER, x, PANEL + 66, text_w("Layer 8 of 8") + 4, 16, -1); x += text_w("Layer 8 of 8") + 6;
+            mkbtn(">", x, PANEL + 62, 24, ID_LAYERNEXT, &w); x += w + 8;
+            mkbtn("Undo", x, PANEL + 62, 24, ID_UNDO, &w); x += w + 2;
+            mkbtn("Clear", x, PANEL + 62, 24, ID_CLEAR, &w); x += w + 10;
+            mklbl("Harmony", x, PANEL + 66, 16, &w); x += w + 4;
+            for (k = 0; k < 6; k++) if (btn_w(harmNames[k]) > hw) hw = btn_w(harmNames[k]);   /* as wide as its longest name */
+            hHarm = mk("BUTTON", "", WS_VISIBLE | BS_PUSHBUTTON, x, PANEL + 62, hw, 24, ID_HARM);
+            btn_text(hHarm, harmNames[harmIdx]);
+        }
         for (i = 0; i < 4; i++) {
             mk("STATIC", sliders[i].label, WS_VISIBLE, 398 + i * 120, PANEL + 60, 70, 14, -1);
             hSb[i] = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, 398 + i * 120, PANEL + 74, 84, 14, ID_SB + i);
@@ -1523,31 +1557,44 @@ static void panel_create(int group)
         }
         break;
     case 4:   /* the header: preset browser and every sound; pan, offset and the drawn envelope's points */
-        hFilter[0] = mk("BUTTON", "All", WS_VISIBLE | BS_PUSHBUTTON, 406, 3, 26, 21, ID_FILTER);       /* the preset browser's */
-        hFilter[1] = mk("BUTTON", "W3.11", WS_VISIBLE | BS_PUSHBUTTON, 433, 3, 44, 21, ID_FILTER + 1);  /* filter: Windows 3.x */
-        hFilter[2] = mk("BUTTON", "XP", WS_VISIBLE | BS_PUSHBUTTON, 478, 3, 24, 21, ID_FILTER + 2);     /* sounds only, or XP's */
-        hPreset = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, 504, 3, 162, 320, ID_PRESET);
-        mk("BUTTON", "<", WS_VISIBLE | BS_PUSHBUTTON, 669, 3, 17, 21, ID_PRESETPREV);   /* the previous / next program */
-        mk("BUTTON", ">", WS_VISIBLE | BS_PUSHBUTTON, 687, 3, 17, 21, ID_PRESETNEXT);
-        mk("STATIC", "Sound", WS_VISIBLE, 716, 7, 38, 14, -1);
-        hLibrary = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, 756, 3, 262, 320, ID_LIBRARY);   /* (LIBRARY.TSV is in order) */
-        listsWanted = TRUE;    /* filled at the first idle moment after the assembly */
-        for (i = SL_PAN; i < SL_PAN + 2; i++) {
-            int k = i - SL_PAN, x = 410 + k * 132, lw = k ? 40 : 26;
-            mk("STATIC", sliders[i].label, WS_VISIBLE, x, 31, lw, 14, -1);
-            hSb[i] = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, x + lw + 2, 31, 64, 14, ID_SB + i);
-            SetScrollRange(hSb[i], SB_CTL, sliders[i].lo, sliders[i].hi, FALSE);
-            hVal[i] = mk("STATIC", "", WS_VISIBLE, x + lw + 70, 31, 32, 14, ID_VAL + i);
+        {   /* the preset browser's filter (all, Windows 3.x sounds only, or XP's), its list and previous / next; the
+               library's sounds */
+            int w, wp, wn;
+            x = 406;
+            hFilter[0] = mkbtn("All", x, 3, 21, ID_FILTER, &w); x += w + 1;
+            hFilter[1] = mkbtn("W3.11", x, 3, 21, ID_FILTER + 1, &w); x += w + 1;
+            SetWindowText(hFilter[1], "  W3.11");   /* its 1's wide right bearing: one more space on the left centres the ink (8x crop) */
+            hFilter[2] = mkbtn("XP", x, 3, 21, ID_FILTER + 2, &w); x += w + 3;
+            wp = btn_w("<"); wn = btn_w(">");
+            hPreset = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, x, 3, 714 - wp - wn - 3 - x, 320, ID_PRESET);
+            x = 714 - wp - wn - 1;
+            mkbtn("<", x, 3, 21, ID_PRESETPREV, &w); x += w + 1;
+            mkbtn(">", x, 3, 21, ID_PRESETNEXT, &w); x += w + 4;
+            mklbl("Sound", x, 7, 14, &w); x += w + 2;
+            hLibrary = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, x, 3, 1018 - x, 320, ID_LIBRARY);   /* (LIBRARY.TSV is in order) */
         }
-        mk("STATIC", "Env", WS_VISIBLE, 684, 31, 24, 14, -1);
-        mk("BUTTON", "<", WS_VISIBLE | BS_PUSHBUTTON, 708, 28, 17, 20, ID_ENVPREV);
-        mk("BUTTON", ">", WS_VISIBLE | BS_PUSHBUTTON, 726, 28, 17, 20, ID_ENVNEXT);
-        mk("BUTTON", "+", WS_VISIBLE | BS_PUSHBUTTON, 744, 28, 17, 20, ID_ENVADD);
-        mk("BUTTON", "-", WS_VISIBLE | BS_PUSHBUTTON, 762, 28, 17, 20, ID_ENVDEL);
-        hEnvLbl = mk("STATIC", "A/D/S", WS_VISIBLE, 783, 31, 86, 14, -1);
-        for (i = SL_ETIME; i <= SL_ELEVEL; i++) {   /* the point's time and level */
-            hSb[i] = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, i == SL_ETIME ? 870 : 946, 31, 72, 14, ID_SB + i);
-            SetScrollRange(hSb[i], SB_CTL, sliders[i].lo, sliders[i].hi, FALSE);
+        listsWanted = TRUE;    /* filled at the first idle moment after the assembly */
+        {   /* pan and offset; the drawn envelope's points: Point k of n, its Time and its Level (without points the
+               layer uses the global Attack, Decay, Sustain and Release below) */
+            int w, k;
+            x = 406;
+            for (i = SL_PAN; i < SL_PAN + 2; i++) {
+                mklbl(sliders[i].label, x, 31, 14, &w); x += w + 2;
+                hSb[i] = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, x, 31, 52, 14, ID_SB + i); x += 54;
+                SetScrollRange(hSb[i], SB_CTL, sliders[i].lo, sliders[i].hi, FALSE);
+                hVal[i] = mk("STATIC", "", WS_VISIBLE, x, 31, text_w("-100") + 4, 14, ID_VAL + i); x += text_w("4000") + 10;
+            }
+            mklbl("Envelope", x, 31, 14, &w); x += w + 3;
+            mkbtn("<", x, 28, 20, ID_ENVPREV, &w); x += w + 1;
+            mkbtn(">", x, 28, 20, ID_ENVNEXT, &w); x += w + 1;
+            mkbtn("+", x, 28, 20, ID_ENVADD, &w); x += w + 1;
+            mkbtn("-", x, 28, 20, ID_ENVDEL, &w); x += w + 4;
+            hEnvLbl = mk("STATIC", "No points", WS_VISIBLE, x, 31, text_w("Point 8 of 8") + 4, 14, -1); x += text_w("Point 8 of 8") + 6;
+            for (k = 0, i = SL_ETIME; i <= SL_ELEVEL; i++, k++) {   /* the point's time (ms) and level (%) */
+                mklbl(k ? "Level" : "Time", x, 31, 14, &w); x += w + 2;
+                hSb[i] = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, x, 31, k ? 1018 - x : 50, 14, ID_SB + i); x += 52;
+                SetScrollRange(hSb[i], SB_CTL, sliders[i].lo, sliders[i].hi, FALSE);
+            }
         }
         panel_refresh();
         break;
@@ -2102,6 +2149,17 @@ static void host_line(char *s)
         if (c) { SendMessage(c, WM_COMMAND, 305, 0L); SendMessage(c, WM_COMMAND, 124, MAKELPARAM(GetDlgItem(c, 124), BN_CLICKED));
                  SetWindowPos(c, HWND_TOPMOST, CALCX, CALCY, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE); UpdateWindow(c); }
         say("calcshow %d", c != NULL);
+    }
+    else if (!strcmp(s, "btns")) {   /* test aid: every push button of BASILISK 16, its screen rectangle and text */
+        HWND c; char cls[16], t[40]; RECT r;
+        for (c = GetWindow(hMain, GW_CHILD); c; c = GetWindow(c, GW_HWNDNEXT)) {
+            GetClassName(c, cls, sizeof cls);
+            if (lstrcmpi(cls, "Button") || (GetWindowLong(c, GWL_STYLE) & 0x0F) > 1 || !IsWindowVisible(c)) continue;
+            GetWindowText(c, t, sizeof t); GetWindowRect(c, &r);
+            if (!t[0] || t[0] == '\x95') continue;
+            say("btn %d %d %d %d %s", r.left, r.top, r.right, r.bottom, t);
+        }
+        say("btns end");
     }
     else if (!strcmp(s, "panic")) { int r; for (r = 0; r < NALL; r++) stop_rec(r, 0, 5); }
     else if (!strcmp(s, "env")) {
