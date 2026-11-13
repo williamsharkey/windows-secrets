@@ -83,7 +83,8 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
 .pxtime { font: 12px "Lucida Console", ui-monospace, monospace; min-width: 8.5em; }
 .pxseek { flex: 1 1 160px; min-width: 120px; }
 .pxloop { font-size: 13px; white-space: nowrap; }
-.pxclips { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 0 0 6px; }
+.pxclips { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 0 0 6px; align-items: center; }
+.pxclips .lbl { font-size: 13px; color: var(--muted); min-width: 11.5em; }
 .pxcap { margin: 0 0 6px; min-height: 4.65em; }   /* room for the longest caption, so switching clips moves nothing */
 .pxnote { min-height: 2.9em; margin: 0 0 6px; }   /* always there (it states the scale), so nothing shifts when it changes */
 /* source-sound badges: one line in the empty space between the name and the waveform; overflow folds into +N */
@@ -175,7 +176,10 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     <p class="lede">BASILISK 16 and BASILISK SYNTH are instrument plugins for your DAW. Each one runs a real old Windows inside the plugin, opens sixteen copies of Sound Recorder, and plays your notes on them. Every sound is built with Sound Recorder's own menu commands. The plugin never makes a sound of its own, and everything on this page was recorded from it.</p>
     <div class="pxp" id="hero">
       <div class="pxclips" role="group" aria-label="Clip">
-        <button type="button" class="chip pxclip" aria-pressed="true">Loading</button><button type="button" class="chip pxclip" aria-pressed="false">Playing</button><button type="button" class="chip pxclip" aria-pressed="false">Preset change</button><button type="button" class="chip pxclip" aria-pressed="false">Mod wheel</button>
+        <span class="lbl">BASILISK 16 (3.11)</span><button type="button" class="chip pxclip" aria-pressed="true">Loading</button><button type="button" class="chip pxclip" aria-pressed="false">Playing</button><button type="button" class="chip pxclip" aria-pressed="false">Preset change</button><button type="button" class="chip pxclip" aria-pressed="false">Mod wheel</button>
+      </div>
+      <div class="pxclips" role="group" aria-label="BASILISK SYNTH clip">
+        <span class="lbl">BASILISK SYNTH (XP)</span><button type="button" class="chip pxclip" aria-pressed="false">Loading</button><button type="button" class="chip pxclip" aria-pressed="false">Playing</button><button type="button" class="chip pxclip" aria-pressed="false">Preset change</button>
       </div>
       <div class="pxbox"><canvas width="1024" height="768" data-px="1024x768" data-px-note="hero-note" tabindex="0" aria-label="BASILISK 16"></canvas><button type="button" class="pxbig" aria-label="Play">&#9654;</button><p class="pxstatus" hidden></p></div><script>pxfit.fit(document.querySelector('#hero [data-px]'))</script>
       <div class="pxctl"><button type="button" class="btn pxplay" aria-pressed="false">Play</button><span class="pxtime">0:00</span><input class="pxseek" type="range" min="0" max="15" step="0.001" value="0" aria-label="Position"><label class="pxloop"><input type="checkbox"> Loop</label></div>
@@ -414,7 +418,14 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     {base: 'sndrec/pxv/b16-change', seconds: 22.5, title: 'A preset change while playing: Windows rebuilds the recorders one at a time',
      caption: '<b>Changing preset while playing.</b> Kalimba Glass becomes Choir Pad. Sound Recorder rebuilds the recorders one at a time; the row being built lights yellow, and the old sound keeps playing until the new one is ready.'},
     {base: 'sndrec/pxv/b16-macro', seconds: 9.8, title: 'The mod wheel moving Macro 1 on Macro Swell',
-     caption: '<b>The mod wheel.</b> On Macro Swell, the wheel (the Mod scroll bar, bottom left) adds to Macro 1, which stretches chord\'s envelope and swings ding\'s echo across the stereo field.'}];
+     caption: '<b>The mod wheel.</b> On Macro Swell, the wheel (the Mod scroll bar, bottom left) adds to Macro 1, which stretches chord\'s envelope and swings ding\'s echo across the stereo field.'},
+    // BASILISK SYNTH 1.2.0: bsynth-host --editor --shots, the editor window's own pixels every 1/30 s on the audio clock
+    {base: 'sndrec/pxv/xp-assembly', seconds: 20.1, title: 'BASILISK SYNTH loading: Windows XP wakes and its sixteen Sound Recorders assemble, then Chord Organ plays',
+     caption: '<b>BASILISK SYNTH loading.</b> Windows XP wakes inside the plugin, its sixteen Sound Recorders line up beside the DNA box, the library browser, Task Manager\'s graphs and the macros, and Chord Organ plays.'},
+    {base: 'sndrec/pxv/xp-play', seconds: 10.5, title: 'Wide Chimes playing on BASILISK SYNTH',
+     caption: '<b>BASILISK SYNTH playing.</b> Wide Chimes: three layers of chimes.wav and ding.wav, panned left and right. Each note plays one recorder\'s own saved sound, and its key goes down.'},
+    {base: 'sndrec/pxv/xp-change', seconds: 18.7, title: 'A preset change on BASILISK SYNTH: Windows XP rebuilds the recorders',
+     caption: '<b>BASILISK SYNTH changing preset.</b> Kalimba Glass becomes Choir Pad mid-phrase. XP rebuilds the recorders with Sound Recorder\'s own commands, Open dialog and all; here the new sound took about 4.5 s, and the notes in between were silent.'}];
   window.heroPlayer = new PxPlayer(document.getElementById('hero'), clips);
   // the help gallery
   var g = document.getElementById('helpg'), shot = function () { return g.querySelector('[data-px]'); };
