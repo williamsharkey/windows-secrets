@@ -273,8 +273,28 @@ Host -> guest:
 | `on <rec> <rate> <vol> [<pan> [<delay_ms> [<layer>]]]` | optional trailing fields; old parsers read the first three. pan -100..100 (default 0); delay_ms: start this many ms later (an edition may also let the host do the waiting and send 0); layer: which layer's envelope applies (default: the recorder's layer) |
 | `lenv <layer> <a\|p> <t,l.t,l...>` | the effective envelope of a layer after macros (`-` = none). Sent after each `dna` and whenever a macro changes one; the guest uses the latest. |
 | `lib <path>` | (optional) the library disc was (re)inserted at <path>; the guest rereads its catalogue |
+| `vis <0\|1>` | (optional) 1 (default): after the assembly, builds are shown step by step (each command is picked from the recorder's own menu, which pops up on its strip); 0: builds run unseen and faster (batch renders) |
 
-Guest -> host: unchanged (`edit` carries v2 DNA when the visitor edits envelopes, offsets, pan or macros in Windows).
+Guest -> host: `edit` carries v2 DNA when the visitor edits envelopes, offsets, pan or macros in Windows;
+`lib <n> <path>` (optional) reports a catalogue of n sounds read from the disc at <path>.
+
+**The keyboard strip (both editions):** a piano keyboard, a mod wheel and a pitch bend built from real Windows
+controls along the bottom of the synth. It plays through the host (the same voice allocator as MIDI) and shows what
+the host plays.
+
+| Direction | Line | Meaning |
+|---|---|---|
+| guest -> host | `key <note> <vel>` | the visitor played a key in Windows (mouse, or the computer keyboard): a note-on, vel 1..127; vel 0 = note-off |
+| guest -> host | `cc <n> <v>` | a controller moved in Windows; the mod wheel is `cc 1 <0..127>` |
+| guest -> host | `bend <v>` | the pitch bend in Windows, -8192..8191 (0 = centre; it springs back to 0 when let go) |
+| host -> guest | `show <note> <vel>` | display only: an incoming MIDI note holds its key down (vel 0 lets it up) |
+| host -> guest | `cc 1 <v>`, `bend <v>` | display only: the wheels follow incoming MIDI |
+
+Host rules: display lines are never echoed back. CC1 (from MIDI or from Windows) adds to Macro 1:
+effective macro 1 = clamp(Macro 1 parameter + CC1 * 100 / 127, 0, 100), so a DNA gives the mod wheel a job with
+`m1...` mappings (a mapped `N` is not rebuilt from the wheel; it follows the parameter only). Pitch bend uses the
+DNA's B range. Hold (latch) and the computer-keyboard toggle (a w s e d f t g y h u j k = C..C, z / x = octave down /
+up) live in Windows: with Hold on, Windows sends the note-offs when Hold is released.
 
 ### 5.5 The library disc
 
@@ -296,6 +316,22 @@ PRESETS.TSV feeds the plugin's program list ("Category: Name") and the browser i
 machine (a VST3 host per job, the plugin's own VM). Jobs: `[{"dna": "...", "score": "t:note:vel:dur,...",
 "out": "x.wav", "seconds": 4}]`. Rendering is real time per VM (the emulated sound card runs on the virtual clock);
 throughput comes from K VMs in parallel (default: cores / 2, at most 6 on this PC).
+
+### 5.7 Forward compatibility (unknown tokens are kept)
+
+A parser keeps what it cannot read, so saving a later version's DNA does not lose it:
+
+- **In a layer:** an unknown uppercase letter followed by lowercase subkeys, digits, `.`, `,` and `~` is one token.
+  It is kept verbatim, in place, and written back; it has no effect.
+- **In the globals:** an unknown letter followed by the same characters (but not `m`, which always starts a macro)
+  is kept the same way.
+- **A macro token this version cannot read** (`m`K outside 1..4, a layer outside 0..8, a parameter letter outside
+  `O Q L T C Z N`) is consumed whole (K, `=` or L and P, then digits `, . ~ -`) and kept verbatim. Its letters are
+  never read again as globals: `m11S50` does not set sustain.
+- Guests skip unknown characters as before; their globals react only to `A D S R B V K G`.
+
+Checked with the preset-engine-2 fuzz test (20,000 mixed v2/v3 strings): the v2 meaning is unchanged and every v3
+token survives a save.
 
 ## Appendix: the Windows 3.11 edition (BASILISK 16, packages/basilisk-synth-311)
 

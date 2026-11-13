@@ -24,21 +24,37 @@ uint16_t Voices::volumeFor(int vel, int velocityPct, int levelPct)
     return (uint16_t)std::lround(x);
 }
 
+static uint64_t bufferKey(const Layer &s)
+{
+    uint64_t h = 1469598103934665603ull;
+    auto mix = [&](const void *p, size_t n) { for (size_t i = 0; i < n; i++) { h ^= ((const unsigned char *)p)[i]; h *= 1099511628211ull; } };
+    mix(s.sourceName.data(), s.sourceName.size());
+    for (auto &st : s.steps) { mix(&st.op, 1); mix(&st.arg, sizeof st.arg); mix(&st.ms, sizeof st.ms); mix(st.name.data(), st.name.size()); }
+    mix(&s.first, sizeof s.first); mix(&s.count, sizeof s.count);
+    return h;
+}
+
 int Voices::setDna(const Dna &d, Cmd *out)
 {
+    // the same buffers on the same recorders: only genes changed, nothing needs to stop
+    bool same = (int)d.layers.size() == nlay_;
+    for (int i = 0; same && i < nlay_ && i < kMaxLayers; i++) same = bufferKey(d.layers[i]) == buf_[i];
     nlay_ = (int)d.layers.size();
     for (int i = 0; i < kMaxLayers; i++) {
         lay_[i] = L();
-        info_[i] = LayerInfo();
+        if (!same) info_[i] = LayerInfo();
+        buf_[i] = 0;
         if (i >= nlay_) continue;
         const Layer &s = d.layers[i];
+        buf_[i] = bufferKey(s);
         lay_[i].valid = s.valid() && s.count > 0;
         lay_[i].fixed = s.fixed; lay_[i].T = s.transpose; lay_[i].U = s.unison; lay_[i].C = s.spreadCents; lay_[i].level = s.level; lay_[i].pan = s.pan; lay_[i].offset = s.offset;
         lay_[i].nh = (int)s.harmony.size();
         for (int k = 0; k < lay_[i].nh && k < kMaxHarmony; k++) lay_[i].h[k] = s.harmony[k];
-        info_[i].first = s.first; info_[i].count = s.count;
+        if (!same) { info_[i].first = s.first; info_[i].count = s.count; }
     }
     root_ = d.g.root; velocity_ = d.g.velocity; bendRange_ = d.g.bendRange;
+    if (same) return 0;
     for (auto &r : rec_) r = Rec();
     sustain_ = false;
     out[0] = Cmd{Cmd::Panic, 0, 0, 0, 0};

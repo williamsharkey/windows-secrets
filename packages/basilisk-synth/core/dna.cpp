@@ -65,6 +65,17 @@ struct Reader {
     char peek() const { return p < s.size() ? s[p] : 0; }
     static bool namech(char c) { return (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '_'; }
     std::string name() { size_t b = p; while (p < s.size() && namech(s[p])) p++; return s.substr(b, p - b); }
+    // the body of an unknown (later-version) token: lowercase subkeys, digits, '.', ',' and '~' (DNA.md 5.8);
+    // in the globals 'm' always starts a macro, so it ends the token
+    std::string later(bool global) {
+        size_t b = p;
+        while (p < s.size()) {
+            char c = s[p];
+            if ((c >= '0' && c <= '9') || c == '.' || c == ',' || c == '~' || (c >= 'a' && c <= 'z' && !(global && c == 'm'))) p++;
+            else break;
+        }
+        return s.substr(b, p - b);
+    }
     bool hasInt() const {
         size_t q = p;
         if (q < s.size() && (s[q] == '-' || s[q] == '+')) q++;
@@ -156,7 +167,11 @@ void parseLayer(Reader &r, Layer &L)
             break; }
         case 'F': L.fixed = true; L.tokens.push_back("F"); break;
         case 'L': { int v = clampi(r.integer(100), 0, 400); L.level = v; L.tokens.push_back("L" + num(v)); break; }
-        default: break;   // unknown character: skipped (and dropped from the canonical form)
+        default:
+            // an unknown gene of a later version (an uppercase letter, then its lowercase subkeys, digits . , ~):
+            // kept verbatim so saving does not lose it (forward compatibility); anything else is skipped
+            if (c >= 'A' && c <= 'Z') L.tokens.push_back(std::string(1, c) + r.later(false));
+            break;
         }
     }
 }
@@ -168,7 +183,21 @@ void parseGlobals(Reader &r, Globals &g)
         int *f = nullptr;
         if (c == 'm') {   // v2 macros: mK=V or mKLPlo,hi
             char kc = r.peek();
-            if (kc < '1' || kc > '4') continue;
+            // a macro token that this version cannot read is consumed whole and kept verbatim: its letters are
+            // never read again as globals (`m11S50` must not set sustain)
+            auto keep = [&](size_t from) {
+                r.p = from;
+                if (!r.end()) r.p++;                                          // K
+                if (r.peek() == '=') r.p++;
+                else {
+                    if (isdigit((unsigned char)r.peek())) r.p++;              // L
+                    if (isalpha((unsigned char)r.peek()) && r.peek() != 'm') r.p++;   // P
+                }
+                while (!r.end() && (isdigit((unsigned char)r.peek()) || strchr(",.~-", r.peek()))) r.p++;
+                g.tokens.push_back("m" + r.s.substr(from, r.p - from));
+            };
+            size_t from = r.p;
+            if (kc < '1' || kc > '4') { keep(from); continue; }
             r.p++;
             int k = kc - '0';
             if (r.peek() == '=') {
@@ -179,10 +208,10 @@ void parseGlobals(Reader &r, Globals &g)
                 continue;
             }
             char lc = r.peek();
-            if (lc < '0' || lc > '8') continue;
+            if (lc < '0' || lc > '8') { keep(from); continue; }
             r.p++;
             char pc = r.peek();
-            if (!strchr("OQLTCZN", pc) || !pc) continue;
+            if (!pc || !strchr("OQLTCZN", pc)) { keep(from); continue; }
             r.p++;
             int lo = r.integer(0), hi = lo;
             if (r.peek() == ',') { r.p++; hi = r.integer(lo); }
@@ -202,7 +231,12 @@ void parseGlobals(Reader &r, Globals &g)
         case 'A': f = &g.attack; break; case 'D': f = &g.decay; break; case 'S': f = &g.sustain; break;
         case 'R': f = &g.release; break; case 'B': f = &g.bendRange; break; case 'V': f = &g.velocity; break;
         case 'K': f = &g.root; break; case 'G': f = &g.gainDb; break;
-        default: continue;
+        default:
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {      // a later version's global: kept verbatim
+                std::string body = r.later(true);
+                g.tokens.push_back(std::string(1, c) + body);
+            }
+            continue;
         }
         if (!r.hasInt()) continue;           // a letter with no number is ignored
         *f = clampGlobal(c, r.integer());

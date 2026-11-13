@@ -24,8 +24,10 @@ class Voices {
 public:
     explicit Voices(double sampleRate = 48000) : sr_(sampleRate) {}
     void setSampleRate(double sr) { sr_ = sr; }
-    // New DNA: layer pools, genes and globals. Call off the audio thread or between blocks. Silences everything
-    // (returns the commands to send: one Panic).
+    // New DNA: layer pools, genes and globals. Call off the audio thread or between blocks. When a layer's buffer
+    // (source, steps) or pool changes, everything is silenced (returns one Panic); when only voice genes, pan,
+    // offsets, envelopes or globals change (macros, the mod wheel), sounding notes go on and the guest's layer
+    // info is kept (returns 0 commands).
     int setDna(const Dna &d, Cmd *out);
     // The guest's `layer i first count rate frames` reply.
     void setLayerInfo(int i, int first, int count, int rate, int frames);
@@ -46,6 +48,7 @@ private:
     struct Rec { bool busy = false, released = false, held = false; int note = -1, layer = -1; uint64_t start = 0, finish = 0; };
     Rec rec_[kRecorders];
     LayerInfo info_[kMaxLayers];
+    uint64_t buf_[kMaxLayers] = {0};     // what each layer's buffer depends on (a hash of source and steps)
     struct L { bool valid = false, fixed = false; int T = 0, U = 1, C = 0, level = 100, nh = 1, pan = 0, offset = 0; int h[kMaxHarmony] = {0}; } lay_[kMaxLayers];
     int nlay_ = 0, root_ = 60, velocity_ = 100, bendRange_ = 2;
     double sr_, bend_ = 0;
