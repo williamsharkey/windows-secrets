@@ -283,9 +283,9 @@ def box_scene():
     # price sticker on the film, top left of the front
     fw = 120 * MM if t == 'jewel' else 112 * MM if t == 'mailer' else w
     fx0 = (w / 2 - fw - 1 * MM) if t == 'jewel' else -fw / 2
-    sp = job.get('sticker_pos') or [0.17, 0.08]
+    sp = job.get('sticker_pos') or [0.84, 0.045]   # the shop's corner, clear of the title
     sx, sz = fx0 + sp[0] * fw, h - sp[1] * (h if t != 'mailer' else 112 * MM) - (0 if t != 'mailer' else 15 * MM)
-    sticker((sx, -d / 2 * 1.03 - 0.6 * MM, sz), (40 * MM, 22 * MM), rot=-6)
+    sticker((sx, -d / 2 * 1.03 - 0.6 * MM, sz), (32 * MM, 17.6 * MM), rot=-6)
     floor()
     lights((0, 0, h / 2))
     tall = h > w
@@ -357,5 +357,7 @@ def disc_scene():
     render(job['out_disc'], 720, 560)
 
 
-box_scene()
-disc_scene()
+if os.environ.get('PACK_ONLY') != 'disc':
+    box_scene()
+if os.environ.get('PACK_ONLY') != 'box':
+    disc_scene()

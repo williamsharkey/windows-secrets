@@ -197,13 +197,15 @@ def render_pack(p, opt):
                'sticker_pos': p['box'].get('sticker', {}).get('pos')}
         jp = os.path.join(build, 'job.json')
         json.dump(job, open(jp, 'w'))
-        r = subprocess.run([BLENDER, '-b', '--factory-startup', '-t', os.environ.get('BLENDER_THREADS', '4'), '-P', os.path.join(HERE, 'packlib', 'render_blender.py'), '--', jp],
+        r = subprocess.CompletedProcess([], 0) if os.environ.get('PACK_ONLY') == 'post' else subprocess.run([BLENDER, '-b', '--factory-startup', '-t', os.environ.get('BLENDER_THREADS', '4'), '-P', os.path.join(HERE, 'packlib', 'render_blender.py'), '--', jp],
                            capture_output=True, text=True)
-        if r.returncode or not os.path.exists(job['out_box']):
+        if r.returncode:
             print(r.stdout[-3000:], r.stderr[-3000:])
             raise SystemExit('blender failed for ' + pid)
         post = p['look'].get('render_post')
         for raw, name in ((job['out_box'], 'box.png'), (job['out_disc'], 'disc.png')):
+            if not os.path.exists(raw):
+                continue
             im = gfx.Image.open(raw).convert('RGBA')
             if post:   # period colours, alpha kept (shadow becomes a hard-edged, dithered grey)
                 a = im.getchannel('A')
@@ -211,6 +213,10 @@ def render_pack(p, opt):
                 bg.alpha_composite(im)
                 im = gfx.dither(bg.convert('RGB'), post, 'bayer4' if post == 'vga16' else 'fs').convert('RGB')
                 im.putalpha(a.point(lambda v: 255 if v >= 96 else 0))
+            bb = im.getchannel('A').point(lambda v: 255 if v > 24 else 0).getbbox()
+            if bb:   # crop to the object and its shadow, with a margin (no scaling)
+                mg = 16
+                im = im.crop((max(0, bb[0] - mg), max(0, bb[1] - mg), min(im.width, bb[2] + mg), min(im.height, bb[3] + mg)))
             im.save(os.path.join(rend, name), optimize=True)
         print('[%s] rendered' % pid, flush=True)
 
