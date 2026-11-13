@@ -1,0 +1,7 @@
+# 3.11 versions of shared presets (packages/basilisk-synth/library/presets), replacing them in place in BASILISK 16's
+# program list and \PRESETS.TSV, where 3.11's Sound Recorder needs a different recipe.
+# Chord Thump: `]` after `<<` is at position 0 on 3.11 (a refused step), so the slowed chord needs one `<` and gain.
+# Critical Bass: critstop's 42 ms lead-in, slowed 4x and an octave down, hides short notes: trimmed (`@t40[`) first.
+# category	name	DNA
+Bass	Chord Thump	chord<#16T-12Ja0,100.80,60.300,0;R80G18
+Bass	Critical Bass	critstop@t40[<<#16T-12;A5D400S60R200G6

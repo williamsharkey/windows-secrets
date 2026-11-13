@@ -34,7 +34,10 @@ python3 -c "import zipfile,sys;zipfile.ZipFile(sys.argv[1]).extractall(sys.argv[
 rm -rf "$W/wfw/.jsdos"
 # the library disc (drive L:): packages/basilisk-synth/library/sources, converted for Sound Recorder 3.1
 python3 "$PKG/tools/make_library311.py" "$W/library.zip"
-BS311_ENGINE="$W/engine" BS311_OFFS="$W/offs" python3 "$PKG/tools/make_machine.py" "$W/wfw" "$W/gout" "$W/dosbox-pure/dosbox_pure_libretro.so" "$W/machine" --library "$W/library.zip"
+# XP's sounds for C:\XPSOUNDS, from your own XP image (XP_IMAGE: BASILISK SYNTH's base.qcow2) through the sound-archaeology
+# extractor (EXTRACTOR: packages/basilisk-synth/archaeology/extract.py)
+python3 "$PKG/tools/xpsounds311.py" "${XP_IMAGE:?XP_IMAGE}" "$W/xpsounds" --extractor "${EXTRACTOR:?EXTRACTOR}"
+BS311_ENGINE="$W/engine" BS311_OFFS="$W/offs" python3 "$PKG/tools/make_machine.py" "$W/wfw" "$W/gout" "$W/dosbox-pure/dosbox_pure_libretro.so" "$W/machine" --library "$W/library.zip" --xpsounds "$W/xpsounds"
 
 # --- the Windows plugin (its program list: tools/make_presets311.py)
 python3 "$PKG/tools/make_presets311.py"
@@ -50,5 +53,5 @@ rm -rf "$W/macsrc"; mkdir -p "$W/macsrc"
 cp -r "$W/dosbox-pure" "$W/macsrc/dosbox-pure"; rm -rf "$W/macsrc/dosbox-pure/build" "$W/macsrc/dosbox-pure"/*.so "$W/macsrc/dosbox-pure/.git"
 cp -r "$W/DPF" "$W/macsrc/DPF"; rm -rf "$W/macsrc/DPF/build" "$W/macsrc/DPF/.git"
 cp -r "$PKG" "$W/macsrc/pkg"; cp -r "$PKG/../basilisk-synth/core" "$W/macsrc/core"
-cp -r "$W/wfw" "$W/macsrc/wfw"; cp -r "$W/gout" "$W/macsrc/gout"; cp "$W/library.zip" "$W/library.names.txt" "$W/macsrc/"
+cp -r "$W/wfw" "$W/macsrc/wfw"; cp -r "$W/gout" "$W/macsrc/gout"; cp "$W/library.zip" "$W/library.names.txt" "$W/macsrc/"; cp -r "$W/xpsounds" "$W/macsrc/xpsounds"
 echo "built: $W/win (Windows), $W/macsrc (copy to a Mac, run pkg/tools/mac_build.sh there)"

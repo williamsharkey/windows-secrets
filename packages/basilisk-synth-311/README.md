@@ -19,7 +19,7 @@ Workgroups 3.11.
      (`Ja`, `Jp`).
    - **Macros:** four, automatable, each mapped by the DNA onto layer genes.
    - **Collages:** steps at a time in ms (`@t500Mglass_ping`).
-   - **The library disc:** 249 public-domain/CC0 sounds on drive L:, usable by name.
+   - **The library disc:** 510 public-domain/CC0 sounds on drive L:, usable by name.
 
 ## Install
 
@@ -39,11 +39,14 @@ is the strongest free option, and the Windows plugin is unsigned. Hence the step
 
 ## Playing it
 
+- **Pixels.** Windows' screen is drawn at a whole number of device pixels per Windows pixel (1x1, 2x2, 3x3),
+  never smoothed: the editor is at least 1024x768, snaps to whole multiples when resized, opens at 2x on a 200%
+  display or a Retina Mac, and centres the screen on Windows' grey when the host forces an in-between size.
 - **The editor is Windows 3.11.** Click Sound Recorder's buttons, type a DNA into the DNA line (Enter applies it,
   Esc puts it back), or use Windows' own controls:
   - **Header:**
-    - Preset: a drop-down of all 71 programs, with < > to step.
-    - Sound: every sound, meaning C:\WINDOWS's six and the library's 249.
+    - Preset: a drop-down of all 72 programs, with < > to step.
+    - Sound: every sound, meaning C:\WINDOWS's six and the library's 510.
     - The selected layer's Pan and Offset.
     - Env: the layer's drawn envelope. < > picks a point, + adds, - deletes; then the point's time and level.
     - Envelope: a seventeenth Sound Recorder whose green wave view draws that envelope.
@@ -66,15 +69,23 @@ is the strongest free option, and the Windows plugin is unsigned. Hence the step
   is built in front of you:
   - the recorder's row number lights up;
   - its own status field names each command as it runs (Open, Echo, Insert ding, Seek 500 ms...).
-- **Programs.** There are 71 ("Category: Name"): BASILISK 16's own, then the shared library presets. They appear in
+- **Programs.** There are 72 ("Category: Name"): BASILISK 16's own, then the shared library presets.
+  `presets/overrides311.tsv` replaces a few shared presets in place with 3.11 versions (their XP sounds would play
+  DING here). They appear in
   the DAW's preset list (a VST3 program list, AU factory presets) and in Windows' Preset drop-down. User presets are
   the host's own: they save the DNA.
 - **Automatable parameters:**
   - Attack, Decay, Sustain, Release, Velocity, Bend Range, Output Gain and Transpose edit the DNA's globals.
   - Macro 1-4 move whatever the DNA maps them to (`m1L0,150`, `m12Q-100,100`, `m11Z50,200`, ...).
   - The mod wheel (CC1) adds to Macro 1. Pitch bend uses the DNA's range.
-- **Sounds.** C:\WINDOWS has WfW 3.11's CHIMES, DING, RINGIN and RINGOUT, plus Windows 3.1's CHORD and TADA.
-  WfW 3.11's disks had dropped those two. Every other built-in NAME plays DING.
+- **Sounds (DNA.md 2.4: one name, one file).**
+  - `chimes chord ding tada ringin ringout` are the Windows 3.x files in C:\WINDOWS: WfW 3.11's CHIMES, DING,
+    RINGIN and RINGOUT, plus Windows 3.1's CHORD and TADA, which WfW 3.11's disks had dropped.
+  - Every XP sound plays XP's own file, from `C:\XPSOUNDS\X<nn>.WAV`, converted to PCM Sound Recorder 3.1 opens:
+    `notify`, `startup`, `critstop`... and `chimesxp chordxp dingxp tadaxp`, XP's copies of the four.
+  - The files come from your own XP image at build time (`tools/xpsounds311.py`, the sound-archaeology extractor);
+    XP's audio is not in git.
+  - The preset browser in Windows filters [All] [W3.11] [XP]: XP lists the presets that use an XP sound.
   - The library disc (drive L:, `library.zip`) holds the shared library's sounds converted to 22050 Hz 16-bit mono,
     which Sound Recorder 3.1 opens as they are. Sounds over 30 s are skipped.
   - A DNA names them like built-in ones: `marimba_c4E#16`, `piano_upright_cs4#10T-1/glass_ping#6T12O15Q40L50`.
@@ -203,7 +214,9 @@ python3 tools/batch_render311.py JOBS.json --machine DIR [--render311 EXE] [--pa
 ## Build
 
 ```
+XP_IMAGE=.../base.qcow2 EXTRACTOR=.../archaeology/extract.py \
 tools/build.sh WORKDIR        # Linux/WSL: guest (Open Watcom), DOSBox Pure + BSYN, the machine, the Windows VST3
+                              # (XP_IMAGE: your XP image, BASILISK SYNTH's; EXTRACTOR: branch feat/sound-archaeology)
 tools/mac_build.sh WORKDIR    # on a Mac, with WORKDIR/macsrc from the above: universal VST3 + AU, snapshots per CPU
 ```
 
@@ -226,5 +239,5 @@ tools/mac_build.sh WORKDIR    # on a Mac, with WORKDIR/macsrc from the above: un
 | DOSBox Pure | GPL-2.0-or-later. Source: https://codeberg.org/schelling/dosbox-pure, at the commit in `dosbox-pure/UPSTREAM.txt`, with `dosbox-pure.patch` and `bsynth.cpp`. |
 | DPF | ISC |
 | This plugin | GPL-2.0-or-later |
-| Windows for Workgroups 3.11, and Windows 3.1's CHORD.WAV and TADA.WAV | © 1992-1993 Microsoft, included as part of an art project, as in the BASILISK 3.11 download |
+| Windows for Workgroups 3.11, Windows 3.1's CHORD.WAV and TADA.WAV, XP's sounds (C:\XPSOUNDS, extracted at build time) | © Microsoft, included as part of an art project, as in the BASILISK 3.11 download |
 | Library sounds (`library.zip`) | each sound's licence and source is in `\LIBRARY.TSV` (CC0 and public domain; see `packages/basilisk-synth/library`) |

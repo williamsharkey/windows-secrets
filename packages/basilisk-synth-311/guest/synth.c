@@ -21,7 +21,7 @@
 #define ROWH 30
 #define STRIPX 40
 #define STRIPW 924
-#define STRIPH 30
+#define STRIPH 30   /* (a strip shorter than its row leaves gaps that make every repaint of the window slow) */
 #define PANEL 550
 #define KBY 684      /* the keyboard strip: mod wheel, pitch bend, Hold, Keys, five octaves */
 #define ENVX 262
@@ -99,15 +99,17 @@ static void logf_(const char *fmt, ...)
 }
 
 /* ================================================================ the DNA, as packages/basilisk-synth/core parses it */
-static const char *names[35] = {
-    "chimes", "chord", "ding", "notify", "recycle", "ringin", "ringout", "start", "tada",
-    "balloon", "batcrit", "batlow", "critstop", "default", "xpding", "error", "exclaim", "hwfail",
-    "hwin", "hwout", "infobar", "logoff", "logon", "menu", "minimize", "xpnotify", "popup", "print",
-    "xprecycle", "restore", "xpringin", "xpringout", "shutdown", "startup", "xpstart"};
+/* the built-in NAMEs, in core order (packages/basilisk-synth/core/dna.cpp kSoundNames, DNA.md 2.4: one name, one file) */
+#define NSND 39
+static const char *names[NSND] = {
+    "chimes", "chord", "ding", "notify", "recycle", "ringin", "ringout", "start", "tada", "balloon",
+    "batcrit", "batlow", "critstop", "default", "xpding", "error", "exclaim", "hwfail", "hwin", "hwout",
+    "infobar", "logoff", "logon", "menu", "minimize", "xpnotify", "popup", "print", "xprecycle", "restore",
+    "xpringin", "xpringout", "shutdown", "startup", "xpstart", "chimesxp", "chordxp", "dingxp", "tadaxp"};
 static int sound_index(const char *s, int n)
 {
     int i;
-    for (i = 0; i < 35; i++) if ((int)strlen(names[i]) == n && !strncmp(names[i], s, n)) return i;
+    for (i = 0; i < NSND; i++) if ((int)strlen(names[i]) == n && !strncmp(names[i], s, n)) return i;
     return -1;
 }
 /* DNA v2 library sounds (DNA.md 5.5): the library drive L: holds \LIBRARY.TSV (name, category, path, seconds,
@@ -155,25 +157,52 @@ static int lib_index(const char *name, int n)
     _lclose(f);
     return -1;
 }
-static const char *sound_file(int i)   /* C:\\WINDOWS: WfW 3.11's four, and 3.1's CHORD and TADA; every other NAME plays ding */
+/* C:\WINDOWS holds the 3.x recordings (chimes, chord, ding, tada, ringin, ringout); every XP file is in C:\XPSOUNDS
+   as X<index>.WAV, converted to PCM that Sound Recorder opens (core kSoundFiles311) */
+static const char *sound_file(int i)
 {
+    static char path[32];
     if (i >= 1000) return libPath[i - 1000];
     switch (i) {
     case 0: return "C:\\WINDOWS\\CHIMES.WAV";
     case 1: return "C:\\WINDOWS\\CHORD.WAV";
-    case 8: return "C:\\WINDOWS\\TADA.WAV";
+    case 2: return "C:\\WINDOWS\\DING.WAV";
     case 5: return "C:\\WINDOWS\\RINGIN.WAV";
     case 6: return "C:\\WINDOWS\\RINGOUT.WAV";
+    case 8: return "C:\\WINDOWS\\TADA.WAV";
     }
-    return "C:\\WINDOWS\\DING.WAV";
+    if (i < 0 || i >= NSND) return "C:\\WINDOWS\\DING.WAV";
+    sprintf(path, "C:\\XPSOUNDS\\X%02d.WAV", i);
+    return path;
+}
+/* rate and length (centiseconds, for the 30 s rule) from the file's own header, read once */
+static long sndRate[NSND], sndCs[NSND];
+static void sound_info(int i)
+{
+    OFSTRUCT of; HFILE f; BYTE h[44];
+    if (i < 0 || i >= NSND || sndRate[i]) return;
+    sndRate[i] = 22050; sndCs[i] = 100;
+    f = OpenFile(sound_file(i), &of, OF_READ);
+    if (f == HFILE_ERROR) return;
+    if (_lread(f, h, 44) == 44) {
+        long rate = *(long *)(h + 24), bps = *(long *)(h + 28), data = *(long *)(h + 40);
+        if (rate > 0) sndRate[i] = rate;
+        if (bps > 0) sndCs[i] = data * 100 / bps;
+    }
+    _lclose(f);
 }
 static int sound_cs(int i)   /* lengths in centiseconds, for the 30 s rule */
 {
     if (i >= 1000) return (int)libCs[i - 1000];
-    switch (i) { case 0: return 72; case 1: return 113; case 5: return 90; case 6: return 47; case 8: return 126; }
-    return 52;
+    sound_info(i);
+    return i >= 0 && i < NSND ? (int)sndCs[i] : 52;
 }
-static int sound_rate(int i) { if (i >= 1000) return (int)libRate[i - 1000]; return (i == 5 || i == 6) ? 11025 : 22050; }
+static int sound_rate(int i)
+{
+    if (i >= 1000) return (int)libRate[i - 1000];
+    sound_info(i);
+    return i >= 0 && i < NSND ? (int)sndRate[i] : 22050;
+}
 static int sound_lookup(const char *s, int n)   /* the built-in table first, then the library (DNA.md 5.2) */
 {
     int i = sound_index(s, n);
@@ -302,7 +331,10 @@ static void dna_parse(const char *t)
 /* ================================================================ driving one Sound Recorder */
 typedef struct { int id; int x, y, w, h; } PART;
 static PART strip[] = {   /* wave display: Sound Recorder draws it at its own size, so it keeps that width */
-    {SR_STATUS, 4, 7, 80, 16}, {SR_WAVE, 88, 1, 133, 28}, {SR_POS, 228, 8, 66, 14}, {SR_LEN, 298, 8, 66, 14},
+    /* Sound Recorder draws the wave display's centre line 18 rows down, from the control's native 35-row height,
+       whatever its size: so it keeps that height, 4 rows above the strip; the strip shows rows 4..33 of it, and a
+       1-row cover on the strip's last row (layout_strip) leaves 29 rows with the line exactly in the middle (row 14) */
+    {SR_STATUS, 4, 7, 80, 16}, {SR_WAVE, 88, -4, 133, 35}, {SR_POS, 228, 8, 66, 14}, {SR_LEN, 298, 8, 66, 14},
     {SR_SCROLL, 370, 6, 270, 17}, {SR_REW, 648, 1, 52, 28}, {SR_FWD, 702, 1, 52, 28}, {SR_PLAY, 756, 1, 52, 28},
     {SR_STOP, 810, 1, 52, 28}, {SR_REC, 864, 1, 52, 28}};
 #define NPART (sizeof strip / sizeof strip[0])
@@ -314,15 +346,16 @@ static void press(int r, int id)
     SendMessage(rw[r], WM_COMMAND, id, MAKELPARAM(GetDlgItem(rw[r], id), BN_CLICKED));
 }
 static void menu(int r, int id) { SendMessage(rw[r], WM_COMMAND, id, 0L); }
-static int length_cs(int r)       /* "0.52 sec." -> 52 */
+static int field_cs(int r, int id)   /* "0.52 sec." -> 52 */
 {
     char t[32]; int s = 0, c = 0; char *p;
-    GetDlgItemText(rw[r], SR_LEN, t, sizeof t);
+    GetDlgItemText(rw[r], id, t, sizeof t);
     s = atoi(t);
     p = t; while (*p && *p >= '0' && *p <= '9') p++;
     if (*p) { p++; c = atoi(p); }
     return s * 100 + c;
 }
+static int length_cs(int r) { return field_cs(r, SR_LEN); }
 static BOOL is_playing(int r)
 {
     char t[24];
@@ -354,6 +387,13 @@ static void layout_strip(int r)   /* Sound Recorder re-lays its controls when it
     for (i = 0; i < 5; i++) ShowWindow(GetDlgItem(rw[r], hidden[i]), SW_HIDE);
     for (i = 0; i < NPART; i++)
         SetWindowPos(GetDlgItem(rw[r], strip[i].id), NULL, strip[i].x, strip[i].y, strip[i].w, strip[i].h, SWP_NOZORDER | SWP_NOACTIVATE);
+    {   /* the cover: a blank static of ours in the recorder's window, above its wave display, on the strip's last row */
+        static HWND cover[NALL];
+        HWND wv = GetDlgItem(rw[r], SR_WAVE);
+        SetWindowLong(wv, GWL_STYLE, GetWindowLong(wv, GWL_STYLE) | WS_CLIPSIBLINGS);   /* never paints over it */
+        if (!cover[r]) cover[r] = CreateWindow("STATIC", "", WS_CHILD | WS_VISIBLE, 88, STRIPH - 1, 133, 1, rw[r], (HMENU)-1, hInst, NULL);
+        SetWindowPos(cover[r], HWND_TOP, 88, STRIPH - 1, 133, 1, SWP_NOACTIVATE);
+    }
 }
 
 static void seek_ms(int r, int ms, int len_cs)   /* v2: the position slider to ms (clamped to the length) */
@@ -446,7 +486,8 @@ static int run_steps(int r, LAYER *L)
         case 'E': menu(r, SR_ECHO); break;
         case 'R': menu(r, SR_REVERSE); break;
         case '[': menu(r, SR_DELBEFORE); break;
-        case ']': menu(r, SR_DELAFTER); break;
+        case ']': if (field_cs(r, SR_POS) > 0) menu(r, SR_DELAFTER); break;   /* at the start it would delete the whole
+                                                                                  sound: refused, like [ at the start (DNA.md 2.1) */
         case 'C': menu(r, SR_COPY); clip = len; break;
         case 'P': menu(r, SR_PASTE); break;
         case 'X': menu(r, SR_PASTEMIX); break;
@@ -827,6 +868,7 @@ static void keyboard_show(void)     /* part of the assembly: wheels and switches
 #define ID_ENVNEXT 1148
 #define ID_ENVADD 1149
 #define ID_ENVDEL 1150
+#define ID_FILTER 1157     /* + 0 All, 1 W3.11, 2 XP: which presets the browser lists */
 #define ID_PRESETPREV 1155
 #define ID_PRESETNEXT 1156
 static const char *panelSounds[4] = {"chimes", "ding", "ringin", "ringout"};
@@ -846,7 +888,8 @@ static SLIDER sliders[] = {
 #define SL_ELEVEL 11
 #define SL_MACRO 12
 #define NSL (sizeof sliders / sizeof sliders[0])
-static HWND hSb[NSL], hVal[NSL], hLayerLbl, hHarm, hPreset, hLibrary, hEnvLbl;
+static HWND hSb[NSL], hVal[NSL], hLayerLbl, hHarm, hPreset, hLibrary, hEnvLbl, hFilter[3];
+static int presetFilter;   /* 0 All, 1 W3.11 (no XP file), 2 XP (uses one) */
 static int harmIdx, envPt;
 
 /* the span of layer i in dnaText (or of the globals, i = -1) */
@@ -1084,11 +1127,15 @@ static void edited(BOOL rebuild)
 }
 static void read_lines(const char *path, void (*fn)(char *line, long off))   /* a text file on a disc, line by line */
 {
-    OFSTRUCT of; HFILE f = OpenFile(path, &of, OF_READ);
-    static char buf[512], ln[1100]; int n, i, m = 0; long off = 0, start = 0;
+    OFSTRUCT of; HFILE f;
+    static char buf[512], ln[1100]; static int busy; int n, i, m = 0; long off = 0, start = 0;
+    if (busy) return;                    /* (it pumps messages: a click must not start a second read) */
+    f = OpenFile(path, &of, OF_READ);
     if (f == HFILE_ERROR) return;
+    busy = 1;
     while ((n = _lread(f, buf, sizeof buf)) > 0) {
-        poll_host();                     /* notes are served while a long list is read */
+        poll_host();                     /* notes are served, and windows painted, while a long list is read */
+        pump();
         for (i = 0; i < n; i++, off++) {
             char c = buf[i];
             if (c == '\n') { ln[m] = 0; if (m && ln[m - 1] == '\r') ln[m - 1] = 0; fn(ln, start); m = 0; start = off + 1; }
@@ -1097,12 +1144,31 @@ static void read_lines(const char *path, void (*fn)(char *line, long off))   /* 
     }
     if (m) { ln[m] = 0; fn(ln, start); }
     _lclose(f);
+    busy = 0;
+}
+/* does a DNA use an XP file? (its sources and its I/M sounds; DNA.md 2.4: everything but the six 3.x files) */
+static int uses_xp(const char *d)
+{
+    const char *p = d; int start = 1;
+    while (*p && *p != ';') {
+        if (start || ((*p == 'I' || *p == 'M') && isname(p[1]))) {
+            const char *q = start ? p : p + 1, *e = q; int i;
+            while (isname(*e)) e++;
+            i = sound_index(q, (int)(e - q));
+            if (i == 3 || i == 4 || i == 7 || i >= 9) return 1;
+            p = e; start = 0; continue;
+        }
+        if (*p == '/') start = 1;
+        p++;
+    }
+    return 0;
 }
 static void add_preset(char *ln, long off)    /* category TAB name TAB DNA -> "Category: Name" (its DNA is re-read when picked) */
 {
     char *a = strchr(ln, '\t'), *b, t[80]; int i;
     if (!a || ln[0] == '#') return;
     *a = 0; b = strchr(a + 1, '\t'); if (!b) return; *b = 0;
+    if (presetFilter && uses_xp(b + 1) != (presetFilter == 2)) return;
     sprintf(t, "%.30s: %.44s", ln, a + 1);
     i = (int)SendMessage(hPreset, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t);
     if (i >= 0) SendMessage(hPreset, CB_SETITEMDATA, i, off);
@@ -1124,14 +1190,23 @@ static void add_sound(char *ln, long off)     /* name TAB category ... -> "categ
     sprintf(t, "%.20s: %.40s", a + 1, ln);
     SendMessage(hLibrary, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t);
 }
+static void preset_list(void)
+{
+    int i;
+    SendMessage(hPreset, CB_RESETCONTENT, 0, 0L);
+    read_lines("L:\\PRESETS.TSV", add_preset);
+    for (i = 0; i < 3; i++) if (hFilter[i]) SendMessage(hFilter[i], BM_SETSTATE, i == presetFilter, 0L);   /* pushed in */
+}
 static void panel_lists(void)
 {
     int i; char t[48];
-    SendMessage(hPreset, CB_RESETCONTENT, 0, 0L);
-    read_lines("L:\\PRESETS.TSV", add_preset);
+    preset_list();
     SendMessage(hLibrary, CB_RESETCONTENT, 0, 0L);
-    for (i = 0; i < 4; i++) { sprintf(t, "windows: %s", panelSounds[i]); SendMessage(hLibrary, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t); }
     read_lines("L:\\LIBRARY.TSV", add_sound);
+    {   /* C:\\WINDOWS: WfW 3.11's four and 3.1's CHORD and TADA */
+        static const char *w[6] = {"chimes", "chord", "ding", "ringin", "ringout", "tada"};
+        for (i = 0; i < 6; i++) { sprintf(t, "windows: %s", w[i]); SendMessage(hLibrary, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t); }
+    }
 }
 static void combo_pick(int id)
 {
@@ -1168,6 +1243,7 @@ static void panel_command(int id, int code)
         }
         return;
     }
+    if (id >= ID_FILTER && id < ID_FILTER + 3) { presetFilter = id - ID_FILTER; preset_list(); return; }
     if (building) return;
     if (id == ID_PRESETPREV || id == ID_PRESETNEXT) {
         int n = (int)SendMessage(hPreset, CB_GETCOUNT, 0, 0L), i = (int)SendMessage(hPreset, CB_GETCURSEL, 0, 0L);
@@ -1328,12 +1404,14 @@ static void panel_create(int group)
         }
         break;
     case 4:   /* the header: preset browser and every sound; pan, offset and the drawn envelope's points */
-        mk("STATIC", "Preset", WS_VISIBLE, 410, 7, 40, 14, -1);
-        hPreset = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, 452, 3, 214, 320, ID_PRESET);
+        hFilter[0] = mk("BUTTON", "All", WS_VISIBLE | BS_PUSHBUTTON, 406, 3, 26, 21, ID_FILTER);       /* the preset browser's */
+        hFilter[1] = mk("BUTTON", "W3.11", WS_VISIBLE | BS_PUSHBUTTON, 433, 3, 44, 21, ID_FILTER + 1);  /* filter: Windows 3.x */
+        hFilter[2] = mk("BUTTON", "XP", WS_VISIBLE | BS_PUSHBUTTON, 478, 3, 24, 21, ID_FILTER + 2);     /* sounds only, or XP's */
+        hPreset = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, 504, 3, 162, 320, ID_PRESET);
         mk("BUTTON", "<", WS_VISIBLE | BS_PUSHBUTTON, 669, 3, 17, 21, ID_PRESETPREV);   /* the previous / next program */
         mk("BUTTON", ">", WS_VISIBLE | BS_PUSHBUTTON, 687, 3, 17, 21, ID_PRESETNEXT);
         mk("STATIC", "Sound", WS_VISIBLE, 716, 7, 38, 14, -1);
-        hLibrary = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST | CBS_SORT, 756, 3, 262, 320, ID_LIBRARY);
+        hLibrary = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, 756, 3, 262, 320, ID_LIBRARY);   /* (LIBRARY.TSV is in order) */
         listsWanted = TRUE;    /* filled at the first idle moment after the assembly */
         for (i = SL_PAN; i < SL_PAN + 2; i++) {
             int k = i - SL_PAN, x = 410 + k * 132, lw = k ? 40 : 26;
@@ -1546,18 +1624,18 @@ static void assemble(void)
         UpdateWindow(hEnvRec);
         {   /* the wave display alone, at the window's corner */
             HWND wv = GetDlgItem(hEnvRec, SR_WAVE);
-            SetWindowPos(wv, NULL, 0, 0, 133, 32, SWP_NOZORDER | SWP_NOACTIVATE);
+            SetWindowPos(wv, NULL, 0, 0, 133, 35, SWP_NOZORDER | SWP_NOACTIVATE);   /* native height: centred line */
         }
         GetWindowRect(hEnvRec, &c);
         st = GetWindowLong(hEnvRec, GWL_STYLE);
         SetWindowLong(hEnvRec, GWL_STYLE, (st & ~(WS_CAPTION | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_DLGFRAME | WS_BORDER)) | WS_POPUP);
-        SetWindowPos(hEnvRec, HWND_TOPMOST, c.left, c.top, 133, 32, SWP_NOACTIVATE | SWP_FRAMECHANGED);
-        SetRect(&a2, c.left, c.top, c.left + 133, c.top + 32);
+        SetWindowPos(hEnvRec, HWND_TOPMOST, c.left, c.top, 133, 35, SWP_NOACTIVATE | SWP_FRAMECHANGED);
+        SetRect(&a2, c.left, c.top, c.left + 133, c.top + 35);
         o.x = ENVX; o.y = 2; ClientToScreen(hMain, &o);
         t1 = timeGetTime();
         for (;;) {
             long f = ease((long)(timeGetTime() - t1) * 1000 / 220);
-            lerp_rect(&q, &a2, o.x, o.y, 133, 32, f);
+            lerp_rect(&q, &a2, o.x, o.y, 133, 35, f);
             SetWindowPos(hEnvRec, HWND_TOPMOST, q.left, q.top, q.right, q.bottom, SWP_NOACTIVATE);
             UpdateWindow(hEnvRec); UpdateWindow(hMain);
             poll_host();
@@ -1568,7 +1646,7 @@ static void assemble(void)
         st = GetWindowLong(hEnvRec, GWL_STYLE);
         SetWindowLong(hEnvRec, GWL_STYLE, (st & ~WS_POPUP) | WS_CHILD);
         SetParent(hEnvRec, hMain);
-        SetWindowPos(hEnvRec, HWND_TOP, ENVX, 2, 133, 32, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+        SetWindowPos(hEnvRec, HWND_TOP, ENVX, 2, 133, 35, SWP_NOACTIVATE | SWP_SHOWWINDOW);
         UpdateWindow(hEnvRec);
     }
     stage[3] = timeGetTime() - tStart;
@@ -1753,7 +1831,13 @@ static void paint(HWND h)
     if (assembled) {
         static const char *hdr[] = {"Status", "Wave", "Position", "Length", "Seek", "Rewind", "Forward", "Play", "Stop", "Record"};
         int hx[] = {4, 88, 228, 298, 370, 648, 702, 756, 810, 864};
-        for (i = 0; i < 10; i++) TextOut(dc, STRIPX + hx[i], ROW0 - 15, hdr[i], strlen(hdr[i]));
+        /* each drawn after a space, the space's width to the left: Windows 3.1 cuts off what a glyph draws left of
+           where the string starts, and Arial's W reaches one pixel left of its cell */
+        for (i = 0; i < 10; i++) {
+            char t[16]; DWORD e = GetTextExtent(dc, " ", 1);
+            t[0] = ' '; lstrcpy(t + 1, hdr[i]);
+            TextOut(dc, STRIPX + hx[i] - LOWORD(e), ROW0 - 15, t, lstrlen(t));
+        }
     }
     for (i = 0; i < NR; i++) {
         char t[4]; RECT b;
@@ -1886,7 +1970,7 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
             TranslateMessage(&m); DispatchMessage(&m);
         } else {
             if (!poll_host()) {
-                if (listsWanted && assembled && !building) { listsWanted = FALSE; panel_lists(); }
+                if (listsWanted && assembled && !building) { DWORD tl = timeGetTime(); listsWanted = FALSE; panel_lists(); logf_("lists in %ld ms", (long)(timeGetTime() - tl)); }
                 else if (envWant && timeGetTime() - envWant > 120 && !building) { envWant = 0; draw_envelope(); }
                 else bs_idle();
             }

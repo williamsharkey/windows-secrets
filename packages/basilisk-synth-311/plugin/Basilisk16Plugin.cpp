@@ -190,7 +190,7 @@ protected:
     const char *getMaker() const override { return "William Sharkey"; }
     const char *getHomePage() const override { return "https://williamsharkey.com/basilisk-download.html"; }
     const char *getLicense() const override { return "GPL-2.0-or-later"; }
-    uint32_t getVersion() const override { return d_version(1, 2, 0); }
+    uint32_t getVersion() const override { return d_version(1, 2, 1); }
 
     void initParameter(uint32_t i, Parameter &p) override
     {
@@ -220,6 +220,7 @@ protected:
         if (param_[i].load() == v) return;
         param_[i] = v;
         paramsDirty_ = true;
+        paramSeq_++;
     }
 
     void initProgramName(uint32_t i, String &name) override { name = kPresets[i].name; }
@@ -276,6 +277,10 @@ protected:
             return;
         }
         S->realtime = 1;
+        // offline: a parameter change of this block becomes the DNA before its notes are stamped (if it needs a rebuild,
+        // the wait below covers it; the notes come after the new sound is built)
+        for (int k = 0; offline && k < 4000 && paramSeq_.load() != paramDone_.load() && !quit_; k++)
+            std::this_thread::sleep_for(std::chrono::microseconds(250));
         if (offline && S->state >= BS_RUNNING && (!ready_ || building_ || inFlightAtomic())) {
             // the engine may run on while we wait (Windows needs the time); its sound in that stretch is skipped
             // (also the assembly: until it is done, Windows serves notes only between animation frames)
@@ -429,6 +434,8 @@ private:
 
     std::atomic<float> param_[pCount];
     std::atomic<bool> paramsDirty_{false};
+    std::atomic<uint32_t> paramSeq_{0}, paramDone_{0};   // parameter changes made / taken into the DNA (offline waits for it)
+    bool rebuildQueued_ = false;       // a DNA that needs Sound Recorder is waiting to go to Windows
     std::atomic<bool> building_{false};
     std::atomic<bool> ready_{false};       // Windows has assembled the instrument
     std::atomic<double> audioAlive_{0};
@@ -478,6 +485,7 @@ private:
             // (At first the snapshot's machine holds DING in all sixteen: the default plays before Windows replies.)
             if (cacheSig_.empty()) layerCache_[0] = LayerInfo{0, 16, 22050, 11466, true};
             cacheSig_ = sig;
+            if (!inFlight_) rebuildQueued_ = false;
             dnaForAudio_ = d;
             dnaPending_ = true;
         } else {
@@ -486,6 +494,7 @@ private:
             stagedDna_ = d; stagedSig_ = sig;
             for (auto &c : stagedLayers_) c = LayerInfo();
             if (fromGuest) inFlight_ = true;   // Windows is already building it
+            else if (toGuest) rebuildQueued_ = true;
         }
         param_[pAttack] = (float)d.g.attack; param_[pDecay] = (float)d.g.decay; param_[pSustain] = (float)d.g.sustain;
         param_[pRelease] = (float)d.g.release; param_[pVelocity] = (float)d.g.velocity; param_[pBend] = (float)d.g.bendRange;
@@ -508,7 +517,9 @@ private:
         return sigOf(d) == sigOf(base) ? d : base;
     }
 
-    bool inFlightAtomic() { std::lock_guard<std::mutex> l(mtx_); return inFlight_ || dnaToGuest_; }
+    // offline waits only for what changes the recorders' buffers (a DNA that only moves genes, macros or envelopes
+    // takes effect at once, and an offline render never stalls on it)
+    bool inFlightAtomic() { std::lock_guard<std::mutex> l(mtx_); return inFlight_ || rebuildQueued_; }
 
     // audio thread, start of every block: adopt what the worker prepared (never waits for it)
     void housekeeping()
@@ -692,6 +703,7 @@ private:
                 std::lock_guard<std::mutex> l(mtx_);
                 dnaToGuest_ = true;
             }
+            const uint32_t seq = paramSeq_.load();
             if (paramsDirty_.exchange(false)) {
                 std::string d;
                 { std::lock_guard<std::mutex> l(mtx_); d = dnaText_; }
@@ -709,6 +721,7 @@ private:
                 { std::lock_guard<std::mutex> l(mtx_); changed = d != dnaText_; }
                 if (changed) setDna(d, true);
             }
+            paramDone_ = seq;
             if (cc1_.load() != cc1Applied_) {   // the mod wheel moved: the sound follows (no DNA to Windows)
                 std::string cur;
                 { std::lock_guard<std::mutex> l(mtx_); cur = dnaText_; }
@@ -723,7 +736,7 @@ private:
                 sendLine(t, 0, 0);
                 showR_.store(r + 1);
             }
-            bool send = false, sendEnv = false; std::string d; Globals g; Dna eff;
+            bool send = false, sendEnv = false, rebuild = false; std::string d; Globals g; Dna eff;
             {
                 std::lock_guard<std::mutex> l(mtx_);
                 // automation: Windows hears the DNA 300 ms after the last change (the sound already follows: genes,
@@ -732,13 +745,15 @@ private:
                 if (hello && dnaToGuest_ && !inFlight_ && settled) {
                     send = true; dnaToGuest_ = false; d = dnaText_;
                     g = parse(d).g;
-                    if (sigOf(applyMacros(parse(d))) != cacheSig_) { inFlight_ = true; for (auto &c : stagedLayers_) c = LayerInfo(); }
+                    rebuild = sigOf(applyMacros(parse(d))) != cacheSig_;
+                    if (rebuild) { inFlight_ = true; for (auto &c : stagedLayers_) c = LayerInfo(); }
+                    rebuildQueued_ = false;
                 }
                 if (hello && lenvDirty_ && !send && !inFlight_) { sendEnv = true; lenvDirty_ = false; eff = effective(parse(dnaText_)); }
             }
             if (send) {
                 std::string line = "dna " + d;   // as written: Windows shows it, and does N itself
-                building_ = true;
+                building_ = rebuild;   // ("built 0" for a DNA that Sound Recorder has nothing to do for)
                 sendLine(line.c_str(), 0, 0);
                 char b[96]; proto::env(b, sizeof b, g); trimSend(b);
                 std::lock_guard<std::mutex> l(mtx_);

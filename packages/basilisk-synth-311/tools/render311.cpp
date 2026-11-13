@@ -159,7 +159,13 @@ struct Machine {
                 const uint8_t a = (uint8_t)text[pos + 2 * k], b = 2 * k + 1 < m ? (uint8_t)text[pos + 2 * k + 1] : 0;
                 w[3 + k] = (uint16_t)(a | (b << 8));
             }
-            while (!bs_engine_event(e, w, nw, last ? id : 0, last ? at : 0)) nap();
+            // through the event ring, delivered by the engine thread between frames (calling into the card from this
+            // thread hangs Sound Recorder's first playback under Rosetta on macOS x86_64)
+            while (S->ev_w - S->ev_r >= BSHM_EV) nap();
+            bshm_ev &q = S->ev[S->ev_w % BSHM_EV];
+            std::memcpy(q.w, w, sizeof(uint16_t) * nw); q.n = (uint32_t)nw; q.id = last ? id : 0; q.at = last ? at : 0;
+            __sync_synchronize();
+            S->ev_w++;
             pos += m;
         } while (pos < len);
     }
@@ -254,12 +260,18 @@ int main(int argc, char **argv)
     Voices voices(48000); Cmd c[kMaxCmds];
     voices.setDna(dna, c);
     M.send("hi 2");
+    for (bool hi = false; !hi && S->state != BS_FAILED;) {   // Windows answers before it gets the sound (as the plugin does)
+        M.runTo(S->dac_w + 4800); nap();
+        std::vector<std::string> ls; M.lines(ls);
+        for (auto &l : ls) { if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str()); if (l.rfind("hi ", 0) == 0) hi = true; }
+    }
     M.send("dna " + written.canonical);     // as written: Windows does N itself
     char b[160]; proto::env(b, sizeof b, dna.g); b[std::strlen(b) - 1] = 0; M.send(b);
     for (bool built = false; !built;) {
         M.runTo(S->dac_w + 48000); nap();
         std::vector<std::string> ls; M.lines(ls);
         for (auto &l : ls) {
+            if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str());   // Windows' replies, for debugging
             proto::Reply r = proto::parse(l);
             if (r.kind == proto::Reply::Layer) voices.setLayerInfo(r.layer, r.first, r.count, r.rate, r.frames);
             if (r.kind == proto::Reply::Built) built = true;
@@ -315,6 +327,10 @@ int main(int argc, char **argv)
         }
     }
     out.erase(out.begin(), out.begin() + 2 * (size_t)kLat);
+    {   // the DNA's output gain G, applied as the plugin applies it
+        const float g = (float)std::pow(10.0, dna.g.gainDb / 20.0);
+        if (g != 1.f) for (float &x : out) x *= g;
+    }
     if (a.count("--bits") && a["--bits"] == "32") writeWavFloat(a["--out"], out); else writeWav(a["--out"], out);
     bs_engine_stop(M.e);
     std::remove(conf.c_str());

@@ -1,8 +1,35 @@
 # BASILISK 16: status
 
-- v1.2.0 is the release (basilisk-synth-311-v1.2.0). Round 3 is done; its record is below.
+- v1.2.1 is the release (basilisk-synth-311-v1.2.1): the fixes the sndrec demo renders found, below.
+- v1.2.0 (basilisk-synth-311-v1.2.0) was round 3; its record is further down.
 - v1.1.0 was basilisk-synth-311-v1.1.0, commit 948ce56.
 - There is still no plugin-made sound, by design: every sound comes from the sixteen SOUNDREC.EXE in Windows 3.11.
+
+## v1.2.1: fixes from the demo renders (tools/sndrec-demo)
+
+| Finding | Fix | Measured (the demo's own phrases) |
+|---|---|---|
+| Chord Thump silent: after `<<` the position is 0, so `]` deleted the whole sound | `]` at position 0 is a refused step and is skipped (like `[` at 0); the 3.11 Chord Thump also uses one `<` and G18 | 16/16 note starts sound; peak -4.8 dBFS |
+| Critical Bass, Hardware Sub: XP sounds fall back to DING, whose slowed lead-in hid 12 of 16 notes | `presets/overrides311.tsv`: 3.11 versions in place (CHORD, RINGIN/RINGOUT) with gain | 4/16 → 16/16 note starts; peaks -5.0 / -2.6 dBFS |
+| Bowl Swell about -48 LUFS | `singing_bowl_c` is silent-ish for its first 6 s; Bowl Swell and Bowl Morph use `singing_bowl_commons_2` | gated RMS -47.5 → -20.1 dB |
+| Echo Count, Macro Echoes: chords dropped offline when Macro 1 changes N | offline: a parameter change becomes the DNA before the block's notes are stamped, and only a change that needs Sound Recorder makes the render wait (non-rebuild changes no longer mark Windows busy) | 24/24 notes in all six macro programs (BasiliskHost, Macro 1 automated) |
+| Peaks above 0 dBFS: Vibe Wide, Cello Breath, Organ Ring, Echo Count, Kit | G-2..G-4; 3.11 Kit with 3.11 sounds; render311 now applies G like the plugin (it did not) | all below 0 dBFS (-1.5 .. -4.1) |
+| Telephone Choir: 3 late notes in 54 | not fixed: 9 voices per chord, mostly steals (Stop, Rewind, Play each); about a millisecond, not audible | 3 of 54 |
+| Silence line below the centre of every wave display | Sound Recorder draws it 18 rows down from its native 35-row height whatever the size: the control keeps 35 rows, 4 rows above the strip, and a 1-row cover leaves 29 rows with the line on row 14 | silence on the middle row of all 16; a loud TADA symmetric (5/5, 4/4 rows) |
+| Electromech and water sounds | the library disc scans every category | 510 sounds, 112 MB |
+
+| XP's sounds (DNA.md 2.4: one name, one file) | `C:\XPSOUNDS\X<nn>.WAV` for every XP file of core `kSoundFiles311` (33), from the user's own XP image through the sound-archaeology extractor (`tools/xpsounds311.py`; no Microsoft audio in git); the guest follows the core's 39-name table and reads each file's rate and length from its header; the DING fallback is gone | 31 programs that played DING now play XP's sounds; all render, none over 0 dBFS, 0 late |
+| Critical Bass on its real `critstop` | critstop's 42 ms lead-in, ×4 slower and an octave down, hid 12 of 16 notes (the same on XP): 3.11 override trims it (`critstop@t40[<<`) | 16/16 note starts; peak -2.7 dBFS |
+| Preset browser filter | [All] [W3.11] [XP] buttons in Windows: XP = the DNA uses any XP file (sources and I/M sounds) | W3.11 lists BASILISK 16's own; XP lists the XP-sound presets |
+| Integer pixel scaling | the editor draws Windows' screen at the largest whole scale k of its device-pixel size (GL viewport), nearest-neighbour, centred on the panel grey; minimum 1024x768; host resizes snap to multiples; opens at k = the display scale when it is 2 or more | Windows 1024x768: exact; 1536x1152: exact 1x centred at (256,192) on pure grey; 2048x1536: every 2x2 block one colour; Retina Mac (AU, backing 2.0): 2048x1536 device pixels, k 2, every 2x2 block one colour (GL readback, `BASILISK16_TEST_SHOT`) |
+| "Wave" header's W cut | Windows 3.1's TextOut cuts what a glyph draws left of where the string starts (Arial's W reaches 1 px left): the headers are drawn after a space, moved left by its width | all headers and labels checked at 8x, during and after the assembly |
+| Record button's mic "missing pixels" | none missing: SOUNDREC's bitmap 270 (17x17, 1-bit) is drawn greyed (Windows 3.11's 50% dither for a disabled button: our wave driver has no input, so Record is disabled), and an unmodified SOUNDREC draws exactly the same pixels; Rewind/Forward/Stop/Record glyphs identical to native, Play/Forward identical to their bitmaps | no change |
+| render311 hung under Rosetta (macOS x86_64) on any DNA Windows must build | lines now go through the event ring (delivered by the engine thread), not into the card from render311's thread | Linux, Windows, macOS arm64 and x86_64 bit-identical again; the plugin itself was unaffected (x86_64 = arm64 renders) |
+
+- A 29-row strip (gaps between strips) made every repaint slow: assembly 5.9 s, keys painted late. Strips stay 30 rows.
+- The Sound drop-down is no longer sorted by Windows: LIBRARY.TSV is already in order, and a sorted insert of 516
+  items blocked painting. It now fills in 54 ms, after `ready`.
+- Assembly: 5.39 s on Windows' clock, 5.41 s wall.
 
 ## Round 3 (v1.2.0): DNA v2, library disc, keyboard strip, batch CLI
 

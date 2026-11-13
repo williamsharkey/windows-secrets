@@ -2,7 +2,7 @@
 """Build the machine the plugin resumes: drive.zip (the Windows for Workgroups 3.11 C: drive with BASILISK 16 installed, and the
 snapshot of it (sixteen Sound Recorders open, waiting for `go`).
 
-  make_machine.py WFW_DRIVE GUEST_BUILD_DIR CORE_SO OUT_DIR [--library LIBRARY.zip] [--folder]
+  make_machine.py WFW_DRIVE GUEST_BUILD_DIR CORE_SO OUT_DIR [--library LIBRARY.zip] [--xpsounds DIR] [--folder]
 
 --library: the library disc (tools/make_library311.py), mounted as L:; the snapshot is made with it mounted, so the
 bundle must ship this same library.zip (and library.names.txt, the plugin's catalogue). Without it, an empty disc.
@@ -15,6 +15,7 @@ from bsdrv import Engine
 
 src, gout, core, out = sys.argv[1:5]
 library = sys.argv[sys.argv.index('--library') + 1] if '--library' in sys.argv else None   # the L: drive (make_library311.py)
+xpsounds = sys.argv[sys.argv.index('--xpsounds') + 1] if '--xpsounds' in sys.argv else None   # C:\XPSOUNDS (xpsounds311.py)
 folder = '--folder' in sys.argv   # C: as a plain folder instead of drive.zip (for experiments)
 drive = os.path.join(out, 'drive')
 if os.path.exists(out): shutil.rmtree(out)
@@ -22,6 +23,11 @@ shutil.copytree(src, drive)
 for d in ('WATCOM', 'B3', '.jsdos'):
     shutil.rmtree(os.path.join(drive, d), ignore_errors=True)
 os.makedirs(os.path.join(drive, 'BS'), exist_ok=True)
+# XP's sounds (DNA.md 2.4: one name, one file): C:\XPSOUNDS\X<index>.WAV, from xpsounds311.py
+if xpsounds:
+    os.makedirs(os.path.join(drive, 'XPSOUNDS'), exist_ok=True)
+    for f in sorted(os.listdir(xpsounds)):
+        if f.upper().endswith('.WAV'): shutil.copy(os.path.join(xpsounds, f), os.path.join(drive, 'XPSOUNDS', f.upper()))
 # Windows 3.1's CHORD.WAV and TADA.WAV (WfW 3.11's disks dropped them): `chord` and `tada` play their own files
 for f in ('CHORD.WAV', 'TADA.WAV'):
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'machine-extra', f), os.path.join(drive, 'WINDOWS', f))

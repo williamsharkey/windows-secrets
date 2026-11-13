@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""BASILISK 16's programs: presets/b16.tsv, then packages/basilisk-synth/library/presets/*.tsv (factory.tsv first).
+"""BASILISK 16's programs: presets/b16.tsv, then packages/basilisk-synth/library/presets/*.tsv (factory.tsv first),
+with presets/overrides311.tsv replacing shared presets in place (3.11 sounds, gain staging).
 
     make_presets311.py            writes plugin/presets_gen.h (the program list, "Category: Name")
 
@@ -19,8 +20,21 @@ def preset_files():
     return [os.path.join(PKG, 'presets', 'b16.tsv')] + shared
 
 
+def overrides():
+    """presets/overrides311.tsv: 3.11 versions of shared presets, by (category, name)"""
+    o = {}
+    p = os.path.join(PKG, 'presets', 'overrides311.tsv')
+    if os.path.exists(p):
+        for line in open(p, encoding='utf-8'):
+            line = line.rstrip('\r\n')
+            if line.strip() and not line.startswith('#') and line.count('\t') >= 2:
+                c, n, d = [x.strip() for x in line.split('\t')[:3]]
+                o[(c, n)] = d
+    return o
+
+
 def rows(files=None):
-    out, seen = [], set()
+    out, seen, ov = [], set(), overrides()
     for f in files or preset_files():
         for line in open(f, encoding='utf-8'):
             line = line.rstrip('\r\n')
@@ -29,7 +43,7 @@ def rows(files=None):
             c, n, d = [x.strip() for x in line.split('\t')[:3]]
             if (c, n) in seen:
                 continue
-            seen.add((c, n)); out.append((c, n, d))
+            seen.add((c, n)); out.append((c, n, ov.get((c, n), d)))
     return out
 
 
