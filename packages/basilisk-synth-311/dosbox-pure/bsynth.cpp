@@ -89,6 +89,8 @@ static struct {
 	/* event id -> DAC sample (target) */
 	Bit32u tgt_id[4096]; Bit64u tgt_at[4096];
 	float master;                  /* master pitch multiplier (pitch bend) */
+	/* the host's pointer (event type 6): once the driver polls it (PTRGET), it is kept here, not queued */
+	bool ptr_polled; Bit16u ptr_x, ptr_y, ptr_seq;
 	/* DAC output ring for the host */
 	float *ring; Bit32u ring_len; Bit64u ring_w;
 	MixerChannel *chan; MixerObject *mo;
@@ -105,6 +107,7 @@ BSYN_API void bsyn_host_event(const Bit16u *w, int n, Bit32u id, Bit64u at)
 {
 	std::lock_guard<std::mutex> l(bs.mtx);
 	if (id) { bs.tgt_id[id & 4095] = id; bs.tgt_at[id & 4095] = at; }
+	if (bs.ptr_polled && n >= 3 && (w[0] >> 8) == 6) { bs.ptr_x = w[1]; bs.ptr_y = w[2]; bs.ptr_seq++; return; }
 	for (int i = 0; i < n; i++) bs.events.push_back(w[i]);
 }
 BSYN_API int bsyn_host_reports(Bit16u *w, int max)
@@ -377,6 +380,10 @@ static void command(Bit16u c)
 		}
 		else A.fade = (Bit32u)arg(3) * (BS_RATE / 1000);
 		break; }
+	case 32: /* PTRGET -> seq x y: the host's pointer for the driver's timer, which moves it with USER's mouse_event
+	            (at interrupt time, so it also moves while a scroll bar's tracking loop holds the synth program) */
+		bs.ptr_polled = true;
+		bs.results.push_back(bs.ptr_seq); bs.results.push_back(bs.ptr_x); bs.results.push_back(bs.ptr_y); break;
 	case 22: /* REPORT words... */
 		for (Bit16u w : bs.args) bs.reports.push_back(w);
 		break;

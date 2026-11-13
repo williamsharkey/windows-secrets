@@ -1810,6 +1810,21 @@ static void host_line(char *s)
     }
 }
 
+/* The host's pointer. BSYNTH.DRV moves it at interrupt time with USER's mouse_event (BsPointer), so a held scroll
+   bar thumb follows a drag; until that runs (or without it) the pointer events come here and SetCursorPos places
+   the arrow, which makes no mouse input. */
+static void pointer_feed(void)
+{
+    static BOOL done;
+    BOOL (FAR PASCAL *f)(BOOL, WORD, WORD); HMODULE m;
+    if (done) return;
+    done = TRUE;
+    m = GetModuleHandle("BSYNTH");
+    f = m ? (BOOL (FAR PASCAL *)(BOOL, WORD, WORD))GetProcAddress(m, "BSPOINTER") : NULL;
+    logf_("pointer feed %s", f && f(TRUE, (WORD)GetSystemMetrics(SM_CXSCREEN), (WORD)GetSystemMetrics(SM_CYSCREEN)) ? "on" : "missing: SetCursorPos only");
+}
+static void host_pointer(int x, int y) { SetCursorPos(x, y); }
+
 static int poll_host(void)   /* returns how many events it handled */
 {
     static WORD e[140];
@@ -1817,7 +1832,7 @@ static int poll_host(void)   /* returns how many events it handled */
     int n, k, handled = 0;
     while ((n = bs_event(e, 140)) > 0) {
         int ty = e[0] >> 8;
-        if (ty == 6 && n >= 3) { SetCursorPos(e[1], e[2]); handled++; continue; }   /* the host's pointer */
+        if (ty == 6 && n >= 3) { host_pointer(e[1], e[2]); handled++; continue; }   /* the host's pointer */
         if (ty == 4 || ty == 8) {
             for (k = 3; k < n && accn < (int)sizeof acc - 2; k++) { acc[accn++] = (char)(e[k] & 0xFF); acc[accn++] = (char)(e[k] >> 8); }
             if (ty == 4) {
@@ -1992,6 +2007,7 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
     dna_parse(dnaText);
     signature(lastSig);
     { int i; for (i = 0; i < nlay; i++) layer_len[i] = 52; }
+    pointer_feed();
     logf_("SYNTH up: %d recorders, free resources: user %d%% gdi %d%%", NALL, GetFreeSystemResources(GFSR_USERRESOURCES), GetFreeSystemResources(GFSR_GDIRESOURCES));
     {   /* idle: the engine may freeze the machine here (the snapshot) */
         WORD z = 0; bs_report(2, &z, 0);

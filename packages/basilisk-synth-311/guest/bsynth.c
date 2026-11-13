@@ -95,6 +95,48 @@ void FAR PASCAL __loadds __export TimeProc(UINT id, UINT msg, DWORD user, DWORD 
     drain();
 }
 
+/* The host's pointer (BsPointer): every 10 ms at interrupt time, a new position from the card becomes real mouse
+   input through USER's mouse_event (USER.299, the entry the mouse driver itself calls at interrupt time; registers
+   AX flags, BX x, CX y, DX buttons, SI:DI extra). SetCursorPos in the synth program cannot do this: it makes no
+   input, and it does not run while a scroll bar's tracking loop (a modal loop) holds the program. */
+static FARPROC mouseEvent;
+static UINT ptrTimer;
+static WORD ptrSeq, scrW = 1024, scrH = 768;
+void mev_call(WORD ax, WORD bx, WORD cx, WORD dx, FARPROC f);
+#pragma aux mev_call = \
+    "push bp" \
+    "push es" \
+    "push di" \
+    "mov bp, sp" \
+    "xor si, si" \
+    "xor di, di" \
+    "call dword ptr ss:[bp]" \
+    "add sp, 4" \
+    "pop bp" \
+    parm [ax] [bx] [cx] [dx] [es di] \
+    modify [ax bx cx dx si di es];
+void FAR PASCAL __loadds __export PtrProc(UINT id, UINT msg, DWORD user, DWORD d1, DWORD d2)
+{
+    WORD seq, x, y;
+    _disable(); outpw(BS_CMD, 32); seq = get(); x = get(); y = get(); _enable();
+    if (seq == ptrSeq) return;
+    ptrSeq = seq;
+    mev_call(0x8001, (WORD)(((DWORD)x * 65535UL + (scrW - 1) / 2) / (scrW - 1)), (WORD)(((DWORD)y * 65535UL + (scrH - 1) / 2) / (scrH - 1)), 2, mouseEvent);
+}
+/* the synth program turns the pointer feed on (TRUE) once, with the screen size; FALSE stops it */
+BOOL FAR PASCAL __loadds __export BsPointer(BOOL on, WORD w, WORD h)
+{
+    if (!card) return FALSE;
+    if (!on) { if (ptrTimer) timeKillEvent(ptrTimer); ptrTimer = 0; return TRUE; }
+    if (ptrTimer) return TRUE;
+    if (!mouseEvent) mouseEvent = GetProcAddress(GetModuleHandle("USER"), MAKEINTRESOURCE(299));
+    if (!mouseEvent || w < 2 || h < 2) return FALSE;
+    scrW = w; scrH = h;
+    _disable(); outpw(BS_CMD, 32); ptrSeq = get(); get(); get(); _enable();
+    ptrTimer = timeSetEvent(10, 1, (LPTIMECALLBACK)PtrProc, 0L, TIME_PERIODIC);
+    return ptrTimer != 0;
+}
+
 static int nopen(void) { int k, n = 0; for (k = 0; k < MAXI; k++) if (in[k].used) n++; return n; }
 
 DWORD FAR PASCAL __loadds __export wodMessage(UINT dev, UINT msg, DWORD user, DWORD p1, DWORD p2)
