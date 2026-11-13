@@ -20,7 +20,7 @@ class B16Out extends AudioWorkletProcessor {
         this.dacLo = (b + L.dac_w) >> 2; this.hrLo = (b + L.host_r) >> 2; this.beat = (b + L.host_beat) >> 2;
         this.rt = (b + L.realtime) >> 2; this.ring = (b + L.ring) >> 2; this.len = L.ring_len; this.gain = L.gain >> 2;
         this.leadIdx = L.lead !== undefined ? (b + L.lead) >> 2 : -1;
-        this.lead = m.lead || 2048; this.leadMax = m.leadMax || 3584; this.pos = -1;
+        this.lead = this.lead0 = m.lead || 2048; this.leadMax = m.leadMax || 3584; this.pos = -1;
         if (this.leadIdx >= 0) this.u32[this.leadIdx] = this.lead;
       } else if (m.t === 'tap') this.tap = m.on ? [] : null;   // tests: capture the output
     };
@@ -65,6 +65,12 @@ class B16Out extends AudioWorkletProcessor {
     u[this.hrLo] = hr % 4294967296; u[this.hrLo + 1] = Math.floor(hr / 4294967296);
     u[this.rt] = 1;
     Atomics.add(this.i32, this.beat, 1);
+    // after 20 s without a gap, give some of the lead back (latency), never below where it started
+    if (!missing && !this.starved) {
+      if (currentTime - (this.lastGapT || 0) > 20 && this.leadIdx >= 0 && this.lead > this.lead0 && currentTime - (this.shrunk || 0) > 20) {
+        this.lead = Math.max(this.lead0, this.lead - 256); this.u32[this.leadIdx] = this.lead; this.shrunk = currentTime;
+      }
+    } else this.lastGapT = currentTime;
     this.blocks++; this.short += missing;
     if (missing) this.under++;
     if (this.tap) { this.tap.push(new Float32Array(L), new Float32Array(R)); if (this.tap.length >= 64) { this.port.postMessage({ t: 'tap', d: this.tap }); this.tap = []; } }
@@ -77,3 +83,28 @@ class B16Out extends AudioWorkletProcessor {
   }
 }
 registerProcessor('b16-out', B16Out);
+
+// the microphone, for Sound Recorder's Record (the card's ADC): 48 kHz stereo blocks of 1024 frames to the page,
+// which hands them to the emulator stamped on its DAC clock; and the input level for the meter
+class B16Mic extends AudioWorkletProcessor {
+  constructor() { super(); this.buf = new Float32Array(2048); this.n = 0; this.ratio = sampleRate / 48000; this.ph = 0; this.prev = 0; this.peak = 0; }
+  process(inputs) {
+    const inp = inputs[0], L = inp && inp[0];
+    if (!L) return true;
+    const R = inp[1] || L;
+    for (let i = 0; i < L.length; i++) {
+      const x = 0.5 * (L[i] + R[i]);
+      this.peak = Math.max(this.peak, Math.abs(x));
+      // to 48 kHz (linear between the input's samples; exact when the context runs at 48 kHz)
+      while (this.ph < 1) {
+        const y = this.prev + (x - this.prev) * this.ph;
+        this.buf[this.n * 2] = y; this.buf[this.n * 2 + 1] = y; this.n++;
+        if (this.n === 1024) { this.port.postMessage({ t: 'mic', d: this.buf, peak: this.peak }, [this.buf.buffer]); this.buf = new Float32Array(2048); this.n = 0; this.peak = 0; }
+        this.ph += this.ratio;
+      }
+      this.ph -= 1; this.prev = x;
+    }
+    return true;
+  }
+}
+registerProcessor('b16-mic', B16Mic);

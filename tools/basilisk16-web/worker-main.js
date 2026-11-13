@@ -54,11 +54,9 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
         const a = i * lib.chunk, e = Math.min(lib.size, a + lib.chunk) - 1;
         const r = await fetch(lib.url, { headers: { Range: 'bytes=' + a + '-' + e } });
         if (r.status !== 206) continue;
-        const d = new Uint8Array(await r.arrayBuffer());
-        const p = M._malloc(d.length); M.HEAPU8.set(d, p);
-        for (let k = 0; k < 400 && M._b16_lazy_put(i, p, d.length) === 0; k++) await new Promise(res => setTimeout(res, 5));
-        // (M.HEAPU8 follows memory growth: emscripten updates it)
-        M._free(p);
+        // kept on this thread's side: when Windows reads it, the answer is immediate (lazyfile.js), and nothing here
+        // ever touches the emulator's locks
+        M.b16LazyCache.set(a, new Uint8Array(await r.arrayBuffer()));
       }
     } catch (err) {} finally { libBusy = false; }
   }
@@ -97,7 +95,7 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
       lastPost = now;
       const i = info(false);
       post({ t: 'hb', dac: i.dac, beat: i.beat, load: i.load, late: i.late, ontime: i.ontime, state: i.state, ready: i.ready,
-             building: i.building || i.inFlight, dna: i.dna, stalls, notes: i.notes, keys: i.keys, error: i.error });
+             building: i.building || i.inFlight, dna: i.dna, stalls, rec: M._b16_recording(), notes: i.notes, keys: i.keys, error: i.error });
       if (i.state === 9) { running = false; post({ t: 'error', msg: i.error || 'the machine stopped' }); }
     }
   }
@@ -127,6 +125,7 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
                        ['/machine/w31.conf', '/machine/w31web.state', '', '', m.lead || 2048, m.libraryNames || '']);
     if (!ok) throw new Error('the engine did not start');
     if (m.relDrag === false) M._b16_relscale(0);   // (the guest's driver moves the pointer during drags itself)
+    M.b16LazyCache = new Map();
     if (m.libMap) lib = { map: m.libMap, url: m.libraryUrl, size: m.librarySize, chunk: m.libraryChunk || 262144 };
     (m.layers || []).forEach((L, i) => { if (L[0]) M._b16_layer(i, L[1], L[2], L[3], L[4]); });
     const o = M._b16_layout() >> 2, h32 = new Int32Array(M.wasmMemory.buffer);
@@ -170,6 +169,8 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
         const go = () => { const p = M.stringToNewUTF8(m.text); M._b16_dna(p); M._free(p); };
         if (lib) { libWant(libNames(m.text), true); libDone().then(go); } else go();
       } break;
+      case 'mic': if (M && m.d) { const n = m.d.length >> 1, p = M._malloc(m.d.length * 4); new Float32Array(M.wasmMemory.buffer, p, m.d.length).set(m.d); M._b16_mic(p, n); M._free(p); } break;
+      case 'micon': if (M) M._b16_mic_on(m.on ? 1 : 0); break;
       case 'pause': if (M) M._b16_pause(m.p ? 1 : 0); paused = !!m.p; lastDacT = performance.now(); break;
       case 'info': { const r = M ? info(true) : null; if (r) r.lazy = Array.from(new Uint32Array(M.wasmMemory.buffer, M._b16_lazy_vars(), 8)); post({ t: 'info', id: m.id, info: r }); break; }
       // tests: make the worker (or only the engine) stop answering, to see the page's watchdog act

@@ -92,7 +92,7 @@
       worker.onmessage = onWorker;
       worker.onerror = function (e) { fail('The emulator stopped: ' + (e.message || 'error')); };
       worker.postMessage({ t: 'init', conf: DATA.conf, lead: CFG.lead, layers: DATA.layers, libraryNames: DATA.libraryNames,
-        relDrag: DATA.relDrag,   /* (libMap: fetching library pieces ahead raced the emulator's own reads; off for now) */ libraryUrl: new URL(base + 'library.zip', location.href).href, librarySize: DATA.librarySize, libraryChunk: 262144,
+        relDrag: DATA.relDrag, libMap: DATA.libMap, libTsv: DATA.libTsv, libraryUrl: new URL(base + 'library.zip', location.href).href, librarySize: DATA.librarySize, libraryChunk: 262144,
         files: CFG.files.map(function (f) { return { name: f.name, size: f.size, url: base + f.name + '?v=' + CFG.v }; }) });
       clearInterval(wd); wd = setInterval(watchdog, 500);
     }).catch(function (e) { fail('It could not start: ' + e.message); });
@@ -111,10 +111,12 @@
       stopB.disabled = false; midiB.disabled = !navigator.requestMIDIAccess; presetS.disabled = false;
       try { if (canvas) canvas.focus({ preventScroll: true }); } catch (err) {}
       status();
+      onRunning();
     } else if (m.t === 'hb') {
       var now = performance.now();
       if (m.dac !== hb.dac) { hb.dac = m.dac; hb.dacT = now; }
       hb.t = now; api.stats = m; stats.stalls = m.stalls || 0; showStats();
+      onHeartbeat(m);
       if (m.building) stat.textContent = 'Sound Recorder is building the sound…'; else status();
     } else if (m.t === 'frame') {
       if (running) show(m.bitmap); else if (m.bitmap.close) m.bitmap.close();
@@ -151,6 +153,7 @@
     stopB.disabled = true; midiB.disabled = true; presetS.disabled = true; stat.textContent = '';
     say(text || 'Stopped.');
     setState('stopped');
+    onStopped();
   }
   function fail(text) { stop(text); setState('failed'); }
   api.stop = function () { stop(); };
@@ -252,6 +255,326 @@
     var p = DATA && DATA.presets[+presetS.value];
     if (p && worker) { worker.postMessage({ t: 'dna', text: p[1] }); if (canvas) canvas.focus({ preventScroll: true }); }
   });
+
+  // ================================================================ state files, slots, microphone, drag and drop
+  // A state is the plugin's own state text (packages/basilisk-synth/design/STATE.md): the DNA (parameters, globals and
+  // macros are in it) and any other lines, kept as they came. `.b16` is that text, zlib-compressed, with a 16-byte
+  // header; a `.vstpreset` carries the same text as the plugin's component state, so either opens in the DAW.
+  var curDna = '', extras = [], pendingState = null, savedText = '', autoT = 0, U = window.B16UI;
+  function stateText(dna) { return 'BASILISK-SYNTH 1\ndna ' + (dna || curDna || 'ding#16;R120') + '\nreference 0\n' + extras.join(''); }
+  function parseState(text) {
+    var lines = text.replace(/\r/g, '').split('\n'), dna = null, ex = [];
+    if (!/^BASILISK-SYNTH /.test(lines[0])) { var t = lines[0].trim(); return t ? { dna: t, extras: [] } : null; }   // a bare DNA line
+    for (var i = 1; i < lines.length; i++) {
+      var l = lines[i]; if (!l) continue;
+      if (l.lastIndexOf('dna ', 0) === 0) dna = l.slice(4); else if (l.lastIndexOf('reference ', 0) !== 0) ex.push(l + '\n');
+    }
+    return dna ? { dna: dna, extras: ex } : null;
+  }
+  var CRC = (function () { var t = new Uint32Array(256); for (var n = 0; n < 256; n++) { var c = n; for (var k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  function crc32(b) { var c = 0xFFFFFFFF; for (var i = 0; i < b.length; i++) c = CRC[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+  function streamBytes(bytes, stream) {
+    return new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer().then(function (a) { return new Uint8Array(a); });
+  }
+  function encodeB16(text) {
+    var raw = new TextEncoder().encode(text), crc = crc32(raw);
+    var z = window.CompressionStream ? streamBytes(raw, new CompressionStream('deflate')) : Promise.resolve(null);
+    return z.then(function (comp) {
+      var body = comp || raw, out = new Uint8Array(16 + body.length), dv = new DataView(out.buffer);
+      out.set([66, 49, 54, 83]); dv.setUint16(4, 1, true); dv.setUint16(6, comp ? 1 : 0, true);
+      dv.setUint32(8, raw.length, true); dv.setUint32(12, crc, true); out.set(body, 16);
+      return out;
+    });
+  }
+  function decodeB16(b) {
+    var dv = new DataView(b.buffer, b.byteOffset, b.byteLength);
+    if (b.length < 16 || String.fromCharCode(b[0], b[1], b[2], b[3]) !== 'B16S') return Promise.reject(new Error('not a .b16 file'));
+    if (dv.getUint16(4, true) !== 1) return Promise.reject(new Error('a .b16 of a newer version'));
+    var flags = dv.getUint16(6, true), len = dv.getUint32(8, true), crc = dv.getUint32(12, true), body = b.subarray(16);
+    var p = flags & 1 ? (window.DecompressionStream ? streamBytes(body, new DecompressionStream('deflate')) : Promise.reject(new Error('this browser cannot decompress it'))) : Promise.resolve(body);
+    return p.then(function (raw) {
+      if (raw.length !== len || crc32(raw) !== crc) throw new Error('the file is damaged (its check sum does not match)');
+      return new TextDecoder().decode(raw);
+    });
+  }
+  // .vstpreset: the VST3 preset container (as packages/basilisk-synth/library/builder/ship.py writes it) around the DPF
+  // component state; the class id is DPF's ('DPF ', 'clas', 'B311', 'Wshk'), in the host OS's string form
+  function classId(mac) {
+    var w = ['DPF ', 'clas', 'B311', 'Wshk'].map(function (s) { return ((s.charCodeAt(0) << 24) | (s.charCodeAt(1) << 16) | (s.charCodeAt(2) << 8) | s.charCodeAt(3)) >>> 0; });
+    var raw = new Uint8Array(16), dv = new DataView(raw.buffer); w.forEach(function (x, i) { dv.setUint32(i * 4, x, true); });
+    var hex = function (a) { return Array.prototype.map.call(a, function (x) { return (x < 16 ? '0' : '') + x.toString(16).toUpperCase(); }).join(''); };
+    if (mac) return hex(raw);
+    var h8 = function (v, n) { var t = v.toString(16).toUpperCase(); while (t.length < n) t = '0' + t; return t; };
+    return h8(dv.getUint32(0, true), 8) + h8(dv.getUint16(4, true), 4) + h8(dv.getUint16(6, true), 4) + hex(raw.subarray(8));
+  }
+  function latin1(s) { var o = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) o[i] = s.charCodeAt(i) & 255; return o; }
+  function encodeVstPreset(text) {
+    var t = new TextEncoder().encode(text);
+    var a = latin1('__dpf_state_begin__\xffstate\xff'), z = latin1('\xff__dpf_state_end__\xff');
+    var comp = new Uint8Array(a.length + t.length + z.length); comp.set(a); comp.set(t, a.length); comp.set(z, a.length + t.length);
+    var head = latin1('VST3'), cid = latin1(classId(/Mac/.test(navigator.platform)));
+    var off = 4 + 4 + 32 + 8, lst = off + comp.length, out = new Uint8Array(lst + 4 + 4 + 4 + 16), dv = new DataView(out.buffer);
+    out.set(head); dv.setInt32(4, 1, true); out.set(cid, 8); dv.setBigInt64(40, BigInt(lst), true); out.set(comp, off);
+    out.set(latin1('List'), lst); dv.setInt32(lst + 4, 1, true); out.set(latin1('Comp'), lst + 8); dv.setBigInt64(lst + 12, BigInt(off), true); dv.setBigInt64(lst + 20, BigInt(comp.length), true);
+    return out;
+  }
+  function decodeVstPreset(b) {
+    if (String.fromCharCode(b[0], b[1], b[2], b[3]) !== 'VST3') throw new Error('not a .vstpreset');
+    var s = ''; for (var i = 48; i < b.length; i++) s += String.fromCharCode(b[i]);
+    var m = /__dpf_state_begin__[\xff\0]state[\xff\0]([\s\S]*?)[\xff\0]/.exec(s);
+    if (!m) throw new Error('this preset is not BASILISK 16’s');
+    return new TextDecoder().decode(latin1(m[1]));
+  }
+  function readStateFile(file) {
+    return file.arrayBuffer().then(function (ab) {
+      var b = new Uint8Array(ab), magic = String.fromCharCode(b[0], b[1], b[2], b[3]);
+      if (magic === 'B16S') return decodeB16(b);
+      if (magic === 'VST3') return decodeVstPreset(b);
+      throw new Error('not a BASILISK 16 state (.b16 or .vstpreset)');
+    });
+  }
+  function applyState(text) {
+    var st = parseState(text);
+    if (!st) { note('That state has no DNA.'); return false; }
+    extras = st.extras;
+    if (running && ready && worker) { curDna = st.dna; worker.postMessage({ t: 'dna', text: st.dna }); savedText = ''; }
+    else { pendingState = text; if (!running) start(); }
+    return true;
+  }
+  api.stateText = function () { return stateText(); };
+  api.applyState = applyState;
+  api.encodeB16 = function (t) { return encodeB16(t || stateText()); };
+  api.decodeB16 = decodeB16;
+  api.encodeVstPreset = function (t) { return encodeVstPreset(t || stateText()); };
+  api.decodeVstPreset = decodeVstPreset;
+
+  // ---------------------------------------------------------------- slots (IndexedDB; every call guarded)
+  var db = null;
+  function idb() {
+    if (db) return db;
+    db = new Promise(function (res, rej) {
+      try {
+        var r = indexedDB.open('basilisk16', 1);
+        r.onupgradeneeded = function () { r.result.createObjectStore('slots', { keyPath: 'name' }); };
+        r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); };
+      } catch (e) { rej(e); }
+    });
+    return db;
+  }
+  function tx(mode, fn) {
+    return idb().then(function (d) { return new Promise(function (res, rej) {
+      try { var t = d.transaction('slots', mode), s = t.objectStore('slots'), out = fn(s); t.oncomplete = function () { res(out && out.result !== undefined ? out.result : out); }; t.onerror = function () { rej(t.error); }; }
+      catch (e) { rej(e); }
+    }); });
+  }
+  var slots = { list: function () { return tx('readonly', function (s) { return s.getAll(); }).catch(function () { return []; }); },
+    put: function (name, bytes) { return tx('readwrite', function (s) { s.put({ name: name, data: bytes, t: Date.now() }); }); },
+    del: function (name) { return tx('readwrite', function (s) { s.delete(name); }); } };
+  var AUTO = 'AUTOSAVE';
+  function autosave() {
+    clearTimeout(autoT);
+    autoT = setTimeout(function () {
+      var t = stateText(); if (!curDna || t === savedText) return;
+      encodeB16(t).then(function (b) { return slots.put(AUTO, b); }).then(function () { savedText = t; refreshSlots(); }).catch(function () {});
+    }, 3000);
+  }
+  api.slots = slots;
+
+  // ---------------------------------------------------------------- the row under the screen
+  var row = $('.b16slots'), iconsEl = $('.b16icons'), btnsEl = $('.b16row'), sel = null, iconBtns = {}, B = {}, statusL = null, meterCv = null;
+  function eightThree(s) { return (s || '').toUpperCase().replace(/[^A-Z0-9_\-]/g, '').slice(0, 8); }
+  function note(t) { if (statusL) statusL.set(t); }
+  function select(name) {
+    sel = name;
+    Object.keys(iconBtns).forEach(function (n) { iconBtns[n].setSelected(n === name); });
+    showButtons();
+  }
+  function showButtons() {
+    if (!B.open) return;
+    var named = sel && sel !== AUTO;
+    // what appears when the machine runs keeps its place from the start (hidden, not removed): nothing moves then
+    var vis = function (el, on) { el.style.visibility = on ? '' : 'hidden'; el.tabIndex = on ? 0 : -1; el.setAttribute('aria-hidden', String(!on)); };
+    vis(B.mic, ready); vis(meterCv, ready); vis(B.save, ready); vis(B.saveas, ready);
+    vis(B.down, ready || !!sel); vis(B.vst, ready || !!sel);
+    B.rename.hidden = !named; B.del.hidden = !named;
+  }
+  function refreshSlots() {
+    if (!U || !iconsEl) return Promise.resolve();
+    return slots.list().then(function (all) {
+      all.sort(function (a, b) { return a.name === AUTO ? -1 : b.name === AUTO ? 1 : a.name < b.name ? -1 : 1; });
+      iconsEl.textContent = ''; iconBtns = {};
+      var bytes = 0;
+      all.forEach(function (sl) {
+        bytes += sl.data.length;
+        var ic = U.icon(sl.name + '.B16', { aria: (sl.name === AUTO ? 'Autosave' : sl.name) + ' slot: Enter or double-click to load' });
+        ic.addEventListener('click', function () { select(sl.name); });
+        ic.addEventListener('dblclick', function () { loadSlot(sl.name); });
+        ic.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') { e.preventDefault(); loadSlot(sl.name); }
+          else if (e.key === 'Delete' && sl.name !== AUTO) { e.preventDefault(); select(sl.name); B.del.click(); }
+          else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { var n = e.key === 'ArrowRight' ? ic.nextSibling : ic.previousSibling; if (n) { n.focus(); n.click(); } }
+        });
+        iconsEl.appendChild(ic); iconBtns[sl.name] = ic;
+      });
+      if (!all.length) { var hint = U.label('Saved states appear here: Save As... keeps one; Open... or drop a .b16 file.', { color: U.C.gray }); hint.style.margin = '6px'; iconsEl.appendChild(hint); }
+      if (sel && !iconBtns[sel]) sel = null;
+      select(sel);
+      var est = navigator.storage && navigator.storage.estimate ? navigator.storage.estimate() : Promise.resolve(null);
+      est.then(function () {
+        note(all.length ? all.length + (all.length === 1 ? ' state' : ' states') + ', ' + Math.max(1, Math.round(bytes / 1024)) + ' KB' : (ready ? 'No saved states yet.' : ''));
+      });
+    });
+  }
+  function loadSlot(name) {
+    return slots.list().then(function (all) {
+      var sl = all.filter(function (x) { return x.name === name; })[0]; if (!sl) return;
+      return decodeB16(sl.data).then(function (t) { select(name); if (applyState(t)) note('Loaded ' + name + '.B16'); });
+    }).catch(function (e) { note('Could not load it: ' + e.message); });
+  }
+  function download(bytes, name, type) {
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([bytes], { type: type })); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  function currentOrSelected() {   // the running synth's state, or (before it runs) the selected slot's
+    if (ready) return Promise.resolve(stateText());
+    return slots.list().then(function (all) { var sl = all.filter(function (x) { return x.name === sel; })[0]; if (!sl) throw new Error('nothing selected'); return decodeB16(sl.data); });
+  }
+  function openFiles(files) {
+    var f = files && files[0]; if (!f) return;
+    if (/\.wav$/i.test(f.name) || f.type === 'audio/wav' || f.type === 'audio/x-wav') { note('WAV import into Sound Recorder is not in this version yet.'); return; }
+    readStateFile(f).then(function (t) {
+      var name = eightThree(f.name.replace(/\.[^.]*$/, '')) || 'IMPORT';
+      return encodeB16(t).then(function (b) { return slots.put(name, b); }).then(function () { return refreshSlots(); }).then(function () { select(name); applyState(t); note('Opened ' + f.name); });
+    }).catch(function (e) { note(e.message.charAt(0).toUpperCase() + e.message.slice(1) + '.'); });
+  }
+  api.openFiles = openFiles;
+  function buildRow() {
+    if (!U || !row) return;
+    var picker = document.createElement('input'); picker.type = 'file'; picker.accept = '.b16,.vstpreset,application/x-basilisk16-state'; picker.hidden = true;
+    picker.addEventListener('change', function () { openFiles(picker.files); picker.value = ''; });
+    row.appendChild(picker);
+    B.mic = U.button('', { sprite: 'mic', width: 27, aria: 'Microphone into Sound Recorder' });
+    meterCv = document.createElement('canvas'); meterCv.className = 'b16meter'; meterCv.setAttribute('aria-hidden', 'true');
+    B.open = U.button('Open...', { aria: 'Open a state file (.b16 or .vstpreset)' });
+    B.save = U.button('Save', { aria: 'Save the state into the selected slot' });
+    B.saveas = U.button('Save As...', { aria: 'Save the state into a new named slot' });
+    B.rename = U.button('Rename...'); B.del = U.button('Delete');
+    B.down = U.button('Download', { aria: 'Download the state as a .b16 file' });
+    B.vst = U.button('VST3 Preset', { aria: 'Download the state as a .vstpreset for the BASILISK 16 plugin' });
+    statusL = U.label('', { max: 360 });
+    [B.mic, meterCv, B.open, B.save, B.saveas, B.down, B.vst, B.rename, B.del, statusL].forEach(function (el) { btnsEl.appendChild(el); });
+    drawMeter(0);
+    B.open.addEventListener('click', function () { picker.click(); });
+    B.save.addEventListener('click', function () {
+      if (!sel || sel === AUTO) { B.saveas.click(); return; }
+      encodeB16(stateText()).then(function (b) { return slots.put(sel, b); }).then(refreshSlots).then(function () { note('Saved ' + sel + '.B16'); });
+    });
+    B.saveas.addEventListener('click', function () {
+      U.dialog(stage, { title: 'Save As', prompt: 'State name (8 letters):', value: sel && sel !== AUTO ? sel : '', filter: eightThree }).then(function (v) {
+        v = eightThree(v); if (!v) return;
+        if (v === AUTO) { note('AUTOSAVE is the automatic slot: choose another name.'); return; }
+        return encodeB16(stateText()).then(function (b) { return slots.put(v, b); }).then(refreshSlots).then(function () { select(v); note('Saved ' + v + '.B16'); });
+      });
+    });
+    B.rename.addEventListener('click', function () {
+      var old = sel; if (!old || old === AUTO) return;
+      U.dialog(stage, { title: 'Rename', prompt: 'New name for ' + old + '.B16:', value: old, filter: eightThree }).then(function (v) {
+        v = eightThree(v); if (!v || v === old || v === AUTO) return;
+        return slots.list().then(function (all) { var sl = all.filter(function (x) { return x.name === old; })[0]; if (!sl) return;
+          return slots.put(v, sl.data).then(function () { return slots.del(old); }); }).then(refreshSlots).then(function () { select(v); });
+      });
+    });
+    B.del.addEventListener('click', function () {
+      var old = sel; if (!old || old === AUTO) return;
+      U.dialog(stage, { title: 'Delete', prompt: 'Delete ' + old + '.B16?', edit: false, ok: 'Delete' }).then(function (v) {
+        if (v) return slots.del(old).then(function () { sel = null; return refreshSlots(); });
+      });
+    });
+    B.down.addEventListener('click', function () {
+      currentOrSelected().then(encodeB16).then(function (b) { download(b, (sel && !ready ? sel : 'BASILISK') + '.b16', 'application/x-basilisk16-state'); }).catch(function (e) { note(e.message); });
+    });
+    B.vst.addEventListener('click', function () {
+      currentOrSelected().then(function (t) { download(encodeVstPreset(t), (sel && !ready ? sel : 'BASILISK 16') + '.vstpreset', 'application/octet-stream'); }).catch(function (e) { note(e.message); });
+    });
+    B.mic.addEventListener('click', toggleMic);
+    showButtons();
+    refreshSlots();
+  }
+
+  // ---------------------------------------------------------------- the microphone into Sound Recorder (the card's ADC)
+  var mic = null;
+  function drawMeter(level) {
+    if (!U || !meterCv) return;
+    var W = 8, H = 23, n = Math.round(Math.min(1, level * 1.4) * 9);
+    U.canvas(meterCv, W, H, function (ctx) {
+      ctx.fillStyle = U.C.lo; ctx.fillRect(0, 0, W, 1); ctx.fillRect(0, 0, 1, H);
+      ctx.fillStyle = U.C.hi; ctx.fillRect(0, H - 1, W, 1); ctx.fillRect(W - 1, 0, 1, H);
+      ctx.fillStyle = U.C.ink; ctx.fillRect(1, 1, W - 2, H - 2);
+      for (var i = 0; i < 9; i++) { ctx.fillStyle = i < n ? (i >= 7 ? '#ff0000' : i >= 5 ? '#ffff00' : '#00ff00') : '#004000'; ctx.fillRect(2, H - 4 - i * 2 - 1, W - 4, 1); }
+    });
+  }
+  function toggleMic() {
+    if (mic) { stopMic(); note('Microphone off.'); return; }
+    if (!ready || !actx || !navigator.mediaDevices) return;
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } }).then(function (s) {
+      var src = actx.createMediaStreamSource(s), n = new AudioWorkletNode(actx, 'b16-mic', { numberOfInputs: 1, numberOfOutputs: 0 });
+      src.connect(n);
+      var lvl = 0;
+      n.port.onmessage = function (e) { if (worker) worker.postMessage({ t: 'mic', d: e.data.d }, [e.data.d.buffer]); lvl = Math.max(e.data.peak, lvl * 0.7); drawMeter(lvl); };
+      mic = { s: s, src: src, n: n };
+      worker.postMessage({ t: 'micon', on: true });
+      B.mic.setToggled(true);
+      note('Microphone on: press Record in a Sound Recorder.');
+    }, function (err) {
+      note(err && err.name === 'NotAllowedError' ? 'The microphone was not allowed. Allow it in the address bar, then try again.' : 'No microphone could be opened (' + (err && err.name || 'error') + ').');
+    });
+  }
+  function stopMic() {
+    if (!mic) return;
+    try { mic.s.getTracks().forEach(function (t) { t.stop(); }); mic.src.disconnect(); mic.n.disconnect(); } catch (e) {}
+    mic = null; if (worker) worker.postMessage({ t: 'micon', on: false });
+    if (B.mic) B.mic.setToggled(false); drawMeter(0);
+  }
+  api.mic = function () { return !!mic; };
+
+  // ---------------------------------------------------------------- drag and drop onto the screen
+  var stage = $('.b16stage'), dropEl = $('.b16drop'), dragN = 0;
+  function dropMsg(show) {
+    if (!dropEl || !U) return;
+    dropEl.hidden = !show;
+    if (show) {
+      var cv = dropEl.querySelector('canvas'), t = 'Drop here to load this synth state', W = U.measure(t, 'system') + 40, H = 46;
+      U.canvas(cv, W, H, function (ctx) {
+        ctx.fillStyle = U.C.ink; ctx.fillRect(0, 0, W, H); ctx.fillStyle = U.C.face; ctx.fillRect(1, 1, W - 2, H - 2);
+        ctx.fillStyle = U.C.hi; ctx.fillRect(1, 1, W - 3, 1); ctx.fillRect(1, 1, 1, H - 3);
+        ctx.fillStyle = U.C.lo; ctx.fillRect(1, H - 2, W - 2, 1); ctx.fillRect(W - 2, 1, 1, H - 2);
+        U.text(ctx, t, 20, (H - U.fontHeight('system')) >> 1, 'system', U.C.ink);
+      });
+    }
+  }
+  function hasFiles(e) { return e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') >= 0; }
+  window.addEventListener('dragenter', function (e) { if (hasFiles(e)) { dragN++; dropMsg(true); } });
+  window.addEventListener('dragleave', function () { if (--dragN <= 0) { dragN = 0; dropMsg(false); } });
+  window.addEventListener('dragover', function (e) { if (hasFiles(e) && stage && stage.contains(e.target)) { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; } });
+  window.addEventListener('drop', function (e) {
+    dragN = 0; dropMsg(false);
+    if (!hasFiles(e) || !stage || !stage.contains(e.target)) return;
+    e.preventDefault(); openFiles(e.dataTransfer.files);
+  });
+
+  // ---------------------------------------------------------------- the emulator's own events
+  function onRunning() {
+    if (pendingState) { var t = pendingState; pendingState = null; applyState(t); }
+    showButtons(); refreshSlots();
+  }
+  function onHeartbeat(m) {
+    if (m.dna && m.dna !== curDna) { curDna = m.dna; autosave(); }
+  }
+  function onStopped() { stopMic(); showButtons(); }
+  if (U) U.load(base, CFG.v).then(buildRow).catch(function () {});
+  // a machine started without a click (a dropped file, a slot opened by keyboard) may get a suspended AudioContext:
+  // the next click lets it play
+  document.addEventListener('pointerdown', function () { if (actx && actx.state === 'suspended' && !paused) actx.resume(); }, true);
 
   // ---------------------------------------------------------------- tests
   var pending = {}, nextId = 1;

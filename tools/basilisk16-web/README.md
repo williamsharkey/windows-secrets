@@ -49,3 +49,31 @@ python3 tools/basilisk16-web/insert_section.py site/sndrec.html <version from si
 - **Tests** (scratch, not in git): a node run of every preset through the recorders, and Playwright end-to-end
   checks: nothing loads before the click, no layout shift, pitch, keys, watchdog, phone width, and k×k pixels at
   DPR 1, 2 and 3.
+
+## The controls under the screen
+
+- **State files** (`packages/basilisk-synth/design/STATE.md`):
+  - A state is the plugin's own state text, `BASILISK-SYNTH 1`, then `dna`, `reference` and any other lines, kept
+    as they came.
+  - `.b16` is that text zlib-compressed (`CompressionStream('deflate')`) behind a 16-byte header.
+  - `.vstpreset` is the VST3 container around the DPF component state. It is byte-identical to what
+    `packages/basilisk-synth/library/builder/ship.py` writes.
+  - Both load back (Open..., or drop the file on the screen; a machine that isn't running starts with it).
+  - A typical state is 84 bytes as `.b16`. The browser's deflate is enough: xz's header alone is larger than that.
+- **Slots** live in IndexedDB (`basilisk16`/`slots`, `.b16` bytes):
+  - AUTOSAVE updates 3 s after the DNA changes.
+  - Named slots use 8.3 names: Save As..., Save, Rename..., Delete; Enter or double-click loads one.
+- **Microphone:**
+  - `getUserMedia` with echo cancellation, noise suppression and gain control off.
+  - An AudioWorklet (`b16-mic`) resamples it to 48 kHz and sends it to the card's ADC: `b16_mic` → `bsyn_host_input`,
+    stamped 50 ms ahead of the DAC (STATE.md 4).
+  - Sound Recorder's Record records it.
+- **Pixels:**
+  - `ui_assets.py` takes MS Sans Serif 8 (SSERIFE.FON), System (VGASYS.FON), Sound Recorder's icon and its RECORD
+    microphone bitmap straight out of the 3.11 image's NE resources.
+  - `b16-ui.js` draws buttons, icons, the dotted focus rectangle, the Save As dialog and the drop message with them,
+    at k = max(1, round(dpr)) device pixels per pixel.
+- **Library prefetch:**
+  - A DNA sent from the page has its library sounds fetched asynchronously by the worker before it goes to Windows.
+  - The pieces are kept on the JS side (`Module.b16LazyCache`), so Windows' reads are answered at once and nothing
+    touches the emulator's locks.

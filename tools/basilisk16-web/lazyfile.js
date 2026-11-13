@@ -4,6 +4,9 @@
 // ranged request on the worker's own thread: an engine thread asks for it over a BroadcastChannel, and waits.
 var b16LazyChannel = null;
 function b16LazyXhr(dst, a, e) {
+  // a piece the worker fetched ahead of time (asynchronously, off the emulator's threads) is answered at once
+  const pre = Module['b16LazyCache'] && Module['b16LazyCache'].get(a);
+  if (pre && pre.length === e - a + 1) { HEAPU8.set(pre, dst); Module['b16LazyCache'].delete(a); return pre.length; }
   let url = '', p = _b16_lazy_url();
   while (HEAPU8[p]) url += String.fromCharCode(HEAPU8[p++]);
   for (let tries = 0; tries < 3; tries++) {

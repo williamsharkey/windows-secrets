@@ -25,6 +25,12 @@
 using namespace bsynth;
 
 extern "C" volatile int web_snapshot_request;
+// the card's ADC (RECORDING.md R1, STATE.md 4): the microphone goes in stamped on the DAC clock
+extern "C" void bsyn_host_input(uint64_t at, const float *lr, int n);
+extern "C" void bsyn_host_insrc(int src);
+extern "C" int bsyn_host_instate(uint64_t *start, uint32_t *bytes, uint32_t *overruns);
+extern "C" uint64_t bsyn_host_dac(void);
+static uint64_t micAt = 0;
 extern "C" volatile int web_mouse_dx, web_mouse_dy;   // web_engine.c: relative motion for the emulated mouse
 static float relScale = 1.f, relAccX = 0, relAccY = 0;
 static double relDownT = 0;
@@ -345,6 +351,20 @@ EMSCRIPTEN_KEEPALIVE void b16_button(int bit, int down)
     }
     S->mouse_btn = btn; S->mouse_seq++;
 }
+// the microphone: n stereo frames at 48 kHz (lr interleaved), contiguous with the previous block; the first block
+// (or one after a gap the card has already passed) goes 50 ms ahead of the card's DAC, as STATE.md 4 says
+EMSCRIPTEN_KEEPALIVE void b16_mic(const float *lr, int n)
+{
+    if (!S || S->state < BS_RUNNING) return;
+    const uint64_t dac = bsyn_host_dac();
+    if (!micAt || micAt < dac + 256) micAt = dac + 2400;
+    bsyn_host_input(micAt, lr, n);
+    micAt += (uint64_t)n;
+}
+// (the input is the host's, not the synth's own output: what is not fed is silence)
+EMSCRIPTEN_KEEPALIVE void b16_mic_on(int on) { bsyn_host_insrc(0); micAt = 0; (void)on; }
+EMSCRIPTEN_KEEPALIVE int b16_recording() { uint64_t st = 0; uint32_t b = 0, o = 0; return bsyn_host_instate(&st, &b, &o); }
+
 // tests and calibration: relative motion straight to the emulated mouse; the scale of drag motion
 EMSCRIPTEN_KEEPALIVE void b16_rel(int dx, int dy) { __sync_fetch_and_add(&web_mouse_dx, dx); __sync_fetch_and_add(&web_mouse_dy, dy); }
 EMSCRIPTEN_KEEPALIVE void b16_relscale(float f) { relScale = f; }

@@ -14,6 +14,9 @@ cp(os.path.join(W, 'out', 'w31web.state'), 'w31web.state')
 cp(os.path.join(W, 'machine', 'drive.zip'), 'drive.zip')
 cp(os.path.join(HERE, 'audio-worklet.js'), 'b16-audio.js')
 cp(os.path.join(HERE, 'htaccess'), '.htaccess')
+cp(os.path.join(HERE, 'b16-ui.js'), 'b16-ui.js')
+import subprocess
+subprocess.run([sys.executable, os.path.join(HERE, 'ui_assets.py'), os.path.join(W, 'w31.jsdos'), OUT], check=True, stdout=subprocess.DEVNULL)
 lib = os.path.join(OUT, 'library.zip')
 if not os.path.exists(lib) or os.path.getsize(lib) != os.path.getsize(os.path.join(LIB, 'library.zip')): cp(os.path.join(LIB, 'library.zip'), 'library.zip')
 # the poster: Windows' screen at the snapshot
@@ -53,7 +56,7 @@ for n in ('b16.wasm', 'w31web.state', 'drive.zip'):
 hsh = hashlib.sha1()
 for n in sorted(os.listdir(OUT)):
     if n != 'library.zip' and n != 'b16-try.js' and os.path.isfile(os.path.join(OUT, n)): hsh.update(open(os.path.join(OUT, n), 'rb').read())
-hsh.update(open(os.path.join(HERE, 'b16-try.js'), 'rb').read())   # (the page script itself, before its config goes in)
+hsh.update(open(os.path.join(HERE, 'b16-try.js'), 'rb').read()); hsh.update(open(os.path.join(HERE, 'section.html'), 'rb').read())   # (the page script itself, before its config goes in)
 cfg = {'v': hsh.hexdigest()[:10], 'files': files, 'lead': 2048}
 js = open(os.path.join(HERE, 'b16-try.js')).read()
 js = re.sub(r'/\*CONFIG\*/.*?/\*END\*/', '/*CONFIG*/' + json.dumps(cfg, separators=(',', ':')) + '/*END*/', js, flags=re.S)

@@ -23,6 +23,19 @@
 #b16try .b16stat { max-width: 1028px; margin: 4px auto 0; height: 1.55em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 #b16try button:disabled, #b16try select:disabled { opacity: .55; cursor: default; }
 #b16try [hidden] { display: none !important; }
+/* the controls drawn with Windows 3.11's own pixels (b16-ui.js): canvases at k x k device pixels per pixel */
+#b16try .b16b, #b16try .b16icon { padding: 0; margin: 0; border: 0; background: none; line-height: 0; cursor: pointer; flex: none; }
+#b16try .b16b:focus, #b16try .b16icon:focus { outline: none; }
+#b16try .b16b:disabled { cursor: default; }
+#b16try canvas.b16label, #b16try .b16b canvas, #b16try .b16icon canvas, #b16try .b16meter, #b16try .b16dlg canvas, #b16try .b16drop canvas { display: block; image-rendering: crisp-edges; image-rendering: pixelated; }
+#b16try .b16slots { max-width: 1028px; margin: 6px auto 0; overflow: hidden; }   /* its height is set before the first paint */
+#b16try .b16icons { display: flex; gap: 0; overflow-x: auto; overflow-y: hidden; background: #fff; border: 1px solid var(--ink); }
+#b16try .b16row { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; margin-top: 4px; }
+#b16try .b16row .b16label { margin-left: 6px; flex: none; }
+#b16try .b16dlg { position: absolute; z-index: 5; }
+#b16try .b16dlginput { position: absolute; opacity: 0; border: 0; padding: 0; margin: 0; font-size: 16px; }
+#b16try .b16dlgbtns { position: absolute; display: flex; }
+#b16try .b16drop { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 32, .35); z-index: 4; pointer-events: none; }
 </style>
 <div id="b16try" data-state="idle">
   <h2>Try it online</h2>
@@ -31,6 +44,7 @@
     <div class="pxbox pximg b16box"><img id="b16screen" src="sndrec/try/poster.png" width="1024" height="768" data-px="1024x768" data-px-note="b16-pxnote"
       alt="BASILISK 16 in Windows for Workgroups 3.11: sixteen Sound Recorders in rows, the DNA line, the panel, Clock and a five-octave keyboard"></div>
     <script>window.pxfit && pxfit.fit(document.getElementById('b16screen'))</script>
+    <div class="b16drop" hidden><canvas></canvas></div>
     <div class="b16over">
       <div class="b16card">
         <button class="btn b16go" type="button">Try BASILISK 16 online</button>
@@ -41,6 +55,17 @@
     </div>
   </div>
   <p class="note pxnote" id="b16-pxnote"></p>
+  <div class="b16slots" aria-label="Saved synth states">
+    <div class="b16icons" role="listbox" aria-label="Saved states: double-click or Enter loads one"></div>
+    <div class="b16row"></div>
+  </div>
+  <script>
+  /* the row of saved states keeps its height from the first paint (its icons and buttons are drawn in device pixels,
+     k = max(1, round(devicePixelRatio)) per Windows pixel, so their size in CSS pixels depends on the screen) */
+  (function () { var k = Math.max(1, Math.round(window.devicePixelRatio || 1)), u = k / (window.devicePixelRatio || 1);
+    var s = document.querySelector('#b16try .b16slots'), i = s.querySelector('.b16icons');
+    i.style.height = (52 * u + 2) + 'px'; s.style.height = (52 * u + 2 + 4 + 23 * u + 18) + 'px'; })();
+  </script>
   <div class="b16tools">
     <button class="btn b16stop" type="button" disabled>Stop</button>
     <button class="btn b16midi" type="button" disabled aria-pressed="false">Enable Web MIDI</button>
@@ -53,5 +78,6 @@
   <p class="note b16mobile" hidden>Best on a desktop or laptop computer: it needs a mouse, a keyboard and a fast processor.</p>
   <p class="note">BASILISK SYNTH (XP edition): download only. Its Windows XP machine is about 1 GB and needs a fast virtual PC, which a browser cannot run in real time.</p>
 </div>
+<script src="sndrec/try/b16-ui.js?v=@V@" defer></script>
 <script src="sndrec/try/b16-try.js?v=@V@" defer></script>
 <!-- b16-try: end -->
