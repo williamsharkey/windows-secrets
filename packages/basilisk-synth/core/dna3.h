@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "scales.h"
 
 namespace bsynth3 {
 
@@ -30,6 +31,13 @@ struct Window {
     Range l{-1, -1};          // Wl  length (-1: not given; end = e)
     int vel = 0;              // Wv  velocity moves the start toward 0, 0..kOne (kOne: velocity 127 starts at 0)
     int maxMs = 0;            // Wm  real-time cap in ms (tape length); 0 = none
+    // time and tempo (as on main, 4bda617, the 3.11 lane: no "tempo twins", looping drawn envelopes, long offsets)
+    int offMs = 0;            // Wo  start offset in ms, 0..30000; replaces v2 O (capped at 4000) when given
+    int beat16 = 0;           // Wb  start offset in 1/16 beats of the host tempo, 0..1024; added to O / Wo
+    int gate16 = 0;           // Wg  release the note after n/16 beats (a beat gate), 0 = none
+    bool tempo = false;       // Wt  every ms time of this layer (O Wo Wm Ja Jp Ss Yt Ng) counts at 120 bpm: x 120/bpm
+    int loopA = 0;            // Wr  loop the last n (2..8) points of the drawn amp envelope (Ja) while the key is held
+    int loopP = 0;            // Wp  the same for the drawn pan envelope (Jp)
 };
 // N: voice mode (owner wish 2)
 struct VoiceMode {
@@ -46,7 +54,6 @@ struct Stack {
     int group = 0;            // Sg<n> layers with the same n take turns, one layer per note
     bool groupRandom = false; // Sg<n>x: a random layer of the group
     int strumMs = 0;          // Ss<ms> harmony voice k starts k*ms later
-    int diatonic = 0;         // Sd<n> n-note chord in thirds of the global scale q (replaces H)
     int width = 0;            // Sw<frac> unison voices spread over +-width of the pan range
 };
 // Y: per-note random (humanize) and its seed (owner wishes 2, 3)
@@ -79,13 +86,14 @@ struct Grain {
     bool sync = false;        // Gy  density counts grains per beat, on the beat grid
 };
 // The v3 layer letters, in canonical order.
-constexpr char kLayerLetters[] = "WNSYVZG";
+// D (degree harmony, section 18) is the eighth letter; S lost its old d subkey (a chord in thirds) to it
+constexpr char kLayerLetters[] = "WNSYVZGD";
 struct Layer3 {
-    Window w; VoiceMode n; Stack s; Human y; Mod v; Zone z; Grain g;
-    bool has[7] = {false, false, false, false, false, false, false};   // a token of letter kLayerLetters[i] was read
-    std::string extra[7];      // unknown subkeys of each letter, verbatim, in written order
+    Window w; VoiceMode n; Stack s; Human y; Mod v; Zone z; Grain g; Degrees d;
+    bool has[8] = {false, false, false, false, false, false, false, false};   // a token of letter kLayerLetters[i] was read
+    std::string extra[8];      // unknown subkeys of each letter, verbatim, in written order
     bool grains() const { return has[6]; }
-    std::string tokens() const; // canonical v3 tokens of this layer, in letter order W N S Y V Z G
+    std::string tokens() const; // canonical v3 tokens of this layer, in letter order W N S Y V Z G D
 };
 // q: scale; x: the mine-grid sequencer (owner wish 6)
 struct Seq {
@@ -125,7 +133,8 @@ struct Pad {
     std::string token() const;
 };
 struct Globals3 {
-    int scale = -1, rootPc = -1;          // q<id>[r<pc>]
+    int scale = -1, rootPc = -1;          // q<id>[r<pc>][n<mask>][e<edo>]: the preset's suggested key (section 18.2)
+    int mask = 0, edo = 0;                // n: a 12-note mask (bit k = k semitones above the root); e: n-TET
     Seq x;
     std::vector<MacroMap3> maps;
     std::vector<Pad> pads;                // k tokens, in written order

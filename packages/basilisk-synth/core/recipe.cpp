@@ -7,6 +7,7 @@
 // test checks it anyway.
 #include "recipe.h"
 #include "dna3.h"
+#include "scales.h"
 #include "dna.h"
 #include <algorithm>
 #include <cctype>
@@ -122,8 +123,9 @@ enum W {
     // v3 layer
     wStart, wEnd, wLength, wVelStart, wTape, wPoly, wMono, wLegato, wContinue, wGlide, wPrio, wRoundRobin, wRandomNote,
     wRandomRec, wGroup, wStrum, wChord, wSpread, wRand, wSeed, wWow, wFlutter, wScoop, wKeys, wRoot, wGrains,
+    wDelay, wBeatDelay, wBeatGate, wTempoSync, wLoopAmp, wLoopPan,
     // globals
-    wAttack, wDecay, wSustain, wRelease, wBend, wVelocity, wGain, wMacro, wScale, wSeq, wPad, wKitOff,
+    wAttack, wDecay, wSustain, wRelease, wBend, wVelocity, wGain, wMacro, wScale, wSeq, wPad, wKitOff, wInv, wSnap,
     wCount
 };
 struct Spell { const char *lng, *one, *sht; };
@@ -142,14 +144,15 @@ const Spell kW[wCount] = {
     {"group", "group", "grp"}, {"strum", "strum", "strum"}, {"chord", "chord", "chord"}, {"spread", "spread", "spr"},
     {"random", "rand", "rnd"}, {"seed", "seed", "seed"}, {"wow", "wow", "wow"}, {"flutter", "flutter", "flut"},
     {"scoop", "scoop", "scoop"}, {"keys", "keys", "keys"}, {"root", "root", "root"}, {"grains", "grains", "gr"},
+    {"delay", "delay", "dly"}, {"beat-delay", "beat-delay", "bdly"}, {"beat-gate", "beat-gate", "bgate"},
+    {"tempo-sync", "tempo-sync", "tsync"}, {"loop-amp", "loop-amp", "lamp"}, {"loop-pan", "loop-pan", "lpan"},
     {"attack", "atk", "a"}, {"decay", "dec", "d"}, {"sustain", "sus", "s"}, {"release", "rel", "r"}, {"bend", "bend", "b"},
     {"velocity", "vel", "v"}, {"gain", "gain", "g"}, {"macro", "m", "m"}, {"scale", "scale", "scale"}, {"sequencer", "seq", "seq"},
-    {"pad", "pad", "pad"}, {"kit off", "kit off", "kitoff"},
+    {"pad", "pad", "pad"}, {"kit off", "kit off", "kitoff"}, {"inversion", "inv", "inv"}, {"snap", "snap", "snap"},
 };
 const char *spell(W w, RecipeForm f) { return f == RecipeForm::Lines ? kW[w].lng : f == RecipeForm::OneLine ? kW[w].one : kW[w].sht; }
 
-const char *kScaleWords[kScaleCount] = {"major", "minor", "dorian", "phrygian", "lydian", "mixolydian", "locrian",
-                                        "harmonic-minor", "major-pent", "minor-pent", "whole-tone", "blues", "chromatic"};
+
 const char *kMacroParams = "OQLTCZNWEYPIXUFHJ";
 const char *kMacroWords[] = {"offset", "pan", "level", "transpose", "spread", "envtime", "repeat", "start", "end", "length",
                              "grainpos", "spray", "grainsize", "density", "scan", "wow", "glide"};
@@ -210,6 +213,12 @@ std::string v3Layer(const std::string &tok, RecipeForm f)
         if (L.w.l.lo >= 0) o.push_back(kv(wLength, rangeText(L.w.l) + (sh ? "" : "%"), f));
         if (L.w.vel) o.push_back(kv(wVelStart, pct(L.w.vel) + (sh ? "" : "%"), f));
         if (L.w.maxMs) o.push_back(kv(wTape, unitless(msText(L.w.maxMs), f, "ms"), f));
+        if (L.w.offMs) o.push_back(kv(wDelay, unitless(msText(L.w.offMs), f, "ms"), f));
+        if (L.w.beat16) o.push_back(kv(wBeatDelay, itos(L.w.beat16) + "/16", f));
+        if (L.w.gate16) o.push_back(kv(wBeatGate, itos(L.w.gate16) + "/16", f));
+        if (L.w.tempo) o.push_back(spell(wTempoSync, f));
+        if (L.w.loopA) o.push_back(kv(wLoopAmp, itos(L.w.loopA), f));
+        if (L.w.loopP) o.push_back(kv(wLoopPan, itos(L.w.loopP), f));
         break; }
     case 'N':
         if (L.n.mode == 'p') o.push_back(L.n.poly ? kv(wPoly, itos(L.n.poly), f) : spell(wPoly, f));
@@ -223,7 +232,6 @@ std::string v3Layer(const std::string &tok, RecipeForm f)
         if (L.s.randomRec) o.push_back(spell(wRandomRec, f));
         if (L.s.group) o.push_back(kv(wGroup, itos(L.s.group), f) + (L.s.groupRandom ? (sh ? "r" : " random") : ""));
         if (L.s.strumMs) o.push_back(kv(wStrum, unitless(msText(L.s.strumMs), f, "ms"), f));
-        if (L.s.diatonic) o.push_back(kv(wChord, itos(L.s.diatonic), f));
         if (L.s.width) o.push_back(kv(wSpread, pct(L.s.width) + (sh ? "" : "%"), f));
         break;
     case 'Y':
@@ -243,6 +251,15 @@ std::string v3Layer(const std::string &tok, RecipeForm f)
     case 'Z':
         o.push_back(kv(wKeys, noteName(L.z.lo) + "-" + noteName(L.z.hi), f) + (L.z.root >= 0 ? " " + kv(wRoot, noteName(L.z.root), f) : ""));
         break;
+    case 'D': {   // degree harmony: "scale 1 3 5 -5" (degrees; negative = below), "inv 1", "snap up"
+        std::vector<std::string> x;
+        for (int g : L.d.up) x.push_back(itos(g));
+        for (int g : L.d.down) x.push_back("-" + itos(g));
+        if (!x.empty()) o.push_back(std::string(spell(wScale, f)) + " " + join(x, " "));
+        if (L.d.inversion) o.push_back(kv(wInv, itos(L.d.inversion), f));
+        static const char *snaps[] = {"", "nearest", "down", "up", "off"};
+        if (L.d.snap) o.push_back(std::string(spell(wSnap, f)) + " " + snaps[L.d.snap]);
+        break; }
     case 'G': {
         Grain g = L.g, dg;
         std::vector<std::string> x{spell(wGrains, f)};
@@ -307,8 +324,12 @@ std::string globalPhrase(const std::string &tok, RecipeForm f)
     if (c == 'q') {
         Dna3 d = parse3(";" + tok);
         if (!d.g.qExtra.empty() || d.g.tokens() != tok) return "{" + tok + "}";
-        std::string t = kv(wScale, kScaleWords[d.g.scale], f);
+        std::string w = itos(d.g.scale);   // a library word, or the number (a scale on a pack disc or a user slot)
+        for (auto &ls : scaleLibrary()) if (ls.id == d.g.scale) w = ls.word;
+        std::string t = std::string(spell(wScale, f)) + " " + w;
         if (d.g.rootPc >= 0) t += f == RecipeForm::Lines ? std::string(" root ") + kNotes[d.g.rootPc] : std::string(" ") + kNotes[d.g.rootPc];
+        if (d.g.mask) { std::string m; for (int b = 0; b < 12; b++) m += (d.g.mask >> b & 1) ? '1' : '0'; t += " mask " + m; }   // from the root up
+        if (d.g.edo) t += " edo " + itos(d.g.edo);
         return t;
     }
     if (c == 'x') {
@@ -602,7 +623,7 @@ std::vector<Word> lex(const std::string &in, size_t base, bool keepFirst = false
 bool kwIs(const std::string &s, W w) { auto &kw = keywords(); auto it = kw.find(s); return it != kw.end() && it->second == w; }
 
 // v3 layer subkeys collected while a line is read; written as one token per letter at the end of the layer
-struct V3 { std::string W_, N_, S_, Y_, V_, Z_, G_; bool hasG = false, hasN = false; };
+struct V3 { std::string W_, N_, S_, Y_, V_, Z_, G_, D_; bool hasG = false, hasN = false, hasD = false; };
 
 bool parseStep(P &p, std::vector<std::string> &toks)
 {
@@ -759,6 +780,18 @@ bool parseGene(P &p, std::vector<std::string> &toks, V3 &v3)
         p.i++;
         v3.W_ += std::string(k == wStart ? "s" : k == wEnd ? "e" : k == wLength ? "l" : "v") + f; return true;
     }
+    case wDelay: { std::string a = arg(); if (!parseMs(a, v)) return p.fail("a time such as 9000ms or 9s"); p.i++; v3.W_ += "o" + itos(v); return true; }
+    case wBeatDelay: case wBeatGate: {
+        std::string a = arg();
+        if (a.size() > 3 && a.compare(a.size() - 3, 3, "/16") == 0) a.resize(a.size() - 3);
+        if (!isnum(a)) return p.fail("sixteenths of a beat, such as 4/16");
+        p.i++; v3.W_ += std::string(k == wBeatDelay ? "b" : "g") + a; return true;
+    }
+    case wTempoSync: p.i++; v3.W_ += "t"; return true;
+    case wLoopAmp: case wLoopPan: {
+        std::string a = arg(); if (!isnum(a)) return p.fail("how many points loop, 2 to 8");
+        p.i++; v3.W_ += std::string(k == wLoopAmp ? "r" : "p") + a; return true;
+    }
     case wTape: { std::string a = arg(); if (!parseMs(a, v)) return p.fail("a time such as 8000ms or 8s"); p.i++; v3.W_ += "m" + itos(v); return true; }
     // ---- v3 voice mode
     case wPoly: { p.i++; v3.hasN = true; if (!p.end() && isnum(p.peek())) { v3.N_ += "p" + p.peek(); p.i++; } else v3.N_ += "p"; return true; }
@@ -780,7 +813,12 @@ bool parseGene(P &p, std::vector<std::string> &toks, V3 &v3)
         v3.S_ += "g" + a + rnd; return true;
     }
     case wStrum: { std::string a = arg(); if (!parseMs(a, v)) return p.fail("a time such as 30ms"); p.i++; v3.S_ += "s" + itos(v); return true; }
-    case wChord: { std::string a = arg(); if (!isnum(a)) return p.fail("a note count such as 3"); p.i++; v3.S_ += "d" + a; return true; }
+    case wChord: {   // "chord 3": typed shorthand for degree thirds, scale 1 3 5 (the D token)
+        std::string a = arg(); long n = std::atol(a.c_str());
+        if (!isnum(a) || n < 1 || n > 8) return p.fail("a note count such as 3");
+        std::vector<std::string> d; for (long i = 0; i < n; i++) d.push_back(itos(1 + 2 * i));
+        p.i++; v3.D_ += "h" + join(d, ","); v3.hasD = true; return true;
+    }
     case wSpread: { std::string a = arg(), f; if (!parseFracRange(a, f) || f.find('~') != std::string::npos) return p.fail("a width such as 50%"); p.i++; v3.S_ += "w" + f; return true; }
     case wRand: {
         p.i++; unglue(p, {"pitch", "level", "lv", "late", "pan"}); p.i--;
@@ -829,6 +867,30 @@ bool parseGene(P &p, std::vector<std::string> &toks, V3 &v3)
         unglue(p);
         if (!p.end() && kwIs(p.peek(), wRoot)) { std::string rt = arg(); long n; if (!parseNote(rt, n)) return p.fail("a root note such as C3"); p.i++; v3.Z_ += "," + itos(n); }
         return true;
+    }
+    case wScale: {   // degree harmony in a layer: scale 1 3 5 -5 (the global "scale minor" is parsed by parseGlobal)
+        p.i++;
+        std::vector<std::string> up, dn;
+        while (!p.end()) {
+            std::string a = p.peek();
+            std::string nx = p.i + 1 < p.ws.size() ? p.ws[p.i + 1].w : "";
+            bool neg = !a.empty() && a[0] == '-';
+            std::string n = neg ? a.substr(1) : (!a.empty() && a[0] == '+' ? a.substr(1) : a);
+            if (!isnum(n) || std::atol(n.c_str()) < 1) break;
+            if (!neg && (kwIs(nx, wRec) || nx == "recorder" || nx == "recorders")) break;   // "4 recorders" is not a degree
+            (neg ? dn : up).push_back(itos(std::atol(n.c_str())));
+            p.i++;
+        }
+        if (up.empty() && dn.empty()) return p.fail("degrees such as 1 3 5 (a minus sign: below)");
+        v3.D_ += (up.empty() ? "" : "h" + join(up, ",")) + (dn.empty() ? "" : "b" + join(dn, ","));
+        v3.hasD = true;
+        return true;
+    }
+    case wInv: { std::string a = arg(); if (!isnum(a)) return p.fail("an inversion such as 1"); p.i++; v3.D_ += "i" + a; v3.hasD = true; return true; }
+    case wSnap: {
+        std::string a = arg(); int sn = a == "nearest" ? 1 : a == "down" ? 2 : a == "up" ? 3 : a == "off" ? 4 : 0;
+        if (!sn) return p.fail("nearest, down, up or off");
+        p.i++; v3.D_ += "s" + itos(sn); v3.hasD = true; return true;
     }
     case wGrains: {
         p.i++; v3.hasG = true;
@@ -906,13 +968,21 @@ bool parseGlobal(P &p, std::vector<std::string> &toks)
     case wGain: { std::string a = arg(); if (a.size() > 2 && a.compare(a.size() - 2, 2, "db") == 0) a.resize(a.size() - 2); size_t q = 0; if (!readInt(a, q, v) || q != a.size()) return p.fail("decibels such as -6dB"); p.i++; toks = {"G" + itos(v)}; return true; }
     case wKitOff: p.i++; toks = {"kd"}; return true;
     case wScale: {
-        std::string a = arg(); int sc = -1;
-        for (int i = 0; i < kScaleCount; i++) if (a == kScaleWords[i]) sc = i;
-        if (sc < 0) return p.fail("a scale such as major, minor, dorian, blues");
+        std::string a = arg(); int sc = libraryId(a);
+        if (sc < 0 && isnum(a) && a.size() <= 3) sc = std::atoi(a.c_str());
+        if (sc < 0) return p.fail("a scale such as major, minor, dorian, hirajoshi, yaman, rast, 19tet (or its number)");
         p.i++;
         std::string t = "q" + itos(sc);
         if (!p.end() && p.peek() == "root") p.i++;
         if (!p.end() && pitchClass(p.peek()) >= 0) { t += "r" + itos(pitchClass(p.peek())); p.i++; }
+        if (!p.end() && p.peek() == "mask") {
+            p.i++;
+            std::string m = p.end() ? "" : p.peek();
+            if (m.size() != 12 || m.find_first_not_of("01") != std::string::npos) return p.fail("12 digits 1 or 0, from the root up, such as 101011010101");
+            int v2 = 0; for (int b = 0; b < 12; b++) if (m[b] == '1') v2 |= 1 << b;
+            t += "n" + itos(v2 | 1); p.i++;
+        }
+        if (!p.end() && p.peek() == "edo") { p.i++; std::string n = p.end() ? "" : p.peek(); if (!isnum(n)) return p.fail("steps per octave, such as 19"); t += "e" + n; p.i++; }
         toks = {t}; return true;
     }
     case wSeq: {
@@ -1196,6 +1266,7 @@ bool fromRecipe(const std::string &text, std::string &dna, RecipeError *errOut)
         if (!v3.V_.empty()) L += "V" + v3.V_;
         if (!v3.Z_.empty()) L += "Z" + v3.Z_;
         if (v3.hasG) L += "G" + v3.G_;
+        if (v3.hasD) L += "D" + v3.D_;
         layers.push_back(L);
     }
     std::string d = join(layers, "/");

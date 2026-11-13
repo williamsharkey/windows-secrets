@@ -122,20 +122,9 @@ std::vector<Action> MonoPlan::keyUp(int note, double t, double soundingUntil)
 }
 
 // ---------------------------------------------------------------- 3. stacking and humanize
-std::vector<int> noteIntervals(const Stack &s, const std::vector<int> &H, uint32_t counter, Rng &rng, int scale, int rootPc, int note)
+std::vector<int> noteIntervals(const Stack &s, const std::vector<int> &H, uint32_t counter, Rng &rng)
 {
     std::vector<int> out;
-    if (s.diatonic >= 2) {
-        // the note's degree in the scale (rounded down to a scale note), then thirds above it
-        int sc = scale < 0 || scale >= kScaleCount ? 0 : scale;
-        int root = rootPc >= 0 ? rootPc : 0;
-        int rel = ((note - root) % 12 + 12) % 12;
-        int deg = 0;
-        for (int i = 0; i < kScales[sc].n; i++) if (kScales[sc].step[i] <= rel) deg = i;
-        int base = degreeToSemis(sc, deg);
-        for (int k = 0; k < s.diatonic; k++) out.push_back(degreeToSemis(sc, deg + 2 * k) - base);
-        return out;
-    }
     std::vector<int> h = H.empty() ? std::vector<int>{0} : H;
     if (s.roundRobin) return {h[counter % h.size()]};
     if (s.randomPick) return {h[(size_t)rng.in(0, (int)h.size() - 1)]};

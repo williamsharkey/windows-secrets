@@ -97,6 +97,9 @@ int main(int argc, char **argv)
             {"kick 2 recorders / hats 6 recorders | pad 36  pad 42 layer 2 cut 1  pad 46 layer 2 start 50% cut 1 fade 20ms", "kick#2/hats#6;k36k42l2c1k46l2s.5c1f20"},
             {"ding mono glide 80ms | scale minor root A seq 1/16 gate 70% swing 12% arp", "dingNmg80;q1r9xg70s12n2"},
             {"tada | m1 50%  m1 layer1 pan -100-100", "tada;m1=50m11Q-100,100"},
+            {"ding scale 1 3 5 -5  inv 1  snap up | scale minor root D mask 101101011010", "dingDh1,3,5b5i1s3;q1r2n1453"},
+            {"chord scale 1 3 5 7  4 recorders | scale 19tet", "chord#4Dh1,3,5,7;q31"},
+            {"ding delay 9s beat-delay 4/16 beat-gate 8/16 tempo-sync loop-amp 3 loop-pan 2", "dingWo9000b4g8tr3p2"},
             {"ding-xp faster, insert chimes-xp, mix tada-xp  8 recorders / ding echo / chord-xp slower", "dingxp>IchimesxpMtadaxp#8/dingE/chordxp<"},
         };
         for (auto &t : typed) {
@@ -122,7 +125,7 @@ int main(int argc, char **argv)
             "ding+-><ERCPX[]@30@t250IchimesMtada#4T-12H0,4,-12U3~9FL80O120Q-40Ja0,0.30,100.400,60Jp0,-50.500,50;A10D300S70R1500B12V80K48G-6m1=40m21L0,200m30Z50,200",
             "logon<#8Ws.2~.4l.1~.3v.5m8000NcGp.3j.1z60~120n40c25o20e3s.5bfv6w.7yYd8l6t12q20krSrxpg2xs30d3w.5Vw6,7f2,11s20,60Z36,60,48",
             "aNlg80kh/bNp4/cNm/dSg3/eZ0,127;q9r4xd8tg60s20n2p3a5o3l12b96fhkdk36k38l2y1,90k38l2i120y91,127k42l3j1e.9c1f20k47,53l4r50p100w3b15h70u2,3n1o2zm11W200,400m40J10,300",
-            "dingDl3Ws.2q9;A5E7z2",      // unknown tokens and subkeys (v4), kept verbatim
+            "dingBl3Ws.2q9;A5E7z2",      // unknown tokens and subkeys (v4), kept verbatim
             "", ";A5", "ding//chord", "-", "dingWs0", "a;x", "a;q0", "a;k36", "dingG", "dingNp",
         };
         for (auto s : all) roundTrip(s);
@@ -185,10 +188,10 @@ int main(int argc, char **argv)
                                "Idingxp", "Mtadaxp", "Ichimesxp", "Mchordxp"};
         const char *v3tok[] = {"Ws.2~.4l.1~.3", "We.9", "Wv.5m8000", "Np4", "Nm", "Nlg80", "Ncg200kh", "Sr", "Sx", "Sp",
                                "Sg2x", "Ss30", "Sd3", "Sw.5", "Yd8l6t12q20kr", "Vw8,6", "Vf2,12s30,80", "Z0,59,48",
-                               "Gp.5j.2z40~90n60c30o20e3s.5bv6w.7y", "Gf", "Ws.1u5", "G", "Z40,70", "Dl3"};
+                               "Gp.5j.2z40~90n60c30o20e3s.5bv6w.7y", "Gf", "Ws.1u5", "G", "Z40,70", "Bl3", "Dh1,3,5", "Dh1,3,5,7b5i1s2", "Db8s4", "Wo9000b4g8tr3p2"};
         const char *v2glob[] = {"A10", "D300", "S70", "R250", "B12", "V80", "K48", "G-6", "m1=40", "m21L0,200", "m30Z50,200", "R1500"};
         const char *v3glob[] = {"q0", "q9r4", "x", "xd8tg60s20n1p6a5o3l12b96fh", "m11W200,400", "m40J10,300", "xz2", "k36", "k42l3j2e.5c1f15",
-                                "k46l3j2s.5c1", "k60,72l2p100w5t20h40y1,90g", "kd", "k38u1,2z", "E7"};
+                                "k46l3j2s.5c1", "k60,72l2p100w5t20h40y1,90g", "kd", "k38u1,2z", "E7", "q20r2n2741", "q34", "q7e19", "q105r11"};
         const char *src[] = {"ding", "chord", "tada", "logon", "ringout", "", "dingxp", "chimesxp", "chordxp", "tadaxp"};
         Rng r(4242);
         int bad0 = fails;
@@ -199,12 +202,12 @@ int main(int argc, char **argv)
                 if (l) v3 += "/";
                 v3 += src[r.in(0, 9)];
                 int m = r.in(0, 8);
-                for (int i = 0; i < m; i++) v3 += r.in(0, 2) == 0 ? v3tok[r.in(0, 23)] : v2tok[r.in(0, 34)];
+                for (int i = 0; i < m; i++) v3 += r.in(0, 2) == 0 ? v3tok[r.in(0, 27)] : v2tok[r.in(0, 34)];
             }
             if (r.in(0, 1)) {
                 v3 += ";";
                 int m = r.in(0, 6);
-                for (int i = 0; i < m; i++) v3 += r.in(0, 2) == 0 ? v3glob[r.in(0, 13)] : v2glob[r.in(0, 11)];
+                for (int i = 0; i < m; i++) v3 += r.in(0, 2) == 0 ? v3glob[r.in(0, 17)] : v2glob[r.in(0, 11)];
             }
             roundTrip(v3);
             if (fails > bad0 + 10) break;

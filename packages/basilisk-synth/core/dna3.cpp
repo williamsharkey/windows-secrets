@@ -113,6 +113,12 @@ static void layerToken(const std::string &s, size_t &p, Layer3 &L)
             else if (k == 'l') L.w.l = readFracRange(s, p, kOne);
             else if (k == 'v') L.w.vel = clampi(readFrac(s, p), 0, kOne);
             else if (k == 'm') L.w.maxMs = clampi(readInt(s, p, 0), 0, 30000);
+            else if (k == 'o') L.w.offMs = clampi(readInt(s, p, 0), 0, 30000);
+            else if (k == 'b') L.w.beat16 = clampi(readInt(s, p, 0), 0, 1024);
+            else if (k == 'g') L.w.gate16 = clampi(readInt(s, p, 0), 0, 1024);
+            else if (k == 't') L.w.tempo = true;
+            else if (k == 'r') { int n = clampi(readInt(s, p, 2), 0, 8); L.w.loopA = n == 1 ? 2 : n; }
+            else if (k == 'p') { int n = clampi(readInt(s, p, 2), 0, 8); L.w.loopP = n == 1 ? 2 : n; }
             else known = false;
             break;
         case 'N':
@@ -128,7 +134,6 @@ static void layerToken(const std::string &s, size_t &p, Layer3 &L)
             else if (k == 'p') L.s.randomRec = true;
             else if (k == 'g') L.s.group = clampi(readInt(s, p, 1), 1, 8);
             else if (k == 's') L.s.strumMs = clampi(readInt(s, p, 0), 0, 500);
-            else if (k == 'd') L.s.diatonic = clampi(readInt(s, p, 3), 2, 5);
             else if (k == 'w') L.s.width = clampi(readFrac(s, p), 0, kOne);
             else known = false;
             break;
@@ -169,6 +174,15 @@ static void layerToken(const std::string &s, size_t &p, Layer3 &L)
             else if (k == 'y') L.g.sync = true;
             else known = false;
             break;
+        case 'D': {
+            auto list = [&](std::vector<int> &v) { v.clear(); do { if (p < s.size() && s[p] == ',') p++; int d = readInt(s, p, 0); if (d >= 1) v.push_back(clampi(d, 1, 64)); } while (p < s.size() && s[p] == ',' && v.size() < 8); };
+            if (k == 'h') list(L.d.up);
+            else if (k == 'b') list(L.d.down);
+            else if (k == 'i') L.d.inversion = clampi(readInt(s, p, 0), 0, 8);
+            else if (k == 's') L.d.snap = clampi(readInt(s, p, 0), 0, 4);
+            else known = false;
+            L.d.given = true;
+            break; }
         default: known = false;   // Z has no subkeys
         }
         if (known) skipVals(s, p);                         // a malformed value tail is dropped
@@ -181,7 +195,7 @@ static void globalToken(const std::string &s, size_t &p, Globals3 &g)
     char letter = s[p++];
     Pad pad;
     bool isPad = false;
-    if (letter == 'q') { g.hasQ = true; g.scale = clampi(readInt(s, p, 0), 0, kScaleCount - 1); }
+    if (letter == 'q') { g.hasQ = true; g.scale = clampi(readInt(s, p, 0), 0, 999); }
     else if (letter == 'k') {
         if (p < s.size() && isdigit((unsigned char)s[p])) {
             isPad = true;
@@ -198,6 +212,8 @@ static void globalToken(const std::string &s, size_t &p, Globals3 &g)
         bool known = true;
         if (letter == 'q') {
             if (k == 'r') g.rootPc = clampi(readInt(s, p, 0), 0, 11);
+            else if (k == 'n') g.mask = clampi(readInt(s, p, 0), 0, 4095) | 1;
+            else if (k == 'e') g.edo = clampi(readInt(s, p, 12), 5, 72);
             else known = false;
         } else if (letter == 'k' && !isPad) {
             if (k == 'd') g.kitOff = true;
@@ -394,6 +410,12 @@ std::string Layer3::tokens() const
         if (this->w.l.lo >= 0) w += "l" + rangeText(this->w.l);
         if (this->w.vel) w += "v" + fracText(this->w.vel);
         if (this->w.maxMs) w += "m" + std::to_string(this->w.maxMs);
+        if (this->w.offMs) w += "o" + std::to_string(this->w.offMs);
+        if (this->w.beat16) w += "b" + std::to_string(this->w.beat16);
+        if (this->w.gate16) w += "g" + std::to_string(this->w.gate16);
+        if (this->w.tempo) w += "t";
+        if (this->w.loopA) w += "r" + std::to_string(this->w.loopA);
+        if (this->w.loopP) w += "p" + std::to_string(this->w.loopP);
         w += extra[0];
         if (!w.empty()) t += "W" + w;
     }
@@ -410,7 +432,6 @@ std::string Layer3::tokens() const
         if (s.randomRec) x += "p";
         if (s.group) x += "g" + std::to_string(s.group) + (s.groupRandom ? "x" : "");
         if (s.strumMs) x += "s" + std::to_string(s.strumMs);
-        if (s.diatonic) x += "d" + std::to_string(s.diatonic);
         if (s.width) x += "w" + fracText(s.width);
         x += extra[2];
         if (!x.empty()) t += "S" + x;
@@ -454,13 +475,23 @@ std::string Layer3::tokens() const
         if (g.sync) x += "y";
         t += "G" + x + extra[6];     // a bare "G" stays: grains on with every default
     }
+    if (has[7]) {   // D: degree harmony
+        std::string x;
+        auto list = [](const std::vector<int> &v) { std::string o; for (size_t i = 0; i < v.size(); i++) o += (i ? "," : "") + std::to_string(v[i]); return o; };
+        if (!d.up.empty()) x += "h" + list(d.up);
+        if (!d.down.empty()) x += "b" + list(d.down);
+        if (d.inversion) x += "i" + std::to_string(d.inversion);
+        if (d.snap) x += "s" + std::to_string(d.snap);
+        x += extra[7];
+        if (!x.empty()) t += "D" + x;
+    }
     return t;
 }
 
 std::string Globals3::tokens() const
 {
     std::string t;
-    if (hasQ) t += "q" + std::to_string(scale) + (rootPc >= 0 ? "r" + std::to_string(rootPc) : "") + qExtra;
+    if (hasQ) t += "q" + std::to_string(scale) + (rootPc >= 0 ? "r" + std::to_string(rootPc) : "") + (mask ? "n" + std::to_string(mask) : "") + (edo ? "e" + std::to_string(edo) : "") + qExtra;
     if (x.on) {
         Seq d;
         t += "x";
