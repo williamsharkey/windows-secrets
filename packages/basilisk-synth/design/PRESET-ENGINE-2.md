@@ -230,8 +230,20 @@ Example (the owner's pad): `logon<#8Ws.2~.4l.1~.3;A400R900`. Each voice starts a
 The host sends a v3 line only to a guest that answered `hi 3`. A v2 guest gets v2 lines only. New fields go at the
 end of a line, so old parsers read the fields they know.
 
-`hi 3` is answered with `hi 3 <edition> <state> <caps>`. caps is a comma list, for example
-`win,rate,swap4,grain,grid,desk`. The host uses only the features in the list.
+`hi 3` is answered with `hi 3 <edition> <state> <caps>`. caps is a comma list. The host uses only the features
+in the list.
+
+| Cap | Meaning | Has it |
+|---|---|---|
+| `win` | `on` takes the window fields `<from> <to>` (section 4) | 3.11 (main 1b606d2) |
+| `desk` | `desk 0\|1` desktop mode (section 10) | 3.11 |
+| `rate` | `rate` on a sounding voice (section 5) | 3.11 |
+| `loop` | `lenv <layer> <a\|p> <pts> [<loop>]`: the guest loops the last `<loop>` points while held (`Wr`/`Wp`) | 3.11 |
+| `swap4` | XP's streamed handovers with a 4-handle cache (section 5.3, phase 0) | planned (XP) |
+| `grain`, `grid`, `kit`, `scale`, `pack` | grains, the mine board, kit mode, the keyboard strip's scale layouts, disc packs | planned |
+
+Today's 3.11 guest answers `win,desk,rate,loop`. `Wt`, `Wo`, `Wb` and `Wg` need no cap: the host (and `render311
+--bpm`) scales the times by the host tempo, and a beat gate becomes a stamped `off`.
 
 ### Host to guest
 
@@ -239,6 +251,7 @@ end of a line, so old parsers read the fields they know.
 |---|---|
 | `on <rec> <rate> <vol> <pan> <delay> <layer> <from> <to>` | v2 `on` plus a window in frames of the layer's buffer, `[from, to)`. `0 0` = the whole buffer. |
 | `rate <rec> <hz> [<glide_ms> [<regate>]]` | Change the rate of a sounding voice. Keep its position. glide_ms: ramp time. regate 1: the voice was in its release; hold it again at the sustain level. If the recorder is silent, ignore the line. |
+| `lenv <layer> <a\|p> <pts> [<loop>]` | v2 `lenv` plus a loop count (cap `loop`): loop the last `<loop>` points while the key is held (`Wr`, `Wp`). |
 | `lmod <layer> <wow_c> <wow_dhz> <flu_c> <flu_hz> <scoop_c> <scoop_ms>` | The layer's rate modulation after macros. The guest runs it for each voice (section 6.3). |
 | `lgrain <layer> <pos> <spray> <size_lo> <size_hi> <density> <cents> <oct> <shape> <scan> <flags> <streams> <width>` | The layer's grain settings after macros. Fractions in 1/10000. flags: b backward, f freeze, y sync. |
 | `tempo <bpm_x100> <ppq_x1000> <playing>` | The host transport, for beat-synced grains. At most 10 per second. |
