@@ -154,6 +154,11 @@ What changed for 1.2:
   restarts a machine that goes silent while awake (up to 3 times). QEMU inherits only its log handle. Temp folders
   of crashed hosts are removed at the next start.
 - **Forward compatibility:** unknown (later-version) DNA tokens are kept on save.
+- **Sharp screen:** the editor draws XP's 1024x768 screen with nearest-neighbour sampling at a whole scale only
+  (each XP pixel is exactly 1x1, 2x2, 3x3... device pixels). It opens at the integer scale nearest the system's
+  (100-150 % -> 1x, 175-200 % and Retina -> 2x), never goes below 1x, and when a host forces an in-between size it
+  centres the image at the largest whole scale on XP's panel colour. Checked in our host at 1024x768 (1x),
+  1500x1125 (1x, centred) and 2048x1536 (2x: every 2x2 block exact wherever the window was on screen).
 
 What changed for 1.1:
 - **A fast play path inside each Sound Recorder.** Sound Recorder's own Play took 30-300 ms before it opened the card.

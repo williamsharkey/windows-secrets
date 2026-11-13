@@ -194,6 +194,11 @@ Done and measured in the real machine (machine-3):
   117 -> 12 ms (std 168 -> 37-52), pitch mean 11.7 / max 150 -> 11 / 16-19 cents, repeat envelope corr 0.29-0.36
   -> 0.77-0.88 (not bit-identical), state bytes identical (sound 0.70-0.74), no orphans, no render timeouts;
   live program change still drops the notes in the ~1.5 s rebuild (3-6 notes).
+- Sharp editor (owner requirement): nearest-neighbour image (NVG_IMAGE_NEAREST), integer scale k from the pixel
+  size, centred on the panel colour at in-between sizes, min size 1x, opens at round(scale) (150 % -> 1x);
+  mouse mapping follows. Verified with bsynth-host --editor-size: 1x exact, 1500x1125 centred at 1x, 2048x1536 every
+  2x2 block identical (except under the taskbar). Not verified at real 150/200 % Windows scaling (would mean
+  changing the owner's display settings) or on a Retina screen (no editor-capable host on the Mac yet).
 - Not done: bit-identical renders (XP is not sample-accurate); Windows pitch ~10 cents mean (the playout drift
   trim modulates speed under load); the layer table from ui-layouts.md (the Layers list stays); .vstpreset files.
 

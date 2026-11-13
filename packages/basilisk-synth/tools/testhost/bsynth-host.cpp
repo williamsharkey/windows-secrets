@@ -85,6 +85,7 @@ int main(int argc, char **argv)
     double shotEvery = 0;       // --shots S: with --editor, a screenshot of the editor every S seconds
     std::string shotDir;
     bool editor = false, roundtrip = false, timing = false;
+    int edW = 0, edH = 0;       // --editor-size WxH: the host resizes the editor to this (pixels), as a DAW may
     std::vector<SetAt> sets;
     std::vector<UiAt> uis;
     for (int i = 3; i < argc; i++) {
@@ -103,6 +104,7 @@ int main(int argc, char **argv)
         else if (a == "--editor") editor = true;
         else if (a == "--shots") { shotEvery = atof(next().c_str()); shotDir = next(); }
         else if (a == "--state-roundtrip") roundtrip = true;
+        else if (a == "--editor-size") sscanf(next().c_str(), "%dx%d", &edW, &edH);
         else if (a == "--timing") timing = true;
         else if (a == "--set") {
             std::string v = next();
@@ -226,6 +228,15 @@ int main(int argc, char **argv)
             win = CreateWindowA("bsynthhost", "bsynth-host", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 40, 40, r.right - r.left, r.bottom - r.top, NULL, NULL, wc.hInstance, NULL);
             SetWindowPos(win, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
             tresult ar = view->attached(win, kPlatformTypeHWND);
+            if (edW > 0 && edH > 0) {
+                ViewRect nr(0, 0, edW, edH);
+                view->checkSizeConstraint(&nr);
+                RECT wr = {0, 0, nr.getWidth(), nr.getHeight()};
+                AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);
+                SetWindowPos(win, NULL, 0, 0, wr.right - wr.left, wr.bottom - wr.top, SWP_NOMOVE | SWP_NOZORDER);
+                view->onSize(&nr);
+                printf("editor resized by the host to %dx%d\n", nr.getWidth(), nr.getHeight());
+            }
             printf("editor %dx%d attached: %s\n", vr.getWidth(), vr.getHeight(), ar == kResultOk ? "ok" : "FAILED");
         }
     }

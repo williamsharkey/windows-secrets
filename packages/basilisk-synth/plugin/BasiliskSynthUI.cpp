@@ -3,6 +3,7 @@
 #include "DistrhoUI.hpp"
 #include "BasiliskSynthShared.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 
@@ -18,9 +19,13 @@ public:
     {
         host_ = synthHostOf(getPluginInstancePointer());
         loadSharedResources();
+        // XP's screen is drawn sharp: each XP pixel is an exact k x k block of device pixels (k = 1, 2, 3...), never
+        // resampled. The window opens at the integer scale nearest the system's (150 % -> 1x, 175-200 % -> 2x,
+        // Retina -> 2x) and never goes below 1x.
         const double s = getScaleFactor();
-        setGeometryConstraints((uint)(Machine::kW / 2 * s), (uint)(Machine::kH / 2 * s), true);
-        if (s != 1.0) setSize((uint)(Machine::kW * s), (uint)(Machine::kH * s));
+        const uint k = std::max(1, (int)std::floor(s + 0.25));
+        setGeometryConstraints(Machine::kW, Machine::kH, true);
+        if (k != 1) setSize(Machine::kW * k, Machine::kH * k);
         if (host_) host_->uiOpened();
         opened_ = Machine::now();
     }
@@ -49,14 +54,24 @@ protected:
     {
         const float W = getWidth(), H = getHeight();
         if (fresh_ && !rgba_.empty()) {
-            if (!img_.isValid()) img_ = createImageFromRGBA(Machine::kW, Machine::kH, rgba_.data(), 0);
+            // NVG_IMAGE_NEAREST (1 << 5): nearest-neighbour, never smoothed
+            if (!img_.isValid()) img_ = createImageFromRGBA(Machine::kW, Machine::kH, rgba_.data(), (ImageFlags)(1 << 5));
             else img_.update(rgba_.data());
             fresh_ = false;
         }
         if (shown_ && img_.isValid()) {
+            // the largest whole scale that fits, centred; a host's in-between size gets XP's panel colour around it
+            int k, ox, oy;
+            layout(k, ox, oy);
+            if (ox > 0 || oy > 0) {
+                beginPath();
+                rect(0, 0, W, H);
+                fillColor(236, 233, 216);
+                fill();
+            }
             beginPath();
-            rect(0, 0, W, H);
-            fillPaint(imagePattern(0, 0, W, H, 0, img_, 1.f));
+            rect(ox, oy, Machine::kW * k, Machine::kH * k);
+            fillPaint(imagePattern(ox, oy, Machine::kW * k, Machine::kH * k, 0, img_, 1.f));
             fill();
             return;
         }
@@ -118,10 +133,20 @@ protected:
     }
 
     // ------------------------------------------------------------------ mouse and keys go to XP
+    void layout(int &k, int &ox, int &oy) const
+    {
+        k = std::max(1, (int)std::min(getWidth() / Machine::kW, getHeight() / Machine::kH));
+        ox = std::max(0, ((int)getWidth() - Machine::kW * k) / 2);
+        oy = std::max(0, ((int)getHeight() - Machine::kH * k) / 2);
+    }
     bool toXP(double x, double y, int &vx, int &vy) const
     {
-        vx = (int)(x * Machine::kW / getWidth());
-        vy = (int)(y * Machine::kH / getHeight());
+        int k, ox, oy;
+        layout(k, ox, oy);
+        vx = (int)std::floor((x - ox) / k);
+        vy = (int)std::floor((y - oy) / k);
+        vx = vx < 0 ? 0 : vx >= Machine::kW ? Machine::kW - 1 : vx;
+        vy = vy < 0 ? 0 : vy >= Machine::kH ? Machine::kH - 1 : vy;
         return shown_;
     }
     bool onMouse(const MouseEvent &ev) override
