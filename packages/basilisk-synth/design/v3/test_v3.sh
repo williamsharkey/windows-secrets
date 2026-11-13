@@ -8,7 +8,7 @@ set -e
 here=$(cd "$(dirname "$0")" && pwd)
 out=${PE2_BUILD:-$HOME/pe2-build}; mkdir -p "$out"
 core=$here/../../core
-src="$here/dna3.cpp $here/engine3.cpp"
+src="$here/dna3.cpp $here/engine3.cpp $here/scales.cpp"
 rsrc="$src $here/recipe.cpp"
 presets=""
 if [ -n "$1" ]; then

@@ -3,6 +3,8 @@
 // "unknown tokens are kept"), defining CORE_KEEPS for the second.
 #include "dna3.h"
 #include "engine3.h"
+#include "scales.h"
+#include <cmath>
 #include "dna.h"
 #include <cstdio>
 #include <map>
@@ -111,9 +113,9 @@ int main()
     CHECK(canonical3("dingWs.2q9e.8") == "dingWs.2e.8q9");                 // an unknown subkey stays in its token
     CHECK(canonical3("ding;xg50z3") == "ding;xg50z3");
     CHECK(canonical3("ding;q2r4u7") == "ding;q2r4u7");
-    CHECK(strip3("dingDl3Ws.5") == "dingDl3");                            // a v4 layer token is not v3: left to core
+    CHECK(strip3("dingBl3Ws.5") == "dingBl3");                            // a v4 layer token is not v3: left to core
     if (CORE_KEEPS) {
-        CHECK(canonical3("dingDl3Ws.5") == "dingDl3Ws.5");                // ... and core keeps it
+        CHECK(canonical3("dingBl3Ws.5") == "dingBl3Ws.5");                // ... and core keeps it
         CHECK(canonical3("ding;A5E7q1") == "ding;A5E7q1");                 // a v4 global token, then q
     }
     // a v2 macro right after a v3 global token is not read as part of it (the 'm' boundary)
@@ -167,7 +169,7 @@ int main()
         const char *v2tok[] = {"+", "-", ">", "<", "E", "R", "[", "]", "C", "P", "X", "@30", "@t250", "Iding", "Mchimes",
                                "#4", "T-12", "H0,4,7", "U3~9", "F", "L80", "O120", "Q-40", "Ja0,0.30,100", "Jp0,-50.500,50"};
         const char *v3tok[] = {"Ws.2~.4l.1~.3", "We.9", "Wv.5m8000", "Np4", "Nm", "Nlg80", "Ncg200kh", "Sr", "Sx", "Sp",
-                               "Sg2x", "Ss30", "Sd3", "Sw.5", "Yd8l6t12q20kr", "Vw8,6", "Vf2,12s30,80", "Z0,59,48",
+                               "Sg2x", "Ss30", "Dh1,3,5b5i1s2", "Sw.5", "Yd8l6t12q20kr", "Vw8,6", "Vf2,12s30,80", "Z0,59,48",
                                "Gp.5j.2z40~90n60c30o20e3s.5bv6w.7y", "Gf", "Ws.1u5", "G", "Z40,70"};
         const char *v2glob[] = {"A10", "D300", "S70", "R250", "B12", "V80", "K48", "G-6", "m1=40", "m21L0,200", "m30Z50,200"};
         const char *v3glob[] = {"q0", "q9r4", "x", "xd8tg60s20n1p6a5o3l12b96fh", "k36", "k42l3j2e.5c1f15", "k46l3j2s.5c1", "k60,72l2p100w5t20h40y1,90g", "kd", "k38u1,2z", "m11W200,400", "m40J10,300", "xz2"};
@@ -273,18 +275,12 @@ int main()
         Stack rr; rr.roundRobin = true;
         Rng rng(3);
         std::vector<int> H{0, 12, 7};
-        CHECK(noteIntervals(rr, H, 0, rng, 0, -1, 60) == std::vector<int>{0});
-        CHECK(noteIntervals(rr, H, 1, rng, 0, -1, 60) == std::vector<int>{12});
-        CHECK(noteIntervals(rr, H, 5, rng, 0, -1, 60) == std::vector<int>{7});
+        CHECK(noteIntervals(rr, H, 0, rng) == std::vector<int>{0});
+        CHECK(noteIntervals(rr, H, 1, rng) == std::vector<int>{12});
+        CHECK(noteIntervals(rr, H, 5, rng) == std::vector<int>{7});
         Stack rx; rx.randomPick = true;
-        for (int i = 0; i < 50; i++) { auto v = noteIntervals(rx, H, i, rng, 0, -1, 60); CHECK(v.size() == 1 && (v[0] == 0 || v[0] == 12 || v[0] == 7)); }
-        Stack dia; dia.diatonic = 3;
-        CHECK(noteIntervals(dia, H, 0, rng, 0, 0, 60) == (std::vector<int>{0, 4, 7}));     // C in C major: C E G
-        CHECK(noteIntervals(dia, H, 0, rng, 0, 0, 62) == (std::vector<int>{0, 3, 7}));     // D: D F A
-        CHECK(noteIntervals(dia, H, 0, rng, 0, 0, 71) == (std::vector<int>{0, 3, 6}));     // B: B D F
-        dia.diatonic = 4;
-        CHECK(noteIntervals(dia, H, 0, rng, 1, 9, 69) == (std::vector<int>{0, 3, 7, 10})); // A minor: Am7
-        CHECK(noteIntervals(Stack(), H, 0, rng, 0, -1, 60) == H);
+        for (int i = 0; i < 50; i++) { auto v = noteIntervals(rx, H, i, rng); CHECK(v.size() == 1 && (v[0] == 0 || v[0] == 12 || v[0] == 7)); }
+        CHECK(noteIntervals(Stack(), H, 0, rng) == H);
         Stack sw; sw.width = 6000;
         CHECK(unisonPan(sw, 0, 3) == -60 && unisonPan(sw, 1, 3) == 0 && unisonPan(sw, 2, 3) == 60 && unisonPan(sw, 0, 1) == 0);
         Stack st; st.strumMs = 30;
@@ -407,6 +403,67 @@ int main()
         Dna3 a = parse3("dingVw6,6s15,80Gp.5bv6");
         CHECK(lmodLine(0, a.layers[0].v) == "lmod 0 6 6 0 0 15 80");
         CHECK(lgrainLine(0, a.layers[0].g) == "lgrain 0 5000 0 80 80 20 0 0 2 0 b 6 0");
+    }
+
+    // ---- keys, scales, degree harmony, remap (section 18)
+    {
+        auto near = [](const std::vector<double> &a, std::vector<double> b) { if (a.size() != b.size()) return false; for (size_t i = 0; i < a.size(); i++) if (std::fabs(a[i] - b[i]) > 0.01) return false; return true; };
+        Key k;                                         // default: C major, snap nearest
+        Degrees tri; tri.up = {1, 3, 5};
+        CHECK(near(voiceOffsets(k, tri, 60, SnapDefault), {0, 400, 700}));     // C: major
+        CHECK(near(voiceOffsets(k, tri, 62, SnapDefault), {0, 300, 700}));     // D: minor ("major on C, minor on D")
+        CHECK(near(voiceOffsets(k, tri, 71, SnapDefault), {0, 300, 600}));     // B: diminished
+        CHECK(near(voiceOffsets(k, tri, 61, SnapNearest), {-100, 300, 600}));  // C#: a tie snaps down to C
+        CHECK(near(voiceOffsets(k, tri, 61, SnapUp), {100, 400, 800}));        // ... or up to D (minor)
+        CHECK(near(voiceOffsets(k, tri, 61, SnapOff), {0, 400, 700}));         // ... or C# as played, C's shape
+        Degrees dn; dn.up = {1}; dn.down = {5};
+        CHECK(near(voiceOffsets(k, dn, 60, SnapDefault), {-700, 0}));          // the fifth degree below C is F
+        Degrees inv = tri; inv.inversion = 1;
+        CHECK(near(voiceOffsets(k, inv, 60, SnapDefault), {400, 700, 1200}));  // first inversion
+        Degrees sev; sev.up = {1, 3, 5, 7, 9};
+        CHECK(near(voiceOffsets(k, sev, 60, SnapDefault), {0, 400, 700, 1100, 1400}));   // Cmaj9
+        Key a; libraryTuning(libraryId("minor"), a.tuning); a.root = 9;          // A minor
+        CHECK(near(voiceOffsets(a, tri, 69, SnapDefault), {0, 300, 700}) && near(voiceOffsets(a, tri, 72, SnapDefault), {0, 400, 700}));
+        // 16-TET: on the normal keys each note snaps to the nearest of the 75-cent steps; with remap, keys walk steps
+        Key e; e.tuning = edo(16);
+        CHECK(std::fabs(playKey(e, 61, SnapNearest).cents - 6075) < 0.01);
+        e.remap = true; e.anchor = 60;
+        CHECK(std::fabs(playKey(e, 61, 0).cents - 6075) < 0.01 && std::fabs(playKey(e, 76, 0).cents - 7200) < 0.01 && std::fabs(playKey(e, 59, 0).cents - 5925) < 0.01);
+        Degrees st; st.up = {1, 6};                                              // in remap, degrees count steps
+        CHECK(near(voiceOffsets(e, st, 60, 0), {0, 375}));
+        // masks, library, labels
+        Tuning maj; libraryTuning(0, maj);
+        CHECK(tuningMask(maj) == 2741 && maskTuning(2741).size() == 7 && tuningMask(edo(16)) == 0 && maj.twelve());
+        CHECK(scaleLibrary().size() >= 37 && libraryId("hirajoshi") == 14 && libraryId("31tet") == 34);
+        for (auto &ls : scaleLibrary()) { Tuning t; CHECK(libraryTuning(ls.id, t) && !t.steps.empty() && t.steps[0] == 0); }
+        CHECK(stepLabel(k, 4, 2) == "Pa" && stepLabel(k, 0, 3) == "C" && stepLabel(k, 9, 1) == "3");
+        Key bh; libraryTuning(libraryId("bhairav"), bh.tuning);
+        CHECK(stepLabel(bh, 1, 2) == "re" && stepLabel(e, 1, 2) == "75");
+        // Scala
+        Tuning sc;
+        std::string err;
+        CHECK(parseScl("! pelog.scl\n!\nA pelog-like scale\n 5\n!\n 120.0\n 270.0\n 540.0\n 670.\n 2/1\n", sc, &err));
+        CHECK(sc.size() == 5 && std::fabs(sc.steps[2] - 270) < 1e-9 && std::fabs(sc.period - 1200) < 1e-9 && sc.name == "A pelog-like scale");
+        CHECK(parseScl("bohlen-pierce\n13\n" "27/25\n25/21\n9/7\n7/5\n75/49\n5/3\n9/5\n49/25\n15/7\n7/3\n63/25\n25/9\n3/1\n", sc) && sc.size() == 13 && std::fabs(sc.period - 1901.955) < 0.01);
+        CHECK(!parseScl("x\n3\n100.0\nfoo\n2/1\n", sc, &err) && !err.empty());
+        CHECK(parseKbm("0\n0\n127\n62\n69\n440.0\n0\n", sc) && sc.refNote == 62);
+        CHECK(!parseKbm("12\n0\n127\n60\n69\n440.0\n12\n0\n2\n1\n", sc, &err));
+        Tuning rt; CHECK(tuningFromText(tuningText(maj), rt) && rt.steps == maj.steps && tuningText(rt) == tuningText(maj));
+        // the DNA side: D and q
+        CHECK(canonical3("dingDh1,3,5b5i1s2") == "dingDh1,3,5b5i1s2" && strip3("dingDh1,3,5b5i1s2") == "ding");
+        Dna3 dd = parse3("dingDh1,3,5i1");
+        CHECK(dd.layers[0].d.up.size() == 3 && dd.layers[0].d.inversion == 1);
+        CHECK(canonical3("a;q7r2n2741e16") == "a;q7r2n2741e16" && parse3("a;q34").g.scale == 34 && parse3("a;q0n5").g.mask == 5);
+        // pitch resolution (section 18.6): XP opens a handle at a whole number of Hz; 3.11's rate is 16.16 fixed point
+        double worstXp = 0, worst311 = 0;
+        for (int c = -2400; c <= 2400; c += 7) {
+            double ratio = std::pow(2.0, c / 1200.0);
+            double hz = std::round(22050 * ratio), q = std::round(ratio * 65536) / 65536;
+            worstXp = std::max(worstXp, std::fabs(1200 * std::log2(hz / 22050) - c));
+            worst311 = std::max(worst311, std::fabs(1200 * std::log2(q) - c));
+        }
+        std::printf("pitch quantization, -2..+2 octaves: XP (whole Hz at 22050) %.3f cents, 3.11 (16.16) %.3f cents\n", worstXp, worst311);
+        CHECK(worstXp < 0.2 && worst311 < 0.06);
     }
 
     std::printf("%d checks: %s\n", checks, fails ? "FAILED" : "ok");

@@ -12,7 +12,7 @@
 //
 // Lossless: fromRecipe(toRecipe(d)) has exactly the v3 canonical form of d (canonical3), for every form except a
 // short form that had to be cut, and so has fromRecipe(prettify(toRecipe(d))). Every v1, v2 and v3 token has
-// words; a token without words (a later version's) is written verbatim in braces, {Dl3}, and kept.
+// words; a token without words (a later version's) is written verbatim in braces, {Bl3}, and kept.
 // Parsing is lenient: any case, the pretty symbols or their ASCII, any of the three spellings of a word, commas
 // and · as spaces. Errors name the word and its position.
 #pragma once

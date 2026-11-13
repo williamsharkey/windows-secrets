@@ -2,7 +2,7 @@
 // Status: tested code, ready to fold into core/voices.cpp once both v1.2 releases ship.
 //   - window():      one voice's playback window in frames (wish 1)
 //   - MonoPlan:      what a mono / legato / continue layer sends for each key event (wish 2)
-//   - stacking:      round-robin / random intervals, diatonic chords, strum, layer groups, humanize (wish 2)
+//   - stacking:      round-robin / random intervals, strum, layer groups, humanize (wish 2); degree chords: scales.h
 //   - zones, rate modulation (wow, flutter, scoop) and its XP staircase (wish 3)
 //   - Grid:          the mine-grid board as the guest reports it, and the notes of one step (wish 6)
 //   - wire:          the v3 guest-link lines (section 3)
@@ -62,8 +62,8 @@ private:
 
 // ---------------------------------------------------------------- 3. stacking and humanize
 // The harmony intervals one note sounds: all of H (default), the next one (Sr, counter = notes so far), one at
-// random (Sx), or a diatonic chord of Sd notes in thirds of scale q from the note (replaces H).
-std::vector<int> noteIntervals(const Stack &s, const std::vector<int> &H, uint32_t counter, Rng &rng, int scale, int rootPc, int note);
+// random (Sx). Degree harmony (the D token) is resolved by scales.h voiceOffsets, in cents.
+std::vector<int> noteIntervals(const Stack &s, const std::vector<int> &H, uint32_t counter, Rng &rng);
 // Strum: the start delay of harmony voice k (the v2 `on` delay field).
 inline int strumDelayMs(const Stack &s, int k) { return s.strumMs * k; }
 // Unison voice u of n: pan offset (-100..100) when Sw spreads them.

@@ -35,6 +35,7 @@ Contents:
 15. Wish 8: kit mode (percussion kits)
 16. The Library tab: sound packs as real discs
 17. Recipes: the DNA in words
+18. Keys, scales and tunings: degree harmony, custom scales, keyboard remap
 
 ---
 
@@ -110,7 +111,7 @@ revision is listed at the end of this section.
 - 7: XP grains are mixed into streams; the 3.11 grain rate is about 100 per second (it was expected to be low).
 - 8: layout fitted to the v1.2 keyboard strip and Macros frame; tab ids and `tab` lines; the `vis` collision.
 - 9: both boards confirmed in memory; 3.1 Beginner is 8 x 8; clicks are posted.
-- 15 (kit mode), 16 (packs as real discs) and 17 (recipes: the DNA in words) are new owner requests; the owner decision "Windows images are built
+- 15 (kit mode), 16 (packs as real discs), 17 (recipes: the DNA in words) and 18 (keys, scales and tunings) are new owner requests; the owner decision "Windows images are built
   in" is in the status lines.
 - The prototypes are now tested code in `design/v3/` (13).
 
@@ -203,7 +204,8 @@ Example: `m1 1 W 200,400` written as `m11W200,400` moves layer 1's start from 0.
 |---|---|---|
 | `W` window | `s`F[`~`F] start, `e`F[`~`F] end, `l`F[`~`F] length, `v`F velocity to start, `m`ms real-time cap | Section 4 |
 | `N` voice mode | `p`[n] poly (at most n notes), `m` mono, `l` legato, `c` continue, `g`ms glide, `k`(`n`\|`h`\|`l`) note priority | Section 5 |
-| `S` stack | `r` round-robin, `x` random interval, `p` random recorder, `g`n[`x`] layer group, `s`ms strum, `d`n diatonic chord, `w`F unison pan width | Section 5 |
+| `S` stack | `r` round-robin, `x` random interval, `p` random recorder, `g`n[`x`] layer group, `s`ms strum, `w`F unison pan width (the earlier `d`n chord moved to `D`) | Section 5 |
+| `D` degree harmony | `h`d,d,... degrees above (1 = the note), `b`d,... degrees below, `i`n inversion, `s`n out-of-scale snap (1 nearest, 2 down, 3 up, 4 off) | Section 18 |
 | `Y` random | `d`c detune +-cents, `l`% level down, `t`ms late start, `q`n pan +-, `k` seed per key, `r` seed per recorder | Sections 5, 6 |
 | `V` rate modulation | `w`c`,`dHz wow (depth cents, rate in 0.1 Hz), `f`c`,`Hz flutter, `s`c`,`ms start scoop | Section 6 |
 | `Z` key zone | lo`,`hi[`,`root] (MIDI notes) | Section 6 |
@@ -215,7 +217,7 @@ F is a fraction as in rule 6. A range `a~b` means "a new random value in [a, b] 
 
 | Token | Subkeys | Meaning |
 |---|---|---|
-| `q`id[`r`pc] | id 0-12, `r` root pitch class 0-11 | Scale for `Sd` and the sequencer: 0 major, 1 minor, 2 dorian, 3 phrygian, 4 lydian, 5 mixolydian, 6 locrian, 7 harmonic minor, 8 major pentatonic, 9 minor pentatonic, 10 whole tone, 11 blues, 12 chromatic. Without `r`, the root is the lowest held note. |
+| `q`id[`r`pc][`n`mask][`e`n] | id 0-999 (section 18.3: 0-99 built in, 100-899 pack discs, 900-915 the user's slots), `r` root pitch class 0-11, `n` 12-note mask, `e` n-TET | The preset's **suggested** key and scale (section 18.2). The plugin's Key and Scale parameters win unless the user turns on "Use the preset's scale". The sequencer and `D` use the effective key. |
 | `x` | `d`n[`t`] division (4, 8, 16, 32, `t` triplet), `g`% gate, `s`% swing, `n`n kind (0 field, 1 count, 2 arp), `p`n notes per step, `a`n auto-dig cells, `o`n octaves, `l`n steps used, `b`bpm free tempo, `f` free run, `h` latch | Section 9 |
 
 Example (the owner's pad): `logon<#8Ws.2~.4l.1~.3;A400R900`. Each voice starts at a random point from 0.2 to
@@ -406,7 +408,7 @@ v2 already has `H` (harmony intervals) and `U` (unison count and spread). v3 add
 | `Sp` | Random recorder pick: a random free recorder of the pool, not the oldest. With `Yr` each recorder has its own small level and detune offset, so the pick is audible. |
 | `Sg1` / `Sg1x` | Layer group: the layers with the same group number take turns, one layer per note. `x`: a random layer of the group. This is round-robin samples: for example `ding>#4Sg1/ding>E#4Sg1`. On a v2 machine both layers sound together. |
 | `Ss30` | Strum: harmony voice k starts k x 30 ms later. This uses the v2 `on` delay field, so it needs no new wire. |
-| `Sd3` | A 3-note chord in thirds of the global scale `q`. It replaces `H`. `Sd4` is a seventh chord. |
+| `Dh1,3,5` | A chord of scale degrees in the current key (section 18): major on C, minor on D in C major. It replaces `H` for that layer. `Dh1,3,5,7` is a seventh chord. |
 | `Sw.6` | Unison voices spread over +-0.6 of the pan range. |
 | `Yd6` | Random detune of +-6 cents for each voice. |
 
@@ -609,7 +611,7 @@ The whole editor is the inside of Windows. So the tabs are real Windows controls
  | [x] Round-robin  [ ] Random interval         |
  | [ ] Random recorder   Group: [ 0 ]^v [ ] Rnd |
  | Strum    0 |---[]-----------| 200 ms  30 ms  |
- | Chord in scale: [ Off v]                     |
+ | Degrees: [ Off v]  (see the Scales tab)      |
  +- Unison -------------------------------------+
  | Voices [ 2 ]^v  Detune |--[]-----| +-9 cents |
  | Pan width |------[]----| 0.60                |
@@ -752,7 +754,8 @@ Manager's Performance page. The game draws its own cells. Nothing is copied.
 | mine shown after a loss | that column plays one octave up (a fill) |
 | wrong flag shown after a loss | that column is a rest |
 
-- The scale comes from `q`. The root is the lowest held note; with no note held, it is `K`. A 7-note scale over
+- The scale is the effective key of section 18.2 (the Key and Scale parameters, or the preset's `q`). The root
+  is the lowest held note (or the key's root with `qr`); with no note held, it is `K`. A 7-note scale over
   `xo2` octaves gives 14 lanes; rows above that wrap.
 - The board size is the pattern size. Beginner: 9 steps x 9 notes on XP, **8 x 8 on 3.1**. Intermediate: 16 x 16.
   Expert: 30 x 16.
@@ -967,7 +970,8 @@ Measurement list (kept for reference):
 | File | Content |
 |---|---|
 | `dna3.h`, `dna3.cpp` | The v3 tokens (W N S Y V Z G, q x k, v3 macro letters): `parse3()`, `canonical3()` (core's canonical form plus the v3 tokens; idempotent; equals core's for v1/v2), `strip3()` (the v2 subset), `applyMacros3()`. Unknown subkeys are kept. |
-| `engine3.h`, `engine3.cpp` | `window()`, `bakeSteps()`, `MonoPlan` (poly, mono, mono + portamento, legato, continue; priority; repeated note-ons), stacking (`noteIntervals` for `Sr Sx Sd`, `unisonPan`, `strumDelayMs`, `groupPick`, `humanize`, `voiceSeed`), zones and `modCents`/`xpStaircase` (wow, flutter, scoop; the XP swap plan), `Grid`/`stepNotes`/`stepPpq` (the mine grid), kit mode (`pickPad`, `padCents`, `padGain`, `chokeTargets`, `padWindow`), and the wire (`parseHi3`, `onLine`, `rateLine`, `lmodLine`, `lgrainLine`). |
+| `engine3.h`, `engine3.cpp` | `window()`, `bakeSteps()`, `MonoPlan` (poly, mono, mono + portamento, legato, continue; priority; repeated note-ons), stacking (`noteIntervals` for `Sr Sx`, `unisonPan`, `strumDelayMs`, `groupPick`, `humanize`, `voiceSeed`), zones and `modCents`/`xpStaircase` (wow, flutter, scoop; the XP swap plan), `Grid`/`stepNotes`/`stepPpq` (the mine grid), kit mode (`pickPad`, `padCents`, `padGain`, `chokeTargets`, `padWindow`), and the wire (`parseHi3`, `onLine`, `rateLine`, `lmodLine`, `lgrainLine`). |
+| `scales.h`, `scales.cpp` | Keys, scales and tunings (section 18): the library (37 scales), masks, n-TET, just intonation, Scala `.scl`/`.kbm` import, the compact state text, `playKey` (snap), `degreeVoices`/`voiceOffsets` (degree harmony, inversions), the keyboard remap and the strip's labels. |
 | `recipe.h`, `recipe.cpp` | Recipes (section 17): `toRecipe` (multi-line, one-line, short) and `fromRecipe` (lenient, errors with position). |
 | `test_v3.cpp`, `test_recipe.cpp`, `test_v3.sh`, `collect_presets.py` | About 29,900 v3 checks and 61,900 recipe checks (every real preset and 20,000 fuzz strings in 3 forms). `test_v3.sh [main checkout] [aesthetic-presets.json]` runs them against this branch's core and against `main`'s core (DNA.md 5.7). |
 
@@ -1012,7 +1016,7 @@ Status on `main` (2026-11-13) of the notes in the first version of this spec, an
    one tap at 150 ms x0.25 and never lengthens the buffer; `<E>` gives a 75 ms echo (the doc says longer), `>E<`
    300 ms; `<>` is bit-identical (no filter); `><` and `>><<` darken with strong aliasing. That doc's `W`N wow gene
    is `Yd` here (v3 `W` is the window), its strum `Hs` is `Ss`, its round robin `Y` is `Sg` groups, its `Ja!3` loop
-   and `O`Nb beat offset need sign-free v3 tokens (proposal: a `D` layer token, `Dl3` loop the last 3 points, `Db4`
+   and `O`Nb beat offset need sign-free v3 tokens (proposal: an `A` layer token, `Al3` loop the last 3 points, `Ab4`
    offset in 1/16 beats).
 
 ---
@@ -1407,3 +1411,184 @@ Kits are far longer than any line (every pad is a phrase): show "kit, N pads" in
 `recipe.cpp` depends on `dna3` (`canonical3`, `parse3`) and core. It folds into core with v3; the plugin's DNA box
 accepts either form (a text with a space is a recipe, else a DNA), and the editor can show the multi-line form
 beside the DNA. Help: topic `recipe` (context 20) on `feat/help-and-site`, written in the ASCII form.
+
+---
+
+## 18. Keys, scales and tunings: degree harmony, custom scales, keyboard remap
+
+Owner request (2026-11-13): a mode like a fixed chord (`H0,4,7`), but choosing its intervals from a selected key
+("major when you hit C and minor when you hit D"); a key and scale picker that does not clutter the UI; custom
+scales (note toggles as in pitch-correction plugins, exotic and non-12 tunings, Scala files); a keyboard remap that
+walks the scale's steps from MIDI or the PC keys; and a keyboard strip that adapts its layout and labels. BASILISK
+16 implements it first (1.3.0); the XP edition follows with the Scales tab.
+
+**Status:** code and tests in `design/v3/scales.{h,cpp}` (library, masks, n-TET, JI, Scala import, snapping,
+degree chords, inversions, remap, labels), the `D` and extended `q` tokens in `dna3`, recipe words in `recipe.cpp`.
+This section reconciles with 2.2-2.3 (tokens), 5.4 (stacking: the old `Sd` chord moved to `D`) and 9 (the
+sequencer uses the same effective key).
+
+### 18.1 Degree harmony: the `D` layer token
+
+| Example | Recipe | Meaning |
+|---|---|---|
+| `Dh1,3,5` | `scale 1 3 5` | the note and the 3rd and 5th degree above it, in the current key: C major on C, D minor on D, B diminished on B |
+| `Dh1,3,5,7,9` | `scale 1 3 5 7 9` | a ninth chord; degrees count past the octave (8 = the octave in a 7-note scale) |
+| `Dh1b5` | `scale 1 -5` | the note and the 5th degree below it (C with the F below, in C major) |
+| `Dh1,3,5i1` | `scale 1 3 5  inv 1` | first inversion: the lowest chord note goes up a period; `i2`, `i3` ... |
+| `Dh1,3,5s4` | `scale 1 3 5  snap off` | out-of-scale notes pass through (see below) |
+
+- **Why `D` and not `Hd...`:** v2's core parses `H` and then drops the rest, so a v2 save of `Hd1,3,5` would become
+  `H0` (checked). `D` is an unknown uppercase token to v2, kept verbatim (DNA.md 5.7). In v3 canonical order it
+  comes last: W N S Y V Z G D.
+- A layer with `D` uses it instead of `H`. It works with everything that takes intervals: unison (`U`) spreads
+  each degree voice; round-robin (`Sr`) and random (`Sx`) pick among the degree voices; strum (`Ss`) delays them in
+  order, low to high; humanize (`Y`) applies per voice.
+- **Out-of-scale played notes** (`s`, else the plugin's Snap parameter, default nearest):
+
+| `s` | Recipe | A played note that is not in the scale |
+|---|---|---|
+| 1 | `snap nearest` | moves to the nearest scale step (a tie goes down); the chord is built there |
+| 2 | `snap down` | moves to the step below |
+| 3 | `snap up` | moves to the step above |
+| 4 | `snap off` | sounds as played (chromatic); the chord takes the shape of the step below, moved with it |
+
+  Measured in the tests: in C major, C# with `snap nearest` plays the C major chord, with `snap up` D minor, with
+  `snap off` a C major shape on C#.
+- The old `Sd`n subkey (a chord in thirds) is gone; `chord 3` in a typed recipe is shorthand for `scale 1 3 5`.
+
+### 18.2 The global key and scale
+
+- **Plugin parameters** (automatable, saved in the state, used for batch renders): **Key** (C..B, default C),
+  **Scale** (the library list plus 16 user slots, default Major), **Use the preset's scale** (off), **Snap**
+  (nearest / down / up / off, default nearest), **Remap keys** (off), **Remap anchor** (MIDI 0-127, default 60),
+  **Key labels** (none / degrees / sargam / names / cents).
+- **The effective key:** if "Use the preset's scale" is on and the DNA has `q`, the DNA's key; else the
+  parameters. A preset can suggest a scale (`q`) without changing the user's choice; the Scale box shows the
+  suggestion as a hint ("preset: D dorian") and one click adopts it.
+- Changing the key changes new notes only; sounding voices keep their pitch (no retune; a later option with `rate`).
+- **UI:** two compact drop-down list combo boxes beside the DNA box, real Windows controls on both editions:
+  `Key [C v]` and `Scale [Major v]` (`COMBOBOX` with `CBS_DROPDOWNLIST`; on 3.11 the 3.1 combo box). XP: in the DNA
+  frame, right of the Apply button. 3.11: in the DNA row, the DNA edit field shrinks by 140 px more. The Scale list
+  is grouped by category with separator rows ("-- Japanese --").
+
+### 18.3 Scales and tunings
+
+**Representation.** A tuning is the steps of one period in cents from the root (`steps[0] = 0`, ascending), the
+period in cents (1200 for an octave), a reference note and frequency (from `.kbm`). In the state:
+`t1;name;period;c1,c2,...;refNote;refHz` (cents to 3 decimals; `tuningText`). In a DNA only short forms fit:
+`q`id (a library or disc scale), `n`mask (a 12-note subset), `e`n (n-TET).
+
+**The library** (ids are stable; 0-12 were already the sequencer's):
+
+| Ids | Scales |
+|---|---|
+| 0-13 | major (Ionian), minor (Aeolian), dorian, phrygian, lydian, mixolydian, locrian, harmonic minor, major pentatonic, minor pentatonic, whole tone, blues, chromatic, melodic minor |
+| 14-18 | Japanese: hirajoshi, in (miyako-bushi), yo, kumoi, iwato |
+| 19-25 | raga pitch sets: Bhairav, Yaman, Kafi, Todi, Bhairavi, Marwa, Purvi |
+| 26-29 | maqam approximations in 24-TET: Rast, Bayati, Hijaz, Saba |
+| 30-34 | 16-, 19-, 22-, 24-, 31-TET |
+| 35-36 | just intonation: 5-limit major, 5-limit chromatic (12 notes) |
+| 100-899 | scales on the library or pack discs (`\SCALES\*.scl` and a `SCALES.TSV` with the ids) |
+| 900-915 | the user's slots (masks, imports); in the state, not portable: a preset that uses one also stores the tuning text in its state |
+
+Caveats written in the help and the picker: a raga is more than its pitch set (its movement, gamaka and phrases
+are not modelled; Yaman and Lydian share a pitch set); maqam intervals vary by region and performer (the
+24-TET values are approximations); just intonation is fixed to its root (changing the key moves the whole table).
+
+**12-note masks.** The Scales tab has 12 toggles, one per semitone from the root (as in pitch-correction plugins).
+Any mask of a 12-TET scale is a scale (`n` in the DNA: bit k = k semitones above the root; the root is always on).
+Recipe: `scale minor root D mask 101101011010` (12 digits from the root up).
+
+**Scala import.** `.scl` (description, count, pitches in cents with a "." or ratios, the last one is the period) and
+`.kbm` (the anchor and the reference; only linear maps, because the remap walks every step). The import button on
+the plugin's own menu (a host file dialog: files outside Windows) puts the tuning in a user slot; in Windows the
+Scales tab opens the disc's `\SCALES` folder. Errors name the line (`parseScl`, `parseKbm`).
+
+**Pitch resolution (computed; measure TS1 before 1.3.0).** XP opens a handle at a whole number of Hz: at 22,050 Hz
+the worst quantization over +-2 octaves is 0.157 cents. 3.11's `BSC_SETRATE` is 16.16 fixed point: 0.045 cents.
+The smallest step in the library (31-TET) is 38.7 cents, so both are far finer than any scale. The emulated output
+paths are coarser: XP measured within 6 cents in 1.0's scale test (PROGRESS.md), so on XP a 31-TET step is
+reliable, a 1-2 cent JI comma difference is not. TS1 measures every library tuning's steps on both editions.
+
+### 18.4 Keyboard remap
+
+- With **Remap keys** on, consecutive keys walk consecutive scale steps, on MIDI and on the PC keys (`a w s e d f
+  t g y h u j k`: 13 keys, 13 steps). The anchor key (default 60) plays the root in the anchor's octave; key
+  anchor + s plays step s (white and black keys alike). A 16-TET scale: 16 keys per period; a pentatonic scale: 5.
+- Without remap, a non-12 tuning is played from the normal keys by snapping each key's 12-TET pitch to the nearest
+  step (a pitch-correction style mapping); 12-note scales snap as in 18.1.
+- **Degrees** count scale steps in both modes (in 16-TET `scale 1 6` is the note and 5 steps up).
+- **Bend** stays in semitones x 100 cents (the DNA's `B`), independent of the tuning; a bend does not snap.
+- **The sequencer** (section 9): rows are scale steps of the effective key, so a 16-TET key gives 16 rows per
+  period.
+- **Kit mode** (section 15) ignores the key: pads are fixed notes (a pitched pad with `p` follows semitones).
+
+### 18.5 The adaptive keyboard strip
+
+The keyboard strip of DNA.md 5.4 (XP: 37 BUTTON keys C3-C6; 3.11: five drawn octaves) re-lays itself out for the key.
+Everything it shows is ASCII.
+
+| Situation | Layout |
+|---|---|
+| 12-note scale, no remap | the piano layout; out-of-scale keys are dimmed (XP: `EnableWindow(FALSE)` greys the BUTTON key, and it still plays: snap); in-scale keys may carry labels |
+| remap, or a non-12 tuning | a linear row: the same number of equal-width step keys as the strip has keys (37 on XP, 61 on 3.11), one per step from the anchor; each period's first step is marked (a pushed-in look, `BM_SETSTATE`, and a heavier frame) |
+| labels | none; degree numbers (1 2 3 ...); sargam (Sa re Re ga Ga ma Ma' Pa dha Dha ni Ni: lowercase = komal, Ma' = tivra); note names (C C# D ...); cents (0 75 150 ...). Non-12 tunings show cents (or degree numbers). A label is drawn only where the key is at least 14 px wide; else every period's first step only |
+
+The strip keeps its frame, height and controls (bend, mod, Hold, PC keys); only the key row changes. On XP, the 37
+key buttons are re-positioned (`SetWindowPos`), not re-created; on 3.11 the drawing routine uses the layout.
+
+### 18.6 The Scales tab
+
+On XP the Scales tab (id `scales`) of section 8; on 3.11 a page of the push-button tabs once tabs land:
+
+```
+ [ Main | Voices | Playback | Grains | Sequencer | Kit | Scales | Library ]
+ Key [ D  v]   Scale [ Dorian            v]   [x] Use the preset's scale (preset: D dorian)
+ +- Notes (from the root) ------------------------------------------------+
+ | [1][b2][2][b3][3][4][#4][5][b6][6][b7][7]   (12 push-like toggles)       |
+ +- Library ---------------------------------------------------------------+
+ | Category [Japanese v]   Scale [Hirajoshi v]   [Import .scl...]  [Save to slot 1 v] |
+ +- Keyboard --------------------------------------------------------------+
+ | [x] Remap keys to scale steps   Anchor [C4 v]   Labels [Degrees v]      |
+ | Out-of-scale notes: (o) nearest ( ) down ( ) up ( ) as played           |
+ +-------------------------------------------------------------------------+
+```
+
+3.11: the same controls in the panel page (y 580-682): push buttons for the 12 toggles (`BM_SETSTATE` for on),
+COMBOBOXes, check boxes and radio buttons.
+
+### 18.7 Wire and DAW behaviour
+
+- **The host resolves every pitch.** For each voice the host computes cents (key, scale, degrees, snap, remap,
+  transpose, unison, bend) and sends the rate, as today. So a batch render with the same DNA, parameters and state
+  is the same on every run and on both editions. The guest never computes a scale.
+- host -> guest `key <root> <id> <n> <period> <c1,c2,...> <remap> <anchor> <labels> <mask>`: what the strip and the
+  Scales tab show (sent on change; the steps are listed so a user slot or a disc scale needs nothing in Windows).
+- guest -> host `key <root> <id>` / `keymask <mask>` / `keyopt <remap> <anchor> <labels> <snap>`: the visitor
+  changed it in Windows; the host sets the parameters (so the DAW sees and automates them).
+- `key <note> <vel>` from the strip keeps sending MIDI note numbers (anchor + step in remap), so the host maps the
+  strip and MIDI the same way.
+- Automating Key or Scale changes the next notes; parameter changes are sample-accurate in the host, like notes.
+
+### 18.8 Recipe words
+
+`scale 1 3 5 -5` (D degrees; a minus sign = below), `inv 1`, `snap nearest|down|up|off` in a layer; `scale minor
+root D`, `mask 101101011010`, `edo 19`, a library word (`hirajoshi`, `yaman`, `rast`, `19tet`, `just-major`) or a
+number in the globals. All ASCII; round-trip tested with the rest of section 17.
+
+### 18.9 Tests and measurements
+
+- `test_v3.cpp`: degree chords in C major (C major, D minor, B diminished), Cmaj9, A minor, snapping (nearest tie,
+  up, off), below degrees, inversions, 16-TET snap and remap (61 -> 6075 cents, 76 -> one period up), degrees in
+  steps, masks (major = 2741), all 37 library scales, labels (sargam, names, cents), Scala `.scl` (cents, ratios,
+  a 13-step tritave, an error) and `.kbm` (linear only), the state text, `D` and `q` canonical forms, and the
+  quantization figures above.
+- `test_recipe.cpp`: `D` and extended `q` in the 20,000-string fuzz and typed recipes
+  (`ding scale 1 3 5 -5  inv 1  snap up | scale minor root D mask 101101011010`).
+- **TS1 (before 1.3.0):** each library tuning's steps on both editions (a sine source, every step over two
+  periods): error in cents. **TS2:** the strip's linear layout at 61 steps (3.11) and 37 (XP): legible labels, and
+  the GDI cost on 3.11.
+
+Effort: **M** for the 3.11 lane in 1.3.0 (host resolution and parameters S, Key/Scale combos S, strip layouts M,
+Scales page M); the XP Scales tab follows its tab frame. Risk: low for the sound (host-side, rates only); medium for
+the 3.11 strip and page (GDI and space).

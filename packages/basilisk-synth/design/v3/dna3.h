@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include "scales.h"
 
 namespace bsynth3 {
 
@@ -46,7 +47,6 @@ struct Stack {
     int group = 0;            // Sg<n> layers with the same n take turns, one layer per note
     bool groupRandom = false; // Sg<n>x: a random layer of the group
     int strumMs = 0;          // Ss<ms> harmony voice k starts k*ms later
-    int diatonic = 0;         // Sd<n> n-note chord in thirds of the global scale q (replaces H)
     int width = 0;            // Sw<frac> unison voices spread over +-width of the pan range
 };
 // Y: per-note random (humanize) and its seed (owner wishes 2, 3)
@@ -79,13 +79,14 @@ struct Grain {
     bool sync = false;        // Gy  density counts grains per beat, on the beat grid
 };
 // The v3 layer letters, in canonical order.
-constexpr char kLayerLetters[] = "WNSYVZG";
+// D (degree harmony, section 18) is the eighth letter; S lost its old d subkey (a chord in thirds) to it
+constexpr char kLayerLetters[] = "WNSYVZGD";
 struct Layer3 {
-    Window w; VoiceMode n; Stack s; Human y; Mod v; Zone z; Grain g;
-    bool has[7] = {false, false, false, false, false, false, false};   // a token of letter kLayerLetters[i] was read
-    std::string extra[7];      // unknown subkeys of each letter, verbatim, in written order
+    Window w; VoiceMode n; Stack s; Human y; Mod v; Zone z; Grain g; Degrees d;
+    bool has[8] = {false, false, false, false, false, false, false, false};   // a token of letter kLayerLetters[i] was read
+    std::string extra[8];      // unknown subkeys of each letter, verbatim, in written order
     bool grains() const { return has[6]; }
-    std::string tokens() const; // canonical v3 tokens of this layer, in letter order W N S Y V Z G
+    std::string tokens() const; // canonical v3 tokens of this layer, in letter order W N S Y V Z G D
 };
 // q: scale; x: the mine-grid sequencer (owner wish 6)
 struct Seq {
@@ -125,7 +126,8 @@ struct Pad {
     std::string token() const;
 };
 struct Globals3 {
-    int scale = -1, rootPc = -1;          // q<id>[r<pc>]
+    int scale = -1, rootPc = -1;          // q<id>[r<pc>][n<mask>][e<edo>]: the preset's suggested key (section 18.2)
+    int mask = 0, edo = 0;                // n: a 12-note mask (bit k = k semitones above the root); e: n-TET
     Seq x;
     std::vector<MacroMap3> maps;
     std::vector<Pad> pads;                // k tokens, in written order
