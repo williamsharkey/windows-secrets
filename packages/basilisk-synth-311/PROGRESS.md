@@ -20,10 +20,10 @@
 | 6 Grains | |
 | 7 Mine sequencer, Library tab | |
 | Scales (section 18) | after phase 2 |
-| Calculator digit keys 0-F (strip numbers) | queued: Scientific + Hex Calculator donor keys, flown in during assembly (< 6 s total), a thin layer-colour bar; a click auditions the slot |
-| R1 Recording: ADC | code done, untested: card `BSC_IN*` (40-47) with the Hermite converter, source = the host's input or the card's own output; BSYNTH.DRV `widMessage` (one input, WIM_DATA from the timer); bshm v2 input ring; the plugin's stereo sidechain input, stamped on the DAC clock like the notes; `rsrc side/self` |
+| Calculator digit keys 0-F (strip numbers) | DONE locally: at startup a real Calculator (Scientific, Hex) is opened and its keys 0-F copied from the screen (they are painted by Calculator, not windows; it has no pressed look, so pressed = the same pixels with the two colours swapped); hidden until its turn, it appears above BASILISK 16 and the keys fly to the strips (save-under drawing, no trails), then it closes. Owner-drawn buttons at native size (39x28) at x 4 (strips moved to x 44), a 3-px layer-colour bar left of each; held = audition at the root rate, pressed while the recorder sounds. Assembly 5.74 s on Windows' clock (recorder gap 160 -> 140 ms to make room). 8x crops: corners transparent to the panel grey, no clipped glyphs. |
+| R1 Recording: ADC | DONE locally (TR4: File > New records 22050 Hz 8-bit mono; a fed 1 kHz tone plays back at 1000.0 Hz, clicks every 24000 samples exactly): card `BSC_IN*` (40-47) with the Hermite converter, source = the host's input or the card's own output; BSYNTH.DRV `widMessage` (one input, WIM_DATA from the timer); bshm v2 input ring; the plugin's stereo sidechain input, stamped on the DAC clock like the notes; `rsrc side/self` |
 | R2-R5 Recording | queued (RECORDING.md section 6) |
-| Pointer drags | DONE (a9bd56b): a held scroll-bar thumb follows a drag (BSYNTH.DRV feeds the host pointer through USER's mouse_event at interrupt time). SOUNDREC's Seek bar ignores clicks and drags: open |
+| Pointer drags | DONE (a9bd56b): a held scroll-bar thumb follows a drag (BSYNTH.DRV feeds the host pointer through USER's mouse_event at interrupt time); checked in the plugin through BasiliskHost (Macro 1 to 69, Macro 3 past the end to 100). SOUNDREC's Seek bar ignores clicks and drags: open |
 
 ## v1.2.1: fixes from the demo renders (tools/sndrec-demo)
 

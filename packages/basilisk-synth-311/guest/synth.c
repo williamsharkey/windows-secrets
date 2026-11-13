@@ -20,7 +20,7 @@
 #define NR 16
 #define ROW0 66      /* the header above: title, envelope, presets, library, pan, offset, envelope points */
 #define ROWH 30
-#define STRIPX 40
+#define STRIPX 44   /* left of the strips: a layer-colour bar (0..2) and the Calculator digit key (4..42) */
 #define STRIPW 924
 #define STRIPH 30   /* (a strip shorter than its row leaves gaps that make every repaint of the window slow) */
 #define PANEL 550
@@ -535,6 +535,7 @@ static void signature(char *out)    /* what Sound Recorder has to do: sources, s
 static char pendingDna[1100];
 static BOOL assembling;
 static int poll_host(void);
+static void dig_watch(void);
 static void layer_replies(void)
 {
     int i;
@@ -672,6 +673,7 @@ static void watch_ends(void)
     if (timeGetTime() - last < 25) return;
     last = timeGetTime();
     watch_rec();
+    dig_watch();
     for (r = 0; r < NR; r++) if (rplay[AR(r)] && !is_playing(AR(r))) { rplay[AR(r)] = FALSE; say("end %d", r); }
 }
 
@@ -1585,10 +1587,159 @@ static void step_fly(int r, long ms)   /* ms since this recorder's turn began */
 
 static int poll_host(void);
 
+/* ================================================================ the strip numbers: Calculator's digit keys
+   The recorders are 0..F (DNA.md numbers them 0..15). Windows 3.1's Calculator paints its keys itself (they are not
+   windows), so its keys are taken as pictures: at startup a real Calculator is opened in Scientific view and Hex,
+   and each key 0-F is copied from the screen as Calculator drew it. Calculator has no pressed look (a real press
+   changes only its display), so the pressed key is the same picture with its two colours swapped (the key's colour
+   fills it, the digit is white). In the assembly the keys fly from Calculator to the strips, and Calculator closes.
+   Each is then an owner-drawn button: pressed while held (an audition: the recorder plays at its root rate) and
+   while its recorder sounds. */
+#define NDIG 16
+#define DIGW 39
+#define DIGH 28
+#define DIGX 4
+#define ID_DIG 1300
+#define CALCX 272
+#define CALCY 214
+static HWND hCalc, hDig[NDIG];
+static HBITMAP digUp[NDIG], digDn[NDIG], digMask;
+static BOOL digShown[NDIG], digHeld[NDIG];
+static const int digKX[NDIG] = {221, 221, 264, 307, 221, 264, 307, 221, 264, 307, 221, 264, 307, 350, 393, 436};   /* Calculator's client */
+static const int digKY[NDIG] = {216, 180, 180, 180, 144, 144, 144, 108, 108, 108, 252, 252, 252, 252, 252, 252};
+static HWND launch(const char *cmd, int show);
+
+static void wait_ms(DWORD ms) { DWORD t = timeGetTime(); while (timeGetTime() - t < ms) pump(); }
+static void calc_prepare(void)
+{
+    HDC sdc, mdc, kdc; POINT o = {0, 0}; int i; COLORREF bg;
+    hCalc = launch("CALC.EXE", SW_SHOWNOACTIVATE);
+    if (!hCalc) { logf_("no Calculator: plain numbers"); return; }
+    SendMessage(hCalc, WM_COMMAND, 305, 0L);                                                 /* View > Scientific */
+    SendMessage(hCalc, WM_COMMAND, 124, MAKELPARAM(GetDlgItem(hCalc, 124), BN_CLICKED));      /* Hex */
+    SetWindowPos(hCalc, HWND_TOP, CALCX, CALCY, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
+    UpdateWindow(hCalc); pump();
+    ClientToScreen(hCalc, &o);
+    sdc = GetDC(NULL); mdc = CreateCompatibleDC(sdc); kdc = CreateCompatibleDC(sdc);
+    for (i = 0; i < NDIG; i++) {
+        int x = o.x + digKX[i], y = o.y + digKY[i], px, py;
+        COLORREF ink = RGB(0, 0, 255);
+        digUp[i] = CreateCompatibleBitmap(sdc, DIGW, DIGH); digDn[i] = CreateCompatibleBitmap(sdc, DIGW, DIGH);
+        SelectObject(mdc, digUp[i]); BitBlt(mdc, 0, 0, DIGW, DIGH, sdc, x, y, SRCCOPY);
+        SelectObject(kdc, digDn[i]); BitBlt(kdc, 0, 0, DIGW, DIGH, mdc, 0, 0, SRCCOPY);
+        ink = GetPixel(mdc, DIGW / 2, 0);   /* the key's outline colour */
+        for (py = 1; py < DIGH - 1; py++) for (px = 1; px < DIGW - 1; px++) {
+            COLORREF c = GetPixel(mdc, px, py);
+            if (c == RGB(255, 255, 255)) SetPixel(kdc, px, py, ink);
+            else if (c == ink) {   /* inside the outline: the digit's pixels (the outline itself stays) */
+                BOOL inside = GetPixel(mdc, px - 1, py) == RGB(255, 255, 255) || GetPixel(mdc, px + 1, py) == RGB(255, 255, 255) ||
+                              GetPixel(mdc, px, py - 1) == RGB(255, 255, 255) || GetPixel(mdc, px, py + 1) == RGB(255, 255, 255);
+                if (inside && px > 3 && px < DIGW - 4 && py > 2 && py < DIGH - 3) SetPixel(kdc, px, py, RGB(255, 255, 255));
+            }
+        }
+    }
+    UpdateWindow(hCalc);
+    ShowWindow(hCalc, SW_HIDE);   /* until its turn in the assembly (it would only be in the way of the recorders) */
+    /* the mask: 1 where Calculator's background shows (outside the rounded key), from the corner's colour */
+    SelectObject(mdc, digUp[0]); bg = GetPixel(mdc, 0, 0);
+    digMask = CreateBitmap(DIGW, DIGH, 1, 1, NULL);
+    SelectObject(kdc, digMask); SetBkColor(mdc, bg); BitBlt(kdc, 0, 0, DIGW, DIGH, mdc, 0, 0, SRCCOPY);
+    for (i = 0; i < NDIG; i++) {   /* the pictures with that background black, for SRCAND + SRCPAINT */
+        SelectObject(mdc, digUp[i]); BitBlt(mdc, 0, 0, DIGW, DIGH, kdc, 0, 0, 0x00220326L);
+        SelectObject(mdc, digDn[i]); BitBlt(mdc, 0, 0, DIGW, DIGH, kdc, 0, 0, 0x00220326L);
+    }
+    DeleteDC(kdc); DeleteDC(mdc); ReleaseDC(NULL, sdc);
+    logf_("Calculator keys taken");
+}
+static void dig_draw(HDC dc, int i, BOOL down, int x, int y)
+{
+    HDC mdc = CreateCompatibleDC(dc);
+    RECT b; HBRUSH face = CreateSolidBrush(GetSysColor(COLOR_BTNFACE));
+    SetRect(&b, x, y, x + DIGW, y + DIGH); FillRect(dc, &b, face); DeleteObject(face);
+    if (digMask) {
+        COLORREF tc = SetTextColor(dc, RGB(0, 0, 0)), bc = SetBkColor(dc, RGB(255, 255, 255));
+        HBITMAP ob = SelectObject(mdc, digMask);
+        BitBlt(dc, x, y, DIGW, DIGH, mdc, 0, 0, SRCAND);
+        SelectObject(mdc, down ? digDn[i] : digUp[i]); BitBlt(dc, x, y, DIGW, DIGH, mdc, 0, 0, SRCPAINT);
+        SelectObject(mdc, ob);
+        SetTextColor(dc, tc); SetBkColor(dc, bc);
+    } else {   /* no Calculator: the digit as text */
+        char t[2]; t[0] = "0123456789ABCDEF"[i]; t[1] = 0;
+        SetBkMode(dc, TRANSPARENT);
+        DrawText(dc, t, 1, &b, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    }
+    DeleteDC(mdc);
+}
+static void dig_drawitem(const DRAWITEMSTRUCT FAR *d)
+{
+    int i = d->CtlID - ID_DIG;
+    BOOL sel = (d->itemState & ODS_SELECTED) != 0;
+    if (i < 0 || i >= NDIG) return;
+    if (sel != digHeld[i] && assembled) {   /* held: an audition of this recorder at its root rate */
+        digHeld[i] = sel;
+        if (sel) play_rec(i, 0, (DWORD)recRate[AR(i)], 65535, 0, -1, 0);
+        else stop_rec(AR(i), 0, envR);
+    }
+    dig_draw(d->hDC, i, sel || rplay[AR(i)], d->rcItem.left, d->rcItem.top);
+}
+static void dig_watch(void)   /* down while its recorder sounds */
+{
+    int i;
+    for (i = 0; i < NDIG; i++) if (hDig[i] && digShown[i] != (rplay[AR(i)] != 0)) { digShown[i] = rplay[AR(i)] != 0; InvalidateRect(hDig[i], NULL, FALSE); }
+}
+/* the keys leave Calculator one by one and fly to their strips (drawn on the screen with save-under: nothing else
+   paints meanwhile); then they become buttons of BASILISK 16 and Calculator closes */
+static void calc_fly(void)
+{
+    POINT o = {0, 0}; DWORD t0; int i, done = 0;
+    HDC sdc, mdc, sav; HBITMAP under[NDIG]; POINT at[NDIG]; BOOL shown[NDIG];
+    if (hCalc && digMask) {
+        SetWindowPos(hCalc, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);   /* Calculator's turn */
+        UpdateWindow(hCalc);
+        { DWORD t1 = timeGetTime(); while (timeGetTime() - t1 < 120) poll_host(); }
+        ClientToScreen(hCalc, &o);
+        sdc = GetDC(NULL); mdc = CreateCompatibleDC(sdc); sav = CreateCompatibleDC(sdc);
+        for (i = 0; i < NDIG; i++) { under[i] = CreateCompatibleBitmap(sdc, DIGW, DIGH); shown[i] = FALSE; }
+        t0 = timeGetTime();
+        while (done < NDIG) {
+            long t = (long)(timeGetTime() - t0);
+            done = 0;
+            for (i = NDIG - 1; i >= 0; i--)   /* last drawn first undone: what each saved is under the later ones */
+                if (shown[i]) { SelectObject(sav, under[i]); BitBlt(sdc, at[i].x, at[i].y, DIGW, DIGH, sav, 0, 0, SRCCOPY); shown[i] = FALSE; }
+            for (i = 0; i < NDIG; i++) {
+                long f = ease((t - i * 10) * 1000 / 170);
+                POINT d; RECT a, q;
+                d.x = DIGX; d.y = ROW0 + i * ROWH + 1; ClientToScreen(hMain, &d);
+                SetRect(&a, o.x + digKX[i], o.y + digKY[i], o.x + digKX[i] + DIGW, o.y + digKY[i] + DIGH);
+                lerp_rect(&q, &a, d.x, d.y, DIGW, DIGH, f);
+                if (f >= 1000) { done++; if (!hDig[i]) hDig[i] = CreateWindow("BUTTON", "", WS_CHILD | WS_VISIBLE | BS_OWNERDRAW, DIGX, ROW0 + i * ROWH + 1, DIGW, DIGH, hMain, (HMENU)(ID_DIG + i), hInst, NULL); continue; }
+                at[i].x = q.left; at[i].y = q.top;
+                SelectObject(sav, under[i]); BitBlt(sav, 0, 0, DIGW, DIGH, sdc, q.left, q.top, SRCCOPY);
+                {   /* the key over what is there: mask, then picture */
+                    COLORREF tc = SetTextColor(sdc, RGB(0, 0, 0)), bc = SetBkColor(sdc, RGB(255, 255, 255));
+                    SelectObject(mdc, digMask); BitBlt(sdc, q.left, q.top, DIGW, DIGH, mdc, 0, 0, SRCAND);
+                    SelectObject(mdc, digUp[i]); BitBlt(sdc, q.left, q.top, DIGW, DIGH, mdc, 0, 0, SRCPAINT);
+                    SetTextColor(sdc, tc); SetBkColor(sdc, bc);
+                }
+                shown[i] = TRUE;
+            }
+            if (hDig[NDIG - 1]) break;
+            poll_host();
+        }
+        for (i = 0; i < NDIG; i++) if (shown[i]) { SelectObject(sav, under[i]); BitBlt(sdc, at[i].x, at[i].y, DIGW, DIGH, sav, 0, 0, SRCCOPY); }
+        DeleteDC(sav); DeleteDC(mdc); ReleaseDC(NULL, sdc);
+        for (i = 0; i < NDIG; i++) DeleteObject(under[i]);
+        PostMessage(hCalc, WM_CLOSE, 0, 0L);
+        hCalc = NULL;
+    }
+    for (i = 0; i < NDIG; i++) if (!hDig[i])
+        hDig[i] = CreateWindow("BUTTON", "", WS_CHILD | WS_VISIBLE | BS_OWNERDRAW, DIGX, ROW0 + i * ROWH + 1, DIGW, DIGH, hMain, (HMENU)(ID_DIG + i), hInst, NULL);
+}
+
 static void assemble(void)
 {
     DWORD t0 = timeGetTime(), tStart = t0; long stage[6];
-    long gap = 160, first_extra = 200;   /* the first recorder is shown slowly; the rest follow */
+    long gap = 140, first_extra = 200;   /* the first recorder is shown slowly; the rest follow (140: room for the Calculator keys in 6 s) */
     int r, done = 0;
     RECT full;
     assembling = TRUE;
@@ -1709,6 +1860,8 @@ static void assemble(void)
         stage[5] = timeGetTime() - tStart;
         keyboard_show();
     }
+    calc_fly();
+    stage[5] = timeGetTime() - tStart;   /* (keys made: now with the Calculator's) */
     assembled = TRUE;
     assembling = FALSE;
     for (r = 0; r < NR; r++) layout_strip(r);
@@ -1821,6 +1974,12 @@ static void host_line(char *s)
         if (w) { GetClassName(w, cls, sizeof cls); GetWindowText(w, txt, sizeof txt); }
         say("who %d %d %04x %s id %d en %d '%s' parent %04x", pt.x, pt.y, (WORD)w, cls, w ? GetDlgCtrlID(w) : 0, w ? IsWindowEnabled(w) : 0, txt, w ? (WORD)GetParent(w) : 0);
     }
+    else if (!strcmp(s, "calcshow")) {   /* test aid: a Calculator in Scientific + Hex where the donor one was */
+        HWND c = launch("CALC.EXE", SW_SHOWNOACTIVATE);
+        if (c) { SendMessage(c, WM_COMMAND, 305, 0L); SendMessage(c, WM_COMMAND, 124, MAKELPARAM(GetDlgItem(c, 124), BN_CLICKED));
+                 SetWindowPos(c, HWND_TOPMOST, CALCX, CALCY, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE); UpdateWindow(c); }
+        say("calcshow %d", c != NULL);
+    }
     else if (!strcmp(s, "panic")) { int r; for (r = 0; r < NALL; r++) stop_rec(r, 0, 5); }
     else if (!strcmp(s, "env")) {
         sscanf(rest, "%d %d %d %d", &envA, &envD, &envS, &envR);
@@ -1920,22 +2079,15 @@ static void paint(HWND h)
             TextOut(dc, STRIPX + hx[i] - LOWORD(e), ROW0 - 15, t, lstrlen(t));
         }
     }
-    for (i = 0; i < NR; i++) {
-        char t[4]; RECT b;
+    for (i = 0; i < NR; i++) {   /* left of each Calculator key: its layer's colour (yellow while it is built) */
+        RECT b;
         int y = ROW0 + i * ROWH;
         int l = rlayer[AR(i)];
-        SetRect(&b, 6, y + 3, 34, y + 27);
-        if (i == buildRow) {
-            HBRUSH br = CreateSolidBrush(RGB(255, 255, 0));
+        SetRect(&b, 0, y + 3, 3, y + 27);
+        if (i == buildRow || l >= 0) {
+            HBRUSH br = CreateSolidBrush(i == buildRow ? RGB(255, 255, 0) : layerColor[l % NL]);
             FillRect(dc, &b, br); DeleteObject(br);
-            SetTextColor(dc, RGB(0, 0, 0));
-        } else if (l >= 0) {
-            HBRUSH br = CreateSolidBrush(layerColor[l % NL]);
-            FillRect(dc, &b, br); DeleteObject(br);
-            SetTextColor(dc, RGB(255, 255, 255));
-        } else SetTextColor(dc, RGB(0, 0, 0));
-        wsprintf(t, "%d", i + 1);
-        DrawText(dc, t, -1, &b, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+        }
     }
     SetTextColor(dc, RGB(0, 0, 0));
 
@@ -1948,6 +2100,7 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
     switch (m) {
     case WM_PAINT: paint(h); return 0;
+    case WM_DRAWITEM: if (w >= ID_DIG && w < ID_DIG + NDIG) { dig_drawitem((const DRAWITEMSTRUCT FAR *)l); return TRUE; } break;
     case WM_HSCROLL: panel_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
     case WM_VSCROLL: kb_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
     case WM_KEYDOWN: case WM_KEYUP: if (computer_key(w, l, m == WM_KEYDOWN)) return 0; break;
@@ -2023,6 +2176,7 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
     /* the desktop as the visitor first sees it: Program Manager out of the way, a clock, sixteen recorders */
     pm = FindWindow("Progman", NULL);
     if (pm) ShowWindow(pm, SW_MINIMIZE);
+    calc_prepare();   /* first, while nothing covers it: its keys' pictures (the recorders open over it) */
     hClock = launch("CLOCK.EXE", SW_SHOWNOACTIVATE);
     hEnvRec = launch("SOUNDREC.EXE C:\\WINDOWS\\DING.WAV", SW_SHOWNOACTIVATE);
     if (hEnvRec) MoveWindow(hEnvRec, 700, 560, 320, 186, TRUE);

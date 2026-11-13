@@ -4,7 +4,11 @@ A VST3 instrument for Windows and macOS, and an Audio Unit for macOS. Each insta
 Workgroups 3.11.
 
 1. **Assembly.** Sixteen real Sound Recorders (SOUNDREC.EXE) lose their menus and title bars. They line up into
-   one synthesizer, alongside Clock and a panel. This takes under 6 seconds after the plugin loads.
+   one synthesizer, alongside Clock and a panel. The strips are numbered 0 to F with Calculator's own hex keys: a
+   real Calculator opens in Scientific view and Hex, and its keys fly to the strips. Windows 3.1's Calculator
+   paints its keys itself (they are not windows), so these are pixel copies of what it drew; it has no pressed look,
+   so a key pressed (an audition of its recorder) or sounding is the same picture with its two colours swapped.
+   All this takes under 6 seconds after the plugin loads.
 2. **Notes.** Every MIDI note is played by Sound Recorder. The plugin picks a recorder, Windows presses its Play
    button, and Sound Recorder's own buffer goes out through the emulated sound card into your DAW.
 3. **The DNA.** A DNA string is a recipe of Sound Recorder commands (`../basilisk-synth/DNA.md`), for example
