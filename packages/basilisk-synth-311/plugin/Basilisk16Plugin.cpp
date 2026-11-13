@@ -15,6 +15,7 @@
 #include "../../basilisk-synth/core/voices.h"
 #include "../../basilisk-synth/core/proto.h"
 #include "../../basilisk-synth/core/state.h"
+#include "V3Voice.h"
 
 #include <atomic>
 #include <chrono>
@@ -341,10 +342,21 @@ protected:
                 voices_.bend(v / 8192.0);
                 if (!fromWindows) show(2, 0, (uint32_t)(v + 8192));
             }
+            const int vel = (st == 0x90 && e.size >= 3) ? d[2] : 100;
             for (int k = 0; k < n; k++) {
-                char line[64];
+                char line[128];
                 uint64_t when = at;
                 if (c[k].kind == Cmd::On && c[k].delayMs) { when += (uint64_t)c[k].delayMs * 48; c[k].delayMs = 0; }   // O: a later stamp
+                if (c[k].kind == Cmd::On && capWin_) {   // DNA v3: the window and the per-note random draws (V3Voice.h)
+                    const int L = c[k].layer < kMaxLayers ? c[k].layer : 0;
+                    const b16v3::NoteOut o = b16v3::note(d3Audio_, c[k], vel, when, audioFrames_[L], audioRate_[L], v3Counter_, d3Salt_, true);
+                    std::snprintf(line, sizeof line, "%s", o.on);
+                    when = o.when;
+                    sendLine(line, ++nextId_, when);
+                    if (o.cut) { char cl[32]; std::snprintf(cl, sizeof cl, "cut %d", c[k].rec); sendLine(cl, ++nextId_, o.cutAt); }
+                    if (trace_) std::fprintf(trace_, "%s id %u at %llu%s\n", line, nextId_, (unsigned long long)when, o.cut ? " (window cut stamped)" : "");
+                    continue;
+                }
                 proto::cmd(line, sizeof line, c[k]);
                 line[std::strlen(line) - 1] = 0;
                 sendLine(line, ++nextId_, when);
@@ -406,6 +418,10 @@ private:
     std::string cacheSig_;
     bool dnaToGuest_ = false;          // worker: send the DNA to Windows
     bool lenvDirty_ = false;           // worker: send every layer's effective envelopes (lenv)
+    // DNA v3 (design/PRESET-ENGINE-2.md): the parsed v3 tokens, beside the v2 DNA (same staging); the guest's caps
+    bsynth3::Dna3 d3ForAudio_, stagedD3_;
+    uint32_t d3SaltPending_ = 0;
+    std::atomic<bool> capWin_{false}, capDesk_{false};
     double lastParamEdit_ = 0;         // a DNA from parameters (automation) goes to Windows 300 ms after the last change
     // the keyboard strip: Windows' keys to the audio thread, and incoming MIDI to Windows' keys (single producer and
     // consumer each, no locks: kind << 24 | a << 16 | b for the display, status << 16 | data1 << 8 | data2 for keys)
@@ -446,6 +462,9 @@ private:
 
     // audio thread only
     Voices voices_{48000};
+    bsynth3::Dna3 d3Audio_;
+    uint32_t d3Salt_ = 0, v3Counter_ = 0;
+    uint32_t audioFrames_[kMaxLayers] = {}; int audioRate_[kMaxLayers] = {};
     double dacPos_ = -1, anchor_ = -1, lastRatio_ = 0;
     uint64_t hcount_ = 0;
     bool wasPlaying_ = false;
@@ -475,6 +494,13 @@ private:
     {
         const Dna written = parse(text);
         Dna d = effective(written);      // what sounds: the macros' mapped genes, Z-scaled envelopes, N repeats
+        bsynth3::Dna3 d3;                // DNA v3: its tokens, with the v3 macro maps applied (mod wheel included)
+        {
+            int mac[4];
+            for (int k = 0; k < 4; k++) mac[k] = written.g.macro[k];
+            mac[0] = std::min(100, mac[0] + (cc1_.load() * 100 + 63) / 127);
+            d3 = bsynth3::applyMacros3(bsynth3::parse3(written.canonical), mac);
+        }
         std::lock_guard<std::mutex> l(mtx_);
         dnaText_ = written.canonical;
         lenvDirty_ = true;               // the card gets every layer's effective envelopes again
@@ -487,11 +513,12 @@ private:
             cacheSig_ = sig;
             if (!inFlight_) rebuildQueued_ = false;
             dnaForAudio_ = d;
+            d3ForAudio_ = d3; d3SaltPending_ = b16v3::salt(written.canonical);
             dnaPending_ = true;
         } else {
             // Sound Recorder must rebuild: the audio keeps the old sound until Windows says `built`, so notes never
             // stop sounding (Windows rebuilds one recorder at a time and serves notes in between)
-            stagedDna_ = d; stagedSig_ = sig;
+            stagedDna_ = d; stagedSig_ = sig; stagedD3_ = d3;
             for (auto &c : stagedLayers_) c = LayerInfo();
             if (fromGuest) inFlight_ = true;   // Windows is already building it
             else if (toGuest) rebuildQueued_ = true;
@@ -528,13 +555,19 @@ private:
         if (dnaPending_) {
             Cmd c[1];
             voices_.setDna(dnaForAudio_, c);
+            d3Audio_ = d3ForAudio_; d3Salt_ = d3SaltPending_;
             for (int i = 0; i < kMaxLayers; i++)
-                if (layerCache_[i].known) voices_.setLayerInfo(i, layerCache_[i].first, layerCache_[i].count, layerCache_[i].rate, layerCache_[i].frames);
+                if (layerCache_[i].known) {
+                    voices_.setLayerInfo(i, layerCache_[i].first, layerCache_[i].count, layerCache_[i].rate, layerCache_[i].frames);
+                    audioFrames_[i] = (uint32_t)layerCache_[i].frames; audioRate_[i] = layerCache_[i].rate;
+                }
             gain_ = (float)std::pow(10.0, dnaForAudio_.g.gainDb / 20.0);
             dnaPending_ = false;
         }
-        for (size_t i = 0; i < pendLayers_.size(); i++)
+        for (size_t i = 0; i < pendLayers_.size(); i++) {
             voices_.setLayerInfo(pendLayerIdx_[i], pendLayers_[i].first, pendLayers_[i].count, pendLayers_[i].rate, pendLayers_[i].frames);
+            if (pendLayerIdx_[i] >= 0 && pendLayerIdx_[i] < kMaxLayers) { audioFrames_[pendLayerIdx_[i]] = (uint32_t)pendLayers_[i].frames; audioRate_[pendLayerIdx_[i]] = pendLayers_[i].rate; }
+        }
         pendLayers_.clear(); pendLayerIdx_.clear();
         for (int r : pendEnds_) voices_.end(r);
         pendEnds_.clear();
@@ -697,7 +730,7 @@ private:
 #else
                 localtime_r(&t, &lt);
 #endif
-                proto::hi(b, sizeof b); trimSend(b);
+                trimSend(std::strcpy(b, "hi 3"));   // DNA v3: the guest answers with its caps (v2 guests answer hi 2)
                 proto::time(b, sizeof b, lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday, lt.tm_hour, lt.tm_min, lt.tm_sec); trimSend(b);
                 proto::go(b, sizeof b); trimSend(b);
                 std::lock_guard<std::mutex> l(mtx_);
@@ -805,10 +838,15 @@ private:
         proto::Reply r = proto::parse(line);
         switch (r.kind) {
         case proto::Reply::Ready: status(""); ready_ = true; break;
+        case proto::Reply::Hi: {
+            const std::vector<std::string> caps = bsynth3::parseHi3(line);
+            capWin_ = bsynth3::hasCap(caps, "win"); capDesk_ = bsynth3::hasCap(caps, "desk");
+            break; }
         case proto::Reply::Built: {
             std::lock_guard<std::mutex> l(mtx_);
             if (inFlight_) {   // the new sound is in the recorders: the audio switches to it now
                 dnaForAudio_ = stagedDna_; cacheSig_ = stagedSig_;
+                d3ForAudio_ = stagedD3_; d3SaltPending_ = b16v3::salt(dnaText_);
                 for (int i = 0; i < kMaxLayers; i++) layerCache_[i] = stagedLayers_[i];
                 dnaPending_ = true;
                 inFlight_ = false;

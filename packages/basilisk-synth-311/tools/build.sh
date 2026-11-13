@@ -37,7 +37,8 @@ python3 "$PKG/tools/make_library311.py" "$W/library.zip"
 # XP's sounds for C:\XPSOUNDS, from your own XP image (XP_IMAGE: BASILISK SYNTH's base.qcow2) through the sound-archaeology
 # extractor (EXTRACTOR: packages/basilisk-synth/archaeology/extract.py)
 python3 "$PKG/tools/xpsounds311.py" "${XP_IMAGE:?XP_IMAGE}" "$W/xpsounds" --extractor "${EXTRACTOR:?EXTRACTOR}"
-BS311_ENGINE="$W/engine" BS311_OFFS="$W/offs" python3 "$PKG/tools/make_machine.py" "$W/wfw" "$W/gout" "$W/dosbox-pure/dosbox_pure_libretro.so" "$W/machine" --library "$W/library.zip" --xpsounds "$W/xpsounds"
+sh "$PKG/../basilisk-synth/help/build.sh"   # the help: BASIL16.HLP
+BS311_ENGINE="$W/engine" BS311_OFFS="$W/offs" python3 "$PKG/tools/make_machine.py" "$W/wfw" "$W/gout" "$W/dosbox-pure/dosbox_pure_libretro.so" "$W/machine" --library "$W/library.zip" --xpsounds "$W/xpsounds" --help "$PKG/../basilisk-synth/help/out/BASIL16.HLP"
 
 # --- the Windows plugin (its program list: tools/make_presets311.py)
 python3 "$PKG/tools/make_presets311.py"

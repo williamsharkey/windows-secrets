@@ -15,6 +15,7 @@
 #include "../../basilisk-synth/core/dna.h"
 #include "../../basilisk-synth/core/voices.h"
 #include "../../basilisk-synth/core/proto.h"
+#include "../plugin/V3Voice.h"
 
 #include <algorithm>
 #include <chrono>
@@ -257,13 +258,17 @@ int main(int argc, char **argv)
     // the DNA, built by Sound Recorder (no assembly animation: nobody is watching)
     const Dna written = parse(a["--dna"]);
     const Dna dna = applyMacros(written);   // what sounds (as the plugin does it)
+    const bsynth3::Dna3 d3 = bsynth3::applyMacros3(bsynth3::parse3(written.canonical), written.g.macro);   // DNA v3
+    const uint32_t d3salt = b16v3::salt(written.canonical);
+    uint32_t v3counter = 0, lframes[kMaxLayers] = {}; int lrate[kMaxLayers] = {};
+    bool win = false;
     Voices voices(48000); Cmd c[kMaxCmds];
     voices.setDna(dna, c);
-    M.send("hi 2");
+    M.send("hi 3");   // DNA v3: the guest answers with its caps
     for (bool hi = false; !hi && S->state != BS_FAILED;) {   // Windows answers before it gets the sound (as the plugin does)
         M.runTo(S->dac_w + 4800); nap();
         std::vector<std::string> ls; M.lines(ls);
-        for (auto &l : ls) { if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str()); if (l.rfind("hi ", 0) == 0) hi = true; }
+        for (auto &l : ls) { if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str()); if (l.rfind("hi ", 0) == 0) { hi = true; win = bsynth3::hasCap(bsynth3::parseHi3(l), "win"); } }
     }
     M.send("dna " + written.canonical);     // as written: Windows does N itself
     char b[160]; proto::env(b, sizeof b, dna.g); b[std::strlen(b) - 1] = 0; M.send(b);
@@ -273,7 +278,10 @@ int main(int argc, char **argv)
         for (auto &l : ls) {
             if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str());   // Windows' replies, for debugging
             proto::Reply r = proto::parse(l);
-            if (r.kind == proto::Reply::Layer) voices.setLayerInfo(r.layer, r.first, r.count, r.rate, r.frames);
+            if (r.kind == proto::Reply::Layer) {
+                voices.setLayerInfo(r.layer, r.first, r.count, r.rate, r.frames);
+                if (r.layer >= 0 && r.layer < kMaxLayers) { lframes[r.layer] = (uint32_t)r.frames; lrate[r.layer] = r.rate; }
+            }
             if (r.kind == proto::Reply::Built) built = true;
         }
         if (S->state == BS_FAILED) { std::fprintf(stderr, "render311: %s\n", S->error); return 3; }
@@ -309,6 +317,13 @@ int main(int argc, char **argv)
             for (int k = 0; k < n; k++) {
                 uint64_t when = at;
                 if (c[k].kind == Cmd::On && c[k].delayMs) { when += (uint64_t)c[k].delayMs * 48; c[k].delayMs = 0; }   // O, as the plugin
+                if (c[k].kind == Cmd::On && win) {   // DNA v3 window and random draws, as the plugin (V3Voice.h)
+                    const int L = c[k].layer < kMaxLayers ? c[k].layer : 0;
+                    const b16v3::NoteOut o = b16v3::note(d3, c[k], m.b, when, lframes[L], lrate[L], v3counter, d3salt, true);
+                    M.send(o.on, ++M.nextId, o.when);
+                    if (o.cut) { char cl[32]; std::snprintf(cl, sizeof cl, "cut %d", c[k].rec); M.send(cl, ++M.nextId, o.cutAt); }
+                    continue;
+                }
                 char line[64]; proto::cmd(line, sizeof line, c[k]); line[std::strlen(line) - 1] = 0;
                 M.send(line, ++M.nextId, when);
             }

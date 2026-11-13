@@ -1,9 +1,24 @@
 # BASILISK 16: status
 
+- **Round 5 (in progress): Preset Engine 2, DNA v3** (`design/PRESET-ENGINE-2.md`, branch `design/preset-engine-2`).
+  One release, 1.3.0, when every phase is solid; features are announced to the coordinator when usable locally.
 - v1.2.1 is the release (basilisk-synth-311-v1.2.1): the fixes the sndrec demo renders found, below.
 - v1.2.0 (basilisk-synth-311-v1.2.0) was round 3; its record is further down.
 - v1.1.0 was basilisk-synth-311-v1.1.0, commit 948ce56.
 - There is still no plugin-made sound, by design: every sound comes from the sixteen SOUNDREC.EXE in Windows 3.11.
+
+## Round 5: Preset Engine 2 (DNA v3) on 3.11
+
+| Phase | Status |
+|---|---|
+| Core merge | DONE: `core/dna3.*`, `engine3.*`, `recipe.*` added as new files (dna.cpp, voices.cpp untouched: v1/v2 identical by construction); `core/test_v3.sh`: 29,938 v3 checks, 562 real presets x 3 forms, 20,000 fuzz strings, 246,964 recipe checks, all ok; DNA.md §6 points to the spec. The fold into dna.cpp waits for the XP lane's 1.2.1. |
+| 1 Windows, random, desktop, help | DONE locally (not released): `hi 3` -> `hi 3 311 <state> win,desk`; `W` start/end/length/velocity/tape (`Wm`) and `Y` detune/level/late/pan, decided host-side (seeded, renders repeat; `plugin/V3Voice.h`, shared with render311); the start is a scroll-bar seek to round(from x 10000 / frames), the end a stamped `cut`; desktop mode (minimize box, SOUNDREC's icon, `desk 0/1` both ways, strips re-laid on restore); F1 opens BASIL16.HLP; the help lane's installer puts the help and a "BASILISK 16" group on C: (Program Manager rewrites the new group once on a writable boot inside make_machine, else it stops on the read-only zip). Measured: windows start within 0.4 ms of the target (correlation 0.998 against the whole sound at that point) and last exactly their length; desktop/restore and F1 by screenshot. |
+| 2 Rate by task, voice modes | next |
+| 3 Tab frame (Voices, Playback) | |
+| 4 Tape keyboard | |
+| 5 Kit mode | |
+| 6 Grains | |
+| 7 Mine sequencer, Library tab | |
 
 ## v1.2.1: fixes from the demo renders (tools/sndrec-demo)
 

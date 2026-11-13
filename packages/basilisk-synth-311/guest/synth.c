@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <dos.h>
+#include <shellapi.h>
 #include "bslink.h"
 
 #define NR 16
@@ -396,6 +397,19 @@ static void layout_strip(int r)   /* Sound Recorder re-lays its controls when it
     }
 }
 
+/* v3: the position slider to num/den of the length. Sound Recorder's scroll range is 0..10000 for every length and
+   playback starts within half a frame of round(pos * N / 10000) (design/PRESET-ENGINE-2.md T1) */
+static void seek_frac(int r, long num, long den)
+{
+    HWND sb = GetDlgItem(rw[r], SR_SCROLL); int lo, hi, pos;
+    if (den <= 0) return;
+    if (num < 0) num = 0;
+    if (num > den) num = den;
+    GetScrollRange(sb, SB_CTL, &lo, &hi);
+    pos = lo + (int)(((long)(hi - lo) * num + den / 2) / den);
+    SendMessage(rw[r], WM_HSCROLL, SB_THUMBPOSITION, MAKELPARAM(pos, sb));
+    SendMessage(rw[r], WM_HSCROLL, SB_ENDSCROLL, MAKELPARAM(pos, sb));
+}
 static void seek_ms(int r, int ms, int len_cs)   /* v2: the position slider to ms (clamped to the length) */
 {
     HWND sb = GetDlgItem(rw[r], SR_SCROLL); int lo, hi, pos;
@@ -507,6 +521,7 @@ static void stop_rec(int r, DWORD id, int fade_ms);
 
 static char lastSig[1400];
 static int layer_len[NL];
+static long layerFrames[NL];   /* each layer's length in frames, as told to the host (v3 windows are in these frames) */
 static void signature(char *out)    /* what Sound Recorder has to do: sources, steps, pools */
 {
     int i, k; char *o = out;
@@ -524,7 +539,7 @@ static void layer_replies(void)
 {
     int i;
     for (i = 0; i < nlay; i++)
-        if (lay[i].count) say("layer %d %d %d %d %ld", i, lay[i].first, lay[i].count, sound_rate(lay[i].source), (long)layer_len[i] * sound_rate(lay[i].source) / 100);
+        if (lay[i].count) { layerFrames[i] = (long)layer_len[i] * sound_rate(lay[i].source) / 100; say("layer %d %d %d %d %ld", i, lay[i].first, lay[i].count, sound_rate(lay[i].source), layerFrames[i]); }
         else say("layer %d %d 0 0 0", i, lay[i].first);
 }
 static void build(const char *dna)
@@ -592,7 +607,7 @@ static void build(const char *dna)
 }
 
 /* ================================================================ notes */
-static void play_rec(int r, DWORD id, DWORD hz, WORD vol, int pan, int layer)
+static void play_rec(int r, DWORD id, DWORD hz, WORD vol, int pan, int layer, long from)
 {
     if (r < 0 || r >= NR) return;
     r = AR(r);
@@ -602,7 +617,11 @@ static void play_rec(int r, DWORD id, DWORD hz, WORD vol, int pan, int layer)
     DWORD t0 = timeGetTime(), t1, t2, t3;
     if (rplay[r] || is_playing(r)) { bs_armstop(rt[r], id, 5); press(r, SR_STOP); }
     t1 = timeGetTime();
-    press(r, SR_REW);
+    {   /* v3 window: start at frame `from` of the layer's buffer (the host ends it with a stamped cut) */
+        int L = layer >= 0 && layer < NL ? layer : rlayer[r];
+        if (from > 0 && L >= 0 && L < NL && layerFrames[L] > 0) seek_frac(r, from, layerFrames[L]);
+        else press(r, SR_REW);
+    }
     t2 = timeGetTime();
     bs_arm2(rt[r], id, hz, vol, pan, layer < 0 ? rlayer[r] : layer);
     press(r, SR_PLAY);
@@ -1745,14 +1764,20 @@ static void host_line(char *s)
     char *a = strchr(s, ' ');
     char *rest = a ? a + 1 : "";
     if (a) *a = 0;
-    if (!strcmp(s, "hi")) { int v = atoi(rest) >= 2 ? 2 : 1; say("hi %d 311 %s", v, assembled ? "ready" : "wait"); }
+    if (!strcmp(s, "hi")) {
+        int v = atoi(rest); v = v >= 3 ? 3 : v >= 2 ? 2 : 1;
+        if (v == 3) say("hi 3 311 %s win,desk", assembled ? "ready" : "wait");   /* the v3 features this guest has */
+        else say("hi %d 311 %s", v, assembled ? "ready" : "wait");
+    }
+    else if (!strcmp(s, "desk")) { if (hMain && assembled) ShowWindow(hMain, atoi(rest) ? SW_MINIMIZE : SW_RESTORE); }
     else if (!strcmp(s, "go")) { if (!assembled) assemble(); else say("ready"); }
     else if (!strcmp(s, "dna")) build(rest);
     else if (!strcmp(s, "on")) {
-        /* on <rec> <rate> <vol> [<pan> [<delay_ms> [<layer>]]]: the host waits out delays and sends 0 */
-        long f[6] = {0, 0, 65535, 0, 0, -1}; int nf = 0; char *p = rest;
-        while (*p && nf < 6) { f[nf++] = atol(p); p = strchr(p, ' '); if (!p) break; p++; }
-        play_rec((int)f[0], curId, (DWORD)f[1], (WORD)f[2], (int)f[3], (int)f[5]);
+        /* on <rec> <rate> <vol> [<pan> [<delay_ms> [<layer> [<from> <to>]]]]: the host waits out delays and sends 0;
+           v3: the window [from, to) in frames of the layer's buffer (0 0: all) */
+        long f[8] = {0, 0, 65535, 0, 0, -1, 0, 0}; int nf = 0; char *p = rest;
+        while (*p && nf < 8) { f[nf++] = atol(p); p = strchr(p, ' '); if (!p) break; p++; }
+        play_rec((int)f[0], curId, (DWORD)f[1], (WORD)f[2], (int)f[3], (int)f[5], f[6]);
     }
     else if (!strcmp(s, "off")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, envR); }
     else if (!strcmp(s, "cut")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, 5); }
@@ -1887,6 +1912,13 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
             return 0;
         }
         break; }
+    case WM_SIZE:                      /* desktop mode (PRESET-ENGINE-2 section 10): the host hears it */
+        if (assembled) {
+            static int iconic;
+            if (w == SIZE_MINIMIZED && !iconic) { iconic = 1; say("desk 1"); }
+            else if (w != SIZE_MINIMIZED && iconic) { int r; iconic = 0; for (r = 0; r < NR; r++) layout_strip(r); say("desk 0"); }
+        }
+        break;
     case WM_CLOSE: return 0;           /* BASILISK 16 is the machine: it does not close */
     case WM_DESTROY: PostQuitMessage(0); return 0;
     }
@@ -1926,9 +1958,10 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
     memset(&wc, 0, sizeof wc);
     wc.lpfnWndProc = MainProc; wc.hInstance = hi; wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.lpszClassName = "Basilisk16";
-    wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    wc.hIcon = ExtractIcon(hi, "C:\\WINDOWS\\SOUNDREC.EXE", 0);   /* minimized, BASILISK 16 is Sound Recorder's icon */
+    if ((UINT)wc.hIcon <= 1) wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     RegisterClass(&wc);
-    hMain = CreateWindow("Basilisk16", "BASILISK 16 - Sound Recorder Synthesizer", WS_POPUP | WS_CAPTION | WS_CLIPCHILDREN,
+    hMain = CreateWindow("Basilisk16", "BASILISK 16 - Sound Recorder Synthesizer", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN,
                          0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, hi, NULL);
 
     /* the desktop as the visitor first sees it: Program Manager out of the way, a clock, sixteen recorders */
@@ -1967,6 +2000,7 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
         MSG m;
         if (PeekMessage(&m, 0, 0, 0, PM_REMOVE)) {
             if (m.message == WM_QUIT) break;
+            if (m.message == WM_KEYDOWN && m.wParam == VK_F1) { WinHelp(hMain, "C:\\BS\\BASIL16.HLP", HELP_CONTENTS, 0L); continue; }
             TranslateMessage(&m); DispatchMessage(&m);
         } else {
             if (!poll_host()) {

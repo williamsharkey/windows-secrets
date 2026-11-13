@@ -367,6 +367,23 @@ A parser keeps what it cannot read, so saving a later version's DNA does not los
 Checked with the preset-engine-2 fuzz test (20,000 mixed v2/v3 strings): the v2 meaning is unchanged and every v3
 token survives a save.
 
+## 6. DNA v3 (Preset Engine 2): additive tokens
+
+DNA v3 is specified in `design/PRESET-ENGINE-2.md` (branch `design/preset-engine-2`), sections 2 and 3. Its code
+is in `core/` as its own files: `dna3.*` (the tokens: `parse3`, `canonical3`, `strip3`, `applyMacros3`),
+`engine3.*` (windows, voice modes, stacking, zones, grains, the mine grid, kit pads, the v3 wire) and `recipe.*`
+(the DNA in words). Those files read v2 through `dna.cpp`/`dna.h` and do not change them.
+
+- v3 only adds:
+  - layer tokens start with `W N S Y V Z G`;
+  - global tokens start with `q`, `x` or `k`;
+  - v3 macro parameters are `W E Y P I X U F H J`.
+
+  Token boundaries are 5.7's, so every v1/v2 string keeps its meaning and every v3 token survives a v2 save.
+- Proof: `core/test_v3.sh` checks 20,000 random mixed v2/v3 strings against this core, plus the recipe round trips.
+- The v3 wire (`hi 3 <edition> <state> <caps>`, `on` with a window, `rate`, `lmod`, `lgrain`, `desk`, `choke`,
+  `kit`, `tab`, ...) is sent only to a guest that answered `hi 3`, and only for the features in its caps.
+
 ## Appendix: the Windows 3.11 edition (BASILISK 16, packages/basilisk-synth-311)
 
 The DNA, pools, voice allocator, parameters and preset state are the same code (`core/`), so a DNA or a preset

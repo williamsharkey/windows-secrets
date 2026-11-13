@@ -1,0 +1,15 @@
+; BASILISK 16 Help (Windows 3.11 edition). Built by build.sh: mkrtf.py makes basil16.rtf from help.txt,
+; hlpc.py compiles this project to out/BASIL16.HLP.
+[OPTIONS]
+TITLE=BASILISK 16 Help
+COPYRIGHT=BASILISK 16 by William Sharkey. Windows 3.11 and Sound Recorder are Microsoft's.
+CONTENTS=contents
+
+[FILES]
+basil16.rtf
+
+[CONFIG]
+BrowseButtons()
+
+[MAP]
+#include helpmap.txt

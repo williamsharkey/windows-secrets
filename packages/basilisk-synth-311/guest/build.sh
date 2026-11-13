@@ -29,4 +29,4 @@ segment type code fixed
 segment type data fixed
 LNK
 wlink @synhook.lnk
-wcl -q $CFLAGS16 -bt=windows -l=windows -ml -k16384 -fe=SYNTH.EXE "$HERE/synth.c" mmsystem.lib
+wcl -q $CFLAGS16 -bt=windows -l=windows -ml -k16384 -fe=SYNTH.EXE "$HERE/synth.c" mmsystem.lib shell.lib

@@ -2,7 +2,7 @@
 """Build the machine the plugin resumes: drive.zip (the Windows for Workgroups 3.11 C: drive with BASILISK 16 installed, and the
 snapshot of it (sixteen Sound Recorders open, waiting for `go`).
 
-  make_machine.py WFW_DRIVE GUEST_BUILD_DIR CORE_SO OUT_DIR [--library LIBRARY.zip] [--xpsounds DIR] [--folder]
+  make_machine.py WFW_DRIVE GUEST_BUILD_DIR CORE_SO OUT_DIR [--library LIBRARY.zip] [--xpsounds DIR] [--help BASIL16.HLP] [--folder]
 
 --library: the library disc (tools/make_library311.py), mounted as L:; the snapshot is made with it mounted, so the
 bundle must ship this same library.zip (and library.names.txt, the plugin's catalogue). Without it, an empty disc.
@@ -16,6 +16,7 @@ from bsdrv import Engine
 src, gout, core, out = sys.argv[1:5]
 library = sys.argv[sys.argv.index('--library') + 1] if '--library' in sys.argv else None   # the L: drive (make_library311.py)
 xpsounds = sys.argv[sys.argv.index('--xpsounds') + 1] if '--xpsounds' in sys.argv else None   # C:\XPSOUNDS (xpsounds311.py)
+helpfile = sys.argv[sys.argv.index('--help') + 1] if '--help' in sys.argv else None   # BASIL16.HLP (packages/basilisk-synth/help)
 folder = '--folder' in sys.argv   # C: as a plain folder instead of drive.zip (for experiments)
 drive = os.path.join(out, 'drive')
 if os.path.exists(out): shutil.rmtree(out)
@@ -28,6 +29,10 @@ if xpsounds:
     os.makedirs(os.path.join(drive, 'XPSOUNDS'), exist_ok=True)
     for f in sorted(os.listdir(xpsounds)):
         if f.upper().endswith('.WAV'): shutil.copy(os.path.join(xpsounds, f), os.path.join(drive, 'XPSOUNDS', f.upper()))
+# the help (packages/basilisk-synth/help): C:\BS\BASIL16.HLP and a "BASILISK 16" group in Program Manager (F1 opens it)
+if helpfile:
+    inst = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'basilisk-synth', 'help', 'install', 'install311.py')
+    subprocess.run([sys.executable, inst, drive, helpfile], check=True)
 # Windows 3.1's CHORD.WAV and TADA.WAV (WfW 3.11's disks dropped them): `chord` and `tada` play their own files
 for f in ('CHORD.WAV', 'TADA.WAV'):
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'machine-extra', f), os.path.join(drive, 'WINDOWS', f))
@@ -48,6 +53,29 @@ def winini(b):
              b'SystemHand=none,Critical Stop\r\nSystemQuestion=none,Question\r\n')
     return b
 edit(os.path.join(drive, 'WINDOWS', 'WIN.INI'), winini)
+
+# Program Manager rewrites a group file it has not seen before (install311.py writes a minimal one), and on the
+# read-only zip it cannot, so it stops with "write-protected". One boot with C: as a writable folder lets it write
+# the group; only that file is kept, the rest of the drive goes back to how it was.
+if helpfile and not folder:
+    pristine = drive + '.pristine'
+    shutil.copytree(drive, pristine)
+    here0 = os.path.dirname(os.path.abspath(__file__))
+    nconf = os.path.join(out, 'norm.conf')
+    open(nconf, 'w').write(open(os.path.join(here0, '..', 'engine', 'w31-folder.conf.in')).read()
+                           .replace('@MACHINE@', '"%s"' % os.path.abspath(out)).replace('@DRIVE@', '"%s"' % os.path.abspath(drive)))
+    os.makedirs(out, exist_ok=True)
+    if not os.path.exists(os.path.join(out, 'library.zip')) and library: shutil.copy(library, os.path.join(out, 'library.zip'))
+    en = Engine(nconf, core=core, log=os.path.join(out, 'norm.log'), name='bs311norm')
+    try:
+        en.wait_packet(2, 120)
+    finally:
+        en.close()
+    grp = open(os.path.join(drive, 'WINDOWS', 'BASIL16.GRP'), 'rb').read()
+    shutil.rmtree(drive); shutil.move(pristine, drive)
+    open(os.path.join(drive, 'WINDOWS', 'BASIL16.GRP'), 'wb').write(grp)
+    os.remove(nconf)
+    print('help group normalized by Program Manager: %d bytes' % len(grp))
 
 # C: travels as one zip (DOSBox Pure mounts it read-only): plugin hosts scan their folders for .dll files and
 # must not find Windows 3.11's 16-bit ones; it also halves the download
