@@ -20,6 +20,8 @@ namespace bsynth3 {
 namespace {
 
 // ------------------------------------------------------------------------------------------------ text helpers
+// The pretty display symbols (UTF-8). Recipes are written in ASCII; prettify() puts these in for display, and
+// the parser accepts them too.
 const char *kMinus = "\xE2\x88\x92", *kTimes = "\xC3\x97", *kPm = "\xC2\xB1", *kCent = "\xC2\xA2", *kDash = "\xE2\x80\x93",
            *kDot = "\xC2\xB7", *kEll = "\xE2\x80\xA6";
 
@@ -158,8 +160,8 @@ const char *kKinds[] = {"field", "count", "arp"};
 struct Item { std::string text; bool step; std::vector<std::string> toks; };
 
 std::string panText(int v) { return v == 0 ? "C" : (v < 0 ? "L" : "R") + itos(std::abs(v)); }
-std::string pmCents(int c, RecipeForm f) { return std::string(f == RecipeForm::Short ? "+-" : kPm) + itos(c) + (f == RecipeForm::Short ? "c" : kCent); }
-std::string rangeText(const Range &r) { return r.random() ? pct(r.lo) + kDash + pct(r.hi) : pct(r.lo); }
+std::string pmCents(int c, RecipeForm) { return std::string("+-") + itos(c) + "c"; }
+std::string rangeText(const Range &r) { return r.random() ? pct(r.lo) + "-" + pct(r.hi) : pct(r.lo); }
 std::string join(const std::vector<std::string> &v, const std::string &sep) { std::string o; for (size_t i = 0; i < v.size(); i++) o += (i ? sep : "") + v[i]; return o; }
 // keyword + value: "level 80%" (Lines, OneLine) or "lv80" (Short)
 std::string kv(W w, const std::string &val, RecipeForm f)
@@ -233,12 +235,12 @@ std::string v3Layer(const std::string &tok, RecipeForm f)
         break;
     case 'V': {
         auto hz = [](int deci) { char b[16]; std::snprintf(b, sizeof b, "%g", deci / 10.0); return std::string(b); };
-        if (L.v.wowCents) o.push_back(kv(wWow, itos(L.v.wowCents) + (sh ? "c" : kCent) + (sh ? "," : " ") + hz(L.v.wowDeciHz) + (sh ? "" : "Hz"), f));
-        if (L.v.fluCents) o.push_back(kv(wFlutter, itos(L.v.fluCents) + (sh ? "c" : kCent) + (sh ? "," : " ") + itos(L.v.fluHz) + (sh ? "" : "Hz"), f));
-        if (L.v.scoopCents) o.push_back(kv(wScoop, itos(L.v.scoopCents) + (sh ? "c" : kCent) + (sh ? "," : " ") + unitless(msText(L.v.scoopMs), f, "ms"), f));
+        if (L.v.wowCents) o.push_back(kv(wWow, itos(L.v.wowCents) + "c" + (sh ? "," : " ") + hz(L.v.wowDeciHz) + (sh ? "" : "Hz"), f));
+        if (L.v.fluCents) o.push_back(kv(wFlutter, itos(L.v.fluCents) + "c" + (sh ? "," : " ") + itos(L.v.fluHz) + (sh ? "" : "Hz"), f));
+        if (L.v.scoopCents) o.push_back(kv(wScoop, itos(L.v.scoopCents) + "c" + (sh ? "," : " ") + unitless(msText(L.v.scoopMs), f, "ms"), f));
         break; }
     case 'Z':
-        o.push_back(kv(wKeys, noteName(L.z.lo) + kDash + noteName(L.z.hi), f) + (L.z.root >= 0 ? " " + kv(wRoot, noteName(L.z.root), f) : ""));
+        o.push_back(kv(wKeys, noteName(L.z.lo) + "-" + noteName(L.z.hi), f) + (L.z.root >= 0 ? " " + kv(wRoot, noteName(L.z.root), f) : ""));
         break;
     case 'G': {
         Grain g = L.g, dg;
@@ -246,7 +248,7 @@ std::string v3Layer(const std::string &tok, RecipeForm f)
         auto add = [&](const char *k, const std::string &v) { x.push_back(sh ? std::string(k) + v : std::string(k) + " " + v); };
         if (g.pos) add("pos", pct(g.pos) + (sh ? "" : "%"));
         if (g.spray) add("spray", pct(g.spray) + (sh ? "" : "%"));
-        if (g.sizeMs != dg.sizeMs || g.sizeHiMs != dg.sizeHiMs) add("size", itos(g.sizeMs) + (g.sizeHiMs != g.sizeMs ? kDash + itos(g.sizeHiMs) : "") + (sh ? "" : "ms"));
+        if (g.sizeMs != dg.sizeMs || g.sizeHiMs != dg.sizeHiMs) add("size", itos(g.sizeMs) + (g.sizeHiMs != g.sizeMs ? "-" + itos(g.sizeHiMs) : "") + (sh ? "" : "ms"));
         if (g.density != dg.density) add("density", itos(g.density) + (sh ? "" : "/s"));
         if (g.cents) add("pitch", pmCents(g.cents, f));
         if (g.octPct) add("oct", itos(g.octPct) + (sh ? "" : "%"));
@@ -261,7 +263,7 @@ std::string v3Layer(const std::string &tok, RecipeForm f)
         break; }
     }
     if (o.empty()) return "{" + tok + "}";       // a v3 token with only defaults ("Ws0"): verbatim
-    return join(o, f == RecipeForm::Lines ? std::string(" ") + kDot + " " : " ");
+    return join(o, f == RecipeForm::Lines ? std::string("  ") : " ");
 }
 
 std::string macroParamWord(char p) { const char *q = std::strchr(kMacroParams, p); return q ? kMacroWords[q - kMacroParams] : ""; }
@@ -278,7 +280,7 @@ std::string globalPhrase(const std::string &tok, RecipeForm f)
         case 'R': return kv(wRelease, unitless(msText(v), f, "ms"), f);
         case 'S': return kv(wSustain, itos(v) + (sh ? "" : "%"), f);
         case 'V': return kv(wVelocity, itos(v) + (sh ? "" : "%"), f);
-        case 'B': return kv(wBend, (sh ? "" : kPm) + itos(v), f);
+        case 'B': return kv(wBend, "+-" + itos(v), f);
         case 'K': return kv(wRoot, noteName((int)v), f);
         case 'G': return kv(wGain, sgn(v) + (sh ? "" : "dB"), f);
         }
@@ -295,7 +297,7 @@ std::string globalPhrase(const std::string &tok, RecipeForm f)
                 long lo = std::strtol(vals.c_str(), &e1, 10), hi = std::strtol(vals.c_str() + cm + 1, &e2, 10);
                 if (*e1 == ',' && !*e2 && itos(lo) + "," + itos(hi) == vals) {
                     std::string layer = tok[2] == '0' ? "all" : (f == RecipeForm::Lines ? "layer" : "L") + std::string(1, tok[2]);
-                    return std::string(spell(wMacro, f)) + tok[1] + " " + layer + " " + macroParamWord(tok[3]) + " " + itos(lo) + kDash + itos(hi);
+                    return std::string(spell(wMacro, f)) + tok[1] + " " + layer + " " + macroParamWord(tok[3]) + " " + itos(lo) + "-" + itos(hi);
                 }
             }
         }
@@ -331,7 +333,7 @@ std::string globalPhrase(const std::string &tok, RecipeForm f)
         if (tok == "kd") return spell(wKitOff, f);
         if (d.g.pads.size() != 1 || !d.g.pads[0].extra.empty() || d.g.pads[0].token() != tok) return "{" + tok + "}";
         const Pad &p = d.g.pads[0]; Pad df;
-        std::vector<std::string> o{std::string(spell(wPad, f)) + (sh ? "" : " ") + itos(p.lo) + (p.hi != p.lo ? kDash + itos(p.hi) : "")};
+        std::vector<std::string> o{std::string(spell(wPad, f)) + (sh ? "" : " ") + itos(p.lo) + (p.hi != p.lo ? "-" + itos(p.hi) : "")};
         auto add = [&](const char *k, const std::string &v) { o.push_back(sh ? std::string(k) + v : std::string(k) + " " + v); };
         if (p.layer != df.layer) add("layer", itos(p.layer));
         if (p.seg) add("seg", itos(p.seg));
@@ -339,13 +341,13 @@ std::string globalPhrase(const std::string &tok, RecipeForm f)
         if (p.e.lo != kOne || p.e.hi != kOne) add("end", rangeText(p.e) + (sh ? "" : "%"));
         if (p.root >= 0 && p.root != p.lo) add("root", itos(p.root));
         if (p.pitchPct) add("pitch", itos(p.pitchPct) + (sh ? "" : "%"));
-        if (p.rangeSemis) add("range", (sh ? "" : kPm) + itos(p.rangeSemis));
-        if (p.tuneCents) add("tune", sgn(p.tuneCents) + (sh ? "c" : kCent));
+        if (p.rangeSemis) add("range", "+-" + itos(p.rangeSemis));
+        if (p.tuneCents) add("tune", sgn(p.tuneCents) + "c");
         if (p.level != 100) add("level", itos(p.level) + (sh ? "" : "%"));
         if (p.pan) add("pan", panText(p.pan));
         if (p.curve) add("curve", kCurves[p.curve]);
         if (p.velAmount >= 0) add("vel", itos(p.velAmount) + "%");
-        if (p.velLo != 1 || p.velHi != 127) add("vel", itos(p.velLo) + kDash + itos(p.velHi));
+        if (p.velLo != 1 || p.velHi != 127) add("vel", itos(p.velLo) + "-" + itos(p.velHi));
         if (p.gated) o.push_back("gated");
         if (p.cut) add("cut", itos(p.cut));
         if (p.fadeMs != df.fadeMs) add("fade", unitless(msText(p.fadeMs), f, "ms"));
@@ -379,12 +381,12 @@ Item layerPhrase(const std::string &t, RecipeForm f)
     if (c == 'H') {
         std::vector<std::string> v; size_t b = 1;
         while (b <= t.size()) { size_t e = t.find(',', b); if (e == std::string::npos) e = t.size(); v.push_back(sgn(std::atol(t.substr(b, e - b).c_str()))); b = e + 1; }
-        it.text = std::string(spell(wNotes, f)) + (sh ? "" : " ") + join(v, f == RecipeForm::Lines ? " " : ""); return it;
+        it.text = std::string(spell(wNotes, f)) + (sh ? "" : " ") + join(v, " "); return it;   // "notes +0 -12": spaced, so - is a sign
     }
     if (c == 'U') {
         size_t tl = t.find('~');
         std::string n = t.substr(1, tl - 1), cc = t.substr(tl + 1);
-        it.text = std::string(spell(wUnison, f)) + (sh ? "" : " ") + n + (cc == "0" ? "" : (f == RecipeForm::Lines ? " " : "") + pmCents(std::atoi(cc.c_str()), f)); return it;
+        it.text = std::string(spell(wUnison, f)) + (sh ? "" : " ") + n + (cc == "0" ? "" : (sh ? "" : " ") + pmCents(std::atoi(cc.c_str()), f)); return it;
     }
     if (t == "F") { it.text = spell(wFixed, f); return it; }
     if (c == 'L') { it.text = kv(wLevel, t.substr(1) + (sh ? "" : "%"), f); return it; }
@@ -812,11 +814,14 @@ bool parseGene(P &p, std::vector<std::string> &toks, V3 &v3)
         return true;
     }
     case wKeys: {
-        std::string a = arg(), ra, rb;
-        long lo, hi;
-        if (a.find("..") == std::string::npos) { ra = a; rb = ""; }
-        if (a.find("..") != std::string::npos) { size_t r = a.find(".."); ra = a.substr(0, r); rb = a.substr(r + 2); }
-        if (rb.empty() || !parseNote(ra, lo) || !parseNote(rb, hi)) return p.fail("a key range such as C2..B3");
+        std::string a = arg();
+        long lo = 0, hi = 0;
+        bool ok = false;   // "c2-b3", "c-1-g9", "c2..b3": try each dash until both sides are notes
+        for (size_t r = 1; r < a.size() && !ok; r++) {
+            if (a.compare(r, 2, "..") == 0) ok = parseNote(a.substr(0, r), lo) && parseNote(a.substr(r + 2), hi);
+            else if (a[r] == '-') ok = parseNote(a.substr(0, r), lo) && parseNote(a.substr(r + 1), hi);
+        }
+        if (!ok) return p.fail("a key range such as C2-B3");
         p.i++;
         v3.Z_ = itos(lo) + "," + itos(hi);
         unglue(p);
@@ -973,7 +978,6 @@ bool parseGlobal(P &p, std::vector<std::string> &toks)
 
 }  // namespace
 
-namespace { bool bareKeyword(const std::string &t) { return keywords().count(t) > 0; } }
 
 // ------------------------------------------------------------------------------------------------ API
 std::string toRecipe(const std::string &dna, RecipeForm f, size_t maxLen)
@@ -1001,11 +1005,11 @@ std::string toRecipe(const std::string &dna, RecipeForm f, size_t maxLen)
                 std::string lo = msText(A), hi = msText(B);
                 if (lo.back() == 's' && lo[lo.size() - 2] != 'm' && hi.back() == 's' && hi[hi.size() - 2] != 'm') lo.pop_back();
                 else if (lo.size() > 2 && lo.compare(lo.size() - 2, 2, "ms") == 0 && hi.size() > 2 && hi.compare(hi.size() - 2, 2, "ms") == 0) lo.resize(lo.size() - 2);
-                if (A < B && tryItem(std::string(spell(wTrim, f)) + " " + lo + kDash + hi, 4)) continue;
+                if (A < B && tryItem(std::string(spell(wTrim, f)) + " " + lo + "-" + hi, 4)) continue;
             }
             if (a.size() > 1 && a[0] == '@' && a[1] != 't' && b == "]" && c2.size() > 1 && c2[0] == '@' && c2[1] != 't' && d == "[") {
                 long B = std::atol(a.c_str() + 1), C = std::atol(c2.c_str() + 1), A = std::lround(C * B / 100.0);
-                if (A > 0 && A < B && tryItem(std::string(spell(wTrim, f)) + " " + itos(A) + kDash + itos(B) + "%", 4)) continue;
+                if (A > 0 && A < B && tryItem(std::string(spell(wTrim, f)) + " " + itos(A) + "-" + itos(B) + "%", 4)) continue;
             }
             if (a.size() > 1 && a[0] == '@' && (b == "[" || b == "]")) {
                 std::string pos = a[1] == 't' ? msText(std::atol(a.c_str() + 2)) : a.substr(1) + "%";
@@ -1021,7 +1025,7 @@ std::string toRecipe(const std::string &dna, RecipeForm f, size_t maxLen)
             if (items[i].step) while (j < items.size() && items[j].step && items[j].text == items[i].text) j++;
             std::string t = items[i].text;
             // x N: glued to a one-word step in the compact forms ("slower×2"), spaced after a phrase ("mix tada ×2")
-            if (j - i > 1) t += std::string(f == RecipeForm::Lines || !bareKeyword(t) ? " " : "") + (f == RecipeForm::Short ? "x" : kTimes) + itos((long)(j - i));
+            if (j - i > 1) t += " x" + itos((long)(j - i));   // always spaced: "slower x2" (pretty: "slower ×2")
             parts.push_back(t); isStep.push_back(items[i].step);
             i = j;
         }
@@ -1029,9 +1033,9 @@ std::string toRecipe(const std::string &dna, RecipeForm f, size_t maxLen)
         if (f == RecipeForm::Lines) {
             // steps joined by ", ", genes by " · ", a wide gap where steps and genes meet
             for (size_t k = 0; k < parts.size(); k++) {
-                if (k == 0) line += std::string(std::max<int>(1, 8 - (int)src.size()), ' ');
+                if (k == 0) line += std::string(std::max<int>(3, 9 - (int)src.size()), ' ');   // never exactly 2: that is the separator
                 else if (isStep[k] != isStep[k - 1]) line += "   ";
-                else line += isStep[k] ? ", " : std::string(" ") + kDot + " ";
+                else line += isStep[k] ? ", " : std::string("  ");
                 line += parts[k];
             }
         } else for (auto &x : parts) line += " " + x;
@@ -1042,7 +1046,7 @@ std::string toRecipe(const std::string &dna, RecipeForm f, size_t maxLen)
     std::string out;
     if (f == RecipeForm::Lines) {
         out = join(lines, "\n");
-        if (c.hasGlobals) out += (lines.empty() ? "" : "\n") + std::string("env     ") + join(g, std::string(" ") + kDot + " ");
+        if (c.hasGlobals) out += (lines.empty() ? "" : "\n") + std::string("env      ") + join(g, std::string("  "));
         return out;
     }
     out = join(lines, " / ");
@@ -1051,9 +1055,54 @@ std::string toRecipe(const std::string &dna, RecipeForm f, size_t maxLen)
         // cut at a word, mark it: no longer a recipe ("…" makes fromRecipe refuse it)
         size_t cutAt = out.rfind(' ', maxLen - 3);
         if (cutAt == std::string::npos || cutAt == 0) cutAt = maxLen - 3;
-        out = out.substr(0, cutAt) + kEll;
+        out = out.substr(0, cutAt) + "...";
     }
     return out;
+}
+
+// ------------------------------------------------------------------------------------------------ display form
+// prettify: a pure character substitution of the ASCII recipe, for reading. asciify undoes it exactly.
+//   " x<digits>" (a repeat, before a space, ',' or the end) -> " ×<digits>"
+//   "+-"                                           -> "±"
+//   "<digit>c" before a space, ',', '|', end       -> "<digit>¢"
+//   "-" after a digit, before a digit, A-G or '-'  -> "–"   (a range; a sign never follows a digit)
+//   exactly two spaces between two words           -> " · " (the separator of voice words)
+//   "..." (a cut short form)                       -> "…"
+std::string prettify(const std::string &a)
+{
+    std::string o;
+    size_t n = a.size();
+    for (size_t i = 0; i < n; i++) {
+        char c = a[i];
+        if (c == 'x' && i > 0 && a[i - 1] == ' ' && i + 1 < n && isdigit((unsigned char)a[i + 1])) {
+            size_t j = i + 1; while (j < n && isdigit((unsigned char)a[j])) j++;
+            if (j == n || a[j] == ' ' || a[j] == ',' || a[j] == '\n') { o += kTimes; continue; }
+        }
+        if (c == '+' && i + 1 < n && a[i + 1] == '-') { o += kPm; i++; continue; }
+        if (c == 'c' && i > 0 && isdigit((unsigned char)a[i - 1]) && (i + 1 == n || std::strchr(" ,|\n", a[i + 1]))) { o += kCent; continue; }
+        if (c == '-' && i > 0 && isdigit((unsigned char)a[i - 1]) && i + 1 < n && (isdigit((unsigned char)a[i + 1]) || std::strchr("ABCDEFGabcdefg-", a[i + 1]))) { o += kDash; continue; }
+        if (c == ' ' && i + 1 < n && a[i + 1] == ' ' && i > 0 && a[i - 1] != ' ' && a[i - 1] != '\n' && i + 2 < n && a[i + 2] != ' ' && a[i + 2] != '\n') { o += std::string(" ") + kDot + " "; i++; continue; }
+        if (c == '.' && a.compare(i, 3, "...") == 0) { o += kEll; i += 2; continue; }
+        o += c;
+    }
+    return o;
+}
+std::string asciify(const std::string &p)
+{
+    std::string o;
+    for (size_t i = 0; i < p.size();) {
+        auto at = [&](const char *u) { return p.compare(i, strlen(u), u) == 0; };
+        if (at(" \xC2\xB7 ")) { o += "  "; i += 4; }
+        else if (at(kTimes)) { o += 'x'; i += 2; }
+        else if (at(kPm)) { o += "+-"; i += 2; }
+        else if (at(kCent)) { o += 'c'; i += 2; }
+        else if (at(kDash)) { o += '-'; i += 3; }
+        else if (at(kEll)) { o += "..."; i += 3; }
+        else if (at(kMinus)) { o += '-'; i += 3; }
+        else if (at(kDot)) { o += ' '; i += 2; }
+        else o += p[i++];
+    }
+    return o;
 }
 
 bool fromRecipe(const std::string &text, std::string &dna, RecipeError *errOut)
@@ -1061,7 +1110,7 @@ bool fromRecipe(const std::string &text, std::string &dna, RecipeError *errOut)
     RecipeError err;
     auto fail = [&](size_t pos, const std::string &w, const std::string &m) { err.pos = pos; err.word = w; err.message = m; if (errOut) *errOut = err; return false; };
     if (text.find(kEll) != std::string::npos || text.find("...") != std::string::npos)
-        return fail(text.find(kEll) != std::string::npos ? text.find(kEll) : text.find("..."), "\xE2\x80\xA6", "a shortened recipe (it ends in \xE2\x80\xA6): it cannot be read back; use the one-line form");
+        return fail(text.find(kEll) != std::string::npos ? text.find(kEll) : text.find("..."), "...", "a shortened recipe (it ends in ...): it cannot be read back; use the one-line form");
     // split into layer chunks and the globals. Each line: "env ..." = globals (multi-line form); otherwise layers
     // separated by " / ", then optionally " | " and the globals (one-line form). A line may also start with "| ".
     struct Chunk { std::string s; size_t base; bool globals; };

@@ -1261,30 +1261,67 @@ Owner-approved (2026-11-13): a readable form of any DNA, in Sound Recorder's men
 `design/v3/recipe.h`, `recipe.cpp` (ready to fold into core after v1.2), tests in `test_recipe.cpp`, help topic
 `recipe` on `feat/help-and-site`.
 
-### 17.1 The three forms
+### 17.1 ASCII is canonical; the pretty form is a substitution
+
+**The canonical recipe is plain printable ASCII** (bytes 0x20-0x7E; the multi-line form separates lines with a
+newline). It is what `toRecipe()` returns, what goes into edit boxes, the clipboard, help files and docs, and what
+people type. No ×, ·, ±, ¢, – or … in it.
 
 ```
-multi-line   ding    faster, echo
-             tada    slower ×2, reverse, louder   4 recorders · notes +0 +12 · unison 2 ±9¢
-             env     attack 5ms · release 350ms
-one-line     ding faster echo / tada slower×2 reverse louder 4rec notes +0+12 unison 2±9¢ | atk 5ms rel 350ms
-short        ding fast echo / tada slowx2 rev loud 4r h+0+12 u2+-9c | a5 r350
+multi-line   ding     faster, echo
+             tada     slower x2, reverse, louder   4 recorders  notes +0 +12  unison 2 +-9c
+             env      attack 5ms  release 350ms
+one-line     ding faster echo / tada slower x2 reverse louder 4rec notes +0 +12 unison 2 +-9c | atk 5ms rel 350ms
+short        ding fast echo / tada slow x2 rev loud 4r h+0 +12 u2+-9c | a5 r350
 ```
 
 (`ding>E/tada<<R+#4H0,12U2~9;A5R350`.)
 
-- **Multi-line:** one line per layer (the source NAME, the steps joined by ", ", the voice words joined by " · ", a
-  wide gap where they meet), then an `env` line for the globals. A layer with no sound is `-`.
+**The pretty form is for reading only:** `prettify()` makes it from the ASCII form by pure character
+substitution, and `asciify()` gives back exactly the same ASCII (tested on every recipe of the corpus and the fuzz):
+
+| ASCII | Pretty | Where |
+|---|---|---|
+| ` x2` (a word `x` + digits after a space, before a space, `,` or the end) | ` ×2` | repeats |
+| `+-` | `±` | spreads, bend, ranges |
+| `9c` (a digit, then `c` before a space, a comma, a bar or the end) | `9¢` | cents |
+| `-` after a digit and before a digit, a note letter or `-` | `–` | ranges (`5-45%`, `C2-B3`, `-100-100`) |
+| exactly two spaces between two words | ` · ` | between voice words in the multi-line form |
+| `...` | `…` | the end of a cut short form |
+
+```
+pretty       tada     slower ×2, reverse, louder   4 recorders · notes +0 +12 · unison 2 ±9¢
+```
+
+Rules that keep this unambiguous: a minus sign never follows a digit (signed values stand alone: `notes +0 -12`,
+`gain -6dB`, `tune -15c`); the layer-name gap is never exactly two spaces (at least three); a repeat is always its
+own word (`slower x2`, never `slowerx2` in output; the parser still accepts it).
+
+- **Multi-line:** one line per layer (the source NAME, the steps joined by ", ", the voice words joined by two
+  spaces, three spaces where steps and voice words meet), then an `env` line for the globals. A layer with no sound
+  is `-`.
 - **One-line:** the layers joined by " / ", the globals after " | ".
 - **Short:** the one-line form with short words and default units dropped. `toRecipe(d, Short, maxLen)` cuts a
-  longer one at a word and ends it with "…"; a recipe with "…" is a preview: `fromRecipe` refuses it (with that
+  longer one at a word and ends it with `...`; a recipe with `...` is a preview: `fromRecipe` refuses it (with that
   message), so a cut form is never mistaken for a sound.
 - Tokens are written in canonical order, so steps and genes interleave as the DNA has them. Defaults that the DNA
-  does not write are not written either (`unison 2` is `U2~0`; a `U2~0` in the DNA prints as `unison 2`).
+  does not write are not written either (`unison 2` is `U2~0`).
+
+### 17.1b The UIs (plugin editor, website)
+
+- **Reading:** show `prettify(recipe)`.
+- **Editing:** on focus, or a double click into an edit box, the text becomes the ASCII form (`asciify`, or
+  `toRecipe` again); the visitor edits ASCII; on Enter the text is parsed (`fromRecipe` accepts both forms) and the
+  box shows the pretty form again. A parse error leaves the ASCII text in the box, selects the bad word (its byte
+  position is in the error) and shows the message.
+- **Copy** always puts the ASCII form on the clipboard (also when copying from a pretty, read-only view).
+- In Windows (both editions) everything is ASCII: the 3.11 character set has none of the pretty symbols, and edit
+  boxes in XP show the editable form anyway. The help files use the ASCII form.
 
 ### 17.2 Words
 
-Each word has three spellings (multi-line / one-line / short); the parser accepts all of them in every form.
+Each word has three spellings (multi-line / one-line / short); the parser accepts all of them in every form. All
+spellings below are the ASCII ones.
 
 | DNA | Recipe (multi-line, one-line, short) |
 |---|---|
@@ -1293,28 +1330,28 @@ Each word has three spellings (multi-line / one-line / short); the parser accept
 | `[ ]` | cut before, cut after (short cut<, cut>) |
 | `@45`, `@t250` | at 45%, at 250ms, at 1.5s (short @45%, @250ms) |
 | `I`NAME, `M`NAME | insert NAME, mix NAME (short ins, mix) |
-| any step n times in a row | step ×n (×n glued to a one-word step; x n accepted) |
+| any step n times in a row | step xn, e.g. `slower x2` (the parser also takes `slowerx2`) |
 | `@N[`, `@N]` (`@tN` too) | cut before N%, cut after N% |
-| `@B]@C[` | trim A–B% where C = round(100 A / B); only written when that gives back exactly C |
-| `@tB]@tA[` | trim A–B ms (exact: absolute times) |
+| `@B]@C[` | trim A-B% where C = round(100 A / B); only written when that gives back exactly C |
+| `@tB]@tA[` | trim A-B ms (exact: absolute times) |
 | `@0CP` | double |
 | `#N`, `TN`, `H...` | N recorders (4rec, 4r), transpose +7 (tr+7), notes +0 +12 (notes+0+12, h+0+12; always signed) |
-| `UN~C`, `F`, `LN` | unison N ±C¢ (u2+-9c), fixed pitch (fixed, fix), level 80% (lv80) |
+| `UN~C`, `F`, `LN` | unison N +-Cc (u2+-9c), fixed pitch (fixed, fix), level 80% (lv80) |
 | `ON`, `QN` | offset 120ms (o120), pan L40 / R40 / C |
 | `Ja...`, `Jp...` | amp env 0:0,30:100 (ms:level), pan env 0:-50,500:50 |
-| `W` | start 20–40%, end 90%, length 10–30%, velocity start 50%, tape 8s (fractions shown as percent, 0.01 % steps) |
+| `W` | start 20-40%, end 90%, length 10-30%, velocity start 50%, tape 8s (fractions shown as percent, 0.01 % steps) |
 | `N` | poly 4, mono, legato, continue, glide 80ms, priority high/low |
 | `S` | round-robin, random note, random recorder, group 2 [random], strum 30ms, chord 3, spread 50% |
-| `Y` | random pitch ±8¢, random level 6%, random late 12ms, random pan 20, seed key, seed recorder |
-| `V` | wow 6¢ 0.6Hz, flutter 2¢ 11Hz, scoop 20¢ 60ms |
-| `Z` | keys C2–B3 root C3 (note names, C4 = 60; numbers accepted) |
-| `G` | grains pos 30% spray 10% size 60–120ms density 40/s pitch ±25¢ oct 20% shape rect/triangle/smooth/hit scan 0.5x back freeze streams 6 width 70% sync |
+| `Y` | random pitch +-8c, random level 6%, random late 12ms, random pan 20, seed key, seed recorder |
+| `V` | wow 6c 0.6Hz, flutter 2c 11Hz, scoop 20c 60ms |
+| `Z` | keys C2-B3 root C3 (note names, C4 = 60; numbers accepted) |
+| `G` | grains pos 30% spray 10% size 60-120ms density 40/s pitch +-25c oct 20% shape rect/triangle/smooth/hit scan 0.5x back freeze streams 6 width 70% sync |
 | `A D S R` | attack 5ms, decay 300ms, sustain 70%, release 1.5s (atk/dec/sus/rel; a5 d300 s70 r1.5s) |
-| `B V K G` | bend ±12, velocity 80%, root C4, gain -6dB |
-| `mK=V`, `mKLPlo,hi` | macro1 50%; macro1 layer2 pan -100–100 (m1 L2 ..., all = every layer); targets offset pan level transpose spread envtime repeat start end length grainpos spray grainsize density scan wow glide |
+| `B V K G` | bend +-12, velocity 80%, root C4, gain -6dB |
+| `mK=V`, `mKLPlo,hi` | macro1 50%; macro1 layer2 pan -100-100 (m1 L2 ..., all = every layer); targets offset pan level transpose spread envtime repeat start end length grainpos spray grainsize density scan wow glide |
 | `q` | scale minor root A (major minor dorian phrygian lydian mixolydian locrian harmonic-minor major-pent minor-pent whole-tone blues chromatic) |
 | `x` | seq 1/8t gate 60% swing 20% field/count/arp max 3 dig 5 octaves 3 steps 12 bpm 96 free-run latch |
-| `k` | pad 36 / pad 47–53, then layer 2, seg 6, start, end, root 72, pitch 100%, range ±12, tune -15¢, level 120%, pan L30, curve soft/hard/fixed, vel 80% (amount), vel 1–100 (window), gated, cut 1, fade 20ms, mutes 1,2, voices 1, out 2, random; `kd` = kit off |
+| `k` | pad 36 / pad 47-53, then layer 2, seg 6, start, end, root 72, pitch 100%, range +-12, tune -15c, level 120%, pan L30, curve soft/hard/fixed, vel 80% (amount), vel 1-100 (window), gated, cut 1, fade 20ms, mutes 1,2, voices 1, out 2, random; `kd` = kit off |
 | anything else (a later version's token, a v3 token with an unknown subkey, a token with only defaults) | `{token}` verbatim, kept |
 
 ### 17.3 Rules
@@ -1322,9 +1359,9 @@ Each word has three spellings (multi-line / one-line / short); the parser accept
 - **Lossless by construction.** `toRecipe` cuts `canonical3(dna)` into tokens and writes one phrase per token (a
   sugar phrase covers 2-4 tokens). `fromRecipe` turns every phrase back into exactly those token texts. A sugar
   phrase is written only if parsing it gives back the same tokens (checked when printing).
-- **Lenient input:** any case; ASCII for the symbols (x for ×, +- for ±, c for ¢, .. or - for the range dash, - for
-  the minus sign); commas and · are spacing; keywords may be glued to their value (`lv80`, `panl40`, `h+0+12`,
-  `slowx2`, `4rec`). The first word of a layer is always the source NAME (`-` for none).
+- **Lenient input:** any case; the ASCII form and the pretty symbols alike (×, ±, ¢, –, −, ·, also `..` for a
+  range); commas and · are spacing; keywords may be glued to their value (`lv80`, `panl40`, `h+0`, `slowx2`,
+  `4rec`). The first word of a layer is always the source NAME (`-` for none).
 - **Errors** give the byte position and the word, and what was expected there:
   `ding faster wobble echo` -> `wobble` at 12: "a Sound Recorder step (faster, slower, ...) or a voice word (...)".
 - A core quirk the parser mirrors: core writes two layers whose last one is empty as `a/`, but reads `a/` as one
@@ -1341,27 +1378,29 @@ then runs the recipe test against this branch's core and against `main`'s core (
 | XP presets (`library/presets/factory.tsv`, `plugin/presets_gen.h`) | 39 + 39 | same |
 | electromech (instruments and kits), preset targets, aesthetic presets, `site/sndrec/presets.json` | 52 + 198 + 102 + 71 | same |
 | fuzz: 20,000 random DNAs (v1/v2/v3 tokens, kit pads, sequencer, windows, macros, sugar sequences, unknown tokens) | 20,000 x 3 forms | same |
-| hand cases: every token family, empty DNA, globals only, empty layers, unknown subkeys, errors, lenient input | - | pass |
+| hand cases: every token family, empty DNA, globals only, empty layers, unknown subkeys, errors, lenient input, 10 recipes typed by hand in plain ASCII | - | pass |
 
-All 610 real presets (426 distinct) and the 20,000 fuzz strings round-trip in all three forms, with both cores
-(61,888 checks per core).
+For every DNA and every form the test checks: the emitted recipe is printable ASCII only; it parses back to the
+identical canonical form; `prettify` of it also parses back to it; and `asciify(prettify(r)) == r`. All 610 real
+presets (426 distinct) and the 20,000 fuzz strings pass, with both cores (247,525 checks per core).
 
 Length in characters over the 426 distinct real presets:
 
 | Form | Median | p90 | Max | Fit in 60 |
 |---|---|---|---|---|
-| one-line | 108 | 155 | 1309 (a kit) | 37 (9 %) |
-| short, uncut | 72 | 108 | 1122 (a kit) | 133 (31 %) |
-| short, cut to 60 with "…" | - | - | 60 | all; 293 of 426 are cut |
+| one-line (ASCII) | 111 | 159 | 1310 (a kit) | 36 (8 %) |
+| short, uncut (ASCII) | 73 | 110 | 1124 (a kit) | 126 (30 %) |
+| short, cut to 60 with `...` | - | - | 60 | all; 300 of 426 are cut |
 
-By source (short, median / p90): 3.11 programs 46-54 / 98-102, aesthetic 73 / 109, preset targets 74 / 99,
-electromech 79 / 605 (kits). **So:** the one-line form does not fit one website line for most presets (a two-line
+By source (short, median / p90, before the ASCII change; within 1-2 characters now): 3.11 programs 46-54 / 98-102,
+aesthetic 73 / 109, preset targets 74 / 99, electromech 79 / 605 (kits). **So:** the one-line form does not fit one website line for most presets (a two-line
 cell or a wrapped line does); the short form fits 60 characters losslessly for about a third (most of the simple
-3.11 programs); for lists, use the short form cut to 60 with "…" and the full one-line form on hover or click.
+3.11 programs); for lists, use the short form cut to 60 with `...` (shown as …) and the full one-line form on
+hover or click.
 Kits are far longer than any line (every pad is a phrase): show "kit, N pads" in lists.
 
 ### 17.5 Folding in
 
 `recipe.cpp` depends on `dna3` (`canonical3`, `parse3`) and core. It folds into core with v3; the plugin's DNA box
 accepts either form (a text with a space is a recipe, else a DNA), and the editor can show the multi-line form
-beside the DNA. Help: topic `recipe` (context 20) on `feat/help-and-site`, written to these words.
+beside the DNA. Help: topic `recipe` (context 20) on `feat/help-and-site`, written in the ASCII form.

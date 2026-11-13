@@ -20,15 +20,20 @@ using namespace bsynth3;
 static int fails = 0, checks = 0;
 #define CHECK(c) do { checks++; if (!(c)) { std::printf("FAIL %s:%d %s\n", __FILE__, __LINE__, #c); fails++; } } while (0)
 
+static bool asciiOnly(const std::string &r) { for (unsigned char c : r) if ((c < 0x20 || c > 0x7E) && c != '\n') return false; return true; }
+
 static bool roundTrip(const std::string &dna, bool verbose = true)
 {
     std::string want = canonical3(dna);
     bool ok = true;
     for (RecipeForm f : {RecipeForm::Lines, RecipeForm::OneLine, RecipeForm::Short}) {
-        std::string r = toRecipe(dna, f, 0), got;
-        RecipeError e;
-        bool parsed = fromRecipe(r, got, &e);
-        checks++;
+        std::string r = toRecipe(dna, f, 0), got, got2, pretty = prettify(r);
+        RecipeError e, e2;
+        bool parsed = fromRecipe(r, got, &e), parsed2 = fromRecipe(pretty, got2, &e2);
+        checks += 4;
+        if (!asciiOnly(r)) { ok = false; fails++; if (verbose && fails < 30) std::printf("FAIL not ASCII: %s\n", r.c_str()); }
+        if (asciify(pretty) != r) { ok = false; fails++; if (verbose && fails < 30) std::printf("FAIL asciify(prettify)\n  ascii  %s\n  pretty %s\n  back   %s\n", r.c_str(), pretty.c_str(), asciify(pretty).c_str()); }
+        if (!parsed2 || got2 != want) { ok = false; fails++; if (verbose && fails < 30) std::printf("FAIL pretty round trip\n  pretty %s\n  back   %s\n  error  %s: %s\n", pretty.c_str(), got2.c_str(), e2.word.c_str(), e2.message.c_str()); }
         if (!parsed || got != want) {
             ok = false;
             fails++;
@@ -57,8 +62,9 @@ int main(int argc, char **argv)
     // ---- the coordinator's examples
     {
         std::string d = "ding>E/tada<<R+#4H0,12U2~9;A5R350";
-        std::printf("multi-line:\n%s\none-line: %s\nshort:    %s\n", toRecipe(d, RecipeForm::Lines).c_str(), toRecipe(d, RecipeForm::OneLine).c_str(),
-                    toRecipe(d, RecipeForm::Short).c_str());
+        std::printf("multi-line (ASCII):\n%s\none-line (ASCII): %s\nshort (ASCII):    %s\n", toRecipe(d, RecipeForm::Lines).c_str(), toRecipe(d, RecipeForm::OneLine).c_str(),
+                    toRecipe(d, RecipeForm::Short, 0).c_str());
+        std::printf("multi-line (pretty):\n%s\none-line (pretty): %s\n", prettify(toRecipe(d, RecipeForm::Lines)).c_str(), prettify(toRecipe(d, RecipeForm::OneLine)).c_str());
         roundTrip(d);
         std::string got;
         // lenient: case, ASCII, spacing, either spelling
@@ -70,9 +76,30 @@ int main(int argc, char **argv)
         CHECK(fromRecipe("startup double x2", got) && got == "startup@0CP@0CP");
         CHECK(fromRecipe("logon cut before 20%", got) && got == "logon@20[");
         std::printf("trim: %s | %s\n", toRecipe("tada@45]@11[", RecipeForm::OneLine).c_str(), toRecipe("tada@t750]@t250[", RecipeForm::OneLine).c_str());
-        CHECK(toRecipe("tada@45]@11[", RecipeForm::OneLine) == "tada trim 5\xE2\x80\x93" "45%");
-        CHECK(toRecipe("tada@t750]@t250[", RecipeForm::OneLine) == "tada trim 250\xE2\x80\x93" "750ms");
-        CHECK(toRecipe("startup@0CP@0CP", RecipeForm::OneLine) == "startup double\xC3\x97" "2");
+        CHECK(toRecipe("tada@45]@11[", RecipeForm::OneLine) == "tada trim 5-45%");
+        CHECK(toRecipe("tada@t750]@t250[", RecipeForm::OneLine) == "tada trim 250-750ms");
+        CHECK(toRecipe("startup@0CP@0CP", RecipeForm::OneLine) == "startup double x2");
+        CHECK(prettify("startup double x2") == "startup double \xC3\x97" "2");
+        CHECK(toRecipe(d, RecipeForm::OneLine) == "ding faster echo / tada slower x2 reverse louder 4rec notes +0 +12 unison 2 +-9c | atk 5ms rel 350ms");
+        // typed by hand: plain keyboard text, loose spacing and spellings
+        const char *typed[][2] = {
+            {"ding faster echo / tada slower x2 reverse louder 4 recorders notes +0 +12 unison 2 +-9c | attack 5ms release 350ms", "ding>E/tada<<R+#4H0,12U2~9;A5R350"},
+            {"Tada slower x2, Reverse, Louder  4 recorders  notes +0 +12  unison 2 +-9c\nenv attack 5ms  release 0.35s", "tada<<R+#4H0,12U2~9;A5R350"},
+            {"logon cut before 20%, slower x2, echo  12 recorders  unison 3 +-10c | attack 400ms sustain 95% release 3s root D#2", "logon@20[<<E#12U3~10;A400S95R3000K39"},
+            {"tada trim 250-750ms 16 recorders", "tada@t750]@t250[#16"},
+            {"chimes reverse  4 recorders  pan L50  level 40%  offset 200ms  transpose +1", "chimesR#4Q-50L40O200T1"},
+            {"startup at 55%, cut before, at 40%, cut after, double x2, slower, echo  8 recorders | attack 20ms release 1.5s root G#3", "startup@55[@40]@0CP@0CP<E#8;A20R1500K56"},
+            {"violin_section_sus_c4  7 recorders  keys G3-G9 root C4  tape 8s  scoop 15c 80ms  wow 6c 0.6Hz  random level 6%  random pitch +-4c  seed key", "violin_section_sus_c4#7Z55,127,60Wm8000Vs15,80Vw6,6Yl6d4k"},
+            {"kick 2 recorders / hats 6 recorders | pad 36  pad 42 layer 2 cut 1  pad 46 layer 2 start 50% cut 1 fade 20ms", "kick#2/hats#6;k36k42l2c1k46l2s.5c1f20"},
+            {"ding mono glide 80ms | scale minor root A seq 1/16 gate 70% swing 12% arp", "dingNmg80;q1r9xg70s12n2"},
+            {"tada | m1 50%  m1 layer1 pan -100-100", "tada;m1=50m11Q-100,100"},
+        };
+        for (auto &t : typed) {
+            std::string g; RecipeError e;
+            bool okT = fromRecipe(t[0], g, &e) && g == canonical3(t[1]);
+            if (!okT) std::printf("FAIL typed: %s\n  got %s want %s (%s: %s)\n", t[0], g.c_str(), canonical3(t[1]).c_str(), e.word.c_str(), e.message.c_str());
+            CHECK(okT);
+        }
     }
     // ---- errors point at the word
     {
