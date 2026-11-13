@@ -1,5 +1,5 @@
 import sys, os, struct, zlib
-sys.path.insert(0, os.path.expanduser('~/windows-secrets-sound-arch/packages/basilisk-synth/sound-archaeology'))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import sound_archaeology as sa
 def tags(d):
     if d[:3]==b'CWS': d=d[:8]+zlib.decompress(d[8:])
