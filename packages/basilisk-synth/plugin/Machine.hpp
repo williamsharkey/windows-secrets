@@ -73,6 +73,7 @@ public:
     ~Machine();
     void start();            // non-blocking; idempotent
     void stop();             // blocking, quick: QEMU is gone when it returns
+    void restart();          // stop, then start a fresh QEMU (the watchdog: a machine that went silent)
 
     // the guest link: any thread may queue (the audio thread does); the link thread sends
     void send(const char *line);
@@ -103,6 +104,7 @@ public:
     static double now();
     static void log(const char *fmt, ...);
     static std::string machineDir();
+    static std::string cacheDir();
 
 private:
     void run();

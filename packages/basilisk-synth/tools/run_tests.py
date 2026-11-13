@@ -33,14 +33,14 @@ def render(name, args, timeout=300):
         # through a .bat: quotes in arguments do not survive WSL -> cmd.exe intact
         bat = os.path.join(WSL_DIR, 'run_%s.bat' % name)
         with open(bat, 'w') as f:
-            f.write('@echo off\r\ncd /d %s\r\nset BSYNTH_MACHINE_DIR=%s\\machine-2\r\nbsynth-host.exe BasiliskSynth.vst3 %s.wav %s\r\n'
-                    % (WIN_DIR, WIN_DIR, name, ' '.join(args)))
+            f.write('@echo off\r\ncd /d %s\r\nbsynth-host.exe BasiliskSynth.vst3 %s.wav %s\r\n'
+                    % (WIN_DIR, name, ' '.join(args)))
         out = subprocess.run(['cmd.exe', '/c', 'run_%s.bat' % name], capture_output=True, text=True, timeout=timeout, cwd=WSL_DIR).stdout
         path = os.path.join(WSL_DIR, name + '.wav')
     else:
         args = [a.strip('"') for a in args]
         q = ' '.join("'%s'" % a if ' ' in a or ';' in a or '#' in a else a for a in args)
-        out = subprocess.run(['ssh', MAC, 'cd %s && BSYNTH_MACHINE_DIR=$HOME/bsynth/test/machine-2 ../bsynth-host '
+        out = subprocess.run(['ssh', MAC, 'cd %s && ../bsynth-host '
                               'BasiliskSynth.vst3 %s.wav %s' % (MAC_DIR, name, q)], capture_output=True, text=True, timeout=timeout).stdout
         path = '/tmp/bsyn-%s.wav' % name
         subprocess.run(['scp', '-q', '%s:%s/%s.wav' % (MAC, MAC_DIR, name), path])
@@ -52,8 +52,10 @@ def render(name, args, timeout=300):
 
 def qemu_count():
     if MODE == 'win':
-        o = subprocess.run(['/mnt/c/Windows/System32/tasklist.exe'], capture_output=True, text=True).stdout
-        return o.lower().count('qemu-system-i386')
+        # our QEMUs only: the ones whose command line uses this test folder's machine or a bsynth temp folder
+        ps = "(Get-CimInstance Win32_Process -Filter \"name='qemu-system-i386w.exe'\" | Where-Object { $_.CommandLine -like '*bsynth-test*' }).Count"
+        o = subprocess.run(['/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe', '-NoProfile', '-Command', ps], capture_output=True, text=True).stdout
+        return int(o.strip() or 0)
     o = subprocess.run(['ssh', MAC, 'pgrep -f qemu-system-i386 | wc -l'], capture_output=True, text=True).stdout
     return int(o.strip() or 0)
 
@@ -200,8 +202,8 @@ def test_sleep_wake_and_kill():
     # 1) quiet for 14 s (the machine pauses after 4 s), then notes: they must still sound (it wakes)
     score = '0:60:100:0.5,1:64:100:0.5'
     out, x, sr = render('t_wake', ['--dna', '"ding#16;R150"', '--score', score, '--warmup', '14', '--tail', '2'])
-    log = open(os.path.join(WSL_DIR, 'machine-2', 'plugin.log')).read() if MODE == 'win' else subprocess.run(
-        ['ssh', MAC, 'cat %s/machine-2/plugin.log' % MAC_DIR], capture_output=True, text=True).stdout
+    log = open('/mnt/c/Users/willi/AppData/Local/BASILISK SYNTH/plugin.log').read() if MODE == 'win' else subprocess.run(
+        ['ssh', MAC, 'cat ~/Library/Caches/BASILISK\\ SYNTH/plugin.log'], capture_output=True, text=True).stdout
     tail = log[-3000:]
     results['sleep_wake'] = {'slept': 'asleep' in tail, 'woke': 'woke' in tail,
                              'peak_after_wake': round(float(np.abs(x[int(14 * sr):]).max()), 3)}
@@ -212,7 +214,11 @@ def test_sleep_wake_and_kill():
     def killer():
         time.sleep(12 + 6)       # load + warmup + 6 s of notes
         if MODE == 'win':
-            subprocess.run(['/mnt/c/Windows/System32/taskkill.exe', '/f', '/im', 'qemu-system-i386w.exe'], capture_output=True)
+            # only the QEMU our own bsynth-host started (other programs on this PC may run QEMUs too)
+            ps = ("$h = Get-CimInstance Win32_Process -Filter \"name='bsynth-host.exe'\" | ForEach-Object ProcessId; "
+                  "Get-CimInstance Win32_Process -Filter \"name='qemu-system-i386w.exe'\" | Where-Object { $h -contains $_.ParentProcessId } | "
+                  "ForEach-Object { Stop-Process -Id $_.ProcessId -Force }")
+            subprocess.run(['/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe', '-NoProfile', '-Command', ps], capture_output=True)
         else:
             subprocess.run(['ssh', MAC, 'pkill -9 -f "[q]emu-system-i386"'])
         res['killed_at'] = time.time()
@@ -229,9 +235,81 @@ def test_sleep_wake_and_kill():
                             'note': 'notes were scheduled until %.1f s; QEMU was killed about 6 s into them' % (12 + 0.35 * 30)}
 
 
+def test_v2():
+    """DNA v2 (DNA.md 5): pan, offsets, drawn envelopes, macros, a library sound; one note each"""
+    r = {}
+    def one(name, dna, score='0:60:100:1.2', warm=12):
+        out, x, sr = render(name, ['--dna', '"%s"' % dna, '--score', score, '--warmup', str(warm), '--tail', '2'])
+        return x[int(warm * sr):], sr, latency_ms(out) or 100
+    xl, sr, lat = one('t_panl', 'ding#16Q-100;R200')
+    xr, _, _ = one('t_panr', 'ding#16Q100;R200')
+    rms = lambda v: float(np.sqrt((v ** 2).mean()))
+    r['pan_left_L_R'] = [round(rms(xl[:, 0]), 4), round(rms(xl[:, 1]), 4)]
+    r['pan_right_L_R'] = [round(rms(xr[:, 0]), 4), round(rms(xr[:, 1]), 4)]
+    # offsets: layer 2 (right) starts 500 ms after layer 1 (left)
+    x, sr, lat = one('t_offset', 'ding#8Q-100/ding#8O500Q100;R100', '0:60:100:1.5')
+    on = []
+    for ch in (0, 1):          # the first time each side gets loud (each side has one layer)
+        env = np.convolve(np.abs(x[:, ch]), np.ones(64) / 64, 'same')
+        k = np.nonzero(env[:int(2 * sr)] > 0.2 * env[:int(2 * sr)].max())[0]
+        on.append(int(k[0]) if len(k) else None)
+    r['offset_ms'] = {'asked': 500, 'measured': round((on[1] - on[0]) / sr * 1000, 1) if None not in on else None}
+    # a drawn envelope on a sustained organ: silent start, loudest at 500 ms, gone by 1000 ms
+    x, sr, lat = one('t_ja', 'organ_pipe_open_31#16Ja0,0.500,100.1000,0;R100', '0:60:100:2.0')
+    e = envelope(x, sr)
+    k0 = int(np.argmax(e > e.max() * 0.02))
+    r['ja_envelope'] = {'asked': '0 -> 100 % at 500 ms -> 0 at 1000 ms', 'peak_ms_after_onset': int((int(np.argmax(e)) - k0) * 10),
+                        'level_at_250ms_rel': round(float(e[k0 + 25] / e.max()), 2), 'level_at_1100ms_rel': round(float(e[min(len(e) - 1, k0 + 110)] / e.max()), 3)}
+    # a macro: the same DNA, macro 1 at 0 and at 100, mapped to the layer's level 10..100 %
+    x0, _, _ = one('t_m0', 'ding#16;m1=0m10L10,100')
+    x1, _, _ = one('t_m1', 'ding#16;m1=100m10L10,100')
+    r['macro_level_ratio'] = round(float(np.abs(x0).max() / max(1e-9, np.abs(x1).max())), 3)
+    # a sound from the library disc, at its root note
+    x, sr, lat = one('t_lib', 'kalimba_c4#16;R300')
+    m = x.mean(axis=1)
+    env = np.convolve(np.abs(m), np.ones(64) / 64, 'same')
+    on = onset(env, 0, int(1.0 * sr), sr)
+    r['library_kalimba_c4'] = {'peak': round(float(np.abs(m).max()), 3), 'hz': round(peak_hz(m[on + int(0.05 * sr):], sr), 1) if on is not None else None, 'c4_hz': 261.6}
+    results['v2'] = r
+
+
+def test_host():
+    """what a DAW does, in our own host: automation (a macro), a preset change while notes play, state round trip,
+    real-time timing on a dummy device; on Windows also the keyboard inside XP (mouse and PC keys) through the editor"""
+    r = {}
+    def seg_peaks(x, sr, warm, times, w=0.45):
+        m = np.abs(x.mean(axis=1))
+        return [round(float(m[int((warm + t + 0.08) * sr):int((warm + t + w) * sr)].max()), 3) for t in times]
+    # a macro automated mid-score: level 10 % -> 100 %
+    times = [0, 1, 2, 3]
+    out, x, sr = render('t_auto', ['--dna', '"ding#16;m1=0m10L10,100"', '--score', ','.join('%g:60:100:0.4' % t for t in times),
+                                   '--set', '"Macro 1@1.8=100"', '--warmup', '12', '--tail', '1'])
+    pk = seg_peaks(x, sr, 12, times)
+    r['macro_automation'] = {'peaks': pk, 'after_over_before': round(pk[3] / max(1e-9, pk[0]), 1), 'host': [l for l in out.splitlines() if 'automation' in l]}
+    # a preset change while playing: notes every 0.5 s; program 5 at 2.6 s
+    times = [0.5 * k for k in range(20)]
+    out, x, sr = render('t_prog', ['--score', ','.join('%g:%d:100:0.3' % (t, 60 + k % 5) for k, t in enumerate(times)), '--set', 'program@2.6=5',
+                                   '--warmup', '12', '--tail', '2', '--state-roundtrip', '--timing'])
+    pk = seg_peaks(x, sr, 12, times, 0.4)
+    r['preset_change_while_playing'] = {'peaks': pk, 'silent_notes': sum(p < 0.01 for p in pk),
+                                        'host': [l for l in out.splitlines() if 'automation' in l or 'roundtrip' in l]}
+    r['state_roundtrip'] = [l for l in out.splitlines() if 'roundtrip' in l]
+    r['realtime_timing'] = [l for l in out.splitlines() if l.startswith('timing')]
+    if MODE == 'win':
+        # the keyboard in Windows, through the editor: "PC keys" on, then the 'a' key (C4), then the mouse on C4
+        menu = 19
+        ui = ['--ui', '0.3:click:117:%d' % (690 + menu), '--ui', '1.0:key:a', '--ui', '1.8:keyup:a',
+              '--ui', '3.0:down:298:%d' % (723 + menu), '--ui', '3.8:up:298:%d' % (723 + menu)]
+        out, x, sr = render('t_kbd', ['--editor', '--score', '"7:30:1:0.05"', '--warmup', '14', '--tail', '1'] + ui)
+        m = np.abs(x.mean(axis=1))
+        blk = [round(float(m[int((14 + t) * sr):int((14 + t + 0.5) * sr)].max()), 3) for t in (0.0, 1.0, 2.2, 3.0)]
+        r['xp_keyboard'] = {'peak_quiet_0s': blk[0], 'peak_pc_key_1s': blk[1], 'peak_after_release': blk[2], 'peak_mouse_key_3s': blk[3]}
+    results['host'] = r
+
+
 if __name__ == '__main__':
     only = sys.argv[2].split(',') if len(sys.argv) > 2 else None
-    for t in [test_scale, test_steal, test_determinism_and_state, test_offline, test_instances, test_sleep_wake_and_kill]:
+    for t in [test_scale, test_steal, test_determinism_and_state, test_offline, test_instances, test_sleep_wake_and_kill, test_v2, test_host]:
         if only and t.__name__ not in only: continue
         try:
             t()

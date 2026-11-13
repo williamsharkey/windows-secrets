@@ -301,6 +301,9 @@ Dna parse(const std::string &in)
         if ((int)d.layers.size() < kMaxLayers) d.layers.push_back(L);
         if (r.peek() == '/') r.p++;
     }
+    // trailing empty layers say nothing ("a//" and "a/" are "a"): dropped, so canonical() is a fixed point
+    auto emptyLayer = [](const Layer &L) { for (auto &t : L.tokens) if (!t.empty()) return false; return true; };
+    while (!d.layers.empty() && emptyLayer(d.layers.back())) d.layers.pop_back();
     if (r.peek() == ';') { r.p++; parseGlobals(r, d.g); }
     assignPools(d);
     d.canonical = join(d, true);

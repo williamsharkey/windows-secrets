@@ -2,66 +2,66 @@
   "pitch": {
     "notes": 10,
     "heard": 10,
-    "max_cents_off": 5.5,
+    "max_cents_off": 5.2,
     "cents": [
       0.0,
-      3.9,
-      3.1,
-      2.5,
-      1.1,
-      5.5,
-      -0.2,
-      0.2,
-      0.2,
-      1.6
+      -0.9,
+      -1.7,
+      -2.4,
+      -3.1,
+      -3.6,
+      -4.0,
+      -4.6,
+      -5.2,
+      -5.0
     ]
   },
   "timing": {
     "reported_latency_ms": 100.0,
     "per_note_ms": [
-      55.8,
-      -11.9,
-      1.6,
-      3.3,
-      3.4,
-      4.6,
+      12.0,
+      -8.6,
       1.3,
-      0.3,
-      5.1,
-      118.0
+      -8.4,
+      -18.1,
+      -28.0,
+      -16.8,
+      -18.1,
+      -4.0,
+      -26.0
     ],
-    "onset_error_median_ms": 3.3,
-    "onset_error_spread_ms": 129.9,
-    "onset_error_std_ms": 37.4
+    "onset_error_median_ms": -12.7,
+    "onset_error_spread_ms": 40.1,
+    "onset_error_std_ms": 11.8
   },
   "steal_clicks": {
     "notes": 20,
     "recorders": 2,
     "sample_jumps_over_40x_local": 0,
     "max_ratio": 8.7,
-    "peak": 0.257
+    "peak": 0.15
   },
   "determinism": {
-    "same_dna_twice_envelope_corr": 0.996,
+    "same_dna_twice_envelope_corr": 0.981,
     "peaks": [
-      0.138,
-      0.138
+      0.084,
+      0.084
     ]
   },
   "state": {
-    "state_bytes": 216,
+    "state_bytes": 252,
     "state_has_dna": true,
-    "reloaded_vs_original_envelope_corr": 0.993
+    "reloaded_vs_original_envelope_corr": 0.984
   },
   "offline": {
-    "host_line": "rendered 15.1 s of audio in 14.9 s (offline)",
-    "wall_s": 17.3,
-    "peak": 0.22
+    "host_line": "rendered 15.1 s of audio in 15.0 s (offline)",
+    "wall_s": 18.2,
+    "peak": 0.092
   },
   "instances": {
     "peaks": [
-      0.301,
-      0.301
+      0.187,
+      0.183
     ],
     "max_qemu_during": 2,
     "qemu_after": 0
@@ -69,7 +69,7 @@
   "sleep_wake": {
     "slept": true,
     "woke": true,
-    "peak_after_wake": 0.126
+    "peak_after_wake": 0.077
   },
   "kill_qemu": {
     "audible_seconds": [
@@ -78,6 +78,81 @@
     ],
     "render_seconds": 24.5,
     "note": "notes were scheduled until 22.5 s; QEMU was killed about 6 s into them"
+  },
+  "v2": {
+    "pan_left_L_R": [
+      0.0117,
+      0.0
+    ],
+    "pan_right_L_R": [
+      0.0,
+      0.0131
+    ],
+    "offset_ms": {
+      "asked": 500,
+      "measured": 480.2
+    },
+    "ja_envelope": {
+      "asked": "0 -> 100 % at 500 ms -> 0 at 1000 ms",
+      "peak_ms_after_onset": 400,
+      "level_at_250ms_rel": 0.48,
+      "level_at_1100ms_rel": 0.0
+    },
+    "macro_level_ratio": 0.1,
+    "library_kalimba_c4": {
+      "peak": 0.353,
+      "hz": 264.0,
+      "c4_hz": 261.6
+    }
+  },
+  "host": {
+    "macro_automation": {
+      "peaks": [
+        0.007,
+        0.008,
+        0.075,
+        0.075
+      ],
+      "after_over_before": 10.7,
+      "host": [
+        "automation: Macro 1 @ 1.80 s = 100"
+      ]
+    },
+    "preset_change_while_playing": {
+      "peaks": [
+        0.158,
+        0.162,
+        0.159,
+        0.156,
+        0.158,
+        0.158,
+        0.0,
+        0.215,
+        0.216,
+        0.196,
+        0.2,
+        0.204,
+        0.209,
+        0.224,
+        0.222,
+        0.223,
+        0.22,
+        0.216,
+        0.201,
+        0.201
+      ],
+      "silent_notes": 1,
+      "host": [
+        "automation: program @ 2.60 s = 5",
+        "state roundtrip: identical (255 -> 255 bytes)"
+      ]
+    },
+    "state_roundtrip": [
+      "state roundtrip: identical (255 -> 255 bytes)"
+    ],
+    "realtime_timing": [
+      "timing: block 512 (10.7 ms), process() avg 0.006 ms max 0.038 ms, real-time blocks late by more than a block: 0, max late 0.0 ms"
+    ]
   },
   "qemu_left": 0
 }

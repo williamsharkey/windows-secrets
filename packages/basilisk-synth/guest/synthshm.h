@@ -22,6 +22,7 @@
 #define SYO_LOADPCM 13 /* read s[i].pcmfile (the file this Sound Recorder just opened) for the fast play path */
 #define SYO_VISUAL 14  /* show the note playing: Play held down, the slider and wave following the sound */
 #define SYO_SNAP 15    /* exactly into place now: the strip at s[i].fly, its parts in their row (end of the assembly) */
+#define SYO_CMDV 16    /* like SYO_CMD, but visibly: the recorder's own menu pops up and walks to the command */
 #define SY_NOTE_EV "BasiliskSynthNote%d"   /* auto-reset event per recorder: a note to play now (s[i].rate, vol) */
 #define SYE_END 100    /* the recorder stopped (end of sound or Stop) */
 #define SYE_OPEN 101   /* the sound card was opened (lParam: ms since the play request) */
@@ -69,6 +70,9 @@ typedef struct {
     volatile LONG fly[4];     /* SYO_FLY target: x, y, w, h */
     volatile LONG t_post;     /* GetTickCount() when synth.exe asked for the last note */
     volatile LONG cut;        /* 1: end the note now (a 5 ms ramp) */
+    volatile LONG pan;        /* v2: -100..100, as left/right volume */
+    volatile LONG layer;      /* v2: which layer's envelope applies (-1: none) */
+    volatile LONG menu_x, menu_y;   /* SYO_CMDV: where the menu pops up (screen) */
     WCHAR pcmfile[260];       /* SYO_LOADPCM: the Sound Recorder's own file */
     WCHAR file[260];          /* the next Open/Save/Insert/Mix dialog answers with this file */
 } SySlot;
@@ -77,6 +81,7 @@ typedef struct {
     LONG magic, synth_hwnd;
     volatile LONG env_a, env_d, env_s, env_r;   /* ms, ms, %, ms */
     volatile LONG pad[10];
+    struct { volatile LONG n; volatile LONG t[8], v[8]; } env[8][2];   /* v2 lenv: per layer, [0] amplitude, [1] pan */
     RECT kid_final[16];       /* where a strip's controls end up, in this order: Play, Stop, Position frame,
                                  "Position:", position, wave, Length frame, "Length:", length, slider */
     SySlot s[SY_NREC];

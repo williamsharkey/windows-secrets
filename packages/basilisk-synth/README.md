@@ -8,22 +8,22 @@ those Sound Recorders and passes on what XP plays. It never makes a sound of its
 Open the editor and you watch the machine put itself together. Sixteen Sound Recorders sit on XP's desktop. Each
 loses its menu bar, then its title bar. Its unused buttons drop off, then it glides into place as one strip of a
 16-track tape machine: Play, Stop, Position, the green wave, Length and the slider. Task Manager's CPU and
-page-file graphs and the Date and Time clock and calendar move in beside them.
+page-file graphs and the Date and Time clock move in beside them, and a keyboard of real push buttons lays itself
+out along the bottom, with Volume Control's sliders as the pitch bend, mod wheel and four macros.
 
 Download
 --------
-https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.1.0
+https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.2.0
 
 | File | Contents |
 |---|---|
-| `BASILISK-SYNTH-windows-x64.zip` (47 MB) | `BasiliskSynth.vst3`. Copy it to `C:\Program Files\Common Files\VST3`. |
-| `BASILISK-SYNTH-macos.dmg` (95 MB) | `BasiliskSynth.vst3`, `.component` and `.clap`, universal (Apple Silicon and Intel). Copy them to `~/Library/Audio/Plug-Ins/VST3`, `Components` and `CLAP`. |
-| `basilisk-synth-machine-2.tar.xz` | The XP machine. You don't download it yourself: the plugin fetches it once, on first use. |
+| `BASILISK-SYNTH-windows-x64.zip` (952 MB) | `BasiliskSynth.vst3`, with Windows XP inside it. Copy it to `C:\Program Files\Common Files\VST3`. |
+| `BASILISK-SYNTH-macos.dmg` (932 MB) | `BasiliskSynth.vst3` (with Windows XP inside it), `.component` and `.clap`, universal (Apple Silicon and Intel). Copy them to `~/Library/Audio/Plug-Ins/VST3`, `Components` and `CLAP`; the AU and CLAP use the VST3's machine, so install the VST3 too. |
 
-- **First use:** the plugin downloads the machine (788 MB), checks its SHA-256 and unpacks it (930 MB). It uses the
-  curl and tar that come with Windows 10/11 and macOS, and its editor shows the progress.
-- **Where it lives:** `%LOCALAPPDATA%\BASILISK SYNTH` (Windows) or `~/Library/Application Support/BASILISK SYNTH`
-  (macOS). Delete that folder to remove it.
+- **Complete:** Windows XP, its sixteen Sound Recorders and the library disc are inside the plugin. Nothing is
+  downloaded on first use.
+- **Writes only:** a per-instance overlay in the temp folder (removed when the instance goes), and a log plus the
+  unpacked QEMU (Windows) in `%LOCALAPPDATA%\BASILISK SYNTH` or `~/Library/Caches/BASILISK SYNTH`.
 - **Unsigned:** nothing is code-signed by Microsoft or Apple.
   - Windows: SmartScreen does not look at plugins, so there is nothing to click.
   - macOS: run `xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/*/BasiliskSynth.*` once, or your DAW will
@@ -32,15 +32,31 @@ https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1
 Playing it
 ----------
 - MIDI notes, velocity, sustain pedal (CC64), pitch bend (applied when a note starts) and all-notes-off.
-- **DAW parameters:** Gain, Attack, Decay, Sustain, Release, Velocity, Bend Range and Transpose. All are
-  automatable.
-- **Presets:** 12 factory presets, plus whatever the DAW saves. The whole sound is one DNA string kept in the plugin
-  state, so DAW projects and preset files restore it exactly.
+- **DAW parameters:** Gain, Attack, Decay, Sustain, Release, Velocity, Bend Range, Transpose and Macro 1-4. All
+  are automatable. The mod wheel (CC1) adds to Macro 1.
+- **Presets:** 39 factory programs named "Category: Name" (Keys, Bells, Pads, Bass, Plucks, Percussion, Collage,
+  FX, Macro, Brass, Library), plus whatever the DAW saves. The whole sound is one DNA string kept in the plugin
+  state, so DAW projects and preset files restore it exactly (a state saved, loaded and saved again is
+  byte-identical).
+- **Layers (DNA v2):** up to 8 layers, each on its own pool of recorders, each with an offset from the note
+  (`O`), pan (`Q`, applied as the card's left/right volume for that recorder), level (`L`) and a drawn amplitude or
+  pan envelope (`Ja`, `Jp`: up to 8 points, applied as the card's volume while the note plays). None of these
+  rebuild the sound; the sound itself is still what the recorder made and plays.
+- **Library disc:** the machine has a CD drive; the plugin puts the library disc in it after XP wakes. 510 public
+  domain / CC0 sounds (tonal instruments, glass and bells, nature, machines, electromechanical, office, water) are names a DNA can use like XP's own
+  (`kalimba_c4#10/glass_ping#6T12`).
 - **Inside XP (the editor):**
   - Effects and Edit menus that are Sound Recorder's own commands
   - Voices: transpose, harmony and unison
   - Layers
-  - a sound list for picking each layer's source (35 of XP's sounds from `C:\WINDOWS\Media`)
+  - a library browser: XP's 35 sounds, the disc's categories and its presets (double-click to use)
+  - an envelope editor under the strips: eight upright trackbars (the selected layer's envelope), Length, Offset
+    and Pan sliders, and the curve drawn the way Task Manager draws its history
+  - Macros: four upright sliders (Tone, Body, Time, Motion = Macro 1-4)
+  - the keyboard: 37 keys (C3-C6) that go down for the DAW's notes; the mouse plays them (drag to glide), Hold
+    latches, "PC keys" turns on a w s e d f t g y h u j k (z/x octave, c/v velocity); Bend springs back, Mod stays
+  - **you see the sounds being built:** while the editor is open, every step of a build is picked from that
+    recorder's own File, Edit or Effects menu, which pops up on its strip and walks down to the command
   - a DNA box with Apply, Mutate and Undo
   - Play and Stop on any strip
   Every change is sent back to the DAW as the new DNA.
@@ -75,39 +91,69 @@ How the sound gets out of XP
   stop.
 - **Playback:** the plugin delays the stream by a fixed latency it reports to the DAW, so delay compensation lines
   notes up. It resamples to the session rate with 4-point Hermite interpolation and a slow drift correction.
-- **Pitch:** XP's AC97 driver has no `waveOutSetPlaybackRate`; the call returns MMSYSERR_NOTSUPPORTED.
-  - Instead, a small DLL injected into each Sound Recorder (`guest/srhook.c`) asks `waveOutOpen` for the file's rate
-    times 2^(semitones/12).
-  - XP's kernel mixer then resamples in hardware-driver fashion. No sample is touched by anyone but XP.
-  - Measured: ±6 cents over five octaves. Rates from 2.7 kHz to 176 kHz were tested.
-- **Note shaping:** each note's envelope and velocity are XP's per-stream `waveOutSetVolume`, ramped by the same
-  DLL.
+- **Pitch and shaping:** a small DLL injected into each Sound Recorder (`guest/srhook.c`) plays that recorder's
+  own saved sound (its buffer, with its effects).
+  - It streams the sound to a card handle opened once at 48 kHz stereo, 20 ms at a time, four chunks ahead.
+  - Pitch is the step through the source: the file's rate times 2^(semitones/12), in 16.16 fixed point with
+    linear interpolation.
+  - Velocity, level, pan and the envelope (ADSR or the drawn `Ja`/`Jp`) are applied to the samples on the way.
+    The envelope's clock is the sound itself, so it is exact.
+  - Integer arithmetic only: x87 floating point is slow under the emulator.
+  - Why not XP's own mixer and volume, as in 1.0-1.1: `waveOutSetVolume` is card-wide on this XP, so one voice's
+    envelope moved all of them. Reopening the card at a new rate also cost a note up to 400 ms.
 - **Voice allocation:** the voice allocator (`core/voices.cpp`) gives each note a free recorder from its layer's
   pool. If none is free, it takes the oldest, cutting it with a 5 ms fade.
 
-Timing and tests (v1.1)
+Timing and tests (v1.2)
 -----------------------
-Measured through a real VST3 host (`tools/testhost`, `tools/run_tests.py`; `tools/test-results-*.json`):
+Measured through our own VST3 hosts (`tools/testhost` with `tools/run_tests.py`, and tools/basilisk-host's
+harness; `tools/test-results-*.json`). The Windows PC was shared with other projects' emulators while it ran, so
+its timing numbers are the worse of the two.
 
-|                                          | Windows 11 (QEMU 11.1)            | macOS, Apple silicon (QEMU 11.1)  | v1.0 (Win / mac)          |
-|------------------------------------------|-----------------------------------|-----------------------------------|---------------------------|
-| plugin load -> ready for sound           | ~1.1 s                            | ~0.3 s                            | 1.2 / 0.3 s               |
-| plugin load -> assembly finished         | 5.6-6.1 s                         | 4.4-4.5 s                         | 11.5 / 11.3 s             |
-| reported latency                         | 100 ms                            | 100 ms                            | 370 / 200 ms              |
-| note timing after compensation (std)     | about +-25 ms (std ~20)                       | about +-8 ms (std ~5)                       | 82 / 24 ms                |
-| pitch error, 10 notes over 3 octaves     | max 7 cents                       | max 5.5 cents                     | 5.2 / 3.6 cents           |
-| same DNA twice (envelope correlation)    | 0.982-0.992                       | 0.995-0.996                            | 0.986 / 0.999             |
-| state saved -> reloaded                  | 0.988-0.991                       | 0.993-0.995                            | 0.992 / 0.997             |
-| emulator CPU, awake, nothing playing     | ~50% of a core                    | ~20% of a core                    | ~200% / ~190%             |
-| emulator CPU, asleep                     | ~3%                               | ~2%                               | same                      |
-| emulator CPU, playing 3 notes a second   | ~100% of a core                   | ~100% of a core                   | ~200%+                    |
-| clicks on voice steals                   | none                              | none                              | none                      |
-| offline render, two instances, sleep/wake, QEMU killed -> silence | pass   | pass                              | pass                      |
-| pluginval strictness 10                  | SUCCESS                           | SUCCESS (VST3); auval PASS (AU)   | SUCCESS / SUCCESS         |
+|                                              | Windows 11                         | macOS, Apple silicon          | v1.1 (Win / mac)        |
+|----------------------------------------------|------------------------------------|-------------------------------|-------------------------|
+| plugin load -> XP running and linked         | 1.9 s (first load ever: +3.5 s to unpack QEMU) | 0.3 s              | same                    |
+| plugin load -> a new sound built, playable   | 4.3 s                              | 0.8 s                         |                         |
+| editor: assembly finished                    | 4.1 s                              | (4.4-4.5 s in 1.1)            | 5.6-6.1 / 4.4-4.5 s     |
+| reported latency                             | 100 ms                             | 100 ms                        | 100 / 100 ms            |
+| note timing after compensation               | median 3-12 ms, std 37-46 ms       | median -13 ms, std 10-12 ms   | std ~20 / ~5 ms         |
+| harness: notes heard of 50 (offline / live)  | 50 / 50                            |                               | 34 / 22 (Windows)       |
+| pitch, 10 notes over 3 octaves               | max 14 cents (harness: mean 11-12) | max 2-5 cents                 | 7 / 5.5 cents           |
+| same DNA twice (envelope correlation)        | 0.85-0.98 (harness 0.77-0.88)      | 0.98-0.995                    | 0.98-0.99 / 0.995       |
+| state saved -> reloaded                      | bytes identical; sound 0.70-0.97   | bytes identical; sound 0.98-0.995 |                     |
+| clicks on voice steals                       | none                               | none                          | none                    |
+| offline render, two instances, sleep/wake, QEMU killed -> silence, no orphans | pass | pass                    | pass                    |
+| pluginval strictness 10                      | SUCCESS                            | SUCCESS (VST3); auval PASS (AU) | SUCCESS / SUCCESS     |
 
-Timing spread is for every note but the first after a quiet spell and the 4x-speed top note, whose onset the
-analysis misreads (+70 to +118 ms in every run). Two things it still cannot do: notes are not sample-accurate, and on
-a busy Windows machine some mid-assembly frames still show a strip being reshaped before every part has repainted.
+Version 2 of the DNA, measured on rendered audio (both systems):
+- **Pan:** `Q-100` gives silence on the right and `Q100` silence on the left, per voice, with other voices sounding.
+- **Offset:** `O500` starts its layer 450-500 ms after the first.
+- **Drawn envelope:** `Ja0,0.500,100.1000,0` gives 46-51 % at 250 ms and nothing at 1100 ms.
+- **Macro:** `m1=0m10L10,100` against `m1=100...` gives a level ratio of 0.10, live by automation too (Macro 1
+  from 0 to 100 mid-score: 9.4-10.7x louder).
+- **Library:** `kalimba_c4` at note 60 is 263-264 Hz (the sample's own tuning; C4 is 261.6 Hz).
+- **Keyboard in XP:** through the editor, the PC key `a` and a mouse click on C4 each played a note
+  (peaks 0.19 and 0.27), silent before and after.
+- **Program change while notes play:** the new sound takes about 1.5 s to build in Windows. Live, notes in that
+  time are not heard (the BasiliskHost harness counts 3-6). Offline renders wait for the build instead.
+- **Batch rendering:** 4 jobs on 4 machines at once: 16.5 s of audio in 11.5 s, startup included.
+
+Not reached: renders are not bit-identical from run to run (XP's timing is not sample-accurate, unlike the
+3.11 edition), and a busy Windows machine still spreads note timing to about +-40 ms.
+
+What changed for 1.2:
+- **Sound applied inside each Sound Recorder.** XP's `waveOutSetVolume` turned out to be one volume for the whole
+  card, not one per voice, so 1.1's per-voice velocity and envelope were last-writer-wins. Each recorder's DLL now
+  streams its own saved sound to a card handle opened once at 48 kHz, 4 x 20 ms ahead. It applies the pitch (a
+  16.16 fixed-point step, linear interpolation), velocity, level, pan and envelope to the samples in integer
+  arithmetic. A note never waits for the card to open (0-16 ms, was up to 400 ms).
+- **DNA v2** (offsets, pan, drawn envelopes, collages, macros, the library disc), the keyboard and wheels,
+  the macros panel, the envelope editor, the library browser, visible builds and 39 programs.
+- **Built in:** the machine is inside the plugin; no first-use download.
+- **Never hangs a host:** an offline render waits at most 60 s for the machine, then renders silence. A watchdog
+  restarts a machine that goes silent while awake (up to 3 times). QEMU inherits only its log handle. Temp folders
+  of crashed hosts are removed at the next start.
+- **Forward compatibility:** unknown (later-version) DNA tokens are kept on save.
 
 What changed for 1.1:
 - **A fast play path inside each Sound Recorder.** Sound Recorder's own Play took 30-300 ms before it opened the card.
@@ -131,6 +177,11 @@ The machine
 - **One machine per instance:** each plugin instance runs its own QEMU as a hidden child process. It uses a
   throwaway overlay over the shared, read-only machine disk and its own sixteen recorders. Instances are independent
   and play at the same time.
+- **Built in:** the machine ships inside the plugin, in `BasiliskSynth.vst3/Contents/Resources/machine`
+  (`base.qcow2` with zstd-compressed clusters and its free space zeroed, `state.mig`, firmware and the library disc).
+  QEMU reads the disk in place, read-only; each instance writes only to its own overlay in the temp folder, which
+  is removed when the instance goes (and leftovers of crashed hosts are removed at the next start). Nothing is
+  downloaded. On macOS the AU and CLAP use the VST3's copy, so install the VST3 too.
 - **Fast resume:** QEMU resumes from the shipped machine state (a migration stream, streamed in over loopback) in
   about a second, with XP already logged in and the sixteen recorders open.
 - **When it goes away:**
@@ -149,14 +200,42 @@ What's inside
 | `core/` | DNA parsing, the voice allocator and the protocol. Shared with the 3.11 edition. |
 | `guest/` | `synth.c` (the conductor in XP: animation, panels, COM1) and `srhook.c` (inside each Sound Recorder). Both are compiled in XP with tcc. |
 | `tools/make_machine.py` | Builds the shipped machine from a prepared XP disk. |
-| `tools/testhost/` | A small VST3 host used for the tests: render, offline, instances, state. |
+| `tools/testhost/` | `bsynth-host`, a small VST3 host for the tests and for demos: render, offline, instances, state, automation (`--set NAME@T=V`, `program`), editor input (`--ui T:click:X:Y`, `key:C`), `--state-roundtrip`, `--timing`, editor frames (`--shots`). |
+| `tools/batch_render.py` | DNA + score or MIDI -> WAV through the real machine, several VMs in parallel. |
+| `tools/make_library.py`, `tools/make_presets.py` | The library disc (ISO 9660 + Joliet) and the programs (`presets_gen.h`, `PRESETS.TSV`) from `library/`. |
 | `tools/run_tests.py` | The end-to-end checks. |
+
+Batch rendering and demo capture
+--------------------------------
+**Batch rendering** (DNA.md 5.6): a job list in, one WAV per job out, each through its own plugin instance and its
+own Windows XP. XP plays in real time, so throughput comes from running several machines at once.
+
+    [{"dna": "kalimba_c4#10/glass_ping#6T12;R300", "score": "0:60:100:0.5,0.5:64:100:0.5", "out": "kalimba.wav", "tail": 2},
+     {"dna": "chord#10/ding>>E#6;A2D300S70R250", "midi": "phrase.mid", "out": "chord-phrase.wav"}]
+
+    python3 tools/batch_render.py jobs.json --host bsynth-host.exe --plugin BasiliskSynth.vst3 --parallel 4 --out-dir out
+
+Scores are `t:note:velocity:duration` in seconds; `midi` takes a standard MIDI file (all tracks). Builds are not
+shown during batch renders (`BSYNTH_VISIBLE_BUILD=0`). It writes `out/batch.json` with each job's length, peak and
+wall time.
+
+**Editor video with its audio** (Windows): `bsynth-host` opens the real editor, plays a score and saves a frame of
+the editor every `--shots` seconds, named in order, next to the WAV of the same run:
+
+    bsynth-host.exe BasiliskSynth.vst3 demo.wav --editor --shots 0.04 frames --warmup 10 --tail 3 ^
+        --dna "kalimba_c4#10/glass_ping#6T12;R300" --score "0:60:100:0.5,0.5:64:100:0.5,1:67:100:1"
+    ffmpeg -framerate 25 -i frames\%06d.bmp -i demo.wav -c:v libx264 -pix_fmt yuv420p -c:a aac -shortest demo.mp4
+
+Frame N is at N x 0.04 s of the same clock as the audio, from the moment the plugin loads (so the assembly is in
+the video). `--ui T:click:X:Y`, `--ui T:key:a` and `--set "Macro 1@T=V"` script clicks, typing and automation
+into the take. The window must stay visible on screen while it records.
 
 Builds
 ------
-- **Windows:** `make WINDOWS=true CC=x86_64-w64-mingw32-gcc-posix CXX=x86_64-w64-mingw32-g++-posix` from Linux. Then put QEMU for Windows (Stefan Weil's build, as in packages/basilisk-xp), still zipped, at `BasiliskSynth.vst3/Contents/Resources/qemu-win64.zip`: the plugin unpacks it beside the machine on first use, so no QEMU `.dll` sits in a VST folder for hosts to probe.
+- **Windows:** `make WINDOWS=true CC=x86_64-w64-mingw32-gcc-posix CXX=x86_64-w64-mingw32-g++-posix` from Linux. Then put QEMU for Windows (Stefan Weil's build, as in packages/basilisk-xp), still zipped, at `BasiliskSynth.vst3/Contents/Resources/qemu-win64.zip` (the plugin unpacks it once into `%LOCALAPPDATA%\BASILISK SYNTH`, so no QEMU `.dll` sits in a VST folder for hosts to probe), and the machine (`tools/make_machine.py` output) in `Contents/Resources/machine`.
 - **macOS:** `make MACOS=true` with universal `-arch` flags. Then put the Homebrew QEMU builds from
-  packages/basilisk-xp in `Contents/Resources/qemu-arm64` and `qemu-x86_64`, and ad-hoc sign.
+  packages/basilisk-xp in `Contents/Resources/qemu-arm64` and `qemu-x86_64`, the machine in the VST3's
+  `Contents/Resources/machine`, and ad-hoc sign.
 
 Windows XP is Microsoft's; its sounds and Sound Recorder are Microsoft's. QEMU is GPL v2 (source: qemu.org).
 DPF is ISC.

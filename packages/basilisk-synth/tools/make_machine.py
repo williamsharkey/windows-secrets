@@ -12,7 +12,8 @@ writes the machine state as a migration stream. The disk as it is at that moment
 QEMU 6.2 the XP lane ships for Linux, like packages/basilisk-xp/tools/make_ready.py: a TCG stream with plain qemu32
 CPUs loads in the QEMU 11 of Windows and macOS.
 
-Then OUTDIR/basilisk-synth-machine-1.tar.xz and plugin/machine_info.h are written.
+Then OUTDIR/machine/ (base.qcow2 with zstd clusters, state.mig, fw/, library.iso: what the plugin bundles carry
+in Contents/Resources/machine) and plugin/machine_info.h are written.
 """
 import argparse
 import hashlib
@@ -25,7 +26,8 @@ import sys
 import time
 
 PKG = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-NAME = 'machine-2'
+NAME = 'machine-3'
+RELEASE = 'basilisk-synth-v1.2.0'
 
 
 def qmp(path, cmd, args=None, timeout=600):
@@ -83,6 +85,7 @@ def main():
     ap.add_argument('out')
     ap.add_argument('--qemu-linux', default=os.path.expanduser('~/basilisk-build/qemu-linux'))
     ap.add_argument('--settle', type=float, default=25)
+    ap.add_argument('--library', help='the library disc (tools/make_library.py); shipped beside the state as library.iso')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     work = os.path.join(a.out, 'work')
@@ -99,6 +102,7 @@ def main():
     args = pre + [os.path.join(q, 'bin', 'qemu-system-i386'), '-name', 'BASILISK SYNTH', '-nodefaults', '-no-user-config',
                   '-M', 'pc-i440fx-6.2', '-m', '512', '-smp', '1', '-cpu', 'qemu32',
                   '-drive', 'file=%s,format=qcow2,if=ide,index=0,cache=writeback' % disk,
+                  '-drive', 'if=none,id=cd0,media=cdrom,readonly=on', '-device', 'ide-cd,drive=cd0,id=cdrom0,bus=ide.1,unit=0',
                   '-vga', 'cirrus', '-device', 'rtl8139,netdev=n0,mac=52:54:00:12:34:56',
                   '-netdev', 'user,id=n0,restrict=on,net=10.0.2.0/24',
                   '-usb', '-device', 'usb-tablet', '-rtc', 'base=localtime', '-display', 'none', '-boot', 'menu=off',
@@ -166,31 +170,25 @@ def main():
     p.wait(60)
     print('state: %d bytes' % os.path.getsize(state_path), flush=True)
     base = os.path.join(a.out, 'base.qcow2')
-    subprocess.check_call(pre + [os.path.join(q, 'bin', 'qemu-img'), 'convert', '-c', '-O', 'qcow2', disk, base], env=env)
+    subprocess.check_call(pre + [os.path.join(q, 'bin', 'qemu-img'), 'convert', '-c', '-O', 'qcow2', '-o', 'compression_type=zstd,cluster_size=65536', disk, base], env=env)
     fw = os.path.join(a.out, 'fw')
     shutil.rmtree(fw, ignore_errors=True)
     shutil.copytree(os.path.join(q, 'share'), fw, ignore=shutil.ignore_patterns('keymaps'))
-    tarball = os.path.join(a.out, 'basilisk-synth-%s.tar.xz' % NAME)
-    subprocess.check_call(['tar', '-C', a.out, '-cf', '-', 'base.qcow2', 'state.mig', 'fw'],
-                          stdout=open(tarball + '.tar', 'wb'))
-    subprocess.check_call(['xz', '-6', '-T0', '-f', tarball + '.tar'])
-    os.replace(tarball + '.tar.xz', tarball)
-    h = hashlib.sha256()
-    with open(tarball, 'rb') as f:
-        for b in iter(lambda: f.read(1 << 20), b''):
-            h.update(b)
-    unpacked = os.path.getsize(base) + os.path.getsize(state_path) + sum(
-        os.path.getsize(os.path.join(fw, x)) for x in os.listdir(fw))
+    # the machine ships inside the plugin bundles (Contents/Resources/machine): no download, no archive
+    if a.library:
+        shutil.copyfile(a.library, os.path.join(a.out, 'library.iso'))
+    mach = os.path.join(a.out, 'machine')
+    shutil.rmtree(mach, ignore_errors=True)
+    os.makedirs(mach)
+    for part in ['base.qcow2', 'state.mig', 'fw'] + (['library.iso'] if a.library else []):
+        os.replace(os.path.join(a.out, part), os.path.join(mach, part))
+    size = sum(os.path.getsize(os.path.join(dp, f)) for dp, _, fs in os.walk(mach) for f in fs)
     info = os.path.join(PKG, 'plugin', 'machine_info.h')
     with open(info, 'w') as f:
         f.write('// the Windows XP machine this build of BASILISK SYNTH resumes (written by tools/make_machine.py)\n#pragma once\n')
         f.write('#define BSYNTH_MACHINE_NAME "%s"\n' % NAME)
-        f.write('#define BSYNTH_MACHINE_URL "https://github.com/williamsharkey/windows-secrets/releases/download/'
-                'basilisk-synth-v1.1.0/basilisk-synth-%s.tar.xz"\n' % NAME)
-        f.write('#define BSYNTH_MACHINE_BYTES %dLL\n' % os.path.getsize(tarball))
-        f.write('#define BSYNTH_MACHINE_UNPACKED %dLL\n' % unpacked)
-        f.write('#define BSYNTH_MACHINE_SHA256 "%s"\n' % h.hexdigest())
-    print('wrote %s (%d bytes, sha256 %s) and %s' % (tarball, os.path.getsize(tarball), h.hexdigest(), info))
+        f.write('#define BSYNTH_MACHINE_BYTES %dLL   // Contents/Resources/machine, unpacked\n' % size)
+    print('wrote %s (%d bytes) and %s' % (mach, size, info))
     shutil.rmtree(work)
 
 

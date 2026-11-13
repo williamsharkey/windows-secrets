@@ -42,6 +42,9 @@ static UINT msg_op, msg_done;
 static P_OPEN real_open;
 static P_CLOSE real_close;
 static P_SETVOL setvol;
+/* envelope time: the performance counter (the emulated ACPI timer, which follows the virtual clock the sound card
+   runs on); XP's tick count runs slow when the emulator is short of CPU */
+static DWORD cur_rate;
 static P_OFN real_ofn, real_sfn;
 static P_MB real_mb;
 static CRITICAL_SECTION cs;
@@ -65,7 +68,22 @@ static DWORD pcm_len;
 static WAVEFORMATEX pcm_fmt;
 static HWAVEOUT fh;           /* the fast path's handle, kept open between notes */
 static DWORD fh_rate;
-static WAVEHDR fhdr;
+/* The fast path streams: XP's waveOutSetVolume on this machine is one volume for the whole card, not per handle
+   (measured: one recorder's pan or envelope moved every other voice). So the level, pan and envelope are applied
+   to the samples here, 20 ms at a time, four chunks queued (4 x 10 ms starves under the emulator). */
+#define NCH 4
+#define CH_MS 20
+#define CH_MAXF 4096                    /* frames per chunk at up to 204 kHz */
+static WAVEHDR chdr[NCH];
+static short chbuf[NCH][CH_MAXF * 2];
+static int ch_next;                     /* the next chunk to fill, in order */
+#define OUT_RATE 48000                  /* the handle's fixed rate: opened once, never reopened for a pitch */
+static DWORD src_frames, spos;          /* source frames; the next one (integer part of sp) */
+static DWORD sfrac, sstep_i, sstep_f;   /* 16.16: source position fraction, and the step per output frame (pitch) */
+static DWORD ofr;                       /* output frames queued for this note */
+static int src_ch, src_bits, ended;     /* ended: no more source; the queued chunks play out */
+static double g_l, g_r;                 /* the gains the last chunk ended with (ramped across each chunk) */
+static DWORD wbytes, chstart[NCH];      /* bytes queued since the stream (re)started; where each chunk begins */
 static HANDLE note_ev;
 
 static void done(int op, LONG arg)
@@ -73,7 +91,30 @@ static void done(int op, LONG arg)
     if (shm && shm->synth_hwnd) PostMessageA((HWND)shm->synth_hwnd, msg_done, slot, op == SYE_OPEN ? (op | (arg << 8)) : op);
 }
 
+/* a v2 breakpoint curve (lenv) at t ms: linear between points, the last one held */
+static LONG curve_at(int L, int which, LONG t, LONG dflt)
+{
+    int n, i;
+    if (L < 0 || L >= 8) return dflt;
+    n = shm->env[L][which].n;
+    if (n <= 0) return dflt;
+    if (t <= shm->env[L][which].t[0]) return shm->env[L][which].v[0];
+    for (i = 1; i < n; i++) {
+        LONG t0_ = shm->env[L][which].t[i - 1], t1 = shm->env[L][which].t[i], v0 = shm->env[L][which].v[i - 1], v1 = shm->env[L][which].v[i];
+        if (t <= t1) return t1 > t0_ ? v0 + (LONG)((double)(v1 - v0) * (t - t0_) / (t1 - t0_)) : v1;
+    }
+    return shm->env[L][which].v[n - 1];
+}
+
 /* the envelope at time now, 0..65535 */
+static DWORD env_now(void)
+{
+    static LARGE_INTEGER f;
+    LARGE_INTEGER c;
+    if (!f.QuadPart && !QueryPerformanceFrequency(&f)) f.QuadPart = -1;
+    if (f.QuadPart <= 0 || !QueryPerformanceCounter(&c)) return GetTickCount();
+    return (DWORD)(c.QuadPart * 1000 / f.QuadPart);
+}
 static LONG env_level(DWORD now)
 {
     LONG a = shm->env_a, d = shm->env_d, s = shm->env_s * 65535 / 100, t = (LONG)(now - t0), l;
@@ -82,6 +123,8 @@ static LONG env_level(DWORD now)
     if (t < a) l = (LONG)((double)t * 65535 / a);
     else if (t < a + d) l = 65535 - (LONG)((double)(t - a) * (65535 - s) / d);
     else l = s;
+    if (S->layer >= 0 && S->layer < 8 && shm->env[S->layer][0].n > 0)      /* a drawn envelope replaces A, D and S */
+        l = curve_at(S->layer, 0, t, 100) * 65535 / 100;
     if (t_rel) {
         LONG r = (LONG)(now - t_rel);
         l = r >= rel_ms ? 0 : (LONG)((double)lvl_rel * (rel_ms - r) / rel_ms);
@@ -89,12 +132,132 @@ static LONG env_level(DWORD now)
     return l;
 }
 
-static void apply_vol(LONG l)
+/* the gains for envelope level l (0..65535) at note time t ms: velocity, then pan as a balance */
+static void gains(LONG l, LONG t, double *gl, double *gr)
 {
-    DWORD v = (DWORD)((double)l * S->vol / 65535);
-    if (v > 65535) v = 65535;
+    double v = (double)l / 65535 * S->vol / 65535;
+    LONG pan = S->pan + (S->layer >= 0 && S->layer < 8 ? curve_at(S->layer, 1, t, 0) : 0);
+    if (pan > 100) pan = 100;
+    if (pan < -100) pan = -100;
+    *gl = pan > 0 ? v * (100 - pan) / 100 : v;
+    *gr = pan < 0 ? v * (100 + pan) / 100 : v;
     S->level = l;
-    if (cur && setvol) setvol(cur, v | (v << 16));
+}
+
+/* note time of the next chunk: the source frames already queued, at the rate they play */
+static DWORD stream_now(void) { return t0 + (DWORD)((double)ofr * 1000 / OUT_RATE); }
+
+/* the source as 16-bit stereo, made once when the sound loads: the inner loop below is integers only (x87 floating
+   point is slow under the emulator) */
+static short *src16;
+static void make_src16(void)
+{
+    DWORD i;
+    free(src16);
+    src16 = (short *)malloc((size_t)(src_frames + 2) * 4);
+    if (!src16) return;
+    for (i = 0; i < src_frames; i++) {
+        int l, r;
+        if (src_bits == 16) { const short *q = (const short *)pcm + (size_t)i * src_ch; l = q[0]; r = src_ch > 1 ? q[1] : q[0]; }
+        else { const unsigned char *b = (const unsigned char *)pcm + (size_t)i * src_ch; l = ((int)b[0] - 128) << 8; r = src_ch > 1 ? ((int)b[1] - 128) << 8 : l; }
+        src16[2 * i] = (short)l; src16[2 * i + 1] = (short)r;
+    }
+    src16[2 * src_frames] = src16[2 * src_frames + 1] = src16[2 * src_frames + 2] = src16[2 * src_frames + 3] = 0;
+}
+
+/* fill chunk k with the next 20 ms (levels ramp from the last chunk's to this one's) and queue it; 0 when nothing
+   is left to play */
+static int fill_chunk(int k)
+{
+    WAVEHDR *h = &chdr[k];
+    DWORD n = OUT_RATE * CH_MS / 1000, i, now;
+    double gl, gr, l, r;
+    LONG lv;
+    short *o = chbuf[k];
+    if (n > CH_MAXF) n = CH_MAXF;
+    if (n < 16) n = 16;
+    if (ended || spos >= src_frames) { ended = 1; return 0; }
+    now = stream_now();
+    if (!t_rel && (!S->gate || S->cut)) {     /* the note was let go (or cut): the release starts with this chunk */
+        lvl_rel = S->level;
+        rel_ms = S->cut ? 5 : (shm->env_r > 0 ? shm->env_r : 1);
+        t_rel = now;
+    }
+    lv = env_level(now + CH_MS);
+    gains(lv, (LONG)(now + CH_MS - t0), &gl, &gr);
+    {
+        /* linear interpolation through the source in 16.16 fixed point (the step is the pitch); gains in Q15,
+           ramped from the last chunk's to this one's */
+        LONG gl0 = (LONG)(g_l * 32768), gr0 = (LONG)(g_r * 32768), gl1 = (LONG)(gl * 32768), gr1 = (LONG)(gr * 32768);
+        LONG dgl = (gl1 - gl0) / (LONG)n, dgr = (gr1 - gr0) / (LONG)n, xl = gl0, xr = gr0;
+        DWORD idx = spos, frac = sfrac, si = sstep_i, sf = sstep_f;
+        for (i = 0; i < n; i++) {
+            LONG l = 0, r = 0;
+            if (src16 && idx < src_frames) {
+                const short *q = src16 + 2 * idx;
+                l = q[0] + (((LONG)q[2] - q[0]) * (LONG)(frac >> 1) >> 15);
+                r = q[1] + (((LONG)q[3] - q[1]) * (LONG)(frac >> 1) >> 15);
+                frac += sf; idx += si + (frac >> 16); frac &= 0xFFFF;
+            }
+            l = (l * (xl >> 1)) >> 14; r = (r * (xr >> 1)) >> 14;
+            o[2 * i] = (short)(l > 32767 ? 32767 : l < -32768 ? -32768 : l);
+            o[2 * i + 1] = (short)(r > 32767 ? 32767 : r < -32768 ? -32768 : r);
+            xl += dgl; xr += dgr;
+        }
+        spos = idx > src_frames ? src_frames : idx; sfrac = frac;
+    }
+    g_l = gl; g_r = gr;
+    ofr += n;
+    if (t_rel && lv == 0) { ended = 1; spos = src_frames; }        /* released to silence */
+    if (h->dwFlags & 2 /* WHDR_PREPARED */) w_unprep(fh, h, sizeof *h);
+    memset(h, 0, sizeof *h);
+    h->lpData = (char *)o;
+    h->dwBufferLength = n * 4;
+    chstart[k] = wbytes;
+    wbytes += n * 4;
+    w_prep(fh, h, sizeof *h);
+    w_write(fh, h, sizeof *h);
+    return 1;
+}
+
+static int chunks_busy(void)
+{
+    int k, b = 0;
+    for (k = 0; k < NCH; k++) if ((chdr[k].dwFlags & 2) && !(chdr[k].dwFlags & WHDR_DONE_)) b++;
+    return b;
+}
+
+/* stop the stream now: what is queued is faded out in place over 4 ms first (no click), then the card is reset */
+static void open_fh(void);
+static void stream_stop(void)
+{
+    int k;
+    MMT mt;
+    DWORD played, fade = OUT_RATE * 4 / 1000 * 4, lead = OUT_RATE * 3 / 1000 * 4;   /* bytes: 4 ms fade, from 3 ms ahead */
+    mt.wType = TIME_BYTES_; mt.u.cb = 0;
+    if (!fh) return;
+    if (w_pos) w_pos(fh, &mt, sizeof mt);
+    played = mt.u.cb + lead;
+    if (!chunks_busy()) {        /* nothing playing: nothing to fade */
+        for (k = 0; k < NCH; k++) if (chdr[k].dwFlags & 2) w_unprep(fh, &chdr[k], sizeof chdr[k]);
+        memset(chdr, 0, sizeof chdr);
+        wbytes = 0;
+        return;
+    }
+    for (k = 0; k < NCH; k++) if ((chdr[k].dwFlags & 2) && !(chdr[k].dwFlags & WHDR_DONE_)) {
+        /* what is still queued is faded from a little ahead of the play position, then silent */
+        DWORD n = chdr[k].dwBufferLength / 4, i;
+        for (i = 0; i < n; i++) {
+            DWORD o = chstart[k] + i * 4;
+            double g = o < played ? 1.0 : o >= played + fade ? 0.0 : 1.0 - (double)(o - played) / fade;
+            if (g < 1.0) { chbuf[k][2 * i] = (short)(chbuf[k][2 * i] * g); chbuf[k][2 * i + 1] = (short)(chbuf[k][2 * i + 1] * g); }
+        }
+    }
+    Sleep(8);
+    w_reset(fh);
+    for (k = 0; k < NCH; k++) if (chdr[k].dwFlags & 2) w_unprep(fh, &chdr[k], sizeof chdr[k]);
+    memset(chdr, 0, sizeof chdr);
+    wbytes = 0;
 }
 
 static DWORD WINAPI env_thread(LPVOID p)
@@ -103,22 +266,36 @@ static DWORD WINAPI env_thread(LPVOID p)
         Sleep(5);
         EnterCriticalSection(&cs);
         if (cur && !stopping) {
-            DWORD now = GetTickCount();
+            DWORD now = env_now();
             LONG l;
             if (!t_rel && (!S->gate || S->cut)) {     /* the note was let go (or cut) */
                 lvl_rel = S->level;
                 rel_ms = S->cut ? 5 : (shm->env_r > 0 ? shm->env_r : 1);
                 t_rel = now;
             }
+            if (cur == fh && fh) {
+                /* the fast path: keep four chunks queued; the note ends when the last one has played */
+                int k, guard;
+                for (guard = 0; guard < NCH; guard++) {
+                    k = ch_next;
+                    if ((chdr[k].dwFlags & 2) && !(chdr[k].dwFlags & WHDR_DONE_)) break;   /* still playing */
+                    if (!fill_chunk(k)) break;
+                    ch_next = (ch_next + 1) % NCH;
+                }
+                if (ended && !chunks_busy()) {
+                    for (k = 0; k < NCH; k++) if (chdr[k].dwFlags & 2) w_unprep(fh, &chdr[k], sizeof chdr[k]);
+                    memset(chdr, 0, sizeof chdr);
+                    cur = 0; S->playing = 0; S->level = 0;
+                    done(SYE_END, 0);
+                }
+                LeaveCriticalSection(&cs);
+                continue;
+            }
             l = env_level(now);
-            apply_vol(l);
-            if (cur == fh && fh && (fhdr.dwFlags & WHDR_DONE_)) {        /* the fast path's sound ran out */
-                cur = 0; S->playing = 0; S->level = 0;
-                done(SYE_END, 0);
-            } else if (t_rel && l == 0) {
+            S->level = l;          /* Sound Recorder's own Play (a click in XP): as it is */
+            if (t_rel && l == 0) {
                 stopping = 1;
-                if (cur == fh && fh) { w_reset(fh); cur = 0; S->playing = 0; S->level = 0; done(SYE_END, 0); }
-                else PostMessageW((HWND)S->hwnd, WM_COMMAND, MAKEWPARAM(SR_STOP, BN_CLICKED),
+                PostMessageW((HWND)S->hwnd, WM_COMMAND, MAKEWPARAM(SR_STOP, BN_CLICKED),
                                   (LPARAM)GetDlgItem((HWND)S->hwnd, SR_STOP));
             }
         }
@@ -149,15 +326,16 @@ opened:
     if (!r) {
         EnterCriticalSection(&cs);
         cur = *ph;
-        t0 = GetTickCount();
+        cur_rate = S->rate > 0 ? (DWORD)S->rate : f->nSamplesPerSec;
+        t0 = env_now();
         t_rel = 0;
         stopping = 0;
-        S->t_open = t0;
+        S->t_open = GetTickCount();
         S->opens++;
         S->playing = 1;
-        apply_vol(env_level(t0));
+        S->level = env_level(t0);
         LeaveCriticalSection(&cs);
-        done(SYE_OPEN, (LONG)(t0 - S->t_req));
+        done(SYE_OPEN, (LONG)(S->t_open - S->t_req));
     }
     return r;
 }
@@ -351,7 +529,7 @@ static void load_pcm(void)
     DWORD sz, got, i;
     char *b;
     EnterCriticalSection(&cs);
-    if (fh) { w_reset(fh); w_unprep(fh, &fhdr, sizeof fhdr); real_close(fh); fh = 0; if (cur == fh) cur = 0; }
+    if (fh) { stream_stop(); if (cur == fh) { cur = 0; S->playing = 0; } }
     free(pcm); pcm = NULL; pcm_len = 0;
     LeaveCriticalSection(&cs);
     if (f == INVALID_HANDLE_VALUE) return;
@@ -370,13 +548,26 @@ static void load_pcm(void)
             pcm = (char *)malloc(n + 4);
             memcpy(pcm, b + i + 8, n);
             pcm_len = n - n % (pcm_fmt.nBlockAlign ? pcm_fmt.nBlockAlign : 1);
-            if (pcm_fmt.wFormatTag != 1) { free(pcm); pcm = NULL; pcm_len = 0; }
+            if (pcm_fmt.wFormatTag != 1 || (pcm_fmt.wBitsPerSample != 8 && pcm_fmt.wBitsPerSample != 16) || pcm_fmt.nChannels < 1 || pcm_fmt.nChannels > 2) { free(pcm); pcm = NULL; pcm_len = 0; }
+            else { src_ch = pcm_fmt.nChannels; src_bits = pcm_fmt.wBitsPerSample; src_frames = pcm_len / pcm_fmt.nBlockAlign; make_src16(); open_fh(); }
             LeaveCriticalSection(&cs);
             break;
         }
         i += 8 + n + (n & 1);
     }
     free(b);
+}
+
+/* the card, stereo 16-bit at a fixed rate, opened once: a note never waits for waveOutOpen */
+static void open_fh(void)
+{
+    WAVEFORMATEX g;
+    if (fh) return;
+    g.wFormatTag = 1; g.nChannels = 2; g.wBitsPerSample = 16; g.nBlockAlign = 4; g.cbSize = 0;
+    g.nSamplesPerSec = OUT_RATE;
+    g.nAvgBytesPerSec = OUT_RATE * 4;
+    if (real_open(&fh, WAVE_MAPPER, &g, 0, 0, 0)) fh = 0;
+    fh_rate = OUT_RATE;
 }
 
 static DWORD WINAPI note_thread(LPVOID p)
@@ -393,37 +584,35 @@ static DWORD WINAPI note_thread(LPVOID p)
             continue;
         }
         if (!rate) rate = pcm_fmt.nSamplesPerSec;
-        if (fh) {                               /* stop what this recorder was playing */
-            w_reset(fh);
-            w_unprep(fh, &fhdr, sizeof fhdr);
-            if (fh_rate != rate) { real_close(fh); fh = 0; }
+        if (fh) {                               /* stop what this recorder was playing (faded, no click) */
+            stream_stop();
+
         }
-        if (!fh) {                              /* the card, at the note's rate: kmixer resamples */
-            WAVEFORMATEX g = pcm_fmt;
-            g.nSamplesPerSec = rate;
-            g.nAvgBytesPerSec = rate * g.nBlockAlign;
-            if (real_open(&fh, WAVE_MAPPER, &g, 0, 0, 0)) fh = 0;
-            fh_rate = rate;
-        }
+        if (!fh) open_fh();
         if (fh) {
             cur = fh;
-            t0 = GetTickCount();
+            cur_rate = fh_rate;
+            t0 = env_now();
             t_rel = 0;
             stopping = 0;
             S->cut = 0;
-            S->t_open = t0;
+            S->t_open = GetTickCount();
             S->opens++;
             S->playing = 1;
-            apply_vol(env_level(t0));
-            memset(&fhdr, 0, sizeof fhdr);
-            fhdr.lpData = pcm;
-            fhdr.dwBufferLength = pcm_len;
-            w_prep(fh, &fhdr, sizeof fhdr);
-            w_write(fh, &fhdr, sizeof fhdr);
+            spos = 0; sfrac = 0; ofr = 0; ended = 0; ch_next = 0; wbytes = 0;
+            {
+                unsigned __int64 st = ((unsigned __int64)rate << 16) / OUT_RATE;
+                sstep_i = (DWORD)(st >> 16); sstep_f = (DWORD)(st & 0xFFFF);
+            }
+            gains(env_level(t0), 0, &g_l, &g_r);
+            {
+                int k;
+                for (k = 0; k < NCH; k++) { if (!fill_chunk(k)) break; ch_next = (k + 1) % NCH; }
+            }
         }
         LeaveCriticalSection(&cs);
         if (fh) {
-            done(SYE_OPEN, (LONG)(t0 - S->t_post));
+            done(SYE_OPEN, (LONG)(S->t_open - S->t_post));
             PostMessageA((HWND)S->hwnd, msg_op, SYO_VISUAL, 0);
         }
     }
@@ -445,7 +634,11 @@ static void CALLBACK vis_tick(HWND w, UINT m, UINT_PTR id, DWORD now)
     if (on) w_pos(fh, &mt, sizeof mt);
     LeaveCriticalSection(&cs);
     mx = (LONG)SendMessageW(tb, TBM_GETRANGEMAX, 0, 0);
-    pos = pcm_len ? (LONG)((double)mx * (mt.u.cb > pcm_len ? pcm_len : mt.u.cb) / pcm_len) : 0;
+    {
+        /* bytes the card has played (stereo 16-bit) -> source frames */
+        DWORD f = (DWORD)(((unsigned __int64)(mt.u.cb / 4) * ((sstep_i << 16) | sstep_f)) >> 16);
+        pos = src_frames ? (LONG)((double)mx * (f > src_frames ? src_frames : f) / src_frames) : 0;
+    }
     if (on) {
         SendMessageW(tb, TBM_SETPOS, TRUE, pos);
         SendMessageW(w, WM_HSCROLL, MAKEWPARAM(TB_THUMBTRACK, pos), (LPARAM)tb);
@@ -471,6 +664,68 @@ static void cmd(int id)
     SendMessageW(w, WM_COMMAND, MAKEWPARAM(id, BN_CLICKED), (LPARAM)GetDlgItem(w, id));
 }
 
+
+/* ---------------------------------------------------------------- building, visibly */
+/* The command runs from Sound Recorder's own menu: it pops up at the strip, the highlight walks down to the item,
+   Enter. The command it returns is executed the ordinary way. */
+static HMENU g_menu;
+static volatile int walk_presses;
+static HMENU walk_menu;
+#define MN_GETHMENU_ 0x01E1
+static DWORD WINAPI walker(LPVOID p)
+{
+    HWND pop = NULL, w = (HWND)S->hwnd;
+    int k, i;
+    /* the popup that shows this menu (not one still fading out from before) */
+    for (k = 0; k < 100 && !pop; k++) {
+        HWND h = NULL;
+        while ((h = FindWindowExA(NULL, h, "#32768", NULL))) {
+            DWORD pid;
+            GetWindowThreadProcessId(h, &pid);
+            if (pid == GetCurrentProcessId() && IsWindowVisible(h) && (HMENU)SendMessageA(h, MN_GETHMENU_, 0, 0) == walk_menu) { pop = h; break; }
+        }
+        if (!pop) Sleep(10);
+    }
+    if (!pop) { PostMessageA(w, WM_CANCELMODE, 0, 0); return 0; }
+    Sleep(60);
+    for (i = 0; i < walk_presses; i++) { PostMessageA(pop, WM_KEYDOWN, VK_DOWN, 0); Sleep(45); }
+    Sleep(110);
+    PostMessageA(pop, WM_KEYDOWN, VK_RETURN, 0);
+    for (k = 0; k < 30; k++) {           /* still up: close it; the command runs anyway */
+        Sleep(20);
+        if (!IsWindowVisible(pop)) return 0;
+    }
+    PostMessageA(w, WM_CANCELMODE, 0, 0);
+    return 0;
+}
+static void visible_cmd(int id)
+{
+    HWND w = (HWND)S->hwnd;
+    HMENU m = g_menu ? g_menu : GetMenu(w), sub = NULL;
+    int i, k, n, presses = 0, got;
+    for (i = 0; m && i < GetMenuItemCount(m) && !sub; i++) {
+        HMENU sm = GetSubMenu(m, i);
+        if (!sm) continue;
+        presses = 0;
+        n = GetMenuItemCount(sm);
+        for (k = 0; k < n; k++) {
+            UINT st = GetMenuState(sm, k, MF_BYPOSITION);
+            if (!(st & MF_SEPARATOR)) presses++;
+            if (GetMenuItemID(sm, k) == (UINT)id) { sub = sm; break; }
+        }
+    }
+    S->answer = 1;
+    if (sub) {
+        walk_presses = presses;
+        walk_menu = sub;
+        CloseHandle(CreateThread(NULL, 0, walker, NULL, 0, NULL));
+        got = (int)TrackPopupMenu(sub, TPM_RETURNCMD | TPM_LEFTALIGN | TPM_TOPALIGN | TPM_NONOTIFY, S->menu_x, S->menu_y, 0, w, NULL);
+        (void)got;
+    }
+    cmd(id);
+    S->answer = 0;
+}
+
 static void run_op(int op, LONG arg)
 {
     switch (op) {
@@ -491,7 +746,8 @@ static void run_op(int op, LONG arg)
         S->answer = 0;
         break;
     case SYO_SEEK: seek(arg); break;
-    case SYO_NOMENU: SetMenu((HWND)S->hwnd, NULL); UpdateWindow((HWND)S->hwnd); break;
+    case SYO_NOMENU: g_menu = GetMenu((HWND)S->hwnd); SetMenu((HWND)S->hwnd, NULL); UpdateWindow((HWND)S->hwnd); break;
+    case SYO_CMDV: visible_cmd((int)arg); break;
     case SYO_STRIP: strip(); break;
     case SYO_LOADPCM: load_pcm(); break;
     case SYO_SNAP: {

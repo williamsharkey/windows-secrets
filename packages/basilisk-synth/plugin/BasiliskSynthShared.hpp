@@ -12,6 +12,7 @@ public:
     virtual ~SynthHost() {}
     virtual bsynth::Machine &machine() = 0;
     virtual void uiOpened() = 0;                       // the editor is showing: time for the assembly
+    virtual void uiClosed() {}                         // builds stop being shown (DNA.md 5.4 vis)
     virtual bool takeEdit(std::string &dna) = 0;       // a DNA changed inside XP, for the UI to hand to the host
     virtual std::string dnaText() = 0;
     virtual int latencyMs() const = 0;

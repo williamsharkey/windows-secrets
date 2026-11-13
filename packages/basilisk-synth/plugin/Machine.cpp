@@ -118,17 +118,36 @@ static const char SEP = '\\';
 static const char SEP = '/';
 #endif
 
+static std::string resources_dir();
+
+// where the machine is: inside the plugin's own bundle (Contents/Resources/machine). On macOS the AU and CLAP
+// carry no copy of their own: they use the VST3's, installed beside them (README: install the VST3 too).
 std::string Machine::machineDir()
 {
     if (const char *e = getenv("BSYNTH_MACHINE_DIR")) return e;
+    std::string own = resources_dir() + SEP + "machine";
+    if (exists(own + SEP + "state.mig")) return own;
+#ifndef _WIN32
+    const char *h = getenv("HOME");
+    std::string cands[] = {std::string(h ? h : "") + "/Library/Audio/Plug-Ins/VST3/BasiliskSynth.vst3/Contents/Resources/machine",
+                           "/Library/Audio/Plug-Ins/VST3/BasiliskSynth.vst3/Contents/Resources/machine"};
+    for (auto &c : cands) if (exists(c + "/state.mig")) return c;
+#endif
+    return own;
+}
+
+// somewhere writable for logs and the unpacked QEMU (the bundle may be read-only)
+std::string Machine::cacheDir()
+{
 #ifdef _WIN32
     char p[MAX_PATH];
     if (SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, p) != S_OK) GetTempPathA(MAX_PATH, p);
-    return std::string(p) + "\\BASILISK SYNTH\\" BSYNTH_MACHINE_NAME;
+    std::string d = std::string(p) + "\\BASILISK SYNTH";
 #else
     const char *h = getenv("HOME");
-    return std::string(h ? h : "/tmp") + "/Library/Application Support/BASILISK SYNTH/" BSYNTH_MACHINE_NAME;
+    std::string d = std::string(h ? h : "/tmp") + "/Library/Caches/BASILISK SYNTH";
 #endif
+    return d;
 }
 
 // where this plugin binary lives: QEMU sits beside it in the bundle's Resources
@@ -151,61 +170,6 @@ static std::string resources_dir()
     return p + SEP + "Resources";
 }
 
-// ------------------------------------------------------------------ SHA-256 (to check the machine download)
-namespace {
-struct Sha256 {
-    uint32_t h[8] = {0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
-    uint8_t buf[64];
-    uint64_t len = 0;
-    size_t n = 0;
-    static uint32_t ror(uint32_t x, int r) { return (x >> r) | (x << (32 - r)); }
-    void block(const uint8_t *p)
-    {
-        static const uint32_t k[64] = {
-            0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01,
-            0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc,
-            0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147,
-            0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
-            0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08,
-            0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
-            0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2};
-        uint32_t w[64], a, b, c, d, e, f, g, hh;
-        for (int i = 0; i < 16; i++) w[i] = (uint32_t)p[4 * i] << 24 | (uint32_t)p[4 * i + 1] << 16 | (uint32_t)p[4 * i + 2] << 8 | p[4 * i + 3];
-        for (int i = 16; i < 64; i++) {
-            uint32_t s0 = ror(w[i - 15], 7) ^ ror(w[i - 15], 18) ^ (w[i - 15] >> 3), s1 = ror(w[i - 2], 17) ^ ror(w[i - 2], 19) ^ (w[i - 2] >> 10);
-            w[i] = w[i - 16] + s0 + w[i - 7] + s1;
-        }
-        a = h[0]; b = h[1]; c = h[2]; d = h[3]; e = h[4]; f = h[5]; g = h[6]; hh = h[7];
-        for (int i = 0; i < 64; i++) {
-            uint32_t t1 = hh + (ror(e, 6) ^ ror(e, 11) ^ ror(e, 25)) + ((e & f) ^ (~e & g)) + k[i] + w[i];
-            uint32_t t2 = (ror(a, 2) ^ ror(a, 13) ^ ror(a, 22)) + ((a & b) ^ (a & c) ^ (b & c));
-            hh = g; g = f; f = e; e = d + t1; d = c; c = b; b = a; a = t1 + t2;
-        }
-        h[0] += a; h[1] += b; h[2] += c; h[3] += d; h[4] += e; h[5] += f; h[6] += g; h[7] += hh;
-    }
-    void add(const uint8_t *p, size_t m)
-    {
-        len += m;
-        while (m) {
-            size_t t = 64 - n < m ? 64 - n : m;
-            memcpy(buf + n, p, t); n += t; p += t; m -= t;
-            if (n == 64) { block(buf); n = 0; }
-        }
-    }
-    std::string hex()
-    {
-        uint64_t bits = len * 8;
-        uint8_t pad = 0x80, z = 0, lb[8];
-        add(&pad, 1);
-        while (n != 56) add(&z, 1);
-        for (int i = 0; i < 8; i++) lb[i] = (uint8_t)(bits >> (56 - 8 * i));
-        add(lb, 8);
-        char s[65];
-        for (int i = 0; i < 8; i++) snprintf(s + 8 * i, 9, "%08x", h[i]);
-        return s;
-    }
-};
-}  // namespace
 
 // ------------------------------------------------------------------ sockets
 static bool net_init()
@@ -336,24 +300,45 @@ static std::string quote(const std::string &a)
     for (char c : a) { if (c == '"') q += '\\'; q += c; }
     return q + "\"";
 }
+// start a child that inherits exactly one handle (its log, as stdout/stderr) and nothing else of the host's:
+// a DAW's own open files and pipes must not leak into QEMU (PROC_THREAD_ATTRIBUTE_HANDLE_LIST)
+static BOOL spawn_only(std::wstring &cmd, DWORD flags, HANDLE log, PROCESS_INFORMATION *pi)
+{
+    STARTUPINFOEXW si = {};
+    si.StartupInfo.cb = sizeof si;
+    SIZE_T sz = 0;
+    InitializeProcThreadAttributeList(NULL, 1, 0, &sz);
+    std::vector<char> buf(sz ? sz : 64);
+    LPPROC_THREAD_ATTRIBUTE_LIST al = (LPPROC_THREAD_ATTRIBUTE_LIST)buf.data();
+    HANDLE list[1] = {log};
+    bool have = log != INVALID_HANDLE_VALUE && log != NULL;
+    if (have && InitializeProcThreadAttributeList(al, 1, 0, &sz)) {
+        if (UpdateProcThreadAttribute(al, 0, PROC_THREAD_ATTRIBUTE_HANDLE_LIST, list, sizeof list, NULL, NULL)) {
+            si.StartupInfo.dwFlags = STARTF_USESTDHANDLES;
+            si.StartupInfo.hStdOutput = si.StartupInfo.hStdError = log;
+            si.lpAttributeList = al;
+            BOOL ok = CreateProcessW(NULL, &cmd[0], NULL, NULL, TRUE, flags | EXTENDED_STARTUPINFO_PRESENT, NULL, NULL, &si.StartupInfo, pi);
+            DeleteProcThreadAttributeList(al);
+            return ok;
+        }
+        DeleteProcThreadAttributeList(al);
+    }
+    return CreateProcessW(NULL, &cmd[0], NULL, NULL, FALSE, flags, NULL, NULL, &si.StartupInfo, pi);
+}
+
 // run and wait (hidden); returns exit code, or -1
 static int run_wait(const std::vector<std::string> &argv, int timeout_ms, const std::string &log = "", std::atomic<bool> *stop = nullptr)
 {
     std::string cl;
     for (auto &a : argv) cl += (cl.empty() ? "" : " ") + quote(a);
     std::wstring w = widen(cl);
-    STARTUPINFOW si = {};
     PROCESS_INFORMATION pi = {};
-    si.cb = sizeof si;
     HANDLE lf = INVALID_HANDLE_VALUE;
     if (!log.empty()) {
         SECURITY_ATTRIBUTES sa = {sizeof sa, NULL, TRUE};
         lf = CreateFileA(log.c_str(), FILE_APPEND_DATA, FILE_SHARE_READ | FILE_SHARE_WRITE, &sa, OPEN_ALWAYS, 0, NULL);
-        si.dwFlags = STARTF_USESTDHANDLES;
-        si.hStdOutput = si.hStdError = lf;
-        si.hStdInput = NULL;
     }
-    if (!CreateProcessW(NULL, &w[0], NULL, NULL, lf != INVALID_HANDLE_VALUE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi)) {
+    if (!spawn_only(w, CREATE_NO_WINDOW, lf, &pi)) {
         if (lf != INVALID_HANDLE_VALUE) CloseHandle(lf);
         return -1;
     }
@@ -411,7 +396,7 @@ void Machine::log(const char *fmt, ...)
 {
     static std::mutex m;
     std::lock_guard<std::mutex> g(m);
-    std::string dir = Machine::machineDir();
+    std::string dir = getenv("BSYNTH_MACHINE_DIR") ? Machine::machineDir() : Machine::cacheDir();
     mkdirs(dir);
     FILE *f = fopen((dir + SEP + "plugin.log").c_str(), "a");
     if (!f) return;
@@ -468,108 +453,11 @@ bool Machine::popReply(std::string &line)
 
 bool Machine::ensureMachine()
 {
-    std::string dir = machineDir(), ok = dir + SEP + "machine.ok";
-    if (exists(ok)) return true;
-    mkdirs(dir);
-    std::string lock = dir + SEP + "fetch.lock", arc = dir + SEP + "machine.tar.xz";
-    // one instance fetches; the others wait for it
-    for (;;) {
-        if (stopping_) return false;
-        if (exists(ok)) return true;
-#ifdef _WIN32
-        HANDLE h = CreateFileA(lock.c_str(), GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_FLAG_DELETE_ON_CLOSE, NULL);
-        bool mine = h != INVALID_HANDLE_VALUE;
-#else
-        int fd = ::open(lock.c_str(), O_CREAT | O_EXCL | O_WRONLY, 0644);
-        bool mine = fd >= 0;
-        if (!mine) {   // a lock older than an hour belongs to a crashed fetch
-            struct stat st;
-            if (::stat(lock.c_str(), &st) == 0 && time(NULL) - st.st_mtime > 3600) { remove_file(lock); continue; }
-        }
-#endif
-        if (!mine) {
-            phase = Fetching;
-            setStatus("Another BASILISK SYNTH is fetching the Windows XP machine...");
-            long long sz = file_size(arc);
-            progress = sz > 0 ? (float)((double)sz / BSYNTH_MACHINE_BYTES) : 0.f;
-            sleep_ms(500);
-            continue;
-        }
-        bool good = false;
-        // download (curl ships with Windows 10+ and macOS), watching the file grow
-        phase = Fetching;
-        setStatus("Fetching the Windows XP machine (once): " + std::to_string(BSYNTH_MACHINE_BYTES / 1000000) + " MB");
-        remove_file(arc);
-        {
-#ifdef _WIN32
-            char sys[MAX_PATH];
-            GetSystemDirectoryA(sys, MAX_PATH);
-            std::string curl = std::string(sys) + "\\curl.exe";
-#else
-            std::string curl = "/usr/bin/curl";
-#endif
-            std::atomic<bool> done{false};
-            int rc = -1;
-            std::thread t([&] { rc = run_wait({curl, "-L", "-f", "-s", "-S", "--retry", "3", "-o", arc, getenv("BSYNTH_MACHINE_URL") ? getenv("BSYNTH_MACHINE_URL") : BSYNTH_MACHINE_URL}, 4 * 3600 * 1000, dir + SEP + "fetch.log", &stopping_); done = true; });
-            while (!done) {
-                long long sz = file_size(arc);
-                progress = sz > 0 ? (float)((double)sz / BSYNTH_MACHINE_BYTES) : 0.f;
-                sleep_ms(200);
-                if (stopping_) break;
-            }
-            t.join();
-            if (rc != 0) { fail("Could not download the Windows XP machine (see " + dir + SEP + "fetch.log)."); goto out; }
-        }
-        {
-            phase = Unpacking;
-            setStatus("Checking the download...");
-            std::ifstream f(arc, std::ios::binary);
-            Sha256 h;
-            std::vector<char> b(1 << 20);
-            long long tot = 0;
-            while (f) {
-                f.read(b.data(), (std::streamsize)b.size());
-                std::streamsize n = f.gcount();
-                if (n <= 0) break;
-                h.add((const uint8_t *)b.data(), (size_t)n);
-                tot += n;
-                progress = (float)(0.3 * tot / BSYNTH_MACHINE_BYTES);
-            }
-            if (h.hex() != BSYNTH_MACHINE_SHA256) { remove_file(arc); fail("The Windows XP machine download was damaged; it will be fetched again next time."); goto out; }
-        }
-        {
-            setStatus("Unpacking the Windows XP machine...");
-            progress = 0.35f;
-#ifdef _WIN32
-            char sys[MAX_PATH];
-            GetSystemDirectoryA(sys, MAX_PATH);
-            std::string tar = std::string(sys) + "\\tar.exe";
-#else
-            std::string tar = "/usr/bin/tar";
-#endif
-            std::atomic<bool> done{false};
-            int rc = -1;
-            std::thread t([&] { rc = run_wait({tar, "-x", "-f", arc, "-C", dir}, 3600 * 1000, dir + SEP + "fetch.log", &stopping_); done = true; });
-            while (!done) {
-                long long sz = file_size(dir + SEP + "base.qcow2");
-                if (sz > 0) progress = 0.35f + 0.65f * (float)((double)sz / BSYNTH_MACHINE_UNPACKED);
-                sleep_ms(200);
-            }
-            t.join();
-            if (rc != 0 || !exists(dir + SEP + "base.qcow2") || !exists(dir + SEP + "state.mig")) { fail("Could not unpack the Windows XP machine."); goto out; }
-            remove_file(arc);
-            std::ofstream(ok) << BSYNTH_MACHINE_NAME << "\n";
-            good = true;
-        }
-    out:
-#ifdef _WIN32
-        CloseHandle(h);
-#else
-        ::close(fd);
-        remove_file(lock);
-#endif
-        return good;
-    }
+    // the machine ships inside the plugin (no download): base disk, saved state, firmware, library disc
+    std::string dir = machineDir();
+    if (exists(dir + SEP + "base.qcow2") && exists(dir + SEP + "state.mig")) return true;
+    fail("The Windows XP machine is missing from the plugin (" + dir + "). Reinstall BASILISK SYNTH.");
+    return false;
 }
 
 bool Machine::launch()
@@ -581,9 +469,26 @@ bool Machine::launch()
     GetTempPathA(MAX_PATH, tp);
     snprintf(tag, sizeof tag, "bsynth-%lu-%d", (unsigned long)GetCurrentProcessId(), instance_counter++);
     tmp_ = std::string(tp) + tag;
+    {
+        // folders left by hosts that crashed or were killed: their process is gone, so they go too
+        WIN32_FIND_DATAA fd;
+        HANDLE fh = FindFirstFileA((std::string(tp) + "bsynth-*").c_str(), &fd);
+        if (fh != INVALID_HANDLE_VALUE) {
+            do {
+                unsigned long pid = 0;
+                if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) || sscanf(fd.cFileName, "bsynth-%lu-", &pid) != 1) continue;
+                if (pid == GetCurrentProcessId()) continue;
+                HANDLE ph = OpenProcess(SYNCHRONIZE, FALSE, pid);
+                if (ph) { CloseHandle(ph); continue; }
+                remove_tree(std::string(tp) + fd.cFileName);
+            } while (FindNextFileA(fh, &fd));
+            FindClose(fh);
+        }
+    }
     // QEMU is shipped zipped inside the bundle and unpacked beside the machine on first use: hosts that scan VST
     // folders for .dll files must never find QEMU's libraries in there
-    std::string qbase = mdir.substr(0, mdir.find_last_of('\\')) + "\\qemu-" BSYNTH_QEMU_TAG;
+    std::string qbase = cacheDir() + "\\qemu-" BSYNTH_QEMU_TAG;
+    mkdirs(cacheDir());
     std::string qdir = qbase + "\\qemu", qemu = qdir + "\\qemu-system-i386w.exe", img = qdir + "\\qemu-img.exe", share = qdir + "\\share";
     if (!exists(qemu) && exists(res + "\\qemu-win64.zip")) {
         setStatus("Unpacking QEMU (once)...");
@@ -633,6 +538,8 @@ bool Machine::launch()
     std::vector<std::string> a = {qemu, "-name", "BASILISK SYNTH", "-nodefaults", "-no-user-config", "-M", "pc-i440fx-6.2",
         "-m", "512", "-smp", "1", "-cpu", "qemu32",
         "-drive", "file=" + esc(overlay_) + ",format=qcow2,if=ide,index=0,cache=writeback",
+        // the library disc's drive (DNA.md 5.6): empty in the saved state; the disc goes in after the resume
+        "-drive", "if=none,id=cd0,media=cdrom,readonly=on", "-device", "ide-cd,drive=cd0,id=cdrom0,bus=ide.1,unit=0",
         "-vga", "cirrus", "-device", "rtl8139,netdev=n0,mac=52:54:00:12:34:56",
         "-netdev", "user,id=n0,restrict=on,net=10.0.2.0/24",
         "-usb", "-device", "usb-tablet", "-rtc", "base=localtime", "-display", "none", "-boot", "menu=off",
@@ -656,17 +563,13 @@ bool Machine::launch()
     std::wstring w = widen(cl);
     SECURITY_ATTRIBUTES sa = {sizeof sa, NULL, TRUE};
     HANDLE lf = CreateFileA(log.c_str(), FILE_APPEND_DATA, FILE_SHARE_READ | FILE_SHARE_WRITE, &sa, OPEN_ALWAYS, 0, NULL);
-    STARTUPINFOW si = {};
     PROCESS_INFORMATION pi = {};
-    si.cb = sizeof si;
-    si.dwFlags = STARTF_USESTDHANDLES;
-    si.hStdOutput = si.hStdError = lf;
     // the job dies with this process, and takes QEMU with it: no orphan survives a crashed DAW
     job_ = CreateJobObjectA(NULL, NULL);
     JOBOBJECT_EXTENDED_LIMIT_INFORMATION li = {};
     li.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
     SetInformationJobObject(job_, JobObjectExtendedLimitInformation, &li, sizeof li);
-    BOOL ok = CreateProcessW(NULL, &w[0], NULL, NULL, TRUE, CREATE_NO_WINDOW | CREATE_SUSPENDED, NULL, NULL, &si, &pi);
+    BOOL ok = spawn_only(w, CREATE_NO_WINDOW | CREATE_SUSPENDED, lf, &pi);
     CloseHandle(lf);
     if (!ok) { fail("Could not start QEMU."); return false; }
     AssignProcessToJobObject(job_, pi.hProcess);
@@ -754,6 +657,18 @@ void Machine::run()
     phase = Resuming;
     if (!resume() || stopping_) return;
     resumedAt = now();
+    {
+        // the library disc goes into the (empty) CD drive; the guest reads its catalogue when told "lib"
+        std::string iso = machineDir() + SEP + "library.iso";
+        if (exists(iso)) {
+            std::string e;
+            for (char c : iso) { if (c == '\\' || c == '"') e += '\\'; e += c; }
+            std::string r = qmp(portQmp_, "{\"execute\":\"blockdev-change-medium\",\"arguments\":{\"id\":\"cdrom0\",\"filename\":\"" + e +
+                                "\",\"format\":\"raw\",\"read-only-mode\":\"read-only\"}}", 3000);
+            Machine::log("library disc: %s", r.find("\"return\"") != std::string::npos ? "in" : r.c_str());
+            if (r.find("\"return\"") != std::string::npos) send("lib\n");
+        }
+    }
     Machine::log("running (qemu in %s)", tmp_.c_str());
     phase = Running;
     setStatus("");
@@ -1086,6 +1001,16 @@ void Machine::kill()
     if (watchdog_ > 0) { ::kill(watchdog_, SIGKILL); int st; waitpid(watchdog_, &st, 0); watchdog_ = -1; }
     if (fifo_ >= 0) { ::close(fifo_); fifo_ = -1; }
 #endif
+}
+
+void Machine::restart()
+{
+    log("restarting the machine");
+    stop();
+    stopping_ = false;
+    linked = false; ready = false; asleep = false;
+    { std::lock_guard<std::mutex> g(mu_); error_.clear(); }
+    start();
 }
 
 void Machine::stop()

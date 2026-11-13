@@ -55,7 +55,8 @@ Likely cause of the other lane's hang: host audio backends (dsound/coreaudio) or
   | 2756 | ≈125 | 125 |
 
 - The same hook does the following:
-  - per-voice volume and an ADSR envelope (per-handle volume, 5 ms steps);
+  - per-voice volume and an ADSR envelope (per-handle volume, 5 ms steps; WRONG, see round 3: on this XP the
+    Wave volume is one setting for the whole card, so this was measured one voice at a time only);
   - answers the Open/Save dialogs and message boxes, so DNA steps run Sound Recorder's real menu commands with no
     dialog ever shown;
   - runs the assembly animation inside each recorder.
@@ -142,6 +143,59 @@ C:\Users\willi\BASILISK-plugins\REAPER, pid 8168); auval via a GUI-session launc
   (pure moves carry painted pixels; only one mover at a time). WS_EX_COMPOSITED broke Sound Recorder's statics: not used.
 - Guest COM writer: a synchronous COM handle serializes reads and writes, so an endless write blocked reads (deadlock
   in make_machine); writes now time out at 40 ms and continue.
+
+## Round 3 (v1.2.0) status (2026-11-13)
+Done and measured in the real machine (machine-3):
+- DNA v2 spec (DNA.md 5) + shared core (cd9bef9, d61652f). Keyboard wire lines as agreed with the 3.11 lane
+  (`key`, `cc`, `bend` guest->host; `show`, `cc 1`, `bend` host->guest; CC1 adds to Macro 1). `vis 0|1`, `lib` added.
+- Plugin: Macro 1-4 params; offsets held host-side; pan in `on`; `lenv`; effective DNA to the guest; 38 programs
+  "Category: Name" (factory.tsv incl. a Library category); library names compiled in (presets_gen.h); the library
+  disc inserted into XP's CD drive after resume (QMP blockdev-change-medium on `cdrom0`); XP keyboard/wheels through
+  the voice allocator; "show" lines for DAW notes; visible builds only while an editor is open.
+- Guest: v2 tokens (O Q Ja Jp @t, library names with `_`), pan, level and envelopes applied to the samples inside
+  each Sound Recorder (see the streaming note below), drawn envelopes per layer from `lenv`, visible construction (each step picked from the
+  recorder's own File/Edit/Effects menu popping up on its strip), library + preset browser (category combo +
+  list), envelope editor of real trackbars + Task-Manager-style graph, Macros panel (4 Volume Control sliders,
+  Tone/Body/Time/Motion), keyboard strip (37 BUTTON keys, BM_SETSTATE for held notes, mouse with glide, Hold,
+  PC keys a w s e d f t g y h u j k / z x / c v), bend + mod trackbars; rows 41 -> 34 px, clock-only Time port.
+- Machine 3: IDE CD-ROM (empty in the state), autorun off, library.iso shipped inside the plugin (510 sounds, 7 categories, 114 MB of audio).
+- tools/make_library.py (ISO 9660 + Joliet), tools/make_presets.py, tools/batch_render.py (parallel VMs).
+- bsynth-host gained --set NAME@T=V (automation, `program`), --ui T:click|down|up|move|key|keyup (posted to the
+  editor window), --state-roundtrip, --timing. REAPER is not used any more (owner instruction); its folders removed
+  (C:\Users\willi\bsynth-reaper is an empty folder Linux cannot remove: permission denied).
+- Measured (Windows unless noted): XP keyboard through the editor: PC key 'a' -> peak 0.187, mouse on C4 -> 0.24,
+  silent before and after; state round trip identical (259 bytes); macro level ratio 0.10 (Win and mac); library
+  kalimba_c4 at 262.6-264.1 Hz (C4 261.6); assembly in the dev VM 2.6-3.5 s.
+- **waveOutSetVolume is card-wide on this XP** (found by the PE2 lane: two handles, the second one's L/R setting
+  moved the first one; it persists after the process exits). v1.0-1.1's per-voice velocity and ADSR and my first
+  v1.2 pan were all that one volume, last writer wins. Fixed: srhook's fast path now streams the recorder's own
+  saved PCM to its handle in 4 x 20 ms chunks (stereo 16-bit at the note's rate) and applies velocity, level,
+  pan, ADSR / drawn envelope and release to the samples; the envelope clock is the source position (exact).
+  Pitch is now done in the guest too: each recorder's handle is opened once at 48 kHz stereo when its sound
+  loads and never reopened; a note's pitch is a 4-point Hermite step through the source (measured in the dev VM:
+  note open 0-16 ms, was 16-400 ms with a reopen per new pitch; intervals -12..+19 st within ~5-10 cents of each
+  other on an organ pipe, FFT over 370 ms).   Steals fade the queued audio in place from 3 ms past the play position (4 ms) before the reset. synth.exe sets
+  the card volume to full once at startup; nothing calls waveOutSetVolume any more.
+  Measured PER VOICE in the dev VM (two simultaneous voices, raw XP output): voice A hard left from 0 s, voice B
+  hard right from 0.5 s: left channel = A only (12967..18642 while held, 0 after its release), right = B only
+  (0 until 0.5 s); a 3-voice chord with one voice released at 1 s: total drops ~30000 -> ~20000 and the other two
+  hold until their own release.
+- Built-in machine (owner decision): Contents/Resources/machine in the Windows VST3 and the macOS VST3 (AU/CLAP
+  use the VST3's). The downloader and SHA code are gone; logs and the unpacked QEMU live in %LOCALAPPDATA% /
+  ~/Library/Caches. base.qcow2 has zstd clusters; zero-filling 3 GB of free space and trimming dllcache, driver
+  cabs and the page file left it at 704 MB (no measurable gain: the image was already lean).
+  Sizes: Windows zip 952 MB, macOS dmg 932 MB (ULMO). Load -> XP linked: Windows 1.9 s (first ever +3.5 s QEMU
+  unpack), macOS 0.3 s; -> a new sound built: 4.3 s / 0.8 s.
+- Robustness: offline render waits for the machine at most 60 s and for each build (program changes too) at
+  most 15 s, paced within 20 ms of the clock; watchdog restarts a silent machine (x3); QEMU inherits only its log
+  handle (PROC_THREAD_ATTRIBUTE_HANDLE_LIST); stale bsynth-<pid>-* temp folders of dead hosts removed at start.
+- Library table cap: MAXSND 512 silently dropped 33 of 510 disc names (tonal ones, incl. kalimba_c4); now 2048.
+- BasiliskHost harness, Windows (v1.1 -> v1.2): offline heard 34/50 -> 50/50, live 22/50 -> 50/50, onset median
+  117 -> 12 ms (std 168 -> 37-52), pitch mean 11.7 / max 150 -> 11 / 16-19 cents, repeat envelope corr 0.29-0.36
+  -> 0.77-0.88 (not bit-identical), state bytes identical (sound 0.70-0.74), no orphans, no render timeouts;
+  live program change still drops the notes in the ~1.5 s rebuild (3-6 notes).
+- Not done: bit-identical renders (XP is not sample-accurate); Windows pitch ~10 cents mean (the playout drift
+  trim modulates speed under load); the layer table from ui-layouts.md (the Layers list stays); .vstpreset files.
 
 ## Round 2 status (2026-11-13, before -> after)
 - Assembly, plugin load -> ready: Windows 11.5 s -> 5.6-6.1 s; macOS 11.3 s -> 4.4-4.5 s (1 vCPU, idle patch,

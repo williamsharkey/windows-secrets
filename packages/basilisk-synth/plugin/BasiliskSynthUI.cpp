@@ -24,6 +24,7 @@ public:
         if (host_) host_->uiOpened();
         opened_ = Machine::now();
     }
+    ~BasiliskSynthUI() override { if (host_) host_->uiClosed(); }
 
 protected:
     void parameterChanged(uint32_t, float) override {}
