@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BASILISK Downloads</title>
-<meta name="description" content="Run BASILISK on your own computer: Windows for Workgroups 3.11 with Claude Code built into it, in a window of its own, using your own Anthropic account.">
+<meta name="description" content="Run BASILISK on your own computer: Windows XP or Windows for Workgroups 3.11 with Claude Code built into it, in a window of its own, using your own Anthropic account.">
 <style>
 :root {
   --desk: #008080; --face: #c0c0c0; --hi: #ffffff; --lo: #808080; --ink: #000000;
@@ -56,7 +56,35 @@ th { font-weight: 700; }
   <div class="cap"><span class="box"></span><span class="t">BASILISK Downloads</span></div>
   <div class="body">
     <h1>Run BASILISK on your own computer</h1>
-    <p>BASILISK is Claude Code living inside old Windows, built by Windows itself out of Notepad, Terminal, Clock, Cardfile and Calculator. On this site it runs on a shared server, one visitor at a time, on a small monthly budget. Downloaded, it is yours: no queue and no caps, any model and effort you like, and it bills <b>your own</b> Anthropic account.</p>
+    <p>BASILISK is Claude Code living inside old Windows, built by Windows itself out of its own programs: on XP from Notepad, Find, Date and Time and Calculator; on 3.11 from Notepad, Terminal, Clock, Cardfile and Calculator. On this site it runs on a shared server, one visitor at a time, on a small monthly budget. Downloaded, it is yours: no queue and no caps, any model and effort you like, and it bills <b>your own</b> Anthropic account.</p>
+  </div>
+</div>
+
+<div class="win" id="basilisk-xp">
+  <div class="cap"><span class="box"></span><span class="t">BASILISK XP &mdash; Windows XP</span></div>
+  <div class="body">
+    <img class="shot" src="basilisk-download/basilisk-xp.png" width="1040" height="780" loading="lazy" alt="BASILISK XP in its own window on a Mac: the BASILISK III suite in Windows XP, with Claude's transcript, a MessageBox saying Hello from BASILISK that Claude wrote, compiled and ran, the context pie, clock and calendar.">
+    <p>One window, titled BASILISK XP: Windows XP with the BASILISK III suite (Chat, Plan, Files, Usage, Tools, Settings) already built and running. The first start downloads the machine once (790 MB) and unpacks it; after that it opens in about 1 to 3 seconds, because XP resumes from a snapshot taken just after BASILISK assembled itself. Turn on <i>Intro</i> in settings to watch the build every time. Claude writes files in <code>C:\b3\work</code>, runs commands, and compiles and runs C with tcc, all inside XP.</p>
+    <div class="dl">
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-xp-v1.0.0/BASILISK-XP-windows-x64.zip"><b>Windows 10 / 11</b><span>x64 &middot; .zip &middot; 91 MB</span></a>
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-xp-v1.0.0/BASILISK-XP-macos-arm64.dmg"><b>macOS, Apple silicon</b><span>macOS 11+ &middot; .dmg &middot; 62 MB</span></a>
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-xp-v1.0.0/BASILISK-XP-macos-x86_64.dmg"><b>macOS, Intel</b><span>.dmg &middot; 63 MB</span></a>
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-xp-v1.0.0/BASILISK-XP-linux-x64.AppImage"><b>Linux</b><span>x64 &middot; AppImage &middot; 83 MB</span></a>
+    </div>
+    <p class="note">Plus the machine itself, fetched on first start: <code>basilisk-xp-machine-1.qcow2.xz</code>, 753 MB (930 MB unpacked). Checksums and everything else are on the <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-xp-v1.0.0">release page</a>.</p>
+
+    <h2>Start it</h2>
+    <table>
+      <tr><th>Windows</th><td>Unzip, open the <b>BASILISK XP</b> folder, double-click <b>BASILISK XP.exe</b>. SmartScreen may say "Windows protected your PC": <i>More info</i> &gt; <i>Run anyway</i>. It adds itself to the Start menu.</td></tr>
+      <tr><th>macOS</th><td>Open the .dmg and drag BASILISK XP to Applications. It is not notarized, so the first time right-click it &gt; <i>Open</i> &gt; <i>Open</i> (macOS 15 and later: System Settings &gt; Privacy &amp; Security &gt; <i>Open Anyway</i>), or run <code>xattr -dr com.apple.quarantine "/Applications/BASILISK XP.app"</code>.</td></tr>
+      <tr><th>Linux</th><td><code>chmod +x BASILISK-XP-linux-x64.AppImage</code> and run it. AppImages need FUSE 2 (Ubuntu: <code>sudo apt install libfuse2</code>), or run it with <code>--appimage-extract-and-run</code>. QEMU and its C library are inside.</td></tr>
+    </table>
+
+    <h2>Sign in, models, settings</h2>
+    <p>On the first start BASILISK XP's own settings open: paste an API key from <a href="https://console.anthropic.com/settings/keys">console.anthropic.com</a> (checked with one tiny call, kept on your computer readable only by you), or use <code>ant auth login</code> or <code>ANTHROPIC_API_KEY</code>. Same billing as above: your account, API prices, no caps. Pick Haiku 5.5, Sonnet 5.5, Opus 5.5 or Fable 5.2 and any effort in the settings, on XP's Settings tab, or with <code>/model</code> and <code>/effort</code> in Chat. Settings: <kbd>Ctrl+Alt+S</kbd> (Mac: <kbd>&#8984;,</kbd>); full screen <kbd>F11</kbd> (Mac: <kbd>Ctrl+&#8984;F</kbd>). Closing the window asks whether to keep the machine as it is (windows, files, the conversation) or start fresh next time. <i>Reset machine</i> goes back to the freshly built BASILISK.</p>
+
+    <h2>Inside</h2>
+    <p class="note">Windows XP (&copy; Microsoft), the same machine as BASILISK III on this site, run by <a href="https://www.qemu.org/">QEMU</a> (GPLv2) with no window of its own: BASILISK XP draws XP's screen itself (pygame-ce/SDL2) from a private local socket and passes keys and the mouse straight in. XP is emulated (no hardware acceleration can resume the shared snapshot), which is plenty for BASILISK. On macOS and Linux XP can reach only BASILISK; on Windows QEMU gives it ordinary NAT networking. No sound card. Sources: <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-xp">packages/basilisk-xp</a>.</p>
   </div>
 </div>
 
