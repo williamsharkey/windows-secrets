@@ -3,7 +3,7 @@
 // pressed. The machine runs in a worker; the page only forwards the pointer, the keys and MIDI, and watches it.
 (function () {
   'use strict';
-  var CFG = /*CONFIG*/{"v":"390198a1d4","files":[{"name":"b16.wasm","size":2523434,"gz":1034128},{"name":"w31web.state","size":5842196,"gz":1362890},{"name":"drive.zip","size":3366379,"gz":3366379}],"lead":2048}/*END*/;
+  var CFG = /*CONFIG*/{"v":"863fb2c24c","files":[{"name":"b16.wasm","size":2524744,"gz":1034547},{"name":"w31web.state","size":5869564,"gz":1379300},{"name":"drive.zip","size":3368363,"gz":3368363}],"lead":2048}/*END*/;
   var DATA = null;   // b16-data.json, fetched on the click: the machine's settings, the library's names, the presets
   var root = document.getElementById('b16try');
   if (!root) return;

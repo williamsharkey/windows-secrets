@@ -11,6 +11,9 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 REPO=$(cd "$HERE/../.." && pwd)
 W=${1:?workdir}; mkdir -p "$W"; W=$(cd "$W" && pwd)
 LIB=${2:-$W}
+# DBP / OBJ: where DOSBox Pure's source and objects go (default WORKDIR/dbp, WORKDIR/obj). Other pages link against
+# WORKDIR/obj/libdbp.a, so a build with a changed card can go elsewhere first.
+DBP=${DBP:-$W/dbp}; OBJ=${OBJ:-$W/obj}
 NODE=${NODE:-node}
 source "${EMSDK:-$HOME/emsdk}/emsdk_env.sh" >/dev/null 2>&1
 
@@ -19,16 +22,16 @@ rm -rf "$W/src"; mkdir -p "$W/src"
 git -C "$REPO" archive HEAD packages/basilisk-synth-311 packages/basilisk-synth/core | tar -x -C "$W/src"
 git -C "$REPO" rev-parse HEAD > "$W/srcrev.txt"
 P=$W/src/packages/basilisk-synth-311
-[ -d "$W/dbp" ] || { git clone -q https://codeberg.org/schelling/dosbox-pure.git "$W/dbp"; (cd "$W/dbp" && git checkout -q "$(cat "$P/dosbox-pure/UPSTREAM.txt")" && git apply "$P/dosbox-pure/dosbox-pure.patch"); }
-cp "$P/dosbox-pure/bsynth.cpp" "$W/dbp/src/hardware/bsynth.cpp"
+[ -d "$DBP" ] || { git clone -q https://codeberg.org/schelling/dosbox-pure.git "$DBP"; (cd "$DBP" && git checkout -q "$(cat "$P/dosbox-pure/UPSTREAM.txt")" && git apply "$P/dosbox-pure/dosbox-pure.patch"); }
+cp "$P/dosbox-pure/bsynth.cpp" "$DBP/src/hardware/bsynth.cpp"
 [ -d "${OW:=$W/ow}" ] || { mkdir -p "$OW"; (cd "$OW" && gh release download Current-build -R open-watcom/open-watcom-v2 -p ow-snapshot.tar.xz && tar xf ow-snapshot.tar.xz && rm ow-snapshot.tar.xz); }
 
 # --- the guest, the C: drive (only what Windows uses: drive-keep.txt), the engine
 sh "$P/guest/build.sh" "$OW" "$W/gout" 2>&1 | grep -iv "already been exported" | grep -i "error" || true
 git -C "$REPO" show HEAD:site/basilisk-31-browser/w31.jsdos > "$W/w31.jsdos"
 python3 "$HERE/make_drive.py" "$W/w31.jsdos" "$W/gout" "$P" "$W/machine" --keep "$HERE/drive-keep.txt" ${XPSOUNDS:+--xpsounds "$XPSOUNDS"}
-make -s -f "$HERE/core.mk" DBP="$W/dbp" OUT="$W/obj" -j"$(nproc)"
-bash "$HERE/link.sh" "$W/src" "$W/obj" "$W/out" 2>&1 | grep -v "pthread + ALLOW_MEMORY_GROWTH" || true
+make -s -f "$HERE/core.mk" DBP="$DBP" OUT="$OBJ" -j"$(nproc)"
+bash "$HERE/link.sh" "$W/src" "$OBJ" "$W/out" 2>&1 | grep -v "pthread + ALLOW_MEMORY_GROWTH" || true
 
 # --- the snapshot: boot, assemble, build the default DNA, freeze (and the screen at that moment: the poster)
 "$NODE" "$HERE/make_snapshot.cjs" "$W/out" "$W/machine" "$LIB/library.zip" "$LIB/library.names.txt" | tail -2
