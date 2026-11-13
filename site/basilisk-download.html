@@ -131,6 +131,33 @@ open BASILISK-3.11-macos-arm64.dmg</pre></td></tr>
   </div>
 </div>
 
+
+<div class="win" id="basilisk-16">
+  <div class="cap"><span class="box"></span><span class="t">BASILISK 16 &mdash; an instrument made of sixteen Windows 3.11 Sound Recorders</span></div>
+  <div class="body">
+    <img class="shot" src="basilisk-download/basilisk-16.png" width="1024" height="768" alt="BASILISK 16 in a DAW: sixteen Sound Recorder rows (status, green wave display, position, length, seek bar, Rewind, Forward, Play, Stop and Record), four of them playing, a DNA line, the effect and envelope panel, and the Windows Clock.">
+    <p>A plugin instrument (VST3 for Windows and macOS, Audio Unit for macOS). Each copy runs its own Windows for Workgroups 3.11. When it loads, sixteen real Sound Recorders lose their menus and title bars and line up into one synthesizer, in under six seconds. Every note you play is played by Sound Recorder: the plugin picks a recorder, Windows presses its Play button, and Sound Recorder's own sound comes out of the emulated sound card into your DAW, at the pitch you played.</p>
+    <p>The sound is a <b>DNA</b>, a line of Sound Recorder commands run in order: <code>chimesE+;R900</code> loads CHIMES.WAV, adds an echo, turns it up, and releases over 900 ms. The commands are Sound Recorder's own menus: louder, softer, faster, slower, echo, reverse, copy and paste, insert or mix another sound, delete before or after a position. The DNA also sets harmony, unison, transpose, layers and the envelope. Change any of it in Windows with the panel, from the DAW's parameters, or with the 16 factory programs. Your DAW saves the DNA with the project.</p>
+    <div class="dl">
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-311-v1.0.0/BASILISK-16-windows-x64.zip"><b>Windows 10 / 11</b><span>VST3 &middot; x64 &middot; .zip &middot; <!--SIZE-b16win-->10 MB</span></a>
+      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-311-v1.0.0/BASILISK-16-macos-universal.zip"><b>macOS</b><span>VST3 + AU &middot; Apple silicon and Intel &middot; .zip &middot; <!--SIZE-b16mac-->24 MB</span></a>
+    </div>
+    <p class="note">Checksums and the patched DOSBox Pure source are on the <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-311-v1.0.0">release page</a>.</p>
+
+    <h2>Install</h2>
+    <table>
+      <tr><th>Windows</th><td>Unzip and copy the <b>Basilisk16.vst3</b> folder to <code>C:\Program Files\Common Files\VST3</code>, then rescan plugins in your DAW. It is an instrument called BASILISK 16.</td></tr>
+      <tr><th>macOS</th><td>Unzip. Copy <b>Basilisk16.vst3</b> to <code>~/Library/Audio/Plug-Ins/VST3</code> and <b>Basilisk16.component</b> to <code>~/Library/Audio/Plug-Ins/Components</code>. It is not notarized, so run this once in Terminal, then restart the DAW:
+        <pre>xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Basilisk16.vst3 ~/Library/Audio/Plug-Ins/Components/Basilisk16.component</pre></td></tr>
+    </table>
+
+    <h2>Good to know</h2>
+    <p>No account and no API key: this one never talks to Claude. It reports a fixed latency of 53 ms, which DAWs compensate for on playback; you hear it when you play live. A new DNA takes Windows a moment to rebuild the recorders: offline renders wait for it and come out exact, while a preset change during playback costs a moment of silence. Each instance is an emulated PC, about 10&ndash;18% of one core on an Apple M-series Mac and 20&ndash;40% on a typical PC. Sixteen voices per instance; a seventeenth note steals the oldest.</p>
+
+    <h2>What is in it</h2>
+    <p class="note">Windows for Workgroups 3.11 (&copy; 1993 Microsoft), included as part of this art project. The emulator is <a href="https://codeberg.org/schelling/dosbox-pure">DOSBox Pure</a> (GPLv2 or later), with one addition: BSYN, an emulated 32-voice sound card, because Windows 3.11's Sound Blaster driver can only play one sound at a time. Its Windows 3.11 wave driver, the program that assembles the recorders, and the plugin (built with <a href="https://github.com/DISTRHO/DPF">DPF</a>) are in <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">packages/basilisk-synth-311</a>.</p>
+  </div>
+</div>
 </div>
 <nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">Windows Secrets</a><i>&middot;</i><a href="inside-windows.html">Inside Windows</a><i>&middot;</i><a href="tribute.html">Tribute</a><i>&middot;</i><a href="basilisk.html">BASILISK</a><i>&middot;</i><a href="basilisk-term.html">BASILISK III</a><i>&middot;</i><a href="basilisk-31.html">BASILISK 3.11</a><i>&middot;</i><a href="xp-live.html">Live</a><i>&middot;</i><a href="puppetry.html">Window Puppetry</a><i>&middot;</i><a href="valentine-xp.html">XP Valentine</a><i>&middot;</i><a href="valentine-31.html">Valentine 3.11</a><i>&middot;</i><a href="basilisk-31-browser.html">3.11 in your browser</a><i>&middot;</i><b>Download</b></nav>
 </body>

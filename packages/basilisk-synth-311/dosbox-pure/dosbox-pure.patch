@@ -1,0 +1,32 @@
+diff --git a/src/dbp_serialize.cpp b/src/dbp_serialize.cpp
+index 8c3c343..e56a254 100644
+--- a/src/dbp_serialize.cpp
++++ b/src/dbp_serialize.cpp
+@@ -346,6 +346,7 @@ void DBPSerialize_All(DBPArchive& ar, bool dos_running, bool game_running)
+ 			case __LINE__: DBPSERIALIZE_GET_FVER(DBPSerialize_Voodoo,  >=5); break;
+ 			case __LINE__: DBPSERIALIZE_GET_FVER(DBPSerialize_CDPlayer,>=6); break;
+ 			case __LINE__: DBPSERIALIZE_GET_FVER(DBPSerialize_IDE,     >=8); break;
++			case __LINE__: DBPSERIALIZE_GET_FUNC(DBPSerialize_BSYNTH      ); break;
+ 			case __LINE__: goto done; /*return;*/ default: continue;
+ 		}
+ 		//size_t old_off = ar.GetOffset();
+diff --git a/src/dosbox.cpp b/src/dosbox.cpp
+index 24e2472..605ffea 100644
+--- a/src/dosbox.cpp
++++ b/src/dosbox.cpp
+@@ -92,6 +92,7 @@ void MPU401_Init(Section*);
+ void PCSPEAKER_Init(Section*);
+ void TANDYSOUND_Init(Section*);
+ void DISNEY_Init(Section*);
++void BSYNTH_Init(Section*);
+ void SERIAL_Init(Section*);
+ 
+ 
+@@ -856,6 +857,7 @@ void DOSBOX_Init(void) {
+ 	Pint->Set_help("Sample rate of the Tandy 3-Voice generation.");
+ 
+ 	secprop->AddInitFunction(&DISNEY_Init,true);//done
++	secprop->AddInitFunction(&BSYNTH_Init,true);
+ 
+ 	Pbool = secprop->Add_bool("disney",Property::Changeable::WhenIdle,true);
+ 	Pbool->Set_help("Enable Disney Sound Source emulation. (Covox Voice Master and Speech Thing compatible).");
