@@ -1,0 +1,2412 @@
+{
+ "schema": {
+  "section": "preset section",
+  "name": "preset name (original)",
+  "intent": "what it is for",
+  "sources": "source NAMEs",
+  "chain": "Sound Recorder chain in words",
+  "voice": "voice/layer idea",
+  "dna": "draft DNA, canonical, checked with core/dna.cpp parse() on main d61652f",
+  "K_used": "root note set by the generator (main layer's estimated root after its steps)",
+  "voices_per_note": "recorders one note uses (sum of harmony x unison)",
+  "needs_library": "library-disc sounds already collected in the library lane",
+  "needs_new_library": "library-disc sounds proposed in AESTHETIC-PRESETS.md section 6",
+  "works_on_311": "true if every NAME exists on Windows 3.11",
+  "status": "v2 = plays on main today; v2+library = needs library-disc sounds; (v3 note) = a v3 gene would improve it",
+  "v3": "v3 proposal text"
+ },
+ "count": 101,
+ "sections": [
+  "Mall",
+  "Eccojam",
+  "Late Night",
+  "Signal",
+  "Utopia",
+  "Glass",
+  "Aqua",
+  "Startup",
+  "Slush",
+  "Funk & Hard"
+ ],
+ "presets": [
+  {
+   "section": "Mall",
+   "name": "Atrium Keys",
+   "intent": "Soft electric-piano chords that sound three shops away.",
+   "sources": [
+    "xpding",
+    "default"
+   ],
+   "chain": "Trim the bell strike, slow it one octave, echo it; a quieter, brighter copy enters 20 ms late.",
+   "voice": "Two layers, slight unison wow, left/right split.",
+   "dna": "xpding@25]<E#8U2~9Q-20/default@30]<<E#6U2~6L45O20Q25T-4;A8D1800S30R1400V70K47",
+   "K_used": 47,
+   "voices_per_note": 4,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Mall",
+   "name": "Food Court Nylon",
+   "intent": "A bossa-nova nylon pluck for one-finger comping.",
+   "sources": [
+    "default",
+    "menu"
+   ],
+   "chain": "COMB idiom: echo twice, then speed up, so the echo becomes a string resonance; slowed after.",
+   "voice": "Pluck plus a quiet fixed click for the fingernail.",
+   "dna": "default@20]EE><#10/menu<#4FL30;A0D900S0R300V90K75",
+   "K_used": 75,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Mall",
+   "name": "Escalator Ascent",
+   "intent": "A slow string pad that rises and drifts left to right, like riding up past a skylight.",
+   "sources": [
+    "logoff"
+   ],
+   "chain": "Drop the attack, slow two octaves, echo; drawn envelope and pan envelope.",
+   "voice": "One wide unison layer.",
+   "dna": "logoff@30[<<E#12U3~10Ja0,0.900,100.4000,85Jp0,-60.6000,60;R3500K39",
+   "K_used": 39,
+   "voices_per_note": 3,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Mall",
+   "name": "Empty Concourse",
+   "intent": "Hold one key: distant shoppers under a slowed startup chord. A bed for a whole track.",
+   "sources": [
+    "mall_ambience_shopping_centre",
+    "startup"
+   ],
+   "chain": "The ambience is quiet and fixed; the startup bloom is slowed twice and echoed.",
+   "voice": "Bed layer (fixed pitch) plus a pitched pad.",
+   "dna": "mall_ambience_shopping_centre-#2FL40/startup<<E#12U2~12Ja0,0.2500,100;R4000V0K44",
+   "K_used": 44,
+   "voices_per_note": 3,
+   "needs_library": [
+    "mall_ambience_shopping_centre"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Mall",
+   "name": "Lobby Vibes",
+   "intent": "Vibraphone with motor tremolo, the sound of a hotel-lobby jazz trio.",
+   "sources": [
+    "print"
+   ],
+   "chain": "The sine-like Print bell, slowed and echoed. The tremolo is an 8-point drawn amplitude envelope.",
+   "voice": "H0 only, so 12 voices of polyphony.",
+   "dna": "print<E#12Ja0,100.150,65.300,95.450,62.600,90.750,58.900,85.1050,55;R900V80K70",
+   "K_used": 70,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2 (v3 note)",
+   "v3": "A looping amplitude envelope (repeat the last N points) would keep the tremolo going past 1 s."
+  },
+  {
+   "section": "Mall",
+   "name": "Paging Chime",
+   "intent": "The two-tone public-address chime that comes before an announcement.",
+   "sources": [
+    "notify"
+   ],
+   "chain": "Notify already alternates a fourth; slowed once and echoed it is a store PA chime.",
+   "voice": "Unison 2 for a cheap speaker chorus.",
+   "dna": "notify<E#8U2~4;A0R1500V60K62",
+   "K_used": 62,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Mall",
+   "name": "Department Strings",
+   "intent": "Lush, polite string pad for the cosmetics floor.",
+   "sources": [
+    "logon",
+    "shutdown"
+   ],
+   "chain": "Logon body slowed once; shutdown body slowed twice, quieter, entering later.",
+   "voice": "Two layers, wide unison, pan apart.",
+   "dna": "logon@20[<#8U3~14Q-35/shutdown@30[<<#8U2~10L50O150Q35;A600S90R2500K44",
+   "K_used": 44,
+   "voices_per_note": 5,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Mall",
+   "name": "Elevator Alto",
+   "intent": "A smooth-jazz alto sax line, slowed into a dream (needs the GM render).",
+   "sources": [
+    "gm_alto_sax_c4"
+   ],
+   "chain": "A GM alto sax note rendered in Windows, slowed one octave and echoed.",
+   "voice": "Mono lead with light unison.",
+   "dna": "gm_alto_sax_c4<E#6U2~5;A40S85R700B5K48",
+   "K_used": 48,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [
+    "gm_alto_sax_c4"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Mall",
+   "name": "Closing Announcement",
+   "intent": "Last call: a falling cadence with pre-echo, then the lights go off.",
+   "sources": [
+    "shutdown"
+   ],
+   "chain": "PRE-VERB idiom (reverse, echo, reverse) after a slow-down, so echo arrives before the note.",
+   "voice": "Big pool, chorus.",
+   "dna": "shutdown<RER#12U2~8;A0S100R3000K44",
+   "K_used": 44,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Mall",
+   "name": "Fountain Coins",
+   "intent": "Bright bell plinks with a long, wet echo, as coins hit a fountain.",
+   "sources": [
+    "ding",
+    "droplet_soft"
+   ],
+   "chain": "Ding with LONG-ECHO (slow, echo, speed up); a soft droplet mixed into the attack.",
+   "voice": "Bell layer plus droplet layer, offset 10 ms.",
+   "dna": "ding<E>#10/droplet_soft#4FL50O10;A0D2500S0R1800K79",
+   "K_used": 79,
+   "voices_per_note": 2,
+   "needs_library": [
+    "droplet_soft"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Mall",
+   "name": "Atrium Marimba",
+   "intent": "Warm wood mallet for lounge riffs.",
+   "sources": [
+    "xpding",
+    "chord"
+   ],
+   "chain": "The Ding body is a soft marimba; slowed chord adds a quiet low bloom.",
+   "voice": "Two layers.",
+   "dna": "xpding#10/chord@10]<<#4L25T4;A0D700S0R400V90K59",
+   "K_used": 59,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Eccojam",
+   "name": "Startup Loop Half Speed",
+   "intent": "The last figure of the startup sound looped four times; lower keys screw it slower.",
+   "sources": [
+    "startup"
+   ],
+   "chain": "GRAIN (keep a slice), double it twice with @0CP, slow one octave, echo.",
+   "voice": "Key-tracked on purpose: tape-style speed, so pitch and tempo fall together.",
+   "dna": "startup@55[@40]@0CP@0CP<E#8;A20S100R1500K56",
+   "K_used": 56,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Eccojam",
+   "name": "Logon Stutter",
+   "intent": "A one-beat stutter: the same short slice repeated eight times, then the phrase continues.",
+   "sources": [
+    "logon"
+   ],
+   "chain": "Copy a short slice, paste it in front of itself three times (8 hits), then Insert the full logon after.",
+   "voice": "One layer, fixed root.",
+   "dna": "logon@10[@15]@0CP@0CP@0CP@99Ilogon<#8;A5S100R800K44",
+   "K_used": 44,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Eccojam",
+   "name": "Chord Screw Down",
+   "intent": "A chopped-and-screwed stab: the chord, then the same chord an octave down, then two.",
+   "sources": [
+    "chord"
+   ],
+   "chain": "Sound Recorder cannot slow only part of a buffer, so three layers do it: each one is slower and starts later.",
+   "voice": "Three layers at O0 / O350 / O1050, each one octave lower; a tape-stop feel.",
+   "dna": "chord@60]#6/chord@60]<#5O350L80/chord@60]<<#5O1050L60;A0S100R600K55",
+   "K_used": 55,
+   "voices_per_note": 3,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Eccojam",
+   "name": "Reverse Ding Loop",
+   "intent": "A backwards bell fragment looped into a hypnotic swell.",
+   "sources": [
+    "ding"
+   ],
+   "chain": "Reverse, keep the swell part, loop it 4x, echo.",
+   "voice": "One layer.",
+   "dna": "dingR@40[@0CP@0CPE#10;A10S100R1200K79",
+   "K_used": 79,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": true,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Eccojam",
+   "name": "Fanfare Fragment",
+   "intent": "The middle of the ta-da fanfare as a slowed four-beat loop.",
+   "sources": [
+    "tada"
+   ],
+   "chain": "GRAIN on the brass middle, loop 4x, slow, echo twice.",
+   "voice": "Pool of 8, unison wow.",
+   "dna": "tada@30[@50]@0CP@0CP<EE#8U2~10;A30S100R1500K48",
+   "K_used": 48,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Eccojam",
+   "name": "Ringback Lullaby",
+   "intent": "A phone ringback tone looped and slowed into a pulsing drone.",
+   "sources": [
+    "xpringout"
+   ],
+   "chain": "Loop 8x, slow twice; the beating of the two tones becomes a slow tremolo.",
+   "voice": "One layer.",
+   "dna": "xpringout@0CP@0CP@0CP<<E#8U2~6;A300S100R2000K45",
+   "K_used": 45,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Eccojam",
+   "name": "Gate Echo Startup",
+   "intent": "The whole startup slowed with echoes between, then cut into a chopped gate by Delete.",
+   "sources": [
+    "startup"
+   ],
+   "chain": "BLUR-DOWN (slow, echo, slow, echo) with a delete-after at 60 % to end on the bloom.",
+   "voice": "Big pool; a bed key.",
+   "dna": "startup<E<E@60]#12U2~10;A100S100R3500K44",
+   "K_used": 44,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Eccojam",
+   "name": "Hold Music Loop",
+   "intent": "A public-domain hold-music excerpt cut to one bar and looped (library sound).",
+   "sources": [
+    "holdmusic_lunar_hold_music"
+   ],
+   "chain": "GRAIN of about 2 s, loop 4x, echo; tune by ear (no measured root).",
+   "voice": "Fixed pitch until tuned.",
+   "dna": "holdmusic_lunar_hold_music@20[@10]@0CP@0CPE#6F;A20S100R800",
+   "K_used": null,
+   "voices_per_note": 1,
+   "needs_library": [
+    "holdmusic_lunar_hold_music"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Eccojam",
+   "name": "Notify Ping-Pong",
+   "intent": "A two-note chime looped, then echoed left and right on the beat.",
+   "sources": [
+    "notify"
+   ],
+   "chain": "Loop 2x; three offset layers make a tempo delay (500 ms = 120 BPM quarter).",
+   "voice": "Taps at 0/500/1000 ms, panned L/R/L, falling level.",
+   "dna": "notify@0CP<#6/notify@0CP<#5O500Q-70L60/notify@0CP<#5O1000Q70L35;A0S100R900K62",
+   "K_used": 62,
+   "voices_per_note": 3,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2 (v3 note)",
+   "v3": "Tempo-synced offsets (O in beats) would follow the DAW tempo."
+  },
+  {
+   "section": "Eccojam",
+   "name": "Shutdown Ascending",
+   "intent": "The falling shutdown cadence played backwards, looped twice: the screw-up.",
+   "sources": [
+    "shutdown"
+   ],
+   "chain": "Reverse, loop 2x, slow, echo.",
+   "voice": "One layer.",
+   "dna": "shutdownR@0CP<E#10U2~8;A0S100R2500K44",
+   "K_used": 44,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Late Night",
+   "name": "Midnight Tines",
+   "intent": "A dusty electric piano for maj7 and min9 voicings at 70 BPM.",
+   "sources": [
+    "xpding",
+    "ringout",
+    "recycle"
+   ],
+   "chain": "DX-style tine (xpding strike) over a looped ringout body; DECIMATE round trip on the body for VHS dullness; crumple dust.",
+   "voice": "Three layers; dust is fixed pitch and quiet.",
+   "dna": "xpding@20]#6U2~10/ringout@25[@35]><#6L70U2~12T2/recycle<<<#2FL10;A5D2000S30R700V80K59",
+   "K_used": 59,
+   "voices_per_note": 5,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Late Night",
+   "name": "News Break Strings",
+   "intent": "Synth strings from a 1980s local news break, slightly out of tune.",
+   "sources": [
+    "logoff"
+   ],
+   "chain": "Body only, slowed, decimated (><), wide unison.",
+   "voice": "One layer, wide chorus.",
+   "dna": "logoff@30[<><#12U4~18;A400S90R1800K51",
+   "K_used": 51,
+   "voices_per_note": 4,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Late Night",
+   "name": "Velvet Fretless",
+   "intent": "A round fretless-bass slide sound for walking lines (GM render).",
+   "sources": [
+    "gm_fretless_c2",
+    "hwin"
+   ],
+   "chain": "GM fretless, unchanged; a quiet slowed rising bloop under it gives the slide.",
+   "voice": "Bend range 12 so the wheel slides.",
+   "dna": "gm_fretless_c2#6/hwin<<@40]#2L30;A5D1200S60R250B12K36",
+   "K_used": 36,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [
+    "gm_fretless_c2"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Late Night",
+   "name": "Tape Sax",
+   "intent": "A tenor sax note slowed and smeared, as on a worn VHS (GM render).",
+   "sources": [
+    "gm_tenor_sax_c3"
+   ],
+   "chain": "Slow, decimate, echo.",
+   "voice": "Wide wow unison; macro 2 (motion) opens the wow from 8 to 40 cents.",
+   "dna": "gm_tenor_sax_c3<><E#6U2~8;A50S85R900B4m2=0m21C8,40K36",
+   "K_used": 36,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [
+    "gm_tenor_sax_c3"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Late Night",
+   "name": "Rainy Window Keys",
+   "intent": "Soft keys and rain on the glass, for a sleepy hook.",
+   "sources": [
+    "default",
+    "rain_on_window"
+   ],
+   "chain": "Default bell trimmed and slowed for a felt piano; rain is a fixed bed.",
+   "voice": "Keys layer plus fixed rain layer.",
+   "dna": "default@40]<#10U2~6/rain_on_window-#2FL30;A5D1600S20R900K63",
+   "K_used": 63,
+   "voices_per_note": 3,
+   "needs_library": [
+    "rain_on_window"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Late Night",
+   "name": "Weather Map Pad",
+   "intent": "A warm synth pad for a forecast scroll at 2 a.m.",
+   "sources": [
+    "startup",
+    "logon"
+   ],
+   "chain": "Startup body slowed with echo; logon slowed twice behind it.",
+   "voice": "Two layers, panned.",
+   "dna": "startup@30[<E#8U2~8Q-25/logon<<#8U2~12L50Q25;A700S95R2500K56",
+   "K_used": 56,
+   "voices_per_note": 4,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Late Night",
+   "name": "Barber Chair Organ",
+   "intent": "A soft drawbar organ for slowed smooth-jazz loops.",
+   "sources": [
+    "ringout"
+   ],
+   "chain": "LOOP-OSC on ringout, then octave and fifth by harmony.",
+   "voice": "H0,12,19 at U1 keeps chords possible.",
+   "dna": "ringout@20[@30]@0CP@0CP@0CP#12H0,12,19;A20D300S70R150K69",
+   "K_used": 69,
+   "voices_per_note": 3,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": true,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Late Night",
+   "name": "VHS Bell Pad",
+   "intent": "A bright bell-pad hybrid with tape wow, the brighter VHS-pop color.",
+   "sources": [
+    "chimes",
+    "logon"
+   ],
+   "chain": "Reversed chime sparkle, a wow-heavy logon body.",
+   "voice": "Two layers.",
+   "dna": "logon@20[<><#10U3~20/chimesR#6U2~15L60T1;A250S90R2000K44",
+   "K_used": 44,
+   "voices_per_note": 5,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Late Night",
+   "name": "Slow Jam Bass",
+   "intent": "A soft synth bass for slowed R&B.",
+   "sources": [
+    "error"
+   ],
+   "chain": "The error tone slowed twice and trimmed, a little clip for body.",
+   "voice": "Mono feel: pool 4.",
+   "dna": "error<<@30]+#4;A2D500S60R180V80K63",
+   "K_used": 63,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Late Night",
+   "name": "Static Lullaby",
+   "intent": "Music box through a cheap TV speaker.",
+   "sources": [
+    "chimes",
+    "print"
+   ],
+   "chain": "Chimes front decimated hard (>>><<<), print bell under it.",
+   "voice": "Two layers.",
+   "dna": "chimes@30]>>><<<#8/print#6L50T-3;A0D1500S0R1200K79",
+   "K_used": 79,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Signal",
+   "name": "Channel Surf",
+   "intent": "Each key jumps to another \"channel\": a chime ident, a tone, a crumple, a voice.",
+   "sources": [
+    "notify",
+    "ringout",
+    "recycle",
+    "sam_welcome"
+   ],
+   "chain": "SPLICE-SEQ: Insert File chains short pieces into one 3-second strip.",
+   "voice": "Fixed pitch, so every key starts the same strip; velocity sets level.",
+   "dna": "notify@40]IringoutIrecycleIsam_welcomeIchimes#8F;A0S100R200",
+   "K_used": null,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [
+    "sam_welcome"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Signal",
+   "name": "Test Pattern Tone",
+   "intent": "The color-bars test tone: a steady sine, with a slow fade at the end of the night.",
+   "sources": [
+    "ringout"
+   ],
+   "chain": "LOOP-OSC on the steadiest slice; no unison, no echo.",
+   "voice": "One layer.",
+   "dna": "ringout@30[@20]@0CP@0CP@0CP@0CP#8;A30S100R300K69",
+   "K_used": 69,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": true,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Signal",
+   "name": "Station Ident",
+   "intent": "A three-note TV station logo: chime, fanfare tail, a voice.",
+   "sources": [
+    "chimes",
+    "tada",
+    "sam_system_ready"
+   ],
+   "chain": "Three layers enter at 0/300/900 ms: an ident sequence on one key.",
+   "voice": "Pitched chime and fanfare; fixed voice.",
+   "dna": "chimes#4/tada@40[#6O300T-5/sam_system_ready#2FO900L80;A0S100R1200K79",
+   "K_used": 79,
+   "voices_per_note": 3,
+   "needs_library": [],
+   "needs_new_library": [
+    "sam_system_ready"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Signal",
+   "name": "Forecast Voice",
+   "intent": "A slowed robot forecaster, for spoken hooks (Sam render).",
+   "sources": [
+    "sam_forecast"
+   ],
+   "chain": "Slowed once and echoed; key-tracked so lower keys are lower and slower.",
+   "voice": "One layer.",
+   "dna": "sam_forecast<E#6;A0S100R400",
+   "K_used": null,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [
+    "sam_forecast"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Signal",
+   "name": "Broken Transmission",
+   "intent": "Speech and tone torn into pieces: a chopped, reversed, decimated strip.",
+   "sources": [
+    "sam_portal",
+    "batcrit"
+   ],
+   "chain": "Delete-after/before cut the voice; reverse half; decimate; mix the battery tone at 50 %.",
+   "voice": "Fixed pitch.",
+   "dna": "sam_portal@20[@50]R>><<@50Mbatcrit#6F;A0S100R150",
+   "K_used": null,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [
+    "sam_portal"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Signal",
+   "name": "Degauss Swell",
+   "intent": "The CRT degauss thump as a dark, pitched swell (library sound).",
+   "sources": [
+    "crt_degauss"
+   ],
+   "chain": "Slowed once, reversed for a swell, echoed.",
+   "voice": "Tune by ear; key-tracked.",
+   "dna": "crt_degaussR<E#6;A0S100R1500",
+   "K_used": null,
+   "voices_per_note": 1,
+   "needs_library": [
+    "crt_degauss"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Signal",
+   "name": "Modem Choir",
+   "intent": "Dial-up handshake slowed two octaves into an eerie chord.",
+   "sources": [
+    "modem_handshake_early"
+   ],
+   "chain": "Slow twice; the 30 s cap skips a step if the excerpt is too long, so trim first.",
+   "voice": "Wide unison.",
+   "dna": "modem_handshake_early@40]<<#8U3~20;A800S90R2500",
+   "K_used": null,
+   "voices_per_note": 3,
+   "needs_library": [
+    "modem_handshake_early"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Signal",
+   "name": "Number Station",
+   "intent": "A voice reading numbers over a tone, for the eerie end of signalwave (Sam render).",
+   "sources": [
+    "sam_numbers",
+    "xpringout"
+   ],
+   "chain": "Voice fixed; the ringback tone looped underneath as a carrier.",
+   "voice": "Two layers.",
+   "dna": "sam_numbers#4F/xpringout@0CP@0CP@0CP#6L40;A0S100R300K69",
+   "K_used": 69,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [
+    "sam_numbers"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Signal",
+   "name": "Off-Air Hiss",
+   "intent": "Tape and TV hiss as a texture layer under everything.",
+   "sources": [
+    "recycle",
+    "xprecycle"
+   ],
+   "chain": "Crumple decimated and looped into hiss; volume down.",
+   "voice": "Fixed, quiet.",
+   "dna": "recycle>>><<<@0CP@0CP@0CP@0CP-#4F/xprecycle<<@0CP@0CP-#2FL60;A400S100R800G-10",
+   "K_used": null,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Signal",
+   "name": "Satellite Bulletin",
+   "intent": "A 1960 newsreel voice cut to one phrase and echoed (library sound).",
+   "sources": [
+    "newsreel_tiros_ii_satellite_1960"
+   ],
+   "chain": "Keep a 2-3 s slice; echo; fixed pitch.",
+   "voice": "One layer.",
+   "dna": "newsreel_tiros_ii_satellite_1960@10[@12]E#4F;A0S100R600",
+   "K_used": null,
+   "voices_per_note": 1,
+   "needs_library": [
+    "newsreel_tiros_ii_satellite_1960"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Utopia",
+   "name": "Contact Online",
+   "intent": "The two-note \"a contact is online\" chime as a melodic instrument (Messenger render).",
+   "sources": [
+    "msgr_online"
+   ],
+   "chain": "As it is, slight echo; the source is the meaning.",
+   "voice": "One layer, chorus.",
+   "dna": "msgr_online#10U2~4E;A0R700K72",
+   "K_used": 72,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [
+    "msgr_online"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Utopia",
+   "name": "Conference Blip",
+   "intent": "A bright, short call-client bell, for arpeggios (NetMeeting).",
+   "sources": [
+    "netm_blip"
+   ],
+   "chain": "Front only, long-echo.",
+   "voice": "One layer.",
+   "dna": "netm_blip@50]<E>#10;A0D600S0R500K87",
+   "K_used": 87,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [
+    "netm_blip"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Utopia",
+   "name": "Polyphonic Ringtone",
+   "intent": "An early-2000s polyphonic ringtone lead: bright, square-ish, cheerful.",
+   "sources": [
+    "batlow"
+   ],
+   "chain": "LOOP-OSC on a short slice, CLIP twice, one octave up.",
+   "voice": "Pool 8; staccato envelope.",
+   "dna": "batlow@5[@20]@0CP@0CP@0CP++>#8;A0D180S55R40K55",
+   "K_used": 55,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Utopia",
+   "name": "Fantasy Module Pad",
+   "intent": "The General MIDI \"new age\" pad, made glossier with a reversed chime halo.",
+   "sources": [
+    "gm_newage_c5",
+    "chimes"
+   ],
+   "chain": "GM pad as it is; chimes reversed and quiet.",
+   "voice": "Two layers.",
+   "dna": "gm_newage_c5#10U2~6/chimesR#6L35T5;A300S90R2200K72",
+   "K_used": 72,
+   "voices_per_note": 3,
+   "needs_library": [],
+   "needs_new_library": [
+    "gm_newage_c5"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Utopia",
+   "name": "Sushi Bar Kalimba",
+   "intent": "A clean, cheerful GM kalimba with a 16th-note echo.",
+   "sources": [
+    "gm_kalimba_c5"
+   ],
+   "chain": "Long-echo; three taps by offset at 125 ms (120 BPM 16ths).",
+   "voice": "Three layers, panned.",
+   "dna": "gm_kalimba_c5#6/gm_kalimba_c5#5O125Q-60L55/gm_kalimba_c5#5O250Q60L30;A0D800S0R400K72",
+   "K_used": 72,
+   "voices_per_note": 3,
+   "needs_library": [],
+   "needs_new_library": [
+    "gm_kalimba_c5"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Utopia",
+   "name": "Virtual Lobby Steel Drum",
+   "intent": "GM steel drum for tropical demo-disc riffs.",
+   "sources": [
+    "gm_steeldrum_c5"
+   ],
+   "chain": "COMB (EE>) bakes in a metallic ring; then slow back.",
+   "voice": "One layer.",
+   "dna": "gm_steeldrum_c5EE><#10;A0D900S0R500K72",
+   "K_used": 72,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [
+    "gm_steeldrum_c5"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Utopia",
+   "name": "Synergy Pad",
+   "intent": "A sung corporate word under a glossy pad: hold one key for a slogan bed (Sam render).",
+   "sources": [
+    "sam_synergy",
+    "logon"
+   ],
+   "chain": "Voice slowed into a vowel smear; logon pad under it.",
+   "voice": "Two layers.",
+   "dna": "sam_synergy<<E#4F/logon<#10U2~8L80;A400S95R2500K44",
+   "K_used": 44,
+   "voices_per_note": 3,
+   "needs_library": [],
+   "needs_new_library": [
+    "sam_synergy"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Utopia",
+   "name": "New Mail Arp",
+   "intent": "A soft mallet arpeggio from the mail alert, playable (Messenger render).",
+   "sources": [
+    "msgr_email"
+   ],
+   "chain": "As it is, plus a quiet octave baked in (OCT-BAKE).",
+   "voice": "One layer.",
+   "dna": "msgr_emailC>@0X#10;A0R600K74",
+   "K_used": 74,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [
+    "msgr_email"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Utopia",
+   "name": "Bubble Sign-In",
+   "intent": "A rising bloop then a two-note alert: the \"you are signed in\" moment.",
+   "sources": [
+    "hwin",
+    "msgr_alert"
+   ],
+   "chain": "Bloop at 0 ms, alert at 180 ms.",
+   "voice": "Two layers.",
+   "dna": "hwin>#6/msgr_alert#6O180T5;A0S100R500",
+   "K_used": 60,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [
+    "msgr_alert"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Utopia",
+   "name": "Demo Disc Brass",
+   "intent": "A glossy synth-brass stab from a 1990s demo disc (GM render).",
+   "sources": [
+    "gm_synbrass_c4",
+    "tada"
+   ],
+   "chain": "GM synth brass plus the ta-da attack for bite.",
+   "voice": "Two layers.",
+   "dna": "gm_synbrass_c4#8U2~8/tada@15]#4L40;A5D600S60R300",
+   "K_used": 60,
+   "voices_per_note": 3,
+   "needs_library": [],
+   "needs_new_library": [
+    "gm_synbrass_c4"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Glass",
+   "name": "Crystal Taskbar",
+   "intent": "A clean glass-bell pluck with a long, bright halo.",
+   "sources": [
+    "print",
+    "crystal_bell_bb5"
+   ],
+   "chain": "Print bell with a PRE-VERB halo (reverse, echo, reverse); the crystal bell is quiet under it.",
+   "voice": "Two layers.",
+   "dna": "printRER#8/crystal_bell_bb5@30]#6L40O5;A0D2500S0R2000K82",
+   "K_used": 82,
+   "voices_per_note": 2,
+   "needs_library": [
+    "crystal_bell_bb5"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Glass",
+   "name": "Glossy Bloom",
+   "intent": "A pad that opens like a window fading in: soft attack, bright top, gentle shimmer.",
+   "sources": [
+    "logon",
+    "xpding",
+    "chimes"
+   ],
+   "chain": "Logon body; reversed bright bells as sparkle.",
+   "voice": "Three layers, shimmer panned out.",
+   "dna": "logon@20[#8U2~8/xpding>>R#4L35Q-50T-3/chimes>R#4L30Q50O200T1;A600S90R2500K56",
+   "K_used": 56,
+   "voices_per_note": 4,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Glass",
+   "name": "Sparkle Cascade",
+   "intent": "One key plays a rising four-note glass glissando.",
+   "sources": [
+    "chimes"
+   ],
+   "chain": "Reversed chimes; harmony gives the chord, offsets give the strum.",
+   "voice": "Four layers at 0/45/90/135 ms.",
+   "dna": "chimesR#3/chimesR#3O45T4/chimesR#3O90T7/chimesR#3O135T12;A0D1800S0R1500K79",
+   "K_used": 79,
+   "voices_per_note": 4,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": true,
+   "status": "v2 (v3 note)",
+   "v3": "A strum gene (each harmony voice O ms later) would do this in one layer."
+  },
+  {
+   "section": "Glass",
+   "name": "Rounded Corner Chord",
+   "intent": "A soft major-7th chord pluck, the confident \"notification\" of 2007.",
+   "sources": [
+    "xpnotify"
+   ],
+   "chain": "XP Notify voiced as maj7 (H0,4,7,11).",
+   "voice": "One finger, one chord; pool 12.",
+   "dna": "xpnotify#12H0,4,7,11;A0D1500S0R1100K70",
+   "K_used": 70,
+   "voices_per_note": 4,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Glass",
+   "name": "Aurora Glass Pad",
+   "intent": "A singing glass rim, slowed and wide, for slow keynotes.",
+   "sources": [
+    "wine_glass_singing_half_full"
+   ],
+   "chain": "Slowed once, echo; tune by ear.",
+   "voice": "Wide unison.",
+   "dna": "wine_glass_singing_half_full<E#10U3~10;A900S95R3000",
+   "K_used": null,
+   "voices_per_note": 3,
+   "needs_library": [
+    "wine_glass_singing_half_full"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Glass",
+   "name": "Lens Flare Riser",
+   "intent": "An upward whoosh and a reversed bell meet on the downbeat.",
+   "sources": [
+    "restore",
+    "ding"
+   ],
+   "chain": "Restore slowed into a long rise; reversed ding ends with the hit.",
+   "voice": "Two layers.",
+   "dna": "restore<<#4F/dingR#8;A0S100R600K79",
+   "K_used": 79,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Glass",
+   "name": "Glass Keyboard",
+   "intent": "Clean digital EP with a glass edge, for hopeful chord progressions.",
+   "sources": [
+    "default",
+    "ringout"
+   ],
+   "chain": "Default bell strike over a ringout body.",
+   "voice": "Two layers.",
+   "dna": "default@25]#8/ringout@25[@35]#8L60T-6;A0D1600S30R700K75",
+   "K_used": 75,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Glass",
+   "name": "Tray Balloon Bell",
+   "intent": "A tiny pop plus a soft bell, the sound of a system-tray balloon tip.",
+   "sources": [
+    "balloon",
+    "xpding"
+   ],
+   "chain": "Balloon mixed into the xpding attack (MIX-TRANSIENT).",
+   "voice": "One layer.",
+   "dna": "xpdingMballoon#12;A0D900S0R500K59",
+   "K_used": 59,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Glass",
+   "name": "Clear Sky Choir",
+   "intent": "An airy \"ooh\" pad that sounds clean, not dark (GM render).",
+   "sources": [
+    "gm_oohs_c4",
+    "soft_wind"
+   ],
+   "chain": "GM voice oohs; soft wind under it.",
+   "voice": "Two layers.",
+   "dna": "gm_oohs_c4#10U2~8/soft_wind-#2FL30;A700S95R2500",
+   "K_used": 60,
+   "voices_per_note": 3,
+   "needs_library": [
+    "soft_wind"
+   ],
+   "needs_new_library": [
+    "gm_oohs_c4"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Glass",
+   "name": "Reflection Ping",
+   "intent": "A glass ping with a ping-pong echo, panned left then right.",
+   "sources": [
+    "ui_glass_ping"
+   ],
+   "chain": "Three offset taps.",
+   "voice": "Three layers.",
+   "dna": "ui_glass_ping#6Q-40/ui_glass_ping#5O300Q70L55/ui_glass_ping#5O600Q-70L30;A0S100R600",
+   "K_used": null,
+   "voices_per_note": 3,
+   "needs_library": [
+    "ui_glass_ping"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Aqua",
+   "name": "Tank Bubbles",
+   "intent": "Rounded bloops for bouncy arpeggios.",
+   "sources": [
+    "balloon",
+    "hwout"
+   ],
+   "chain": "Balloon with long-echo; a quiet falling bloop for body.",
+   "voice": "Two layers.",
+   "dna": "balloon<E>#8/hwout>@30]#4L40T-3;A0D400S0R300K81",
+   "K_used": 81,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Aqua",
+   "name": "Reef Pad",
+   "intent": "Hold one key: water movement and a calm pad.",
+   "sources": [
+    "underwater_movement",
+    "logon"
+   ],
+   "chain": "Underwater ambience fixed and quiet; logon slowed.",
+   "voice": "Two layers.",
+   "dna": "underwater_movement-#2FL40/logon<#10U2~8;A1200S90R3500V0K44",
+   "K_used": 44,
+   "voices_per_note": 3,
+   "needs_library": [
+    "underwater_movement"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Aqua",
+   "name": "Droplet Marimba",
+   "intent": "A wood mallet with a water drop on every strike.",
+   "sources": [
+    "xpding",
+    "drop_plink"
+   ],
+   "chain": "MIX-TRANSIENT: the plink mixed at the start.",
+   "voice": "One layer.",
+   "dna": "xpdingMdrop_plink#12;A0D800S0R400K59",
+   "K_used": 59,
+   "voices_per_note": 1,
+   "needs_library": [
+    "drop_plink"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Aqua",
+   "name": "Plaza Bossa Keys",
+   "intent": "Cheerful jazzy keys for a shop channel, in a bright room (GM render).",
+   "sources": [
+    "gm_vibes_c4",
+    "gm_nylon_c4"
+   ],
+   "chain": "GM vibes and GM nylon guitar at equal level.",
+   "voice": "Two layers.",
+   "dna": "gm_vibes_c4#8/gm_nylon_c4#6L70O8;A0D1200S20R500",
+   "K_used": 60,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [
+    "gm_nylon_c4",
+    "gm_vibes_c4"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Aqua",
+   "name": "Eco Wind Chimes",
+   "intent": "Wind chimes and birds, the solar-panel brochure sound.",
+   "sources": [
+    "wind_chime_528hz",
+    "bird_hermit_thrush"
+   ],
+   "chain": "Chime pitched; bird enters later, fixed.",
+   "voice": "Two layers.",
+   "dna": "wind_chime_528hz#8/bird_hermit_thrush-#2FO400L40;A0D2500S0R2000K72",
+   "K_used": 72,
+   "voices_per_note": 2,
+   "needs_library": [
+    "bird_hermit_thrush",
+    "wind_chime_528hz"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Aqua",
+   "name": "Fishbowl Glass",
+   "intent": "A bright, short glass-bowl tone with a watery echo.",
+   "sources": [
+    "crystal_bowl_g4"
+   ],
+   "chain": "Front kept, long-echo.",
+   "voice": "One layer.",
+   "dna": "crystal_bowl_g4@40]<E>#10;A0D2000S0R1500K67",
+   "K_used": 67,
+   "voices_per_note": 1,
+   "needs_library": [
+    "crystal_bowl_g4"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Aqua",
+   "name": "Lagoon Flute",
+   "intent": "A breathy pan flute over waves (GM render).",
+   "sources": [
+    "gm_panflute_c5",
+    "nps_ocean_waves"
+   ],
+   "chain": "GM pan flute; ocean fixed and quiet.",
+   "voice": "Two layers.",
+   "dna": "gm_panflute_c5#8U2~5/nps_ocean_waves-#2FL25;A80S85R700K72",
+   "K_used": 72,
+   "voices_per_note": 3,
+   "needs_library": [
+    "nps_ocean_waves"
+   ],
+   "needs_new_library": [
+    "gm_panflute_c5"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Aqua",
+   "name": "Bubble Sweep",
+   "intent": "Bubbles slowed into a rising wash.",
+   "sources": [
+    "tiny_bubbles",
+    "restore"
+   ],
+   "chain": "Bubbles slowed twice; restore whoosh.",
+   "voice": "Two fixed layers.",
+   "dna": "tiny_bubbles<<#4F/restore<#4FO100L60;A300S100R1500",
+   "K_used": null,
+   "voices_per_note": 2,
+   "needs_library": [
+    "tiny_bubbles"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Aqua",
+   "name": "Hydro Kalimba",
+   "intent": "Kalimba with a water drop and a bowl ring.",
+   "sources": [
+    "kalimba_c4",
+    "droplet_soft"
+   ],
+   "chain": "Kalimba as it is; droplet at 5 ms.",
+   "voice": "Two layers.",
+   "dna": "kalimba_c4#10/droplet_soft#4FO5L45;A0D900S0R500",
+   "K_used": 60,
+   "voices_per_note": 2,
+   "needs_library": [
+    "droplet_soft",
+    "kalimba_c4"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Aqua",
+   "name": "Aquarium Screensaver",
+   "intent": "Slow glass bells over a filter hum, for a fish-tank screensaver.",
+   "sources": [
+    "print",
+    "ringout"
+   ],
+   "chain": "Print slowed, PRE-VERB; ringout slowed twice as a hum.",
+   "voice": "Two layers.",
+   "dna": "print<RER#10/ringout<<#4L30T1;A400S90R2500K70",
+   "K_used": 70,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Startup",
+   "name": "Power-On Ceremony",
+   "intent": "Hold one key: power hum, a seek clunk, then the startup bloom.",
+   "sources": [
+    "hdd_conner_spin",
+    "floppy_seek_clunk",
+    "startup"
+   ],
+   "chain": "Three layers at 0/600/1400 ms.",
+   "voice": "Fixed hum and clunk; pitched bloom.",
+   "dna": "hdd_conner_spin-#2F/floppy_seek_clunk#2FO600/startup#10O1400;A0S100R3000V0K68",
+   "K_used": 68,
+   "voices_per_note": 3,
+   "needs_library": [
+    "floppy_seek_clunk",
+    "hdd_conner_spin"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Startup",
+   "name": "Login Wish",
+   "intent": "The logon phrase as a soft, playable pad with chorus.",
+   "sources": [
+    "logon"
+   ],
+   "chain": "As it is, slowed once; chorus.",
+   "voice": "Pool 12.",
+   "dna": "logon<#12U2~8;A100S95R2500K44",
+   "K_used": 44,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Startup",
+   "name": "Goodbye Pad",
+   "intent": "The logoff phrase stretched into a slow, sad string line.",
+   "sources": [
+    "logoff"
+   ],
+   "chain": "Slow twice, echo.",
+   "voice": "One layer.",
+   "dna": "logoff<<E#12U2~10;A400S95R3000K39",
+   "K_used": 39,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Startup",
+   "name": "Ninety-Five Bloom",
+   "intent": "A legacy-style Ab major bloom built from parts, for a short ceremony chord.",
+   "sources": [
+    "startup",
+    "chimes",
+    "tada"
+   ],
+   "chain": "Startup body; chimes sparkle; ta-da attack under it.",
+   "voice": "Three layers.",
+   "dna": "startup@20[#8U2~6/chimes>R#4L40T1/tada@15]#4L30T-4;A20S90R2500K68",
+   "K_used": 68,
+   "voices_per_note": 4,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Startup",
+   "name": "Sixteen-Bit Chimes",
+   "intent": "The original 8-bit chimes, slowed and echoed; plays on the 3.11 edition too.",
+   "sources": [
+    "chimes"
+   ],
+   "chain": "Slow once, echo, long-echo.",
+   "voice": "One layer.",
+   "dna": "chimes<E<E>#12;A0D2500S0R2000K67",
+   "K_used": 67,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": true,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Startup",
+   "name": "Hyperspace Launch",
+   "intent": "The pinball launch ramp as a pitched riser and hit (Pinball render).",
+   "sources": [
+    "pin_hyper",
+    "pin_bonus"
+   ],
+   "chain": "Launch at 0 ms, bonus chord at 700 ms.",
+   "voice": "Two layers.",
+   "dna": "pin_hyper#6/pin_bonus#6O700T-4;A0S100R1200K40",
+   "K_used": 40,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [
+    "pin_bonus",
+    "pin_hyper"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Startup",
+   "name": "Mission Complete Pad",
+   "intent": "The pinball mission tone slowed into a triumphant pad.",
+   "sources": [
+    "pin_mission"
+   ],
+   "chain": "Slow once, echo, chorus.",
+   "voice": "One layer.",
+   "dna": "pin_mission<E#12U2~8;A300S95R2000K48",
+   "K_used": 48,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [
+    "pin_mission"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Startup",
+   "name": "Setup Wizard Swell",
+   "intent": "The question-mark assistant swell, gentle and welcoming.",
+   "sources": [
+    "qmark_swell"
+   ],
+   "chain": "As it is with chorus.",
+   "voice": "One layer.",
+   "dna": "qmark_swell#12U2~6;A200S95R2000K66",
+   "K_used": 66,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [
+    "qmark_swell"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Startup",
+   "name": "Shutdown Choir",
+   "intent": "Shutdown, slowed, reversed then forward: it rises before it falls.",
+   "sources": [
+    "shutdown"
+   ],
+   "chain": "Copy, reverse, then Paste Insert the forward copy at the end.",
+   "voice": "One layer.",
+   "dna": "shutdown<CR@99P#12U2~6;A0S100R3000K44",
+   "K_used": 44,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Startup",
+   "name": "Boot Beep Bass",
+   "intent": "A short tone stack as a sub bass: the click of a power switch on top.",
+   "sources": [
+    "batlow",
+    "relay_click"
+   ],
+   "chain": "Battery tone slowed; relay click at the start.",
+   "voice": "Two layers.",
+   "dna": "batlow<@30]#6/relay_click#2FL60;A0D600S50R150K31",
+   "K_used": 31,
+   "voices_per_note": 2,
+   "needs_library": [
+    "relay_click"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Slush",
+   "name": "Ten Minute Chord",
+   "intent": "A chord stretched four times and echoed: hold it for a whole track.",
+   "sources": [
+    "chord"
+   ],
+   "chain": "BLUR-DOWN twice (slow, echo, slow, echo).",
+   "voice": "Pool 12; very long release.",
+   "dna": "chord<E<E#12U2~12;A1500S100R6000K31",
+   "K_used": 31,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Slush",
+   "name": "Fluorescent Hum",
+   "intent": "The empty-office buzz: a decimated low tone and office air.",
+   "sources": [
+    "ringout",
+    "office_ambience_01"
+   ],
+   "chain": "LOOP-OSC on ringout, slowed two octaves, CLIP once; office ambience fixed.",
+   "voice": "Two layers.",
+   "dna": "ringout@30[@20]@0CP@0CP@0CP@0CP<<+#4/office_ambience_01-#2FL25;A800S100R2000V0K45",
+   "K_used": 45,
+   "voices_per_note": 2,
+   "needs_library": [
+    "office_ambience_01"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Slush",
+   "name": "Carpet Corridor",
+   "intent": "A distant, heavily echoed muzak chord from another room.",
+   "sources": [
+    "xpnotify"
+   ],
+   "chain": "Slow twice, echo three times, volume down.",
+   "voice": "One layer.",
+   "dna": "xpnotify<<EEE--#12U2~10;A600S90R5000K46",
+   "K_used": 46,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Slush",
+   "name": "Neon Rain Pad",
+   "intent": "Dreampunk: a cold, wide pad with a rain bed, after the film scores.",
+   "sources": [
+    "shutdown",
+    "rain_on_window"
+   ],
+   "chain": "Shutdown slowed twice, reversed, echo; rain fixed.",
+   "voice": "Two layers.",
+   "dna": "shutdown<<RE#12U3~16/rain_on_window-#2FL25;A1500S95R5000K32",
+   "K_used": 32,
+   "voices_per_note": 4,
+   "needs_library": [
+    "rain_on_window"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Slush",
+   "name": "Memory Of A Memory",
+   "intent": "Hypnagogic: startup slowed three times, a ghost of itself.",
+   "sources": [
+    "startup"
+   ],
+   "chain": "Slow three times (19 s), echo once.",
+   "voice": "Wide chorus.",
+   "dna": "startup<<<E#12U3~18;A2000S100R6000K32",
+   "K_used": 32,
+   "voices_per_note": 3,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Slush",
+   "name": "Liminal Pool Room",
+   "intent": "Wet, tiled-room echo on a single water drop, for still scenes.",
+   "sources": [
+    "droplet_echoed"
+   ],
+   "chain": "Slow, echo twice.",
+   "voice": "Fixed pitch.",
+   "dna": "droplet_echoed<EE#8F;A0S100R3000",
+   "K_used": null,
+   "voices_per_note": 1,
+   "needs_library": [
+    "droplet_echoed"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Slush",
+   "name": "Sleep Mode",
+   "intent": "A soft swell that breathes in and out, drawn by an envelope.",
+   "sources": [
+    "logon"
+   ],
+   "chain": "Logon slowed; a 5-point breathing envelope; pan envelope.",
+   "voice": "One layer.",
+   "dna": "logon<<#12U2~8Ja0,0.2000,100.4000,35.6000,90.8000,30Jp0,-40.8000,40;R3000K32",
+   "K_used": 32,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Slush",
+   "name": "Dial Tone Drone",
+   "intent": "A phone dial tone slowed into a deep, eerie drone.",
+   "sources": [
+    "phone_dial_tone_us"
+   ],
+   "chain": "Slow twice; echo.",
+   "voice": "Tune by ear (350 + 440 Hz source).",
+   "dna": "phone_dial_tone_us@50]<<E#8U2~6;A1000S100R3000",
+   "K_used": null,
+   "voices_per_note": 2,
+   "needs_library": [
+    "phone_dial_tone_us"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Slush",
+   "name": "Faraway Choir",
+   "intent": "A choir behind a wall: slowed, muffled, echoed.",
+   "sources": [
+    "choir_aah"
+   ],
+   "chain": "Slow once, decimate, echo twice.",
+   "voice": "Wide unison.",
+   "dna": "choir_aah<><EE#10U2~12;A1200S95R4000K45",
+   "K_used": 45,
+   "voices_per_note": 2,
+   "needs_library": [
+    "choir_aah"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Slush",
+   "name": "Ambient Elevator",
+   "intent": "An elevator ride slowed into a long, falling drone (library sound).",
+   "sources": [
+    "office_elevator_ride"
+   ],
+   "chain": "Slow once (if under 15 s), echo.",
+   "voice": "Fixed pitch.",
+   "dna": "office_elevator_ride<E#4F;A500S100R3000V0",
+   "K_used": null,
+   "voices_per_note": 1,
+   "needs_library": [
+    "office_elevator_ride"
+   ],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Funk & Hard",
+   "name": "Disco Ball Stab",
+   "intent": "A filtered-house chord stab for future funk at 118 BPM.",
+   "sources": [
+    "chord",
+    "tada"
+   ],
+   "chain": "Chord front, CLIP once; ta-da attack. Speed is the filter: macro 1 fades a dull copy into a bright copy.",
+   "voice": "Two layers; macro 1 = brightness.",
+   "dna": "chord@40]+#6/chord@40]<<>>#6;A0D350S20R150m1=50m11L0,120m12L120,0K55",
+   "K_used": 55,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Funk & Hard",
+   "name": "City Pop Bass",
+   "intent": "A slap-style bass for octave-jumping disco lines (GM render).",
+   "sources": [
+    "gm_slap_c2"
+   ],
+   "chain": "As it is, CLIP once for bite.",
+   "voice": "Mono-ish: pool 4.",
+   "dna": "gm_slap_c2+#4;A0D400S50R100V100K36",
+   "K_used": 36,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [
+    "gm_slap_c2"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Funk & Hard",
+   "name": "Sidechain Pad",
+   "intent": "A pad that ducks on every beat, drawn by the envelope (118 BPM eighths).",
+   "sources": [
+    "logon"
+   ],
+   "chain": "Logon looped; the envelope gates it eight times.",
+   "voice": "One layer.",
+   "dna": "logon@20[@0CP#12U2~10Ja0,0.200,100.254,10.454,100.508,10.708,100.762,10.962,100;R300K56",
+   "K_used": 56,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2 (v3 note)",
+   "v3": "A loop flag on Ja would repeat the duck for as long as the key is held."
+  },
+  {
+   "section": "Funk & Hard",
+   "name": "Vapor Sub Boom",
+   "intent": "A long sub for vaporhop / vaportrap beats; wheel bends a fifth.",
+   "sources": [
+    "ringout",
+    "start"
+   ],
+   "chain": "808 Sub idiom: ringout body slowed three octaves; a click on top.",
+   "voice": "Two layers; bend range 7.",
+   "dna": "ringout@20[@40]<<<#6/start<#2FL50;A0D2500S40R200B7K33",
+   "K_used": 33,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Funk & Hard",
+   "name": "Lazy Trap Hat",
+   "intent": "A tiny closed hat for skittering hi-hats.",
+   "sources": [
+    "menu",
+    "popup"
+   ],
+   "chain": "Menu click and popup burst, fixed.",
+   "voice": "Two fixed layers; velocity matters.",
+   "dna": "menu#4F/popup>#4FL40;A0S100R30V100",
+   "K_used": null,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Funk & Hard",
+   "name": "Gabber Brick",
+   "intent": "A distorted hardvapour kick: clipped, short, tuned low.",
+   "sources": [
+    "critstop"
+   ],
+   "chain": "Front only, slowed twice, CLIP four times.",
+   "voice": "Mono.",
+   "dna": "critstop@20]<<++++#4;A0D250S0R80V100K36",
+   "K_used": 36,
+   "voices_per_note": 1,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Funk & Hard",
+   "name": "Hoover Alarm",
+   "intent": "A harsh, detuned alarm lead for hardvapour drops.",
+   "sources": [
+    "batcrit"
+   ],
+   "chain": "LOOP-OSC on the warning tone, clip, wide unison.",
+   "voice": "U4 on a pool of 8.",
+   "dna": "batcrit@10[@20]@0CP@0CP@0CP+++#8U4~25;A0S100R200K48",
+   "K_used": 48,
+   "voices_per_note": 4,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  },
+  {
+   "section": "Funk & Hard",
+   "name": "Funk Guitar Chop",
+   "intent": "A muted jazz-guitar chop for disco upstrokes (GM render).",
+   "sources": [
+    "gm_jazzgtr_c4"
+   ],
+   "chain": "Keep the first 25 %; an octave-up copy 30 ms later makes an upstroke.",
+   "voice": "Two layers.",
+   "dna": "gm_jazzgtr_c4@25]#6/gm_jazzgtr_c4@25]#6O30T12L50;A0D200S0R60",
+   "K_used": 60,
+   "voices_per_note": 2,
+   "needs_library": [],
+   "needs_new_library": [
+    "gm_jazzgtr_c4"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Funk & Hard",
+   "name": "Anime Sparkle Hit",
+   "intent": "A bright crash-and-chime hit for the start of a future-funk loop.",
+   "sources": [
+    "tada",
+    "chimes",
+    "gm_crash"
+   ],
+   "chain": "Ta-da attack, chimes high, a GM crash fixed.",
+   "voice": "Three layers.",
+   "dna": "tada@25]#6/chimes>#4L50T5/gm_crash#2FL60;A0D900S0R700",
+   "K_used": 60,
+   "voices_per_note": 3,
+   "needs_library": [],
+   "needs_new_library": [
+    "gm_crash"
+   ],
+   "works_on_311": false,
+   "status": "v2+library",
+   "v3": null
+  },
+  {
+   "section": "Funk & Hard",
+   "name": "Screwed Kit",
+   "intent": "A drum kit made of Windows clicks, slowed down: kick, snare, hat in one key-range.",
+   "sources": [
+    "critstop",
+    "recycle",
+    "menu"
+   ],
+   "chain": "Kick, snare and hat layers; key-tracked so each key is another tuning.",
+   "voice": "Three layers.",
+   "dna": "critstop@15]<<#4/recycle@30]<#4FL70/menu<#4FL50;A0S100R80K48",
+   "K_used": 48,
+   "voices_per_note": 3,
+   "needs_library": [],
+   "needs_new_library": [],
+   "works_on_311": false,
+   "status": "v2",
+   "v3": null
+  }
+ ],
+ "library_proposals": [
+  {
+   "name": "bgm_bell",
+   "root_midi": 81,
+   "used_by_draft": false
+  },
+  {
+   "name": "bgm_low",
+   "root_midi": 57,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_alto_sax_c4",
+   "root_midi": 60,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_atmos_c4",
+   "root_midi": 60,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_birds",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_bottle_c5",
+   "root_midi": 72,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_choir_c4",
+   "root_midi": 60,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_clap",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_crash",
+   "root_midi": null,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_crystal_c5",
+   "root_midi": 72,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_epiano_c4",
+   "root_midi": 60,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_fmpiano_c4",
+   "root_midi": 60,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_fretless_c2",
+   "root_midi": 36,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_halopad_c4",
+   "root_midi": 60,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_hat",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_icerain_c5",
+   "root_midi": 72,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_jazzgtr_c4",
+   "root_midi": 60,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_kalimba_c5",
+   "root_midi": 72,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_kick",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_marimba_c4",
+   "root_midi": 60,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_newage_c5",
+   "root_midi": 72,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_nylon_c4",
+   "root_midi": 60,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_oohs_c4",
+   "root_midi": 60,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_openhat",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_orchhit_c4",
+   "root_midi": 60,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_panflute_c5",
+   "root_midi": 72,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_phone",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_rim",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_seashore",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_slap_c2",
+   "root_midi": 36,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_snare",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_steeldrum_c5",
+   "root_midi": 72,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_strings_c4",
+   "root_midi": 60,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_synbass_c2",
+   "root_midi": 36,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_synbrass_c4",
+   "root_midi": 60,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_synstrings_c4",
+   "root_midi": 60,
+   "used_by_draft": false
+  },
+  {
+   "name": "gm_tenor_sax_c3",
+   "root_midi": 48,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_vibes_c4",
+   "root_midi": 60,
+   "used_by_draft": true
+  },
+  {
+   "name": "gm_warmpad_c4",
+   "root_midi": 60,
+   "used_by_draft": false
+  },
+  {
+   "name": "merlin_sparkle",
+   "root_midi": 74,
+   "used_by_draft": false
+  },
+  {
+   "name": "msgr_alert",
+   "root_midi": 79,
+   "used_by_draft": true
+  },
+  {
+   "name": "msgr_email",
+   "root_midi": 62,
+   "used_by_draft": true
+  },
+  {
+   "name": "msgr_online",
+   "root_midi": 72,
+   "used_by_draft": true
+  },
+  {
+   "name": "msgr_type",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "netm_blip",
+   "root_midi": 87,
+   "used_by_draft": true
+  },
+  {
+   "name": "netm_tune",
+   "root_midi": 92,
+   "used_by_draft": false
+  },
+  {
+   "name": "oobe_click",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "pin_bell",
+   "root_midi": 67,
+   "used_by_draft": false
+  },
+  {
+   "name": "pin_bonus",
+   "root_midi": 68,
+   "used_by_draft": true
+  },
+  {
+   "name": "pin_hyper",
+   "root_midi": 40,
+   "used_by_draft": true
+  },
+  {
+   "name": "pin_launch",
+   "root_midi": 53,
+   "used_by_draft": false
+  },
+  {
+   "name": "pin_low",
+   "root_midi": 40,
+   "used_by_draft": false
+  },
+  {
+   "name": "pin_mission",
+   "root_midi": 60,
+   "used_by_draft": true
+  },
+  {
+   "name": "pin_start",
+   "root_midi": 62,
+   "used_by_draft": false
+  },
+  {
+   "name": "qmark_ding",
+   "root_midi": 62,
+   "used_by_draft": false
+  },
+  {
+   "name": "qmark_swell",
+   "root_midi": 66,
+   "used_by_draft": true
+  },
+  {
+   "name": "sam_forecast",
+   "root_midi": null,
+   "used_by_draft": true
+  },
+  {
+   "name": "sam_newmail",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "sam_numbers",
+   "root_midi": null,
+   "used_by_draft": true
+  },
+  {
+   "name": "sam_please_hold",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "sam_portal",
+   "root_midi": null,
+   "used_by_draft": true
+  },
+  {
+   "name": "sam_relax",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "sam_synergy",
+   "root_midi": null,
+   "used_by_draft": true
+  },
+  {
+   "name": "sam_system_ready",
+   "root_midi": null,
+   "used_by_draft": true
+  },
+  {
+   "name": "sam_tokyo",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "sam_vowel_ah",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "sam_vowel_oo",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "sam_welcome",
+   "root_midi": null,
+   "used_by_draft": true
+  },
+  {
+   "name": "silence_1000",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "silence_250",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "silence_4000",
+   "root_midi": null,
+   "used_by_draft": false
+  },
+  {
+   "name": "wmp_bed1",
+   "root_midi": 49,
+   "used_by_draft": false
+  },
+  {
+   "name": "wmp_bed6",
+   "root_midi": 42,
+   "used_by_draft": false
+  }
+ ],
+ "library_existing_used": [
+  "bird_hermit_thrush",
+  "choir_aah",
+  "crt_degauss",
+  "crystal_bell_bb5",
+  "crystal_bowl_g4",
+  "drop_plink",
+  "droplet_echoed",
+  "droplet_soft",
+  "floppy_seek_clunk",
+  "hdd_conner_spin",
+  "holdmusic_lunar_hold_music",
+  "kalimba_c4",
+  "mall_ambience_shopping_centre",
+  "modem_handshake_early",
+  "newsreel_tiros_ii_satellite_1960",
+  "nps_ocean_waves",
+  "office_ambience_01",
+  "office_elevator_ride",
+  "phone_dial_tone_us",
+  "rain_on_window",
+  "relay_click",
+  "soft_wind",
+  "tiny_bubbles",
+  "ui_glass_ping",
+  "underwater_movement",
+  "wind_chime_528hz",
+  "wine_glass_singing_half_full"
+ ]
+}
