@@ -15,7 +15,7 @@ option modname=BSYNTH
 option quiet
 segment type code fixed
 segment type data fixed
-export wodMessage, DriverProc, BsPointer, WEP.1 resident
+export wodMessage, widMessage, DriverProc, BsPointer, WEP.1 resident
 LNK
 wlink @bsynth.lnk
 wcc -q $CFLAGS16 -bt=windows -bd -ml -zu -s -ox -zW -fo=synhook.obj "$HERE/synhook.c"

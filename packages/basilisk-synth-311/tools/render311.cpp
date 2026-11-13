@@ -1,7 +1,7 @@
 // render311: DNA + MIDI -> WAV through the real Windows 3.11 machine (DOSBox Pure with the BSYN card), headless.
 //
 //   render311 --machine DIR --core FILE --dna "DNA" (--midi in.mid | --score "t:note:vel:dur,...") --out out.wav
-//             [--tail SECONDS] [--log FILE] [--bits 24|32]
+//             [--tail SECONDS] [--log FILE] [--bits 24|32] [--bpm BPM]   (BPM: the tempo for v3 Wt, Wb, Wg; 120)
 //
 // --score: notes as t:note:velocity:duration in seconds (the format of packages/basilisk-synth/tools/batch_render.py).
 // DNA v2 (DNA.md 5): library NAMEs come from DIR/library.names.txt; macros are applied as the plugin applies them.
@@ -16,6 +16,7 @@
 #include "../../basilisk-synth/core/voices.h"
 #include "../../basilisk-synth/core/proto.h"
 #include "../plugin/V3Voice.h"
+#include "../plugin/V3Alloc.h"
 
 #include <algorithm>
 #include <chrono>
@@ -221,6 +222,7 @@ int main(int argc, char **argv)
     if (a.count("--score")) { if (!readScore(a["--score"], ev)) { std::fprintf(stderr, "render311: bad --score\n"); return 2; } }
     else if (!readMidi(a["--midi"], ev)) { std::fprintf(stderr, "render311: cannot read %s\n", a["--midi"].c_str()); return 2; }
     const double tail = a.count("--tail") ? std::atof(a["--tail"].c_str()) : 3.0;
+    const double bpm = a.count("--bpm") ? std::atof(a["--bpm"].c_str()) : 120.0;   // v3 Wt, Wb, Wg
     const std::string machine = a["--machine"];
     const double t0 = nowSec();
     {   // the library disc's NAMEs (DNA.md 5.5)
@@ -261,14 +263,17 @@ int main(int argc, char **argv)
     const bsynth3::Dna3 d3 = bsynth3::applyMacros3(bsynth3::parse3(written.canonical), written.g.macro);   // DNA v3
     const uint32_t d3salt = b16v3::salt(written.canonical);
     uint32_t v3counter = 0, lframes[kMaxLayers] = {}; int lrate[kMaxLayers] = {};
-    bool win = false;
+    bool win = false, loopCap = false;
     Voices voices(48000); Cmd c[kMaxCmds];
     voices.setDna(dna, c);
+    b16v3::V3Alloc v3; v3.setDna(dna, d3); v3.setBpm(bpm);   // the layers with N, S or D, and live bend (as the plugin)
+    std::vector<b16v3::Out> vo;
+    bool rateCap = false;
     M.send("hi 3");   // DNA v3: the guest answers with its caps
     for (bool hi = false; !hi && S->state != BS_FAILED;) {   // Windows answers before it gets the sound (as the plugin does)
         M.runTo(S->dac_w + 4800); nap();
         std::vector<std::string> ls; M.lines(ls);
-        for (auto &l : ls) { if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str()); if (l.rfind("hi ", 0) == 0) { hi = true; win = bsynth3::hasCap(bsynth3::parseHi3(l), "win"); } }
+        for (auto &l : ls) { if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str()); if (l.rfind("hi ", 0) == 0) { hi = true; win = bsynth3::hasCap(bsynth3::parseHi3(l), "win"); loopCap = bsynth3::hasCap(bsynth3::parseHi3(l), "loop"); rateCap = bsynth3::hasCap(bsynth3::parseHi3(l), "rate"); } }
     }
     M.send("dna " + written.canonical);     // as written: Windows does N itself
     char b[160]; proto::env(b, sizeof b, dna.g); b[std::strlen(b) - 1] = 0; M.send(b);
@@ -279,7 +284,8 @@ int main(int argc, char **argv)
             if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str());   // Windows' replies, for debugging
             proto::Reply r = proto::parse(l);
             if (r.kind == proto::Reply::Layer) {
-                voices.setLayerInfo(r.layer, r.first, r.count, r.rate, r.frames);
+                v3.setLayerInfo(r.layer, r.first, r.count, r.rate, r.frames);
+                voices.setLayerInfo(r.layer, r.first, v3.owns(r.layer) ? 0 : r.count, r.rate, r.frames);
                 if (r.layer >= 0 && r.layer < kMaxLayers) { lframes[r.layer] = (uint32_t)r.frames; lrate[r.layer] = r.rate; }
             }
             if (r.kind == proto::Reply::Built) built = true;
@@ -289,8 +295,8 @@ int main(int argc, char **argv)
     for (int i = 0; i < kMaxLayers; i++) {   // the layers' drawn envelopes, macros applied
         static const Env none;
         const Layer *L = i < (int)dna.layers.size() ? &dna.layers[i] : nullptr;
-        proto::lenv(b, sizeof b, i, 'a', L ? L->envA : none); b[std::strlen(b) - 1] = 0; M.send(b);
-        proto::lenv(b, sizeof b, i, 'p', L ? L->envP : none); b[std::strlen(b) - 1] = 0; M.send(b);
+        M.send(b16v3::lenvLine(i, 'a', L ? L->envA : none, d3, bpm, loopCap).c_str());
+        M.send(b16v3::lenvLine(i, 'p', L ? L->envP : none, d3, bpm, loopCap).c_str());
     }
     const double tBuilt = nowSec();
 
@@ -309,28 +315,38 @@ int main(int argc, char **argv)
             const uint64_t at = anchor + (uint64_t)(m.t * 48000) + kLat;
             const uint8_t st = m.st & 0xF0;
             int n = 0;
-            if (st == 0x90 && m.b > 0) n = voices.noteOn(m.a, m.b, at, c);
-            else if (st == 0x80 || st == 0x90) n = voices.noteOff(m.a, at, c);
-            else if (st == 0xB0 && m.a == 64) n = voices.sustain(m.b >= 64, at, c);
-            else if (st == 0xB0 && (m.a == 120 || m.a == 123)) n = voices.allOff(c);
-            else if (st == 0xE0) { bend = (((m.b << 7) | m.a) - 8192) / 8192.0; voices.bend(bend); }
-            for (int k = 0; k < n; k++) {
+            vo.clear();
+            if (st == 0x90 && m.b > 0) { n = voices.noteOn(m.a, m.b, at, c); v3.noteOn(m.a, m.b, at, vo); }
+            else if (st == 0x80 || st == 0x90) { n = voices.noteOff(m.a, at, c); v3.noteOff(m.a, at, vo); }
+            else if (st == 0xB0 && m.a == 64) { n = voices.sustain(m.b >= 64, at, c); v3.sustain(m.b >= 64, at, vo); }
+            else if (st == 0xB0 && (m.a == 120 || m.a == 123)) { n = voices.allOff(c); v3.allOff(); }
+            else if (st == 0xE0) { bend = (((m.b << 7) | m.a) - 8192) / 8192.0; voices.bend(bend); if (rateCap) v3.bend(bend, at, vo); }
+            for (int k = 0; k < n; k++) v3.follow(c[k], c[k].layer < dna.layers.size() && dna.layers[c[k].layer].fixed);
+            auto sendCmd = [&](Cmd cm) {
                 uint64_t when = at;
-                if (c[k].kind == Cmd::On && c[k].delayMs) { when += (uint64_t)c[k].delayMs * 48; c[k].delayMs = 0; }   // O, as the plugin
-                if (c[k].kind == Cmd::On && win) {   // DNA v3 window and random draws, as the plugin (V3Voice.h)
-                    const int L = c[k].layer < kMaxLayers ? c[k].layer : 0;
-                    const b16v3::NoteOut o = b16v3::note(d3, c[k], m.b, when, lframes[L], lrate[L], v3counter, d3salt, true);
+                if (cm.kind == Cmd::On) { when += b16v3::delay48(d3, cm, bpm); cm.delayMs = 0; }   // O (v3: Wo, Wb, Wt; S strum), as the plugin
+                if (cm.kind == Cmd::On && win) {   // DNA v3 window and random draws, as the plugin (V3Voice.h)
+                    const int L = cm.layer < kMaxLayers ? cm.layer : 0;
+                    const b16v3::NoteOut o = b16v3::note(d3, cm, m.b, when, lframes[L], lrate[L], v3counter, d3salt, true, bpm);
                     M.send(o.on, ++M.nextId, o.when);
-                    if (o.cut) { char cl[32]; std::snprintf(cl, sizeof cl, "cut %d", c[k].rec); M.send(cl, ++M.nextId, o.cutAt); }
-                    continue;
+                    if (o.cut) { char cl[32]; std::snprintf(cl, sizeof cl, "cut %d", cm.rec); M.send(cl, ++M.nextId, o.cutAt); }
+                    if (o.gate && (!o.cut || o.gateAt < o.cutAt)) { char cl[32]; std::snprintf(cl, sizeof cl, "off %d", cm.rec); M.send(cl, ++M.nextId, o.gateAt); }
+                    return;
                 }
-                char line[64]; proto::cmd(line, sizeof line, c[k]); line[std::strlen(line) - 1] = 0;
+                char line[64]; proto::cmd(line, sizeof line, cm); line[std::strlen(line) - 1] = 0;
                 M.send(line, ++M.nextId, when);
+            };
+            for (int k = 0; k < n; k++) sendCmd(c[k]);
+            for (const b16v3::Out &o : vo) {
+                if (o.kind == b16v3::Out::Cmd) { sendCmd(o.c); continue; }
+                if (!rateCap) continue;
+                char line[64]; std::snprintf(line, sizeof line, "rate %d %u %d %d", o.rec, o.hz, o.glideMs, o.regate ? 1 : 0);
+                M.send(line, ++M.nextId, o.at);
             }
         }
         // Windows' `end` replies free recorders, as in the plugin
         std::vector<std::string> ls; M.lines(ls);
-        for (auto &l : ls) { proto::Reply r = proto::parse(l); if (r.kind == proto::Reply::End) voices.end(r.rec); }
+        for (auto &l : ls) { proto::Reply r = proto::parse(l); if (r.kind == proto::Reply::End) { voices.end(r.rec); v3.end(r.rec); } }
         // the DAC for this block, exactly as the plugin reads it (host time h = DAC anchor + h); a note stamped at
         // t + kLat comes out kLat later, which is taken off at the end
         const uint64_t need = anchor + blockEnd;

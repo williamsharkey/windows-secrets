@@ -11,14 +11,19 @@
 
 | Phase | Status |
 |---|---|
-| Core merge | DONE: `core/dna3.*`, `engine3.*`, `recipe.*` added as new files (dna.cpp, voices.cpp untouched: v1/v2 identical by construction); `core/test_v3.sh`: 29,938 v3 checks, 562 real presets x 3 forms, 20,000 fuzz strings, 246,964 recipe checks, all ok; DNA.md §6 points to the spec. The fold into dna.cpp waits for the XP lane's 1.2.1. |
+| Core merge | DONE: `core/dna3.*`, `engine3.*`, `recipe.*`, `scales.*` as new files (dna.cpp, voices.cpp untouched: v1/v2 identical by construction), now the PE2 branch's 1142d52 (section 18 keys and scales, `D` degree harmony, and the `W` time subkeys agreed with the PE2 lane: `Wo` offset to 30 s, `Wb` beat delay, `Wg` beat gate, `Wt` tempo sync, `Wr`/`Wp` looping drawn envelopes); `core/test_v3.sh`: 30,001 v3 checks, 20,000 fuzz x 3 forms 0 failures, 240,223 recipe checks. The fold into dna.cpp waits for the XP lane's 1.2.1. |
 | 1 Windows, random, desktop, help | DONE locally (not released): `hi 3` -> `hi 3 311 <state> win,desk`; `W` start/end/length/velocity/tape (`Wm`) and `Y` detune/level/late/pan, decided host-side (seeded, renders repeat; `plugin/V3Voice.h`, shared with render311); the start is a scroll-bar seek to round(from x 10000 / frames), the end a stamped `cut`; desktop mode (minimize box, SOUNDREC's icon, `desk 0/1` both ways, strips re-laid on restore); F1 opens BASIL16.HLP; the help lane's installer puts the help and a "BASILISK 16" group on C: (Program Manager rewrites the new group once on a writable boot inside make_machine, else it stops on the read-only zip). Measured: windows start within 0.4 ms of the target (correlation 0.998 against the whole sound at that point) and last exactly their length; desktop/restore and F1 by screenshot. |
-| 2 Rate by task, voice modes | next |
+| 2 Rate by task, voice modes | IN PROGRESS. Card: `RATETASK` (cmd 30) changes every voice of a task (and its release ghosts) at a stamped DAC sample, gliding linear in cents, queued (8 per voice) because the host sends ahead; `regate` takes back a release (continue), `STOPTASK` (31) ends a voice a regate kept. Measured: the first differing sample is the stamp (24001 of a change at 24000), an octave up at the midpoint ends at exactly 24000 + rest/2 (38313). Guest: `rate <rec> <hz> [glide [regate]]`, caps `win,desk,rate,loop`. Host: `plugin/V3Alloc.h` (shared with render311) plays the layers with N/S/D (core gets a 0-recorder pool for them): poly limit, mono, legato, continue, glide, priority; round-robin/random intervals, random recorder, layer groups, strum, unison width; `D` degree chords; live bend for every sounding recorder. `tools/test/test_v3alloc.cpp`: 19 checks ok. Also W time: Wt/Wo/Wb/Wg host-side (bpm from the host, render311 `--bpm`), Wr/Wp on the card (`lenv ... <loop>`). Not yet measured in the machine (the XP lane's quiet window). |
 | 3 Tab frame (Voices, Playback) | |
 | 4 Tape keyboard | |
 | 5 Kit mode | |
 | 6 Grains | |
 | 7 Mine sequencer, Library tab | |
+| Scales (section 18) | after phase 2 |
+| Calculator digit keys 0-F (strip numbers) | queued: Scientific + Hex Calculator donor keys, flown in during assembly (< 6 s total), a thin layer-colour bar; a click auditions the slot |
+| R1 Recording: ADC | code done, untested: card `BSC_IN*` (40-47) with the Hermite converter, source = the host's input or the card's own output; BSYNTH.DRV `widMessage` (one input, WIM_DATA from the timer); bshm v2 input ring; the plugin's stereo sidechain input, stamped on the DAC clock like the notes; `rsrc side/self` |
+| R2-R5 Recording | queued (RECORDING.md section 6) |
+| Pointer drags | DONE (a9bd56b): a held scroll-bar thumb follows a drag (BSYNTH.DRV feeds the host pointer through USER's mouse_event at interrupt time). SOUNDREC's Seek bar ignores clicks and drags: open |
 
 ## v1.2.1: fixes from the demo renders (tools/sndrec-demo)
 

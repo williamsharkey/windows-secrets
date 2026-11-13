@@ -4,13 +4,14 @@
 #define BSHM_H_INCLUDED
 #include <stdint.h>
 #define BSHM_MAGIC 0x4D485342u   /* "BSHM" */
-#define BSHM_VERSION 1
+#define BSHM_VERSION 2   /* 2: the input ring (RECORDING.md 1.3) */
 #define BSHM_RING 65536          /* stereo float frames of DAC output (1.37 s at 48 kHz) */
 #define BSHM_W 1024
 #define BSHM_H 768
 #define BSHM_EV 1024
 #define BSHM_REP 32768
 #define BSHM_KEYS 64
+#define BSHM_INRING 32768       /* stereo float frames of host input (the sidechain), by DAC sample */
 
 typedef struct { uint32_t n; uint32_t id; uint64_t at; uint16_t w[136]; } bshm_ev;   /* 288 bytes: a packet of up to 136 words */
 
@@ -52,6 +53,15 @@ typedef struct {
   volatile uint16_t rep[BSHM_REP];
   float ring[BSHM_RING * 2];
   uint32_t vid[BSHM_W * BSHM_H];
+  /* v2: the host's input for the card's ADC. The host writes frame k of its input at DAC sample in_at + k into
+     in_ring[(in_at + k) % BSHM_INRING] and then moves in_w (the DAC sample after the last one written); the engine
+     hands [in_r, in_w) to the card. */
+  volatile uint64_t in_w, in_r;
+  volatile uint32_t in_src;      /* host: 0 the sidechain, 1 the synth's own output */
+  volatile uint32_t in_rec;      /* engine: 1 while a take runs */
+  volatile uint64_t in_start;    /* engine: the take's first frame, a DAC sample */
+  volatile uint32_t in_bytes, in_over;   /* engine: bytes recorded, frames lost (no buffer queued) */
+  float in_ring[BSHM_INRING * 2];
 } bshm;
 
 #endif

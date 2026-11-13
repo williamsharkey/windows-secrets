@@ -32,7 +32,7 @@ cmp machine-arm64/drive.zip machine-x86_64/drive.zip
 # render311 (tools/render311.cpp): the batch renderer, universal
 cc -O2 -ffp-contract=off -arch x86_64 -arch arm64 -mmacosx-version-min=10.15 -c -o "$W/engine-r.o" basilisk-synth-311/engine/engine.c -Ibasilisk-synth-311/engine
 c++ -std=c++17 -O2 -ffp-contract=off -arch x86_64 -arch arm64 -mmacosx-version-min=10.15 -o "$W/render311" basilisk-synth-311/tools/render311.cpp \
-  basilisk-synth/core/dna.cpp basilisk-synth/core/voices.cpp "$W/engine-r.o"
+  basilisk-synth/core/dna.cpp basilisk-synth/core/voices.cpp basilisk-synth/core/dna3.cpp basilisk-synth/core/engine3.cpp basilisk-synth/core/scales.cpp "$W/engine-r.o"
 codesign --force -s - "$W/render311"
 cd "$W/out"
 for b in Basilisk16.vst3 Basilisk16.component; do

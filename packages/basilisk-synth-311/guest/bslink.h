@@ -77,12 +77,30 @@ static void bs_arm2(HTASK task, DWORD id, DWORD hz, WORD gain, int pan, int laye
     _enable();
 }
 /* v2: a layer's drawn envelope (kind 0 amplitude, levels 0..100; 1 pan, levels -100..100), n breakpoints */
-static void bs_lenv(int layer, int kind, int n, const int *t, const int *l)
+static void bs_lenv(int layer, int kind, int n, const int *t, const int *l, int loop)
 {
     int k;
     _disable();
     bs_put((WORD)layer); bs_put((WORD)kind); bs_put((WORD)n);
     for (k = 0; k < n; k++) { bs_put((WORD)t[k]); bs_put((WORD)(kind ? l[k] + 100 : l[k])); }
+    if (loop >= 2) bs_put((WORD)loop);   /* v3: the last `loop` points repeat while held */
     outpw(BS_CMD, 29);
+    _enable();
+}
+/* v3: change the rate of every voice of a task (and its ghosts) at the event's DAC sample, gliding over glide_ms;
+   regate takes back a release that has begun (mono "continue") */
+static void bs_rate(HTASK task, DWORD id, DWORD hz, WORD glide_ms, WORD regate)
+{
+    _disable();
+    bs_put((WORD)task); bs_put(LOWORD(id)); bs_put(HIWORD(id)); bs_put(LOWORD(hz)); bs_put(HIWORD(hz)); bs_put(glide_ms); bs_put(regate);
+    outpw(BS_CMD, 30);
+    _enable();
+}
+/* v3: stop a task's ghosts (sounds a regate kept going after Sound Recorder stopped) */
+static void bs_stoptask(HTASK task, DWORD id, WORD fade_ms)
+{
+    _disable();
+    bs_put((WORD)task); bs_put(LOWORD(id)); bs_put(HIWORD(id)); bs_put(fade_ms);
+    outpw(BS_CMD, 31);
     _enable();
 }

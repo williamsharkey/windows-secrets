@@ -47,6 +47,9 @@ struct bs_engine {
   uint64_t (*h_dac)(void);
   int (*h_read)(uint64_t, float *, int);
   void (*h_stats)(uint32_t *, uint32_t *, uint32_t *);
+  void (*h_input)(uint64_t, const float *, int);
+  void (*h_insrc)(int);
+  int (*h_instate)(uint64_t *, uint32_t *, uint32_t *);
 };
 
 /* libretro callbacks carry no context: each engine runs the core on its own thread, so the thread says which */
@@ -191,6 +194,7 @@ int bs_engine_run(bs_engine *e)
   GET(c_set_env, "retro_set_environment"); GET(c_set_video, "retro_set_video_refresh"); GET(c_set_audio1, "retro_set_audio_sample");
   GET(c_set_audio, "retro_set_audio_sample_batch"); GET(c_set_poll, "retro_set_input_poll"); GET(c_set_state, "retro_set_input_state");
   GET(h_event, "bsyn_host_event"); GET(h_reports, "bsyn_host_reports"); GET(h_dac, "bsyn_host_dac"); GET(h_read, "bsyn_host_read"); GET(h_stats, "bsyn_host_stats");
+  GET(h_input, "bsyn_host_input"); GET(h_insrc, "bsyn_host_insrc"); GET(h_instate, "bsyn_host_instate");
   if (!e->c_run || !e->h_event) { fail(e, "the core lacks the BSYN card"); return 4; }
   e->c_set_env(env); e->c_set_video(video); e->c_set_audio1(audio1); e->c_set_audio(audiob); e->c_set_poll(poll_); e->c_set_state(istate);
   e->c_init();
@@ -305,6 +309,20 @@ int bs_engine_run(bs_engine *e)
       snap_now = 0; e->make_state[0] = 0;
     }
     if (e->h_stats) { uint32_t a, b, c; e->h_stats(&a, &b, &c); S->sched_ontime = a; S->sched_late = b; S->sched_latemax = c; }
+    if (e->h_input) {   /* the host's input to the card's ADC (v2) */
+      static int src = -1;
+      uint64_t w = S->in_w, r = S->in_r;
+      if ((int)S->in_src != src) { src = (int)S->in_src; e->h_insrc(src); }
+      if (w > r + BSHM_INRING) r = w - BSHM_INRING;
+      while (r < w) {
+        uint32_t i = (uint32_t)(r % BSHM_INRING); uint64_t n = w - r;
+        if (n > BSHM_INRING - i) n = BSHM_INRING - i;
+        e->h_input(r, &S->in_ring[i * 2], (int)n);
+        r += n;
+      }
+      S->in_r = r;
+      { uint64_t st = 0; uint32_t by = 0, ov = 0; S->in_rec = (uint32_t)e->h_instate(&st, &by, &ov); S->in_start = st; S->in_bytes = by; S->in_over = ov; }
+    }
     if (t - t_load > 1) { S->emu_load = (uint32_t)(busy / (t - t_load + 1e-9) * 1000); busy = 0; t_load = t; }
   }
 out:

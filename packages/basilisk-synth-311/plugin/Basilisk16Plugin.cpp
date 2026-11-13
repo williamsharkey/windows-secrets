@@ -16,6 +16,7 @@
 #include "../../basilisk-synth/core/proto.h"
 #include "../../basilisk-synth/core/state.h"
 #include "V3Voice.h"
+#include "V3Alloc.h"
 
 #include <atomic>
 #include <chrono>
@@ -150,6 +151,7 @@ public:
         : Plugin(pCount, kPresetCount, 1)
     {
         created_ = nowSec();
+        vo_.reserve(256);   // the audio thread never allocates for an ordinary chord
         testLive_ = std::getenv("BASILISK16_TEST_LIVE") != nullptr;   // test: take the live path in an offline host
         if (const char *d = std::getenv("BASILISK16_TEST_DUMP_DAC")) if (*d && !isDummyInstance()) dump_ = std::fopen(d, "wb");
         if (const char *d = std::getenv("BASILISK16_TRACE")) if (*d && !isDummyInstance()) {
@@ -254,7 +256,16 @@ protected:
     void bufferSizeChanged(uint32_t) override { updateLatency(); }
     void activate() override { anchor_ = -1; }
 
-    void run(const float **, float **out, uint32_t frames, const MidiEvent *ev, uint32_t nev) override
+    // the inputs are a stereo sidechain (hosts that ignore it see an instrument with no input); the outputs as DPF has them
+    void initAudioPort(bool input, uint32_t index, AudioPort &port) override
+    {
+        if (!input) { Plugin::initAudioPort(input, index, port); return; }
+        port.hints = kAudioPortIsSidechain;
+        port.name = index ? "Record In R" : "Record In L";
+        port.symbol = index ? "rec_in_r" : "rec_in_l";
+    }
+
+    void run(const float **in, float **out, uint32_t frames, const MidiEvent *ev, uint32_t nev) override
     {
         bshm *S = sh_.S;
         float *L = out[0], *R = out[1];
@@ -298,6 +309,10 @@ protected:
         // the same DAC samples and resamples with the same phase: identical output every time.
         {
             const TimePosition &tp = getTimePosition();
+            if (tp.bbt.valid && tp.bbt.beatsPerMinute > 1 && std::fabs(tp.bbt.beatsPerMinute - bpm_.load()) > 0.01) {   // v3 Wt, Wb, Wg
+                bpm_ = tp.bbt.beatsPerMinute;
+                if (d3Audio_.layers.size() && std::any_of(d3Audio_.layers.begin(), d3Audio_.layers.end(), [](const bsynth3::Layer3 &L) { return L.has[0] && L.w.tempo; })) tempoDirty_ = true;
+            }
             const double cur = anchor_ < 0 ? -1 : anchor_ + (double)hcount_ * ratio;
             const bool start = tp.playing && !wasPlaying_;
             wasPlaying_ = tp.playing;
@@ -314,6 +329,24 @@ protected:
             }
         }
         dacPos_ = anchor_ + (double)hcount_ * ratio;
+        // the sidechain into the card's ADC (RECORDING.md 1.1, 1.3): live only, on the DAC clock, stamped like the
+        // notes (kLatency48 ahead), so a take lines up with what was played; resampled linearly to 48 kHz
+        S->in_src = recSelf_.load() ? 1 : 0;
+        if (!offline && in && in[0] && in[1] && !recSelf_.load()) {
+            const double d0 = dacPos_ + kLatency48, d1 = d0 + frames * ratio;
+            uint64_t d = (uint64_t)std::ceil(d0);
+            if (d < inNext_) d = inNext_;   // never write a sample twice
+            if (inNext_ && d > inNext_)      // a jump of the anchor leaves a gap: silence, not what the ring held before
+                for (uint64_t g = std::max(inNext_, d > BSHM_INRING ? d - BSHM_INRING : 0); g < d; g++) { const uint32_t k = (uint32_t)(g % BSHM_INRING); S->in_ring[k * 2] = S->in_ring[k * 2 + 1] = 0.f; }
+            for (; (double)d < d1; d++) {
+                const double x = ((double)d - d0) / ratio; const uint32_t i = (uint32_t)x; const float f = (float)(x - i);
+                const uint32_t j = i + 1 < frames ? i + 1 : i;
+                const uint32_t k = (uint32_t)(d % BSHM_INRING);
+                S->in_ring[k * 2] = in[0][i] + (in[0][j] - in[0][i]) * f;
+                S->in_ring[k * 2 + 1] = in[1][i] + (in[1][j] - in[1][i]) * f;
+            }
+            if (d > inNext_) { __sync_synchronize(); S->in_w = d; inNext_ = d; }
+        }
         // the keyboard strip in Windows (DNA.md 5.4): its keys and wheels play at the start of this block
         MidiEvent kev[64]; uint32_t nk = 0;
         for (uint32_t r = keyR_.load(), w = keyW_.load(std::memory_order_acquire); r != w && nk < 64; r++, nk++) {
@@ -331,37 +364,51 @@ protected:
             const uint64_t at = (uint64_t)std::floor(anchor_ + (double)(hcount_ + e.frame) * ratio) + kLatency48;
             const uint8_t st = d[0] & 0xF0;
             Cmd c[kMaxCmds]; int n = 0;
-            if (st == 0x90 && e.size >= 3 && d[2] > 0) { n = voices_.noteOn(d[1], d[2], at, c); if (!fromWindows) show(0, d[1], d[2]); }
-            else if (st == 0x80 || (st == 0x90 && e.size >= 3)) { n = voices_.noteOff(d[1], at, c); if (!fromWindows) show(0, d[1], 0); }
+            vo_.clear();   // DNA v3: the layers with N, S or D (V3Alloc.h), and live bend
+            v3_.setBpm(bpm_);
+            if (st == 0x90 && e.size >= 3 && d[2] > 0) { n = voices_.noteOn(d[1], d[2], at, c); v3_.noteOn(d[1], d[2], at, vo_); if (!fromWindows) show(0, d[1], d[2]); }
+            else if (st == 0x80 || (st == 0x90 && e.size >= 3)) { n = voices_.noteOff(d[1], at, c); v3_.noteOff(d[1], at, vo_); if (!fromWindows) show(0, d[1], 0); }
             else if (st == 0xB0 && e.size >= 3) {
-                if (d[1] == 64) n = voices_.sustain(d[2] >= 64, at, c);
-                else if (d[1] == 120 || d[1] == 123) n = voices_.allOff(c);
+                if (d[1] == 64) { n = voices_.sustain(d[2] >= 64, at, c); v3_.sustain(d[2] >= 64, at, vo_); }
+                else if (d[1] == 120 || d[1] == 123) { n = voices_.allOff(c); v3_.allOff(); }
                 else if (d[1] == 1) { cc1_ = d[2]; if (!fromWindows) show(1, 1, d[2]); }   // the mod wheel: adds to Macro 1
             } else if (st == 0xE0 && e.size >= 3) {
                 const int v = (d[1] | (d[2] << 7)) - 8192;
                 voices_.bend(v / 8192.0);
+                if (capRate_) v3_.bend(v / 8192.0, at, vo_);   // what already sounds follows the wheel
                 if (!fromWindows) show(2, 0, (uint32_t)(v + 8192));
             }
             const int vel = (st == 0x90 && e.size >= 3) ? d[2] : 100;
-            for (int k = 0; k < n; k++) {
+            for (int k = 0; k < n; k++) v3_.follow(c[k], c[k].layer < kMaxLayers && audioFixed_[c[k].layer]);
+            auto sendCmd = [&](Cmd cm) {
                 char line[128];
+                if (cm.kind != Cmd::Panic && cm.rec < 16 && (recBusy_.load() >> cm.rec & 1)) return;   // recording there
                 uint64_t when = at;
-                if (c[k].kind == Cmd::On && c[k].delayMs) { when += (uint64_t)c[k].delayMs * 48; c[k].delayMs = 0; }   // O: a later stamp
-                if (c[k].kind == Cmd::On && capWin_) {   // DNA v3: the window and the per-note random draws (V3Voice.h)
-                    const int L = c[k].layer < kMaxLayers ? c[k].layer : 0;
-                    const b16v3::NoteOut o = b16v3::note(d3Audio_, c[k], vel, when, audioFrames_[L], audioRate_[L], v3Counter_, d3Salt_, true);
+                if (cm.kind == Cmd::On) { when += b16v3::delay48(d3Audio_, cm, bpm_); cm.delayMs = 0; }   // O (v3: Wo, Wb, Wt; S strum): a later stamp
+                if (cm.kind == Cmd::On && capWin_) {   // DNA v3: the window and the per-note random draws (V3Voice.h)
+                    const int L = cm.layer < kMaxLayers ? cm.layer : 0;
+                    const b16v3::NoteOut o = b16v3::note(d3Audio_, cm, vel, when, audioFrames_[L], audioRate_[L], v3Counter_, d3Salt_, true, bpm_);
                     std::snprintf(line, sizeof line, "%s", o.on);
                     when = o.when;
                     sendLine(line, ++nextId_, when);
-                    if (o.cut) { char cl[32]; std::snprintf(cl, sizeof cl, "cut %d", c[k].rec); sendLine(cl, ++nextId_, o.cutAt); }
+                    if (o.cut) { char cl[32]; std::snprintf(cl, sizeof cl, "cut %d", cm.rec); sendLine(cl, ++nextId_, o.cutAt); }
+                    if (o.gate && (!o.cut || o.gateAt < o.cutAt)) { char cl[32]; std::snprintf(cl, sizeof cl, "off %d", cm.rec); sendLine(cl, ++nextId_, o.gateAt); }
                     if (trace_) std::fprintf(trace_, "%s id %u at %llu%s\n", line, nextId_, (unsigned long long)when, o.cut ? " (window cut stamped)" : "");
-                    continue;
+                    return;
                 }
-                proto::cmd(line, sizeof line, c[k]);
+                proto::cmd(line, sizeof line, cm);
                 line[std::strlen(line) - 1] = 0;
                 sendLine(line, ++nextId_, when);
                 if (trace_) std::fprintf(trace_, "%s id %u at %llu dacPos %.0f dac_w %llu late %u/%u max %u\n", line, nextId_,
                                          (unsigned long long)when, dacPos_, (unsigned long long)S->dac_w, S->sched_late, S->sched_ontime, S->sched_latemax);
+            };
+            for (int k = 0; k < n; k++) sendCmd(c[k]);
+            for (const b16v3::Out &o : vo_) {   // then v3's, in order (a Rate after the On it moves)
+                if (o.kind == b16v3::Out::Cmd) { sendCmd(o.c); continue; }
+                if (!capRate_) continue;
+                char line[64];
+                std::snprintf(line, sizeof line, "rate %d %u %d %d", o.rec, o.hz, o.glideMs, o.regate ? 1 : 0);
+                sendLine(line, ++nextId_, o.at);
             }
         }
         // wait for the machine if it is behind (offline rendering runs faster than real time)
@@ -421,7 +468,15 @@ private:
     // DNA v3 (design/PRESET-ENGINE-2.md): the parsed v3 tokens, beside the v2 DNA (same staging); the guest's caps
     bsynth3::Dna3 d3ForAudio_, stagedD3_;
     uint32_t d3SaltPending_ = 0;
-    std::atomic<bool> capWin_{false}, capDesk_{false};
+    std::atomic<bool> capWin_{false}, capDesk_{false}, capLoop_{false}, capRate_{false};
+    std::atomic<double> bpm_{120};   // the host's tempo (v3 Wt, Wb, Wg)
+    std::atomic<bool> tempoDirty_{false};
+    std::atomic<bool> recSelf_{false};
+    std::atomic<uint32_t> recBusy_{0};   // recorders that record now: notes leave them alone (a Stop would end the take)
+    b16v3::V3Alloc v3_;                  // DNA v3 voice modes, stacking, degree chords, live bend (audio thread)
+    std::vector<b16v3::Out> vo_;
+    bool audioFixed_[kMaxLayers] = {};   // the ADC records the synth's own output (else the sidechain)
+    uint64_t inNext_ = 0;                // the next DAC sample of input to write
     double lastParamEdit_ = 0;         // a DNA from parameters (automation) goes to Windows 300 ms after the last change
     // the keyboard strip: Windows' keys to the audio thread, and incoming MIDI to Windows' keys (single producer and
     // consumer each, no locks: kind << 24 | a << 16 | b for the display, status << 16 | data1 << 8 | data2 for keys)
@@ -556,20 +611,24 @@ private:
             Cmd c[1];
             voices_.setDna(dnaForAudio_, c);
             d3Audio_ = d3ForAudio_; d3Salt_ = d3SaltPending_;
+            v3_.setDna(dnaForAudio_, d3Audio_);
+            for (int i = 0; i < kMaxLayers; i++) audioFixed_[i] = i < (int)dnaForAudio_.layers.size() && dnaForAudio_.layers[i].fixed;
             for (int i = 0; i < kMaxLayers; i++)
                 if (layerCache_[i].known) {
-                    voices_.setLayerInfo(i, layerCache_[i].first, layerCache_[i].count, layerCache_[i].rate, layerCache_[i].frames);
+                    v3_.setLayerInfo(i, layerCache_[i].first, layerCache_[i].count, layerCache_[i].rate, layerCache_[i].frames);
+                    voices_.setLayerInfo(i, layerCache_[i].first, v3_.owns(i) ? 0 : layerCache_[i].count, layerCache_[i].rate, layerCache_[i].frames);
                     audioFrames_[i] = (uint32_t)layerCache_[i].frames; audioRate_[i] = layerCache_[i].rate;
                 }
             gain_ = (float)std::pow(10.0, dnaForAudio_.g.gainDb / 20.0);
             dnaPending_ = false;
         }
         for (size_t i = 0; i < pendLayers_.size(); i++) {
-            voices_.setLayerInfo(pendLayerIdx_[i], pendLayers_[i].first, pendLayers_[i].count, pendLayers_[i].rate, pendLayers_[i].frames);
+            v3_.setLayerInfo(pendLayerIdx_[i], pendLayers_[i].first, pendLayers_[i].count, pendLayers_[i].rate, pendLayers_[i].frames);
+            voices_.setLayerInfo(pendLayerIdx_[i], pendLayers_[i].first, v3_.owns(pendLayerIdx_[i]) ? 0 : pendLayers_[i].count, pendLayers_[i].rate, pendLayers_[i].frames);
             if (pendLayerIdx_[i] >= 0 && pendLayerIdx_[i] < kMaxLayers) { audioFrames_[pendLayerIdx_[i]] = (uint32_t)pendLayers_[i].frames; audioRate_[pendLayerIdx_[i]] = pendLayers_[i].rate; }
         }
         pendLayers_.clear(); pendLayerIdx_.clear();
-        for (int r : pendEnds_) voices_.end(r);
+        for (int r : pendEnds_) { voices_.end(r); v3_.end(r); }
         pendEnds_.clear();
         mtx_.unlock();
     }
@@ -769,9 +828,10 @@ private:
                 sendLine(t, 0, 0);
                 showR_.store(r + 1);
             }
-            bool send = false, sendEnv = false, rebuild = false; std::string d; Globals g; Dna eff;
+            bool send = false, sendEnv = false, rebuild = false; std::string d; Globals g; Dna eff; bsynth3::Dna3 d3e;
             {
                 std::lock_guard<std::mutex> l(mtx_);
+                if (tempoDirty_.exchange(false)) lenvDirty_ = true;   // Wt envelope times follow the host tempo
                 // automation: Windows hears the DNA 300 ms after the last change (the sound already follows: genes,
                 // pan, offsets and envelopes are the host's; only a repeat count N makes Sound Recorder rebuild)
                 const bool settled = nowSec() - lastParamEdit_ > 0.3 || isProcessingOffline();
@@ -782,7 +842,7 @@ private:
                     if (rebuild) { inFlight_ = true; for (auto &c : stagedLayers_) c = LayerInfo(); }
                     rebuildQueued_ = false;
                 }
-                if (hello && lenvDirty_ && !send && !inFlight_) { sendEnv = true; lenvDirty_ = false; eff = effective(parse(dnaText_)); }
+                if (hello && lenvDirty_ && !send && !inFlight_) { sendEnv = true; lenvDirty_ = false; eff = effective(parse(dnaText_)); d3e = d3ForAudio_; }
             }
             if (send) {
                 std::string line = "dna " + d;   // as written: Windows shows it, and does N itself
@@ -797,8 +857,9 @@ private:
                     static const Env none;
                     char b[160];
                     const Layer *L = i < (int)eff.layers.size() ? &eff.layers[i] : nullptr;
-                    proto::lenv(b, sizeof b, i, 'a', L ? L->envA : none); trimSend(b);
-                    proto::lenv(b, sizeof b, i, 'p', L ? L->envP : none); trimSend(b);
+                    (void)b;
+                    sendLine(b16v3::lenvLine(i, 'a', L ? L->envA : none, d3e, bpm_, capLoop_).c_str(), 0, 0);
+                    sendLine(b16v3::lenvLine(i, 'p', L ? L->envP : none, d3e, bpm_, capLoop_).c_str(), 0, 0);
                 }
             }
             // Windows' replies
@@ -835,12 +896,16 @@ private:
 
     void onLine(const std::string &line)
     {
+        if (line.rfind("rsrc ", 0) == 0) { recSelf_ = line.compare(5, 4, "self") == 0; return; }   // the visitor chose the input (RECORDING.md 4.3)
+        if (line.rfind("rec start ", 0) == 0) { const int r = std::atoi(line.c_str() + 10); if (r >= 0 && r < 16) recBusy_ |= 1u << r; return; }
+        if (line.rfind("rec stop ", 0) == 0) { const int r = std::atoi(line.c_str() + 9); if (r >= 0 && r < 16) recBusy_ &= ~(1u << r); return; }
         proto::Reply r = proto::parse(line);
         switch (r.kind) {
         case proto::Reply::Ready: status(""); ready_ = true; break;
         case proto::Reply::Hi: {
             const std::vector<std::string> caps = bsynth3::parseHi3(line);
             capWin_ = bsynth3::hasCap(caps, "win"); capDesk_ = bsynth3::hasCap(caps, "desk");
+            capLoop_ = bsynth3::hasCap(caps, "loop"); capRate_ = bsynth3::hasCap(caps, "rate");
             break; }
         case proto::Reply::Built: {
             std::lock_guard<std::mutex> l(mtx_);

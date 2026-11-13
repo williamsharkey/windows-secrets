@@ -39,7 +39,7 @@ static Bit32u late_n, late_max, ontime_n;   /* scheduling statistics: armed star
 struct BSBuf { std::vector<Bit8u> data; Bit32u cookie; Bit32u frames; };
 /* a drawn envelope: up to 8 breakpoints, time in DAC samples from the voice's start, level 0..1 (or pan -1..1);
    linear between points, the last level holds */
-struct BSEnv { int n; Bit32u t[8]; float l[8]; };
+struct BSEnv { int n; Bit32u t[8]; float l[8]; int loop; };   /* loop: the last `loop` points repeat while the voice is held (v3 Wr / Wp) */
 static float env_at(const BSEnv &e, Bit64u age)
 {
 	if (e.n <= 0) return 1.f;
@@ -68,9 +68,18 @@ struct BSVoice {
 	Bit32u env_a, env_d;   /* envelope: attack and decay in samples */
 	float env_s;           /* sustain level */
 	Bit64u age;            /* samples played since start (for the envelope) */
+	Bit64u age_a, age_p;   /* the drawn envelopes' own clocks: they go back to the loop start while the voice is held */
 	float pan;             /* -1 (left) .. 1 (right), the arm's; the pan envelope adds to it */
 	BSEnv ea, ep;          /* drawn envelopes (DNA v2 Ja / Jp), copied from the layer when the voice opens */
 	int owner;             /* logical channel that owns it, -1 = ghost (fading after reset) */
+	Bit16u task;           /* the Windows task that opened it (kept by its ghost), for RATETASK / STOPTASK */
+	/* v3 rate changes (RATETASK), queued in time order: from DAC sample at the arm rate glides (linear in cents)
+	   to `to` over len samples; the host sends them ahead of time, so several can wait */
+	struct Rt { Bit64u at; Bit32u len; float to; bool regate; } rq[8];
+	int rqn;               /* rate changes waiting (rq[0] is the next) */
+	bool rt_on; Bit64u rt_at; Bit32u rt_len; float rt_from, rt_to;   /* the glide in progress */
+	Bit64u kill_at;        /* STOPTASK: a stop no regate takes back (~0 = none) */
+	Bit32u kill_fade;
 };
 
 static struct {
@@ -89,6 +98,20 @@ static struct {
 	/* event id -> DAC sample (target) */
 	Bit32u tgt_id[4096]; Bit64u tgt_at[4096];
 	float master;                  /* master pitch multiplier (pitch bend) */
+	/* the ADC (RECORDING.md 1.3): one capture channel. Its source is the host's input (the plugin's sidechain),
+	   stamped on the DAC clock, or the card's own output ("Synth output", resampling). The guest's buffers are
+	   filled with 8/16-bit PCM at the open rate through the same Hermite converter the voices use. */
+	struct InBuf { Bit32u lin, len, cookie, filled; };
+	struct {
+		bool open, running; Bit32u rate; int bits, nch;
+		std::deque<InBuf> q; std::vector<Bit32u> done_ck, done_n;   /* finished buffers: cookie, bytes */
+		double spos;            /* the DAC sample (fractional) the next output frame is taken at */
+		Bit32u bytes;           /* bytes recorded since start (GETPOS) */
+		Bit64u start_at;        /* the DAC sample of the take's first frame */
+		Bit32u overruns;        /* frames lost because no buffer was queued */
+	} in;
+	float *iring; Bit32u iring_len; Bit64u iring_hi;   /* the input, by DAC sample: valid in (hi - len, hi] */
+	int insrc;                                         /* 0 the host's input, 1 the card's own output */
 	/* the host's pointer (event type 6): once the driver polls it (PTRGET), it is kept here, not queued */
 	bool ptr_polled; Bit16u ptr_x, ptr_y, ptr_seq;
 	/* DAC output ring for the host */
@@ -132,6 +155,23 @@ BSYN_API int bsyn_host_read(Bit64u from, float *out, int n)
 	}
 	return got;
 }
+/* the host's input (the sidechain), n stereo frames stamped from DAC sample `at` (the same clock as notes) */
+BSYN_API void bsyn_host_input(Bit64u at, const float *lr, int n)
+{
+	std::lock_guard<std::mutex> l(bs.mtx);
+	if (!bs.iring || bs.insrc != 0) return;
+	for (int k = 0; k < n; k++) { Bit32u i = (Bit32u)((at + k) % bs.iring_len); bs.iring[i * 2] = lr[k * 2]; bs.iring[i * 2 + 1] = lr[k * 2 + 1]; }
+	if (at + n > bs.iring_hi) bs.iring_hi = at + n;
+}
+/* the ADC's source: 0 the host's input, 1 the synth's own output */
+BSYN_API void bsyn_host_insrc(int src) { std::lock_guard<std::mutex> l(bs.mtx); bs.insrc = src ? 1 : 0; }
+/* recording state: 1 while a take runs; *start = its first frame's DAC sample, *bytes so far, *overruns */
+BSYN_API int bsyn_host_instate(Bit64u *start, Bit32u *bytes, Bit32u *overruns)
+{
+	std::lock_guard<std::mutex> l(bs.mtx);
+	if (start) *start = bs.in.start_at; if (bytes) *bytes = bs.in.bytes; if (overruns) *overruns = bs.in.overruns;
+	return bs.in.running ? 1 : 0;
+}
 BSYN_API void bsyn_host_stats(Bit32u *ontime, Bit32u *late, Bit32u *latemax)
 {
 	*ontime = ontime_n; *late = late_n; *latemax = late_max;
@@ -172,11 +212,26 @@ static void render(float *out, Bitu len)
 		BSVoice &v = bs.v[vi];
 		if (!v.on || v.paused) continue;
 		double step = (double)v.srate * v.rate * v.armrate * bs.master / BS_RATE;
+		const float master = bs.master;
 		const bool panning = v.pan != 0.f || v.ep.n > 0;
 		for (Bitu s = 0; s < len; s++) {
 			Bit64u t = bs.dac + s;
 			if (t < v.start_at) continue;
 			if (v.q.empty()) { if (v.owner < 0) v.on = false; break; }
+			if (v.rqn && t >= v.rq[0].at) {   /* the next stamped rate change starts: sample-exact, phase-continuous */
+				const BSVoice::Rt r = v.rq[0];
+				for (int k = 1; k < v.rqn; k++) v.rq[k - 1] = v.rq[k];
+				v.rqn--;
+				v.rt_on = true; v.rt_at = r.at; v.rt_len = r.len; v.rt_from = v.armrate; v.rt_to = r.to;
+				if (r.regate) { v.stop_at = ~(Bit64u)0; v.fade_left = 0; }   /* continue: the release is taken back */
+			}
+			if (v.rt_on) {
+				Bit64u k = t - v.rt_at;
+				if (k >= v.rt_len || v.rt_from <= 0.f) { v.armrate = v.rt_to; v.rt_on = false; }
+				else v.armrate = v.rt_from * powf(v.rt_to / v.rt_from, (float)k / (float)v.rt_len);
+				step = (double)v.srate * v.rate * v.armrate * master / BS_RATE;
+			}
+			if (t >= v.kill_at && !v.fade_left) { v.fade_len = v.kill_fade; v.fade_left = v.kill_fade; v.kill_at = ~(Bit64u)0; v.stop_at = ~(Bit64u)0; }
 			float fg = 1.f;
 			if (t >= v.stop_at) {
 				if (!v.fade_left) { v.fade_left = v.fade_len ? v.fade_len : 1; v.stop_at = 0; }
@@ -185,7 +240,7 @@ static void render(float *out, Bitu len)
 				fg = (float)v.fade_left / (float)(v.fade_len ? v.fade_len : 1);
 				if (--v.fade_left == 0) { v.on = false; v.q.clear(); break; }
 			}
-			if (v.ea.n) fg *= env_at(v.ea, v.age);
+			if (v.ea.n) fg *= env_at(v.ea, v.age_a);
 			else if (v.env_a || v.env_d || v.env_s < 1.f) {
 				float eg;
 				if (v.age < v.env_a) eg = (float)v.age / (float)v.env_a;
@@ -195,11 +250,16 @@ static void render(float *out, Bitu len)
 			}
 			float gl = v.voll * v.gain, gr = v.volr * v.gain;
 			if (panning) {   /* pan: the voice's left/right volume, never in the buffer */
-				float p = v.pan + (v.ep.n ? env_at(v.ep, v.age) : 0.f);
+				float p = v.pan + (v.ep.n ? env_at(v.ep, v.age_p) : 0.f);
 				p = p < -1.f ? -1.f : p > 1.f ? 1.f : p;
 				if (p > 0) gl *= 1.f - p; else gr *= 1.f + p;
 			}
 			v.age++;
+			v.age_a++; v.age_p++;
+			if (v.owner >= 0) {   /* held (not yet a releasing ghost): a looping envelope goes back to its loop start */
+				if (v.ea.loop >= 2 && v.ea.n >= v.ea.loop && v.age_a >= v.ea.t[v.ea.n - 1]) { Bit32u s0 = v.ea.t[v.ea.n - v.ea.loop]; if (v.ea.t[v.ea.n - 1] > s0) v.age_a = s0 + (v.age_a - v.ea.t[v.ea.n - 1]); }
+				if (v.ep.loop >= 2 && v.ep.n >= v.ep.loop && v.age_p >= v.ep.t[v.ep.n - 1]) { Bit32u s0 = v.ep.t[v.ep.n - v.ep.loop]; if (v.ep.t[v.ep.n - 1] > s0) v.age_p = s0 + (v.age_p - v.ep.t[v.ep.n - 1]); }
+			}
 			BSBuf &b = v.q.front();
 			Bit32s i = (Bit32s)floor(v.pos); float f = (float)(v.pos - i);
 			for (int c = 0; c < 2; c++) {
@@ -216,6 +276,40 @@ static void render(float *out, Bitu len)
 	}
 }
 
+static float in_at(Bit64s t, int c)   /* the input at DAC sample t (0 outside what the ring holds) */
+{
+	if (t < 0 || (Bit64u)t >= bs.iring_hi || (Bit64u)t + bs.iring_len <= bs.iring_hi) return 0.f;
+	return bs.iring[(Bit32u)((Bit64u)t % bs.iring_len) * 2 + c];
+}
+/* the ADC: output frames whose input (4 samples around them) the ring already holds, up to DAC sample `upto` */
+static void adc_run(Bit64u upto)
+{
+	if (!bs.in.running || !bs.in.rate) return;
+	const double step = (double)BS_RATE / bs.in.rate;
+	const int fb = (bs.in.bits / 8) * bs.in.nch;
+	while (bs.in.spos + 2 < (double)upto) {
+		Bit64s i = (Bit64s)floor(bs.in.spos); float f = (float)(bs.in.spos - i);
+		float y[2];
+		for (int c = 0; c < 2; c++) {
+			float y0 = in_at(i - 1, c), y1 = in_at(i, c), y2 = in_at(i + 1, c), y3 = in_at(i + 2, c);
+			float c1 = 0.5f * (y2 - y0), c2 = y0 - 2.5f * y1 + 2.f * y2 - 0.5f * y3, c3 = 0.5f * (y3 - y0) + 1.5f * (y1 - y2);
+			y[c] = ((c3 * f + c2) * f + c1) * f + y1;
+		}
+		bs.in.spos += step;
+		if (bs.in.q.empty()) { bs.in.overruns++; continue; }
+		auto &b = bs.in.q.front();
+		Bit8u px[4];
+		for (int c = 0; c < bs.in.nch; c++) {
+			float x = bs.in.nch == 1 ? 0.5f * (y[0] + y[1]) : y[c];
+			x = x > 1.f ? 1.f : x < -1.f ? -1.f : x;
+			if (bs.in.bits == 16) { Bit16s s = (Bit16s)lrintf(x * 32767.f); px[c * 2] = (Bit8u)s; px[c * 2 + 1] = (Bit8u)((Bit16u)s >> 8); }
+			else px[c] = (Bit8u)lrintf(128.f + x * 127.f);
+		}
+		for (int k = 0; k < fb && b.filled < b.len; k++) mem_writeb_checked(b.lin + b.filled++, px[k]);
+		bs.in.bytes += fb;
+		if (b.filled + fb > b.len) { bs.in.done_ck.push_back(b.cookie); bs.in.done_n.push_back(b.filled); bs.in.q.pop_front(); }
+	}
+}
 static void BSYN_CallBack(Bitu len)
 {
 	static std::vector<float> tmp; static std::vector<Bit16s> pcm;
@@ -223,6 +317,11 @@ static void BSYN_CallBack(Bitu len)
 	{
 		std::lock_guard<std::mutex> l(bs.mtx);
 		render(&tmp[0], len);
+		if (bs.insrc == 1 && bs.iring) {   /* Synth output: the card's own mix is the input, on the same samples */
+			for (Bitu s = 0; s < len; s++) { Bit32u i = (Bit32u)((bs.dac + s) % bs.iring_len); bs.iring[i * 2] = tmp[s * 2]; bs.iring[i * 2 + 1] = tmp[s * 2 + 1]; }
+			bs.iring_hi = bs.dac + len;
+		}
+		adc_run(bs.dac + len);
 		for (Bitu s = 0; s < len; s++) {
 			Bit32u i = (Bit32u)((bs.ring_w + s) % bs.ring_len);
 			bs.ring[i * 2] = tmp[s * 2]; bs.ring[i * 2 + 1] = tmp[s * 2 + 1];
@@ -291,8 +390,8 @@ static void command(Bit16u c)
 		BSVoice &v = bs.v[ch];
 		v = BSVoice(); v.owner = ch;
 		v.nch = (Bit8u)arg(1); v.bits = (Bit8u)arg(2); v.srate = arg32(3);
-		v.rate = 1.f; v.armrate = 1.f; v.voll = v.volr = 1.f; v.gain = 1.f; v.stop_at = ~(Bit64u)0;
-		bs.chopen[ch] = true; bs.chtask[ch] = arg(0);
+		v.rate = 1.f; v.armrate = 1.f; v.voll = v.volr = 1.f; v.gain = 1.f; v.stop_at = ~(Bit64u)0; v.kill_at = ~(Bit64u)0;
+		bs.chopen[ch] = true; bs.chtask[ch] = arg(0); v.task = arg(0);
 		int a = find_arm(arg(0), false);
 		v.start_at = bs.dac;
 		v.env_a = 0; v.env_d = 0; v.env_s = 1.f; v.age = 0; v.pan = 0; v.ea.n = 0; v.ep.n = 0;
@@ -380,6 +479,73 @@ static void command(Bit16u c)
 		}
 		else A.fade = (Bit32u)arg(3) * (BS_RATE / 1000);
 		break; }
+	case 30: { /* RATETASK task id_lo id_hi hz_lo hz_hi glide_ms regate: every voice of the task (and its ghosts)
+	              changes its arm rate to hz at the event's DAC sample, gliding over glide_ms; regate (the newest voice
+	              only) takes back a release that has begun (mono "continue": the recorder keeps its place) */
+		Bit16u task = arg(0); Bit32u id = arg32(1), hz = arg32(3); Bit32u glide = (Bit32u)arg(5) * (BS_RATE / 1000);
+		bool regate = arg(6) != 0;
+		Bit64u at = target_of(id);
+		int newest = -1;
+		for (int i = 0; i < BS_CH * 2; i++) {
+			BSVoice &v = bs.v[i];
+			if (!v.on || v.task != task || !v.srate || !hz || v.kill_at != ~(Bit64u)0) continue;
+			if (newest < 0 || v.start_at > bs.v[newest].start_at) newest = i;
+			int k = v.rqn;
+			while (k > 0 && v.rq[k - 1].at > at) k--;         /* time order (a later stamp replaces nothing) */
+			if (v.rqn == 8) { for (int j = 1; j < 8; j++) v.rq[j - 1] = v.rq[j]; v.rqn--; if (k) k--; }   /* full: the oldest goes */
+			for (int j = v.rqn; j > k; j--) v.rq[j] = v.rq[j - 1];
+			v.rq[k].at = at; v.rq[k].len = glide; v.rq[k].to = (float)hz / (float)v.srate; v.rq[k].regate = false;
+			v.rqn++;
+		}
+		if (regate && newest >= 0) {   /* the newest voice's matching entry takes back its release */
+			BSVoice &v = bs.v[newest];
+			for (int k = 0; k < v.rqn; k++) if (v.rq[k].at == at) v.rq[k].regate = true;
+		}
+		if (trace) fprintf(stderr, "bsyn rate task %04x hz %u at %llu glide %u regate %d newest %d\n", task, hz, (unsigned long long)at, glide, regate, newest);
+		break; }
+	case 31: { /* STOPTASK task id_lo id_hi fade_ms: stop the task's ghosts that a regate kept sounding */
+		Bit16u task = arg(0); Bit64u at = target_of(arg32(1)); Bit32u fade = (Bit32u)arg(3) * (BS_RATE / 1000);
+		for (int i = BS_CH; i < BS_CH * 2; i++) {
+			BSVoice &v = bs.v[i];
+			if (!v.on || v.task != task) continue;
+			if (v.kill_at > at) { v.kill_at = at; v.kill_fade = fade ? fade : BS_FADE; }
+		}
+		break; }
+	case 40: { /* INOPEN rate_lo rate_hi bits nch -> 1 ok / 0 (busy or a format the ADC has not) */
+		Bit32u rate = arg32(0); int bits = arg(2), nch = arg(3);
+		if (bs.in.open || (bits != 8 && bits != 16) || (nch != 1 && nch != 2) || rate < 4000 || rate > 48000) { bs.results.push_back(0); break; }
+		bs.in.open = true; bs.in.running = false; bs.in.rate = rate; bs.in.bits = bits; bs.in.nch = nch;
+		bs.in.q.clear(); bs.in.done_ck.clear(); bs.in.done_n.clear(); bs.in.bytes = 0; bs.in.overruns = 0;
+		bs.results.push_back(1); break; }
+	case 41: /* INCLOSE */
+		bs.in.open = bs.in.running = false; bs.in.q.clear(); break;
+	case 42: { /* INADD lin_lo lin_hi len_lo len_hi cookie_lo cookie_hi */
+		if (!bs.in.open) break;
+		bs.in.q.push_back({arg32(0), arg32(2), arg32(4), 0}); break; }
+	case 43: /* INSTART: the take starts at the next DAC sample */
+		if (bs.in.open && !bs.in.running) { bs.in.running = true; bs.in.spos = (double)bs.dac; bs.in.start_at = bs.dac; bs.in.bytes = 0; bs.in.overruns = 0; }
+		break;
+	case 44: /* INSTOP: the buffer being filled is returned (with what it holds) */
+		if (bs.in.running) {
+			bs.in.running = false;
+			if (!bs.in.q.empty() && bs.in.q.front().filled) { bs.in.done_ck.push_back(bs.in.q.front().cookie); bs.in.done_n.push_back(bs.in.q.front().filled); bs.in.q.pop_front(); }
+		}
+		break;
+	case 45: /* INRESET: stop; every queued buffer is returned */
+		bs.in.running = false;
+		for (auto &b : bs.in.q) { bs.in.done_ck.push_back(b.cookie); bs.in.done_n.push_back(b.filled); }
+		bs.in.q.clear(); bs.in.bytes = 0; break;
+	case 46: { /* INPOLL -> n, then (cookie_lo, cookie_hi, bytes_lo, bytes_hi) * n; at most 15 */
+		size_t n = bs.in.done_ck.size() > 15 ? 15 : bs.in.done_ck.size();
+		bs.results.push_back((Bit16u)n);
+		for (size_t k = 0; k < n; k++) {
+			bs.results.push_back((Bit16u)bs.in.done_ck[k]); bs.results.push_back((Bit16u)(bs.in.done_ck[k] >> 16));
+			bs.results.push_back((Bit16u)bs.in.done_n[k]); bs.results.push_back((Bit16u)(bs.in.done_n[k] >> 16));
+		}
+		bs.in.done_ck.erase(bs.in.done_ck.begin(), bs.in.done_ck.begin() + n); bs.in.done_n.erase(bs.in.done_n.begin(), bs.in.done_n.begin() + n);
+		break; }
+	case 47: /* INGETPOS -> bytes lo hi */
+		bs.results.push_back((Bit16u)bs.in.bytes); bs.results.push_back((Bit16u)(bs.in.bytes >> 16)); break;
 	case 32: /* PTRGET -> seq x y: the host's pointer for the driver's timer, which moves it with USER's mouse_event
 	            (at interrupt time, so it also moves while a scroll bar's tracking loop holds the synth program) */
 		bs.ptr_polled = true;
@@ -387,7 +553,8 @@ static void command(Bit16u c)
 	case 22: /* REPORT words... */
 		for (Bit16u w : bs.args) bs.reports.push_back(w);
 		break;
-	case 29: { /* LENV layer kind(0 amp, 1 pan) n  t_ms l  t_ms l ...  (l: amp 0..100, pan 0..200 = -100..100) */
+	case 29: { /* LENV layer kind(0 amp, 1 pan) n  t_ms l  t_ms l ... [loop]  (l: amp 0..100, pan 0..200 = -100..100;
+	              loop (v3): the last `loop` points repeat while the voice is held) */
 		int L = arg(0), kind = arg(1), n = arg(2);
 		if (L < 0 || L >= 8) break;
 		BSEnv &e = kind ? bs.lenv_p[L] : bs.lenv_a[L];
@@ -396,6 +563,8 @@ static void command(Bit16u c)
 			e.t[k] = (Bit32u)arg(3 + 2 * k) * (BS_RATE / 1000);
 			e.l[k] = kind ? ((int)arg(4 + 2 * k) - 100) / 100.f : arg(4 + 2 * k) / 100.f;
 		}
+		e.loop = bs.args.size() > (size_t)(3 + 2 * n) ? (int)arg(3 + 2 * n) : 0;
+		if (e.loop > e.n) e.loop = e.n;
 		break; }
 	case 27: /* ENV attack_ms decay_ms sustain_pct */
 		bs.env_a = (Bit32u)arg(0) * (BS_RATE / 1000); bs.env_d = (Bit32u)arg(1) * (BS_RATE / 1000); bs.env_s = arg(2) / 100.f; break;
@@ -441,6 +610,7 @@ public:
 		rh.Install(BS_BASE, bs_read, IO_MW, 6);
 		bs.master = 1.f; bs.env_s = 1.f;
 		if (!bs.ring) { bs.ring_len = BS_RATE * 4; bs.ring = (float *)calloc(bs.ring_len * 2, sizeof(float)); }
+		if (!bs.iring) { bs.iring_len = BS_RATE * 2; bs.iring = (float *)calloc(bs.iring_len * 2, sizeof(float)); }
 		bs.mo = new MixerObject();
 		bs.chan = bs.mo->Install(&BSYN_CallBack, BS_RATE, "BSYNTH");
 		bs.chan->Enable(true);
@@ -469,5 +639,6 @@ void DBPSerialize_BSYNTH(DBPArchive &ar)
 		memset(bs.arms, 0, sizeof bs.arms);
 		memset(bs.lenv_a, 0, sizeof bs.lenv_a); memset(bs.lenv_p, 0, sizeof bs.lenv_p);
 		bs.args.clear(); bs.results.clear(); bs.master = 1.f; bs.env_a = bs.env_d = 0; bs.env_s = 1.f;
+		bs.in.open = bs.in.running = false; bs.in.q.clear(); bs.in.done_ck.clear(); bs.in.done_n.clear();
 	}
 }

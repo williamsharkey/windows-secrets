@@ -22,3 +22,11 @@
 #define BSC_MASTER 24
 #define BSC_DACNOW 25
 #define BSC_VOICES 26
+#define BSC_INOPEN 40
+#define BSC_INCLOSE 41
+#define BSC_INADD 42
+#define BSC_INSTART 43
+#define BSC_INSTOP 44
+#define BSC_INRESET 45
+#define BSC_INPOLL 46
+#define BSC_INGETPOS 47

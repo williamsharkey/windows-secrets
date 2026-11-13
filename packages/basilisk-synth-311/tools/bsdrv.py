@@ -14,7 +14,7 @@ class Engine:
         self.shm = shared_memory.SharedMemory(name=name, create=True, size=OFF['size'])
         self.m = self.shm.buf
         self.m[:OFF['size']] = bytes(OFF['size'])
-        self.u32('magic', 0x4D485342); self.u32('version', 1); self.u32('rate', 48000); self.u32('ring_len', RING)
+        self.u32('magic', 0x4D485342); self.u32('version', 2); self.u32('rate', 48000); self.u32('ring_len', RING)
         self.u32('lead', lead); self.u32('vid_want', 1); self.u32('realtime', 0)
         args = [os.environ.get('BS311_ENGINE', os.path.join(HERE, 'engine')), '/' + name, core or os.environ['CORE'],
                 conf, state, str(os.getpid())]

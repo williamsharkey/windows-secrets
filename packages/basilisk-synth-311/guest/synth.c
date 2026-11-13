@@ -607,6 +607,7 @@ static void build(const char *dna)
 }
 
 /* ================================================================ notes */
+static BOOL regated[NALL];   /* a regate (v3 continue) keeps this recorder's ghost sounding after Sound Recorder stopped */
 static void play_rec(int r, DWORD id, DWORD hz, WORD vol, int pan, int layer, long from)
 {
     if (r < 0 || r >= NR) return;
@@ -616,6 +617,7 @@ static void play_rec(int r, DWORD id, DWORD hz, WORD vol, int pan, int layer, lo
     {
     DWORD t0 = timeGetTime(), t1, t2, t3;
     if (rplay[r] || is_playing(r)) { bs_armstop(rt[r], id, 5); press(r, SR_STOP); }
+    if (regated[r]) { bs_stoptask(rt[r], id, 5); regated[r] = FALSE; }
     t1 = timeGetTime();
     {   /* v3 window: start at frame `from` of the layer's buffer (the host ends it with a stamped cut) */
         int L = layer >= 0 && layer < NL ? layer : rlayer[r];
@@ -637,13 +639,39 @@ static void stop_rec(int r, DWORD id, int fade_ms)   /* r: an absolute recorder 
         bs_armstop(rt[r], id, (WORD)fade_ms);
         press(r, SR_STOP);
     }
+    if (regated[r]) { bs_stoptask(rt[r], id, (WORD)fade_ms); regated[r] = FALSE; }
     rplay[r] = FALSE;
+}
+/* v3: the recorder's sounding voice (and its release) changes to hz at the event's sample, gliding over glide_ms */
+static void rate_rec(int r, DWORD id, DWORD hz, int glide_ms, int regate)
+{
+    if (r < 0 || r >= NALL || !rw[r] || !hz) return;
+    if (hostRate[r] && recRate[r] && hostRate[r] != recRate[r]) hz = hz * recRate[r] / hostRate[r];
+    bs_rate(rt[r], id, hz, (WORD)(glide_ms < 0 ? 0 : glide_ms), (WORD)(regate != 0));
+    if (regate) regated[r] = TRUE;   /* the next stop or play also ends the ghost it kept */
+}
+/* Recording (RECORDING.md 1.3, 4.3): the card has one ADC, so while a recorder records every other Record button
+   is grey; the host hears `rec start <rec>` / `rec stop <rec> <ms>` (it keeps its notes off that recorder) */
+static int recording = -1; static DWORD recT0;
+static void watch_rec(void)
+{
+    int r, now = -1; char t[24];
+    for (r = 0; r < NR && now < 0; r++) { GetDlgItemText(rw[AR(r)], SR_STATUS, t, sizeof t); if (t[0] == 'R' && t[2] == 'c') now = r; }
+    if (now != recording) {
+        if (recording >= 0) say("rec stop %d %ld", recording, (long)(timeGetTime() - recT0));
+        if (now >= 0) { say("rec start %d", now); recT0 = timeGetTime(); }
+        recording = now;
+        if (now < 0) for (r = 0; r < NR; r++) EnableWindow(GetDlgItem(rw[AR(r)], SR_REC), TRUE);
+    }
+    if (recording >= 0)   /* Sound Recorder enables its own button again on its state changes: keep the others grey */
+        for (r = 0; r < NR; r++) if (r != recording && IsWindowEnabled(GetDlgItem(rw[AR(r)], SR_REC))) EnableWindow(GetDlgItem(rw[AR(r)], SR_REC), FALSE);
 }
 static void watch_ends(void)
 {
     static DWORD last; int r;
     if (timeGetTime() - last < 25) return;
     last = timeGetTime();
+    watch_rec();
     for (r = 0; r < NR; r++) if (rplay[AR(r)] && !is_playing(AR(r))) { rplay[AR(r)] = FALSE; say("end %d", r); }
 }
 
@@ -1137,7 +1165,7 @@ static void edited(BOOL rebuild)
                 int n = env_get(i, t, l), k;
                 envN[i] = n;
                 for (k = 0; k < n; k++) { envT[i][k] = t[k]; envL[i][k] = l[k]; }
-                bs_lenv(i, 0, n, t, l);
+                bs_lenv(i, 0, n, t, l, 0);
             }
         }
         show_envelope();
@@ -1766,7 +1794,7 @@ static void host_line(char *s)
     if (a) *a = 0;
     if (!strcmp(s, "hi")) {
         int v = atoi(rest); v = v >= 3 ? 3 : v >= 2 ? 2 : 1;
-        if (v == 3) say("hi 3 311 %s win,desk", assembled ? "ready" : "wait");   /* the v3 features this guest has */
+        if (v == 3) say("hi 3 311 %s win,desk,rate,loop,rec", assembled ? "ready" : "wait");   /* the v3 features this guest has */
         else say("hi %d 311 %s", v, assembled ? "ready" : "wait");
     }
     else if (!strcmp(s, "desk")) { if (hMain && assembled) ShowWindow(hMain, atoi(rest) ? SW_MINIMIZE : SW_RESTORE); }
@@ -1781,14 +1809,26 @@ static void host_line(char *s)
     }
     else if (!strcmp(s, "off")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, envR); }
     else if (!strcmp(s, "cut")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, 5); }
+    else if (!strcmp(s, "rate")) {   /* rate <rec> <hz> [<glide_ms> [<regate>]] (v3) */
+        long f[4] = {-1, 0, 0, 0}; int nf = 0; char *p = rest;
+        while (*p && nf < 4) { f[nf++] = atol(p); p = strchr(p, ' '); if (!p) break; p++; }
+        if (f[0] >= 0 && f[0] < NR) rate_rec(AR((int)f[0]), curId, (DWORD)f[1], (int)f[2], (int)f[3]);
+    }
+    else if (!strcmp(s, "who")) {   /* who <x> <y>: the window under a screen point (a test aid) */
+        POINT pt; HWND w; char cls[32], txt[32];
+        pt.x = atoi(rest); pt.y = atoi(strchr(rest, ' ') ? strchr(rest, ' ') + 1 : "0");
+        w = WindowFromPoint(pt); cls[0] = txt[0] = 0;
+        if (w) { GetClassName(w, cls, sizeof cls); GetWindowText(w, txt, sizeof txt); }
+        say("who %d %d %04x %s id %d en %d '%s' parent %04x", pt.x, pt.y, (WORD)w, cls, w ? GetDlgCtrlID(w) : 0, w ? IsWindowEnabled(w) : 0, txt, w ? (WORD)GetParent(w) : 0);
+    }
     else if (!strcmp(s, "panic")) { int r; for (r = 0; r < NALL; r++) stop_rec(r, 0, 5); }
     else if (!strcmp(s, "env")) {
         sscanf(rest, "%d %d %d %d", &envA, &envD, &envS, &envR);
         bs_env((WORD)envA, (WORD)envD, (WORD)envS);
         show_envelope();
     }
-    else if (!strcmp(s, "lenv")) {   /* lenv <layer> <a|p> <t,l.t,l...|-> */
-        int L = atoi(rest), kind, n = 0, t[8], l[8]; char *p = strchr(rest, ' ');
+    else if (!strcmp(s, "lenv")) {   /* lenv <layer> <a|p> <t,l.t,l...|-> [<loop>] (v3: the last <loop> points repeat while held) */
+        int L = atoi(rest), kind, n = 0, t[8], l[8], loop = 0; char *p = strchr(rest, ' ');
         if (p && L >= 0 && L < NL) {
             kind = p[1] == 'p'; p = strchr(p + 1, ' ');
             if (p && p[1] != '-') {
@@ -1798,7 +1838,8 @@ static void host_line(char *s)
                     if (*q == '.') q++; else break;
                 }
             }
-            bs_lenv(L, kind, n, t, l);
+            if (p && (p = strchr(p + 1, ' ')) != NULL) loop = atoi(p + 1);
+            bs_lenv(L, kind, n, t, l, loop);
             if (!kind) { envN[L] = n; memcpy(envT[L], t, sizeof t); memcpy(envL[L], l, sizeof l); show_envelope(); }
         }
     }

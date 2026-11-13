@@ -38,6 +38,17 @@
 #define WODM_GETPLAYBACKRATE 18
 #define WODM_SETPLAYBACKRATE 19
 #define WODM_BREAKLOOP 20
+#define WIDM_GETNUMDEVS 50
+#define WIDM_GETDEVCAPS 51
+#define WIDM_OPEN 52
+#define WIDM_CLOSE 53
+#define WIDM_PREPARE 54
+#define WIDM_UNPREPARE 55
+#define WIDM_ADDBUFFER 56
+#define WIDM_START 57
+#define WIDM_STOP 58
+#define WIDM_RESET 59
+#define WIDM_GETPOS 60
 typedef struct { HWAVE hWave; const WAVEFORMAT FAR *lpFormat; DWORD dwCallback; DWORD dwInstance; } WAVEOPENDESC;
 typedef WAVEOPENDESC FAR *LPWAVEOPENDESC;
 #define DCB_TYPEMASK 0x0007
@@ -49,6 +60,9 @@ typedef struct { BOOL used; HWAVE hWave; DWORD cb, inst; DWORD flags; int ch; WO
 static INST in[MAXI];
 static UINT timer;
 static BOOL card;
+/* the wave input (RECORDING.md 1.3): the card's one ADC, one open at a time */
+static INST win;   /* .used, .hWave, .cb, .inst, .flags, .align */
+static void ensure_timer(void);
 
 static void put(WORD w) { outpw(BS_ARG, w); }
 static void put32(DWORD d) { outpw(BS_ARG, LOWORD(d)); outpw(BS_ARG, HIWORD(d)); }
@@ -90,9 +104,34 @@ static void drain(void)
     }
 }
 
+/* hand back every filled input buffer (WIM_DATA) */
+static void drain_in(void)
+{
+    WORD n, i; DWORD ck, nb; LPWAVEHDR h;
+    if (!win.used) return;
+    for (;;) {
+        static WORD buf[60];
+        _disable();
+        outpw(BS_CMD, BSC_INPOLL);
+        n = get();
+        for (i = 0; i < n * 4 && i < 60; i++) buf[i] = get();
+        _enable();
+        if (!n) return;
+        for (i = 0; i < n; i++) {
+            ck = MAKELONG(buf[i * 4], buf[i * 4 + 1]); nb = MAKELONG(buf[i * 4 + 2], buf[i * 4 + 3]);
+            h = (LPWAVEHDR)ck;
+            h->dwBytesRecorded = nb;
+            h->dwFlags &= ~WHDR_INQUEUE;
+            h->dwFlags |= WHDR_DONE;
+            notify(&win, WIM_DATA, ck);
+        }
+    }
+}
+
 void FAR PASCAL __loadds __export TimeProc(UINT id, UINT msg, DWORD user, DWORD d1, DWORD d2)
 {
     drain();
+    drain_in();
 }
 
 /* The host's pointer (BsPointer): every 10 ms at interrupt time, a new position from the card becomes real mouse
@@ -133,11 +172,80 @@ BOOL FAR PASCAL __loadds __export BsPointer(BOOL on, WORD w, WORD h)
     if (!mouseEvent || w < 2 || h < 2) return FALSE;
     scrW = w; scrH = h;
     _disable(); outpw(BS_CMD, 32); ptrSeq = get(); get(); get(); _enable();
-    ptrTimer = timeSetEvent(10, 1, (LPTIMECALLBACK)PtrProc, 0L, TIME_PERIODIC);
+    ptrTimer = timeSetEvent(10, 10, (LPTIMECALLBACK)PtrProc, 0L, TIME_PERIODIC);   /* resolution 10: a 1 ms one reprograms the PIT to 1 kHz and slows the whole machine */
     return ptrTimer != 0;
 }
 
-static int nopen(void) { int k, n = 0; for (k = 0; k < MAXI; k++) if (in[k].used) n++; return n; }
+static int nopen(void) { int k, n = win.used ? 1 : 0; for (k = 0; k < MAXI; k++) if (in[k].used) n++; return n; }
+static void ensure_timer(void) { if (!timer) timer = timeSetEvent(10, 5, (LPTIMECALLBACK)TimeProc, 0, TIME_PERIODIC); }
+
+DWORD FAR PASCAL __loadds __export widMessage(UINT dev, UINT msg, DWORD user, DWORD p1, DWORD p2)
+{
+    switch (msg) {
+    case WIDM_GETNUMDEVS:
+        return card ? 1 : 0;
+    case WIDM_GETDEVCAPS: {
+        WAVEINCAPS FAR *c = (WAVEINCAPS FAR *)p1;
+        WAVEINCAPS w;
+        w.wMid = 1; w.wPid = 0xB6; w.vDriverVersion = 0x0100;
+        lstrcpy(w.szPname, "BASILISK 16 Input");
+        w.dwFormats = 0xFFF; w.wChannels = 2;
+        _fmemcpy(c, &w, (UINT)p2 < sizeof w ? (UINT)p2 : sizeof w);
+        return 0; }
+    case WIDM_OPEN: {
+        LPWAVEOPENDESC d = (LPWAVEOPENDESC)p1;
+        const PCMWAVEFORMAT FAR *f = (const PCMWAVEFORMAT FAR *)d->lpFormat;
+        WORD ok;
+        if (!card) return MMSYSERR_NOTENABLED;
+        if (f->wf.wFormatTag != WAVE_FORMAT_PCM || (f->wf.nChannels != 1 && f->wf.nChannels != 2) ||
+            (f->wBitsPerSample != 8 && f->wBitsPerSample != 16) || f->wf.nSamplesPerSec < 4000 || f->wf.nSamplesPerSec > 48000)
+            return WAVERR_BADFORMAT;
+        if (LOWORD(p2) & WAVE_FORMAT_QUERY) return 0;
+        if (win.used) return MMSYSERR_ALLOCATED;
+        _disable();
+        put32(f->wf.nSamplesPerSec); put(f->wBitsPerSample); put(f->wf.nChannels);
+        outpw(BS_CMD, BSC_INOPEN);
+        ok = get();
+        _enable();
+        if (!ok) return MMSYSERR_ALLOCATED;
+        win.used = TRUE; win.hWave = d->hWave; win.cb = d->dwCallback; win.inst = d->dwInstance;
+        win.flags = p2; win.align = f->wf.nBlockAlign;
+        *(DWORD FAR *)user = 1;
+        ensure_timer();
+        notify(&win, WIM_OPEN, 0);
+        return 0; }
+    }
+    if (!win.used) return MMSYSERR_INVALHANDLE;
+    switch (msg) {
+    case WIDM_CLOSE:
+        _disable(); outpw(BS_CMD, BSC_INRESET); _enable();
+        drain_in();
+        _disable(); outpw(BS_CMD, BSC_INCLOSE); _enable();
+        notify(&win, WIM_CLOSE, 0);
+        win.used = FALSE;
+        if (!nopen() && timer) { timeKillEvent(timer); timer = 0; }
+        return 0;
+    case WIDM_ADDBUFFER: {
+        LPWAVEHDR h = (LPWAVEHDR)p1; DWORD lin;
+        if (!(h->dwFlags & WHDR_PREPARED)) return WAVERR_UNPREPARED;
+        h->dwFlags &= ~WHDR_DONE; h->dwFlags |= WHDR_INQUEUE; h->dwBytesRecorded = 0;
+        lin = GetSelectorBase(SELECTOROF(h->lpData)) + OFFSETOF(h->lpData);
+        _disable(); put32(lin); put32(h->dwBufferLength); put32((DWORD)h); outpw(BS_CMD, BSC_INADD); _enable();
+        return 0; }
+    case WIDM_START: _disable(); outpw(BS_CMD, BSC_INSTART); _enable(); return 0;
+    case WIDM_STOP: _disable(); outpw(BS_CMD, BSC_INSTOP); _enable(); drain_in(); return 0;
+    case WIDM_RESET: _disable(); outpw(BS_CMD, BSC_INRESET); _enable(); drain_in(); return 0;
+    case WIDM_GETPOS: {
+        LPMMTIME t = (LPMMTIME)p1; DWORD b;
+        _disable(); outpw(BS_CMD, BSC_INGETPOS); b = get(); b |= (DWORD)get() << 16; _enable();
+        if (t->wType == TIME_SAMPLES && win.align) t->u.sample = b / win.align;
+        else { t->wType = TIME_BYTES; t->u.cb = b; }
+        return 0; }
+    case WIDM_PREPARE: case WIDM_UNPREPARE:
+        return MMSYSERR_NOTSUPPORTED;
+    }
+    return MMSYSERR_NOTSUPPORTED;
+}
 
 DWORD FAR PASCAL __loadds __export wodMessage(UINT dev, UINT msg, DWORD user, DWORD p1, DWORD p2)
 {
@@ -174,7 +282,7 @@ DWORD FAR PASCAL __loadds __export wodMessage(UINT dev, UINT msg, DWORD user, DW
         in[k].used = TRUE; in[k].hWave = d->hWave; in[k].cb = d->dwCallback; in[k].inst = d->dwInstance;
         in[k].flags = p2; in[k].ch = ch; in[k].align = f->wf.nBlockAlign;
         *(DWORD FAR *)user = k + 1;
-        if (!timer) timer = timeSetEvent(10, 5, (LPTIMECALLBACK)TimeProc, 0, TIME_PERIODIC);
+        ensure_timer();
         notify(&in[k], WOM_OPEN, 0);
         return 0; }
     }
