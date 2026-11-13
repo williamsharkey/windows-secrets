@@ -202,6 +202,24 @@ Done and measured in the real machine (machine-3):
 - Not done: bit-identical renders (XP is not sample-accurate); Windows pitch ~10 cents mean (the playout drift
   trim modulates speed under load); the layer table from ui-layouts.md (the Layers list stays); .vstpreset files.
 
+## X0 (2026-11-13): audio input through QEMU's dbus backend on a second, input-only AC97 card
+Probes in tools/x0. Upstream QEMU 11.1 (the builds we ship: Stefan Weil's on Windows, Homebrew's on macOS) is enough:
+no QEMU build of our own is needed.
+- Plumbing: p2p D-Bus to QEMU (QMP getfd + add_client on macOS; get-win32-socket with Python's socket.share on
+  Windows), RegisterInListener (fd on Unix, WSAPROTOCOL_INFOW bytes on Windows), QEMU then calls our Read. Windows
+  needs AUTH ANONYMOUS (EXTERNAL is rejected for a duplicated socket) and TCP_NODELAY. `-display dbus` needs
+  `audiodev=` to export the Audio object.
+- XP: the second AC97 installs silently with XP's own driver; after one reboot waveIn lists
+  "Intel(r) Integrated Audio (2)". Recording goes through XP's own waveIn/kmixer/AC97 driver (wavrec.exe, the
+  same API sndrec32 uses). Format from QEMU: s16 stereo 44.1 kHz.
+- TR1, macOS: 60 s of a 1 kHz sine: 2,646,000 frames (exactly 60 s), 1000.000 Hz, 0 glitches, 0 silent runs,
+  peak 15999 (16000 sent: bit-exact level). Capture starts 109 ms after waveInStart.
+- TR1, Windows: with the default nsamples (480) QEMU delivered only ~30k frames/s (the test QEMU had no timer
+  opt-out, so 15.6 ms ticks x 480); with `nsamples=2048`: 2,646,000 frames in 60 s, 1000.022 Hz, 3 glitches,
+  0 silent runs. The plugin launches QEMU with power throttling off (1 ms timers), which should remove those.
+- Not measured yet (they need the X1 machine build with the card): resume reliability, snapshot size, XP idle
+  CPU, and the DAW -> recording latency through the plugin's ring.
+
 ## 1.2.1 (2026-11-13): one name, one file; sounds kept while rebuilding
 - DNA 2.4 (18f77d5): chimes chord ding tada = the Windows 3.x recordings in both editions; XP's copies are
   chimesxp chordxp dingxp tadaxp (shown ding-xp); ringin ringout are byte-identical in both (same SHA-1), one name.
