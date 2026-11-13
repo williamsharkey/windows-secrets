@@ -8,9 +8,13 @@ sends the results back). No emulator here, so an idle server costs nothing.
 
   127.0.0.1:8785   /ws  (Caddy: live.williamsharkey.com/w31b/*)
 
-page -> server   {t:'turn', text} {t:'result', id, status, text} {t:'int'} {t:'clear'}
-server -> page   {t:'begin'} {t:'text', d} {t:'end'} {t:'tool', id, name, input, title}
-                 {t:'usage', tin, tout, usd} {t:'note', text} {t:'done'}
+page -> server   {t:'turn', text} {t:'result', id, status, text} {t:'int'} {t:'clear'} {t:'compact'}
+                 {t:'settings', effort, length, ask, model} {t:'perm', id, answer: once|always|deny}
+server -> page   {t:'begin'} {t:'text', d} {t:'end'} {t:'tool', id, name, input, title, quiet?}
+                 {t:'usage', tin, tout, usd, ctx, ctxmax, day, daycap, month, monthcap, model, turns, cached}
+                 {t:'plan', items:[{text, status}]} {t:'ask', id, title} {t:'note', text} {t:'done'}
+The suite (puppetry/w31suite): five Cardfile cards - Chat, Plan (todo_write + permission prompts), Files
+(CLAUDE.MD is read before each turn), Usage, Settings (effort, answer length, asking, model).
 The API key is read from /root/stage/.env and never printed.
 """
 import asyncio
@@ -37,7 +41,14 @@ DEFAULTS = {
     'W31B_IP_TURNS_HOUR': '60',
     'W31B_IP_USD_DAY': '1.00',
     'W31B_IP_SOCKETS': '4',
+    'W31B_MODELS': 'claude-haiku-5-5,claude-sonnet-5-5',
 }
+CONTEXT = {'claude-haiku-5-5': 1000000, 'claude-sonnet-5-5': 1000000}
+EFFORTS = ('low', 'medium', 'high', 'xhigh', 'max')
+LENGTHS = {'brief': 'Keep this answer very short: one to three sentences unless a tool result must be shown.',
+           'normal': '',
+           'full': 'Be thorough in this answer: explain your reasoning and what you did.'}
+SAFE = ('DIR', 'TYPE', 'VER', 'MEM', 'SET', 'TREE', 'FIND', 'ECHO')
 PRICES = {'claude-haiku-5-5': (0.10, 0.50), 'claude-sonnet-5-5': (2.00, 10.00)}
 _env = {}
 
@@ -145,6 +156,9 @@ class Limits:
     def usd_note(self, ip, usd):
         self.usd.setdefault(ip, deque()).append((time.time(), usd))
 
+    def usd_today(self, ip):
+        return sum(x for _, x in self._trim(self.usd.setdefault(ip, deque()), 86400))
+
 
 LIMITS = Limits()
 
@@ -167,6 +181,8 @@ hang until the 60 s timeout. Windows programs can't be started from run_command.
 output captured; a Windows .EXE can be built but not launched by you. Compiling in the browser takes a few seconds.
 - Everything resets when the visitor reloads the page.
 
+The screen is a tabbed suite made of real Windows 3.1 programs; the tabs are Cardfile cards: 1 Chat (this transcript), 2 Plan (a Notepad showing your plan: keep it with todo_write for any task of three or more steps, marking one item in_progress at a time and items done as you finish them), 3 Files (File Manager on C:\\B3\\WORK; the visitor can mention a file as @NAME; C:\\B3\\WORK\\CLAUDE.MD, if it exists, holds standing instructions and is given to you when it changes), 4 Usage, 5 Settings. The visitor may set Windows to ask before your commands run and may say no; if a tool result says the visitor declined, don't retry it, ask what they'd like instead.
+
 How to answer: plain text only. No markdown: no headings, no bold or italics, no tables, no code fences (show code \
 by writing it to a file, then mention the file). Short paragraphs, lines that read well at 80 columns, '-' for \
 bullets. Be brief and do the work with tools rather than describing it. ASCII only. When the visitor just chats, \
@@ -184,6 +200,14 @@ TOOLS = [
      'description': 'Read a text file (first 3500 characters). Relative paths are under C:\\B3\\WORK.',
      'input_schema': {'type': 'object', 'properties': {'path': {'type': 'string'}},
                       'required': ['path'], 'additionalProperties': False}},
+    {'name': 'todo_write', 'eager_input_streaming': True,
+     'description': 'Replace your plan (shown on the Plan card in Windows) with this list. Use it for tasks with '
+                    'three or more steps; keep exactly one item in_progress while working.',
+     'input_schema': {'type': 'object', 'properties': {'items': {'type': 'array', 'maxItems': 12, 'items': {
+         'type': 'object', 'properties': {'text': {'type': 'string'},
+                                          'status': {'type': 'string', 'enum': ['pending', 'in_progress', 'done']}},
+         'required': ['text', 'status'], 'additionalProperties': False}}},
+                      'required': ['items'], 'additionalProperties': False}},
     {'name': 'write_file', 'eager_input_streaming': True,
      'description': 'Create or overwrite a text file (up to 6000 characters, DOS line endings are added). '
                     'Relative paths are under C:\\B3\\WORK.',
@@ -215,6 +239,14 @@ def valid(name, inp):
     elif name == 'read_file':
         if not isinstance(inp.get('path'), str) or not inp['path'].strip():
             return 'path must be a non-empty string'
+    elif name == 'todo_write':
+        items = inp.get('items')
+        if not isinstance(items, list) or len(items) > 12:
+            return 'items must be a list of at most 12'
+        for it in items:
+            if not isinstance(it, dict) or not isinstance(it.get('text'), str) or \
+                    it.get('status') not in ('pending', 'in_progress', 'done'):
+                return 'each item needs text and a status of pending, in_progress or done'
     elif name == 'write_file':
         if not isinstance(inp.get('path'), str) or not inp['path'].strip() or not isinstance(inp.get('content'), str):
             return 'path and content must be strings'
@@ -230,6 +262,8 @@ def tool_title(name, inp):
         return 'Run(%s)' % inp.get('command', '')
     if name == 'read_file':
         return 'Read(%s)' % inp.get('path', '')
+    if name == 'todo_write':
+        return 'Plan(%d items)' % len(inp.get('items') or [])
     return 'Write(%s)' % inp.get('path', '')
 
 
@@ -246,7 +280,12 @@ class Visitor:
         self.messages = []
         self.task = None
         self.results = {}
-        self.usage = {'in': 0, 'out': 0, 'usd': 0.0}
+        self.asks = {}
+        self.usage = {'in': 0, 'out': 0, 'usd': 0.0, 'ctx': 0, 'cached': 0, 'turns': 0}
+        self.set = {'effort': cfg('W31B_EFFORT'), 'length': 'normal', 'ask': True, 'model': cfg('W31B_MODEL')}
+        self.allowed = set()           # first words of commands the visitor said to always allow
+        self.allow_writes = False
+        self.claude_md = None          # the CLAUDE.MD text last given to Claude
 
     async def send(self, **m):
         try:
@@ -254,19 +293,77 @@ class Visitor:
         except Exception:
             pass
 
+    def settings(self, m):
+        e = str(m.get('effort', ''))
+        if e in EFFORTS:
+            self.set['effort'] = e
+        if str(m.get('length', '')) in LENGTHS:
+            self.set['length'] = str(m['length'])
+        self.set['ask'] = str(m.get('ask', 'ask')) != 'auto'
+        allowed = [x.strip() for x in cfg('W31B_MODELS').split(',')]
+        want = 'claude-sonnet-5-5' if str(m.get('model', '')) == 'sonnet' else cfg('W31B_MODEL')
+        self.set['model'] = want if want in allowed else cfg('W31B_MODEL')
+
+    async def report(self):
+        model = self.set['model']
+        await self.send(t='usage', tin=self.usage['in'], tout=self.usage['out'], usd=round(self.usage['usd'], 6),
+                        ctx=self.usage['ctx'], ctxmax=CONTEXT.get(model, 1000000),
+                        day=round(LIMITS.usd_today(self.ip), 6), daycap=cfgf('W31B_IP_USD_DAY'),
+                        month=round(BUDGET.spent(), 6), monthcap=cfgf('W31B_MONTHLY_CAP_USD'),
+                        model=model, effort=self.set['effort'], turns=self.usage['turns'], cached=self.usage['cached'])
+
+    def bill(self, model, usage):
+        usd, tin, tout = BUDGET.add(model, usage)
+        LIMITS.usd_note(self.ip, usd)
+        self.usage['in'] += tin
+        self.usage['out'] += tout
+        self.usage['usd'] += usd
+        self.usage['cached'] += getattr(usage, 'cache_read_input_tokens', 0) or 0
+        return usd, tin, tout
+
+    async def windows(self, name, inp, quiet=False, wait=90):
+        """ask the page (and BASILISK.EXE) to do something; -> (status, text)"""
+        tid = secrets.token_hex(3)
+        fut = asyncio.get_running_loop().create_future()
+        self.results[tid] = fut
+        await self.send(t='tool', id=tid, name=name, input={k: ascii7(v) for k, v in inp.items()},
+                        title=ascii7(tool_title(name, inp)), quiet=quiet)
+        try:
+            return await asyncio.wait_for(fut, wait)
+        except asyncio.TimeoutError:
+            return 'err', 'no answer from BASILISK.EXE in time'
+        finally:
+            self.results.pop(tid, None)
+
+    async def memory(self):
+        """CLAUDE.MD in C:\\B3\\WORK, read through Windows; -> text to add to the turn when it changed"""
+        st, text = await self.windows('read_file', {'path': 'CLAUDE.MD'}, quiet=True, wait=8)
+        text = (text or '').strip() if st == 'ok' else ''
+        if text == (self.claude_md or ''):
+            return ''
+        first = self.claude_md is None
+        self.claude_md = text
+        if not text:
+            return '' if first else '[C:\\B3\\WORK\\CLAUDE.MD was removed.]\n\n'
+        return '[Standing instructions from C:\\B3\\WORK\\CLAUDE.MD:]\n%s\n[end of CLAUDE.MD]\n\n' % text[:3000]
+
     async def turn(self, text):
-        self.messages.append({'role': 'user', 'content': text})
         pending = None
         inflight = None
+        model = self.set['model']
         try:
+            mem = await self.memory()
+            note = LENGTHS.get(self.set['length'], '')
+            self.messages.append({'role': 'user', 'content': mem + text + ('\n\n(' + note + ')' if note else '')})
+            self.usage['turns'] += 1
             for step in range(16):
                 streamed = False
                 async with api().messages.stream(
-                        model=cfg('W31B_MODEL'), max_tokens=4000, system=SYSTEM, tools=TOOLS,
+                        model=model, max_tokens=8000, system=SYSTEM, tools=TOOLS,
                         messages=self.messages, cache_control={'type': 'ephemeral'},
-                        output_config={'effort': cfg('W31B_EFFORT')}) as st:
+                        output_config={'effort': self.set['effort']}) as st:
                     t0 = time.time()
-                    inflight = {'in': len(json.dumps(self.messages, default=str)) // 4 + 1200, 'out': 0}
+                    inflight = {'in': len(json.dumps(self.messages, default=str)) // 4 + 1500, 'out': 0}
                     async for ev in st:
                         if ev.type == 'text':
                             if not streamed:
@@ -280,13 +377,10 @@ class Visitor:
                 inflight = None
                 if streamed:
                     await self.send(t='end')
-                usd, tin, tout = BUDGET.add(cfg('W31B_MODEL'), msg.usage)
-                LIMITS.usd_note(self.ip, usd)
-                self.usage['in'] += tin
-                self.usage['out'] += tout
-                self.usage['usd'] += usd
-                await self.send(t='usage', tin=self.usage['in'], tout=self.usage['out'], usd=round(self.usage['usd'], 6))
-                log('api %.1fs in=%d out=%d $%.5f stop=%s' % (time.time() - t0, tin, tout, usd, msg.stop_reason))
+                usd, tin, tout = self.bill(model, msg.usage)
+                self.usage['ctx'] = tin + tout
+                await self.report()
+                log('api %s %.1fs in=%d out=%d $%.5f stop=%s' % (model, time.time() - t0, tin, tout, usd, msg.stop_reason))
                 self.messages.append({'role': 'assistant', 'content': msg.content})
                 uses = [b for b in msg.content if b.type == 'tool_use']
                 if msg.stop_reason == 'refusal':
@@ -309,29 +403,61 @@ class Visitor:
                 class U:
                     input_tokens, output_tokens = inflight['in'], inflight['out'] + 50
                     cache_creation_input_tokens = cache_read_input_tokens = 0
-                usd, tin, tout = BUDGET.add(cfg('W31B_MODEL'), U)
-                LIMITS.usd_note(self.ip, usd)
-                self.usage['in'] += tin
-                self.usage['out'] += tout
-                self.usage['usd'] += usd
-                await self.send(t='usage', tin=self.usage['in'], tout=self.usage['out'], usd=round(self.usage['usd'], 6))
+                self.bill(model, U)
+                await self.report()
             await self.send(t='note', text='Interrupted.')
-            if pending:
-                self.messages.append({'role': 'user', 'content': [
-                    {'type': 'tool_result', 'tool_use_id': u.id, 'content': 'interrupted by the user', 'is_error': True}
-                    for u in pending]})
-            elif self.messages and self.messages[-1]['role'] == 'user' and isinstance(self.messages[-1]['content'], str):
-                self.messages.append({'role': 'assistant', 'content': '(interrupted)'})
+            self.close_out(pending, 'interrupted by the user')
         except Exception as e:
             log('turn error: %r' % e)
             await self.send(t='note', text='Something went wrong on the line (%s). Try again.' % type(e).__name__)
-            if pending:
-                self.messages.append({'role': 'user', 'content': [
-                    {'type': 'tool_result', 'tool_use_id': u.id, 'content': 'not run', 'is_error': True} for u in pending]})
-            elif self.messages and self.messages[-1]['role'] == 'user':
-                self.messages.append({'role': 'assistant', 'content': '(error)'})
+            self.close_out(pending, 'not run')
         finally:
+            for f in list(self.asks.values()):
+                if not f.done():
+                    f.set_result('deny')
             await self.send(t='done')
+
+    def close_out(self, pending, why):
+        """leave the history valid: every tool_use answered, and no dangling user turn"""
+        if pending:
+            self.messages.append({'role': 'user', 'content': [
+                {'type': 'tool_result', 'tool_use_id': u.id, 'content': why, 'is_error': True} for u in pending]})
+        elif self.messages and self.messages[-1]['role'] == 'user':
+            self.messages.append({'role': 'assistant', 'content': '(%s)' % why})
+
+    async def permitted(self, name, inp):
+        """-> None if it may run, else the reason it may not (the visitor said no)"""
+        if not self.set['ask']:
+            return None
+        if name == 'run_command':
+            word = inp.get('command', '').strip().split()[0].upper() if inp.get('command', '').strip() else ''
+            if word in SAFE or word in self.allowed:
+                return None
+            what = inp['command']
+        elif name == 'write_file':
+            if self.allow_writes:
+                return None
+            what = 'write the file %s (%d characters)' % (inp.get('path', ''), len(inp.get('content', '')))
+        else:
+            return None
+        aid = secrets.token_hex(3)
+        fut = asyncio.get_running_loop().create_future()
+        self.asks[aid] = fut
+        await self.send(t='ask', id=aid, title=ascii7(what)[:200])
+        try:
+            answer = await asyncio.wait_for(fut, 300)
+        except asyncio.TimeoutError:
+            answer = 'deny'
+        finally:
+            self.asks.pop(aid, None)
+        if answer == 'always':
+            if name == 'run_command':
+                self.allowed.add(word)
+            else:
+                self.allow_writes = True
+        if answer in ('once', 'always'):
+            return None
+        return 'The visitor declined this (Windows asked them first).'
 
     async def run_tool(self, u):
         inp = u.input if isinstance(u.input, dict) else {}
@@ -339,19 +465,50 @@ class Visitor:
         if bad:
             await self.send(t='tool', id='', name=u.name, input={}, title=tool_title(u.name, inp), error=bad)
             return {'type': 'tool_result', 'tool_use_id': u.id, 'content': bad, 'is_error': True}
-        tid = secrets.token_hex(3)
-        fut = asyncio.get_running_loop().create_future()
-        self.results[tid] = fut
-        await self.send(t='tool', id=tid, name=u.name, input={k: ascii7(v) for k, v in inp.items()},
-                        title=ascii7(tool_title(u.name, inp)))
-        try:
-            status, text = await asyncio.wait_for(fut, 90)
-        except asyncio.TimeoutError:
-            status, text = 'err', 'no answer from BASILISK.EXE in time'
-        finally:
-            self.results.pop(tid, None)
+        if u.name == 'todo_write':
+            items = [{'text': ascii7(it['text'])[:70], 'status': it['status']} for it in inp['items']]
+            await self.send(t='plan', items=items)
+            return {'type': 'tool_result', 'tool_use_id': u.id, 'content': 'The plan card now shows %d items.' % len(items)}
+        no = await self.permitted(u.name, inp)
+        if no:
+            await self.send(t='tool', id='', name=u.name, input={}, title=ascii7(tool_title(u.name, inp)), error='declined')
+            return {'type': 'tool_result', 'tool_use_id': u.id, 'content': no, 'is_error': True}
+        status, text = await self.windows(u.name, inp)
         return {'type': 'tool_result', 'tool_use_id': u.id, 'content': (text or '')[:3500] or '(no output)',
                 'is_error': status != 'ok'}
+
+    async def compact(self):
+        """/compact: Claude summarizes the conversation so far, and the summary replaces it"""
+        model = self.set['model']
+        try:
+            if len(self.messages) < 2:
+                await self.send(t='note', text='Nothing to compact yet.')
+                return
+            ask = self.messages + [{'role': 'user', 'content':
+                'Summarize this conversation for yourself so it can continue from the summary alone: what the '
+                'visitor wants, what was done (files written, commands run, results), the current plan, and any '
+                'open questions. Plain text, at most 200 words. No tools.'}]
+            async with api().messages.stream(model=model, max_tokens=2000, system=SYSTEM, tools=TOOLS,
+                                              messages=ask, output_config={'effort': 'low'}) as st:
+                msg = await st.get_final_message()
+            self.bill(model, msg.usage)
+            summary = ''.join(b.text for b in msg.content if b.type == 'text').strip()
+            if not summary:
+                raise RuntimeError('empty summary')
+            before = self.usage['ctx']
+            self.messages = [{'role': 'user', 'content': '[Summary of the conversation so far]\n' + summary},
+                             {'role': 'assistant', 'content': 'Understood; continuing from that summary.'}]
+            self.usage['ctx'] = len(SYSTEM + summary) // 4 + 900
+            await self.report()
+            await self.send(t='note', text='Compacted: the conversation (%s tokens) is now a summary of about %d '
+                                           'words. Claude keeps going from there.' % (format(before, ','), len(summary.split())))
+        except asyncio.CancelledError:
+            await self.send(t='note', text='Interrupted.')
+        except Exception as e:
+            log('compact error: %r' % e)
+            await self.send(t='note', text='Could not compact just now (%s).' % type(e).__name__)
+        finally:
+            await self.send(t='done')
 
 
 VISITORS = set()
@@ -383,6 +540,7 @@ async def p_ws(req):
     v = Visitor(ws, ip)
     VISITORS.add(v)
     await v.send(t='hello', model=cfg('W31B_MODEL'), live=bool(cfg('ANTHROPIC_API_KEY')) and not BUDGET.over())
+    await v.report()
     rate = deque()
     try:
         async for msg in ws:
@@ -426,6 +584,23 @@ async def p_ws(req):
             elif t == 'clear':
                 if not (v.task and not v.task.done()):
                     v.messages = []
+                    v.usage['ctx'] = 0
+                    v.claude_md = None
+                    await v.report()
+            elif t == 'compact':
+                if not (v.task and not v.task.done()) and not BUDGET.over() and not LIMITS.turn_ok(ip):
+                    LIMITS.turn_note(ip)
+                    v.task = asyncio.create_task(v.compact())
+                else:
+                    await v.send(t='done')
+            elif t == 'settings':
+                v.settings(m)
+                await v.report()
+            elif t == 'perm':
+                fut = v.asks.get(str(m.get('id', '')))
+                if fut and not fut.done():
+                    a = str(m.get('answer', 'deny'))
+                    fut.set_result(a if a in ('once', 'always', 'deny') else 'deny')
     finally:
         VISITORS.discard(v)
         if v.task and not v.task.done():

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BASILISK 3.11, in your browser</title>
-<meta name="description" content="Windows for Workgroups 3.11 boots inside this page, compiles a Claude Code client from a Notepad file with Open Watcom, and assembles it from Notepad, Clock, Cardfile and Calculator. Your typing never leaves your machine; only the words for Claude do.">
+<meta name="description" content="Windows for Workgroups 3.11 boots inside this page, compiles a Claude Code suite from two Notepad files with Open Watcom, and assembles it from Notepad, Cardfile, Clock, Calculator, File Manager and Control Panel, with Cardfile's cards as its tabs. Your typing never leaves your machine; only the words for Claude do.">
 <style>
 :root {
   --bg: #0f1a2b; --panel: #15233a; --ink: #f1ead9; --muted: #a9b2c2; --line: #2a3b57;
@@ -64,7 +64,7 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; padding: 0 4px; b
 <body>
 <header class="wrap">
   <h1>BASILISK 3.11 <small>in your browser</small></h1>
-  <p class="dek">Windows for Workgroups 3.11 boots inside this page. It pours a C file into Notepad, compiles it with Open Watcom, and the program it builds turns Notepad, Clock, Cardfile and Calculator into a Claude Code client. Everything you see and everything you type stays on your machine; only your words for Claude, and what Claude asks this Windows to do, cross the network.</p>
+  <p class="dek">Windows for Workgroups 3.11 boots inside this page. It pours two C files into Notepad, compiles them with Open Watcom, and the program it builds turns Notepad, Cardfile, Clock, Calculator, File Manager and Control Panel into a Claude Code suite, with five Cardfile cards for tabs. Everything you see and everything you type stays on your machine; only your words for Claude, and what Claude asks this Windows to do, cross the network.</p>
 </header>
 
 <main class="wrap">
@@ -83,22 +83,33 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; padding: 0 4px; b
     <div>
       <h2>How to use it</h2>
       <ul>
-        <li>Click the screen, then type: the letters go into Notepad's Find box, as real keystrokes.</li>
+        <li>Click the screen, then type: the letters go into Notepad's Find box, as real keystrokes. The mouse works too: Windows' own pointer follows yours.</li>
         <li><kbd>Enter</kbd> sends, <kbd>Esc</kbd> stops Claude, <kbd>&uarr;</kbd> <kbd>&darr;</kbd> recall, <kbd>PgUp</kbd> <kbd>PgDn</kbd> or the wheel scroll.</li>
-        <li><code>/help</code>, <code>/clear</code>, <code>/cost</code>. Reloading the page starts Windows afresh.</li>
-        <li>Try: write a C program that prints a multiplication table, compile it and run it.</li>
+        <li><kbd>Alt</kbd>+<kbd>1</kbd>&hellip;<kbd>5</kbd>, or a click on a card's header, changes card. On Files, <kbd>Ins</kbd> puts the selected file into your message as <code>@NAME</code>.</li>
+        <li><code>/help</code>, <code>/clear</code>, <code>/compact</code>, <code>/cost</code>. Reloading the page starts Windows afresh.</li>
+        <li>Try: plan and write a C program that prints a multiplication table, compile it and run it.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>The five cards</h2>
+      <ul>
+        <li><b>1 Chat</b>: Notepad's edit is the transcript; Notepad's own Find dialog, shorn of its options, is the input bar (Find Next is Send, Cancel is Stop).</li>
+        <li><b>2 Plan</b>: a second Notepad holds Claude's to-do list, which Claude keeps with a <code>todo_write</code> tool. Before a command or a file write, Windows asks you in a real message box: Yes runs it once, No allows that command from now on, Cancel refuses.</li>
+        <li><b>3 Files</b>: File Manager's directory window on <code>C:\B3\WORK</code>. A <code>CLAUDE.MD</code> there is read before each turn, as standing instructions.</li>
+        <li><b>4 Usage</b>: gauges drawn the way 3.1 Setup draws its progress bar: context used, your share of today's cap, everyone's share of the month's.</li>
+        <li><b>5 Settings</b>: Control Panel's Mouse dialog, relabelled. Its sliders set effort and answer length; its check boxes, asking before commands and Claude Sonnet 5.5 instead of Haiku 5.5.</li>
       </ul>
     </div>
     <div>
       <h2>What happens</h2>
-      <p>The page loads DOSBox-X compiled to WebAssembly (js-dos) and boots Windows for Workgroups 3.11 from a disk image. A small 16-bit program pours <code>BASILISK.C</code> into Notepad, saves it, and runs Open Watcom's compiler in a DOS window, all inside your browser, in about 20 seconds. The program it builds takes Notepad's edit for the transcript, Notepad's own Find dialog for the input bar, Clock, a Cardfile card for the status, and Calculator's display for the bill. Windows and the page pass notes through two files on its C: drive.</p>
+      <p>The page loads DOSBox-X compiled to WebAssembly (js-dos) and boots Windows for Workgroups 3.11 from a disk image. A small 16-bit program pours <code>BASILISK.C</code> and <code>PARTS.C</code> into Notepad, saves them, and runs Open Watcom's compiler in a DOS window, all inside your browser, in about half a minute. The program it builds then assembles the suite in about six seconds, one part at a time: Notepad fills the screen, Find becomes the input bar, Clock and Calculator's display join the right-hand column, Cardfile opens five cards and gives them up, and Notepad, File Manager and Control Panel arrive and go behind their cards.</p>
     </div>
     <div>
       <h2>What goes over the network</h2>
-      <p>When you press Enter, your sentence goes to a small server that talks to Claude (Haiku 5.5). Claude's reply streams back into Notepad; when Claude wants to run a DOS command or read or write a file, the request comes to this page and BASILISK.EXE does it inside your Windows. Nothing else leaves the page. The other version of this, <a href="basilisk-31.html">BASILISK 3.11</a>, runs on a server and streams its screen instead.</p>
+      <p>When you press Enter, your sentence goes to a small server that talks to Claude (Haiku 5.5 unless you pick Sonnet 5.5 on the Settings card). Claude's reply streams back into Notepad; when Claude wants to run a DOS command or read or write a file, the request comes to this page and BASILISK.EXE does it inside your Windows. Nothing else leaves the page. Windows and the page pass notes through two files on its C: drive, and your pointer travels the same way. The other version of this, <a href="basilisk-31.html">BASILISK 3.11</a>, runs on a server and streams its screen instead.</p>
     </div>
   </section>
-  <p class="credits">Windows for Workgroups 3.11 &copy; 1993 Microsoft, shown here as part of an art project. js-dos and DOSBox-X are GPL-licensed emulators (self-hosted copies). Open Watcom is open source. <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry/w31b">Source of this page and of BASILISK.C</a>.</p>
+  <p class="credits">Windows for Workgroups 3.11 &copy; 1993 Microsoft, shown here as part of an art project. js-dos and DOSBox-X are GPL-licensed emulators (self-hosted copies). Open Watcom is open source. <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry/w31suite">Source of the suite (BASILISK.C, PARTS.C, B3BOOT.C)</a> and <a href="https://github.com/williamsharkey/windows-secrets/tree/main/puppetry/w31b">of this page's server</a>.</p>
 </main>
 
 <nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">Windows Secrets</a><i>&middot;</i><a href="inside-windows.html">Inside Windows</a><i>&middot;</i><a href="tribute.html">Tribute</a><i>&middot;</i><a href="basilisk.html">BASILISK</a><i>&middot;</i><a href="basilisk-term.html">BASILISK III</a><i>&middot;</i><a href="basilisk-31.html">BASILISK 3.11</a><i>&middot;</i><b>3.11 in your browser</b><i>&middot;</i><a href="valentine-xp.html">XP Valentine</a><i>&middot;</i><a href="valentine-31.html">Valentine 3.11</a><i>&middot;</i><a href="puppetry.html">Window Puppetry</a><i>&middot;</i><a href="xp-live.html">Live</a><i>&middot;</i><a href="basilisk-download.html">Download</a></nav>
@@ -107,7 +118,9 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; padding: 0 4px; b
 <script>
 (function () {
 const ASSETS = 'basilisk-31-browser/';
-const SERVER = (location.search.includes('local') ? 'ws://127.0.0.1:8785' : 'wss://live.williamsharkey.com/w31b') + '/ws';
+const Q = new URLSearchParams(location.search);
+const SERVER = Q.get('ws') || ((Q.has('local') ? 'ws://127.0.0.1:8785' : 'wss://live.williamsharkey.com/w31b') + '/ws');
+const BUNDLE = /^[\w.-]+\.jsdos$/.test(Q.get('bundle') || '') ? Q.get('bundle') : 'w31.jsdos';
 const $ = (id) => document.getElementById(id);
 const screen = $('screen'), canvas = $('c'), g = canvas.getContext('2d');
 let ci = null, FS = null, phase = 'off', busy = false, ready = false;
@@ -177,17 +190,30 @@ function streamEnd() { if (streaming) out('\n'); streaming = false; }
 function banner() {
   out('BASILISK 3.11  -  Claude Code for Windows for Workgroups 3.11\n');
   out('==============================================================\n\n');
-  para('Assembled a moment ago from Notepad, Clock, Cardfile and Calculator, compiled by Open Watcom from a Notepad file. This Windows is running inside your web browser.', '  ', '  ');
+  para('Assembled a moment ago from Notepad, Cardfile, Clock, Calculator, File Manager and Control Panel, compiled by Open Watcom from two Notepad files. This Windows is running inside your web browser.', '  ', '  ');
+  out('\n');
+  para('Cards (Alt+1..5, or click one): 1 Chat, 2 Plan, 3 Files, 4 Usage, 5 Settings. The mouse works.', '  ', '  ');
   out('\n');
   para('Ask it to look around, write a file, or write and compile a C program. Enter sends. Esc interrupts. Up/Down recall. PgUp/PgDn scroll. /help', '  ', '  ');
   out('\n');
 }
 
 /* ---------------------------------------------------------------- the conversation */
-let sock = null, usage = { tin: 0, tout: 0, usd: 0 }, hist = [], hi = 0, thinking = false;
-function status(doing) {
-  toWin('S', ['model   claude-haiku-5-5', 'tokens  ' + usage.tin.toLocaleString() + ' in, ' + usage.tout.toLocaleString() + ' out',
-    'cost    $' + usage.usd.toFixed(5) + '  (see Calculator)', 'cwd     C:\\B3\\WORK', '', 'now     ' + (doing || 'ready')].join('\r\n'));
+let sock = null, usage = { tin: 0, tout: 0, usd: 0, ctx: 0, ctxmax: 1000000, day: 0, daycap: 1, month: 0, monthcap: 10, model: 'claude-haiku-5-5', effort: 'low', turns: 0, cached: 0 };
+let hist = [], hi = 0, thinking = false, tab = 'Chat';
+const MODELNAME = { 'claude-haiku-5-5': 'Claude Haiku 5.5', 'claude-sonnet-5-5': 'Claude Sonnet 5.5' };
+const e5 = (x) => String(Math.round((x || 0) * 1e5));
+function status(doing) {     /* the Usage card, the gauges and the bill (once BASILISK.EXE is up) */
+  if (!ready) return;
+  const now = doing || 'ready';
+  toWin('S', [MODELNAME[usage.model] || usage.model, 'effort ' + usage.effort + ', turn ' + usage.turns,
+    usage.tin.toLocaleString() + ' tokens in, ' + usage.tout.toLocaleString() + ' out', '$' + usage.usd.toFixed(5) + ' (see Calculator)',
+    '', 'now: ' + now].join('\r\n'));
+  toWin('N', [usage.ctx, usage.ctxmax, e5(usage.day), e5(usage.daycap), e5(usage.month), e5(usage.monthcap),
+    'Model: ' + (MODELNAME[usage.model] || usage.model) + ', effort ' + usage.effort + '~' +
+    'This session: ' + usage.turns + ' turns, ' + usage.tin.toLocaleString() + ' tokens in (' + usage.cached.toLocaleString() + ' read from cache), ' +
+    usage.tout.toLocaleString() + ' out, $' + usage.usd.toFixed(5) + '~' +
+    'Caps: $' + usage.daycap.toFixed(2) + ' a day for you, $' + usage.monthcap.toFixed(2) + ' a month for everyone.~/compact shrinks the context; /clear empties it.~~Now: ' + now].join('|'));
   toWin('C', '$' + usage.usd.toFixed(5) + ' ');
 }
 function thinkOn() { if (!thinking) { out('  (thinking...)'); thinking = true; } }
@@ -195,6 +221,7 @@ function thinkOff() { if (thinking) { toWin('B', String('  (thinking...)'.length
 function setBusy(b) { busy = b; toWin('Y', b ? '1' : '0'); render(); }
 
 function connect() {
+  if (sock) return;
   sock = new WebSocket(SERVER);
   sock.onopen = () => render();
   sock.onclose = () => { sock = null; if (busy) { thinkOff(); streamEnd(); para('(The line to Claude dropped. Try again.)', BUL + ' '); setBusy(false); status('ready'); } render(); setTimeout(connect, 2500); };
@@ -203,14 +230,28 @@ function connect() {
     if (m.t === 'begin') { thinkOff(); streamStart(); }
     else if (m.t === 'text') { thinkOff(); if (!streaming) streamStart(); stream(m.d); }
     else if (m.t === 'end') { streamEnd(); thinkOn(); }
-    else if (m.t === 'tool') { thinkOff(); streamEnd(); runTool(m); }
-    else if (m.t === 'usage') { usage = { tin: m.tin, tout: m.tout, usd: m.usd }; status(busy ? 'thinking' : 'ready'); }
+    else if (m.t === 'tool') { if (m.quiet) { quietTool(m); return; } thinkOff(); streamEnd(); runTool(m); }
+    else if (m.t === 'usage') { Object.assign(usage, m); status(busy ? 'thinking' : 'ready'); }
+    else if (m.t === 'plan') { thinkOff(); streamEnd(); plan(m.items || []); thinkOn(); }
+    else if (m.t === 'ask') { thinkOff(); streamEnd(); para('May Claude ' + (/^write the file/.test(m.title) ? '' : 'run ') + m.title + '? (asking in Windows)', BUL + ' ', '    '); status('asking you'); toWin('J', '1'); toWin('I', m.id, m.title); }
     else if (m.t === 'note') { thinkOff(); streamEnd(); para(m.text, BUL + ' '); }
     else if (m.t === 'done') { thinkOff(); streamEnd(); out('\n'); setBusy(false); status('ready'); toWin('V', 'E'); }
   };
 }
 function send(o) { if (sock && sock.readyState === 1) sock.send(JSON.stringify(o)); }
 
+const MARK = { done: '[x] ', in_progress: '[>] ', pending: '[ ] ' };
+function plan(items) {
+  const lines = items.map((it) => (MARK[it.status] || '[ ] ') + it.text);
+  toWin('L', lines.join('\r\n'));
+  const doing = items.find((it) => it.status === 'in_progress');
+  para('Plan: ' + items.filter((it) => it.status === 'done').length + ' of ' + items.length + ' done' + (doing ? '; now ' + doing.text : '') + ' (card 2)', BUL + ' ', '    ');
+}
+const quiet = {};
+function quietTool(m) {          /* CLAUDE.MD, read before a turn: not shown */
+  quiet[m.id] = 1;
+  toWin('G', m.id, m.input.path);
+}
 const pendingTools = {};
 function runTool(m) {
   para(m.title, BUL + ' ', '    ');
@@ -222,6 +263,7 @@ function runTool(m) {
   else toWin('W', m.id, m.input.path, m.input.content.replace(/\r?\n/g, '\r\n'));
 }
 function toolResult(id, st, text) {
+  if (quiet[id]) { delete quiet[id]; send({ t: 'result', id, status: st, text }); return; }
   const m = pendingTools[id]; delete pendingTools[id];
   text = (text || '').replace(/\r\n/g, '\n').replace(/[\n\x1a]+$/, '');
   const lines = text.split('\n').filter((l) => l.trim());
@@ -243,8 +285,13 @@ function submit(text) {
   para(text, '', '  ');
   if (text[0] === '/') {
     const cmd = text.split(/\s+/)[0].toLowerCase();
-    if (cmd === '/help') para('Type a request and press Enter. BASILISK can run DOS commands, read and write files, and compile C with Open Watcom. Keys: Esc interrupts, Up/Down recall, PgUp/PgDn scroll. Commands: /help, /clear (forget the conversation), /cost.', BUL + ' ');
-    else if (cmd === '/clear') { send({ t: 'clear' }); toWin('K'); banner(); para('Conversation cleared.', BUL + ' '); }
+    if (cmd === '/help') para('Type a request and press Enter. BASILISK can run DOS commands, read and write files, and compile C with Open Watcom. Keys: Esc interrupts, Up/Down recall, PgUp/PgDn scroll, Alt+1..5 (or a click on a card) changes card: 1 Chat, 2 Plan, 3 Files (Ins mentions the selected file), 4 Usage, 5 Settings. Commands: /help, /clear (forget the conversation), /compact (Claude summarizes it, to save context), /cost, /plan, /files, /usage, /settings.', BUL + ' ');
+    else if (cmd === '/clear') { send({ t: 'clear' }); toWin('K'); toWin('L', ''); banner(); para('Conversation cleared.', BUL + ' '); }
+    else if (cmd === '/compact') {
+      if (!sock || sock.readyState !== 1) para('The line to Claude is not connected right now.', BUL + ' ');
+      else { para('Compacting: Claude is summarizing the conversation so far...', BUL + ' '); setBusy(true); status('compacting'); send({ t: 'compact' }); return; }
+    }
+    else if ({ '/plan': 1, '/files': 1, '/usage': 1, '/settings': 1 }[cmd]) toWin('J', String({ '/plan': 2, '/files': 3, '/usage': 4, '/settings': 5 }[cmd]));
     else if (cmd === '/cost') para('This session: ' + usage.tin.toLocaleString() + ' tokens in, ' + usage.tout.toLocaleString() + ' out, $' + usage.usd.toFixed(5) + '.', BUL + ' ');
     else para('Unknown command. Try /help.', BUL + ' ');
     out('\n');
@@ -259,16 +306,32 @@ function submit(text) {
 }
 
 function fromWin(type, p) {
-  if (type === 'H' && p[0] === 'boot') { helloSeen = true; phase = 'building'; setStatus('<b>Building.</b> Notepad, the source, Save As, Open Watcom&hellip;', 'busy'); toWin('G'); }
-  else if (type === 'S' && phase === 'building') { setStatus('<b>Building:</b> ' + clean(p[0]) + '&hellip;', 'busy'); }
-  else if (type === 'E') { setStatus('<b>The build stopped:</b> ' + clean(p[0]) + '. Reload to try again.', ''); }
+  if (type === 'H' && p[0] === 'boot') { helloSeen = true; phase = 'building'; if (!sock) connect(); setStatus('<b>Building.</b> Notepad, the source, Save As, Open Watcom&hellip;', 'busy'); toWin('G'); }
+  else if (type === 'S' && phase === 'building') { const st = clean(p[0]).replace(/ \d+$/, ''); setStatus((/^(notepad|typing|saving|compiling|running)$/.test(st) ? '<b>Building:</b> ' : '<b>Assembling:</b> ') + st + '&hellip;', 'busy'); }
+  else if (type === 'E' && !ready && !/\|/.test(p[0] || '')) { setStatus('<b>The build stopped:</b> ' + clean(p[0]) + '. Reload to try again.', ''); }
   else if (type === 'R' && p[0] === 'assembled') {
     phase = 'ready'; ready = true; buildT = (performance.now() - t0) / 1000;
     banner(); status('ready'); render();
     toWin('F');
   }
   else if (type === 'U') submit(p[0] || '');
+  else if (type === 'J') { tab = p[0] || 'Chat'; render(); }
+  else if (type === 'E') settingsFromWin(p[0] || '');
+  else if (type === 'I' && p[1] && p[1] !== 'asking') {
+    send({ t: 'perm', id: p[0], answer: p[1] });
+    out('  | ' + ({ once: 'yes, this once', always: 'yes, and from now on', deny: 'no' }[p[1]] || p[1]) + '\n');
+    if (p[1] !== 'deny') thinkOn();
+  }
   else if (type === 'O') toolResult(p[0], p[1], p.slice(2).join(' '));
+}
+
+let settingsNow = '';
+function settingsFromWin(v) {      /* Settings card: effort|length|ask|model, from the Mouse applet's controls */
+  const [effort, length, ask, model] = v.split('|');
+  if (!effort) return;
+  send({ t: 'settings', effort, length, ask, model });
+  if (ready && settingsNow && settingsNow !== v) para('Settings: effort ' + effort + ', ' + length + ' answers, ' + (ask === 'ask' ? 'asks before running commands' : 'runs commands without asking') + ', ' + (model === 'sonnet' ? 'Claude Sonnet 5.5' : 'Claude Haiku 5.5') + '.', BUL + ' ');
+  settingsNow = v;
 }
 
 /* ---------------------------------------------------------------- keys */
@@ -295,9 +358,18 @@ function press(code, shift, ctrl) {
   if (ctrl) ci.sendKeyEvent(CTRL, false);
 }
 const OURS = ['Enter', 'Escape', 'PageUp', 'PageDown', 'ArrowUp', 'ArrowDown', 'Tab'];
+const RAW = { Enter: 257, Escape: 256, Tab: 258, PageUp: 266, PageDown: 267, ArrowUp: 265, ArrowDown: 264 };
 function onKey(e, down) {
   if (!ready || e.isComposing) return;
-  if (!down) { if (e.key.length === 1 || e.key in NAMED || OURS.includes(e.key)) e.preventDefault(); return; }
+  if (!down) { if (e.key.length === 1 || e.key in NAMED || OURS.includes(e.key) || (e.altKey && /^[1-5]$/.test(e.key))) e.preventDefault(); return; }
+  if (e.altKey && /^Digit[1-5]$/.test(e.code)) { e.preventDefault(); toWin('J', e.code.slice(5)); return; }
+  if (tab === 'Files' && e.key === 'Insert') { e.preventDefault(); toWin('@'); return; }
+  if (tab !== 'Chat' && OURS.includes(e.key)) {        /* other cards: the keys go to the program on show */
+    e.preventDefault();
+    if (e.key === 'Escape' && busy) { send({ t: 'int' }); toWin('X'); return; }
+    press(RAW[e.key], e.shiftKey, e.ctrlKey);
+    return;
+  }
   if (OURS.includes(e.key)) {
     e.preventDefault();
     if (e.key === 'Enter') { if (!busy) toWin('Z'); }
@@ -322,7 +394,37 @@ screen.addEventListener('keydown', (e) => onKey(e, true));
 screen.addEventListener('keyup', (e) => onKey(e, false));
 screen.addEventListener('paste', (e) => { if (!ready) return; const t = (e.clipboardData || window.clipboardData).getData('text'); if (t) { e.preventDefault(); toWin('P', t.replace(/[\r\n\t]+/g, ' ').slice(0, 900)); } });
 let wheel = 0;
-screen.addEventListener('wheel', (e) => { if (!ready) return; e.preventDefault(); wheel += e.deltaMode === 1 ? e.deltaY : e.deltaY / 40; const n = Math.trunc(wheel); if (n) { wheel -= n; toWin('V', String(n)); } }, { passive: false });
+screen.addEventListener('wheel', (e) => { if (!ready) return; e.preventDefault(); wheel += e.deltaMode === 1 ? e.deltaY : e.deltaY / 40; const n = Math.trunc(wheel); if (n) { wheel -= n; toWin('w', String(n)); } }, { passive: false });
+/* the mouse: BASILISK.EXE puts Windows' own pointer where yours is and clicks there (M x|y|button|down) */
+let mx = -1, my = -1, mSent = 0, mTimer = 0, mDown = 0;
+function mpos(e) {
+  const r = canvas.getBoundingClientRect();
+  return [Math.max(0, Math.min(canvas.width - 1, Math.round((e.clientX - r.left) * canvas.width / r.width))),
+          Math.max(0, Math.min(canvas.height - 1, Math.round((e.clientY - r.top) * canvas.height / r.height)))];
+}
+function mflush() { mTimer = 0; mSent = performance.now(); toWin('M', mx + '|' + my + '|0|0'); }
+canvas.addEventListener('pointermove', (e) => {
+  if (!ready) return;
+  const [x, y] = mpos(e);
+  if (x === mx && y === my) return;
+  mx = x; my = y;
+  const gap = performance.now() - mSent, every = mDown ? 40 : 90;
+  if (gap >= every) mflush(); else if (!mTimer) mTimer = setTimeout(mflush, every - gap);
+});
+canvas.addEventListener('pointerdown', (e) => {
+  if (!ready || e.button > 2 || e.button === 1) return;
+  e.preventDefault(); canvas.setPointerCapture(e.pointerId);
+  [mx, my] = mpos(e); mDown = 1;
+  if (mTimer) { clearTimeout(mTimer); mTimer = 0; }
+  toWin('M', mx + '|' + my + '|' + (e.button === 2 ? 2 : 1) + '|1');
+});
+canvas.addEventListener('pointerup', (e) => {
+  if (!ready || e.button > 2 || e.button === 1) return;
+  [mx, my] = mpos(e); mDown = 0;
+  if (mTimer) { clearTimeout(mTimer); mTimer = 0; }
+  toWin('M', mx + '|' + my + '|' + (e.button === 2 ? 2 : 1) + '|0');
+});
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 screen.addEventListener('mousedown', () => setTimeout(() => screen.focus(), 0));
 screen.addEventListener('focus', render); screen.addEventListener('blur', render);
 $('ttgo').onclick = () => { const v = $('tt').value; if (v && ready && !busy) { toWin('T', v); toWin('Z'); $('tt').value = ''; } };
@@ -333,7 +435,8 @@ let t0 = 0, buildT = 0, bootT = 0, helloSeen = false, bundleBytes = null, tries 
 function render() {
   screen.classList.toggle('on', ready && document.activeElement === screen);
   $('touch').classList.toggle('on', ready);
-  if (ready) setStatus(busy ? '<b>Claude is working.</b> Esc stops it.' : (document.activeElement === screen ? '<b>Ready.</b> Type into the Find box; Enter sends.' : '<b>Ready.</b> Click the screen to type.'), busy ? 'busy' : 'ok');
+  canvas.style.cursor = ready ? 'none' : '';
+  if (ready) setStatus(busy ? '<b>Claude is working.</b> Esc stops it.' : (document.activeElement === screen ? (tab === 'Chat' ? '<b>Ready.</b> Type into the Find box; Enter sends. Alt+1..5 changes card.' : '<b>Card: ' + tab + '.</b> Alt+1 (or the Chat card) returns to the chat.') : '<b>Ready.</b> Click the screen to type.'), busy ? 'busy' : 'ok');
   $('meta').textContent = ready ? ('booted in ' + bootT.toFixed(1) + ' s, built in ' + buildT.toFixed(1) + ' s' + (sock ? '' : ' \u00b7 connecting to Claude\u2026')) : '';
 }
 async function fetchWithProgress(url, onp) {
@@ -348,7 +451,7 @@ async function fetchWithProgress(url, onp) {
 async function boot() {
   $('vtext').textContent = 'Starting DOSBox-X\u2026';
   helloSeen = false; jsOff = 0; towin = ''; tries++;
-  if (ci) { try { await ci.exit(); } catch (e) {} ci = null; }
+  if (ci) { try { await Promise.race([ci.exit(), new Promise((r) => setTimeout(r, 3000))]); } catch (e) {} ci = null; }
   ci = await emulators.dosboxXDirect(bundleBytes);
   FS = ci.transport.module.FS;
   let img = null;
@@ -373,18 +476,18 @@ async function start() {
   let wasmP = 0, bundleP = 0;
   const upd = () => { $('vfill').style.width = Math.round((wasmP * 0.4 + bundleP * 0.6) * 100) + '%'; };
   fetch(ASSETS + 'wdosbox-x.wasm').then(async (r) => { const t = +r.headers.get('content-length') || 1; const rd = r.body.getReader(); let got = 0; for (;;) { const { done, value } = await rd.read(); if (done) break; got += value.length; wasmP = Math.min(1, got / t); upd(); } }).catch(() => {});
-  const bundle = await fetchWithProgress(ASSETS + 'w31.jsdos', (f) => { bundleP = f; upd(); });
+  const bundle = await fetchWithProgress(ASSETS + BUNDLE + '?v=suite1', (f) => { bundleP = f; upd(); });
   bundleBytes = bundle;
   await boot();
   $('veil').hidden = true;
   setStatus('<b>Booting</b> Windows for Workgroups 3.11&hellip;', 'busy');
   bootT = 0;
   (function loop() { pollWin(); if (!bootT && phase !== 'off') bootT = (performance.now() - t0) / 1000; setTimeout(loop, 30); })();
-  connect();
+  /* the line to Claude opens once Windows has said hello (nothing touches the emulator's files before that) */
   screen.focus();
 }
 $('go').onclick = start;
-window.b311 = { toWin: (...a) => toWin(...a), state: () => ({ phase, ready, busy, bootT, buildT, usage }),
+window.b311 = { toWin: (...a) => toWin(...a), state: () => ({ phase, ready, busy, bootT, buildT, usage, tab }),
   files: () => { const r = (f) => { try { return Array.from(FS.readFile(f)).map((c) => String.fromCharCode(c)).join(''); } catch (e) { return '(' + e + ')'; } }; return { towin: r('B3/TOWIN.TXT').slice(-300), tojs: r('B3/TOJS.TXT').slice(-300) }; } };
 })();
 </script>

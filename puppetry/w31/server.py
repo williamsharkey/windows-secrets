@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-"""BASILISK 3.11 - Claude Code on Windows for Workgroups 3.11, assembled from Terminal, Clock and Cardfile.
+"""BASILISK 3.11 - Claude Code on Windows for Workgroups 3.11, a suite assembled from Terminal, Cardfile, Clock,
+Calculator, Notepad, File Manager and Control Panel (puppetry/w31suite: five Cardfile cards are the tabs -
+Chat, Plan, Files, Usage, Settings).
 
 The machine: DOSBox-X (snap) running WfW 3.11 on a private Xvfb :31, its C: drive a directory that is
 restored from a golden copy before every session.  Two null-modem serial lines come back here over TCP:
@@ -22,12 +24,13 @@ from collections import deque
 
 from aiohttp import web, WSMsgType
 
-ROOT = '/root/w31'
+ROOT = os.environ.get('W31_ROOT', '/root/w31')
 DATA = os.path.join(ROOT, 'data')
-SNAPC = '/root/snap/dosbox-x/common/w31'
+SNAPC = os.environ.get('W31_SNAPC', '/root/snap/dosbox-x/common/w31')
 RUN = os.path.join(SNAPC, 'run')
 GOLDEN = os.path.join(ROOT, 'golden')
-DBX = os.path.join(ROOT, 'dbx.sh')
+DBX = os.environ.get('W31_DBX', os.path.join(ROOT, 'dbx.sh'))
+XDISPLAY = os.environ.get('W31_DISPLAY', ':31')
 os.makedirs(DATA, exist_ok=True)
 
 DEFAULTS = {
@@ -45,7 +48,14 @@ DEFAULTS = {
     'W31_IP_USD_DAY': '1.00',
     'W31_QUEUE_MAX': '20',
     'W31_ONE_PER_IP': '1',       # one place (driving or in line) per address
+    'W31_MODELS': 'claude-haiku-5-5,claude-sonnet-5-5',
 }
+CONTEXT = {'claude-haiku-5-5': 1000000, 'claude-sonnet-5-5': 1000000}
+EFFORTS = ('low', 'medium', 'high', 'xhigh', 'max')
+LENGTHS = {'brief': 'Keep this answer very short: one to three sentences unless a tool result must be shown.',
+           'normal': '',
+           'full': 'Be thorough in this answer: explain your reasoning and what you did.'}
+SAFE = ('DIR', 'TYPE', 'VER', 'MEM', 'SET', 'TREE', 'FIND', 'ECHO')
 PRICES = {'claude-haiku-5-5': (0.10, 0.50), 'claude-sonnet-5-5': (2.00, 10.00)}
 _env = {}
 
@@ -160,6 +170,9 @@ class Limits:
 
     def turn_note(self, ip):
         self.turns.setdefault(ip, deque()).append((time.time(), 1))
+
+    def usd_today(self, ip):
+        return sum(x for _, x in self._trim(self.usd.setdefault(ip, deque()), 86400))
 
     def usd_note(self, ip, usd):
         self.usd.setdefault(ip, deque()).append((time.time(), usd))
@@ -442,6 +455,13 @@ timeout. Windows programs can't be started from run_command.
 output captured; a Windows .EXE can be built but not launched by you.
 - The machine is reset for every visitor, so nothing you do persists.
 
+The screen is a tabbed suite made of real Windows 3.1 programs; the tabs are Cardfile cards: 1 Chat (this \
+Terminal), 2 Plan (a Notepad showing your plan: keep it with todo_write for any task of three or more steps, \
+marking one item in_progress at a time and items done as you finish them), 3 Files (File Manager on C:\\B3\\WORK; \
+the visitor can mention a file as @NAME; C:\\B3\\WORK\\CLAUDE.MD, if it exists, holds standing instructions and \
+is given to you when it changes), 4 Usage, 5 Settings. The visitor may set Windows to ask before your commands \
+run and may say no; if a tool result says the visitor declined, don't retry it, ask what they'd like instead.
+
 How to answer: this is a terminal, so plain text only. No markdown: no headings, no bold or italics, no tables, no \
 code fences (show code by writing it to a file, then mention the file). Short paragraphs, lines that read well at \
 80 columns, '-' for bullets. Be brief and do the work with tools rather than describing it. ASCII only. When the \
@@ -458,6 +478,14 @@ TOOLS = [
      'description': 'Read a text file (first 3500 characters). Relative paths are under C:\\B3\\WORK.',
      'input_schema': {'type': 'object', 'properties': {'path': {'type': 'string'}},
                       'required': ['path'], 'additionalProperties': False}},
+    {'name': 'todo_write', 'eager_input_streaming': True,
+     'description': 'Replace your plan (shown on the Plan card in Windows) with this list. Use it for tasks with '
+                    'three or more steps; keep exactly one item in_progress while working.',
+     'input_schema': {'type': 'object', 'properties': {'items': {'type': 'array', 'maxItems': 12, 'items': {
+         'type': 'object', 'properties': {'text': {'type': 'string'},
+                                          'status': {'type': 'string', 'enum': ['pending', 'in_progress', 'done']}},
+         'required': ['text', 'status'], 'additionalProperties': False}}},
+                      'required': ['items'], 'additionalProperties': False}},
     {'name': 'write_file', 'eager_input_streaming': True,
      'description': 'Create or overwrite a text file (up to 6000 characters, DOS line endings are added). '
                     'Relative paths are under C:\\B3\\WORK.',
@@ -489,6 +517,14 @@ def valid(name, inp):
     elif name == 'read_file':
         if not isinstance(inp.get('path'), str) or not inp['path'].strip():
             return 'path must be a non-empty string'
+    elif name == 'todo_write':
+        items = inp.get('items')
+        if not isinstance(items, list) or len(items) > 12:
+            return 'items must be a list of at most 12'
+        for it in items:
+            if not isinstance(it, dict) or not isinstance(it.get('text'), str) or \
+                    it.get('status') not in ('pending', 'in_progress', 'done'):
+                return 'each item needs text and a status of pending, in_progress or done'
     elif name == 'write_file':
         if not isinstance(inp.get('path'), str) or not inp['path'].strip() or not isinstance(inp.get('content'), str):
             return 'path and content must be strings'
@@ -504,6 +540,8 @@ def tool_title(name, inp):
         return 'Run(%s)' % inp.get('command', '')
     if name == 'read_file':
         return 'Read(%s)' % inp.get('path', '')
+    if name == 'todo_write':
+        return 'Plan(%d items)' % len(inp.get('items') or [])
     return 'Write(%s)' % inp.get('path', '')
 
 
@@ -552,7 +590,7 @@ class Machine:
         self.last_key = 0
         self.task = None           # current agent turn
         self.messages = []
-        self.usage = {'in': 0, 'out': 0, 'usd': 0.0}
+        self.fresh()
         self.changed = asyncio.Event()
         self.step = ''
         self.build_t = 0
@@ -565,6 +603,17 @@ class Machine:
                 f.write(secrets.token_hex(16))
             os.chmod(tok, 0o600)
         self.admin_token = open(tok).read().strip()
+
+    def fresh(self):
+        """a new visitor: a new conversation, default settings, nothing allowed yet"""
+        self.messages = []
+        self.usage = {'in': 0, 'out': 0, 'usd': 0.0, 'ctx': 0, 'cached': 0, 'turns': 0}
+        self.set = {'effort': cfg('W31_EFFORT'), 'length': 'normal', 'ask': True, 'model': cfg('W31_MODEL')}
+        self.allowed, self.allow_writes = set(), False
+        self.claude_md = None
+        self.asks = {}
+        self.tab = 'Chat'
+        self.mention = ''
 
     def set_phase(self, p):
         if p != self.phase:
@@ -591,12 +640,41 @@ class Machine:
                     fut.set_result(rest)
                 else:
                     self.events.put_nowait(('O', p))
+            elif t in 'JI@' or (t == 'E' and '|' in p):
+                self.on_client(t, p)
             else:
                 if t == 'S':
                     self.step = p
                     self.changed.set()
                 log('COM2 %s %s' % (t, p[:120]))
                 self.events.put_nowait((t, p))
+
+    def on_client(self, t, p):
+        """what BASILISK.EXE reports while live: the card in front, settings, permission answers, a mention"""
+        if t == 'J':
+            self.tab = p or 'Chat'
+            self.changed.set()
+        elif t == 'E':
+            effort, length, ask, model = (p.split('|') + ['', '', '', ''])[:4]
+            old = dict(self.set)
+            if effort in EFFORTS:
+                self.set['effort'] = effort
+            if length in LENGTHS:
+                self.set['length'] = length
+            self.set['ask'] = ask != 'auto'
+            want = 'claude-sonnet-5-5' if model == 'sonnet' else cfg('W31_MODEL')
+            self.set['model'] = want if want in [x.strip() for x in cfg('W31_MODELS').split(',')] else cfg('W31_MODEL')
+            if self.phase == 'live' and old != self.set:
+                self.usage_card()
+        elif t == 'I':
+            aid, _, answer = p.partition('\x1f')
+            fut = self.asks.get(aid)
+            if fut and not fut.done() and answer in ('once', 'always', 'deny'):
+                fut.set_result(answer)
+        elif t == '@' and self.phase == 'live':
+            self.tui.prompt_on = not (self.task and not self.task.done())
+            self.tui.paste(p)
+            self.send2('J', '1')
 
     def send2(self, t, payload=''):
         b = t.encode() + cp(payload).replace(EOT, b'?') + EOT
@@ -684,7 +762,7 @@ class Machine:
         can't repaint, so X would show black after the next expose)"""
         if self.frozen:
             return
-        env = dict(os.environ, DISPLAY=':31')
+        env = dict(os.environ, DISPLAY=XDISPLAY)
         try:
             subprocess.run(['import', '-window', 'root', self.STILL], env=env, timeout=10,
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -743,8 +821,9 @@ class Machine:
         except asyncio.TimeoutError:
             raise RuntimeError('build timed out at %s' % self.step)
         log('built in %.1fs' % (time.time() - self.build_t))
-        self.messages = []
-        self.usage = {'in': 0, 'out': 0, 'usd': 0.0}
+        keep = dict(self.set)
+        self.fresh()
+        self.set = keep                      # the Settings card already reported itself
         self.status()
         await asyncio.sleep(0.3)
         self.banner()
@@ -757,34 +836,49 @@ class Machine:
         t.out('\x1b[7m' + ' BASILISK 3.11 '.ljust(W - 1) + '\x1b[0m\n')
         t.out('\n')
         t.out('  Claude Code, for Windows for Workgroups 3.11.\n')
-        t.out('  Assembled just now from Terminal, Clock, Cardfile and Calculator,\n')
-        t.out('  compiled by Open Watcom from a Notepad file.\n')
-        t.out('  model: %s    cwd: C:\\B3\\WORK\n' % cfg('W31_MODEL'))
+        t.out('  Assembled just now from Terminal, Cardfile, Clock, Calculator, Notepad,\n')
+        t.out('  File Manager and Control Panel; compiled by Open Watcom from Notepad files.\n')
+        t.out('  model: %s    cwd: C:\\B3\\WORK\n' % self.NAMES.get(self.set['model'], self.set['model']))
         t.out('\n')
-        t.out('  Ask it to look around, write a file, or write and compile a C program.\n')
+        t.out('  Cards: 1 Chat  2 Plan  3 Files  4 Usage  5 Settings  (Alt+1..5, or click one)\n')
         t.out('  Enter sends.  Esc interrupts.  Up/Down recalls.  PgUp/PgDn scroll.  /help\n')
         t.out('\n')
 
+    NAMES = {'claude-haiku-5-5': 'Claude Haiku 5.5', 'claude-sonnet-5-5': 'Claude Sonnet 5.5'}
+
     def status(self, doing=None):
+        """the Usage card's words, its gauges, and Calculator's bill"""
         if doing is not None:
             self.doing = doing
-        u = self.usage
-        lines = ['model   %s' % cfg('W31_MODEL'),
-                 'tokens  %s in, %s out' % (f"{u['in']:,}", f"{u['out']:,}"),
-                 'cost    $%.5f  (see Calculator)' % u['usd'],
-                 'cwd     C:\\B3\\WORK', '',
-                 'now     ' + (getattr(self, 'doing', '') or 'ready')]
+        u, st = self.usage, self.set
+        name = self.NAMES.get(st['model'], st['model'])
+        now = getattr(self, 'doing', '') or 'ready'
+        lines = [name, 'effort %s, turn %d' % (st['effort'], u['turns']),
+                 '%s tokens in, %s out' % (f"{u['in']:,}", f"{u['out']:,}"),
+                 '$%.5f (see Calculator)' % u['usd'], '', 'now: ' + now]
+        left = ''
         if self.driver and self.queue:
-            left = max(0, int(self.lease_start + cfgf('W31_LEASE') - time.time()))
-            lines.append('time    %d:%02d left (someone waits)' % divmod(left, 60))
+            left = '%d:%02d left (someone waits)' % divmod(max(0, int(self.lease_start + cfgf('W31_LEASE') - time.time())), 60)
+            lines.append(left)
         self.send2('S', '\r\n'.join(lines))
+        ip = self.driver.ip if self.driver else ''
+        e5 = lambda x: str(int(round((x or 0) * 1e5)))
+        text = ('Model: %s, effort %s~This session: %d turns, %s tokens in (%s read from cache), %s out, $%.5f~'
+                'Caps: $%.2f a day for you, $%.2f a month for everyone.~/compact shrinks the context; /clear empties it.~~'
+                'Now: %s%s') % (name, st['effort'], u['turns'], f"{u['in']:,}", f"{u['cached']:,}", f"{u['out']:,}", u['usd'],
+                                cfgf('W31_IP_USD_DAY'), cfgf('W31_MONTHLY_CAP_USD'), now, ('~' + left) if left else '')
+        self.send2('N', '|'.join([str(u['ctx']), str(CONTEXT.get(st['model'], 1000000)), e5(LIMITS.usd_today(ip)),
+                                  e5(cfgf('W31_IP_USD_DAY')), e5(BUDGET.spent()), e5(cfgf('W31_MONTHLY_CAP_USD')), text]))
         self.send2('C', '$%.5f ' % u['usd'])
+
+    def usage_card(self):
+        self.status()
 
     # ---- sessions --------------------------------------------------------------------
     def public(self, s=None):
         st = {'t': 'state', 'phase': self.phase, 'since': self.phase_t, 'now': time.time(),
               'viewers': len(self.sessions), 'queue': len(self.queue), 'step': self.step,
-              'busy': bool(self.task and not self.task.done()), 'model': cfg('W31_MODEL'),
+              'busy': bool(self.task and not self.task.done()), 'model': self.set['model'], 'tab': self.tab,
               'quiet': BUDGET.over() or not cfg('ANTHROPIC_API_KEY')}
         if self.driver and self.queue:
             st['lease_left'] = max(0, int(self.lease_start + cfgf('W31_LEASE') - time.time()))
@@ -889,6 +983,13 @@ class Machine:
         if s is not self.driver or self.phase != 'live':
             return
         self.last_key = time.time()
+        if k in ('Alt1', 'Alt2', 'Alt3', 'Alt4', 'Alt5'):
+            self.send2('J', k[3])
+            return
+        if k == 'Insert':
+            if self.tab == 'Files':
+                self.send2('@')
+            return
         if k == 'Escape':
             if self.task and not self.task.done():
                 self.task.cancel()
@@ -911,7 +1012,13 @@ class Machine:
     def scroll(self, s, n):
         if s is self.driver and self.phase == 'live':
             self.last_key = time.time()
-            self.send2('V', ('%+d' % max(-30, min(30, int(n)))))
+            self.send2('w', ('%+d' % max(-30, min(30, int(n)))))
+
+    def mouse(self, s, x, y, b, d):
+        """the driver's pointer: BASILISK.EXE moves Windows' own cursor and clicks there"""
+        if s is self.driver and self.phase == 'live':
+            self.last_key = time.time()
+            self.send2('M', '%d|%d|%d|%d' % (max(0, min(1023, int(x))), max(0, min(767, int(y))), int(b) % 3, 1 if d else 0))
 
     def paste(self, s, text):
         if s is self.driver and self.phase == 'live' and isinstance(text, str):
@@ -925,6 +1032,12 @@ class Machine:
         t.prompt_on = False
         t.out('\r\x1b[K> ')
         t.para(text, '', '  ')           # the request stays in the transcript, wrapped
+        if text.split()[0].lower() == '/compact' and cfg('ANTHROPIC_API_KEY') and not BUDGET.over():
+            t.out('\n')
+            t.para('Compacting: Claude is summarizing the conversation so far...', BUL + ' ')
+            self.status('compacting')
+            self.task = asyncio.create_task(self.compact(s))
+            return
         if text.startswith('/'):
             self.slash(text)
             t.out('\n')
@@ -957,10 +1070,18 @@ class Machine:
         if cmd == '/help':
             t.para('Type a request and press Enter. BASILISK can run DOS commands, read and write files, '
                    'and compile C with Open Watcom. Keys: Esc interrupts, Up/Down recall earlier lines, '
-                   'PgUp/PgDn scroll the Terminal buffer, Ctrl+U clears the line. Commands: /help, /clear '
-                   '(forget the conversation), /cost.', BUL + ' ')
+                   'PgUp/PgDn scroll the Terminal buffer, Ctrl+U clears the line, Alt+1..5 (or a click on a card) '
+                   'changes card: 1 Chat, 2 Plan, 3 Files (Ins mentions the selected file), 4 Usage, 5 Settings. '
+                   'The mouse works in Windows. Commands: /help, /clear (forget the conversation), /compact '
+                   '(Claude summarizes it, to save context), /cost, /plan, /files, /usage, /settings.', BUL + ' ')
+        elif cmd in ('/plan', '/files', '/usage', '/settings'):
+            self.send2('J', {'/plan': '2', '/files': '3', '/usage': '4', '/settings': '5'}[cmd])
         elif cmd == '/clear':
             self.messages = []
+            self.usage['ctx'] = 0
+            self.claude_md = None
+            self.send2('L', '')
+            self.status()
             t.out('\x1b[2J\x1b[H')
             self.banner()
             t.para('Conversation cleared.', BUL + ' ')
@@ -971,18 +1092,86 @@ class Machine:
         else:
             t.para('Unknown command. Try /help.', BUL + ' ')
 
+    def bill(self, s, model, usage):
+        usd, tin, tout = BUDGET.add(model, usage)
+        LIMITS.usd_note(s.ip, usd)
+        self.usage['in'] += tin
+        self.usage['out'] += tout
+        self.usage['usd'] += usd
+        self.usage['cached'] += getattr(usage, 'cache_read_input_tokens', 0) or 0
+        return usd, tin, tout
+
+    async def memory(self):
+        """C:\\B3\\WORK\\CLAUDE.MD, read through BASILISK.EXE; -> words to put before the turn when it changed"""
+        try:
+            res = await self.call2('G', secrets.token_hex(3), 'CLAUDE.MD', 8)
+        except asyncio.TimeoutError:
+            return ''
+        st, _, text = res.partition('\x1f')
+        text = text.strip() if st == 'ok' else ''
+        if text == (self.claude_md or ''):
+            return ''
+        first = self.claude_md is None
+        self.claude_md = text
+        if not text:
+            return '' if first else '[C:\\B3\\WORK\\CLAUDE.MD was removed.]\n\n'
+        self.tui.para('(CLAUDE.MD read: %d lines of standing instructions)' % (text.count('\n') + 1), BUL + ' ')
+        return '[Standing instructions from C:\\B3\\WORK\\CLAUDE.MD:]\n%s\n[end of CLAUDE.MD]\n\n' % text[:3000]
+
+    async def compact(self, s):
+        """/compact: Claude summarizes the conversation so far, and the summary replaces it"""
+        t = self.tui
+        model = self.set['model']
+        try:
+            if len(self.messages) < 2:
+                t.para('Nothing to compact yet.', BUL + ' ')
+                return
+            ask = self.messages + [{'role': 'user', 'content':
+                'Summarize this conversation for yourself so it can continue from the summary alone: what the '
+                'visitor wants, what was done (files written, commands run, results), the current plan, and any '
+                'open questions. Plain text, at most 200 words. No tools.'}]
+            async with api().messages.stream(model=model, max_tokens=2000, system=SYSTEM, tools=TOOLS,
+                                              messages=ask, output_config={'effort': 'low'}) as st:
+                msg = await st.get_final_message()
+            self.bill(s, model, msg.usage)
+            summary = ''.join(b.text for b in msg.content if b.type == 'text').strip()
+            if not summary:
+                raise RuntimeError('empty summary')
+            before = self.usage['ctx']
+            self.messages = [{'role': 'user', 'content': '[Summary of the conversation so far]\n' + summary},
+                             {'role': 'assistant', 'content': 'Understood; continuing from that summary.'}]
+            self.usage['ctx'] = len(SYSTEM + summary) // 4 + 900
+            t.para('Compacted: the conversation (%s tokens) is now a summary of about %d words. Claude keeps '
+                   'going from there.' % (f"{before:,}", len(summary.split())), BUL + ' ')
+        except asyncio.CancelledError:
+            t.para('Interrupted.', '  ')
+        except Exception as e:
+            log('compact error: %r' % e)
+            t.para('Could not compact just now (%s).' % type(e).__name__, BUL + ' ')
+        finally:
+            self.last_key = time.time()
+            self.status('ready')
+            if self.phase == 'live':
+                t.out('\n')
+                t.show_prompt()
+            self.changed.set()
+
     async def turn(self, s, text):
         t = self.tui
-        self.messages.append({'role': 'user', 'content': text})
+        model = self.set['model']
         pending_tools = None
         try:
+            mem = await self.memory()
+            note = LENGTHS.get(self.set['length'], '')
+            self.messages.append({'role': 'user', 'content': mem + text + ('\n\n(' + note + ')' if note else '')})
+            self.usage['turns'] += 1
             for step in range(16):
                 t.stream_start_pending = True
                 streamed = False
                 async with api().messages.stream(
-                        model=cfg('W31_MODEL'), max_tokens=4000, system=SYSTEM, tools=TOOLS,
+                        model=model, max_tokens=8000, system=SYSTEM, tools=TOOLS,
                         messages=self.messages, cache_control={'type': 'ephemeral'},
-                        output_config={'effort': cfg('W31_EFFORT')}) as st:
+                        output_config={'effort': self.set['effort']}) as st:
                     t0 = time.time()
                     self.inflight = {'in': len(json.dumps(self.messages, default=str)) // 4 + 1200, 'out': 0}
                     async for ev in st:
@@ -998,13 +1187,10 @@ class Machine:
                 self.inflight = None
                 if streamed:
                     t.stream_end()
-                usd, tin, tout = BUDGET.add(cfg('W31_MODEL'), msg.usage)
-                LIMITS.usd_note(s.ip, usd)
-                self.usage['in'] += tin
-                self.usage['out'] += tout
-                self.usage['usd'] += usd
+                usd, tin, tout = self.bill(s, model, msg.usage)
+                self.usage['ctx'] = tin + tout
                 self.status()
-                log('api %.1fs in=%d out=%d $%.5f stop=%s' % (time.time() - t0, tin, tout, usd, msg.stop_reason))
+                log(model + ' api %.1fs in=%d out=%d $%.5f stop=%s' % (time.time() - t0, tin, tout, usd, msg.stop_reason))
                 self.messages.append({'role': 'assistant', 'content': msg.content})
                 uses = [b for b in msg.content if b.type == 'tool_use']
                 if msg.stop_reason == 'refusal':
@@ -1030,11 +1216,7 @@ class Machine:
                 class U:
                     input_tokens, output_tokens = fl['in'], fl['out'] + 50
                     cache_creation_input_tokens = cache_read_input_tokens = 0
-                usd, tin, tout = BUDGET.add(cfg('W31_MODEL'), U)
-                LIMITS.usd_note(s.ip, usd)
-                self.usage['in'] += tin
-                self.usage['out'] += tout
-                self.usage['usd'] += usd
+                self.bill(s, model, U)
                 self.inflight = None
             t.out('\x1b[0m\n')
             t.para('Interrupted.', '  ')
@@ -1055,12 +1237,52 @@ class Machine:
             elif self.messages and self.messages[-1]['role'] == 'user':
                 self.messages.append({'role': 'assistant', 'content': '(error)'})
         finally:
+            for f in list(self.asks.values()):
+                if not f.done():
+                    f.set_result('deny')
             self.last_key = time.time()
             self.status('ready')
             if self.phase == 'live':
                 t.out('\n')
                 t.show_prompt()
             self.changed.set()
+
+    MARK = {'done': '[x] ', 'in_progress': '[>] ', 'pending': '[ ] '}
+
+    async def permitted(self, name, inp):
+        """-> None if it may run, else why not: Windows asks the visitor in a real message box"""
+        if not self.set['ask']:
+            return None
+        if name == 'run_command':
+            word = inp['command'].strip().split()[0].upper()
+            if word in SAFE or word in self.allowed:
+                return None
+            what = inp['command']
+        elif name == 'write_file':
+            if self.allow_writes:
+                return None
+            what = 'write the file %s (%d characters)' % (inp['path'], len(inp['content']))
+        else:
+            return None
+        aid = secrets.token_hex(3)
+        fut = asyncio.get_running_loop().create_future()
+        self.asks[aid] = fut
+        self.status('asking you')
+        self.send2('J', '1')
+        self.send2('I', aid + '\x1f' + what[:200])
+        try:
+            answer = await asyncio.wait_for(fut, 300)
+        except asyncio.TimeoutError:
+            answer = 'deny'
+        finally:
+            self.asks.pop(aid, None)
+        self.tui.out('  \xa6 %s\n' % {'once': 'yes, this once', 'always': 'yes, and from now on', 'deny': 'no'}[answer])
+        if answer == 'always':
+            if name == 'run_command':
+                self.allowed.add(word)
+            else:
+                self.allow_writes = True
+        return None if answer in ('once', 'always') else 'The visitor declined this (Windows asked them first).'
 
     async def run_tool(self, u):
         t = self.tui
@@ -1070,6 +1292,16 @@ class Machine:
         if bad:
             t.out('  \xa6 ' + bad + '\n')
             return {'type': 'tool_result', 'tool_use_id': u.id, 'content': bad, 'is_error': True}
+        if u.name == 'todo_write':
+            items = inp['items']
+            self.send2('L', '\r\n'.join(self.MARK[it['status']] + it['text'][:70] for it in items))
+            doing = [it['text'] for it in items if it['status'] == 'in_progress']
+            t.out('  \xa6 %d of %d done%s (card 2)\n' % (sum(it['status'] == 'done' for it in items), len(items),
+                                                         ('; now ' + doing[0][:40]) if doing else ''))
+            return {'type': 'tool_result', 'tool_use_id': u.id, 'content': 'The plan card now shows %d items.' % len(items)}
+        no = await self.permitted(u.name, inp)
+        if no:
+            return {'type': 'tool_result', 'tool_use_id': u.id, 'content': no, 'is_error': True}
         tid = secrets.token_hex(3)
         self.status(tool_title(u.name, inp)[:30])
         try:
@@ -1191,6 +1423,11 @@ async def p_ws(req):
             elif t == 'wheel':
                 try:
                     M.scroll(s, int(m.get('n', 0)))
+                except (TypeError, ValueError):
+                    pass
+            elif t == 'm':
+                try:
+                    M.mouse(s, int(m.get('x', 0)), int(m.get('y', 0)), int(m.get('b', 0)), bool(m.get('d')))
                 except (TypeError, ValueError):
                     pass
             elif t == 'start':

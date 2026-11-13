@@ -1,5 +1,10 @@
 # BASILISK 3.11, in your browser
 
+> Since 2026-11-12 the client is the five-card suite in `puppetry/w31suite` (shared with the server version):
+> `BASILISK.C` + `PARTS.C` + `B3BOOT.C` there; this directory keeps the server (`server.py`, now with
+> `todo_write`, permission prompts, settings, `/compact`, CLAUDE.MD and usage messages), the bundle builder and the
+> notes below. `link.h` and `basilisk.c`/`b3boot.c` here are the earlier single-window client.
+
 https://williamsharkey.com/basilisk-31-browser.html
 
 Windows for Workgroups 3.11 runs inside the visitor's browser (js-dos 8: DOSBox-X compiled to WebAssembly,

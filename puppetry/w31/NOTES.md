@@ -1,3 +1,10 @@
+> 2026-11-12: the client is now the five-card suite in `puppetry/w31suite` (shared with the browser version; Cardfile
+> cards are the tabs: Chat, Plan, Files, Usage, Settings). `server.py` here gained `todo_write`, permission prompts
+> (a real MessageBox in Windows), settings from the Control Panel Mouse dialog, `/compact`, CLAUDE.MD, usage gauges
+> and the driver's mouse (sent down COM2 as `M x|y|button|down`; BASILISK.EXE moves Windows' pointer and clicks).
+> `W31_ROOT`, `W31_SNAPC`, `W31_DBX`, `W31_DISPLAY` let a test copy run beside the live one (`w31suite/rig31.sh`).
+> `basilisk.c`/`b3boot.c` here are the earlier single-window client.
+
 # w31 (Win 3.1 BASILISK lane) - notes for other lanes
 
 Pristine source you MAY COPY (read-only, never run anything on it in place):

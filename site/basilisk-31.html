@@ -88,24 +88,25 @@ code { font-family: "Courier New", monospace; font-size: 14px; }
 <div class="win">
   <div class="cap"><span class="box" aria-hidden="true"></span><span class="t">README.TXT</span></div>
   <div class="doc">
-    <p>This is Claude, working as a coding agent like Claude Code, inside a real copy of Windows for Workgroups 3.11 running on DOS in an emulator. Press <b>Start</b>. The machine pours a C file into Notepad, saves it, compiles it with Open Watcom in a DOS window, and runs it, which takes about 25 seconds. Then it's yours: type requests, as many as you like. It can look around the machine, read and write files, and write, compile and run C programs.</p>
+    <p>This is Claude, working as a coding agent like Claude Code, inside a real copy of Windows for Workgroups 3.11 running on DOS in an emulator. Press <b>Start</b>. The machine pours two C files into Notepad, saves them, compiles them with Open Watcom in a DOS window, and runs the result, which assembles a five-card suite. Then it's yours: type requests, as many as you like, and use the mouse. It can look around the machine, keep a plan, read and write files, and write, compile and run C programs.</p>
 
     <h2>What it is made of</h2>
-    <p>The client is a 16-bit Windows program, <code>BASILISK.C</code>, under 400 lines. It draws nothing itself. It starts four programs that came with Windows 3.1 and moves their parts into one window:</p>
+    <p>The client is a 16-bit Windows program, <code>BASILISK.C</code> and <code>PARTS.C</code>. It draws nothing itself except two gauges. Windows 3.1 has no tab control, so Cardfile's index cards are the tabs: <kbd>Alt</kbd>+<kbd>1</kbd>&hellip;<kbd>5</kbd>, or a click on a card, brings that card to the front and its part to the left of the screen.</p>
     <table>
-      <tr><th>Part</th><th>From</th><th>Job</th></tr>
-      <tr><td>The console</td><td>Terminal</td><td>The transcript, the 399-line scrollback, and the null-modem cable (COM1) that carries the conversation</td></tr>
-      <tr><td>The face</td><td>Clock</td><td>Moved in as a child window, still ticking on its own timer</td></tr>
-      <tr><td>Status card</td><td>Cardfile</td><td>The model, tokens and what it's doing now; the card behind holds the keys</td></tr>
-      <tr><td>The bill</td><td>Calculator</td><td>Its display, showing what the session has cost</td></tr>
-      <tr><td>The build</td><td>Notepad, Open Watcom</td><td>Notepad receives the source; <code>wcl</code> compiles it in a DOS window</td></tr>
+      <tr><th>Card</th><th>From</th><th>Job</th></tr>
+      <tr><td>1 Chat</td><td>Terminal</td><td>The transcript, the 399-line scrollback, and the null-modem cable (COM1) that carries the conversation</td></tr>
+      <tr><td>2 Plan</td><td>Notepad, MessageBox</td><td>Claude's to-do list, kept with a <code>todo_write</code> tool. Before a command or a file write, Windows asks in a real message box: Yes runs it once, No allows that command from now on, Cancel refuses</td></tr>
+      <tr><td>3 Files</td><td>File Manager</td><td>Its directory window on <code>C:\B3\WORK</code>; <kbd>Ins</kbd> puts the selected file into your message as <code>@NAME</code>. A <code>CLAUDE.MD</code> there is read before each turn</td></tr>
+      <tr><td>4 Usage</td><td>Setup's gauge, Cardfile</td><td>Context used, your share of today's cap, everyone's share of the month's</td></tr>
+      <tr><td>5 Settings</td><td>Control Panel</td><td>The Mouse dialog, relabelled: effort, answer length, asking before commands, Sonnet 5.5 instead of Haiku 5.5</td></tr>
+      <tr><td>Always</td><td>Clock, Calculator</td><td>The face in the corner; Calculator's display shows what the session has cost</td></tr>
     </table>
 
     <h2>How your keys get there</h2>
-    <p>Windows 3.11 has no network here. A second serial line (COM2) connects <code>BASILISK.EXE</code> to the server that talks to Claude, and on Claude's request it runs DOS commands, reads files and writes them. Your keystrokes go to that server, which does the line editing and echoes each character back down COM1, so it appears in Terminal the way remote echo always did. Measured on the server, a keystroke reaches the screen in about 40 ms; add your own round trip to see it here.</p>
+    <p>Windows 3.11 has no network here. A second serial line (COM2) connects <code>BASILISK.EXE</code> to the server that talks to Claude, and on Claude's request it runs DOS commands, reads files and writes them. Your keystrokes go to that server, which does the line editing and echoes each character back down COM1, so it appears in Terminal the way remote echo always did. Measured on the server, a keystroke reaches the screen in about 40 ms; add your own round trip to see it here. Windows 3.11 in this emulator has no driver for an absolute pointer, so your mouse goes the same way: the server passes each move and click down COM2, and BASILISK.EXE puts Windows' own pointer there and clicks.</p>
 
     <h2>Fair use</h2>
-    <p>One person drives at a time; everyone else watches the same screen. If someone is waiting, a turn lasts ten minutes, and a turn ends after three quiet minutes. The machine is reset for every visitor. The model is <code>claude-haiku-5-5</code>, with a small monthly budget; if it runs out, the line goes quiet until next month.</p>
+    <p>One person drives at a time; everyone else watches the same screen. If someone is waiting, a turn lasts ten minutes, and a turn ends after three quiet minutes. The machine is reset for every visitor. The model is <code>claude-haiku-5-5</code> (or <code>claude-sonnet-5-5</code>, if you tick it on the Settings card), with a small monthly budget; if it runs out, the line goes quiet until next month.</p>
   </div>
 </div>
 
@@ -161,8 +162,8 @@ function render() {
   const you = st.you, p = st.phase, driver = you === 'driver';
   let t = '';
   if (st.rest_until) t = 'You have had a few turns this hour. You can start again at ' + clock(st.rest_until) + '.';
-  else if (driver && p === 'building') t = 'Building: ' + ({ notepad: 'opening Notepad', typing: 'pouring the source into Notepad', saving: 'saving BASILISK.C', compiling: 'compiling with Open Watcom', running: 'starting BASILISK.EXE' }[st.step] || 'starting') + '...';
-  else if (driver && p === 'live') t = (st.busy ? 'Claude is working. Esc interrupts. ' : "It's yours. Click the screen and type. Enter sends, Esc interrupts. ") + (st.lease_left != null ? 'Someone is waiting: ' + mins(st.lease_left) + ' left.' : '');
+  else if (driver && p === 'building') t = ({ notepad: 'Building: opening Notepad', typing: 'Building: pouring the source into Notepad', saving: 'Building: saving BASILISK.C', compiling: 'Building: compiling with Open Watcom', running: 'Building: starting BASILISK.EXE' }[st.step] || ('Assembling: ' + String(st.step || 'starting').replace(/ \d+$/, ''))) + '...';
+  else if (driver && p === 'live') t = (st.busy ? 'Claude is working. Esc interrupts. ' : (st.tab && st.tab !== 'Chat' ? 'Card: ' + st.tab + '. The mouse works here; Alt+1 returns to the chat. ' : "It's yours. Click the screen and type. Enter sends, Esc interrupts, Alt+1..5 changes card. ")) + (st.lease_left != null ? 'Someone is waiting: ' + mins(st.lease_left) + ' left.' : '');
   else if (you === 'queued') t = 'You are number ' + st.pos + ' in line. Watch while you wait.';
   else if (p === 'ready') t = 'The machine is free. Press Start: it builds BASILISK (about 25 seconds), then it is yours.';
   else if (p === 'building' || p === 'live') t = 'Someone is using BASILISK' + (st.queue ? ' (' + st.queue + ' waiting)' : '') + '. Press Start to get in line.';
@@ -199,6 +200,8 @@ document.addEventListener('keydown', e => {         /* capture phase: before noV
     if ('uae'.includes(k)) { key(k, true); e.preventDefault(); }
     return;
   }
+  if (e.altKey && /^Digit[1-5]$/.test(e.code)) { key('Alt' + e.code.slice(5)); e.preventDefault(); return; }
+  if (e.key === 'Insert') { key('Insert'); e.preventDefault(); return; }
   if (NAMED.has(e.key)) { key(e.key); e.preventDefault(); return; }
   if (e.key.length === 1) {
     if (e.key.charCodeAt(0) < 128) key(e.key); else send({ t: 'paste', text: e.key });
@@ -223,6 +226,36 @@ screen.addEventListener('wheel', e => {
   }
 }, { passive: false });
 screen.addEventListener('mousedown', () => { screen.focus({ preventScroll: true }); setTimeout(() => screen.focus({ preventScroll: true }), 0); }, true);
+
+/* ---- the mouse: the driver's pointer goes to the server, and BASILISK.EXE moves Windows' own cursor and clicks
+   there (Windows 3.11 in DOSBox-X has no absolute-pointer driver, so the click travels as a message on COM2) ---- */
+let mx = -1, my = -1, mSent = 0, mTimer = 0, mDown = 0;
+const driving = () => st.you === 'driver' && st.phase === 'live';
+function mpos(e) {
+  const c = screen.querySelector('canvas'); if (!c) return null;
+  const r = c.getBoundingClientRect();
+  return [Math.max(0, Math.min(1023, Math.round((e.clientX - r.left) * 1024 / r.width))),
+          Math.max(0, Math.min(767, Math.round((e.clientY - r.top) * 768 / r.height)))];
+}
+function mflush() { mTimer = 0; mSent = performance.now(); send({ t: 'm', x: mx, y: my, b: 0, d: 0 }); }
+document.addEventListener('pointermove', e => {          /* the document: noVNC captures a pressed pointer */
+  if (!driving() || (!mDown && !screen.contains(e.target))) return;
+  const q = mpos(e); if (!q || (q[0] === mx && q[1] === my)) return;
+  [mx, my] = q;
+  const gap = performance.now() - mSent, every = mDown ? 50 : 100;
+  if (gap >= every) mflush(); else if (!mTimer) mTimer = setTimeout(mflush, every - gap);
+}, true);
+function mbutton(e, d) {
+  if (!driving() || e.button === 1 || e.button > 2) return;
+  if (d ? !screen.contains(e.target) : !mDown) return;
+  const q = mpos(e); if (!q) return;
+  [mx, my] = q; mDown = d;
+  if (mTimer) { clearTimeout(mTimer); mTimer = 0; }
+  send({ t: 'm', x: mx, y: my, b: e.button === 2 ? 2 : 1, d });
+}
+document.addEventListener('pointerdown', e => mbutton(e, 1), true);
+document.addEventListener('pointerup', e => mbutton(e, 0), true);
+screen.addEventListener('contextmenu', e => { if (driving()) e.preventDefault(); });
 
 /* phones: a plain text box */
 mob.addEventListener('keydown', e => {
