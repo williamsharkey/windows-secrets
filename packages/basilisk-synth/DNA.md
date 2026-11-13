@@ -67,7 +67,8 @@ Rules for steps:
 - If `P` or `X` comes before any `C` in the layer, the clipboard is the layer's source as it was first
   loaded.
 - **Length limit:** if a step would make the buffer longer than 30 s, it is skipped. Both sides must skip it.
-- A step that Sound Recorder refuses is also skipped, for example Delete Before at position 0.
+- A step that Sound Recorder refuses is also skipped: Delete Before at position 0, and Delete After at position 0
+  (which would delete the whole sound). Both editions skip these themselves rather than rely on the program.
 
 ### 2.2 Voice genes
 

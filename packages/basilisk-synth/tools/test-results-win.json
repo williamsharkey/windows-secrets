@@ -1,23 +1,43 @@
 {
-  "determinism": {
-    "same_dna_twice_envelope_corr": 0.849,
-    "peaks": [
-      0.166,
-      0.085
+  "pitch": {
+    "notes": 10,
+    "heard": 10,
+    "max_cents_off": 3598.1,
+    "cents": [
+      0.0,
+      -200.0,
+      -7.7,
+      -6.2,
+      -5.3,
+      -2.3,
+      -6.1,
+      -5.4,
+      -2.0,
+      -3598.1
     ]
   },
-  "state": {
-    "state_bytes": 252,
-    "state_has_dna": true,
-    "reloaded_vs_original_envelope_corr": 0.767
-  },
-  "instances": {
-    "peaks": [
-      0.184,
-      0.184
+  "timing": {
+    "reported_latency_ms": 100.0,
+    "per_note_ms": [
+      472.9,
+      -127.1,
+      42.8,
+      52.5,
+      41.6,
+      70.8,
+      60.6,
+      -13.1,
+      124.9,
+      214.3
     ],
-    "max_qemu_during": 2,
-    "qemu_after": 0
+    "onset_error_median_ms": 56.6,
+    "onset_error_spread_ms": 600.0,
+    "onset_error_std_ms": 151.0
+  },
+  "offline": {
+    "host_line": "rendered 15.1 s of audio in 21.3 s (offline)",
+    "wall_s": 21.7,
+    "peak": 0.23
   },
   "qemu_left": 0
 }

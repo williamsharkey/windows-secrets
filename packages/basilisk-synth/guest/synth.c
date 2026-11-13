@@ -27,14 +27,14 @@
 WINBASEAPI int WINAPI MultiByteToWideChar(UINT, DWORD, LPCSTR, int, LPWSTR, int);
 #endif
 
-#define VERSION "1.2"
+#define VERSION "1.2.1"
 #define ROW_H 34
 #define STRIP_X 30
 #define STRIP_Y 6
 #define STRIP_W 562
 #define SIDE_X (STRIP_X + STRIP_W + 14)
 #define SIDE_W (1016 - SIDE_X)
-#define NSND 35
+#define NSND 39
 #define MAXSND 2048
 #define MAXL 8
 #define MAXSTEP 64
@@ -47,23 +47,27 @@ static const char *snd_name[MAXSND] = {
     "chimes", "chord", "ding", "notify", "recycle", "ringin", "ringout", "start", "tada",
     "balloon", "batcrit", "batlow", "critstop", "default", "xpding", "error", "exclaim", "hwfail", "hwin", "hwout",
     "infobar", "logoff", "logon", "menu", "minimize", "xpnotify", "popup", "print", "xprecycle", "restore",
-    "xpringin", "xpringout", "shutdown", "startup", "xpstart"};
+    "xpringin", "xpringout", "shutdown", "startup", "xpstart",
+    "chimesxp", "chordxp", "dingxp", "tadaxp"};
+/* one name, one file (DNA.md 2.4): chimes chord ding tada are the Windows 3.x recordings (C:\WINDOWS\Media\W31);
+   XP's own copies are chimesxp chordxp dingxp tadaxp; ringin ringout are the same file in both Windows */
 static const char *snd_file[MAXSND] = {
-    "chimes.wav", "chord.wav", "ding.wav", "notify.wav", "recycle.wav", "ringin.wav", "ringout.wav", "start.wav", "tada.wav",
+    "W31\\CHIMES.WAV", "W31\\CHORD.WAV", "W31\\DING.WAV", "notify.wav", "recycle.wav", "ringin.wav", "ringout.wav", "start.wav", "W31\\TADA.WAV",
     "Windows XP Balloon.wav", "Windows XP Battery Critical.wav", "Windows XP Battery Low.wav", "Windows XP Critical Stop.wav",
     "Windows XP Default.wav", "Windows XP Ding.wav", "Windows XP Error.wav", "Windows XP Exclamation.wav",
     "Windows XP Hardware Fail.wav", "Windows XP Hardware Insert.wav", "Windows XP Hardware Remove.wav",
     "Windows XP Information Bar.wav", "Windows XP Logoff Sound.wav", "Windows XP Logon Sound.wav",
     "Windows XP Menu Command.wav", "Windows XP Minimize.wav", "Windows XP Notify.wav", "Windows XP Pop-up Blocked.wav",
     "Windows XP Print complete.wav", "Windows XP Recycle.wav", "Windows XP Restore.wav", "Windows XP Ringin.wav",
-    "Windows XP Ringout.wav", "Windows XP Shutdown.wav", "Windows XP Startup.wav", "Windows XP Start.wav"};
+    "Windows XP Ringout.wav", "Windows XP Shutdown.wav", "Windows XP Startup.wav", "Windows XP Start.wav",
+    "chimes.wav", "chord.wav", "ding.wav", "tada.wav"};
 static int snd_ms[MAXSND];    /* lengths, read from the files once */
 /* v2: the library disc (DNA.md 5.6) extends the table: names after the built-in ones, paths on the disc */
 static int nsnd = NSND;
 static const char *snd_cat[MAXSND];
 static char lib_root[8];
 
-static const char *DEFAULT_DNA = "chord#10/ding>>E#6;A2D300S70R250";
+static const char *DEFAULT_DNA = "chordxp#10/dingxp>>E#6;A2D300S70R250";
 
 /* ---------------------------------------------------------------- state */
 static SyShm *shm;
@@ -440,8 +444,8 @@ static void build_layer(int li, Layer *L)
         case '<': id = SR_SPEED_DOWN; grow = len_ms; break;
         case 'E': id = SR_ECHO; break;
         case 'R': id = SR_REVERSE; break;
-        case '[': id = SR_DEL_BEFORE; break;
-        case ']': id = SR_DEL_AFTER; break;
+        case '[': if (read_ms(r, SR_POS) == 0) continue; id = SR_DEL_BEFORE; break;    /* refused at 0 (DNA.md 2.1) */
+        case ']': if (read_ms(r, SR_POS) == 0) continue; id = SR_DEL_AFTER; break;     /* would delete it all */
         case 'C': id = SR_COPY; break;
         case 'P': id = SR_PASTE_INS; grow = clip_ms; break;
         case 'X': id = SR_PASTE_MIX; pos = read_ms(r, SR_POS); grow = pos + clip_ms > len_ms ? pos + clip_ms - len_ms : 0; break;
@@ -486,10 +490,8 @@ static DWORD WINAPI build_thread(LPVOID p)
     DWORD t0 = GetTickCount();
     lstrcpynA(text, dna_text, sizeof text);
     dna_parse(text, &D);
-    for (r = 0; r < SY_NREC; r++) {           /* everything stops while the tapes change */
-        shm->s[r].gate = 0;
-        if (shm->s[r].playing) rec_op(r, SYO_STOP, 0, 0);
-    }
+    /* the old sounds keep playing while the new ones are built: each recorder's fast path plays its own loaded copy
+       until the new file replaces it at the end (SYO_LOADPCM) */
     for (i = 0; i < D.n; i++) {
         Layer *L = &D.l[i], *O = i < built_dna.n ? &built_dna.l[i] : NULL;
         if (L->src < 0 || !L->count) continue;
@@ -562,7 +564,7 @@ static void note_line(char *l)
     int r, rate, vol, pan = 0, delay = 0, layer = -1, k;
     char w, pts[200];
     if ((k = sscanf(l, "on %d %d %d %d %d %d", &r, &rate, &vol, &pan, &delay, &layer)) >= 3) {
-        if (r < 0 || r >= SY_NREC || building) return;
+        if (r < 0 || r >= SY_NREC) return;      /* during a build too: each recorder plays the sound it has loaded */
         if (k < 6) layer = -1;
         shm->s[r].pan = pan < -100 ? -100 : pan > 100 ? 100 : pan;
         shm->s[r].layer = layer >= 0 && layer < 8 ? layer : -1;
@@ -789,9 +791,13 @@ static HWND page_of(HWND dlg)          /* the visible child dialog: the page */
 #define IDM_ABOUT 4500
 static HWND w_dna, w_apply, w_mutate, w_undo, w_layers, w_sounds, w_lbl[SY_NREC], w_cat;
 #define ID_CAT 3007
+#define ID_FILT 3008         /* + 0..2 */
+static HWND w_filt[3];
 /* the browser (DNA.md 5.6): the XP sounds, the library disc's categories, and its presets by category */
 #define MAXPRE 256
 static char *pre_cat[MAXPRE], *pre_name[MAXPRE], *pre_dna[MAXPRE];
+static int pre_xp[MAXPRE];       /* the preset uses XP-only files (PRESETS.TSV edition column) */
+static int pre_filter;           /* 0 All, 1 W3.11, 2 XP */
 static int npre;
 static char cats[48][40];
 static int ncat;            /* cats[0] = Windows XP sounds; then library categories; then "Presets: X" */
@@ -821,8 +827,8 @@ static HMENU make_menu(void)
     AppendMenuA(m, MF_SEPARATOR, 0, NULL);
     sub = CreatePopupMenu(); sub2 = CreatePopupMenu(); sub3 = CreatePopupMenu();
     for (i = 0; i < NSND; i++) {
-        AppendMenuA(sub, MF_STRING | (i && i % 18 == 0 ? MF_MENUBARBREAK : 0), IDM_INS + i, snd_file[i]);
-        AppendMenuA(sub2, MF_STRING | (i && i % 18 == 0 ? MF_MENUBARBREAK : 0), IDM_MIX + i, snd_file[i]);
+        AppendMenuA(sub, MF_STRING | (i && i % 18 == 0 ? MF_MENUBARBREAK : 0), IDM_INS + i, snd_name[i]);
+        AppendMenuA(sub2, MF_STRING | (i && i % 18 == 0 ? MF_MENUBARBREAK : 0), IDM_MIX + i, snd_name[i]);
     }
     AppendMenuA(m, MF_POPUP, (UINT_PTR)sub, "&Insert File");
     AppendMenuA(m, MF_POPUP, (UINT_PTR)sub2, "&Mix with File");
@@ -1050,9 +1056,10 @@ static void pre_load(void)
     if (!(f = fopen(path, "r"))) return;
     npre = 0;
     while (fgets(ln, sizeof ln, f) && npre < MAXPRE) {
-        char *c = strtok(ln, "\t\r\n"), *n = strtok(NULL, "\t\r\n"), *d = strtok(NULL, "\t\r\n");
+        char *c = strtok(ln, "\t\r\n"), *n = strtok(NULL, "\t\r\n"), *d = strtok(NULL, "\t\r\n"), *e = strtok(NULL, "\t\r\n");
         if (!c || !n || !d || c[0] == '#') continue;
         pre_cat[npre] = _strdup(c); pre_name[npre] = _strdup(n); pre_dna[npre] = _strdup(d);
+        pre_xp[npre] = e && !strcmp(e, "xp");
         npre++;
     }
     fclose(f);
@@ -1071,14 +1078,19 @@ static void browser_list(void)
     SendMessageA(w_sounds, WM_SETREDRAW, FALSE, 0);
     SendMessageA(w_sounds, LB_RESETCONTENT, 0, 0);
     if (!strncmp(cats[k], "Presets: ", 9)) {
-        for (i = 0; i < npre; i++) if (!strcmp(pre_cat[i], cats[k] + 9)) {
+        for (i = 0; i < npre; i++) if (!strcmp(pre_cat[i], cats[k] + 9) && (pre_filter == 0 || (pre_filter == 2) == pre_xp[i])) {
             at = (int)SendMessageA(w_sounds, LB_ADDSTRING, 0, (LPARAM)pre_name[i]);
             SendMessageA(w_sounds, LB_SETITEMDATA, at, 10000 + i);
         }
     } else {
         for (i = 0; i < nsnd; i++) {
             if (k == 0 ? i >= NSND : (i < NSND || strcmp(snd_cat[i], cats[k]))) continue;
-            if (i < NSND) lstrcpynA(item, snd_file[i], sizeof item);
+            if (i < NSND) {
+                /* XP's copies of the 3.x four read ding-xp (DNA.md 2.4); the rest by name */
+                size_t L = strlen(snd_name[i]);
+                if (i >= 35 && L > 2) sprintf(item, "%.*s-xp", (int)(L - 2), snd_name[i]);
+                else sprintf(item, "%s%s", snd_name[i], i == 0 || i == 1 || i == 2 || i == 8 ? "  (3.x)" : "");
+            }
             else sprintf(item, "%s  (%.1f s)", snd_name[i], snd_ms[i] / 1000.0);
             at = (int)SendMessageA(w_sounds, LB_ADDSTRING, 0, (LPARAM)item);
             SendMessageA(w_sounds, LB_SETITEMDATA, at, i);
@@ -1094,7 +1106,7 @@ static void browser_fill(void)
     if (!w_cat) return;
     pre_load();
     ncat = 0;
-    add_cat("Windows XP sounds");
+    add_cat("Windows sounds");
     for (i = NSND; i < nsnd; i++) add_cat(snd_cat[i]);
     for (i = 0; i < npre; i++) { sprintf(t, "Presets: %s", pre_cat[i]); add_cat(t); }
     SendMessageA(w_cat, CB_RESETCONTENT, 0, 0);
@@ -1740,6 +1752,7 @@ static LRESULT CALLBACK wnd_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
         if (id == ID_LAYERS && code == LBN_SELCHANGE) { sel_layer = (int)SendMessageA(w_layers, LB_GETCURSEL, 0, 0); refresh_panel(); return 0; }
         if (id == ID_SOUNDS && code == LBN_DBLCLK) { browser_pick(); return 0; }
         if (id == ID_CAT && code == CBN_SELCHANGE) { browser_list(); return 0; }
+        if (id >= ID_FILT && id < ID_FILT + 3 && code == BN_CLICKED) { pre_filter = id - ID_FILT; browser_list(); return 0; }
         if (id == ID_ENV + 20 && code == BN_CLICKED) { env_clear(); return 0; }
         if (id == ID_HOLD) { if (SendMessageA(w_hold, BM_GETCHECK, 0, 0) != BST_CHECKED) kb_release_hold(); SetFocus(win); return 0; }
         if (id == ID_QWERTY) { SetFocus(win); return 0; }
@@ -1853,7 +1866,15 @@ static void make_window(void)
     w_layers = mk("LISTBOX", "", LBS_NOTIFY | WS_VSCROLL | WS_TABSTOP | LBS_NOINTEGRALHEIGHT, x, fr_lay.top + 16, W, fr_lay.bottom - fr_lay.top - 24, ID_LAYERS, NULL);
     w_sounds = mk("LISTBOX", "", LBS_NOTIFY | WS_HSCROLL | WS_TABSTOP | LBS_NOINTEGRALHEIGHT | LBS_MULTICOLUMN, x, fr_snd.top + 39, W, fr_snd.bottom - fr_snd.top - 47, ID_SOUNDS, NULL);
     SendMessageA(w_sounds, LB_SETCOLUMNWIDTH, (W - 4) / 2, 0);
-    w_cat = mk("COMBOBOX", "", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, x, fr_snd.top + 15, W, 300, ID_CAT, NULL);
+    w_cat = mk("COMBOBOX", "", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, x, fr_snd.top + 15, W - 132, 300, ID_CAT, NULL);
+    {
+        /* the presets' filters (DNA.md 2.4): all, the ones using no XP-only file, the ones that do */
+        static const char *fl[3] = {"All", "W3.11", "XP"};
+        for (i = 0; i < 3; i++) {
+            w_filt[i] = mk("BUTTON", fl[i], BS_AUTORADIOBUTTON | BS_PUSHLIKE | (i ? 0 : WS_GROUP), x + W - 128 + i * 43, fr_snd.top + 15, 42, 21, ID_FILT + i, font);
+        }
+        SendMessageA(w_filt[0], BM_SETCHECK, BST_CHECKED, 0);
+    }
     browser_fill();
     port_cpu = CreateWindowExA(0, "BasiliskPort", "", WS_CHILD | WS_CLIPCHILDREN, SIDE_X + (SIDE_W - sz_cpu.cx) / 2, fr_cpu.top + 14, sz_cpu.cx, sz_cpu.cy, win, NULL, inst, NULL);
     env_make();
@@ -1949,7 +1970,7 @@ static void run_ev(Ev *e)
     case EV_PANEL: {
         HWND p[] = {w_dna, w_apply, w_mutate, w_undo, w_layers, w_sounds};
         if (r < 6) { ShowWindow(p[r], SW_SHOWNA); UpdateWindow(p[r]); }
-        if (r == 5) { ShowWindow(w_cat, SW_SHOWNA); UpdateWindow(w_cat); }
+        if (r == 5) { int f; ShowWindow(w_cat, SW_SHOWNA); UpdateWindow(w_cat); for (f = 0; f < 3; f++) ShowWindow(w_filt[f], SW_SHOWNA); }
         if (r == 6) { int k; env_show(); for (k = 0; k < 4; k++) { ShowWindow(w_mac[k], SW_SHOWNA); ShowWindow(w_macname[k], SW_SHOWNA); ShowWindow(w_macval[k], SW_SHOWNA); } }
         if (r == 0) { panel_frames = 1; InvalidateRect(win, NULL, FALSE); }
         break;

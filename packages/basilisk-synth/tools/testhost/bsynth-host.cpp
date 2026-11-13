@@ -172,7 +172,9 @@ int main(int argc, char **argv)
             if (!loadState.empty()) { std::ifstream f(loadState, std::ios::binary); st.assign(std::istreambuf_iterator<char>(f), {}); }
             else {
                 // DPF's VST3 state: NUL-separated sections, ending in 0xfe
-                std::string s = std::string("__dpf_state_begin__") + '\0' + "dna" + '\0' + dna + '\0' + "__dpf_state_end__" + '\0' + '\xfe';
+                // core's State text with "ver 1.2.1": the DNA is read with 1.2.1's names (DNA.md 2.4)
+                std::string txt = "BASILISK-SYNTH 1\ndna " + dna + "\nreference 0\nver 1.2.1\n";
+                std::string s = std::string("__dpf_state_begin__") + '\0' + "dna" + '\0' + txt + '\0' + "__dpf_state_end__" + '\0' + '\xfe';
                 st.assign(s.begin(), s.end());
             }
             MemoryStream ms;

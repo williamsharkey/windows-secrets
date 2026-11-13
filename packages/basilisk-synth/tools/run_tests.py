@@ -104,7 +104,7 @@ def test_scale():
     times = [0.6 * k for k in range(10)]
     notes = [60, 62, 64, 65, 67, 69, 71, 72, 48, 84]
     score = ','.join('%g:%d:100:0.4' % (t, n) for t, n in zip(times, notes))
-    out, x, sr = render('t_scale', ['--dna', '"ding#16;R200"', '--score', score, '--warmup', '10', '--tail', '2'])
+    out, x, sr = render('t_scale', ['--dna', '"dingxp#16;R200"', '--score', score, '--warmup', '10', '--tail', '2'])
     lat = latency_ms(out)
     rows = notes_analysis(x, sr, 10, times, notes, lat)
     base = rows[0]
@@ -169,7 +169,7 @@ def test_determinism_and_state():
 def test_offline():
     score = ','.join('%g:%d:100:0.3' % (0.4 * k, 60 + k) for k in range(8))
     t0 = time.time()
-    out, x, sr = render('t_offline', ['--offline', '--dna', '"ding#16;R150"', '--score', score, '--warmup', '10', '--tail', '2'])
+    out, x, sr = render('t_offline', ['--offline', '--dna', '"dingxp#16;R150"', '--score', score, '--warmup', '10', '--tail', '2'])
     took = time.time() - t0
     rend = [l for l in out.splitlines() if l.startswith('rendered')]
     results['offline'] = {'host_line': rend[0] if rend else out[-200:], 'wall_s': round(took, 1),
@@ -201,7 +201,7 @@ def test_instances():
 def test_sleep_wake_and_kill():
     # 1) quiet for 14 s (the machine pauses after 4 s), then notes: they must still sound (it wakes)
     score = '0:60:100:0.5,1:64:100:0.5'
-    out, x, sr = render('t_wake', ['--dna', '"ding#16;R150"', '--score', score, '--warmup', '14', '--tail', '2'])
+    out, x, sr = render('t_wake', ['--dna', '"dingxp#16;R150"', '--score', score, '--warmup', '14', '--tail', '2'])
     log = open('/mnt/c/Users/willi/AppData/Local/BASILISK SYNTH/plugin.log').read() if MODE == 'win' else subprocess.run(
         ['ssh', MAC, 'cat ~/Library/Caches/BASILISK\\ SYNTH/plugin.log'], capture_output=True, text=True).stdout
     tail = log[-3000:]
@@ -224,7 +224,7 @@ def test_sleep_wake_and_kill():
         res['killed_at'] = time.time()
     t0 = time.time()
     th = threading.Thread(target=killer); th.start()
-    out, x, sr = render('t_kill', ['--dna', '"ding#16;R150"', '--score', score, '--warmup', '12', '--tail', '2'])
+    out, x, sr = render('t_kill', ['--dna', '"dingxp#16;R150"', '--score', score, '--warmup', '12', '--tail', '2'])
     th.join()
     m = np.abs(x.mean(axis=1))
     hop = sr // 4

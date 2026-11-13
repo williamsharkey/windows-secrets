@@ -1,40 +1,44 @@
 # category	name	DNA (DNA.md). These become the plugin's programs ("Category: Name") and \PRESETS.TSV on the library disc.
-Keys	Chord Organ	chord#10/ding>>E#6;A2D300S70R250
-Keys	Balloon Keys	balloonMding#16H0,12;R300
-Brass	Tada Brass	tada@20[#16;A5S100R300
-Keys	Tada Piano	tada@20]#10/ding>>#6O15Q30Ja0,100.120,40.600,0;R200
+Keys	Chord Organ	chordxp#10/dingxp>>E#6;A2D300S70R250
+Keys	Balloon Keys	balloonMdingxp#16H0,12;R300
+Brass	Tada Brass	tadaxp@20[#16;A5S100R300
+Keys	Tada Piano	tadaxp@20]#10/dingxp>>#6O15Q30Ja0,100.120,40.600,0;R200
 Keys	Notify Rhodes	notify#8Q-30/xpnotify>#8Q30O25;A5D500S40R400
-Bells	Ding Bells	ding#8H0,12/xpding#8T12;R600
-Bells	Reverse Chimes	chimesR#12U2~6/ding>E#4;A30R500
-Bells	Wide Chimes	chimes#6Q-80/chimes#6Q80O40/ding>>#4O90L60;R700
+Bells	Ding Bells	dingxp#8H0,12/xpding#8T12;R600
+Bells	Reverse Chimes	chimesxpR#12U2~6/dingxp>E#4;A30R500
+Bells	Wide Chimes	chimesxp#6Q-80/chimesxp#6Q80O40/dingxp>>#4O90L60;R700
 Bells	Glass Steps	xpding>#8Ja0,100.50,30.200,80.400,0/xpding>>#8O200Q60L70Ja0,0.30,100.250,0;R300
 Pads	Startup Pad	startup<#16U2~8;A400D800S80R1200
 Pads	Logoff Strings	logoff@40[#16U3~12;A250S90R900
 Pads	Shutdown Drone	shutdown<R#16U3~15;A900S100R2000
 Pads	Swell Choir	notify<-E#10Ja0,0.800,100.2000,70Jp0,-60.2000,60/xpnotify<#6O300Ja0,0.1200,80;R1500m1=50m10Z50,250
 Pads	Breathing Logon	logon<#8Ja0,0.600,100.1200,30.1800,90.2400,40Q-40/logon<R#8Q40O600Ja0,0.600,100.1200,40;R1800
-Bass	Critical Bass	critstop<<#16T-12;A5D400S60R200
+Bass	Critical Bass	critstop@t40[<<#16T-12;A5D400S60R200G6
 Bass	Hardware Sub	hwin<<#8T-12/hwout<<#8T-24O30L70;A2D300S50R150
-Bass	Chord Thump	chord<<]#16T-12Ja0,100.80,60.300,0;R80
+Bass	Chord Thump	chordxp<<]#16T-12Ja0,100.80,60.300,0;R80
 Plucks	Error Pluck	errorE#16;A0D250S0R150
 Plucks	Default Pluck	default>#10Ja0,100.60,30.250,0/xprecycle>>#6O20Q50L50;R100
 Plucks	Click Harp	menu>#8U3~20/minimize>#8O35Q-50;R250
 Percussion	Recycle Perc	recycle>>#8F/xprecycle#8T-12;R80
 Percussion	Kit	start#4F/recycle>#4FT-5O10/menu#4FQ60/balloon>#4FQ-60;R60
 Percussion	Hardware Hits	hwfail#8F/hwin>#8FO15Q-30;R80
-Collage	Tada Collage	tada@t300Mding@t900Ichimes>#16;R400
+Collage	Tada Collage	tadaxp@t300Mdingxp@t900Ichimesxp>#16;R400
 Collage	Logon Cut-up	logon@30[@60]Mxpding@50Ixpstart#16;A10R300
 Collage	Startup Reversal	startup@50]CRP#16;A20R600
-Collage	Ding Train	ding@t100IxpdingIxpding@t500Mchimes#16;R300
+Collage	Ding Train	dingxp@t100IxpdingIxpding@t500Mchimesxp#16;R300
 FX	Battery Alarm	batlow>E#8/batcrit>E#8O250;R200
 FX	Pop-up Storm	popup#4F/infobar#4FO60/balloon#4FO120/minimize#4FO180;R100
 FX	Print Spooler	print<E#8Jp0,-100.1500,100/print<RE#8O700Jp0,100.1500,-100;R1000
 FX	Ringing Phones	ringin>#8/xpringout#8O200T7;R300
-Macro	Macro Swell	chord#8/ding>E#8O120Q40;m1=0m11Z50,300m12Q-100,100
-Macro	Macro Layers	tada#8/startup<#8O100;m1=50m11L0,200m12L200,0m2=0m12O0,800
-Macro	Macro Echoes	ding>E#16;m1=0m11N0,4
+Macro	Macro Swell	chordxp#8/dingxp>E#8O120Q40;m1=0m11Z50,300m12Q-100,100
+Macro	Macro Layers	tadaxp#8/startup<#8O100;m1=50m11L0,200m12L200,0m2=0m12O0,800
+Macro	Macro Echoes	dingxp>E#16;m1=0m11N0,4
 Library	Upright Piano	piano_upright_cs4#16T-1;R400
 Library	Kalimba Glass	kalimba_c4#10/glass_ping#6T12O15Q40L60;R300
 Library	Choir Pad	choir_aah#12Ja0,0.400,100.3000,80Q-30/choir_aahE#4T12O80Q30L50;R900
 Library	Singing Bowl	singing_bowl_long#16Ja0,0.150,100.6000,60;R1500
 Library	Thunder Thrush	thunder_rumble#8T-12L80/bird_hermit_thrush#8O300Q50;R800
+Windows 3.x	3.x Chimes	chimes#10/ding>#6T12O20L60;R400
+Windows 3.x	3.1 Tada Hit	tada#16;A2R300
+Windows 3.x	3.1 Chord Pad	chord#12Ja0,0.300,100.2000,70/chordR#4T12L50;R800
+Windows 3.x	Old and New Ding	ding#8Q-50/dingxp#8Q50O30;R500

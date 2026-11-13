@@ -41,7 +41,8 @@ protected:
         Machine &m = host_->machine();
         m.touch();              // XP stays awake while its screen is showing
         std::string e;
-        if (host_->takeEdit(e)) setState("dna", e.c_str());
+        // an edit made in Windows is already in 1.2.1's names: the state says so ("ver"), so it is not migrated
+        if (host_->takeEdit(e)) setState("dna", ("BASILISK-SYNTH 1\ndna " + e + "\nreference 0\nver 1.2.1\n").c_str());
         int x0, y0, x1, y1;
         if (m.phase == Machine::Running && m.frame(rgba_, x0, y0, x1, y1)) {
             fresh_ = true;      // uploaded in onNanoDisplay, where the GL context is current

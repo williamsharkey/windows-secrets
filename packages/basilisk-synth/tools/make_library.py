@@ -12,7 +12,7 @@ Sounds are every library/sources/<category>/*.wav (PCM). Names are made DNA-safe
 anything else '_'); the licence column comes from library/sources/manifest.json or library/catalog/*.json when
 there is an entry for the file. Also writes OUT.names.txt (one name per line) for the plugin's catalogue.
 """
-import argparse, glob, io, json, os, re, sys, wave
+import argparse, glob, io, json, os, re, subprocess, sys, wave
 
 import pycdlib
 
@@ -98,12 +98,11 @@ def main():
         iso.add_fp(io.BytesIO(b), len(b), '/' + iso_name + ';1', joliet_path='/' + joliet)
 
     add_text('LIBRARY.TSV', 'LIBRARY.TSV', ''.join(r + '\r\n' for r in rows))
-    pre = []
-    for p in sorted(glob.glob(os.path.join(a.presets, '*.tsv'))):
-        for ln in open(p, encoding='utf-8'):
-            ln = ln.rstrip('\r\n')
-            if ln and not ln.startswith('#') and ln.count('\t') >= 2:
-                pre.append(ln)
+    # PRESETS.TSV comes from make_presets.py (category, name, DNA, edition)
+    import tempfile
+    tmp = os.path.join(tempfile.mkdtemp(), 'PRESETS.TSV')
+    subprocess.check_call([sys.executable, os.path.join(HERE, 'make_presets.py'), tmp])
+    pre = [ln.rstrip('\r\n') for ln in open(tmp, encoding='utf-8') if ln.strip()]
     add_text('PRESETS.TSV', 'PRESETS.TSV', ''.join(r + '\r\n' for r in pre))
     iso.write(a.out)
     iso.close()

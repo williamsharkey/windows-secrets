@@ -13,7 +13,7 @@ out along the bottom, with Volume Control's sliders as the pitch bend, mod wheel
 
 Download
 --------
-https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.2.0
+https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.2.1
 
 | File | Contents |
 |---|---|
@@ -140,6 +140,23 @@ Version 2 of the DNA, measured on rendered audio (both systems):
 
 Not reached: renders are not bit-identical from run to run (XP's timing is not sample-accurate, unlike the
 3.11 edition), and a busy Windows machine still spreads note timing to about +-40 ms.
+
+What changed for 1.2.1:
+- **One name, one file, in both editions** (DNA.md 2.4). `chimes chord ding tada` are now the Windows 3.x
+  recordings (3.11's CHIMES and DING, 3.1's CHORD and TADA), which XP carries in `C:\WINDOWS\Media\W31`. XP's own
+  copies are `chimesxp chordxp dingxp tadaxp`, shown as `ding-xp` and so on. `ringin` and `ringout` are the same
+  file in both Windows. Projects and presets saved by 1.2.0 or earlier are rewritten to the xp names when they
+  load, so they sound as before, and the factory programs use them too. A new category, "Windows 3.x", has four
+  programs. The browser in Windows filters presets by [All] [W3.11] [XP].
+- **Program changes keep sounding:** while a new sound is built, each recorder goes on playing the sound it has
+  loaded, so notes during a rebuild play the old preset instead of dropping.
+- **Offline renders** wait for the machine to start (and start it again if it failed) and for every layer's sound
+  to be built, after a program change too, so a take is never silent. Their note timing still depends on the
+  PC being free: on a busy Windows PC offline notes can land up to 0.2 s off (1.2.0 behaves the same).
+- **Live macro automation** now shows in Windows (the DNA box and Macros panel follow it).
+- **Presets:** `[` and `]` at position 0 are skipped as refused steps, so Chord Thump sounds; Critical Bass trims
+  critstop's lead-in so short notes sound.
+- The editor draws XP's screen at whole-pixel scales only (this was already in the final 1.2.0 files).
 
 What changed for 1.2:
 - **Sound applied inside each Sound Recorder.** XP's `waveOutSetVolume` turned out to be one volume for the whole

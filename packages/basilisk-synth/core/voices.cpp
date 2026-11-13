@@ -42,7 +42,9 @@ int Voices::setDna(const Dna &d, Cmd *out)
     nlay_ = (int)d.layers.size();
     for (int i = 0; i < kMaxLayers; i++) {
         lay_[i] = L();
-        if (!same) info_[i] = LayerInfo();
+        // a new sound: until the guest reports the new layers, notes go to the recorders as they were, which still
+        // hold the old sounds (the guest plays them during the build, DNA.md 4); a layer that is new stays silent
+        if (!same && !info_[i].known) info_[i] = LayerInfo();
         buf_[i] = 0;
         if (i >= nlay_) continue;
         const Layer &s = d.layers[i];
@@ -51,7 +53,7 @@ int Voices::setDna(const Dna &d, Cmd *out)
         lay_[i].fixed = s.fixed; lay_[i].T = s.transpose; lay_[i].U = s.unison; lay_[i].C = s.spreadCents; lay_[i].level = s.level; lay_[i].pan = s.pan; lay_[i].offset = s.offset;
         lay_[i].nh = (int)s.harmony.size();
         for (int k = 0; k < lay_[i].nh && k < kMaxHarmony; k++) lay_[i].h[k] = s.harmony[k];
-        if (!same) { info_[i].first = s.first; info_[i].count = s.count; }
+        if (!same && !info_[i].known) { info_[i].first = s.first; info_[i].count = s.count; }
     }
     root_ = d.g.root; velocity_ = d.g.velocity; bendRange_ = d.g.bendRange;
     if (same) return 0;

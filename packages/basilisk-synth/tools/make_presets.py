@@ -34,8 +34,19 @@ with open(os.path.join(PKG, 'plugin', 'presets_gen.h'), 'w') as h:
     for n in sorted(names):
         h.write('    "%s",\n' % n)
     h.write('    nullptr};\n')
+def edition(dna):
+    """DNA.md 2.4: 'xp' when the DNA uses any file only XP has, else 'w31' (library sounds do not count)"""
+    shared31, both = {'chimes', 'chord', 'ding', 'tada'}, {'ringin', 'ringout'}
+    xp = set(builtin) | {'chimesxp', 'chordxp', 'dingxp', 'tadaxp'}
+    names = []
+    for layer in dna.split(';')[0].split('/'):
+        m = re.match(r'[a-z0-9_]+', layer)
+        if m: names.append(m.group(0))
+        names += re.findall(r'[IM]([a-z0-9_]+)', layer)
+    return 'xp' if any(n in xp and n not in shared31 and n not in both for n in names) else 'w31'
 if len(sys.argv) > 1:
+    # PRESETS.TSV for the disc: category, name, DNA, edition (the guest's [All] [W3.11] [XP] filters)
     with open(sys.argv[1], 'w', encoding='utf-8', newline='\r\n') as t:
         for c, n, d in rows:
-            t.write('%s\t%s\t%s\n' % (c, n, d))
+            t.write('%s\t%s\t%s\t%s\n' % (c, n, d, edition(d)))
 print(len(rows), 'presets')

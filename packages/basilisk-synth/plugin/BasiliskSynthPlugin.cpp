@@ -80,7 +80,7 @@ protected:
     const char *getMaker() const override { return "williamsharkey.com"; }
     const char *getHomePage() const override { return "https://williamsharkey.com/basilisk-download.html"; }
     const char *getLicense() const override { return "GPL-2.0-or-later"; }
-    uint32_t getVersion() const override { return d_version(1, 2, 0); }
+    uint32_t getVersion() const override { return d_version(1, 2, 1); }
 
     void initAudioPort(bool input, uint32_t index, AudioPort &port) override
     {
@@ -127,22 +127,30 @@ protected:
     {
         s.key = "dna";
         s.label = "DNA";
-        s.defaultValue = kPresets[0].dna;
+        s.defaultValue = (std::string("BASILISK-SYNTH 1\ndna ") + kPresets[0].dna + "\nreference 0\nver 1.2.1\n").c_str();
         s.hints = kStateIsHostReadable;
     }
+    // The state is core's State text with "ver 1.2.1": from 1.2.1 a bare chimes chord ding tada is the Windows 3.x
+    // recording (DNA.md 2.4). A state without "ver" was saved by 1.2.0 or earlier, when those names meant XP's own
+    // files: they become chimesxp ... so it sounds as it did.
     String getState(const char *key) const override
     {
         if (std::strcmp(key, "dna")) return String();
-        std::lock_guard<std::mutex> g(mu_);
-        return String(dna_.c_str());
+        bsynth::State st;
+        { std::lock_guard<std::mutex> g(mu_); st.dna = dna_; }
+        st.extra["ver"] = kStateVer;
+        return String(st.write().c_str());
     }
     void setState(const char *key, const char *value) override
     {
         if (std::strcmp(key, "dna") || !value) return;
         bsynth::State st;
-        if (!st.read(value)) return;
+        if (!st.read(value)) { Machine::log("setState: unreadable (%.60s)", value); return; }
+        Machine::log("setState: %s%s", st.dna.c_str(), st.extra.count("ver") ? "" : " (<= 1.2.0: migrated)");
+        if (!st.extra.count("ver")) st.dna = bsynth::migrateXp120(st.dna);
         applyDna(st.dna, true);
     }
+    static constexpr const char *kStateVer = "1.2.1";
 
     // ------------------------------------------------------------------ processing
     void activate() override
@@ -266,9 +274,15 @@ protected:
         } else if (ahead > 0.35) {
             // a host this far ahead of the clock is rendering offline: first let XP finish waking (and link up),
             // then keep pace with it
-            // at most 60 s in all: a machine that never comes renders silence rather than hang the host
-            for (int k = 0; k < 600 && offlineWaited_ < 60.0 && !(machine_.phase == Machine::Running && machine_.linked) &&
-                            machine_.phase != Machine::Failed && machine_.phase != Machine::Off; k++) {
+            // at most 60 s in all: a machine that never comes renders silence rather than hang the host. A machine
+            // that failed to start is started again (twice at most) instead of rendering silence
+            for (int k = 0; k < 1200 && offlineWaited_ < 60.0 && !(machine_.phase == Machine::Running && machine_.linked); k++) {
+                // Off: not started yet (activate() starts it): wait. Failed: start it again, twice at most
+                if (machine_.phase == Machine::Failed && offlineRestarts_ < 2) {
+                    offlineRestarts_++;
+                    Machine::log("offline render: the machine failed (%s); starting it again", machine_.error().c_str());
+                    machine_.restart();
+                } else if (machine_.phase == Machine::Failed) break;
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
                 offlineWaited_ += 0.05;
             }
@@ -364,6 +378,9 @@ private:
         double lastLog = 0;
         std::string lastSentDna, lastEnv, lastLenv;
         int lastWheel = -1, sentVis = -1, restarts = 0;
+        std::string lastGlobals;
+        double lastGlobalsSent = 0;
+        int builtFrames[bsynth::kMaxLayers] = {0};   // what the guest reported for each layer since the last "dna"
         uint64_t wdFrames = 0;
         double wdSince = Machine::now(), wdStart = 0;
         while (!quit_) {
@@ -399,9 +416,22 @@ private:
                 if (sscanf(line.c_str(), "cc %d %d", &ka, &kb) == 2) { kbdMsgs_.push({0xB0, (uint8_t)(ka & 127), (uint8_t)std::max(0, std::min(127, kb))}); continue; }
                 if (sscanf(line.c_str(), "bend %d", &ka) == 1) { ka = std::max(-8192, std::min(8191, ka)) + 8192; kbdMsgs_.push({0xE0, (uint8_t)(ka & 127), (uint8_t)(ka >> 7)}); continue; }
                 proto::Reply r = proto::parse(line);
-                if (r.kind == proto::Reply::Layer) layerMsgs_.push({r.layer, r.first, r.count, r.rate, r.frames});
+                if (r.kind == proto::Reply::Layer) {
+                    layerMsgs_.push({r.layer, r.first, r.count, r.rate, r.frames});
+                    if (r.layer >= 0 && r.layer < bsynth::kMaxLayers) builtFrames[r.layer] = r.frames;
+                }
                 else if (r.kind == proto::Reply::End) layerMsgs_.push({-1, r.rec, 0, 0, 0});
-                else if (r.kind == proto::Reply::Built) guestBuilding_ = false;
+                else if (r.kind == proto::Reply::Built) {
+                    // the build is done only when every layer that can sound has been reported with a sound in it:
+                    // a "built" can also be a stale one, or come before the library disc was read
+                    Dna d;
+                    { std::lock_guard<std::mutex> g(mu_); d = applyMacros(parsed_); }
+                    bool all = true;
+                    for (size_t i = 0; i < d.layers.size() && i < (size_t)bsynth::kMaxLayers; i++)
+                        if (d.layers[i].valid() && builtFrames[i] <= 0) all = false;
+                    if (all || Machine::now() - buildSentAt_ > 20.0) guestBuilding_ = false;
+                    else Machine::log("built, but not every layer has its sound yet: still waiting");
+                }
                 else if (r.kind == proto::Reply::Edit) {
                     // changed inside XP: it is already built there; adopt it
                     Dna d = parse(r.text);
@@ -471,16 +501,25 @@ private:
                 Dna eff = applyMacros(d);
                 char b[160];
                 // the buffers are rebuilt only when the (effective) layers changed; envelopes and pan are lines
+                std::string globals;
+                size_t semi = d.canonical.find(';');
+                if (semi != std::string::npos) globals = d.canonical.substr(semi);
                 if (!sentDna || eff.layersText() != lastSentDna) {
                     // a macro on N changes the layers: Windows gets the layers as they sound, with the DNA's own
                     // globals (macros included), so its editor still shows the mappings
-                    std::string globals;
-                    size_t semi = d.canonical.find(';');
-                    if (semi != std::string::npos) globals = d.canonical.substr(semi);
                     machine_.sendLong("dna " + eff.layersText() + globals + "\n");
                     guestBuilding_ = true; buildSentAt_ = Machine::now(); dnaSentOnce_ = true;
+                    for (auto &f : builtFrames) f = 0;
                     lastSentDna = eff.layersText();
+                    lastGlobals = globals; lastGlobalsSent = Machine::now();
                     lastLenv.clear();
+                } else if (globals != lastGlobals) {
+                    // only globals moved (a macro, the mod wheel, ADSR): Windows' DNA box and Macros panel follow,
+                    // at most 10 times a second; nothing is rebuilt (the layers are the same)
+                    if (Machine::now() - lastGlobalsSent > 0.1) {
+                        machine_.sendLong("dna " + eff.layersText() + globals + "\n");
+                        lastGlobals = globals; lastGlobalsSent = Machine::now();
+                    } else dnaDirty_ = true;
                 }
                 proto::env(b, sizeof b, d.g);
                 if (!sentDna || lastEnv != b) { machine_.send(b); lastEnv = b; }
@@ -519,6 +558,7 @@ private:
     double sr_ = 48000, pos_ = 0, ratioTrim_ = 1, wallStart_ = 0, lastRun_ = 0;
     bool primed_ = false, offlineSynced_ = false;
     double offlineWaited_ = 0;
+    int offlineRestarts_ = 0;
     uint64_t sampleClock_ = 0, processed_ = 0, unprimedAt_ = 0;
     int8_t noteMap_[128];
 

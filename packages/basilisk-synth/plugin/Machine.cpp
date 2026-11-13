@@ -423,6 +423,7 @@ void Machine::setStatus(const std::string &s) { std::lock_guard<std::mutex> g(mu
 void Machine::start()
 {
     if (main_.joinable() || stopping_) return;
+    phase = Starting;          // at once: a render that looks before the thread runs must not see Off
     main_ = std::thread([this] { run(); });
 }
 

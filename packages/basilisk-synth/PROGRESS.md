@@ -202,6 +202,38 @@ Done and measured in the real machine (machine-3):
 - Not done: bit-identical renders (XP is not sample-accurate); Windows pitch ~10 cents mean (the playout drift
   trim modulates speed under load); the layer table from ui-layouts.md (the Layers list stays); .vstpreset files.
 
+## 1.2.1 (2026-11-13): one name, one file; sounds kept while rebuilding
+- DNA 2.4 (18f77d5): chimes chord ding tada = the Windows 3.x recordings in both editions; XP's copies are
+  chimesxp chordxp dingxp tadaxp (shown ding-xp); ringin ringout are byte-identical in both (same SHA-1), one name.
+  Measured: XP's four vs 3.x's cross-correlate 0.19-0.48 (different recordings, XP's are 16-bit stereo).
+- XP's drive gets C:\WINDOWS\Media\W31\{CHIMES,CHORD,DING,TADA}.WAV (3.11's CHIMES/DING, 3.1's CHORD/TADA).
+- Guest: 39 names, the browser lists them by name (ding (3.x), ding-xp), [All] [W3.11] [XP] filters for presets
+  (PRESETS.TSV has an edition column from make_presets.py), default DNA chordxp/dingxp (sounds as before).
+- State: core State text with `ver 1.2.1`; a state without it (<= 1.2.0) is migrated (migrateXp120); edits from
+  Windows are tagged; factory presets rewritten to xp names; new category "Windows 3.x" (4 presets).
+- Program changes: the guest keeps playing each recorder's loaded sound during a build, and the voice allocator
+  keeps the old layer pools until the guest reports the new ones (core/voices.cpp), so notes during a rebuild
+  sound the old preset instead of dropping.
+- Playout drift trim clamp (+-0.2 %) was tried and REVERTED: QEMU's delivery under load needs the wider trim;
+  with the clamp, live renders underran into gaps. Windows pitch stays ~10 cents mean as in 1.2.0.
+- Offline renders wait until every layer has been reported with a sound (a stale or pre-library "built" no longer
+  releases them; 20 s cap) and for program-change builds (15 s cap); Machine::start sets Starting at once and an
+  offline render restarts a Failed machine (x2) - the silent-take cause was a render seeing Off before start ran.
+- Live macro automation reaches Windows: globals-only changes are sent (<= 10/s) so the DNA box and Macros panel
+  follow; verified with the editor open (Macro 1 0 -> 100: x6-10 louder, panel at 100 %).
+- `[` and `]` at position 0 are skipped (DNA.md 2.1, as BASILISK 16); Critical Bass is the 3.11 lane's
+  `critstop@t40[<<#16T-12;A5D400S60R200G6`.
+- Measured (quiet window, Windows): BasiliskHost live 50/50 notes, onset median 14.7 ms std 19.7, pitch mean 9.7 /
+  max 17.8 cents; state bytes identical; my suite: macro automation 10.2x, pan/offset/Ja/library as specified,
+  program change with no silent notes. Factory sweep (43 presets x 2 offline takes): Mac 41/43 presets with every
+  note in both takes (repeat envelope corr mostly 0.7-0.99); Windows at 4 VMs 38/43, repeat corr 0.1-0.6.
+- Windows OFFLINE timing is load-sensitive: under load the harness gave 38/50 notes, median 103 ms. An A/B against
+  the 1.2.0 plugin in the same conditions (same machine, 2 takes each) gave the same spread (+-0.2 s, some notes
+  missing in both), so it is not a 1.2.1 regression; it is note sends riding host thread timing. Next: offline
+  notes scheduled by the guest (send ahead with delay_ms) so they no longer depend on host scheduling.
+- Next release (batched): Time group-box fix, Calculator hex voice buttons (audition at root rate, thin layer bar),
+  RECORDING.md X0-X4, PE2 v3 features.
+
 ## Round 2 status (2026-11-13, before -> after)
 - Assembly, plugin load -> ready: Windows 11.5 s -> 5.6-6.1 s; macOS 11.3 s -> 4.4-4.5 s (1 vCPU, idle patch,
   single-threaded TCG tb-size 1024, sequential reshape+glide, "go" sent with the first COM1 lines, VNC <= 30 fps).
