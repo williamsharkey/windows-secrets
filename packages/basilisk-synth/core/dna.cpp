@@ -12,10 +12,12 @@ const char *const kSoundNames[kSoundCount] = {
     "balloon", "batcrit", "batlow", "critstop", "default", "xpding", "error", "exclaim", "hwfail",
     "hwin", "hwout", "infobar", "logoff", "logon", "menu", "minimize", "xpnotify", "popup", "print",
     "xprecycle", "restore", "xpringin", "xpringout", "shutdown", "startup", "xpstart",
-    "w31chimes", "w31chord", "w31ding", "w31ringin", "w31ringout", "w31tada",
-    "wxpchimes", "wxpchord", "wxpding", "wxpringin", "wxpringout", "wxptada"};
+    "chimesxp", "chordxp", "dingxp", "tadaxp"};
+// one name, one file, in both editions (DNA.md 2.4): chimes chord ding tada are the Windows 3.x recordings (chord
+// and tada from Windows 3.1); XP's own copies of those four are chimesxp chordxp dingxp tadaxp. ringin and ringout
+// are byte-identical in both Windows, so they have no xp form.
 const char *const kSoundFilesXP[kSoundCount] = {
-    "chimes.wav", "chord.wav", "ding.wav", "notify.wav", "recycle.wav", "ringin.wav", "ringout.wav", "start.wav", "tada.wav",
+    "W31\\CHIMES.WAV", "W31\\CHORD.WAV", "W31\\DING.WAV", "notify.wav", "recycle.wav", "ringin.wav", "ringout.wav", "start.wav", "W31\\TADA.WAV",
     "Windows XP Balloon.wav", "Windows XP Battery Critical.wav", "Windows XP Battery Low.wav", "Windows XP Critical Stop.wav",
     "Windows XP Default.wav", "Windows XP Ding.wav", "Windows XP Error.wav", "Windows XP Exclamation.wav",
     "Windows XP Hardware Fail.wav", "Windows XP Hardware Insert.wav", "Windows XP Hardware Remove.wav",
@@ -23,9 +25,8 @@ const char *const kSoundFilesXP[kSoundCount] = {
     "Windows XP Menu Command.wav", "Windows XP Minimize.wav", "Windows XP Notify.wav", "Windows XP Pop-up Blocked.wav",
     "Windows XP Print complete.wav", "Windows XP Recycle.wav", "Windows XP Restore.wav", "Windows XP Ringin.wav",
     "Windows XP Ringout.wav", "Windows XP Shutdown.wav", "Windows XP Startup.wav", "Windows XP Start.wav",
-    "W31\\CHIMES.WAV", "W31\\CHORD.WAV", "W31\\DING.WAV", "W31\\RINGIN.WAV", "W31\\RINGOUT.WAV", "W31\\TADA.WAV",
-    "chimes.wav", "chord.wav", "ding.wav", "ringin.wav", "ringout.wav", "tada.wav"};
-// Windows 3.11: its own six in C:\WINDOWS; XP's, converted to PCM SOUNDREC opens, in C:\XPSOUNDS as X<index>.WAV
+    "chimes.wav", "chord.wav", "ding.wav", "tada.wav"};
+// Windows 3.11: the 3.x files in C:\WINDOWS; XP's, converted to PCM SOUNDREC opens, in C:\XPSOUNDS as X<index>.WAV
 const char *const kSoundFiles311[kSoundCount] = {
     "C:\\WINDOWS\\CHIMES.WAV", "C:\\WINDOWS\\CHORD.WAV", "C:\\WINDOWS\\DING.WAV", "C:\\XPSOUNDS\\X03.WAV",
     "C:\\XPSOUNDS\\X04.WAV", "C:\\WINDOWS\\RINGIN.WAV", "C:\\WINDOWS\\RINGOUT.WAV", "C:\\XPSOUNDS\\X07.WAV",
@@ -36,10 +37,7 @@ const char *const kSoundFiles311[kSoundCount] = {
     "C:\\XPSOUNDS\\X24.WAV", "C:\\XPSOUNDS\\X25.WAV", "C:\\XPSOUNDS\\X26.WAV", "C:\\XPSOUNDS\\X27.WAV",
     "C:\\XPSOUNDS\\X28.WAV", "C:\\XPSOUNDS\\X29.WAV", "C:\\XPSOUNDS\\X30.WAV", "C:\\XPSOUNDS\\X31.WAV",
     "C:\\XPSOUNDS\\X32.WAV", "C:\\XPSOUNDS\\X33.WAV", "C:\\XPSOUNDS\\X34.WAV",
-    "C:\\WINDOWS\\CHIMES.WAV", "C:\\WINDOWS\\CHORD.WAV", "C:\\WINDOWS\\DING.WAV", "C:\\WINDOWS\\RINGIN.WAV",
-    "C:\\WINDOWS\\RINGOUT.WAV", "C:\\WINDOWS\\TADA.WAV",
-    "C:\\XPSOUNDS\\X00.WAV", "C:\\XPSOUNDS\\X01.WAV", "C:\\XPSOUNDS\\X02.WAV", "C:\\XPSOUNDS\\X05.WAV",
-    "C:\\XPSOUNDS\\X06.WAV", "C:\\XPSOUNDS\\X08.WAV"};
+    "C:\\XPSOUNDS\\X35.WAV", "C:\\XPSOUNDS\\X36.WAV", "C:\\XPSOUNDS\\X37.WAV", "C:\\XPSOUNDS\\X38.WAV"};
 
 static std::vector<std::string> g_library;
 void setLibrary(const std::vector<std::string> &names) { g_library = names; }
@@ -57,9 +55,24 @@ int soundOrigin(const std::string &name)
 {
     int i = soundIndex(name);
     if (i < 0) return inLibrary(name) ? kOriginLibrary : 0;
-    if (i == 0 || i == 1 || i == 2 || i == 5 || i == 6 || i == 8) return kOriginNative;   // chimes chord ding ringin ringout tada
-    if (i >= 35 && i <= 40) return kOrigin31;
+    if (i == 0 || i == 1 || i == 2 || i == 8) return kOrigin31;      // chimes chord ding tada: the 3.x recordings
+    if (i == 5 || i == 6) return kOriginBoth;                         // ringin ringout: the same file in both
     return kOriginXP;
+}
+
+std::string displayName(const std::string &name)
+{
+    if (name == "chimesxp" || name == "chordxp" || name == "dingxp" || name == "tadaxp") return name.substr(0, name.size() - 2) + "-xp";
+    return name;
+}
+
+std::string dnaName(const std::string &shown)
+{
+    if (shown.size() > 3 && shown.compare(shown.size() - 3, 3, "-xp") == 0) {
+        std::string b = shown.substr(0, shown.size() - 3);
+        if (b == "chimes" || b == "chord" || b == "ding" || b == "tada") return b + "xp";
+    }
+    return shown;
 }
 
 static int clampi(int v, int lo, int hi) { return v < lo ? lo : v > hi ? hi : v; }
@@ -331,6 +344,21 @@ Dna parse(const std::string &in)
 }
 
 std::string canonical(const std::string &t) { return parse(t).canonical; }
+
+std::string migrateXp120(const std::string &dna)
+{
+    // BASILISK SYNTH <= 1.2.0 (XP): a bare chimes chord ding tada meant XP's own file; now that is chimesxp etc.
+    Dna d = parse(dna);
+    auto ren = [](const std::string &n) { return n == "chimes" || n == "chord" || n == "ding" || n == "tada" ? n + "xp" : n; };
+    for (auto &L : d.layers) {
+        if (!L.tokens.empty() && !L.sourceName.empty() && L.tokens[0] == L.sourceName) L.tokens[0] = ren(L.sourceName);
+        for (size_t k = 1; k < L.tokens.size(); k++) {
+            const std::string &t = L.tokens[k];
+            if (t.size() > 1 && (t[0] == 'I' || t[0] == 'M') && t[1] >= 'a' && t[1] <= 'z') L.tokens[k] = t.substr(0, 1) + ren(t.substr(1));
+        }
+    }
+    return parse(join(d, true)).canonical;
+}
 
 int dnaOrigins(const Dna &d)
 {

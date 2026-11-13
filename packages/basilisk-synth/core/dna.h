@@ -8,24 +8,28 @@ namespace bsynth {
 constexpr int kRecorders = 16, kMaxLayers = 8, kMaxSteps = 64, kMaxHarmony = 8, kMaxDnaBytes = 1024;
 constexpr int kMaxBufferMs = 30000;   // a step that would make a buffer longer than this is skipped (both sides)
 
-// The sounds both editions carry (section 2.4), in table order: XP's 35 Media sounds (index 0..34), then the six
-// Windows 3.x recordings under edition-qualified names (w31*, 35..40), then XP's six colliding legacy files under
-// edition-qualified names (wxp*, 41..46). Indices never change; new names are appended.
+// The sounds both editions carry (section 2.4), one name for one file in both: XP's 35 Media names (index 0..34;
+// chimes chord ding tada among them now mean the Windows 3.x recordings), then XP's own copies of those four as
+// chimesxp chordxp dingxp tadaxp (35..38). Indices never change; new names are appended.
 extern const char *const kSoundNames[];
 extern const char *const kSoundFilesXP[];     // relative to C:\WINDOWS\Media on XP
 extern const char *const kSoundFiles311[];    // absolute on Windows 3.11
-constexpr int kSoundCount = 47;
+constexpr int kSoundCount = 39;
 int soundIndex(const std::string &name);          // -1 if unknown
 const char *soundFile311(int index);               // kSoundFiles311[index]
-// Which recordings a name stands for (section 2.4): bare names mean the playing edition's own recording when both
-// editions have one (chimes chord ding ringin ringout tada); w31* is always Windows 3.x's, wxp* and XP-only names
-// always XP's; library names are the disc's.
-enum SoundOrigin { kOriginNative = 1, kOrigin31 = 2, kOriginXP = 4, kOriginLibrary = 8 };
-int soundOrigin(const std::string &name);         // one SoundOrigin bit (0: unknown)
+// Which Windows a name's file comes from (section 2.4): chimes chord ding tada are 3.x's; ringin ringout are the
+// same file in both (kOriginBoth); xp names and every XP-only name are XP's; library names are the disc's.
+enum SoundOrigin { kOriginBoth = 1, kOrigin31 = 2, kOriginXP = 4, kOriginLibrary = 8 };   // Both: ringin ringout
+int soundOrigin(const std::string &name);         // SoundOrigin bits (0: unknown)
+std::string displayName(const std::string &name); // the readable recipe's form: dingxp -> ding-xp
+std::string dnaName(const std::string &shown);    // and back: ding-xp -> dingxp
+// a DNA saved by BASILISK SYNTH <= 1.2.0 (XP): bare chimes chord ding tada meant XP's files -> chimesxp ...
+std::string migrateXp120(const std::string &dna);
 struct Dna;
 int dnaOrigins(const Dna &d);                     // the OR of every source and I/M name's origin
-// "Only this Windows' own sounds" (the preset browsers' filter): no library sound, and nothing of the other edition
-inline bool ownSounds(int origins, bool xpEdition) { return !(origins & (kOriginLibrary | (xpEdition ? kOrigin31 : kOriginXP))); }
+// a preset's edition (its metadata, derived from its names): "xp" when it uses any file only XP has, else "w31"
+// [All] [W3.11] [XP] filters in both editions' browsers
+inline const char *dnaEdition(int origins) { return (origins & kOriginXP) ? "xp" : "w31"; }
 
 struct Step {
     char op = 0;          // + - > < E R @ [ ] C P X I M

@@ -123,32 +123,42 @@ Each NAME stands for a file in `C:\WINDOWS\Media\` on XP.
 | exclaim | Windows XP Exclamation.wav | xpstart | Windows XP Start.wav |
 | hwfail | Windows XP Hardware Fail.wav | | |
 
-**Both editions carry both editions' sounds** (from BASILISK SYNTH 1.2.1 and BASILISK 16 1.2.1). Both have a
-`ding`, `chimes`, `chord`, `tada`, `ringin` and `ringout`, but they are different recordings. So:
+**One name, one file, in both editions** (from BASILISK SYNTH 1.2.1 and BASILISK 16 1.2.1). Both editions carry
+every file, so a DNA sounds the same in both.
 
-- **A bare name means the playing edition's own recording**, as it always has: `ding` is XP's `ding.wav` on XP and
-  Windows 3.11's `DING.WAV` on 3.11. Existing presets keep their sound.
-- **`w31`NAME always means the Windows 3.x recording, and `wxp`NAME always means XP's**, in both editions. Only
-  the six shared names have these forms. Every other name exists in one edition only and already means the same
-  file everywhere (`balloon`, `xpding`, ... are XP's).
+- `chimes`, `chord`, `ding` and `tada` are the **Windows 3.x recordings**: 3.11's CHIMES.WAV and DING.WAV, and
+  3.1's CHORD.WAV and TADA.WAV (3.11's disks dropped those two).
+- XP's own copies of those four are different recordings, newer, 16-bit stereo (measured: cross-correlation 0.19 to
+  0.48 against the 3.x files). They are `chimesxp`, `chordxp`, `dingxp` and `tadaxp` in a DNA, and are shown as
+  `chimes-xp`, `chord-xp`, `ding-xp` and `tada-xp` in the readable recipe and on the website. The DNA cannot use
+  `-` there, because `-` is the Decrease Volume step.
+- `ringin` and `ringout` are byte-identical in Windows 3.11 and XP (same SHA-1), so each is one file with no xp form.
+- Every other name in the table above is an XP-only file and keeps its name (`xpding` is "Windows XP Ding.wav").
 
-| NAME | XP edition plays | 3.11 edition plays |
+| NAME | File (XP: C:\WINDOWS\Media\...) | File (3.11) |
 |---|---|---|
-| chimes chord ding ringin ringout tada | XP's `chimes.wav` ... `tada.wav` | 3.11's `CHIMES.WAV` ... `TADA.WAV` (CHORD and TADA from Windows 3.1) |
-| w31chimes w31chord w31ding w31ringin w31ringout w31tada | `C:\WINDOWS\Media\W31\CHIMES.WAV` ..., the 3.x files as they are | `C:\WINDOWS\CHIMES.WAV` ... |
-| wxpchimes wxpchord wxpding wxpringin wxpringout wxptada | `chimes.wav` ... (the same files as the bare names) | `C:\XPSOUNDS\X00.WAV` ... (XP's files, converted) |
-| every other name in the table above | its XP file | `C:\XPSOUNDS\X`*nn*`.WAV`: XP's file converted to PCM that SOUNDREC opens (8 or 16 bit, 11/22/44 kHz); *nn* is the name's index |
+| chimes chord ding tada | `W31\CHIMES.WAV`, `W31\CHORD.WAV`, `W31\DING.WAV`, `W31\TADA.WAV` (the 3.x files as they are) | `C:\WINDOWS\CHIMES.WAV` ... `TADA.WAV` |
+| chimesxp chordxp dingxp tadaxp | `chimes.wav`, `chord.wav`, `ding.wav`, `tada.wav` | `C:\XPSOUNDS\X35.WAV` ... `X38.WAV` |
+| ringin ringout | `ringin.wav`, `ringout.wav` | `C:\WINDOWS\RINGIN.WAV`, `RINGOUT.WAV` (the same bytes) |
+| every other name | its XP file | `C:\XPSOUNDS\X`*nn*`.WAV`: XP's file converted to PCM that SOUNDREC opens (8 or 16 bit, 11/22/44 kHz); *nn* is the name's index |
 
-`core/dna.cpp` holds the tables (`kSoundNames`, `kSoundFilesXP`, `kSoundFiles311`): indices 0-34 are XP's Media
-names, 35-40 the `w31` names, 41-46 the `wxp` names, and new names are only ever appended. The old 3.11 fallback
-(every other name plays `ding`) is gone.
+`core/dna.cpp` holds the tables (`kSoundNames`, `kSoundFilesXP`, `kSoundFiles311`). Indices 0-34 are the names
+above in table order, and 35-38 are `chimesxp chordxp dingxp tadaxp`. New names are only ever appended. The old
+3.11 fallback (an unknown name played DING) is gone. `core::displayName` and `core::dnaName` convert between
+`dingxp` and `ding-xp`.
 
-**Origins and the "own sounds" filter.** Each name has an origin: *native* (the six bare shared names), *3.x*
-(`w31*`), *XP* (`wxp*` and every XP-only name) or *library* (the disc's names, 5.5). A DNA's origins are those of
-every layer source and every `I`/`M` sound (`core::dnaOrigins`). Preset browsers in both editions offer **"Only
-this Windows' own sounds"**: a preset passes in the XP edition when it uses no 3.x and no library sound, and in the
-3.11 edition when it uses no XP and no library sound (`core::ownSounds`). Presets carry no separate tag: the
-metadata is derived from the DNA, so it can never disagree with it.
+**Migration.** Up to BASILISK SYNTH 1.2.0, XP's bare `chimes chord ding tada` meant XP's own files. 1.2.1 stores
+its version in the plugin state (key `ver`). A state without it, from XP's plugin, has those four names renamed to
+their xp forms when it loads (`core::migrateXp120`, for layer sources and `I`/`M` sounds), so it sounds as it did.
+XP's factory presets are written with the xp names. BASILISK 16's states need no change: its bare names were
+always the 3.x files.
+
+**Edition metadata and filters.** Each name has an origin: *3.x* (`chimes chord ding tada`), *both* (`ringin
+ringout`), *XP* (the xp forms and every XP-only name) or *library* (the disc, 5.5). A DNA's origins are those of
+every layer source and every `I`/`M` sound (`core::dnaOrigins`). Its **edition** is `xp` when it uses any XP file,
+and `w31` otherwise (`core::dnaEdition`); library sounds do not count. It is derived from the DNA, never stored, so
+it cannot disagree with the sound. Both editions' preset browsers have the filters **[All] [W3.11] [XP]**, which
+show all presets, the `w31` ones, or the `xp` ones.
 
 ### 2.5 Parsing
 
@@ -362,9 +372,9 @@ token survives a save.
 The DNA, pools, voice allocator, parameters and preset state are the same code (`core/`), so a DNA or a preset
 file from one edition plays in the other. The differences are in the machine.
 
-- **Sounds (from 1.2.1):** a bare shared name plays 3.11's own file (CHORD and TADA come from Windows 3.1, since
-  3.11's disks dropped them); every XP name plays XP's file, converted to PCM in `C:\XPSOUNDS`; `w31*` and `wxp*`
-  are as in 2.4. Before 1.2.1, every XP-only name played DING.
+- **Sounds (from 1.2.1):** one name, one file, as in 2.4. `chimes chord ding tada ringin ringout` are its own files
+  (CHORD and TADA from Windows 3.1). The xp forms and every XP-only name play XP's files, converted to PCM in
+  `C:\XPSOUNDS`. Before 1.2.1, every XP-only name played DING.
 - **Recorders:** 16 SOUNDREC.EXE. Its menus have the same commands as §2.1:
   - Copy, Paste Insert and Paste Mix
   - Insert File and Mix with File
