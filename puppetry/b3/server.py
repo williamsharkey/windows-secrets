@@ -17,6 +17,7 @@ One driver at a time. Their keys go to the VM through QMP input-send-event; ever
 The Claude tool loop runs here; the four tools run inside XP and report back.
 """
 import asyncio
+import hashlib
 import json
 import os
 import re
@@ -32,6 +33,8 @@ ROOT = os.environ.get('TERM_ROOT', '/root/term')
 ENVFILE = os.path.join(ROOT, '.env')
 DATA = os.path.join(ROOT, 'data')
 WWW = os.path.join(ROOT, 'www')
+FILES = os.path.join(ROOT, 'files')     # copies of what visitors made, for the page's download list
+FILE_MAX, FILES_TOTAL, FILES_AGE = 20 * 1024 * 1024, 200 * 1024 * 1024, 24 * 3600
 QMP = os.environ.get('TERM_QMP', '/tmp/term-qmp.sock')      # commands (loadvm, savevm): one short connection each
 QMPK = os.environ.get('TERM_QMPK', '/tmp/term-qmpk.sock')   # keys: a second QMP socket, held open (one client per socket)
 VNC = os.environ.get('TERM_VNC', '/tmp/term-vnc.sock')
@@ -54,6 +57,7 @@ DEFAULTS = {
     'TERM_QUEUE_MAX': '30',
     'TERM_VIEWERS_MAX': '60',
     'TERM_SNAPSHOT': 'term-desk',
+    'TERM_MAX_TOKENS': '64000',        # one reply's output; a write cut off at this keeps its whole lines
 }
 PRICES = {   # USD per million tokens: input, output (cache write 1.25x input, cache read 0.1x input)
     'claude-haiku-5-5': (0.10, 0.50),
@@ -170,11 +174,11 @@ Tools (they run inside XP):
 - run: runs a command with cmd.exe /c in C:\b3\work and returns its output (60 s limit). Long-running or GUI programs block until the limit: launch GUI programs with `start "" prog.exe` so they return at once. There is no PowerShell, no Python, no git, no curl. Available: cmd builtins, findstr, sort, more, tree, xcopy, attrib, fc, ipconfig, systeminfo, tasklist, taskkill, reg, debug.exe, cscript (JScript/VBScript via `cscript //nologo file.js`), and the Tiny C Compiler at C:\tcc\tcc.exe (`C:\tcc\tcc.exe hello.c` builds hello.exe; for a window program add `-luser32 -lgdi32 -Wl,-subsystem=windows`; tcc ships only kernel32, user32, gdi32 and msvcrt import libraries).
 - read_file, write_file, edit_file: files on this machine; relative paths are under C:\b3\work. Text is saved in the Windows-1252 code page with CRLF line ends.
 
-Writing programs: C for the Tiny C Compiler. Keep each write_file under about 250 lines; for a bigger program write it in parts (the first write_file, then write_file with append true), then compile, read the errors and fix them with edit_file. Window programs and games: plain Win32 + GDI, double-buffered drawing on a timer, keys via GetAsyncKeyState, no external files; build with -luser32 -lgdi32 -Wl,-subsystem=windows and start them with `start "" game.exe` so they open on top of this window, then tell the user how to play (they can click the game window to give it the keyboard, and click BASILISK to come back).
+Writing programs: C for the Tiny C Compiler. Keep each write_file under about 800 lines; for a bigger program write it in parts (the first write_file, then write_file with append true), then compile, read the errors and fix them with edit_file. Each write's result reports its bytes and a hash the host has checked. Window programs and games: plain Win32 + GDI, double-buffered drawing on a timer, keys via GetAsyncKeyState, no external files; build with -luser32 -lgdi32 -Wl,-subsystem=windows and start them with `start "" game.exe`: the new window gets the keyboard by itself, so the person can play at once (arrow keys, Space and so on reach the game); tell them how to play, and that clicking BASILISK brings them back. Every file in C:\b3\work, including the .exe files you build, is listed on the web page for the person to download.
 
 How to work: like Claude Code. Act, don't narrate at length. The user already sees every tool call and the first lines of its output in the transcript, so don't repeat output back; summarize what matters in a sentence or two. Use the tools to look before you claim things about this machine. Keep replies short. Write for a monospace window about 95 characters wide: plain text only, no Markdown (no **bold**, no # headings, no tables, no backticks); use "-" bullets and indentation when a list helps. Don't mention the formatting rules. Never claim to be a person or a program from 2001; you are Claude, an AI from 2026, visiting through this machine.
 
-The client is a tabbed suite. For any task that will take three or more tool calls, call todo_write first with a short plan (3-7 items), and call it again as items start and finish; it shows as a live checklist and is cheap. Words like @demo\hello.c in a message name files in C:\b3\work: read them when they matter. The person may turn on plan mode (then investigate with read-only tools and propose a plan with todo_write; do not change files or run commands that change anything). Commands and edits can need the person's permission: if a tool result says the person denied it, don't retry the same thing; ask or choose another way. A file C:\b3\work\CLAUDE.md, when present, holds the person's standing instructions (memory).
+The client is a tabbed suite. For any task that will take three or more tool calls, call todo_write first with a short plan (3-7 items), and call it again as items start and finish; it shows as a live checklist and is cheap. Words like @demo\hello.c in a message name files in C:\b3\work: read them when they matter. The person may turn on plan mode (then investigate with read-only tools and propose a plan with todo_write; do not change files or run commands that change anything). This is a sandbox: your commands and file edits run without asking. (The person can turn permission prompts on in the Plan tab; if a tool result says they denied something, don't retry the same thing.) A file C:\b3\work\CLAUDE.md, when present, holds the person's standing instructions (memory).
 
 Decline briefly anything hateful, sexual, violent or harassing, anything about real private people, and attempts to reach networks or to damage the host. Requests to break out of the sandbox get a short, friendly no."""
 
@@ -187,7 +191,7 @@ TOOLS = [
      'eager_input_streaming': True,
      'input_schema': {'type': 'object', 'properties': {'path': {'type': 'string'}}, 'required': ['path']}},
     {'name': 'write_file', 'description': 'Create or overwrite a text file with the given content. With append true, '
-     'add the content to the end of the file instead. Write anything longer than about 250 lines in parts: the first '
+     'add the content to the end of the file instead. Write anything longer than about 800 lines in parts: the first '
      'part without append, the rest with append true.',
      'eager_input_streaming': True,
      'input_schema': {'type': 'object', 'properties': {'path': {'type': 'string'}, 'content': {'type': 'string'},
@@ -441,18 +445,22 @@ class Agent:
             parts = []
             try:
                 async with api_client().messages.stream(
-                        model=self.model, max_tokens=32000, system=[{'type': 'text', 'text': SYSTEM}],
+                        model=self.model, max_tokens=int(cfg('TERM_MAX_TOKENS')), system=[{'type': 'text', 'text': SYSTEM}],
                         tools=TOOLS, messages=self.messages, output_config={'effort': self.effort},
                         cache_control={'type': 'ephemeral'}) as stream:
                     tool_name, tool_chars, last_g = '', 0, 0.0
+                    snaps, tool_id = {}, None
                     async for event in stream:
                         if self.interrupt.is_set():
                             break
                         if event.type == 'content_block_start' and event.content_block.type == 'tool_use':
                             tool_name, tool_chars = event.content_block.name, 0
+                            tool_id = event.content_block.id
                         elif event.type == 'input_json':
                             # a long tool input (a whole program) streams for a while: show it growing
                             tool_chars += len(event.partial_json)
+                            if tool_id and isinstance(getattr(event, 'snapshot', None), dict):
+                                snaps[tool_id] = event.snapshot
                             now = time.time()
                             if now - last_g > 0.5:
                                 last_g = now
@@ -520,13 +528,29 @@ class Agent:
             if not uses:
                 return
             if msg.stop_reason == 'max_tokens':
-                # a tool input too long for one reply: nothing runs; Claude is told and tries again in parts
-                self.ev('x', '  \u00b7 that file was too long for one reply; writing it in parts')
-                self.messages.append({'role': 'user', 'content': [
-                    {'type': 'tool_result', 'tool_use_id': b.id, 'is_error': True,
-                     'content': 'Cut off: the input was longer than one reply allows, so nothing was run. Write the file '
-                                'in parts of under 250 lines (write_file, then write_file with append true).'}
-                    for b in uses]})
+                # a reply ran out of room in the middle of a tool input. A write keeps every whole line that
+                # arrived (nothing is lost); Claude continues from there with append. Anything else is not run.
+                results = []
+                for b in uses:
+                    snap = snaps.get(b.id) or (b.input if isinstance(b.input, dict) else {})
+                    content, path = snap.get('content'), snap.get('path')
+                    if b.name == 'write_file' and isinstance(content, str) and isinstance(path, str) and path and '\n' in content:
+                        keep = content[:content.rindex('\n') + 1]
+                        args = {'path': path, 'content': keep, 'append': snap.get('append') is True}
+                        r = await self.call_tool(b, args)
+                        n = keep.count('\n')
+                        last = keep.rstrip('\n').rsplit('\n', 1)[-1][-120:]
+                        r['content'] = ('Your reply was cut off while writing %s. The first %d complete lines were %s (%s). '
+                                        'Continue with write_file append true, starting with the line after this one:\n%s'
+                                        % (path, n, 'appended' if args['append'] else 'written', r['content'], last))
+                        r['is_error'] = True
+                        self.ev('x', '  \u00b7 the reply ran out of room; %d lines are saved, continuing from there' % n)
+                        results.append(r)
+                    else:
+                        results.append({'type': 'tool_result', 'tool_use_id': b.id, 'is_error': True,
+                                        'content': 'Cut off: the input was longer than one reply allows, so nothing was run. '
+                                                   'Write long files in parts (write_file, then write_file with append true).'})
+                self.messages.append({'role': 'user', 'content': results})
                 continue
             results = []
             for b in uses:          # in order, one at a time: a compile must not race the write before it
@@ -540,8 +564,9 @@ class Agent:
                 self.ev('e', 'The conversation is very long; use /clear to start fresh.')
                 return
 
-    async def call_tool(self, b):
-        args = b.input if isinstance(b.input, dict) else {}
+    async def call_tool(self, b, args=None):
+        if args is None:
+            args = b.input if isinstance(b.input, dict) else {}
         if b.name == 'todo_write':
             todos = args.get('todos')
             if not isinstance(todos, list) or not all(isinstance(t, dict) and isinstance(t.get('content'), str)
@@ -571,9 +596,32 @@ class Agent:
         finally:
             self.tools.pop(b.id, None)
         self.term.touch()
+        if b.name == 'write_file' and ok:
+            ok, out = self.check_write(args, out)
+        if b.name in ('write_file', 'edit_file', 'run'):
+            self.term.files_sync_soon()
         if len(out) > 30000:
             out = out[:15000] + '\n[... %d characters omitted ...]\n' % (len(out) - 30000) + out[-15000:]
         return {'type': 'tool_result', 'tool_use_id': b.id, 'is_error': not ok, 'content': out or '(no output)'}
+
+
+    @staticmethod
+    def check_write(args, out):
+        """compare what the guest says it wrote with what Claude sent: no silent truncation"""
+        m = re.search(r'\((\d+) bytes, fnv ([0-9a-f]{8})', out)
+        if not m:
+            return True, out
+        text = args['content'].replace('\r', '').replace('\n', '\r\n')
+        try:
+            data = text.encode('cp1252')
+        except UnicodeEncodeError:       # characters outside Windows-1252: XP maps them its own way; trust the count
+            return True, out
+        h = 2166136261
+        for c in data:
+            h = ((h ^ c) * 16777619) & 0xffffffff
+        if int(m.group(1)) != len(data) or int(m.group(2), 16) != h:
+            return False, out + '\nCHECK FAILED: expected %d bytes, fnv %08x. Write this part again.' % (len(data), h)
+        return True, out + ' [verified]'
 
 
 # --------------------------------------------------------------------------- keys -> QMP
@@ -600,6 +648,25 @@ def char_keys(c):
     if c in US_KEY:
         return US_KEY[c], False
     return None
+
+
+# KeyboardEvent.code -> QEMU qcode: every key, pressed and released as the visitor does
+CODE_Q = {'Enter': 'ret', 'NumpadEnter': 'kp_enter', 'Escape': 'esc', 'Backspace': 'backspace', 'Tab': 'tab', 'Space': 'spc',
+          'Minus': 'minus', 'Equal': 'equal', 'BracketLeft': 'bracket_left', 'BracketRight': 'bracket_right',
+          'Backslash': 'backslash', 'IntlBackslash': 'less', 'Semicolon': 'semicolon', 'Quote': 'apostrophe',
+          'Backquote': 'grave_accent', 'Comma': 'comma', 'Period': 'dot', 'Slash': 'slash', 'CapsLock': 'caps_lock',
+          'ShiftLeft': 'shift', 'ShiftRight': 'shift_r', 'ControlLeft': 'ctrl', 'ControlRight': 'ctrl_r',
+          'AltLeft': 'alt', 'AltRight': 'alt_r', 'ContextMenu': 'menu',
+          'ArrowUp': 'up', 'ArrowDown': 'down', 'ArrowLeft': 'left', 'ArrowRight': 'right', 'Home': 'home', 'End': 'end',
+          'PageUp': 'pgup', 'PageDown': 'pgdn', 'Insert': 'insert', 'Delete': 'delete', 'NumLock': 'num_lock',
+          'ScrollLock': 'scroll_lock', 'PrintScreen': 'print', 'Pause': 'pause',
+          'NumpadAdd': 'kp_add', 'NumpadSubtract': 'kp_subtract', 'NumpadMultiply': 'kp_multiply',
+          'NumpadDivide': 'kp_divide', 'NumpadDecimal': 'kp_decimal'}
+CODE_Q.update({'Key' + c: c.lower() for c in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'})
+CODE_Q.update({'Digit%d' % i: str(i) for i in range(10)})
+CODE_Q.update({'Numpad%d' % i: 'kp_%d' % i for i in range(10)})
+CODE_Q.update({'F%d' % i: 'f%d' % i for i in range(1, 13)})
+MODS = {'shift', 'shift_r', 'ctrl', 'ctrl_r', 'alt', 'alt_r'}
 
 
 def kev(q, down):
@@ -701,6 +768,17 @@ class Term:
             os.chmod(tok, 0o600)
         self.admin_token = open(tok).read().strip()
         self.vnc_viewers = 0
+        # the download list: what visitors' sessions made, copied out of XP by the client (no Claude involved)
+        self.session_id = ''
+        self.files_seen = {}          # guest path -> (size, mtime) already copied this session
+        self.files_ver = 0
+        self.files_lock = asyncio.Lock()
+        self.files_task = None
+        self.files_want = False
+        self.ls_reply = None
+        self.file_reply = {}
+        os.makedirs(FILES, exist_ok=True)
+        self.catalog = self.files_load()
 
     # ---- state
     def set_phase(self, p):
@@ -721,6 +799,7 @@ class Term:
             lease_end = self.driver_since + cfgf('TERM_LEASE') if self.queue else 0
             idle_end = self.last_touch + cfgf('TERM_IDLE')
             st['ends'] = min(x for x in (lease_end, idle_end) if x)
+        st['files'] = self.files_ver
         if v is not None:
             st['you'] = 'driver' if v.tok == self.driver else ('queued' if v.tok in self.queue else 'watcher')
             if v.tok in self.queue:
@@ -741,6 +820,112 @@ class Term:
         self.events.append((self.seq, kind, data.encode('utf-8', 'replace') if isinstance(data, str) else data))
         self.ev_new.set()
 
+    # ---- the download list
+    def files_load(self):
+        try:
+            with open(os.path.join(FILES, 'catalog.json')) as f:
+                cat = json.load(f)
+        except (OSError, ValueError):
+            cat = []
+        return [e for e in cat if os.path.exists(os.path.join(FILES, e['id']))]
+
+    def files_save(self):
+        now = time.time()
+        keep, total = [], 0
+        for e in sorted(self.catalog, key=lambda e: -e['t']):      # newest first; old or over the cap goes
+            if now - e['t'] > FILES_AGE or total + e['size'] > FILES_TOTAL:
+                try:
+                    os.remove(os.path.join(FILES, e['id']))
+                except OSError:
+                    pass
+                continue
+            total += e['size']
+            keep.append(e)
+        self.catalog = keep
+        tmp = os.path.join(FILES, 'catalog.json.tmp')
+        with open(tmp, 'w') as f:
+            json.dump(keep, f)
+        os.replace(tmp, os.path.join(FILES, 'catalog.json'))
+        self.files_ver += 1
+        self.changed.set()
+
+    def files_sync_soon(self):
+        self.files_want = True
+        if not self.files_task or self.files_task.done():
+            self.files_task = asyncio.create_task(self.files_sync())
+
+    async def files_sync(self):
+        async with self.files_lock:
+            while self.files_want and self.phase in ('ready', 'ending'):
+                self.files_want = False
+                await asyncio.sleep(0.8)          # let a compile or a burst of writes settle
+                fut = self.ls_reply = asyncio.get_running_loop().create_future()
+                self.gev('L')
+                try:
+                    listing = await asyncio.wait_for(fut, 15)
+                except asyncio.TimeoutError:
+                    log('files: no listing')
+                    continue
+                for line in listing.splitlines():
+                    parts = line.split('\t')
+                    if len(parts) != 3:
+                        continue
+                    rel, size, mt = parts[0], int(parts[1] or 0), parts[2]
+                    if self.files_seen.get(rel) == (size, mt) or size > FILE_MAX:
+                        continue
+                    if len(rel) > 200 or rel.lower().startswith('claude.md'):
+                        continue
+                    fut = self.file_reply[rel] = asyncio.get_running_loop().create_future()
+                    self.gev('F', rel)
+                    try:
+                        data = await asyncio.wait_for(fut, 60)
+                    except asyncio.TimeoutError:
+                        log('files: %s did not arrive' % rel)
+                        continue
+                    finally:
+                        self.file_reply.pop(rel, None)
+                    if data is None:
+                        continue
+                    self.files_seen[rel] = (size, mt)
+                    self.files_add(rel, data)
+
+    def files_add(self, rel, data):
+        sha = hashlib.sha256(data).hexdigest()
+        name = re.sub(r'[^A-Za-z0-9._ ()+-]', '_', rel.replace('\\', '/').split('/')[-1])[:80] or 'file'
+        shown = re.sub(r'[^A-Za-z0-9._ ()+/-]', '_', rel.replace('\\', '/'))[:160]
+        for e in self.catalog:                    # the same file again in this session: replace it
+            if e['session'] == self.session_id and e['path'] == shown:
+                try:
+                    os.remove(os.path.join(FILES, e['id']))
+                except OSError:
+                    pass
+                self.catalog.remove(e)
+                break
+        fid = secrets.token_hex(8)
+        with open(os.path.join(FILES, fid), 'wb') as f:
+            f.write(data)
+        self.catalog.append({'id': fid, 'name': name, 'path': shown, 'size': len(data), 'sha256': sha,
+                             't': time.time(), 'session': self.session_id})
+        log('files: %s (%d bytes)' % (shown, len(data)))
+        self.files_save()
+
+    async def g_ls(self, req):
+        body = (await req.read()).decode('cp1252', 'replace')
+        if self.ls_reply and not self.ls_reply.done():
+            self.ls_reply.set_result(body)
+        return web.Response(text='ok')
+
+    async def g_upload(self, req):
+        body = await req.read()
+        head, _, data = body.partition(b'\n')
+        path = head.decode('cp1252', 'replace')
+        work = 'C:\\b3\\work\\'
+        rel = path[len(work):] if path.lower().startswith(work.lower()) else path
+        fut = self.file_reply.get(rel)
+        if fut and not fut.done():
+            fut.set_result(None if req.query.get('missing') else data)
+        return web.Response(text='ok')
+
     # ---- visitors
     maint = False
 
@@ -758,7 +943,7 @@ class Term:
             return
         day = time.strftime('%Y-%m-%d')
         n = self.sessions_today.get((day, v.ip), 0)
-        if n >= 12:
+        if n >= 30:
             v.note = "That's a lot of sessions today. Watch a while; the wheel frees up tomorrow."
             return
         if len(self.queue) >= cfgf('TERM_QUEUE_MAX'):
@@ -864,6 +1049,8 @@ class Term:
             await asyncio.sleep(30)
             return
         self.agent = Agent(self, ip)
+        self.session_id = time.strftime('%Y%m%d-%H%M%S')
+        self.files_seen = {}
         self.agent.usage_event()
         self.touch()
         self.set_phase('ready')
@@ -898,9 +1085,19 @@ class Term:
                 self.gev('x', '  \u00b7 session over. Thank you for visiting.')
                 await asyncio.sleep(2.5)
                 break
+        try:                                  # the last files made, before the machine is reset
+            self.files_sync_soon()
+            await asyncio.wait_for(asyncio.shield(self.files_task), 20)
+        except Exception:
+            pass
+
+    held = set()
+    code_q = {}
 
     async def release_keys(self):
-        await KEYS.send([kev(q, False) for q in ('shift', 'ctrl', 'alt')] +
+        self.code_q = {}
+        held, self.held = self.held, set()
+        await KEYS.send([kev(q, False) for q in set(held) | {'shift', 'ctrl', 'alt'}] +
                         [{'type': 'btn', 'data': {'down': False, 'button': b}} for b in ('left', 'right', 'middle')])
 
     # ---- driver input
@@ -909,6 +1106,44 @@ class Term:
             return
         self.touch()
         t = m.get('t')
+        if t == 'kc':                # a physical key, down or up: games see keys held, like a real keyboard
+            code = str(m.get('code', ''))
+            q = CODE_Q.get(code)
+            down = bool(m.get('down'))
+            h = {x[:-2] if x.endswith('_r') else x for x in self.held}
+            if not down:
+                q = self.code_q.pop(code, q)
+                if not q or (q not in self.held and q not in MODS):
+                    return
+                self.held.discard(q)
+                await KEYS.send([kev(q, False)])
+                return
+            key = str(m.get('k', ''))
+            shift = None
+            if len(key) == 1 and not ({'ctrl', 'alt'} & h):
+                # a character: type that character (US layout in XP), whatever layout or keyboard made it
+                ck = char_keys(key)
+                if ck is None:
+                    if ord(key) >= 32:
+                        self.gev('p', key)    # beyond a US keyboard: in by paste
+                    return
+                q, shift = ck
+                self.code_q[code] = q
+            if not q:
+                return
+            # the host's own chord (Ctrl+Alt+Shift+F12 starts a build) and Ctrl+Alt+Del stay the host's
+            if {'ctrl', 'alt'} <= h and (q == 'delete' or (q == 'f12' and 'shift' in h)):
+                return
+            self.held.add(q)
+            have = 'shift' in h
+            if shift is not None and shift != have:
+                await KEYS.send([kev('shift', shift), kev(q, True), kev('shift', have)])
+            else:
+                await KEYS.send([kev(q, True)])
+            return
+        if t == 'kreset':
+            await self.release_keys()
+            return
         if t == 'ch':
             c = str(m.get('c', ''))[:1]
             if not c:
@@ -1087,6 +1322,17 @@ class Term:
             self.set_phase('ready')
             self.agent.usage_event()
             return web.Response(text='ok\n')
+        if op == 'twrite':          # maintenance: one write_file through the client's real tool path, checked
+            if not self.agent:
+                return web.Response(status=409, text='no session\n')
+            body = (await req.read()).decode('utf-8')
+            path, _, content = body.partition('\n')
+
+            class B:
+                id, name = 'toolu_selftest%d' % int(time.time()), 'write_file'
+            r = await self.agent.call_tool(B, {'path': path, 'content': content,
+                                               'append': req.query.get('append') == '1'})
+            return web.json_response(r)
         if op == 'status':
             return web.json_response({'phase': self.phase, 'viewers': len(self.viewers), 'vnc': self.vnc_viewers,
                                       'queue': len(self.queue), 'spent': BUDGET.spent(), 'cap': BUDGET.cap()})
@@ -1158,14 +1404,14 @@ async def p_ws(req):
             stamps.append(now)
             while stamps and stamps[0] < now - 1:
                 stamps.popleft()
-            if len(stamps) > 200:         # far beyond typing speed: a runaway script, not a person
+            if len(stamps) > 400:         # far beyond typing speed (keys now count down and up): a runaway script
                 continue
             try:
                 m = json.loads(msg.data)
             except ValueError:
                 continue
             t = m.get('t')
-            if t in ('ch', 'key', 'paste', 'wheel', 'front', 'mouse', 'mwheel'):
+            if t in ('ch', 'key', 'kc', 'kreset', 'paste', 'wheel', 'front', 'mouse', 'mwheel'):
                 await T.key(v, m)
             elif t == 'start':
                 T.start(v)
@@ -1554,6 +1800,23 @@ async def p_vnc_pumped(req):
     return ws
 
 
+async def p_files(req):
+    cat = sorted(T.catalog, key=lambda e: -e['t'])
+    return web.json_response({'v': T.files_ver, 'session': T.session_id if T.driver else '',
+                              'files': [{k: e[k] for k in ('id', 'name', 'path', 'size', 'sha256', 't', 'session')} for e in cat]})
+
+
+async def p_file(req):
+    fid = req.match_info.get('id', '')
+    e = next((e for e in T.catalog if e['id'] == fid), None)
+    if not e or not re.fullmatch(r'[0-9a-f]{16}', fid):
+        return web.Response(status=404, text='not found')
+    resp = web.FileResponse(os.path.join(FILES, fid))
+    resp.headers['Content-Type'] = 'application/octet-stream'
+    resp.headers['Content-Disposition'] = 'attachment; filename="%s"' % e['name'].replace('"', '')
+    return resp
+
+
 async def p_state(req):
     return web.json_response(T.public())
 
@@ -1576,14 +1839,16 @@ async def main():
     except ImportError:
         pass
     signal.signal(signal.SIGHUP, lambda *a: (load_env(), log('reloaded .env')))
-    guest = web.Application(client_max_size=4 * 1024 * 1024)
+    guest = web.Application(client_max_size=FILE_MAX + 1024 * 1024)
     guest.add_routes([web.get('/next', T.g_next), web.post('/out', T.g_out),
                       web.get('/b3/hello', T.g_hello), web.get('/b3/ev', T.g_ev), web.post('/b3/send', T.g_send),
                       web.post('/b3/int', T.g_int), web.post('/b3/tool', T.g_tool),
                       web.post('/b3/set', T.g_set), web.post('/b3/memory', T.g_memory),
+                      web.post('/b3/ls', T.g_ls), web.post('/b3/file', T.g_upload),
                       web.post('/admin/{op}', T.g_admin), web.get('/{name}', T.g_file)])
     pub = web.Application(middlewares=[cors], client_max_size=64 * 1024)
     pub.add_routes([web.get('/ws', p_ws), web.get('/vnc', p_vnc), web.get('/vnc2', p_vnc_pumped), web.get('/state', p_state),
+                    web.get('/files', p_files), web.get('/files/{id}/{name}', p_file),
                     web.get('/', lambda r: web.Response(text='BASILISK III\n'))])
     r1, r2 = web.AppRunner(guest, access_log=None), web.AppRunner(pub, access_log=None)
     await r1.setup()

@@ -54,6 +54,15 @@ button[hidden] { display: none; }
 .touchtype input { flex: 1; min-width: 0; font: 16px var(--mono); padding: 9px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: var(--ink); }
 @media (pointer: coarse) { .touchtype.on { display: flex; } }
 
+.files { margin: 18px 0 0; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); }
+.files h2 { font: 700 13px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; margin: 0; padding: 10px 12px; color: var(--muted);
+  border-bottom: 1px solid var(--line); }
+.files ul { list-style: none; margin: 0; padding: 4px 0; max-height: 320px; overflow: auto; }
+.files li { display: flex; gap: 12px; align-items: baseline; padding: 5px 12px; font: 13px/1.4 var(--mono); min-width: 0; }
+.files li a { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+.files li .sz, .files li .when { color: var(--muted); white-space: nowrap; flex: none; }
+.files .empty { color: var(--muted); padding: 10px 12px; font: 13px/1.4 var(--sans); }
+.files .sess { color: var(--muted); font: 11px/1.4 var(--mono); padding: 8px 12px 2px; letter-spacing: .06em; text-transform: uppercase; }
 .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px 28px; padding: 26px 0 8px; }
 .notes h2 { font: 700 13px/1.3 var(--mono); letter-spacing: .08em; text-transform: uppercase; margin: 0 0 6px; color: var(--muted); }
 .notes p, .notes ul { margin: 0; font-size: 14.5px; }
@@ -70,7 +79,7 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3p
 <body>
 <header class="wrap">
   <h1>BASILISK III</h1>
-  <p class="dek">A working Claude Code client, assembled from Windows XP's own parts, in six tabs. Notepad keeps the transcript, Notepad's Find box takes your words, Date and Time lends its tabs, clock and calendar, Calculator keeps the bill, and a real message box asks before Claude runs anything. It runs on a real XP machine; Claude works in it with real tools. Press start, wait for it to build itself, then type.</p>
+  <p class="dek">A working Claude Code client, assembled from Windows XP's own parts, in six tabs. Notepad keeps the transcript, Notepad's Find box takes your words, Date and Time lends its tabs, clock and calendar, Calculator keeps the bill, and Claude runs commands in a sandbox (a real message box can ask first, if you turn it on). It runs on a real XP machine; Claude works in it with real tools. Press start, wait for it to build itself, then type.</p>
 </header>
 
 <main class="wrap">
@@ -90,6 +99,11 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3p
   </div>
   <div class="meta" id="meta"></div>
 
+  <section class="files" aria-label="Files from the XP machine">
+    <h2>Files made in BASILISK</h2>
+    <div id="files"><div class="empty">Programs and files Claude makes in <code>C:\b3\work</code> appear here to download, including the .exe files it builds. They are kept for a day.</div></div>
+  </section>
+
   <section class="notes" aria-label="About">
     <div>
       <h2>How to drive</h2>
@@ -98,7 +112,8 @@ kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3p
         <li><kbd>&uarr;</kbd> <kbd>&darr;</kbd> recall what you typed. <kbd>PgUp</kbd> <kbd>PgDn</kbd> or the mouse wheel scroll back.</li>
         <li>Paste works (<kbd>Ctrl</kbd>+<kbd>V</kbd>). <code>/help</code>, <code>/clear</code>, <code>/compact</code>, <code>/plan</code>, <code>/effort high</code>, <code>/model sonnet</code>, <code>/cost</code>.</li>
         <li>Click a tab, or <kbd>Ctrl</kbd>+<kbd>Tab</kbd>. <b>Chat</b> talks. <b>Plan</b> shows Claude's to-do list, plan mode and which commands may run without asking. <b>Files</b> shows the work folder; <code>CLAUDE.md</code> there is Claude's memory, and a file can be @-mentioned. <b>Usage</b> is Task Manager for the context window, with a Defragment button that compacts it. <b>Tools</b> lists every tool run, with End Process. <b>Settings</b> has model, effort and the list of where each part comes from.</li>
-        <li>When Claude wants to run a command or change a file, a message box asks: Allow, Always or Deny.</li>
+        <li>Claude runs commands and changes files without asking: the machine is a sandbox. To be asked first (Allow, Always or Deny), tick it on the Plan tab.</li>
+        <li>Games and programs Claude starts get the keyboard: arrow keys, <kbd>Space</kbd> and the rest go to them, held keys included. Click BASILISK, or press "Bring BASILISK forward", to come back.</li>
         <li>One person drives at a time; everyone else watches live. If someone is waiting you get ten minutes, otherwise as long as you keep typing.</li>
       </ul>
     </div>
@@ -162,7 +177,7 @@ function connectControl() {
   ws = new WebSocket(BASE + '/ws?tok=' + tok);
   ws.onmessage = (e) => {
     let m; try { m = JSON.parse(e.data); } catch (x) { return; }
-    if (m.t === 'state') { if (pingT) { rtt = performance.now() - pingT; pingT = 0; } st = m; render(); }
+    if (m.t === 'state') { if (pingT) { rtt = performance.now() - pingT; pingT = 0; } st = m; render(); if (m.files !== filesV) loadFiles(m.files); }
   };
   ws.onclose = () => { st = null; render(); wsTimer = setTimeout(connectControl, 2000); };
 }
@@ -216,17 +231,27 @@ stagebox.addEventListener('mousedown', () => setTimeout(() => stagebox.focus(), 
 stagebox.addEventListener('focus', render);
 stagebox.addEventListener('blur', render);
 
-/* keys: printable characters go as characters (any layout); editing keys go by name */
-const NAMED = new Set(['Enter', 'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown', 'Escape', 'Tab', 'Insert']);
+/* keys: the physical key, pressed and released, like a keyboard plugged into XP (a US layout there).
+   Games read held keys, so every key goes down when you press it and up when you let go. */
+const held = new Set();
 stagebox.addEventListener('keydown', (e) => {
   if (!driving()) return;
-  if (e.isComposing) return;
-  if ((e.ctrlKey || e.metaKey) && (e.key === 'v' || e.key === 'V')) return;     // the paste event handles it
-  if (e.altKey || e.metaKey) return;
-  if (NAMED.has(e.key)) { e.preventDefault(); send({ t: 'key', k: e.key, ctrl: e.ctrlKey, shift: e.shiftKey }); return; }
-  if (e.ctrlKey) { if (e.key.length === 1) { e.preventDefault(); send({ t: 'key', k: e.key, ctrl: true, shift: e.shiftKey }); } return; }
-  if (e.key.length === 1 || [...e.key].length === 1) { e.preventDefault(); send({ t: 'ch', c: e.key }); }
+  if (e.isComposing || e.metaKey) return;
+  if (e.ctrlKey && (e.code === 'KeyV') && !held.has('ShiftLeft')) return;   // the paste event types the clipboard
+  e.preventDefault();
+  if (!e.code) return;
+  held.add(e.code);
+  send({ t: 'kc', code: e.code, k: e.key, down: true });   // repeats go too: XP's own key repeat
 });
+stagebox.addEventListener('keyup', (e) => {
+  if (!held.has(e.code)) return;
+  e.preventDefault();
+  held.delete(e.code);
+  send({ t: 'kc', code: e.code, down: false });
+});
+function releaseAll() { if (held.size) { held.forEach((c) => send({ t: 'kc', code: c, down: false })); held.clear(); } send({ t: 'kreset' }); }
+stagebox.addEventListener('blur', () => { if (driving()) releaseAll(); });
+window.addEventListener('blur', () => { if (driving()) releaseAll(); });
 stagebox.addEventListener('paste', (e) => {
   if (!driving()) return;
   const text = (e.clipboardData || window.clipboardData).getData('text');
@@ -274,6 +299,36 @@ const tt = $('tt');
 function ttSend() { const v = tt.value; if (!v || !driving()) return; send({ t: 'paste', text: v }); setTimeout(() => send({ t: 'key', k: 'Enter' }), 120); tt.value = ''; }
 $('ttsend').onclick = ttSend;
 tt.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); ttSend(); } });
+
+/* the download list: files the sessions made, copied out of XP by the server */
+let filesV = null, filesBusy = false;
+const HTTP = BASE.replace(/^ws/, 'http');
+function fmtSize(n) { return n < 1024 ? n + ' B' : n < 1048576 ? (n / 1024).toFixed(1) + ' KB' : (n / 1048576).toFixed(1) + ' MB'; }
+function esc(t) { return String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+async function loadFiles(v) {
+  if (filesBusy) return;
+  filesBusy = true;
+  try {
+    const r = await fetch(HTTP + '/files', { cache: 'no-store' });
+    const j = await r.json();
+    filesV = v;
+    const box = $('files');
+    if (!j.files.length) { filesBusy = false; return; }
+    let html = '', last = null;
+    for (const f of j.files) {
+      if (f.session !== last) {
+        last = f.session;
+        const mine = j.session && f.session === j.session;
+        html += (html ? '</ul>' : '') + '<div class="sess">' + (mine ? 'This session' : 'Session ' + esc(f.session.replace(/^(\d{4})(\d\d)(\d\d)-(\d\d)(\d\d).*/, '$1-$2-$3 $4:$5 UTC'))) + '</div><ul>';
+      }
+      const when = new Date(f.t * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      html += '<li><a href="' + HTTP + '/files/' + f.id + '/' + encodeURIComponent(f.name) + '" download="' + esc(f.name) + '" title="SHA-256 ' + f.sha256 + '">' +
+        esc(f.path) + '</a><span class="sz">' + fmtSize(f.size) + '</span><span class="when">' + when + '</span></li>';
+    }
+    box.innerHTML = html + '</ul>';
+  } catch (e) { /* the list comes back with the next state */ }
+  filesBusy = false;
+}
 
 setInterval(() => { if (st && st.ends) { st.now += 1; render(); } }, 1000);
 connectScreen();

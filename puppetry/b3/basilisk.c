@@ -225,7 +225,7 @@ static void set_state(const char *s);
 static void layout_main(void);
 static HWND tab_ov;                  /* our invisible pane over the borrowed tabs: it takes the clicks */
 static RECT tab_rc[NTABS];
-static volatile int g_plan, g_autoedit, g_askrun = 1;   /* read by tool threads */
+static volatile int g_plan, g_autoedit = 1, g_askrun = 0;   /* read by tool threads; a sandbox: no prompts unless the visitor turns them on */
 static volatile HWND perm_box;
 static char strip_text[256];
 static int chat_bottom = 1;      /* was the transcript at its end when Chat was left? */
@@ -367,18 +367,46 @@ static void spin_off(void)
 static int busy;
 static const WCHAR *spin_word = L"Thinking";
 static WCHAR spin_custom[128];     /* progress from the host, e.g. "Writing heli.c (9.4 KB)" */
-static void spin_on(void)
+static int spin_pre;                /* characters of line break before the spinner's text */
+static WCHAR spin_shown[160];       /* what the spinner line shows now */
+static void spin_text(WCHAR *b)
 {
     static const WCHAR *f[] = {L"\x00B7", L"\x2022", L"*", L"\x2022"};
-    WCHAR b[160];
     int secs = (int)((GetTickCount() - spin_t0) / 1000);
+    _snwprintf(b, 159, L"%s %s\x2026 (%ds \x00B7 esc to interrupt)", f[spin_i % 4], spin_word, secs);
+    b[159] = 0;
+}
+static void spin_on(void)
+{
+    WCHAR b[170];
     if (!busy) return;
+    if (spin_at >= 0 && spin_at + spin_pre <= t_len()) {   /* already showing: change only its text */
+        WCHAR now[160];
+        spin_text(now);
+        if (wcscmp(now, spin_shown)) {
+            int bottom = t_at_bottom(), first = bottom ? 0 : (int)SendMessageW(np_edit, EM_GETFIRSTVISIBLELINE, 0, 0);
+            /* one replace of the changed tail only: the edit repaints those few characters, never an empty line */
+            int i = 0, base = spin_at + spin_pre;
+            while (now[i] && now[i] == spin_shown[i]) i++;
+            SendMessageW(np_edit, EM_SETSEL, base + i, t_len());
+            SendMessageW(np_edit, EM_REPLACESEL, 0, (LPARAM)(now + i));
+            if (!bottom) {
+                int cur = (int)SendMessageW(np_edit, EM_GETFIRSTVISIBLELINE, 0, 0);
+                if (cur != first) SendMessageW(np_edit, EM_LINESCROLL, 0, first - cur);
+            }
+            wcscpy(spin_shown, now);
+        }
+        return;
+    }
     spin_off();
     spin_at = t_len();
-    _snwprintf(b, 159, L"%s%s %s\x2026 (%ds \x00B7 esc to interrupt)", at_line_start ? L"" : L"\r\n",
-             f[spin_i++ % 4], spin_word, secs);
+    spin_pre = at_line_start ? 0 : 2;
+    spin_text(spin_shown);
+    _snwprintf(b, 169, L"%s%s", spin_pre ? L"\r\n" : L"", spin_shown);
+    b[169] = 0;
     t_raw(b);
 }
+static void spin_tick(void) { spin_i++; spin_on(); }
 
 /* append UTF-8 text with Claude Code style indentation and our own word wrap, so wrapped lines
    keep their indent; \n becomes \r\n + indent */
@@ -514,10 +542,13 @@ static char *tool_run(const char *cmd_u8, int *ok)
     SetHandleInformation(rd, HANDLE_FLAG_INHERIT, 0);
     memset(&si, 0, sizeof si); si.cb = sizeof si;
     si.dwFlags = STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW; si.wShowWindow = SW_HIDE;
-    si.hStdOutput = wr; si.hStdError = wr; si.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+    /* stdin is NUL: a GUI parent has none, and a command that reads it (find, more, sort) would wait forever */
+    si.hStdOutput = wr; si.hStdError = wr;
+    si.hStdInput = CreateFileA("NUL", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, &sa, OPEN_EXISTING, 0, NULL);
     CreateDirectoryA(WORKDIR, NULL);
     if (!CreateProcessA(NULL, line, NULL, NULL, TRUE, CREATE_NO_WINDOW, NULL, WORKDIR, &si, &pi)) {
         CloseHandle(rd); CloseHandle(wr); free(line); free(cmd);
+        if (si.hStdInput != INVALID_HANDLE_VALUE) CloseHandle(si.hStdInput);
         *ok = 0;
         return _strdup("could not start cmd.exe");
     }
@@ -547,6 +578,7 @@ static char *tool_run(const char *cmd_u8, int *ok)
     GetExitCodeProcess(pi.hProcess, &code);
     tool_proc = NULL;
     CloseHandle(pi.hProcess); CloseHandle(pi.hThread); CloseHandle(rd);
+    if (si.hStdInput && si.hStdInput != INVALID_HANDLE_VALUE) CloseHandle(si.hStdInput);
     free(line); free(cmd);
     if (!out.p) b_add(&out, "", 0);
     res = cp_to_u8(out.p, out.n, CP_OEMCP);
@@ -573,7 +605,7 @@ static char *read_all(const char *path, int *n)
     long sz;
     if (!f) return NULL;
     fseek(f, 0, SEEK_END); sz = ftell(f); fseek(f, 0, SEEK_SET);
-    if (sz > 2000000) { fclose(f); return NULL; }
+    if (sz > 32000000) { fclose(f); return NULL; }
     b = (char *)malloc(sz + 1);
     *n = (int)fread(b, 1, sz, f);
     b[*n] = 0;
@@ -649,8 +681,16 @@ static char *tool_write(const char *p_u8, const char *content, int append, int *
     msg = (char *)malloc(MAX_PATH * 2 + 64);
     if (!f) { *ok = 0; sprintf(msg, "cannot write %s", path); }
     else {
-        fwrite(data, 1, n, f); fclose(f); *ok = 1;
-        sprintf(msg, "%s %d lines %s %s", append ? "appended" : "wrote", lines + (n && data[n - 1] != '\n'), append ? "to" : "to", path);
+        unsigned long h = 2166136261UL;
+        long total;
+        int put = (int)fwrite(data, 1, n, f);
+        fseek(f, 0, SEEK_END); total = ftell(f);
+        fclose(f);
+        for (i = 0; i < n; i++) h = ((h ^ (unsigned char)data[i]) * 16777619UL) & 0xffffffffUL;
+        *ok = put == n;
+        /* the host checks bytes and hash against what Claude sent: no silent truncation */
+        sprintf(msg, "%s %d lines (%d bytes, fnv %08lx; file now %ld bytes) %s %s", put == n ? (append ? "appended" : "wrote") : "SHORT WRITE",
+                lines + (n && data[n - 1] != '\n'), put, h, total, "to", path);
     }
     free(data); free(path);
     return msg;
@@ -693,6 +733,92 @@ static char *tool_edit(const char *p_u8, const char *old_u8, const char *new_u8,
     return msg;
 }
 
+/* ---- files for the page's download list: the host asks, we answer; Claude is not involved ---- */
+static void ls_walk(Buf *o, const char *dir, const char *rel, int depth, int *count)
+{
+    WIN32_FIND_DATAA fd;
+    char pat[MAX_PATH * 2];
+    HANDLE h;
+    sprintf(pat, "%s\\*", dir);
+    h = FindFirstFileA(pat, &fd);
+    if (h == INVALID_HANDLE_VALUE) return;
+    do {
+        char full[MAX_PATH * 2], r[MAX_PATH * 2], line[MAX_PATH * 2 + 64];
+        if (!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, "..")) continue;
+        if (*count >= 3000) break;
+        sprintf(full, "%s\\%s", dir, fd.cFileName);
+        if (*rel) sprintf(r, "%s\\%s", rel, fd.cFileName); else strcpy(r, fd.cFileName);
+        if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            if (depth < 8) ls_walk(o, full, r, depth + 1, count);
+            continue;
+        }
+        sprintf(line, "%s\t%lu\t%08lx%08lx\n", r, (unsigned long)fd.nFileSizeLow,
+                (unsigned long)fd.ftLastWriteTime.dwHighDateTime, (unsigned long)fd.ftLastWriteTime.dwLowDateTime);
+        b_add(o, line, -1);
+        (*count)++;
+    } while (FindNextFileA(h, &fd));
+    FindClose(h);
+}
+static DWORD WINAPI files_thread(LPVOID p)
+{
+    char *req = (char *)p, *r;          /* "L" or "F<path>" */
+    if (req[0] == 'L') {
+        Buf o = {0};
+        int count = 0;
+        ls_walk(&o, WORKDIR, "", 0, &count);
+        if (!o.p) b_add(&o, "", 0);
+        r = http("POST", "/b3/ls", o.p, o.n, NULL, 20000);
+        free(r); free(o.p);
+    } else {
+        char *path = abspath(req + 1), *body;
+        FILE *f = fopen(path, "rb");
+        long sz = 0;
+        int hl = (int)strlen(path) + 1;
+        if (f) { fseek(f, 0, SEEK_END); sz = ftell(f); fseek(f, 0, SEEK_SET); }
+        if (!f || sz < 0 || sz > 20000000) {        /* missing or too big: say so (size -1) */
+            body = (char *)malloc(hl + 2);
+            sprintf(body, "%s\n", path);
+            r = http("POST", "/b3/file?missing=1", body, hl, NULL, 20000);
+        } else {
+            body = (char *)malloc(hl + sz + 1);
+            memcpy(body, path, hl - 1); body[hl - 1] = '\n';
+            sz = (long)fread(body + hl, 1, sz, f);
+            r = http("POST", "/b3/file", body, hl + (int)sz, NULL, 60000);
+        }
+        if (f) fclose(f);
+        free(r); free(body); free(path);
+    }
+    free(req);
+    return 0;
+}
+
+/* a program the visitor's command just started (start "" game.exe) gets the keyboard: XP would
+   otherwise keep BASILISK in front, and the arrow keys would go to the prompt */
+typedef struct { HWND w[512]; int n; } WinSet;
+static BOOL CALLBACK ws_cb(HWND h, LPARAM lp) { WinSet *s = (WinSet *)lp; if (s->n < 512) s->w[s->n++] = h; return TRUE; }
+static HWND new_app_window(WinSet *before)
+{
+    WinSet *now = (WinSet *)calloc(1, sizeof *now);
+    HWND hit = NULL;
+    int i, j;
+    DWORD me_pid = GetCurrentProcessId();
+    EnumWindows(ws_cb, (LPARAM)now);
+    for (i = 0; i < now->n && !hit; i++) {
+        HWND h = now->w[i];
+        DWORD pid = 0;
+        LONG st = GetWindowLongA(h, GWL_STYLE);
+        for (j = 0; j < before->n && before->w[j] != h; j++) ;
+        if (j < before->n) continue;
+        if (!IsWindowVisible(h) || GetWindow(h, GW_OWNER) || !(st & WS_CAPTION)) continue;
+        GetWindowThreadProcessId(h, &pid);
+        if (pid == me_pid) continue;
+        {   char c[64]; GetClassNameA(h, c, sizeof c); if (!strcmp(c, "ConsoleWindowClass") || !strcmp(c, "#32770")) continue; }
+        hit = h;
+    }
+    free(now);
+    return hit;
+}
+
 static DWORD WINAPI tool_thread(LPVOID p)
 {
     Tool *t = (Tool *)p;
@@ -701,7 +827,20 @@ static DWORD WINAPI tool_thread(LPVOID p)
     int denied = ask_permission(t->name, t->a1);
     if (denied == 2) res = _strdup("Plan mode is on, so nothing may change. Read and look only, and propose the change as a plan (todo_write).");
     else if (denied) res = _strdup("The person denied this. Do not retry it; ask them, or choose another way.");
-    else if (!strcmp(t->name, "run")) res = tool_run(t->a1, &ok);
+    else if (!strcmp(t->name, "run")) {
+        WinSet *before = (WinSet *)calloc(1, sizeof *before);
+        EnumWindows(ws_cb, (LPARAM)before);
+        res = tool_run(t->a1, &ok);
+        if (ok && (strstr(t->a1, "start") || strstr(t->a1, ".exe"))) {   /* give a new window up to 3 s to appear */
+            int k;
+            for (k = 0; k < 30; k++) {
+                HWND w = new_app_window(before);
+                if (w) { PostMessageA(me, WM_APP + 13, 0, (LPARAM)w); break; }
+                Sleep(100);
+            }
+        }
+        free(before);
+    }
     else if (!strcmp(t->name, "read_file")) res = tool_read(t->a1, &ok);
     else if (!strcmp(t->name, "write_file")) res = tool_write(t->a1, t->a2 ? t->a2 : "", t->a3 && t->a3[0] == '1', &ok);
     else if (!strcmp(t->name, "edit_file")) res = tool_edit(t->a1, t->a2 ? t->a2 : "", t->a3 ? t->a3 : "", &ok);
@@ -838,6 +977,7 @@ static DWORD WINAPI net_thread(LPVOID p)
 }
 
 static void focus_input(void);
+static void bring_front(HWND w);
 static void set_busy(int b)
 {
     busy = b;
@@ -979,8 +1119,20 @@ static void handle_ev(Ev *e)
         break;
     }
     case 'f':                         /* bring BASILISK back to the front */
+        if (GetForegroundWindow() != np) bring_front(np);
         focus_input();
         break;
+    case 'L':                         /* the host wants the work folder's listing (for downloads) */
+        CloseHandle(CreateThread(NULL, 0, files_thread, _strdup("L"), 0, NULL));
+        break;
+    case 'F': {                       /* the host wants one file's bytes (path in UTF-8) */
+        WCHAR *w = u8_to_w(e->data, e->n);
+        char *a = w_to_cp(w, CP_ACP), *q = (char *)malloc(strlen(a) + 2);
+        free(w);
+        q[0] = 'F'; strcpy(q + 1, a); free(a);
+        CloseHandle(CreateThread(NULL, 0, files_thread, q, 0, NULL));
+        break;
+    }
     case 'k':                         /* clear the transcript */
         spin_off();
         SetWindowTextW(np_edit, L"");
@@ -1064,6 +1216,18 @@ static HWND focus_of(DWORD tid)
     return NULL;
 }
 
+/* keys typed while focus was elsewhere in BASILISK: held here, in order, with their Shift state,
+   until the prompt has focus again (then typed into it) */
+static WORD redir_vk[64];
+static char redir_sh[64];
+static int redir_n;
+static void redir_add(WORD vk)
+{
+    if (redir_n >= 64) return;
+    redir_vk[redir_n] = vk;
+    redir_sh[redir_n] = GetAsyncKeyState(VK_SHIFT) < 0;
+    if (redir_n++ == 0) PostMessageA(me, WM_KEYCMD, 12, 0);
+}
 /* keys: Enter sends, Esc interrupts, PgUp/PgDn and Ctrl+arrows scroll, Up/Down recall */
 static LRESULT CALLBACK kbd(int code, WPARAM wp, LPARAM lp)
 {
@@ -1089,6 +1253,8 @@ static LRESULT CALLBACK kbd(int code, WPARAM wp, LPARAM lp)
             if (k->vk == VK_TAB && ctrl) { PostMessageA(me, WM_KEYCMD, 13 | ((GetAsyncKeyState(VK_SHIFT) < 0) << 8), 0); return 1; }
             if (typing_here || (ours && nav && !ctrl)) return CallNextHookEx(NULL, code, wp, lp);
         }
+        if (redir_n && !(k->flags & 0x10) && k->vk != VK_SHIFT && k->vk != VK_LSHIFT && k->vk != VK_RSHIFT &&
+            k->vk != VK_CAPITAL && k->vk != VK_RETURN && k->vk != VK_ESCAPE) { redir_add(k->vk); return 1; }
         switch (k->vk) {
         case VK_RETURN: PostMessageA(me, WM_KEYCMD, 1, 0); return 1;
         case VK_ESCAPE: PostMessageA(me, WM_KEYCMD, 2, 0); return 1;
@@ -1105,7 +1271,7 @@ static LRESULT CALLBACK kbd(int code, WPARAM wp, LPARAM lp)
            (Ctrl+C copies a selection in the transcript). Keys we inject ourselves pass through. */
         if (!(k->flags & 0x10) && focus_of(np_tid) != fd_edit && !ctrl && GetAsyncKeyState(VK_MENU) >= 0 &&
             k->vk != VK_SHIFT && k->vk != VK_LSHIFT && k->vk != VK_RSHIFT && k->vk != VK_CAPITAL) {
-            PostMessageA(me, WM_KEYCMD, 12 | (k->vk << 8), 0);
+            redir_add(k->vk);
             return 1;
         }
     }
@@ -1136,14 +1302,23 @@ static void keycmd(int c)
     case 9: SendMessageW(np_edit, WM_VSCROLL, SB_TOP, 0); break;
     case 10: SendMessageW(np_edit, WM_VSCROLL, SB_BOTTOM, 0); break;
     case 11: focus_input(); break;
-    case 12: {      /* bring the prompt forward, then deliver the key that was typed elsewhere */
-        INPUT in[2];
-        WORD vk = (WORD)(c >> 8);
+    case 12: {      /* bring the prompt forward, then deliver the keys that were typed elsewhere */
+        INPUT in[4];
+        int i, now, k;
         focus_input();
-        memset(in, 0, sizeof in);
-        in[0].type = INPUT_KEYBOARD; in[0].ki.wVk = vk;
-        in[1].type = INPUT_KEYBOARD; in[1].ki.wVk = vk; in[1].ki.dwFlags = KEYEVENTF_KEYUP;
-        SendInput(2, in, sizeof(INPUT));
+        for (i = 0; i < redir_n; i++) {
+            /* each with the Shift state it was typed with (Shift may be up again by now) */
+            int sh = redir_sh[i];
+            now = GetAsyncKeyState(VK_SHIFT) < 0;
+            k = 0;
+            memset(in, 0, sizeof in);
+            if (sh != now) { in[k].type = INPUT_KEYBOARD; in[k].ki.wVk = VK_SHIFT; if (!sh) in[k].ki.dwFlags = KEYEVENTF_KEYUP; k++; }
+            in[k].type = INPUT_KEYBOARD; in[k].ki.wVk = redir_vk[i]; k++;
+            in[k].type = INPUT_KEYBOARD; in[k].ki.wVk = redir_vk[i]; in[k].ki.dwFlags = KEYEVENTF_KEYUP; k++;
+            if (sh != now) { in[k].type = INPUT_KEYBOARD; in[k].ki.wVk = VK_SHIFT; if (sh) in[k].ki.dwFlags = KEYEVENTF_KEYUP; k++; }
+            SendInput(k, in, sizeof(INPUT));
+        }
+        redir_n = 0;
         break;
     }
     case 13:        /* Ctrl+Tab, Ctrl+Shift+Tab */
@@ -2542,7 +2717,8 @@ static void suite_create(int W, int H)
         ck_plan = mk("Button", "Plan mode: Claude looks and plans, and changes nothing", BS_AUTOCHECKBOX, 24, gy + 26, half - 30, 20, panel[T_PLAN], 201);
         ck_autoedit = mk("Button", "Accept file edits without asking", BS_AUTOCHECKBOX, 24, gy + 50, half - 30, 20, panel[T_PLAN], 202);
         ck_askrun = mk("Button", "Ask before running a command", BS_AUTOCHECKBOX, 24, gy + 74, half - 30, 20, panel[T_PLAN], 203);
-        SendMessageA(ck_askrun, BM_SETCHECK, BST_CHECKED, 0);
+        SendMessageA(ck_autoedit, BM_SETCHECK, g_autoedit ? BST_CHECKED : BST_UNCHECKED, 0);
+        SendMessageA(ck_askrun, BM_SETCHECK, g_askrun ? BST_CHECKED : BST_UNCHECKED, 0);
         mk("Static", "When Claude needs permission, a real Windows message box asks: Allow (once), Always, "
                      "or Deny. Reading files never asks.", SS_LEFT, 24, gy + 104, half - 30, 48, panel[T_PLAN], 0);
         mk("Button", "Always allowed commands  (ticked: runs without asking)", BS_GROUPBOX, 20 + half, gy, half, gh, panel[T_PLAN], 0);
@@ -2841,6 +3017,7 @@ static LRESULT CALLBACK me_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
         return 0;
     case WM_APP + 11: lv_add(lv_allow, -1, (char *)lp, 1); free((void *)lp); return 0;
     case WM_APP + 12: SendMessageA(ck_autoedit, BM_SETCHECK, BST_CHECKED, 0); return 0;
+    case WM_APP + 13: if (IsWindow((HWND)lp)) bring_front((HWND)lp); return 0;   /* the program a command started */
     case WM_TIMER:
         if (wp == 1) {
             if (perm_box && IsWindow(perm_box) && GetForegroundWindow() != perm_box) bring_front(perm_box);
@@ -2865,7 +3042,7 @@ static LRESULT CALLBACK me_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
                 for (i = 0; i < nparts; i++) if (*parts[i].h && *parts[i].h != clk && *parts[i].h != grp_time)
                     RedrawWindow(*parts[i].h, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_UPDATENOW);
             }
-            if (busy) spin_on();
+            if (busy) spin_tick();
             /* (no focus keeping here: the visitor's pointer may be selecting text in the transcript;
                the keyboard hook brings the prompt back when they type) */
         }
