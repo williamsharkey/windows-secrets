@@ -3,7 +3,7 @@
 // pressed. The machine runs in a worker; the page only forwards the pointer, the keys and MIDI, and watches it.
 (function () {
   'use strict';
-  var CFG = /*CONFIG*/{"v":"6db837fac5","files":[{"name":"b16.wasm","size":2523434,"gz":1034128},{"name":"w31web.state","size":5842196,"gz":1362890},{"name":"drive.zip","size":3366379,"gz":3366379}],"lead":2048}/*END*/;
+  var CFG = /*CONFIG*/{"v":"390198a1d4","files":[{"name":"b16.wasm","size":2523434,"gz":1034128},{"name":"w31web.state","size":5842196,"gz":1362890},{"name":"drive.zip","size":3366379,"gz":3366379}],"lead":2048}/*END*/;
   var DATA = null;   // b16-data.json, fetched on the click: the machine's settings, the library's names, the presets
   var root = document.getElementById('b16try');
   if (!root) return;
@@ -297,8 +297,8 @@
       return new TextDecoder().decode(raw);
     });
   }
-  // .vstpreset: the VST3 preset container (as packages/basilisk-synth/library/builder/ship.py writes it) around the DPF
-  // component state; the class id is DPF's ('DPF ', 'clas', 'B311', 'Wshk'), in the host OS's string form
+  // .vstpreset: the VST3 preset container around the DPF component state (as DPF writes it; loaded and checked in
+  // BasiliskHost by the 3.11 lane); the class id is DPF's ('DPF ', 'clas', 'B311', 'Wshk'), in the host OS's string form
   function classId(mac) {
     var w = ['DPF ', 'clas', 'B311', 'Wshk'].map(function (s) { return ((s.charCodeAt(0) << 24) | (s.charCodeAt(1) << 16) | (s.charCodeAt(2) << 8) | s.charCodeAt(3)) >>> 0; });
     var raw = new Uint8Array(16), dv = new DataView(raw.buffer); w.forEach(function (x, i) { dv.setUint32(i * 4, x, true); });
@@ -310,7 +310,8 @@
   function latin1(s) { var o = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) o[i] = s.charCodeAt(i) & 255; return o; }
   function encodeVstPreset(text) {
     var t = new TextEncoder().encode(text);
-    var a = latin1('__dpf_state_begin__\xffstate\xff'), z = latin1('\xff__dpf_state_end__\xff');
+    // DPF's own chunk: fields separated by NUL, ended by 0xFE (without it DPF's setState reads past the end)
+    var a = latin1('__dpf_state_begin__\0state\0'), z = latin1('\0__dpf_state_end__\0\xfe\0');
     var comp = new Uint8Array(a.length + t.length + z.length); comp.set(a); comp.set(t, a.length); comp.set(z, a.length + t.length);
     var head = latin1('VST3'), cid = latin1(classId(/Mac/.test(navigator.platform)));
     var off = 4 + 4 + 32 + 8, lst = off + comp.length, out = new Uint8Array(lst + 4 + 4 + 4 + 16), dv = new DataView(out.buffer);

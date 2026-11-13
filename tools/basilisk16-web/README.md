@@ -56,8 +56,8 @@ python3 tools/basilisk16-web/insert_section.py site/sndrec.html <version from si
   - A state is the plugin's own state text, `BASILISK-SYNTH 1`, then `dna`, `reference` and any other lines, kept
     as they came.
   - `.b16` is that text zlib-compressed (`CompressionStream('deflate')`) behind a 16-byte header.
-  - `.vstpreset` is the VST3 container around the DPF component state. It is byte-identical to what
-    `packages/basilisk-synth/library/builder/ship.py` writes.
+  - `.vstpreset` is the VST3 container around the DPF component state as DPF writes it: NUL-separated fields
+    ending in 0xFE. The 3.11 lane loaded one in BasiliskHost.
   - Both load back (Open..., or drop the file on the screen; a machine that isn't running starts with it).
   - A typical state is 84 bytes as `.b16`. The browser's deflate is enough: xz's header alone is larger than that.
 - **Slots** live in IndexedDB (`basilisk16`/`slots`, `.b16` bytes):
