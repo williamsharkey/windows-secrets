@@ -536,6 +536,7 @@ static char pendingDna[1100];
 static BOOL assembling;
 static int poll_host(void);
 static void dig_watch(void);
+static void kb_repaint(void);
 static void layer_replies(void)
 {
     int i;
@@ -603,6 +604,7 @@ static void build(const char *dna)
     if (hMain) InvalidateRect(hMain, NULL, FALSE);
     if (selLayer >= nlay) selLayer = 0;
     panel_refresh();
+    kb_repaint();
     say("built %ld", (long)(timeGetTime() - t0));
     if (pendingDna[0]) { lstrcpy(next, pendingDna); pendingDna[0] = 0; build(next); }
 }
@@ -874,6 +876,15 @@ static void keyboard_create(void)   /* at boot, hidden */
         SetWindowPos(hKey[n], HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
     mkGroup = g;
+}
+/* After a rebuild (and the assembly) controls can be left unpainted: a window that saved the screen bits under it
+   (one of Sound Recorder's dialog boxes while the DNA is built, before the hook moves it off screen) gives them back
+   when it goes, without telling the controls below. So the whole window is marked for repainting, children
+   included; it paints when Windows is idle. */
+static void kb_repaint(void)
+{
+    if (!hMain || !assembled) return;
+    RedrawWindow(hMain, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN);
 }
 static void keyboard_show(void)     /* part of the assembly: wheels and switches, then the keys left to right */
 {
@@ -1878,6 +1889,7 @@ static void assemble(void)
     }
     InvalidateRect(hMain, NULL, TRUE);
     UpdateWindow(hMain);
+    kb_repaint();
     {
         WORD z = 0; bs_report(1, &z, 0);
     }
