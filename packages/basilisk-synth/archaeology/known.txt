@@ -1,0 +1,1209 @@
+*.3cn / *.3th
+*.acs
+*.act
+\documents and settings\all users\documents\my music\sample music\beethoven's symphony no. 9 (scherzo).wma
+\documents and settings\all users\documents\my music\sample music\new stories (highway blues).wma
+\funstuff\videos
+\program files\common files\speechengines\microsoft\tts\1033\sam.spd
+\program files\messenger\newalert.wav
+\program files\messenger\newemail.wav
+\program files\messenger\online.wav
+\program files\messenger\type.wav
+\program files\microsoft games\*\*.dll
+\program files\microsoft plus! digital media edition\alarm clock\default alarm sound 1.wma
+\program files\microsoft plus! digital media edition\alarm clock\default alarm sound 2.wma
+\program files\microsoft plus! digital media edition\alarm clock\default alarm sound 3.wma
+\program files\microsoft plus! digital media edition\alarm clock\default hourly chime sound 1.wma
+\program files\microsoft plus! digital media edition\alarm clock\default hourly chime sound 2.wma
+\program files\microsoft plus! digital media edition\alarm clock\default hourly chime sound 3.wma
+\program files\msn gaming zone\windows\bckgres.dll (wave resource #00)
+\program files\msn gaming zone\windows\bckgres.dll (wave resource #01)
+\program files\msn gaming zone\windows\bckgres.dll (wave resource #02)
+\program files\msn gaming zone\windows\bckgres.dll (wave resource #03)
+\program files\msn gaming zone\windows\bckgres.dll (wave resource #04)
+\program files\msn gaming zone\windows\bckgres.dll (wave resource #05)
+\program files\msn gaming zone\windows\bckgres.dll (wave resource #06)
+\program files\msn gaming zone\windows\bckgres.dll (wave resource #07)
+\program files\msn gaming zone\windows\bckgres.dll (wave resource #08)
+\program files\msn gaming zone\windows\bckgres.dll (wave resource #09)
+\program files\msn gaming zone\windows\bckgres.dll (wave resource #10)
+\program files\msn messenger\
+\program files\netmeeting\blip.wav
+\program files\netmeeting\testsnd.wav
+\program files\plus!\themes\...\16.wav
+\program files\plus!\themes\...\2.wav
+\program files\plus!\themes\...\32.wav
+\program files\plus!\themes\...\4.wav
+\program files\plus!\themes\...\8.wav
+\program files\plus!\themes\...\ar_aster.wav
+\program files\plus!\themes\...\ar_criti.wav
+\program files\plus!\themes\...\ar_defau.wav
+\program files\plus!\themes\...\ar_empty.wav
+\program files\plus!\themes\...\ar_excla.wav
+\program files\plus!\themes\...\ar_exitw.wav
+\program files\plus!\themes\...\ar_maxim.wav
+\program files\plus!\themes\...\ar_menuc.wav
+\program files\plus!\themes\...\ar_menup.wav
+\program files\plus!\themes\...\ar_minim.wav
+\program files\plus!\themes\...\ar_nmail.wav
+\program files\plus!\themes\...\ar_quest.wav
+\program files\plus!\themes\...\ar_restd.wav
+\program files\plus!\themes\...\ar_restu.wav
+\program files\plus!\themes\...\ar_ringi.wav
+\program files\plus!\themes\...\ar_ringo.wav
+\program files\plus!\themes\...\ar_start.wav
+\program files\plus!\themes\...\ar_syste.wav
+\program files\plus!\themes\...\bldin1.wav
+\program files\plus!\themes\...\bldin2.wav
+\program files\plus!\themes\...\bldin3.wav
+\program files\plus!\themes\...\bldout1.wav
+\program files\plus!\themes\...\bldout2.wav
+\program files\plus!\themes\...\bldout3.wav
+\program files\plus!\themes\...\boing.wav
+\program files\plus!\themes\...\bounce.wav
+\program files\plus!\themes\...\bouncein.wav
+\program files\plus!\themes\...\bouncout.wav
+\program files\plus!\themes\...\boxin1.wav
+\program files\plus!\themes\...\boxin2.wav
+\program files\plus!\themes\...\boxout1.wav
+\program files\plus!\themes\...\cantmove.wav
+\program files\plus!\themes\...\cardsw.wav
+\program files\plus!\themes\...\cp_aster.wav
+\program files\plus!\themes\...\cp_criti.wav
+\program files\plus!\themes\...\cp_defau.wav
+\program files\plus!\themes\...\cp_empty.wav
+\program files\plus!\themes\...\cp_excla.wav
+\program files\plus!\themes\...\cp_exitw.wav
+\program files\plus!\themes\...\cp_maxim.wav
+\program files\plus!\themes\...\cp_menuc.wav
+\program files\plus!\themes\...\cp_menup.wav
+\program files\plus!\themes\...\cp_minim.wav
+\program files\plus!\themes\...\cp_nmail.wav
+\program files\plus!\themes\...\cp_quest.wav
+\program files\plus!\themes\...\cp_restd.wav
+\program files\plus!\themes\...\cp_restu.wav
+\program files\plus!\themes\...\cp_ringi.wav
+\program files\plus!\themes\...\cp_ringo.wav
+\program files\plus!\themes\...\cp_start.wav
+\program files\plus!\themes\...\cp_syste.wav
+\program files\plus!\themes\...\cs_aster.wav
+\program files\plus!\themes\...\cs_criti.wav
+\program files\plus!\themes\...\cs_defau.wav
+\program files\plus!\themes\...\cs_empty.wav
+\program files\plus!\themes\...\cs_error.wav
+\program files\plus!\themes\...\cs_excla.wav
+\program files\plus!\themes\...\cs_exitw.wav
+\program files\plus!\themes\...\cs_maxim.wav
+\program files\plus!\themes\...\cs_menuc.wav
+\program files\plus!\themes\...\cs_menup.wav
+\program files\plus!\themes\...\cs_minim.wav
+\program files\plus!\themes\...\cs_nmail.wav
+\program files\plus!\themes\...\cs_quest.wav
+\program files\plus!\themes\...\cs_restd.wav
+\program files\plus!\themes\...\cs_restu.wav
+\program files\plus!\themes\...\cs_ringi.wav
+\program files\plus!\themes\...\cs_ringo.wav
+\program files\plus!\themes\...\cs_start.wav
+\program files\plus!\themes\...\cs_syste.wav
+\program files\plus!\themes\...\cy_aster.wav
+\program files\plus!\themes\...\cy_criti.wav
+\program files\plus!\themes\...\cy_defau.wav
+\program files\plus!\themes\...\cy_empty.wav
+\program files\plus!\themes\...\cy_error.wav
+\program files\plus!\themes\...\cy_excla.wav
+\program files\plus!\themes\...\cy_exitw.wav
+\program files\plus!\themes\...\cy_maxim.wav
+\program files\plus!\themes\...\cy_menuc.wav
+\program files\plus!\themes\...\cy_minim.wav
+\program files\plus!\themes\...\cy_quest.wav
+\program files\plus!\themes\...\cy_restd.wav
+\program files\plus!\themes\...\cy_restu.wav
+\program files\plus!\themes\...\cy_start.wav
+\program files\plus!\themes\...\db_aster.wav
+\program files\plus!\themes\...\db_criti.wav
+\program files\plus!\themes\...\db_defau.wav
+\program files\plus!\themes\...\db_empty.wav
+\program files\plus!\themes\...\db_error.wav
+\program files\plus!\themes\...\db_excla.wav
+\program files\plus!\themes\...\db_exitw.wav
+\program files\plus!\themes\...\db_maxim.wav
+\program files\plus!\themes\...\db_menuc.wav
+\program files\plus!\themes\...\db_minim.wav
+\program files\plus!\themes\...\db_quest.wav
+\program files\plus!\themes\...\db_restd.wav
+\program files\plus!\themes\...\db_restu.wav
+\program files\plus!\themes\...\db_start.wav
+\program files\plus!\themes\...\distort.wav
+\program files\plus!\themes\...\dump3.wav
+\program files\plus!\themes\...\dump4.wav
+\program files\plus!\themes\...\dump5.wav
+\program files\plus!\themes\...\explode1.wav
+\program files\plus!\themes\...\fa_aster.wav
+\program files\plus!\themes\...\fa_criti.wav
+\program files\plus!\themes\...\fa_defau.wav
+\program files\plus!\themes\...\fa_empty.wav
+\program files\plus!\themes\...\fa_error.wav
+\program files\plus!\themes\...\fa_excla.wav
+\program files\plus!\themes\...\fa_exitw.wav
+\program files\plus!\themes\...\fa_maxim.wav
+\program files\plus!\themes\...\fa_menuc.wav
+\program files\plus!\themes\...\fa_menup.wav
+\program files\plus!\themes\...\fa_minim.wav
+\program files\plus!\themes\...\fa_nmail.wav
+\program files\plus!\themes\...\fa_quest.wav
+\program files\plus!\themes\...\fa_restd.wav
+\program files\plus!\themes\...\fa_restu.wav
+\program files\plus!\themes\...\fa_ringi.wav
+\program files\plus!\themes\...\fa_ringo.wav
+\program files\plus!\themes\...\fa_start.wav
+\program files\plus!\themes\...\fl_aster.wav
+\program files\plus!\themes\...\fl_criti.wav
+\program files\plus!\themes\...\fl_defau.wav
+\program files\plus!\themes\...\fl_empty.wav
+\program files\plus!\themes\...\fl_error.wav
+\program files\plus!\themes\...\fl_excla.wav
+\program files\plus!\themes\...\fl_exitw.wav
+\program files\plus!\themes\...\fl_maxim.wav
+\program files\plus!\themes\...\fl_menuc.wav
+\program files\plus!\themes\...\fl_menup.wav
+\program files\plus!\themes\...\fl_minim.wav
+\program files\plus!\themes\...\fl_nmail.wav
+\program files\plus!\themes\...\fl_quest.wav
+\program files\plus!\themes\...\fl_restd.wav
+\program files\plus!\themes\...\fl_restu.wav
+\program files\plus!\themes\...\fl_ringi.wav
+\program files\plus!\themes\...\fl_ringo.wav
+\program files\plus!\themes\...\fl_start.wav
+\program files\plus!\themes\...\fl_syste.wav
+\program files\plus!\themes\...\fo_aster.wav
+\program files\plus!\themes\...\fo_criti.wav
+\program files\plus!\themes\...\fo_defau.wav
+\program files\plus!\themes\...\fo_empty.wav
+\program files\plus!\themes\...\fo_error.wav
+\program files\plus!\themes\...\fo_excla.wav
+\program files\plus!\themes\...\fo_exitw.wav
+\program files\plus!\themes\...\fo_maxim.wav
+\program files\plus!\themes\...\fo_menuc.wav
+\program files\plus!\themes\...\fo_minim.wav
+\program files\plus!\themes\...\fo_quest.wav
+\program files\plus!\themes\...\fo_restd.wav
+\program files\plus!\themes\...\fo_restu.wav
+\program files\plus!\themes\...\fo_start.wav
+\program files\plus!\themes\...\ga_aster.wav
+\program files\plus!\themes\...\ga_criti.wav
+\program files\plus!\themes\...\ga_defau.wav
+\program files\plus!\themes\...\ga_empty.wav
+\program files\plus!\themes\...\ga_error.wav
+\program files\plus!\themes\...\ga_excla.wav
+\program files\plus!\themes\...\ga_exitw.wav
+\program files\plus!\themes\...\ga_maxim.wav
+\program files\plus!\themes\...\ga_menuc.wav
+\program files\plus!\themes\...\ga_menup.wav
+\program files\plus!\themes\...\ga_minim.wav
+\program files\plus!\themes\...\ga_nmail.wav
+\program files\plus!\themes\...\ga_quest.wav
+\program files\plus!\themes\...\ga_restd.wav
+\program files\plus!\themes\...\ga_restu.wav
+\program files\plus!\themes\...\ga_ringi.wav
+\program files\plus!\themes\...\ga_ringo.wav
+\program files\plus!\themes\...\ga_start.wav
+\program files\plus!\themes\...\ga_syste.wav
+\program files\plus!\themes\...\ge_aster.wav
+\program files\plus!\themes\...\ge_criti.wav
+\program files\plus!\themes\...\ge_defau.wav
+\program files\plus!\themes\...\ge_empty.wav
+\program files\plus!\themes\...\ge_error.wav
+\program files\plus!\themes\...\ge_excla.wav
+\program files\plus!\themes\...\ge_exitw.wav
+\program files\plus!\themes\...\ge_maxim.wav
+\program files\plus!\themes\...\ge_menuc.wav
+\program files\plus!\themes\...\ge_menup.wav
+\program files\plus!\themes\...\ge_minim.wav
+\program files\plus!\themes\...\ge_nmail.wav
+\program files\plus!\themes\...\ge_quest.wav
+\program files\plus!\themes\...\ge_restd.wav
+\program files\plus!\themes\...\ge_restu.wav
+\program files\plus!\themes\...\ge_ringi.wav
+\program files\plus!\themes\...\ge_ringo.wav
+\program files\plus!\themes\...\ge_start.wav
+\program files\plus!\themes\...\ge_syste.wav
+\program files\plus!\themes\...\go.wav
+\program files\plus!\themes\...\happy.wav
+\program files\plus!\themes\...\hc_aster.wav
+\program files\plus!\themes\...\hc_criti.wav
+\program files\plus!\themes\...\hc_defau.wav
+\program files\plus!\themes\...\hc_empty.wav
+\program files\plus!\themes\...\hc_end2.wav
+\program files\plus!\themes\...\hc_error.wav
+\program files\plus!\themes\...\hc_excla.wav
+\program files\plus!\themes\...\hc_exitw.wav
+\program files\plus!\themes\...\hc_fire.wav
+\program files\plus!\themes\...\hc_hiss.wav
+\program files\plus!\themes\...\hc_maxim.wav
+\program files\plus!\themes\...\hc_maxp.wav
+\program files\plus!\themes\...\hc_menuc.wav
+\program files\plus!\themes\...\hc_menup.wav
+\program files\plus!\themes\...\hc_minim.wav
+\program files\plus!\themes\...\hc_nmail.wav
+\program files\plus!\themes\...\hc_quest.wav
+\program files\plus!\themes\...\hc_restd.wav
+\program files\plus!\themes\...\hc_restu.wav
+\program files\plus!\themes\...\hc_ringi.wav
+\program files\plus!\themes\...\hc_ringo.wav
+\program files\plus!\themes\...\hc_scrm1.wav
+\program files\plus!\themes\...\hc_scrm2.wav
+\program files\plus!\themes\...\hc_start.wav
+\program files\plus!\themes\...\ja_aster.wav
+\program files\plus!\themes\...\ja_criti.wav
+\program files\plus!\themes\...\ja_defau.wav
+\program files\plus!\themes\...\ja_empty.wav
+\program files\plus!\themes\...\ja_error.wav
+\program files\plus!\themes\...\ja_excla.wav
+\program files\plus!\themes\...\ja_exitw.wav
+\program files\plus!\themes\...\ja_maxim.wav
+\program files\plus!\themes\...\ja_menuc.wav
+\program files\plus!\themes\...\ja_menup.wav
+\program files\plus!\themes\...\ja_minim.wav
+\program files\plus!\themes\...\ja_nmail.wav
+\program files\plus!\themes\...\ja_quest.wav
+\program files\plus!\themes\...\ja_restd.wav
+\program files\plus!\themes\...\ja_restu.wav
+\program files\plus!\themes\...\ja_ringi.wav
+\program files\plus!\themes\...\ja_ringo.wav
+\program files\plus!\themes\...\ja_start.wav
+\program files\plus!\themes\...\level1.wav
+\program files\plus!\themes\...\lnup3fst.wav
+\program files\plus!\themes\...\lnup4fst.wav
+\program files\plus!\themes\...\lnup5fst.wav
+\program files\plus!\themes\...\loss.wav
+\program files\plus!\themes\...\melt.wav
+\program files\plus!\themes\...\move1.wav
+\program files\plus!\themes\...\move2.wav
+\program files\plus!\themes\...\move3.wav
+\program files\plus!\themes\...\nuspin.wav
+\program files\plus!\themes\...\over6.wav
+\program files\plus!\themes\...\pd_aster.wav
+\program files\plus!\themes\...\pd_criti.wav
+\program files\plus!\themes\...\pd_defau.wav
+\program files\plus!\themes\...\pd_empty.wav
+\program files\plus!\themes\...\pd_excla.wav
+\program files\plus!\themes\...\pd_exitw.wav
+\program files\plus!\themes\...\pd_maxim.wav
+\program files\plus!\themes\...\pd_menuc.wav
+\program files\plus!\themes\...\pd_menup.wav
+\program files\plus!\themes\...\pd_minim.wav
+\program files\plus!\themes\...\pd_nmail.wav
+\program files\plus!\themes\...\pd_quest.wav
+\program files\plus!\themes\...\pd_restd.wav
+\program files\plus!\themes\...\pd_restu.wav
+\program files\plus!\themes\...\pd_ringi.wav
+\program files\plus!\themes\...\pd_ringo.wav
+\program files\plus!\themes\...\pd_start.wav
+\program files\plus!\themes\...\pd_syste.wav
+\program files\plus!\themes\...\pe_aster.wav
+\program files\plus!\themes\...\pe_criti.wav
+\program files\plus!\themes\...\pe_defau.wav
+\program files\plus!\themes\...\pe_empty.wav
+\program files\plus!\themes\...\pe_error.wav
+\program files\plus!\themes\...\pe_excla.wav
+\program files\plus!\themes\...\pe_exitw.wav
+\program files\plus!\themes\...\pe_mailb.wav
+\program files\plus!\themes\...\pe_maxim.wav
+\program files\plus!\themes\...\pe_menuc.wav
+\program files\plus!\themes\...\pe_menup.wav
+\program files\plus!\themes\...\pe_minim.wav
+\program files\plus!\themes\...\pe_quest.wav
+\program files\plus!\themes\...\pe_restd.wav
+\program files\plus!\themes\...\pe_restu.wav
+\program files\plus!\themes\...\pe_ringi.wav
+\program files\plus!\themes\...\pe_ringo.wav
+\program files\plus!\themes\...\pe_start.wav
+\program files\plus!\themes\...\poof.wav
+\program files\plus!\themes\...\ro_aster.wav
+\program files\plus!\themes\...\ro_closp.wav
+\program files\plus!\themes\...\ro_criti.wav
+\program files\plus!\themes\...\ro_defau.wav
+\program files\plus!\themes\...\ro_empty.wav
+\program files\plus!\themes\...\ro_excla.wav
+\program files\plus!\themes\...\ro_exitw.wav
+\program files\plus!\themes\...\ro_maxim.wav
+\program files\plus!\themes\...\ro_menuc.wav
+\program files\plus!\themes\...\ro_menup.wav
+\program files\plus!\themes\...\ro_minim.wav
+\program files\plus!\themes\...\ro_nmail.wav
+\program files\plus!\themes\...\ro_quest.wav
+\program files\plus!\themes\...\ro_restd.wav
+\program files\plus!\themes\...\ro_restu.wav
+\program files\plus!\themes\...\ro_ringi.wav
+\program files\plus!\themes\...\ro_ringo.wav
+\program files\plus!\themes\...\ro_start.wav
+\program files\plus!\themes\...\sad.wav
+\program files\plus!\themes\...\sadrpt.wav
+\program files\plus!\themes\...\scanin1.wav
+\program files\plus!\themes\...\scanin2.wav
+\program files\plus!\themes\...\scanin3.wav
+\program files\plus!\themes\...\scanout1.wav
+\program files\plus!\themes\...\scanout2.wav
+\program files\plus!\themes\...\select2.wav
+\program files\plus!\themes\...\sf_aster.wav
+\program files\plus!\themes\...\sf_criti.wav
+\program files\plus!\themes\...\sf_defau.wav
+\program files\plus!\themes\...\sf_empty.wav
+\program files\plus!\themes\...\sf_error.wav
+\program files\plus!\themes\...\sf_excla.wav
+\program files\plus!\themes\...\sf_exitw.wav
+\program files\plus!\themes\...\sf_maxim.wav
+\program files\plus!\themes\...\sf_menuc.wav
+\program files\plus!\themes\...\sf_menup.wav
+\program files\plus!\themes\...\sf_minim.wav
+\program files\plus!\themes\...\sf_nmail.wav
+\program files\plus!\themes\...\sf_quest.wav
+\program files\plus!\themes\...\sf_restd.wav
+\program files\plus!\themes\...\sf_restu.wav
+\program files\plus!\themes\...\sf_ringi.wav
+\program files\plus!\themes\...\sf_ringo.wav
+\program files\plus!\themes\...\sf_start.wav
+\program files\plus!\themes\...\slap.wav
+\program files\plus!\themes\...\squeegie.wav
+\program files\plus!\themes\...\theme.wav
+\program files\plus!\themes\...\victory.wav
+\program files\plus!\themes\...\wi_aster.wav
+\program files\plus!\themes\...\wi_criti.wav
+\program files\plus!\themes\...\wi_defau.wav
+\program files\plus!\themes\...\wi_empty.wav
+\program files\plus!\themes\...\wi_error.wav
+\program files\plus!\themes\...\wi_excla.wav
+\program files\plus!\themes\...\wi_exitw.wav
+\program files\plus!\themes\...\wi_maxim.wav
+\program files\plus!\themes\...\wi_menuc.wav
+\program files\plus!\themes\...\wi_menup.wav
+\program files\plus!\themes\...\wi_minim.wav
+\program files\plus!\themes\...\wi_nmail.wav
+\program files\plus!\themes\...\wi_quest.wav
+\program files\plus!\themes\...\wi_restd.wav
+\program files\plus!\themes\...\wi_restu.wav
+\program files\plus!\themes\...\wi_ringi.wav
+\program files\plus!\themes\...\wi_ringo.wav
+\program files\plus!\themes\...\wi_start.wav
+\program files\plus!\themes\...\wi_syste.wav
+\program files\plus!\themes\...\wind.wav
+\program files\plus!\themes\...\windout1.wav
+\program files\plus!\themes\...\wo_aster.wav
+\program files\plus!\themes\...\wo_criti.wav
+\program files\plus!\themes\...\wo_defau.wav
+\program files\plus!\themes\...\wo_empty.wav
+\program files\plus!\themes\...\wo_error.wav
+\program files\plus!\themes\...\wo_excla.wav
+\program files\plus!\themes\...\wo_exitw.wav
+\program files\plus!\themes\...\wo_maxim.wav
+\program files\plus!\themes\...\wo_menuc.wav
+\program files\plus!\themes\...\wo_menup.wav
+\program files\plus!\themes\...\wo_minim.wav
+\program files\plus!\themes\...\wo_nmail.wav
+\program files\plus!\themes\...\wo_quest.wav
+\program files\plus!\themes\...\wo_restd.wav
+\program files\plus!\themes\...\wo_restu.wav
+\program files\plus!\themes\...\wo_ringi.wav
+\program files\plus!\themes\...\wo_ringo.wav
+\program files\plus!\themes\...\wo_start.wav
+\program files\plus!\themes\...\zoomin.wav
+\program files\plus!\themes\0rastrix.wav
+\program files\plus!\themes\0rclosp.wav
+\program files\plus!\themes\0rcrtstp.wav
+\program files\plus!\themes\0rdefbep.wav
+\program files\plus!\themes\0rdefsnd.wav
+\program files\plus!\themes\0remptyb.wav
+\program files\plus!\themes\0renucmd.wav
+\program files\plus!\themes\0rexclam.wav
+\program files\plus!\themes\0rexitwd.wav
+\program files\plus!\themes\0rmaxmiz.wav
+\program files\plus!\themes\0rminimz.wav
+\program files\plus!\themes\0rmpopup.wav
+\program files\plus!\themes\0ropenp.wav
+\program files\plus!\themes\0rproger.wav
+\program files\plus!\themes\0rquestn.wav
+\program files\plus!\themes\0rrestdn.wav
+\program files\plus!\themes\0rrestup.wav
+\program files\plus!\themes\0rstartw.wav
+\program files\plus!\themes\1mastrix.wav
+\program files\plus!\themes\1mclosp.wav
+\program files\plus!\themes\1mcrtstp.wav
+\program files\plus!\themes\1mdefbep.wav
+\program files\plus!\themes\1mdefsnd.wav
+\program files\plus!\themes\1memptyb.wav
+\program files\plus!\themes\1menucmd.wav
+\program files\plus!\themes\1mexclam.wav
+\program files\plus!\themes\1mexitwd.wav
+\program files\plus!\themes\1mmaxmiz.wav
+\program files\plus!\themes\1mminimz.wav
+\program files\plus!\themes\1mmpopup.wav
+\program files\plus!\themes\1mopenp.wav
+\program files\plus!\themes\1mproger.wav
+\program files\plus!\themes\1mquestn.wav
+\program files\plus!\themes\1mrestdn.wav
+\program files\plus!\themes\1mrestup.wav
+\program files\plus!\themes\1mstartw.wav
+\program files\plus!\themes\2jastrix.wav
+\program files\plus!\themes\2jclosp.wav
+\program files\plus!\themes\2jcrtstp.wav
+\program files\plus!\themes\2jdefbep.wav
+\program files\plus!\themes\2jdefsnd.wav
+\program files\plus!\themes\2jemptyb.wav
+\program files\plus!\themes\2jenucmd.wav
+\program files\plus!\themes\2jexclam.wav
+\program files\plus!\themes\2jexitwd.wav
+\program files\plus!\themes\2jmaxmiz.wav
+\program files\plus!\themes\2jminimz.wav
+\program files\plus!\themes\2jmpopup.wav
+\program files\plus!\themes\2jopenp.wav
+\program files\plus!\themes\2jproger.wav
+\program files\plus!\themes\2jquestn.wav
+\program files\plus!\themes\2jrestdn.wav
+\program files\plus!\themes\2jrestup.wav
+\program files\plus!\themes\2jstartw.wav
+\program files\plus!\themes\3sastrix.wav
+\program files\plus!\themes\3sclosp.wav
+\program files\plus!\themes\3scrtstp.wav
+\program files\plus!\themes\3sdefbep.wav
+\program files\plus!\themes\3sdefsnd.wav
+\program files\plus!\themes\3semptyb.wav
+\program files\plus!\themes\3senucmd.wav
+\program files\plus!\themes\3sexclam.wav
+\program files\plus!\themes\3sexitwd.wav
+\program files\plus!\themes\3smaxmiz.wav
+\program files\plus!\themes\3sminimz.wav
+\program files\plus!\themes\3smpopup.wav
+\program files\plus!\themes\3sopenp.wav
+\program files\plus!\themes\3sproger.wav
+\program files\plus!\themes\3squestn.wav
+\program files\plus!\themes\3srestdn.wav
+\program files\plus!\themes\3srestup.wav
+\program files\plus!\themes\3sstartw.wav
+\program files\plus!\themes\4tastrix.wav
+\program files\plus!\themes\4tclosp.wav
+\program files\plus!\themes\4tcrtstp.wav
+\program files\plus!\themes\4tdefbep.wav
+\program files\plus!\themes\4tdefsnd.wav
+\program files\plus!\themes\4temptyb.wav
+\program files\plus!\themes\4tenucmd.wav
+\program files\plus!\themes\4texclam.wav
+\program files\plus!\themes\4texitwd.wav
+\program files\plus!\themes\4tmaxmiz.wav
+\program files\plus!\themes\4tminimz.wav
+\program files\plus!\themes\4tmpopup.wav
+\program files\plus!\themes\4topenp.wav
+\program files\plus!\themes\4tproger.wav
+\program files\plus!\themes\4tquestn.wav
+\program files\plus!\themes\4trestdn.wav
+\program files\plus!\themes\4trestup.wav
+\program files\plus!\themes\4tstartw.wav
+\program files\plus!\themes\5bastrix.wav
+\program files\plus!\themes\5bclosp.wav
+\program files\plus!\themes\5bcrtstp.wav
+\program files\plus!\themes\5bdefbep.wav
+\program files\plus!\themes\5bdefsnd.wav
+\program files\plus!\themes\5bemptyb.wav
+\program files\plus!\themes\5benucmd.wav
+\program files\plus!\themes\5bexclam.wav
+\program files\plus!\themes\5bexitwd.wav
+\program files\plus!\themes\5bmaxmiz.wav
+\program files\plus!\themes\5bminimz.wav
+\program files\plus!\themes\5bmpopup.wav
+\program files\plus!\themes\5bopenp.wav
+\program files\plus!\themes\5bproger.wav
+\program files\plus!\themes\5bquestn.wav
+\program files\plus!\themes\5brestdn.wav
+\program files\plus!\themes\5brestup.wav
+\program files\plus!\themes\5bstartw.wav
+\program files\plus!\themes\6hastrix.wav
+\program files\plus!\themes\6hclosp.wav
+\program files\plus!\themes\6hcrtstp.wav
+\program files\plus!\themes\6hdefbep.wav
+\program files\plus!\themes\6hdefsnd.wav
+\program files\plus!\themes\6hemptyb.wav
+\program files\plus!\themes\6henucmd.wav
+\program files\plus!\themes\6hexclam.wav
+\program files\plus!\themes\6hexitwd.wav
+\program files\plus!\themes\6hmaxmiz.wav
+\program files\plus!\themes\6hminimz.wav
+\program files\plus!\themes\6hmpopup.wav
+\program files\plus!\themes\6hopenp.wav
+\program files\plus!\themes\6hproger.wav
+\program files\plus!\themes\6hquestn.wav
+\program files\plus!\themes\6hrestdn.wav
+\program files\plus!\themes\6hrestup.wav
+\program files\plus!\themes\6hstartw.wav
+\program files\plus!\themes\7bastrix.wav
+\program files\plus!\themes\7bclosp.wav
+\program files\plus!\themes\7bcrtstp.wav
+\program files\plus!\themes\7bdefbep.wav
+\program files\plus!\themes\7bdefsnd.wav
+\program files\plus!\themes\7bemptyb.wav
+\program files\plus!\themes\7benucmd.wav
+\program files\plus!\themes\7bexclam.wav
+\program files\plus!\themes\7bexitwd.wav
+\program files\plus!\themes\7bmaxmiz.wav
+\program files\plus!\themes\7bminimz.wav
+\program files\plus!\themes\7bmpopup.wav
+\program files\plus!\themes\7bopenp.wav
+\program files\plus!\themes\7bproger.wav
+\program files\plus!\themes\7bquestn.wav
+\program files\plus!\themes\7brestdn.wav
+\program files\plus!\themes\7brestup.wav
+\program files\plus!\themes\7bstartw.wav
+\program files\plus!\themes\8uastrix.wav
+\program files\plus!\themes\8uclosp.wav
+\program files\plus!\themes\8ucrtstp.wav
+\program files\plus!\themes\8udefbep.wav
+\program files\plus!\themes\8udefsnd.wav
+\program files\plus!\themes\8uemptyb.wav
+\program files\plus!\themes\8uenucmd.wav
+\program files\plus!\themes\8uexclam.wav
+\program files\plus!\themes\8uexitwd.wav
+\program files\plus!\themes\8umaxmiz.wav
+\program files\plus!\themes\8uminimz.wav
+\program files\plus!\themes\8umpopup.wav
+\program files\plus!\themes\8uopenp.wav
+\program files\plus!\themes\8uproger.wav
+\program files\plus!\themes\8uquestn.wav
+\program files\plus!\themes\8urestdn.wav
+\program files\plus!\themes\8urestup.wav
+\program files\plus!\themes\8ustartw.wav
+\program files\plus!\themes\9sastrix.wav
+\program files\plus!\themes\9sclosp.wav
+\program files\plus!\themes\9scrtstp.wav
+\program files\plus!\themes\9sdefbep.wav
+\program files\plus!\themes\9sdefsnd.wav
+\program files\plus!\themes\9semptyb.wav
+\program files\plus!\themes\9senucmd.wav
+\program files\plus!\themes\9sexclam.wav
+\program files\plus!\themes\9sexitwd.wav
+\program files\plus!\themes\9smaxmiz.wav
+\program files\plus!\themes\9sminimz.wav
+\program files\plus!\themes\9smpopup.wav
+\program files\plus!\themes\9sopenp.wav
+\program files\plus!\themes\9sproger.wav
+\program files\plus!\themes\9squestn.wav
+\program files\plus!\themes\9srestdn.wav
+\program files\plus!\themes\9srestup.wav
+\program files\plus!\themes\9sstartw.wav
+\program files\plus!\themes\da_astrx.wav
+\program files\plus!\themes\da_beep.wav
+\program files\plus!\themes\da_defau.wav
+\program files\plus!\themes\da_empty.wav
+\program files\plus!\themes\da_error.wav
+\program files\plus!\themes\da_excla.wav
+\program files\plus!\themes\da_max.wav
+\program files\plus!\themes\da_menu.wav
+\program files\plus!\themes\da_menuc.wav
+\program files\plus!\themes\da_min.wav
+\program files\plus!\themes\da_quest.wav
+\program files\plus!\themes\da_start.wav
+\program files\plus!\themes\da_stop.wav
+\program files\plus!\themes\dv_astrx.wav
+\program files\plus!\themes\dv_beep.wav
+\program files\plus!\themes\dv_defau.wav
+\program files\plus!\themes\dv_empty.wav
+\program files\plus!\themes\dv_error.wav
+\program files\plus!\themes\dv_excla.wav
+\program files\plus!\themes\dv_max.wav
+\program files\plus!\themes\dv_menu.wav
+\program files\plus!\themes\dv_menuc.wav
+\program files\plus!\themes\dv_min.wav
+\program files\plus!\themes\dv_quest.wav
+\program files\plus!\themes\dv_restd.wav
+\program files\plus!\themes\dv_restu.wav
+\program files\plus!\themes\dv_start.wav
+\program files\plus!\themes\dv_stop.wav
+\program files\plus!\themes\mo_astrx.wav
+\program files\plus!\themes\mo_beep.wav
+\program files\plus!\themes\mo_defau.wav
+\program files\plus!\themes\mo_empty.wav
+\program files\plus!\themes\mo_error.wav
+\program files\plus!\themes\mo_excla.wav
+\program files\plus!\themes\mo_exit.wav
+\program files\plus!\themes\mo_max.wav
+\program files\plus!\themes\mo_menu.wav
+\program files\plus!\themes\mo_menuc.wav
+\program files\plus!\themes\mo_min.wav
+\program files\plus!\themes\mo_quest.wav
+\program files\plus!\themes\mo_start.wav
+\program files\plus!\themes\mo_stop.wav
+\program files\plus!\themes\my_astrx.wav
+\program files\plus!\themes\my_beep.wav
+\program files\plus!\themes\my_defau.wav
+\program files\plus!\themes\my_empty.wav
+\program files\plus!\themes\my_error.wav
+\program files\plus!\themes\my_excla.wav
+\program files\plus!\themes\my_exit.wav
+\program files\plus!\themes\my_max.wav
+\program files\plus!\themes\my_menu.wav
+\program files\plus!\themes\my_menuc.wav
+\program files\plus!\themes\my_min.wav
+\program files\plus!\themes\my_quest.wav
+\program files\plus!\themes\my_start.wav
+\program files\plus!\themes\my_stop.wav
+\program files\plus!\themes\na_astrx.wav
+\program files\plus!\themes\na_beep.wav
+\program files\plus!\themes\na_defau.wav
+\program files\plus!\themes\na_empty.wav
+\program files\plus!\themes\na_error.wav
+\program files\plus!\themes\na_excla.wav
+\program files\plus!\themes\na_exit.wav
+\program files\plus!\themes\na_max.wav
+\program files\plus!\themes\na_menu.wav
+\program files\plus!\themes\na_menuc.wav
+\program files\plus!\themes\na_min.wav
+\program files\plus!\themes\na_quest.wav
+\program files\plus!\themes\na_restd.wav
+\program files\plus!\themes\na_restu.wav
+\program files\plus!\themes\na_start.wav
+\program files\plus!\themes\na_stop.wav
+\program files\plus!\themes\pc_astrx.wav
+\program files\plus!\themes\pc_beep.wav
+\program files\plus!\themes\pc_defau.wav
+\program files\plus!\themes\pc_empty.wav
+\program files\plus!\themes\pc_error.wav
+\program files\plus!\themes\pc_excla.wav
+\program files\plus!\themes\pc_exit.wav
+\program files\plus!\themes\pc_max.wav
+\program files\plus!\themes\pc_menu.wav
+\program files\plus!\themes\pc_menuc.wav
+\program files\plus!\themes\pc_min.wav
+\program files\plus!\themes\pc_quest.wav
+\program files\plus!\themes\pc_restd.wav
+\program files\plus!\themes\pc_restu.wav
+\program files\plus!\themes\pc_start.wav
+\program files\plus!\themes\pc_stop.wav
+\program files\plus!\themes\sc_astrx.wav
+\program files\plus!\themes\sc_beep.wav
+\program files\plus!\themes\sc_defau.wav
+\program files\plus!\themes\sc_empty.wav
+\program files\plus!\themes\sc_error.wav
+\program files\plus!\themes\sc_excla.wav
+\program files\plus!\themes\sc_exit.wav
+\program files\plus!\themes\sc_max.wav
+\program files\plus!\themes\sc_menu.wav
+\program files\plus!\themes\sc_menuc.wav
+\program files\plus!\themes\sc_min.wav
+\program files\plus!\themes\sc_quest.wav
+\program files\plus!\themes\sc_restd.wav
+\program files\plus!\themes\sc_restu.wav
+\program files\plus!\themes\sc_start.wav
+\program files\plus!\themes\sc_stop.wav
+\program files\plus!\themes\sp_astrx.wav
+\program files\plus!\themes\sp_beep.wav
+\program files\plus!\themes\sp_defau.wav
+\program files\plus!\themes\sp_empty.wav
+\program files\plus!\themes\sp_error.wav
+\program files\plus!\themes\sp_excla.wav
+\program files\plus!\themes\sp_exit.wav
+\program files\plus!\themes\sp_max.wav
+\program files\plus!\themes\sp_menu.wav
+\program files\plus!\themes\sp_menuc.wav
+\program files\plus!\themes\sp_min.wav
+\program files\plus!\themes\sp_quest.wav
+\program files\plus!\themes\sp_start.wav
+\program files\plus!\themes\sp_stop.wav
+\program files\plus!\themes\sx_astrx.wav
+\program files\plus!\themes\sx_beep.wav
+\program files\plus!\themes\sx_defau.wav
+\program files\plus!\themes\sx_empty.wav
+\program files\plus!\themes\sx_error.wav
+\program files\plus!\themes\sx_excla.wav
+\program files\plus!\themes\sx_exit.wav
+\program files\plus!\themes\sx_max.wav
+\program files\plus!\themes\sx_menu.wav
+\program files\plus!\themes\sx_menuc.wav
+\program files\plus!\themes\sx_min.wav
+\program files\plus!\themes\sx_quest.wav
+\program files\plus!\themes\sx_restd.wav
+\program files\plus!\themes\sx_restu.wav
+\program files\plus!\themes\sx_start.wav
+\program files\plus!\themes\sx_stop.wav
+\program files\plus!\themes\tr_astrx.wav
+\program files\plus!\themes\tr_beep.wav
+\program files\plus!\themes\tr_defau.wav
+\program files\plus!\themes\tr_empty.wav
+\program files\plus!\themes\tr_error.wav
+\program files\plus!\themes\tr_excla.wav
+\program files\plus!\themes\tr_exit.wav
+\program files\plus!\themes\tr_max.wav
+\program files\plus!\themes\tr_menu.wav
+\program files\plus!\themes\tr_menuc.wav
+\program files\plus!\themes\tr_min.wav
+\program files\plus!\themes\tr_quest.wav
+\program files\plus!\themes\tr_restd.wav
+\program files\plus!\themes\tr_restu.wav
+\program files\plus!\themes\tr_start.wav
+\program files\plus!\themes\tr_stop.wav
+\program files\plus!\themes\wi_astrx.wav
+\program files\plus!\themes\wi_beep.wav
+\program files\plus!\themes\wi_defau.wav
+\program files\plus!\themes\wi_empty.wav
+\program files\plus!\themes\wi_error.wav
+\program files\plus!\themes\wi_excla.wav
+\program files\plus!\themes\wi_exit.wav
+\program files\plus!\themes\wi_max.wav
+\program files\plus!\themes\wi_menu.wav
+\program files\plus!\themes\wi_menuc.wav
+\program files\plus!\themes\wi_min.wav
+\program files\plus!\themes\wi_quest.wav
+\program files\plus!\themes\wi_restd.wav
+\program files\plus!\themes\wi_restu.wav
+\program files\plus!\themes\wi_stop.wav
+\program files\windows nt\pinball\pinball.mid
+\program files\windows nt\pinball\pinball2.mid
+\program files\windows nt\pinball\sound1.wav
+\program files\windows nt\pinball\sound104.wav
+\program files\windows nt\pinball\sound105.wav
+\program files\windows nt\pinball\sound108.wav
+\program files\windows nt\pinball\sound111.wav
+\program files\windows nt\pinball\sound112.wav
+\program files\windows nt\pinball\sound12.wav
+\program files\windows nt\pinball\sound13.wav
+\program files\windows nt\pinball\sound131.wav
+\program files\windows nt\pinball\sound136.wav
+\program files\windows nt\pinball\sound14.wav
+\program files\windows nt\pinball\sound16.wav
+\program files\windows nt\pinball\sound17.wav
+\program files\windows nt\pinball\sound18.wav
+\program files\windows nt\pinball\sound181.wav
+\program files\windows nt\pinball\sound19.wav
+\program files\windows nt\pinball\sound20.wav
+\program files\windows nt\pinball\sound21.wav
+\program files\windows nt\pinball\sound22.wav
+\program files\windows nt\pinball\sound24.wav
+\program files\windows nt\pinball\sound240.wav
+\program files\windows nt\pinball\sound243.wav
+\program files\windows nt\pinball\sound25.wav
+\program files\windows nt\pinball\sound26.wav
+\program files\windows nt\pinball\sound27.wav
+\program files\windows nt\pinball\sound28.wav
+\program files\windows nt\pinball\sound29.wav
+\program files\windows nt\pinball\sound3.wav
+\program files\windows nt\pinball\sound30.wav
+\program files\windows nt\pinball\sound34.wav
+\program files\windows nt\pinball\sound35.wav
+\program files\windows nt\pinball\sound36.wav
+\program files\windows nt\pinball\sound38.wav
+\program files\windows nt\pinball\sound39.wav
+\program files\windows nt\pinball\sound4.wav
+\program files\windows nt\pinball\sound42.wav
+\program files\windows nt\pinball\sound43.wav
+\program files\windows nt\pinball\sound45.wav
+\program files\windows nt\pinball\sound49.wav
+\program files\windows nt\pinball\sound49d.wav
+\program files\windows nt\pinball\sound5.wav
+\program files\windows nt\pinball\sound50.wav
+\program files\windows nt\pinball\sound528.wav
+\program files\windows nt\pinball\sound53.wav
+\program files\windows nt\pinball\sound54.wav
+\program files\windows nt\pinball\sound55.wav
+\program files\windows nt\pinball\sound560.wav
+\program files\windows nt\pinball\sound563.wav
+\program files\windows nt\pinball\sound57.wav
+\program files\windows nt\pinball\sound58.wav
+\program files\windows nt\pinball\sound6.wav
+\program files\windows nt\pinball\sound65.wav
+\program files\windows nt\pinball\sound68.wav
+\program files\windows nt\pinball\sound7.wav
+\program files\windows nt\pinball\sound713.wav
+\program files\windows nt\pinball\sound735.wav
+\program files\windows nt\pinball\sound8.wav
+\program files\windows nt\pinball\sound827.wav
+\program files\windows nt\pinball\sound9.wav
+\program files\windows nt\pinball\sound999.wav
+\users\public\music\sample music\
+\windows\almonds.mid
+\windows\bells.wav
+\windows\blocks.wav
+\windows\brndnbrg.mid
+\windows\canyon.mid
+\windows\chimes.wav
+\windows\chord.wav
+\windows\clock.wav
+\windows\ding.wav
+\windows\dreamy.mid
+\windows\gong.wav
+\windows\help\tours\windowsmediaplayer\audio\wav\wmpaud1.wav
+\windows\help\tours\windowsmediaplayer\audio\wav\wmpaud2.wav
+\windows\help\tours\windowsmediaplayer\audio\wav\wmpaud3.wav
+\windows\help\tours\windowsmediaplayer\audio\wav\wmpaud4.wav
+\windows\help\tours\windowsmediaplayer\audio\wav\wmpaud5.wav
+\windows\help\tours\windowsmediaplayer\audio\wav\wmpaud6.wav
+\windows\help\tours\windowsmediaplayer\audio\wav\wmpaud7.wav
+\windows\help\tours\windowsmediaplayer\audio\wav\wmpaud8.wav
+\windows\help\tours\windowsmediaplayer\audio\wav\wmpaud9.wav
+\windows\jawharp.wav
+\windows\laser.wav
+\windows\media\(scheme file)
+\windows\media\afternoon\
+\windows\media\aquarium asterisk.wav
+\windows\media\aquarium close.wav
+\windows\media\aquarium critstop.wav
+\windows\media\aquarium default.wav
+\windows\media\aquarium error.wav
+\windows\media\aquarium exclamation.wav
+\windows\media\aquarium maximize.wav
+\windows\media\aquarium menucmd.wav
+\windows\media\aquarium menupopup.wav
+\windows\media\aquarium minimize.wav
+\windows\media\aquarium mp3done.wav
+\windows\media\aquarium mspeakerr.wav
+\windows\media\aquarium mspeakok.wav
+\windows\media\aquarium open.wav
+\windows\media\aquarium pdj.wav
+\windows\media\aquarium question.wav
+\windows\media\aquarium recycle.wav
+\windows\media\aquarium restoredown.wav
+\windows\media\aquarium restoreup.wav
+\windows\media\aquarium sysexit.wav
+\windows\media\aquarium sysstart.wav
+\windows\media\bach's brandenburg concerto no. 3.rmi
+\windows\media\beethoven's 5th symphony.rmi
+\windows\media\beethoven's fur elise.rmi
+\windows\media\calligraphy\
+\windows\media\characters\
+\windows\media\chimes.wav
+\windows\media\chord.wav
+\windows\media\cityscape\
+\windows\media\dance of the sugar-plum fairy.rmi
+\windows\media\davinci asterisk.wav
+\windows\media\davinci close.wav
+\windows\media\davinci critstop.wav
+\windows\media\davinci default.wav
+\windows\media\davinci error.wav
+\windows\media\davinci exclamation.wav
+\windows\media\davinci maximize.wav
+\windows\media\davinci menucmd.wav
+\windows\media\davinci menupopup.wav
+\windows\media\davinci minimize.wav
+\windows\media\davinci mp3done.wav
+\windows\media\davinci mspeakerr.wav
+\windows\media\davinci mspeakok.wav
+\windows\media\davinci open.wav
+\windows\media\davinci pdj.wav
+\windows\media\davinci question.wav
+\windows\media\davinci recycle.wav
+\windows\media\davinci restoredown.wav
+\windows\media\davinci restoreup.wav
+\windows\media\davinci sysexit.wav
+\windows\media\davinci sysstart.wav
+\windows\media\debussy's claire de lune.rmi
+\windows\media\delta\
+\windows\media\ding.wav
+\windows\media\festival\
+\windows\media\flourish.mid
+\windows\media\garden\
+\windows\media\garden\windows ding.wav
+\windows\media\garden\windows logon sound.wav
+\windows\media\heritage\
+\windows\media\in the hall of the mountain king.rmi
+\windows\media\ir_*.wav
+\windows\media\ir_begin.wav
+\windows\media\ir_end.wav
+\windows\media\ir_inter.wav
+\windows\media\jungle asterisk.wav
+\windows\media\jungle close.wav
+\windows\media\jungle default.wav
+\windows\media\jungle exclamation.wav
+\windows\media\jungle maximize.wav
+\windows\media\jungle menu command.wav
+\windows\media\jungle menu popup.wav
+\windows\media\jungle minimize.wav
+\windows\media\jungle open.wav
+\windows\media\jungle question.wav
+\windows\media\jungle recycle.wav
+\windows\media\jungle restore down.wav
+\windows\media\jungle windows exit.wav
+\windows\media\jungle windows start.wav
+\windows\media\landscape\
+\windows\media\logoff.wav
+\windows\media\mozart's symphony no. 40.rmi
+\windows\media\mpspeak_received.wav
+\windows\media\mpspeak_unrecognized.wav
+\windows\media\musica asterisk.wav
+\windows\media\musica close.wav
+\windows\media\musica default.wav
+\windows\media\musica exclamation.wav
+\windows\media\musica maximize.wav
+\windows\media\musica menu command.wav
+\windows\media\musica menu popup.wav
+\windows\media\musica minimize.wav
+\windows\media\musica open.wav
+\windows\media\musica question.wav
+\windows\media\musica recycle.wav
+\windows\media\musica restore down.wav
+\windows\media\musica windows exit.wav
+\windows\media\musica windows start.wav
+\windows\media\nature asterisk.wav
+\windows\media\nature close.wav
+\windows\media\nature critstop.wav
+\windows\media\nature default.wav
+\windows\media\nature error.wav
+\windows\media\nature exclamation.wav
+\windows\media\nature maximize.wav
+\windows\media\nature menucmd.wav
+\windows\media\nature menupopup.wav
+\windows\media\nature minimize.wav
+\windows\media\nature mp3done.wav
+\windows\media\nature mspeakerr.wav
+\windows\media\nature mspeakok.wav
+\windows\media\nature open.wav
+\windows\media\nature question.wav
+\windows\media\nature recycle.wav
+\windows\media\nature restoredown.wav
+\windows\media\nature restoreup.wav
+\windows\media\nature sysexit.wav
+\windows\media\nature sysstart.wav
+\windows\media\notify.wav
+\windows\media\onestop.mid
+\windows\media\passport.mid
+\windows\media\quirky\
+\windows\media\raga\
+\windows\media\recycle.wav
+\windows\media\ringin.wav
+\windows\media\ringout.wav
+\windows\media\robotz asterisk.wav
+\windows\media\robotz close.wav
+\windows\media\robotz default.wav
+\windows\media\robotz exclamation.wav
+\windows\media\robotz maximize.wav
+\windows\media\robotz menu command.wav
+\windows\media\robotz menu popup.wav
+\windows\media\robotz minimize.wav
+\windows\media\robotz open.wav
+\windows\media\robotz question.wav
+\windows\media\robotz recycle.wav
+\windows\media\robotz restore down.wav
+\windows\media\robotz windows exit.wav
+\windows\media\robotz windows start.wav
+\windows\media\savanna\
+\windows\media\sonata\
+\windows\media\space asterisk.wav
+\windows\media\space close.wav
+\windows\media\space critstop.wav
+\windows\media\space default.wav
+\windows\media\space error.wav
+\windows\media\space exclamation.wav
+\windows\media\space maximize.wav
+\windows\media\space menucmd.wav
+\windows\media\space menupopup.wav
+\windows\media\space minimize.wav
+\windows\media\space mp3done.wav
+\windows\media\space mspeakerr.wav
+\windows\media\space mspeakok.wav
+\windows\media\space open.wav
+\windows\media\space pdj.wav
+\windows\media\space question.wav
+\windows\media\space recycle.wav
+\windows\media\space restoredown.wav
+\windows\media\space restoreup.wav
+\windows\media\space sysexit.wav
+\windows\media\space sysstart.wav
+\windows\media\speech disambiguation.wav
+\windows\media\speech misrecognition.wav
+\windows\media\speech off.wav
+\windows\media\speech on.wav
+\windows\media\speech sleep.wav
+\windows\media\start.wav
+\windows\media\tada.wav
+\windows\media\the microsoft sound.wav
+\windows\media\town.mid
+\windows\media\utopia asterisk.wav
+\windows\media\utopia close.wav
+\windows\media\utopia critical stop.wav
+\windows\media\utopia default.wav
+\windows\media\utopia error.wav
+\windows\media\utopia exclamation.wav
+\windows\media\utopia maximize.wav
+\windows\media\utopia menu command.wav
+\windows\media\utopia menu popup.wav
+\windows\media\utopia minimize.wav
+\windows\media\utopia open.wav
+\windows\media\utopia question.wav
+\windows\media\utopia recycle.wav
+\windows\media\utopia restore down.wav
+\windows\media\utopia restore up.wav
+\windows\media\utopia windows exit.wav
+\windows\media\utopia windows start.wav
+\windows\media\windows balloon.wav
+\windows\media\windows battery critical.wav
+\windows\media\windows battery low.wav
+\windows\media\windows critical stop.wav
+\windows\media\windows default.wav
+\windows\media\windows ding.wav
+\windows\media\windows error.wav
+\windows\media\windows exclamation.wav
+\windows\media\windows feed discovered.wav
+\windows\media\windows hardware fail.wav
+\windows\media\windows hardware insert.wav
+\windows\media\windows hardware remove.wav
+\windows\media\windows information bar.wav
+\windows\media\windows logoff sound.wav
+\windows\media\windows logon sound.wav
+\windows\media\windows menu command.wav
+\windows\media\windows minimize.wav
+\windows\media\windows navigation start.wav
+\windows\media\windows notify.wav
+\windows\media\windows pop-up blocked.wav
+\windows\media\windows print complete.wav
+\windows\media\windows recycle.wav
+\windows\media\windows restore.wav
+\windows\media\windows ringin.wav
+\windows\media\windows ringout.wav
+\windows\media\windows shutdown.wav
+\windows\media\windows startup.wav
+\windows\media\windows user account control.wav
+\windows\media\windows xp balloon.wav
+\windows\media\windows xp battery critical.wav
+\windows\media\windows xp battery low.wav
+\windows\media\windows xp critical stop.wav
+\windows\media\windows xp default.wav
+\windows\media\windows xp ding.wav
+\windows\media\windows xp error.wav
+\windows\media\windows xp exclamation.wav
+\windows\media\windows xp hardware fail.wav
+\windows\media\windows xp hardware insert.wav
+\windows\media\windows xp hardware remove.wav
+\windows\media\windows xp information bar.wav
+\windows\media\windows xp logoff sound.wav
+\windows\media\windows xp logon sound.wav
+\windows\media\windows xp menu command.wav
+\windows\media\windows xp minimize.wav
+\windows\media\windows xp notify.wav
+\windows\media\windows xp pop-up blocked.wav
+\windows\media\windows xp print complete.wav
+\windows\media\windows xp recycle.wav
+\windows\media\windows xp restore.wav
+\windows\media\windows xp ringin.wav
+\windows\media\windows xp ringout.wav
+\windows\media\windows xp shutdown.wav
+\windows\media\windows xp start.wav
+\windows\media\windows xp startup.wav
+\windows\metblast.mid
+\windows\msagent\chars\merlin.acs (embedded #00)
+\windows\msagent\chars\merlin.acs (embedded #01)
+\windows\msagent\chars\merlin.acs (embedded #02)
+\windows\msagent\chars\merlin.acs (embedded #03)
+\windows\msagent\chars\merlin.acs (embedded #04)
+\windows\msagent\chars\merlin.acs (embedded #05)
+\windows\msagent\chars\merlin.acs (embedded #06)
+\windows\msagent\chars\merlin.acs (embedded #07)
+\windows\msagent\chars\merlin.acs (embedded #08)
+\windows\msagent\chars\merlin.acs (embedded #09)
+\windows\msagent\chars\merlin.acs (embedded #10)
+\windows\msagent\chars\merlin.acs (embedded #11)
+\windows\msagent\chars\merlin.acs (embedded #12)
+\windows\msagent\chars\merlin.acs (embedded #13)
+\windows\msagent\chars\merlin.acs (embedded #14)
+\windows\msagent\chars\merlin.acs (embedded #15)
+\windows\msagent\chars\merlin.acs (embedded #16)
+\windows\msagent\chars\merlin.acs (embedded #17)
+\windows\msagent\chars\merlin.acs (embedded #18)
+\windows\msagent\chars\merlin.acs (embedded #19)
+\windows\msagent\chars\merlin.acs (embedded #20)
+\windows\msagent\chars\merlin.acs (embedded #21)
+\windows\msagent\chars\merlin.acs (embedded #22)
+\windows\msagent\chars\merlin.acs (embedded #23)
+\windows\msagent\chars\merlin.acs (embedded #24)
+\windows\msagent\chars\merlin.acs (embedded #25)
+\windows\msagent\chars\merlin.acs (embedded #26)
+\windows\msagent\chars\merlin.acs (embedded #27)
+\windows\msagent\chars\merlin.acs (embedded #28)
+\windows\msagent\chars\merlin.acs (embedded #29)
+\windows\msagent\chars\merlin.acs (embedded #30)
+\windows\msagent\chars\merlin.acs (embedded #31)
+\windows\msagent\mslwvtts.dll
+\windows\ohoh.wav
+\windows\passport.mid
+\windows\pchealth\helpctr\system\remote assistance\ding.wav
+\windows\ringin.wav
+\windows\ringout.wav
+\windows\seasons.mid
+\windows\siren.wav
+\windows\someband.mid
+\windows\srchasst\chars\courtney.acs (embedded #00)
+\windows\srchasst\chars\courtney.acs (embedded #01)
+\windows\srchasst\chars\courtney.acs (embedded #02)
+\windows\srchasst\chars\courtney.acs (embedded #03)
+\windows\srchasst\chars\earl.acs (embedded #00)
+\windows\srchasst\chars\earl.acs (embedded #01)
+\windows\srchasst\chars\earl.acs (embedded #02)
+\windows\srchasst\chars\earl.acs (embedded #03)
+\windows\srchasst\chars\earl.acs (embedded #04)
+\windows\srchasst\chars\earl.acs (embedded #05)
+\windows\srchasst\chars\earl.acs (embedded #06)
+\windows\srchasst\chars\earl.acs (embedded #07)
+\windows\srchasst\chars\earl.acs (embedded #08)
+\windows\srchasst\chars\earl.acs (embedded #09)
+\windows\srchasst\chars\earl.acs (embedded #10)
+\windows\srchasst\chars\earl.acs (embedded #11)
+\windows\srchasst\chars\earl.acs (embedded #12)
+\windows\srchasst\chars\earl.acs (embedded #13)
+\windows\srchasst\chars\earl.acs (embedded #14)
+\windows\srchasst\chars\earl.acs (embedded #15)
+\windows\srchasst\chars\earl.acs (embedded #16)
+\windows\srchasst\chars\earl.acs (embedded #17)
+\windows\srchasst\chars\earl.acs (embedded #18)
+\windows\srchasst\chars\earl.acs (embedded #19)
+\windows\srchasst\chars\earl.acs (embedded #20)
+\windows\srchasst\chars\earl.acs (embedded #21)
+\windows\srchasst\chars\rover.acs (embedded #00)
+\windows\srchasst\chars\rover.acs (embedded #01)
+\windows\srchasst\chars\rover.acs (embedded #02)
+\windows\srchasst\chars\rover.acs (embedded #03)
+\windows\srchasst\chars\rover.acs (embedded #04)
+\windows\srchasst\chars\rover.acs (embedded #05)
+\windows\srchasst\chars\rover.acs (embedded #06)
+\windows\srchasst\chars\rover.acs (embedded #07)
+\windows\srchasst\chars\rover.acs (embedded #08)
+\windows\srchasst\chars\rover.acs (embedded #09)
+\windows\stomp.mid
+\windows\system32\drivers\gm.dls
+\windows\system32\imageres.dll (wave resource)
+\windows\system32\mshearts.exe (wave resource #00)
+\windows\system32\mshearts.exe (wave resource #01)
+\windows\system32\narrator.exe
+\windows\system32\oobe\images\clickerx.wav
+\windows\system32\oobe\images\qmark.acs (embedded #00)
+\windows\system32\oobe\images\qmark.acs (embedded #01)
+\windows\system32\oobe\images\qmark.acs (embedded #02)
+\windows\system32\oobe\images\qmark.acs (embedded #03)
+\windows\system32\oobe\images\qmark.acs (embedded #04)
+\windows\system32\oobe\images\qmark.acs (embedded #05)
+\windows\system32\oobe\images\qmark.acs (embedded #06)
+\windows\system32\oobe\images\title.wma
+\windows\system32\spider.exe (wave resource #00)
+\windows\system32\spider.exe (wave resource #01)
+\windows\system32\spider.exe (wave resource #02)
+\windows\system32\spider.exe (wave resource #03)
+\windows\system32\spider.exe (wave resource #04)
+\windows\system32\spider.exe (wave resource #05)
+\windows\system32\winmine.exe (wave resource #00)
+\windows\system32\winmine.exe (wave resource #01)
+\windows\system32\winmine.exe (wave resource #02)
+\windows\tada.wav
+\windows\water.wav
+\windows\welcom98.wav (tour)
+\windows\windows 98 welcom98 / blip.wav / testsnd.wav
+\winnt\media\windows nt logoff sound.wav
+\winnt\media\windows nt logon sound.wav
+bob cd
+cd
+encarta cd
+microsoft office\media
+sb install disks
+speechengines
+tabletpc.cab\spmicoff.wav
+tabletpc.cab\spmicon.wav
+tabletpc.cab\sprec.wav
+tabletpc.cab\spunrec.wav
+tv_enua.exe
+vista/7 sapi 5
+vs97 cd2 vi1.0\client\muscprod
+windows 95 cd \funstuff\hover
+winmine.exe
+wmp preload
+wss disks
