@@ -1330,6 +1330,7 @@ spellings below are the ASCII ones.
 | `[ ]` | cut before, cut after (short cut<, cut>) |
 | `@45`, `@t250` | at 45%, at 250ms, at 1.5s (short @45%, @250ms) |
 | `I`NAME, `M`NAME | insert NAME, mix NAME (short ins, mix) |
+| a NAME (source, insert, mix) | as in the DNA, except XP's own recordings (DNA.md 2.4, `main` 18f77d5): `dingxp chimesxp chordxp tadaxp` are written `ding-xp chimes-xp chord-xp tada-xp` (core `displayName` / `dnaName`); bare `ding` is the 3.x file in both editions. The parser takes either spelling. |
 | any step n times in a row | step xn, e.g. `slower x2` (the parser also takes `slowerx2`) |
 | `@N[`, `@N]` (`@tN` too) | cut before N%, cut after N% |
 | `@B]@C[` | trim A-B% where C = round(100 A / B); only written when that gives back exactly C |
@@ -1370,7 +1371,8 @@ spellings below are the ASCII ones.
 ### 17.4 Tests and lengths
 
 `design/v3/test_v3.sh <main checkout> <aesthetic-presets.json>` collects every real preset (`collect_presets.py`),
-then runs the recipe test against this branch's core and against `main`'s core (5.7):
+then runs the recipe test against `main`'s core (from 18f77d5 it needs `displayName`/`dnaName`; this branch's core
+is older, so only the v3 tests run on it):
 
 | Corpus | DNAs | Result |
 |---|---|---|
@@ -1382,7 +1384,8 @@ then runs the recipe test against this branch's core and against `main`'s core (
 
 For every DNA and every form the test checks: the emitted recipe is printable ASCII only; it parses back to the
 identical canonical form; `prettify` of it also parses back to it; and `asciify(prettify(r)) == r`. All 610 real
-presets (426 distinct) and the 20,000 fuzz strings pass, with both cores (247,525 checks per core).
+presets (426 distinct) and the 20,000 fuzz strings (now with the xp names) pass on `main`'s core at 18f77d5
+(247,540 checks).
 
 Length in characters over the 426 distinct real presets:
 

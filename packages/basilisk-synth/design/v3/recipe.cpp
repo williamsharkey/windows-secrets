@@ -7,6 +7,7 @@
 // test checks it anyway.
 #include "recipe.h"
 #include "dna3.h"
+#include "dna.h"
 #include <algorithm>
 #include <cctype>
 #include <cmath>
@@ -374,8 +375,9 @@ Item layerPhrase(const std::string &t, RecipeForm f)
     if (c == '@' && t.size() > 1 && t[1] == 't') {   // the unit always shows: "at 250ms" is a time, "at 25%" a percent
         it.text = std::string(spell(wAt, f)) + (sh ? "" : " ") + msText(std::atol(t.c_str() + 2)); it.step = true; return it; }
     if (c == '@') { it.text = std::string(spell(wAt, f)) + (sh ? "" : " ") + t.substr(1) + "%"; it.step = true; return it; }
-    if (c == 'I') { it.text = std::string(spell(wInsert, f)) + " " + t.substr(1); it.step = true; return it; }
-    if (c == 'M') { it.text = std::string(spell(wMix, f)) + " " + t.substr(1); it.step = true; return it; }
+    // sound names in their readable form: dingxp is shown ding-xp (DNA.md 2.4, core displayName)
+    if (c == 'I') { it.text = std::string(spell(wInsert, f)) + " " + bsynth::displayName(t.substr(1)); it.step = true; return it; }
+    if (c == 'M') { it.text = std::string(spell(wMix, f)) + " " + bsynth::displayName(t.substr(1)); it.step = true; return it; }
     if (c == '#') { it.text = t.substr(1) + (f == RecipeForm::Lines ? (t == "#1" ? " recorder" : " recorders") : spell(wRec, f)); return it; }
     if (c == 'T') { it.text = kv(wTranspose, sgn(std::atol(t.c_str() + 1)), f); return it; }
     if (c == 'H') {
@@ -648,8 +650,8 @@ bool parseStep(P &p, std::vector<std::string> &toks)
     case wInsert: case wMix: {
         p.i++;
         if (p.end()) return p.fail("a sound name");
-        std::string n = p.peek();
-        for (char c : n) if (!namech(c)) return p.fail("a sound name (letters, digits, _)");
+        std::string n = bsynth::dnaName(p.peek());   // ding-xp -> dingxp
+        for (char c : n) if (!namech(c)) return p.fail("a sound name (letters, digits, _; ding-xp for XP's ding)");
         p.i++;
         toks = {std::string(it->second == wInsert ? "I" : "M") + n};
         return true;
@@ -1029,7 +1031,7 @@ std::string toRecipe(const std::string &dna, RecipeForm f, size_t maxLen)
             parts.push_back(t); isStep.push_back(items[i].step);
             i = j;
         }
-        std::string src = L[0].empty() ? "-" : L[0], line = src;
+        std::string src = L[0].empty() ? "-" : bsynth::displayName(L[0]), line = src;
         if (f == RecipeForm::Lines) {
             // steps joined by ", ", genes by " · ", a wide gap where steps and genes meet
             for (size_t k = 0; k < parts.size(); k++) {
@@ -1165,7 +1167,8 @@ bool fromRecipe(const std::string &text, std::string &dna, RecipeError *errOut)
         if (p.end()) return fail(ch.base, "", "an empty layer: write - for a layer with no sound");
         std::string src = p.peek();
         if (src == "-") src = "";
-        for (char c : src) if (!namech(c)) return fail(p.ws[0].pos, p.ws[0].w, "a sound name first (letters, digits, _), or - for none");
+        src = bsynth::dnaName(src);   // ding-xp -> dingxp
+        for (char c : src) if (!namech(c)) return fail(p.ws[0].pos, p.ws[0].w, "a sound name first (letters, digits, _; ding-xp for XP's ding), or - for none");
         p.i++;
         std::string L = src;
         V3 v3;

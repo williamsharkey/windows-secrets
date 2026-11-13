@@ -80,6 +80,10 @@ int main(int argc, char **argv)
         CHECK(toRecipe("tada@t750]@t250[", RecipeForm::OneLine) == "tada trim 250-750ms");
         CHECK(toRecipe("startup@0CP@0CP", RecipeForm::OneLine) == "startup double x2");
         CHECK(prettify("startup double x2") == "startup double \xC3\x97" "2");
+        // DNA.md 2.4: XP's own recordings are dingxp ... in a DNA and ding-xp ... in a recipe; bare ding is 3.x's
+        CHECK(toRecipe("dingxp>Ichimesxp/ding;A5", RecipeForm::OneLine) == "ding-xp faster insert chimes-xp / ding | atk 5ms");
+        CHECK(prettify("ding-xp faster / chord-xp") == "ding-xp faster / chord-xp");
+        roundTrip("dingxp>Ichimesxp/tadaxp<<Mchordxp/ding/chimes/ringin/ringout;A5");
         CHECK(toRecipe(d, RecipeForm::OneLine) == "ding faster echo / tada slower x2 reverse louder 4rec notes +0 +12 unison 2 +-9c | atk 5ms rel 350ms");
         // typed by hand: plain keyboard text, loose spacing and spellings
         const char *typed[][2] = {
@@ -93,6 +97,7 @@ int main(int argc, char **argv)
             {"kick 2 recorders / hats 6 recorders | pad 36  pad 42 layer 2 cut 1  pad 46 layer 2 start 50% cut 1 fade 20ms", "kick#2/hats#6;k36k42l2c1k46l2s.5c1f20"},
             {"ding mono glide 80ms | scale minor root A seq 1/16 gate 70% swing 12% arp", "dingNmg80;q1r9xg70s12n2"},
             {"tada | m1 50%  m1 layer1 pan -100-100", "tada;m1=50m11Q-100,100"},
+            {"ding-xp faster, insert chimes-xp, mix tada-xp  8 recorders / ding echo / chord-xp slower", "dingxp>IchimesxpMtadaxp#8/dingE/chordxp<"},
         };
         for (auto &t : typed) {
             std::string g; RecipeError e;
@@ -176,14 +181,15 @@ int main(int argc, char **argv)
     // ---- fuzz: the same 20,000-string generator as test_v3 (v1/v2 tokens, v3 tokens, globals, pads)
     {
         const char *v2tok[] = {"+", "-", ">", "<", "E", "R", "[", "]", "C", "P", "X", "@30", "@t250", "@t1500", "Iding", "Mchimes",
-                               "#4", "T-12", "H0,4,7", "U3~9", "U2", "F", "L80", "O120", "Q-40", "Q0", "Ja0,0.30,100", "Jp0,-50.500,50", "@0CP", "@45]@11[", "@t750]@t250["};
+                               "#4", "T-12", "H0,4,7", "U3~9", "U2", "F", "L80", "O120", "Q-40", "Q0", "Ja0,0.30,100", "Jp0,-50.500,50", "@0CP", "@45]@11[", "@t750]@t250[",
+                               "Idingxp", "Mtadaxp", "Ichimesxp", "Mchordxp"};
         const char *v3tok[] = {"Ws.2~.4l.1~.3", "We.9", "Wv.5m8000", "Np4", "Nm", "Nlg80", "Ncg200kh", "Sr", "Sx", "Sp",
                                "Sg2x", "Ss30", "Sd3", "Sw.5", "Yd8l6t12q20kr", "Vw8,6", "Vf2,12s30,80", "Z0,59,48",
                                "Gp.5j.2z40~90n60c30o20e3s.5bv6w.7y", "Gf", "Ws.1u5", "G", "Z40,70", "Dl3"};
         const char *v2glob[] = {"A10", "D300", "S70", "R250", "B12", "V80", "K48", "G-6", "m1=40", "m21L0,200", "m30Z50,200", "R1500"};
         const char *v3glob[] = {"q0", "q9r4", "x", "xd8tg60s20n1p6a5o3l12b96fh", "m11W200,400", "m40J10,300", "xz2", "k36", "k42l3j2e.5c1f15",
                                 "k46l3j2s.5c1", "k60,72l2p100w5t20h40y1,90g", "kd", "k38u1,2z", "E7"};
-        const char *src[] = {"ding", "chord", "tada", "logon", "ringout", ""};
+        const char *src[] = {"ding", "chord", "tada", "logon", "ringout", "", "dingxp", "chimesxp", "chordxp", "tadaxp"};
         Rng r(4242);
         int bad0 = fails;
         for (int k = 0; k < 20000; k++) {
@@ -191,9 +197,9 @@ int main(int argc, char **argv)
             int layers = r.in(1, 4);
             for (int l = 0; l < layers; l++) {
                 if (l) v3 += "/";
-                v3 += src[r.in(0, 5)];
+                v3 += src[r.in(0, 9)];
                 int m = r.in(0, 8);
-                for (int i = 0; i < m; i++) v3 += r.in(0, 2) == 0 ? v3tok[r.in(0, 23)] : v2tok[r.in(0, 30)];
+                for (int i = 0; i < m; i++) v3 += r.in(0, 2) == 0 ? v3tok[r.in(0, 23)] : v2tok[r.in(0, 34)];
             }
             if (r.in(0, 1)) {
                 v3 += ";";
