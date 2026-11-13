@@ -144,7 +144,8 @@ void setDna(const std::string &text, bool toGuest, bool fromGuest = false)
 uint64_t nowStamp()
 {
     // the AudioWorklet's play position plus the latency; never behind what the engine has already made
-    const uint64_t a = S->host_r + kLat, b = S->dac_w + 768;
+    // (the AudioWorklet raises the lead after a gap: the latency follows it)
+    const uint64_t a = S->host_r + S->lead + 1536, b = S->dac_w + 768;
     return a > b ? a : b;
 }
 
@@ -251,14 +252,14 @@ EMSCRIPTEN_KEEPALIVE bshm *b16_shm() { return S; }
 // where the worker and the AudioWorklet find the fields they touch (byte offsets into the bshm block)
 EMSCRIPTEN_KEEPALIVE const int *b16_layout()
 {
-    static int o[28];
+    static int o[29];
     o[0] = offsetof(bshm, state); o[1] = offsetof(bshm, quit); o[2] = offsetof(bshm, host_beat); o[3] = offsetof(bshm, engine_beat);
     o[4] = offsetof(bshm, dac_w); o[5] = offsetof(bshm, host_r); o[6] = offsetof(bshm, realtime); o[7] = offsetof(bshm, vid_seq);
     o[8] = offsetof(bshm, vid_w); o[9] = offsetof(bshm, vid_h); o[10] = offsetof(bshm, vid_want); o[11] = offsetof(bshm, mouse_x);
     o[12] = offsetof(bshm, mouse_y); o[13] = offsetof(bshm, mouse_btn); o[14] = offsetof(bshm, mouse_seq); o[15] = offsetof(bshm, ring);
     o[16] = offsetof(bshm, vid); o[17] = BSHM_RING; o[18] = offsetof(bshm, underruns); o[19] = offsetof(bshm, emu_load);
     o[20] = offsetof(bshm, offline); o[21] = offsetof(bshm, grant_until); o[22] = offsetof(bshm, sched_late); o[23] = offsetof(bshm, error);
-    o[24] = (int)(intptr_t)&outGain; o[25] = sizeof(bshm); o[26] = BSHM_W; o[27] = BSHM_H;
+    o[24] = (int)(intptr_t)&outGain; o[25] = sizeof(bshm); o[26] = BSHM_W; o[27] = BSHM_H; o[28] = offsetof(bshm, lead);
     return o;
 }
 

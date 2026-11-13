@@ -28,6 +28,41 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
     }));
   }
 
+  // the library disc's pieces, fetched ahead of time: a DNA's sounds as soon as it is sent, the TSVs and the factory
+  // presets' sounds in the background. (A piece Windows reads before it is here is fetched while the emulator waits:
+  // a gap in the sound. Ahead of time, it never waits.)
+  let lib = null; const libQ = []; let libBusy = false;
+  function libWant(ranges, first) {
+    if (!lib) return;
+    const c = lib.chunk, add = [];
+    for (const [a, e] of ranges) for (let i = Math.floor(a / c); i <= Math.floor((e - 1) / c); i++) add.push(i);
+    if (first) libQ.unshift(...add); else libQ.push(...add);
+    libPump();
+  }
+  function libNames(text) {
+    const r = [];
+    for (const n in lib.map) if (new RegExp('(^|[^a-z0-9_])' + n + '($|[^a-z0-9_])').test(text)) r.push(lib.map[n]);
+    return r;
+  }
+  function libDone() { return new Promise(res => { const w = () => (!libQ.length && !libBusy) ? res() : setTimeout(w, 10); w(); }); }
+  async function libPump() {
+    if (libBusy) return; libBusy = true;
+    try {
+      while (libQ.length && running) {
+        const i = libQ.shift();
+        if (M._b16_lazy_has(i)) continue;
+        const a = i * lib.chunk, e = Math.min(lib.size, a + lib.chunk) - 1;
+        const r = await fetch(lib.url, { headers: { Range: 'bytes=' + a + '-' + e } });
+        if (r.status !== 206) continue;
+        const d = new Uint8Array(await r.arrayBuffer());
+        const p = M._malloc(d.length); M.HEAPU8.set(d, p);
+        for (let k = 0; k < 400 && M._b16_lazy_put(i, p, d.length) === 0; k++) await new Promise(res => setTimeout(res, 5));
+        // (M.HEAPU8 follows memory growth: emscripten updates it)
+        M._free(p);
+      }
+    } catch (err) {} finally { libBusy = false; }
+  }
+
   function info(withLog) { return JSON.parse(M.UTF8ToString(M._b16_info(withLog ? 1 : 0))); }
 
   // the screen goes to the page as an ImageBitmap at Windows' own 1024x768: the page draws it at exactly k x k device
@@ -47,15 +82,22 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
     setTimeout(draw, 16);
   }
 
+  // frame-production stalls: the DAC not moving for more than 50 ms while the page plays
+  let stalls = 0, lastDac = -1, lastDacT = 0, inStall = false, paused = false;
   function tick() {
     if (!running) return;
     M._b16_tick();
     const now = performance.now();
+    if (S && lay) {
+      const u = new Uint32Array(M.wasmMemory.buffer), d = u[(S + lay.dac_w) >> 2];
+      if (d !== lastDac) { lastDac = d; lastDacT = now; inStall = false; }
+      else if (!paused && !inStall && now - lastDacT > 50) { inStall = true; stalls++; }
+    }
     if (now - lastPost > 250) {
       lastPost = now;
       const i = info(false);
       post({ t: 'hb', dac: i.dac, beat: i.beat, load: i.load, late: i.late, ontime: i.ontime, state: i.state, ready: i.ready,
-             building: i.building || i.inFlight, dna: i.dna, notes: i.notes, keys: i.keys, error: i.error });
+             building: i.building || i.inFlight, dna: i.dna, stalls, notes: i.notes, keys: i.keys, error: i.error });
       if (i.state === 9) { running = false; post({ t: 'error', msg: i.error || 'the machine stopped' }); }
     }
   }
@@ -85,11 +127,12 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
                        ['/machine/w31.conf', '/machine/w31web.state', '', '', m.lead || 2048, m.libraryNames || '']);
     if (!ok) throw new Error('the engine did not start');
     if (m.relDrag === false) M._b16_relscale(0);   // (the guest's driver moves the pointer during drags itself)
+    if (m.libMap) lib = { map: m.libMap, url: m.libraryUrl, size: m.librarySize, chunk: m.libraryChunk || 262144 };
     (m.layers || []).forEach((L, i) => { if (L[0]) M._b16_layer(i, L[1], L[2], L[3], L[4]); });
     const o = M._b16_layout() >> 2, h32 = new Int32Array(M.wasmMemory.buffer);
     lay = {}; ['state', 'quit', 'host_beat', 'engine_beat', 'dac_w', 'host_r', 'realtime', 'vid_seq', 'vid_w', 'vid_h', 'vid_want',
                'mouse_x', 'mouse_y', 'mouse_btn', 'mouse_seq', 'ring', 'vid', 'ring_len', 'underruns', 'emu_load', 'offline',
-               'grant_until', 'sched_late', 'error', 'gain', 'size', 'w', 'h'].forEach((k, i) => lay[k] = h32[o + i]);
+               'grant_until', 'sched_late', 'error', 'gain', 'size', 'w', 'h', 'lead'].forEach((k, i) => lay[k] = h32[o + i]);
     S = M._b16_shm();
     running = true;
     tickTimer = setInterval(tick, 4);
@@ -109,6 +152,7 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
     });
     draw();
     const tReady = performance.now();
+    if (lib) setTimeout(() => { libWant(m.libTsv || [], false); }, 2000);
     post({ t: 'ready', ms: { fetch: Math.round(tFetched - t0), module: Math.round(tModule - tFetched), resume: Math.round(tRunning - tModule),
                              answer: Math.round(tReady - tRunning), total: Math.round(tReady - t0) } });
   }
@@ -122,8 +166,11 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
       case 'b': if (M) { if (m.x !== undefined) M._b16_mouse(m.x, m.y); M._b16_button(m.bit, m.down ? 1 : 0); } break;
       case 'k': if (M) M._b16_key(m.down ? 1 : 0, m.rk); break;
       case 'midi': if (M) M._b16_midi(m.d[0], m.d[1] || 0, m.d[2] || 0); break;
-      case 'dna': if (M) { const p = M.stringToNewUTF8(m.text); M._b16_dna(p); M._free(p); } break;
-      case 'pause': if (M) M._b16_pause(m.p ? 1 : 0); break;
+      case 'dna': if (M) {   // the DNA's library sounds first (fetched while the emulator plays on), then the DNA
+        const go = () => { const p = M.stringToNewUTF8(m.text); M._b16_dna(p); M._free(p); };
+        if (lib) { libWant(libNames(m.text), true); libDone().then(go); } else go();
+      } break;
+      case 'pause': if (M) M._b16_pause(m.p ? 1 : 0); paused = !!m.p; lastDacT = performance.now(); break;
       case 'info': { const r = M ? info(true) : null; if (r) r.lazy = Array.from(new Uint32Array(M.wasmMemory.buffer, M._b16_lazy_vars(), 8)); post({ t: 'info', id: m.id, info: r }); break; }
       // tests: make the worker (or only the engine) stop answering, to see the page's watchdog act
       case 'stall': { const end = performance.now() + m.ms; while (performance.now() < end) {} break; }

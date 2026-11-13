@@ -13,6 +13,13 @@
       msg = $('.b16msg'), stopB = $('.b16stop'), midiB = $('.b16midi'), presetS = $('.b16preset'), stat = $('.b16stat');
   var canvas = null, worker = null, actx = null, node = null, running = false, ready = false, paused = false;
   var memMsg = null, hb = { t: 0, dac: -1, dacT: 0 }, audio = { hist: [] }, wd = 0, tClick = 0, times = null, midi = null, held = {};
+  // audio health, for the page (the "i" readout) and for tests: gaps (the ring ran dry), frames short, frame-
+  // production stalls (the emulator made nothing for 50 ms), the current lead and the note latency
+  var stats = window.__b16stats = { gaps: 0, shortFrames: 0, stalls: 0, lead: 0, latencyMs: 0 };
+  var infoB = null, infoS = null;
+  function showStats() {
+    if (infoS && !infoS.hidden) infoS.textContent = 'audio: ' + stats.gaps + (stats.gaps === 1 ? ' gap' : ' gaps') + ', ' + stats.stalls + ' stalls, ~' + stats.latencyMs + ' ms';
+  }
   var api = window.__b16 = { state: 'idle', stats: null, times: null, ready: false, events: [] };
   function setState(s) { api.state = s; root.setAttribute('data-state', s); }
   function say(t) { msg.textContent = t || ''; }
@@ -54,6 +61,11 @@
       return '<option value="' + i + '">' + p[0].replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</option>'; }).join('');
   }
 
+  infoB = $('.b16info'); infoS = $('.b16infotext');
+  if (infoB) infoB.addEventListener('click', function () {
+    infoS.hidden = !infoS.hidden; infoB.setAttribute('aria-pressed', String(!infoS.hidden)); showStats();
+  });
+
   // ---------------------------------------------------------------- start
   go.addEventListener('click', start);
   function start() {
@@ -80,7 +92,7 @@
       worker.onmessage = onWorker;
       worker.onerror = function (e) { fail('The emulator stopped: ' + (e.message || 'error')); };
       worker.postMessage({ t: 'init', conf: DATA.conf, lead: CFG.lead, layers: DATA.layers, libraryNames: DATA.libraryNames,
-        relDrag: DATA.relDrag, libraryUrl: new URL(base + 'library.zip', location.href).href, librarySize: DATA.librarySize, libraryChunk: 262144,
+        relDrag: DATA.relDrag,   /* (libMap: fetching library pieces ahead raced the emulator's own reads; off for now) */ libraryUrl: new URL(base + 'library.zip', location.href).href, librarySize: DATA.librarySize, libraryChunk: 262144,
         files: CFG.files.map(function (f) { return { name: f.name, size: f.size, url: base + f.name + '?v=' + CFG.v }; }) });
       clearInterval(wd); wd = setInterval(watchdog, 500);
     }).catch(function (e) { fail('It could not start: ' + e.message); });
@@ -92,7 +104,7 @@
     else if (m.t === 'mem') memMsg = m;
     else if (m.t === 'ready') {
       // the sound starts now (not while the machine resumes, which would only be a stretch of silence)
-      if (node && memMsg) node.port.postMessage({ t: 'mem', buffer: memMsg.buffer, base: memMsg.base, lay: memMsg.lay, lead: CFG.lead });
+      if (node && memMsg) node.port.postMessage({ t: 'mem', buffer: memMsg.buffer, base: memMsg.base, lay: memMsg.lay, lead: CFG.lead, leadMax: 3584 });
       ready = true; api.ready = true; setState('running');
       times = api.times = { clickToReady: Math.round(performance.now() - tClick), worker: m.ms };
       over.hidden = true; say('');
@@ -102,7 +114,7 @@
     } else if (m.t === 'hb') {
       var now = performance.now();
       if (m.dac !== hb.dac) { hb.dac = m.dac; hb.dacT = now; }
-      hb.t = now; api.stats = m;
+      hb.t = now; api.stats = m; stats.stalls = m.stalls || 0; showStats();
       if (m.building) stat.textContent = 'Sound Recorder is building the sound…'; else status();
     } else if (m.t === 'frame') {
       if (running) show(m.bitmap); else if (m.bitmap.close) m.bitmap.close();
@@ -114,6 +126,10 @@
     if (m.t === 'a') {
       audio.hist.push(m); if (audio.hist.length > 16) audio.hist.shift();
       api.audio = { under: m.under, blocks: m.blocks };
+      stats.gaps = m.gaps; stats.shortFrames = m.short; stats.lead = m.lead;
+      // the latency of a note: the emulator's lead plus the time Windows gets to press Play, plus the output
+      stats.latencyMs = Math.round((m.lead + 1536) / 48 + ((actx && (actx.outputLatency || actx.baseLatency)) || 0) * 1000);
+      showStats();
     } else if (m.t === 'tap' && api.tapSink) api.tapSink(m.d);
   }
   function status() {

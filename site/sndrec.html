@@ -322,6 +322,8 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
 #b16try .b16prog i { display: block; height: 100%; width: 0; background: var(--sel); transition: width .15s linear; }
 #b16try .b16tools { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; max-width: 1028px; margin: 8px auto 0; min-height: 36px; }
 #b16try .b16tools .btn { margin: 0; }
+#b16try .b16info { padding: 6px 9px; font-style: italic; font-family: "Times New Roman", serif; }
+#b16try .b16infotext { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 24em; }
 #b16try .b16tools label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; }
 #b16try .b16preset { font: inherit; font-size: 13.5px; max-width: min(320px, 70vw); padding: 2px; }
 #b16try .b16stat { max-width: 1028px; margin: 4px auto 0; height: 1.55em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
@@ -349,13 +351,15 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     <button class="btn b16stop" type="button" disabled>Stop</button>
     <button class="btn b16midi" type="button" disabled aria-pressed="false">Enable Web MIDI</button>
     <label>Preset <select class="b16preset" disabled><option value="">Preset…</option></select></label>
+    <button class="btn b16info" type="button" aria-pressed="false" title="Audio health" aria-label="Audio health">i</button>
+    <span class="note b16infotext" aria-live="off" hidden></span>
   </div>
   <p class="note b16stat" aria-live="polite"></p>
   <p class="note">Click the screen, then use Windows: the on-screen keys, <b>Keys</b> to play from the computer keyboard (<code>a w s e d f t g y h u j k</code>, <code>z</code>/<code>x</code> change octave), the Preset and Sound lists, the DNA line and every Sound Recorder button. Web MIDI is optional: it plays notes and follows the mod wheel and pitch bend. It pauses while the page is hidden, and stops itself if the browser cannot keep up.</p>
   <p class="note b16mobile" hidden>Best on a desktop or laptop computer: it needs a mouse, a keyboard and a fast processor.</p>
   <p class="note">BASILISK SYNTH (XP edition): download only. Its Windows XP machine is about 1 GB and needs a fast virtual PC, which a browser cannot run in real time.</p>
 </div>
-<script src="sndrec/try/b16-try.js?v=f115dcb90e" defer></script>
+<script src="sndrec/try/b16-try.js?v=3f8a5b0eb1" defer></script>
 <!-- b16-try: end -->
     <p><a class="btn" href="sndrec-download.html">All downloads and install steps</a><a class="btn" href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">Source</a></p>
     <p class="note">Windows XP, Windows for Workgroups 3.11, their sounds and Sound Recorder are Microsoft's, included as part of this art project. The Windows images came from Windows for Workgroups 3.11 and Windows XP Professional SP3 as preserved by the <a href="https://archive.org/details/wfw311-disk">Internet Archive</a>. The library disc's sounds are public domain and CC0; each one's source is listed on the disc. The emulators are <a href="https://www.qemu.org/">QEMU</a> and DOSBox Pure (GPLv2), and the plugins are built with <a href="https://github.com/DISTRHO/DPF">DPF</a>.</p>

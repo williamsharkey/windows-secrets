@@ -16,6 +16,8 @@
 #b16try .b16prog i { display: block; height: 100%; width: 0; background: var(--sel); transition: width .15s linear; }
 #b16try .b16tools { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; max-width: 1028px; margin: 8px auto 0; min-height: 36px; }
 #b16try .b16tools .btn { margin: 0; }
+#b16try .b16info { padding: 6px 9px; font-style: italic; font-family: "Times New Roman", serif; }
+#b16try .b16infotext { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 24em; }
 #b16try .b16tools label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; }
 #b16try .b16preset { font: inherit; font-size: 13.5px; max-width: min(320px, 70vw); padding: 2px; }
 #b16try .b16stat { max-width: 1028px; margin: 4px auto 0; height: 1.55em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
@@ -43,6 +45,8 @@
     <button class="btn b16stop" type="button" disabled>Stop</button>
     <button class="btn b16midi" type="button" disabled aria-pressed="false">Enable Web MIDI</button>
     <label>Preset <select class="b16preset" disabled><option value="">Preset…</option></select></label>
+    <button class="btn b16info" type="button" aria-pressed="false" title="Audio health" aria-label="Audio health">i</button>
+    <span class="note b16infotext" aria-live="off" hidden></span>
   </div>
   <p class="note b16stat" aria-live="polite"></p>
   <p class="note">Click the screen, then use Windows: the on-screen keys, <b>Keys</b> to play from the computer keyboard (<code>a w s e d f t g y h u j k</code>, <code>z</code>/<code>x</code> change octave), the Preset and Sound lists, the DNA line and every Sound Recorder button. Web MIDI is optional: it plays notes and follows the mod wheel and pitch bend. It pauses while the page is hidden, and stops itself if the browser cannot keep up.</p>

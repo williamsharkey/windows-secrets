@@ -23,9 +23,25 @@ Image.frombytes('RGBA', (w, h), b[8:8 + w * h * 4]).convert('RGB').save(os.path.
 src = open(os.path.join(W, 'src', 'packages', 'basilisk-synth-311', 'plugin', 'presets_gen.h')).read()
 presets = re.findall(r'\{"((?:[^"\\]|\\.)*)", "((?:[^"\\]|\\.)*)"\}', src)
 state = json.load(open(os.path.join(W, 'out', 'state.json')))
+# where each library sound lies in library.zip (byte range of its compressed data), so the page can fetch a DNA's
+# sounds ahead of time instead of the emulator waiting for them; and the sounds the factory presets use
+import struct as _st, zipfile as _zf
+lz = _zf.ZipFile(os.path.join(LIB, 'library.zip')); lraw = open(os.path.join(LIB, 'library.zip'), 'rb')
+def zrange(info):
+    lraw.seek(info.header_offset); h = lraw.read(30); nlen, xlen = _st.unpack('<HH', h[26:30])
+    a = info.header_offset; return [a, info.header_offset + 30 + nlen + xlen + info.compress_size]
+libmap = {}
+for line in lz.read('LIBRARY.TSV').decode('latin1').splitlines():
+    f = line.split('\t')
+    if len(f) >= 3:
+        try: libmap[f[0]] = zrange(lz.getinfo(f[2].lstrip('\\').replace('\\', '/')))
+        except KeyError: pass
+tsvs = [zrange(lz.getinfo(n)) for n in ('LIBRARY.TSV', 'PRESETS.TSV') if n in lz.namelist()]
 data = {'conf': open(os.path.join(W, 'machine', 'w31.conf')).read(), 'layers': state['layers'],
         'libraryNames': open(os.path.join(LIB, 'library.names.txt')).read(), 'presets': presets,
         'librarySize': os.path.getsize(os.path.join(LIB, 'library.zip')),
+        'libMap': libmap, 'libTsv': tsvs,
+        'libPresets': sorted(n for n in libmap if any(re.search(r'(?<![a-z0-9_])' + re.escape(n) + r'(?![a-z0-9_])', d) for _, d in presets)),
         # a card with PTRGET (BSYNTH.DRV moves the pointer itself at interrupt time, with mouse_event) needs no
         # relative-motion help for drags (web_engine.c); older cards do
         'relDrag': 'PTRGET' not in open(os.path.join(W, 'src', 'packages', 'basilisk-synth-311', 'dosbox-pure', 'bsynth.cpp')).read()}
