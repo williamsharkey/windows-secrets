@@ -1,0 +1,24 @@
+# BASILISK 16 "Try it online" (sndrec.html): the files the page fetches when the button is pressed.
+# The emulator shares memory between its threads (SharedArrayBuffer), which browsers allow only to a cross-origin
+# isolated page: sndrec.html is served with COOP/COEP (the site's .htaccess), and these files say they may be used so.
+<IfModule mod_headers.c>
+  Header set Cross-Origin-Opener-Policy "same-origin"
+  Header set Cross-Origin-Embedder-Policy "require-corp"
+  Header set Cross-Origin-Resource-Policy "same-origin"
+  <FilesMatch "\.(wasm|state|zip|webp)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+  <FilesMatch "\.(js|json)$">
+    Header set Cache-Control "public, max-age=300"
+  </FilesMatch>
+</IfModule>
+AddType application/wasm .wasm
+AddType application/octet-stream .state
+AddType application/json .json
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/wasm application/octet-stream application/javascript text/javascript application/json
+</IfModule>
+# library.zip is read in pieces (HTTP ranges): never compressed on the way
+<FilesMatch "\.zip$">
+  SetEnv no-gzip 1
+</FilesMatch>

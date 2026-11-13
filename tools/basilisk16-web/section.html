@@ -1,0 +1,93 @@
+<!-- b16-try: begin. "Try it online": BASILISK 16 in the browser (tools/basilisk16-web; files in sndrec/try/). Keep this block together. -->
+<style>
+#b16try { margin: 20px 0 14px; padding-top: 14px; border-top: 1px solid var(--face); }
+/* Windows' 1024x768 screen at a whole number of device pixels per pixel (k = 1, 2, 3...), never resampled:
+   the script below sets the box to 1024k x 768k device pixels before the page is first drawn */
+#b16try .b16wrap { width: 100%; overflow-x: auto; overflow-y: hidden; }
+#b16try .b16box { position: relative; width: 100%; max-width: 1028px; aspect-ratio: 1028 / 772; margin: 0 auto; background: var(--scr);
+  border: 2px solid; border-color: var(--lo) var(--hi) var(--hi) var(--lo); overflow: hidden; contain: layout paint; box-sizing: border-box; }
+#b16try .b16poster, #b16try .b16screen { position: absolute; left: 0; top: 0; width: 1024px; height: 768px; display: block; transform-origin: 0 0;
+  image-rendering: crisp-edges; image-rendering: pixelated; }
+#b16try .b16screen { outline: none; cursor: default; touch-action: none; }
+#b16try .b16over { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 32, .45); }
+#b16try .b16card { background: var(--face); color: var(--ink); border: 1px solid var(--ink); box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo), 3px 3px 0 rgba(0,0,0,.5);
+  padding: 14px 18px 12px; width: min(440px, calc(100% - 24px)); text-align: center; }
+#b16try .b16go { font-weight: 700; font-size: 16px; padding: 8px 18px; margin: 0 0 6px; }
+#b16try .b16card p { margin: 4px 0 0; font-size: 13.5px; }
+#b16try .b16prog { height: 18px; border: 2px solid; border-color: var(--lo) var(--hi) var(--hi) var(--lo); background: #fff; margin: 4px 0 2px; }
+#b16try .b16prog i { display: block; height: 100%; width: 0; background: var(--sel); transition: width .15s linear; }
+#b16try .b16tools { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; max-width: 1028px; margin: 8px auto 0; min-height: 36px; }
+#b16try .b16tools .btn { margin: 0; }
+#b16try .b16tools label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; }
+#b16try .b16preset { font: inherit; font-size: 13.5px; max-width: min(320px, 70vw); padding: 2px; }
+#b16try .b16stat { max-width: 1028px; margin: 4px auto 0; height: 1.55em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+#b16try button:disabled, #b16try select:disabled { opacity: .55; cursor: default; }
+#b16try [hidden] { display: none !important; }
+</style>
+<div id="b16try" data-state="idle">
+  <h2>Try it online</h2>
+  <p>BASILISK 16 runs in this page: the plugin's own engine, compiled for the browser, with the same Windows for Workgroups 3.11 and the same sixteen Sound Recorders. It resumes from the moment the synth finished assembling, so it is ready as soon as it has loaded. Nothing is downloaded until you press the button.</p>
+  <div class="b16wrap"><div class="b16box">
+    <img class="b16poster" src="sndrec/try/poster.webp" width="1024" height="768" loading="lazy" decoding="async"
+      alt="BASILISK 16 in Windows for Workgroups 3.11: sixteen Sound Recorders in rows, the DNA line, the panel, Clock and a five-octave keyboard">
+    <div class="b16over">
+      <div class="b16card">
+        <button class="btn b16go" type="button">Try BASILISK 16 online</button>
+        <p>Windows 3.11 in your browser, <span class="b16size">about 5 MB</span>. Sound on.</p>
+        <div class="b16prog" hidden><i></i></div>
+        <p class="b16msg" aria-live="polite"></p>
+      </div>
+    </div>
+  </div></div>
+  <script>
+  /* k = max(1, floor(available width x devicePixelRatio / 1024)); the screen is 1024k/dpr CSS pixels wide, placed on
+     whole device pixels; again on resize, zoom and a move to a screen of another density (b16-try.js calls it too) */
+  (function () {
+    var box = document.querySelector('#b16try .b16box'), wrap = box.parentNode;
+    function fit() {
+      var dpr = window.devicePixelRatio || 1, avail = wrap.clientWidth - 4;
+      var k = Math.max(1, Math.floor(avail * dpr / 1024 + 1e-6)), w = Math.ceil(1024 * k / dpr * 64) / 64, h = Math.ceil(768 * k / dpr * 64) / 64;
+      scale = k / dpr;
+      box.style.width = (w + 4) + 'px'; box.style.height = (h + 4) + 'px'; box.style.maxWidth = 'none'; box.style.aspectRatio = 'auto';
+      box.style.marginLeft = box.style.marginRight = (w + 4 <= avail + 4 ? 'auto' : '0');
+      box.setAttribute('data-k', k);
+      snap();
+      return k;
+    }
+    // the box on whole device pixels of the viewport (the page around it has fractional positions): a relative
+    // offset of under a device pixel. The image keeps its 1024x768 CSS size, scaled by k/dpr: a transform is exact
+    // where a CSS size of 1024k/dpr pixels would be rounded to layout units and resampled.
+    var scale = 1, ox = 0, oy = 0;
+    function snap() {
+      var dpr = window.devicePixelRatio || 1, r = box.getBoundingClientRect();
+      var x = (r.left - ox) * dpr, y = (r.top - oy) * dpr, nx = (Math.round(x) - x) / dpr, ny = (Math.round(y) - y) / dpr;
+      if (Math.abs(nx - ox) > 1e-4 || Math.abs(ny - oy) > 1e-4) { ox = nx; oy = ny; box.style.left = ox + 'px'; box.style.top = oy + 'px'; }
+      var t = 'scale(' + scale + ')', kids = box.querySelectorAll('.b16poster, .b16screen');
+      for (var i = 0; i < kids.length; i++) if (kids[i].style.transform !== t) kids[i].style.transform = t;
+    }
+    window.__b16fit = fit;
+    fit();
+    window.addEventListener('resize', fit);
+    window.addEventListener('load', fit);
+    window.addEventListener('scroll', snap, { passive: true });
+    if (window.ResizeObserver) new ResizeObserver(snap).observe(document.body);
+    (function watch() {   // devicePixelRatio changes (zoom, another screen)
+      if (!window.matchMedia) return;
+      var mq = matchMedia('(resolution: ' + (window.devicePixelRatio || 1) + 'dppx)');
+      var on = function () { fit(); mq.removeEventListener ? mq.removeEventListener('change', on) : mq.removeListener(on); watch(); };
+      mq.addEventListener ? mq.addEventListener('change', on) : mq.addListener(on);
+    })();
+  })();
+  </script>
+  <div class="b16tools">
+    <button class="btn b16stop" type="button" disabled>Stop</button>
+    <button class="btn b16midi" type="button" disabled aria-pressed="false">Enable Web MIDI</button>
+    <label>Preset <select class="b16preset" disabled><option value="">Preset…</option></select></label>
+  </div>
+  <p class="note b16stat" aria-live="polite"></p>
+  <p class="note">Click the screen, then use Windows: the on-screen keys, <b>Keys</b> to play from the computer keyboard (<code>a w s e d f t g y h u j k</code>, <code>z</code>/<code>x</code> change octave), the Preset and Sound lists, the DNA line and every Sound Recorder button. Web MIDI is optional: it plays notes and follows the mod wheel and pitch bend. It pauses while the page is hidden, and stops itself if the browser cannot keep up.</p>
+  <p class="note b16mobile" hidden>Best on a desktop or laptop computer: it needs a mouse, a keyboard and a fast processor.</p>
+  <p class="note">BASILISK SYNTH (XP edition): download only. Its Windows XP machine is about 1 GB and needs a fast virtual PC, which a browser cannot run in real time.</p>
+</div>
+<script src="sndrec/try/b16-try.js?v=@V@" defer></script>
+<!-- b16-try: end -->

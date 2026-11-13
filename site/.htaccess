@@ -1,0 +1,9 @@
+# sndrec.html's "Try it online" runs BASILISK 16 (Windows 3.11) in the page: its threads share memory
+# (SharedArrayBuffer), which browsers allow only in a cross-origin isolated page. Everything sndrec.html loads is on
+# this site, so these headers change nothing else for it. (tools/basilisk16-web)
+<Files "sndrec.html">
+  <IfModule mod_headers.c>
+    Header set Cross-Origin-Opener-Policy "same-origin"
+    Header set Cross-Origin-Embedder-Policy "require-corp"
+  </IfModule>
+</Files>
