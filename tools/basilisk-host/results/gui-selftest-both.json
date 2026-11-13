@@ -1,0 +1,160 @@
+{
+  "host": "BasiliskHost 1.0.0",
+  "screenshots": [
+    ["<testdir>\\guiboth\\assembled-main.bmp", "<testdir>\\guiboth\\assembled-editor1.bmp", "<testdir>\\guiboth\\assembled-params1.bmp", "<testdir>\\guiboth\\assembled-editor2.bmp", "<testdir>\\guiboth\\assembled-params2.bmp", "<testdir>\\guiboth\\assembled-editor3.bmp", "<testdir>\\guiboth\\assembled-params3.bmp"],
+    ["<testdir>\\guiboth\\resized-main.bmp", "<testdir>\\guiboth\\resized-editor1.bmp", "<testdir>\\guiboth\\resized-params1.bmp", "<testdir>\\guiboth\\resized-editor2.bmp", "<testdir>\\guiboth\\resized-params2.bmp", "<testdir>\\guiboth\\resized-editor3.bmp", "<testdir>\\guiboth\\resized-params3.bmp"],
+    ["<testdir>\\guiboth\\playing-main.bmp", "<testdir>\\guiboth\\playing-editor1.bmp", "<testdir>\\guiboth\\playing-params1.bmp", "<testdir>\\guiboth\\playing-editor2.bmp", "<testdir>\\guiboth\\playing-params2.bmp", "<testdir>\\guiboth\\playing-editor3.bmp", "<testdir>\\guiboth\\playing-params3.bmp"],
+    ["<testdir>\\guiboth\\playing-main.bmp", "<testdir>\\guiboth\\playing-editor1.bmp", "<testdir>\\guiboth\\playing-params1.bmp", "<testdir>\\guiboth\\playing-editor2.bmp", "<testdir>\\guiboth\\playing-params2.bmp", "<testdir>\\guiboth\\playing-editor3.bmp", "<testdir>\\guiboth\\playing-params3.bmp"],
+    ["<testdir>\\guiboth\\playing-main.bmp", "<testdir>\\guiboth\\playing-editor1.bmp", "<testdir>\\guiboth\\playing-params1.bmp", "<testdir>\\guiboth\\playing-editor2.bmp", "<testdir>\\guiboth\\playing-params2.bmp", "<testdir>\\guiboth\\playing-editor3.bmp", "<testdir>\\guiboth\\playing-params3.bmp"],
+    ["<testdir>\\guiboth\\automation-main.bmp", "<testdir>\\guiboth\\automation-editor1.bmp", "<testdir>\\guiboth\\automation-params1.bmp", "<testdir>\\guiboth\\automation-editor2.bmp", "<testdir>\\guiboth\\automation-params2.bmp", "<testdir>\\guiboth\\automation-editor3.bmp", "<testdir>\\guiboth\\automation-params3.bmp"]
+  ],
+  "automation": {
+    "parameter": "Gain",
+    "lane_value_now": 0.781,
+    "controller_value_now": 0.781
+  },
+  "phases": [
+    {
+      "phase": "startup/assembly",
+      "from_s": 0.011,
+      "to_s": 7.221,
+      "tap_peak_dbfs": -200,
+      "tap_rms_dbfs": -200,
+      "loopback_peak_dbfs": -200,
+      "loopback_rms_dbfs": -200
+    },
+    {
+      "phase": "silence",
+      "from_s": 8.192,
+      "to_s": 8.96,
+      "tap_peak_dbfs": -200,
+      "tap_rms_dbfs": -200,
+      "loopback_peak_dbfs": -200,
+      "loopback_rms_dbfs": -200
+    },
+    {
+      "phase": "on-screen keyboard",
+      "from_s": 8.96,
+      "to_s": 11.712,
+      "tap_peak_dbfs": -10.7,
+      "tap_rms_dbfs": -29,
+      "loopback_peak_dbfs": -200,
+      "loopback_rms_dbfs": -200
+    },
+    {
+      "phase": "computer keyboard",
+      "from_s": 11.712,
+      "to_s": 13.728,
+      "tap_peak_dbfs": -6.5,
+      "tap_rms_dbfs": -24.5,
+      "loopback_peak_dbfs": -200,
+      "loopback_rms_dbfs": -200
+    },
+    {
+      "phase": "pitch bend",
+      "from_s": 13.728,
+      "to_s": 14.741,
+      "tap_peak_dbfs": -11.4,
+      "tap_rms_dbfs": -26.5,
+      "loopback_peak_dbfs": -200,
+      "loopback_rms_dbfs": -200
+    },
+    {
+      "phase": "test pattern",
+      "from_s": 14.741,
+      "to_s": 24.981,
+      "tap_peak_dbfs": -4.6,
+      "tap_rms_dbfs": -26.1,
+      "loopback_peak_dbfs": -200,
+      "loopback_rms_dbfs": -200
+    },
+    {
+      "phase": "automation (sine) + held note",
+      "from_s": 24.981,
+      "to_s": 27.36,
+      "tap_peak_dbfs": 2.8,
+      "tap_rms_dbfs": -22.8,
+      "loopback_peak_dbfs": -200,
+      "loopback_rms_dbfs": -200
+    }
+  ],
+  "output_tap": {
+    "wav": "<testdir>\\guiboth\\tap.wav",
+    "seconds": 27.4,
+    "peak_dbfs": 2.8,
+    "rms_dbfs": -27.3
+  },
+  "device_loopback": {
+    "wav": "<testdir>\\guiboth\\loopback.wav",
+    "sample_rate": 48000,
+    "seconds": 61.8,
+    "peak_dbfs": -200,
+    "rms_dbfs": -200
+  },
+  "test_pattern_live": {
+    "notes": 50,
+    "heard": 34,
+    "note": "all instances play at once; onsets are of the mix, against the largest reported latency",
+    "reported_latency_ms": 100,
+    "onset_error_median_ms": -22.8,
+    "onset_error_std_ms": 43.4,
+    "jitter_spread_ms": 136.7
+  },
+  "audio": {
+    "device": "Speakers (Realtek(R) Audio)",
+    "sample_rate": 48000,
+    "block": 512,
+    "wasapi_buffer_frames": 1056,
+    "device_period_ms": 10,
+    "underruns": 0,
+    "frames_out": 1318176,
+    "wall_s_since_audio_start": 62,
+    "dsp_load": 0.002,
+    "endpoint_volume": 0.04,
+    "endpoint_muted": false
+  },
+  "instances": [
+    {
+      "number": 1,
+      "name": "BASILISK SYNTH",
+      "latency_samples": 4800,
+      "programs": 12,
+      "parameters": 8,
+      "process_calls": 2575,
+      "process_mean_ms": 0.014,
+      "process_max_ms": 0.1,
+      "editor_size": "1023x767",
+      "editor_resizable": true
+    },
+    {
+      "number": 2,
+      "name": "BASILISK 16",
+      "latency_samples": 2880,
+      "programs": 16,
+      "parameters": 8,
+      "process_calls": 2475,
+      "process_mean_ms": 2.917,
+      "process_max_ms": 7179.4,
+      "editor_size": "1024x768",
+      "editor_resizable": true
+    },
+    {
+      "number": 3,
+      "name": "BASILISK SYNTH",
+      "latency_samples": 4800,
+      "programs": 12,
+      "parameters": 8,
+      "process_calls": 2474,
+      "process_mean_ms": 0.01,
+      "process_max_ms": 0.1,
+      "editor_size": "1024x768",
+      "editor_resizable": true
+    }
+  ],
+  "orphans": {
+    "child_processes_seen": ["qemu-system-i386w.exe (2640)", "qemu-system-i386w.exe (5564)"],
+    "left_after_unload": [],
+    "unload_s": 0.49
+  },
+  "log": ["BasiliskHost 1.0.0 - 1 audio device(s), 0 MIDI input(s)", "loading <testdir>\\plugins\\BasiliskSynth.vst3 ...", "#1 BASILISK SYNTH (williamsharkey.com) loaded in 0.01 s, latency 4800 samples (100.0 ms)", "#1 editor open, 1024x768, resizable", "audio: Speakers (Realtek(R) Audio), 48000 Hz, block 512, WASAPI buffer 1056 frames, device period 10.0 ms", "[selftest 0.9 s, audio 0.0 s] startup/assembly", "loading <testdir>\\plugins\\Basilisk16.vst3 ...", "#2 BASILISK 16 (William Sharkey) loaded in 0.00 s, latency 2880 samples (60.0 ms)", "#2 editor open, 1024x768, resizable", "loading <testdir>\\plugins\\BasiliskSynth.vst3 ...", "#3 BASILISK SYNTH (williamsharkey.com) loaded in 4.19 s, latency 4800 samples (100.0 ms)", "#3 editor open, 1024x768, resizable", "[selftest 24.4 s, audio 8.2 s] silence", "[selftest 26.0 s, audio 9.0 s] on-screen keyboard", "[selftest 31.5 s, audio 11.7 s] computer keyboard", "[selftest 35.5 s, audio 13.7 s] pitch bend", "[selftest 37.5 s, audio 14.7 s] test pattern", "test pattern: scale, chords, fast repeats, sustain, bend (50 notes, 17.9 s)", "[selftest 58.0 s, audio 25.0 s] automation (sine) + held note", "#3 BASILISK SYNTH removed (0.20 s)", "#2 BASILISK 16 removed (0.02 s)", "#1 BASILISK SYNTH removed (0.19 s)"]
+}

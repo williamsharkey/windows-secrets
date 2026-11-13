@@ -1,0 +1,285 @@
+{
+  "host": "BasiliskHost 1.0.0",
+  "date": "2026-11-13T11:01:24",
+  "settings": {
+    "sample_rate": 48000,
+    "block": 512,
+    "warmup_s": 10,
+    "tail_s": 2,
+    "score": "test pattern: all",
+    "score_notes": 50,
+    "score_length_s": 17.95
+  },
+  "plugin": {
+    "path": "<testdir>\\plugins\\BasiliskSynth.vst3",
+    "name": "BASILISK SYNTH",
+    "vendor": "williamsharkey.com",
+    "class_id": "445046206173636C6E7973426B687357",
+    "sdk": "VST 3.7.4",
+    "version": "1.0.0",
+    "create_s": 0.007,
+    "latency_samples": 4800,
+    "parameters": [
+      {
+        "id": 2082,
+        "name": "Gain",
+        "default": 0.714,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2083,
+        "name": "Attack",
+        "default": 0,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2084,
+        "name": "Decay",
+        "default": 0,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2085,
+        "name": "Sustain",
+        "default": 1,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2086,
+        "name": "Release",
+        "default": 0.012,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2087,
+        "name": "Velocity",
+        "default": 1,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2088,
+        "name": "Bend Range",
+        "default": 0.083,
+        "steps": 24,
+        "automatable": true
+      },
+      {
+        "id": 2089,
+        "name": "Transpose",
+        "default": 0.5,
+        "steps": 96,
+        "automatable": true
+      }
+    ],
+    "parameters_total_incl_hidden": 2090,
+    "programs": ["Chord Organ", "Tada Brass", "Ding Bells", "Startup Pad", "Reverse Chimes", "Logoff Strings", "Error Pluck", "Recycle Perc", "Notify Choir", "Critical Bass", "Balloon Keys", "Shutdown Drone"]
+  },
+  "renders": {},
+  "program_change": {
+    "wav": "progchange.wav",
+    "change_at_s": 8,
+    "program": 2,
+    "program_name": "Ding Bells",
+    "notes": 50,
+    "heard": 16,
+    "notes_dropped": 34,
+    "dropped_before_change": 4,
+    "dropped_after_change": 30,
+    "dropped_within_3s_of_change": 3,
+    "dropped": [
+      {
+        "t": 0,
+        "note": 60,
+        "section": "scale"
+      },
+      {
+        "t": 3,
+        "note": 69,
+        "section": "scale"
+      },
+      {
+        "t": 3.6,
+        "note": 71,
+        "section": "scale"
+      },
+      {
+        "t": 4.8,
+        "note": 48,
+        "section": "scale"
+      },
+      {
+        "t": 8.5,
+        "note": 67,
+        "section": "chords"
+      },
+      {
+        "t": 8.5,
+        "note": 71,
+        "section": "chords"
+      },
+      {
+        "t": 8.5,
+        "note": 74,
+        "section": "chords"
+      },
+      {
+        "t": 11.125,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.25,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.375,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.5,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.625,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.75,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.875,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 12,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 12.125,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 12.25,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 12.375,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 12.9,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 12.963,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.025,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.088,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.15,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.213,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.275,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.338,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.4,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.463,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.525,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.588,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 14.55,
+        "note": 60,
+        "section": "sustain"
+      },
+      {
+        "t": 15.05,
+        "note": 64,
+        "section": "sustain"
+      },
+      {
+        "t": 16.75,
+        "note": 60,
+        "section": "bend"
+      },
+      {
+        "t": 17.55,
+        "note": 60,
+        "section": "bend"
+      }
+    ],
+    "timing": {
+      "notes": 50,
+      "heard": 16,
+      "reported_latency_ms": 100,
+      "onset_error_median_ms": 261.2,
+      "onset_error_mean_ms": 209,
+      "onset_error_std_ms": 165.4,
+      "onset_error_min_ms": -175,
+      "onset_error_max_ms": 425,
+      "jitter_spread_ms": 600
+    },
+    "max_block_late_ms": 25.3
+  },
+  "render_timeouts": 0,
+  "pass": {
+    "program_change_no_drops_near_change": false
+  },
+  "all_pass": false
+}

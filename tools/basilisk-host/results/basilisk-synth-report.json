@@ -1,0 +1,1616 @@
+{
+  "host": "BasiliskHost 1.0.0",
+  "date": "2026-11-13T10:54:38",
+  "settings": {
+    "sample_rate": 48000,
+    "block": 512,
+    "warmup_s": 10,
+    "tail_s": 2,
+    "score": "test pattern: all",
+    "score_notes": 50,
+    "score_length_s": 17.95
+  },
+  "plugin": {
+    "path": "<testdir>\\plugins\\BasiliskSynth.vst3",
+    "name": "BASILISK SYNTH",
+    "vendor": "williamsharkey.com",
+    "class_id": "445046206173636C6E7973426B687357",
+    "sdk": "VST 3.7.4",
+    "version": "1.0.0",
+    "create_s": 0.008,
+    "latency_samples": 4800,
+    "parameters": [
+      {
+        "id": 2082,
+        "name": "Gain",
+        "default": 0.714,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2083,
+        "name": "Attack",
+        "default": 0,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2084,
+        "name": "Decay",
+        "default": 0,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2085,
+        "name": "Sustain",
+        "default": 1,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2086,
+        "name": "Release",
+        "default": 0.012,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2087,
+        "name": "Velocity",
+        "default": 1,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2088,
+        "name": "Bend Range",
+        "default": 0.083,
+        "steps": 24,
+        "automatable": true
+      },
+      {
+        "id": 2089,
+        "name": "Transpose",
+        "default": 0.5,
+        "steps": 96,
+        "automatable": true
+      }
+    ],
+    "parameters_total_incl_hidden": 2090,
+    "programs": ["Chord Organ", "Tada Brass", "Ding Bells", "Startup Pad", "Reverse Chimes", "Logoff Strings", "Error Pluck", "Recycle Perc", "Notify Choir", "Critical Bass", "Balloon Keys", "Shutdown Drone"]
+  },
+  "determinism": {
+    "renders_compared": 2,
+    "all_bit_identical": false,
+    "min_envelope_corr": 0.294,
+    "vs_first": [
+      {
+        "bit_identical": false,
+        "max_abs_diff": 0.452234,
+        "diff_rms_dbfs": -34.9,
+        "sample_corr": -0.01,
+        "envelope_corr": 0.358,
+        "envelope_shift_ms": 70,
+        "wav": "offline-repeat1.wav"
+      },
+      {
+        "bit_identical": false,
+        "max_abs_diff": 0.456206,
+        "diff_rms_dbfs": -35,
+        "sample_corr": -0.038,
+        "envelope_corr": 0.294,
+        "envelope_shift_ms": -100,
+        "wav": "offline-repeat2.wav"
+      }
+    ]
+  },
+  "renders": {
+    "offline": {
+      "wav": "offline.wav",
+      "seconds": 29.952,
+      "load_s": 0.003,
+      "render_s": 30.745,
+      "unload_s": 0.166,
+      "latency_samples": 4800,
+      "latency_ms": 100,
+      "level": {
+        "peak": 0.454,
+        "peak_dbfs": -6.9,
+        "rms_dbfs": -37.8
+      },
+      "timing": {
+        "notes": 50,
+        "heard": 34,
+        "reported_latency_ms": 100,
+        "onset_error_median_ms": 117.4,
+        "onset_error_mean_ms": 166.1,
+        "onset_error_std_ms": 167.7,
+        "onset_error_min_ms": -162.6,
+        "onset_error_max_ms": 420.9,
+        "jitter_spread_ms": 583.5
+      },
+      "pitch": {
+        "reference_note": 60,
+        "notes_measured": 20,
+        "max_abs_cents_off": 150,
+        "mean_abs_cents_off": 11.7
+      },
+      "notes": [
+        {
+          "t": 0,
+          "note": 60,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 151.4,
+          "onset_error_ms": 51.4,
+          "peak": 0.242,
+          "fft_peak_hz": 3149.6,
+          "interval_cents": 0,
+          "cents_off": 0
+        },
+        {
+          "t": 0.6,
+          "note": 62,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 191.5,
+          "onset_error_ms": 91.5,
+          "peak": 0.204,
+          "fft_peak_hz": 3555.3,
+          "interval_cents": 203,
+          "cents_off": 3
+        },
+        {
+          "t": 1.2,
+          "note": 64,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 144.3,
+          "onset_error_ms": 44.3,
+          "peak": 0.276,
+          "fft_peak_hz": 3979.9,
+          "interval_cents": 403.4,
+          "cents_off": 3.4
+        },
+        {
+          "t": 1.8,
+          "note": 65,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 314.7,
+          "onset_error_ms": 214.7,
+          "peak": 0.201,
+          "fft_peak_hz": 4233.3,
+          "interval_cents": 507.5,
+          "cents_off": 7.5
+        },
+        {
+          "t": 2.4,
+          "note": 67,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 260.4,
+          "onset_error_ms": 160.4,
+          "peak": 0.087,
+          "fft_peak_hz": 1480.3,
+          "interval_cents": 699.8,
+          "cents_off": -0.2
+        },
+        {
+          "t": 3,
+          "note": 69,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 132.2,
+          "onset_error_ms": 32.2,
+          "peak": 0.277,
+          "fft_peak_hz": 5320,
+          "interval_cents": 909,
+          "cents_off": 9
+        },
+        {
+          "t": 3.6,
+          "note": 71,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 202.3,
+          "onset_error_ms": 102.3,
+          "peak": 0.266,
+          "fft_peak_hz": 1119.1,
+          "interval_cents": 1100.1,
+          "cents_off": 0.1
+        },
+        {
+          "t": 4.2,
+          "note": 72,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 239.1,
+          "onset_error_ms": 139.1,
+          "peak": 0.037,
+          "fft_peak_hz": 1981.1,
+          "interval_cents": 1201.8,
+          "cents_off": 1.8
+        },
+        {
+          "t": 4.8,
+          "note": 48,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 217.4,
+          "onset_error_ms": 117.4,
+          "peak": 0.272,
+          "fft_peak_hz": 1576.3,
+          "interval_cents": -1200,
+          "cents_off": -0
+        },
+        {
+          "t": 5.4,
+          "note": 84,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": -62.6,
+          "onset_error_ms": -162.6,
+          "peak": 0.057,
+          "fft_peak_hz": 493.3,
+          "interval_cents": 2250,
+          "cents_off": -150
+        },
+        {
+          "t": 6.5,
+          "note": 60,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 381.4,
+          "onset_error_ms": 281.4,
+          "peak": 0.178
+        },
+        {
+          "t": 6.5,
+          "note": 64,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 381.4,
+          "onset_error_ms": 281.4,
+          "peak": 0.178
+        },
+        {
+          "t": 6.5,
+          "note": 67,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 381.4,
+          "onset_error_ms": 281.4,
+          "peak": 0.178
+        },
+        {
+          "t": 7.5,
+          "note": 65,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 494.3,
+          "onset_error_ms": 394.3,
+          "peak": 0.157
+        },
+        {
+          "t": 7.5,
+          "note": 69,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 494.3,
+          "onset_error_ms": 394.3,
+          "peak": 0.157
+        },
+        {
+          "t": 7.5,
+          "note": 72,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 494.3,
+          "onset_error_ms": 394.3,
+          "peak": 0.157
+        },
+        {
+          "t": 8.5,
+          "note": 67,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 520.9,
+          "onset_error_ms": 420.9,
+          "peak": 0.398
+        },
+        {
+          "t": 8.5,
+          "note": 71,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 520.9,
+          "onset_error_ms": 420.9,
+          "peak": 0.398
+        },
+        {
+          "t": 8.5,
+          "note": 74,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 520.9,
+          "onset_error_ms": 420.9,
+          "peak": 0.398
+        },
+        {
+          "t": 9.5,
+          "note": 60,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 486.5,
+          "onset_error_ms": 386.5,
+          "peak": 0.454
+        },
+        {
+          "t": 9.5,
+          "note": 64,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 486.5,
+          "onset_error_ms": 386.5,
+          "peak": 0.454
+        },
+        {
+          "t": 9.5,
+          "note": 67,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 486.5,
+          "onset_error_ms": 386.5,
+          "peak": 0.454
+        },
+        {
+          "t": 11,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 11.125,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 11.25,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 11.375,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 159.6,
+          "onset_error_ms": 59.6,
+          "peak": 0.219,
+          "fft_peak_hz": 4711.9,
+          "interval_cents": 697.8,
+          "cents_off": -2.2
+        },
+        {
+          "t": 11.5,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 43.7,
+          "onset_error_ms": -56.3,
+          "peak": 0.206,
+          "fft_peak_hz": 4707.9,
+          "interval_cents": 695.6,
+          "cents_off": -4.4
+        },
+        {
+          "t": 11.625,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 168.4,
+          "onset_error_ms": 68.4,
+          "peak": 0.171,
+          "fft_peak_hz": 4720.9,
+          "interval_cents": 699.3,
+          "cents_off": -0.7
+        },
+        {
+          "t": 11.75,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 43.9,
+          "onset_error_ms": -56.1,
+          "peak": 0.171,
+          "fft_peak_hz": 4721,
+          "interval_cents": 699.3,
+          "cents_off": -0.7
+        },
+        {
+          "t": 11.875,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 147.3,
+          "onset_error_ms": 47.3,
+          "peak": 0.02,
+          "fft_peak_hz": 1478.6,
+          "interval_cents": 723.8,
+          "cents_off": 23.8
+        },
+        {
+          "t": 12,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 116.1,
+          "onset_error_ms": 16.1,
+          "peak": 0.297,
+          "fft_peak_hz": 4720.5,
+          "interval_cents": 698.2,
+          "cents_off": -1.8
+        },
+        {
+          "t": 12.125,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 83.3,
+          "onset_error_ms": -16.7,
+          "peak": 0.064,
+          "fft_peak_hz": 1477.4,
+          "interval_cents": 695.3,
+          "cents_off": -4.7
+        },
+        {
+          "t": 12.25,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 73.6,
+          "onset_error_ms": -26.4,
+          "peak": 0.036,
+          "fft_peak_hz": 1478.3,
+          "interval_cents": 695.9,
+          "cents_off": -4.1
+        },
+        {
+          "t": 12.375,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 12.9,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 12.963,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.025,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.088,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.15,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.213,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.275,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.338,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.4,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.463,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.525,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.588,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 14.55,
+          "note": 60,
+          "section": "sustain",
+          "heard": true,
+          "onset_raw_ms": 199.8,
+          "onset_error_ms": 99.8,
+          "peak": 0.254,
+          "fft_peak_hz": 3172.7,
+          "interval_cents": 12,
+          "cents_off": 12
+        },
+        {
+          "t": 15.05,
+          "note": 64,
+          "section": "sustain",
+          "heard": true,
+          "onset_raw_ms": 176.6,
+          "onset_error_ms": 76.6,
+          "peak": 0.193,
+          "fft_peak_hz": 250.7,
+          "interval_cents": 404.8,
+          "cents_off": 4.8
+        },
+        {
+          "t": 16.75,
+          "note": 60,
+          "section": "bend",
+          "heard": true,
+          "onset_raw_ms": 220.3,
+          "onset_error_ms": 120.3,
+          "peak": 0.257
+        },
+        {
+          "t": 17.55,
+          "note": 60,
+          "section": "bend",
+          "heard": true,
+          "onset_raw_ms": 173.2,
+          "onset_error_ms": 73.2,
+          "peak": 0.254
+        }
+      ]
+    },
+    "realtime": {
+      "wav": "realtime.wav",
+      "seconds": 29.952,
+      "load_s": 0.002,
+      "render_s": 29.965,
+      "unload_s": 0.173,
+      "latency_samples": 4800,
+      "latency_ms": 100,
+      "level": {
+        "peak": 0.296,
+        "peak_dbfs": -10.6,
+        "rms_dbfs": -39
+      },
+      "timing": {
+        "notes": 50,
+        "heard": 22,
+        "reported_latency_ms": 100,
+        "onset_error_median_ms": 80.1,
+        "onset_error_mean_ms": 73.8,
+        "onset_error_std_ms": 124.8,
+        "onset_error_min_ms": -178.3,
+        "onset_error_max_ms": 290.5,
+        "jitter_spread_ms": 468.8
+      },
+      "pitch": {
+        "reference_note": 60,
+        "notes_measured": 13,
+        "max_abs_cents_off": 150,
+        "mean_abs_cents_off": 15.8
+      },
+      "notes": [
+        {
+          "t": 0,
+          "note": 60,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 210.6,
+          "onset_error_ms": 110.6,
+          "peak": 0.257,
+          "fft_peak_hz": 3148.1,
+          "interval_cents": 0,
+          "cents_off": 0
+        },
+        {
+          "t": 0.6,
+          "note": 62,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 154,
+          "onset_error_ms": 54,
+          "peak": 0.296,
+          "fft_peak_hz": 3538.9,
+          "interval_cents": 201.3,
+          "cents_off": 1.3
+        },
+        {
+          "t": 1.2,
+          "note": 64,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 182.8,
+          "onset_error_ms": 82.8,
+          "peak": 0.204,
+          "fft_peak_hz": 3970.6,
+          "interval_cents": 400.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 1.8,
+          "note": 65,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 191.9,
+          "onset_error_ms": 91.9,
+          "peak": 0.272,
+          "fft_peak_hz": 4204.2,
+          "interval_cents": 499.5,
+          "cents_off": -0.5
+        },
+        {
+          "t": 2.4,
+          "note": 67,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 180.1,
+          "onset_error_ms": 80.1,
+          "peak": 0.286,
+          "fft_peak_hz": 4711.5,
+          "interval_cents": 697,
+          "cents_off": -3
+        },
+        {
+          "t": 3,
+          "note": 69,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 164.8,
+          "onset_error_ms": 64.8,
+          "peak": 0.255,
+          "fft_peak_hz": 5297.8,
+          "interval_cents": 899.9,
+          "cents_off": -0.1
+        },
+        {
+          "t": 3.6,
+          "note": 71,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 201.6,
+          "onset_error_ms": 101.6,
+          "peak": 0.27,
+          "fft_peak_hz": 5924,
+          "interval_cents": 1092.7,
+          "cents_off": -7.3
+        },
+        {
+          "t": 4.2,
+          "note": 72,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 179.2,
+          "onset_error_ms": 79.2,
+          "peak": 0.078,
+          "fft_peak_hz": 6274.8,
+          "interval_cents": 1190.9,
+          "cents_off": -9.1
+        },
+        {
+          "t": 4.8,
+          "note": 48,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 249.2,
+          "onset_error_ms": 149.2,
+          "peak": 0.267,
+          "fft_peak_hz": 1566.4,
+          "interval_cents": -1208.1,
+          "cents_off": -8.1
+        },
+        {
+          "t": 5.4,
+          "note": 84,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 390.5,
+          "onset_error_ms": 290.5,
+          "peak": 0.114,
+          "fft_peak_hz": 494.9,
+          "interval_cents": 2396.1,
+          "cents_off": -3.9
+        },
+        {
+          "t": 6.5,
+          "note": 60,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 344.2,
+          "onset_error_ms": 244.2,
+          "peak": 0.212
+        },
+        {
+          "t": 6.5,
+          "note": 64,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 344.2,
+          "onset_error_ms": 244.2,
+          "peak": 0.212
+        },
+        {
+          "t": 6.5,
+          "note": 67,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 344.2,
+          "onset_error_ms": 244.2,
+          "peak": 0.212
+        },
+        {
+          "t": 7.5,
+          "note": 65,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": -78.3,
+          "onset_error_ms": -178.3,
+          "peak": 0.009
+        },
+        {
+          "t": 7.5,
+          "note": 69,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": -78.3,
+          "onset_error_ms": -178.3,
+          "peak": 0.009
+        },
+        {
+          "t": 7.5,
+          "note": 72,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": -78.3,
+          "onset_error_ms": -178.3,
+          "peak": 0.009
+        },
+        {
+          "t": 8.5,
+          "note": 67,
+          "section": "chords",
+          "heard": false
+        },
+        {
+          "t": 8.5,
+          "note": 71,
+          "section": "chords",
+          "heard": false
+        },
+        {
+          "t": 8.5,
+          "note": 74,
+          "section": "chords",
+          "heard": false
+        },
+        {
+          "t": 9.5,
+          "note": 60,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 171.4,
+          "onset_error_ms": 71.4,
+          "peak": 0.081
+        },
+        {
+          "t": 9.5,
+          "note": 64,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 171.4,
+          "onset_error_ms": 71.4,
+          "peak": 0.081
+        },
+        {
+          "t": 9.5,
+          "note": 67,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 171.4,
+          "onset_error_ms": 71.4,
+          "peak": 0.081
+        },
+        {
+          "t": 11,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 11.125,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 11.25,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 11.375,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 192.8,
+          "onset_error_ms": 92.8,
+          "peak": 0.017,
+          "fft_peak_hz": 4684.9,
+          "interval_cents": 687.7,
+          "cents_off": -12.3
+        },
+        {
+          "t": 11.5,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 111,
+          "onset_error_ms": 11,
+          "peak": 0.017,
+          "fft_peak_hz": 4695.9,
+          "interval_cents": 691.6,
+          "cents_off": -8.4
+        },
+        {
+          "t": 11.625,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 11.75,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 11.875,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 12,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 12.125,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 12.25,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 12.375,
+          "note": 67,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 12.9,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 12.963,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.025,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.088,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.15,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.213,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.275,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 104.4,
+          "onset_error_ms": 4.4,
+          "peak": 0.022,
+          "fft_peak_hz": 879.9,
+          "interval_cents": 1350,
+          "cents_off": 150
+        },
+        {
+          "t": 13.338,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.4,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.463,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.525,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 13.588,
+          "note": 72,
+          "section": "repeats",
+          "heard": false
+        },
+        {
+          "t": 14.55,
+          "note": 60,
+          "section": "sustain",
+          "heard": false
+        },
+        {
+          "t": 15.05,
+          "note": 64,
+          "section": "sustain",
+          "heard": false
+        },
+        {
+          "t": 16.75,
+          "note": 60,
+          "section": "bend",
+          "heard": false
+        },
+        {
+          "t": 17.55,
+          "note": 60,
+          "section": "bend",
+          "heard": false
+        }
+      ],
+      "max_block_late_ms": 19.7,
+      "vs_offline": {
+        "bit_identical": false,
+        "max_abs_diff": 0.454461,
+        "diff_rms_dbfs": -35.6,
+        "sample_corr": 0.048,
+        "envelope_corr": 0.255,
+        "envelope_shift_ms": -30
+      }
+    }
+  },
+  "state_roundtrip": {
+    "state_file_bytes": 292,
+    "program": 3,
+    "program_name": "Startup Pad",
+    "component_state_bytes": 227,
+    "controller_state_bytes": 0,
+    "reloaded_state_equals_saved": true,
+    "reloaded_vs_original": {
+      "bit_identical": false,
+      "max_abs_diff": 0.910046,
+      "diff_rms_dbfs": -24.5,
+      "sample_corr": 0.004,
+      "envelope_corr": 0.219,
+      "envelope_shift_ms": 210
+    },
+    "original_vs_default_program": {
+      "bit_identical": false,
+      "max_abs_diff": 0.860718,
+      "diff_rms_dbfs": -25,
+      "sample_corr": -0,
+      "envelope_corr": 0.15,
+      "envelope_shift_ms": -290
+    }
+  },
+  "vstpreset_roundtrip": {
+    "vstpreset_bytes": 323,
+    "program": 3,
+    "program_name": "Startup Pad",
+    "component_state_bytes": 227,
+    "controller_state_bytes": 0,
+    "reloaded_state_equals_saved": true,
+    "reloaded_vs_original": {
+      "bit_identical": false,
+      "max_abs_diff": 0.818938,
+      "diff_rms_dbfs": -29.8,
+      "sample_corr": 0.006,
+      "envelope_corr": 0.637,
+      "envelope_shift_ms": -30
+    },
+    "original_vs_default_program": {
+      "bit_identical": false,
+      "max_abs_diff": 0.937407,
+      "diff_rms_dbfs": -32.3,
+      "sample_corr": 0.002,
+      "envelope_corr": 0.196,
+      "envelope_shift_ms": 300
+    }
+  },
+  "program_change": {
+    "wav": "progchange.wav",
+    "change_at_s": 8,
+    "program": 3,
+    "program_name": "Startup Pad",
+    "notes": 50,
+    "heard": 0,
+    "notes_dropped": 50,
+    "dropped_before_change": 16,
+    "dropped_after_change": 34,
+    "dropped_within_3s_of_change": 7,
+    "dropped": [
+      {
+        "t": 0,
+        "note": 60,
+        "section": "scale"
+      },
+      {
+        "t": 0.6,
+        "note": 62,
+        "section": "scale"
+      },
+      {
+        "t": 1.2,
+        "note": 64,
+        "section": "scale"
+      },
+      {
+        "t": 1.8,
+        "note": 65,
+        "section": "scale"
+      },
+      {
+        "t": 2.4,
+        "note": 67,
+        "section": "scale"
+      },
+      {
+        "t": 3,
+        "note": 69,
+        "section": "scale"
+      },
+      {
+        "t": 3.6,
+        "note": 71,
+        "section": "scale"
+      },
+      {
+        "t": 4.2,
+        "note": 72,
+        "section": "scale"
+      },
+      {
+        "t": 4.8,
+        "note": 48,
+        "section": "scale"
+      },
+      {
+        "t": 5.4,
+        "note": 84,
+        "section": "scale"
+      },
+      {
+        "t": 6.5,
+        "note": 60,
+        "section": "chords"
+      },
+      {
+        "t": 6.5,
+        "note": 64,
+        "section": "chords"
+      },
+      {
+        "t": 6.5,
+        "note": 67,
+        "section": "chords"
+      },
+      {
+        "t": 7.5,
+        "note": 65,
+        "section": "chords"
+      },
+      {
+        "t": 7.5,
+        "note": 69,
+        "section": "chords"
+      },
+      {
+        "t": 7.5,
+        "note": 72,
+        "section": "chords"
+      },
+      {
+        "t": 8.5,
+        "note": 67,
+        "section": "chords"
+      },
+      {
+        "t": 8.5,
+        "note": 71,
+        "section": "chords"
+      },
+      {
+        "t": 8.5,
+        "note": 74,
+        "section": "chords"
+      },
+      {
+        "t": 9.5,
+        "note": 60,
+        "section": "chords"
+      },
+      {
+        "t": 9.5,
+        "note": 64,
+        "section": "chords"
+      },
+      {
+        "t": 9.5,
+        "note": 67,
+        "section": "chords"
+      },
+      {
+        "t": 11,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.125,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.25,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.375,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.5,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.625,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.75,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 11.875,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 12,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 12.125,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 12.25,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 12.375,
+        "note": 67,
+        "section": "repeats"
+      },
+      {
+        "t": 12.9,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 12.963,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.025,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.088,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.15,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.213,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.275,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.338,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.4,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.463,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.525,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 13.588,
+        "note": 72,
+        "section": "repeats"
+      },
+      {
+        "t": 14.55,
+        "note": 60,
+        "section": "sustain"
+      },
+      {
+        "t": 15.05,
+        "note": 64,
+        "section": "sustain"
+      },
+      {
+        "t": 16.75,
+        "note": 60,
+        "section": "bend"
+      },
+      {
+        "t": 17.55,
+        "note": 60,
+        "section": "bend"
+      }
+    ],
+    "timing": {
+      "notes": 50,
+      "heard": 0,
+      "reported_latency_ms": 100,
+      "onset_error_median_ms": 0,
+      "onset_error_mean_ms": 0,
+      "onset_error_std_ms": 0,
+      "onset_error_min_ms": 0,
+      "onset_error_max_ms": 0,
+      "jitter_spread_ms": 0
+    },
+    "max_block_late_ms": 15.2
+  },
+  "editor": {
+    "opened": true,
+    "size": "1024x768",
+    "resizable": true,
+    "steps": [
+      {
+        "t": 0.009,
+        "step": "wait 10"
+      },
+      {
+        "t": 10.019,
+        "step": "shot editor-assembled",
+        "file": "<testdir>\\hxp\\editor-assembled.bmp",
+        "ok": true
+      },
+      {
+        "t": 10.044,
+        "step": "click 60 76"
+      },
+      {
+        "t": 10.134,
+        "step": "wait 2"
+      },
+      {
+        "t": 12.182,
+        "step": "shot editor-after-play",
+        "file": "<testdir>\\hxp\\editor-after-play.bmp",
+        "ok": true
+      },
+      {
+        "t": 12.199,
+        "step": "state",
+        "component_state_bytes": 224,
+        "state_text": "__dpf_program__.0.__dpf_state_begin__.dna.chord#10/ding>>E#6;A2D300S70R250.__dpf_state_end__.__dpf_parameters_begin__.gain.0.attack.2.decay.300.sustain.70.release.250.velocity.100.bend.2.transpose.0.__dpf_parameters_end__..."
+      }
+    ],
+    "screenshots": ["<testdir>\\hxp\\editor-assembled.bmp", "<testdir>\\hxp\\editor-after-play.bmp"],
+    "wav": "editor.wav",
+    "level": {
+      "peak": 0.483,
+      "peak_dbfs": -6.3,
+      "rms_dbfs": -35.1
+    },
+    "final_state_bytes": 224
+  },
+  "multi_instance": {
+    "instances": [
+      {
+        "wav": "multi-0.wav",
+        "program": 0,
+        "level": {
+          "peak": 0.322,
+          "peak_dbfs": -9.8,
+          "rms_dbfs": -39.1
+        },
+        "timing": {
+          "notes": 50,
+          "heard": 26,
+          "reported_latency_ms": 100,
+          "onset_error_median_ms": 123.6,
+          "onset_error_mean_ms": 128,
+          "onset_error_std_ms": 226.1,
+          "onset_error_min_ms": -200,
+          "onset_error_max_ms": 482.2,
+          "jitter_spread_ms": 682.2
+        },
+        "pitch": {
+          "reference_note": 60,
+          "notes_measured": 14,
+          "max_abs_cents_off": 41.9,
+          "mean_abs_cents_off": 8.3
+        }
+      },
+      {
+        "wav": "multi-1.wav",
+        "program": 2,
+        "level": {
+          "peak": 0.673,
+          "peak_dbfs": -3.4,
+          "rms_dbfs": -30.7
+        },
+        "timing": {
+          "notes": 50,
+          "heard": 28,
+          "reported_latency_ms": 100,
+          "onset_error_median_ms": 7.4,
+          "onset_error_mean_ms": 32.4,
+          "onset_error_std_ms": 168.6,
+          "onset_error_min_ms": -199.2,
+          "onset_error_max_ms": 489.1,
+          "jitter_spread_ms": 688.3
+        },
+        "pitch": {
+          "reference_note": 60,
+          "notes_measured": 19,
+          "max_abs_cents_off": 150,
+          "mean_abs_cents_off": 102.2
+        }
+      }
+    ],
+    "child_processes_while_loaded": [
+      {
+        "pid": 15672,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 7724,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 13104,
+        "exe": "qemu-system-i386w.exe"
+      },
+      {
+        "pid": 22008,
+        "exe": "qemu-system-i386w.exe"
+      }
+    ],
+    "instance0_vs_instance1": {
+      "bit_identical": false,
+      "max_abs_diff": 0.673059,
+      "diff_rms_dbfs": -30.1,
+      "sample_corr": -0,
+      "envelope_corr": 0.234,
+      "envelope_shift_ms": 280
+    },
+    "load_s": 0.006,
+    "unload_s": 0.426
+  },
+  "orphans": {
+    "child_processes_seen": [
+      {
+        "pid": 16628,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 14704,
+        "exe": "qemu-system-i386w.exe"
+      },
+      {
+        "pid": 18600,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 14380,
+        "exe": "qemu-system-i386w.exe"
+      },
+      {
+        "pid": 23336,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 17668,
+        "exe": "qemu-system-i386w.exe"
+      },
+      {
+        "pid": 14956,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 20724,
+        "exe": "qemu-system-i386w.exe"
+      },
+      {
+        "pid": 15972,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 12600,
+        "exe": "qemu-system-i386w.exe"
+      },
+      {
+        "pid": 7144,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 3500,
+        "exe": "qemu-system-i386w.exe"
+      },
+      {
+        "pid": 23724,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 19628,
+        "exe": "qemu-system-i386w.exe"
+      },
+      {
+        "pid": 6984,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 10660,
+        "exe": "qemu-system-i386w.exe"
+      },
+      {
+        "pid": 23916,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 23176,
+        "exe": "qemu-system-i386w.exe"
+      },
+      {
+        "pid": 13428,
+        "exe": "qemu-system-i386w.exe"
+      },
+      {
+        "pid": 15672,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 7724,
+        "exe": "qemu-img.exe"
+      },
+      {
+        "pid": 13104,
+        "exe": "qemu-system-i386w.exe"
+      },
+      {
+        "pid": 22008,
+        "exe": "qemu-system-i386w.exe"
+      }
+    ],
+    "left_after_unload": [],
+    "left_now": []
+  },
+  "render_timeouts": 0,
+  "pass": {
+    "sound": true,
+    "determinism": false,
+    "realtime_sound": true,
+    "state_reload": false,
+    "vstpreset_reload": false,
+    "program_change_no_drops_near_change": false,
+    "editor_opened": true,
+    "multi_instance_sound": true,
+    "no_orphans": true
+  },
+  "all_pass": false
+}

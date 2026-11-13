@@ -1,0 +1,1638 @@
+{
+  "host": "BasiliskHost 1.0.0",
+  "date": "2026-11-13T10:43:19",
+  "settings": {
+    "sample_rate": 48000,
+    "block": 512,
+    "warmup_s": 8,
+    "tail_s": 2,
+    "score": "test pattern: all",
+    "score_notes": 50,
+    "score_length_s": 17.95
+  },
+  "plugin": {
+    "path": "<testdir>\\plugins\\Basilisk16.vst3",
+    "name": "BASILISK 16",
+    "vendor": "William Sharkey",
+    "class_id": "445046206173636C313133426B687357",
+    "sdk": "VST 3.7.4",
+    "version": "1.0.0",
+    "create_s": 0.007,
+    "latency_samples": 2880,
+    "parameters": [
+      {
+        "id": 2082,
+        "name": "Attack",
+        "default": 0,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2083,
+        "name": "Decay",
+        "default": 0,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2084,
+        "name": "Sustain",
+        "default": 1,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2085,
+        "name": "Release",
+        "default": 0.024,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2086,
+        "name": "Velocity",
+        "default": 1,
+        "steps": 0,
+        "automatable": true
+      },
+      {
+        "id": 2087,
+        "name": "Bend Range",
+        "default": 0.083,
+        "steps": 24,
+        "automatable": true
+      },
+      {
+        "id": 2088,
+        "name": "Output Gain",
+        "default": 0.667,
+        "steps": 36,
+        "automatable": true
+      },
+      {
+        "id": 2089,
+        "name": "Transpose",
+        "default": 0.5,
+        "steps": 48,
+        "automatable": true
+      }
+    ],
+    "parameters_total_incl_hidden": 74,
+    "programs": ["Ding Piano", "Chime Octaves", "Telephone Choir", "Reverse Ding Swell", "Echo Bells", "Slow Ring Pad", "Fifth Stack", "Major Ding", "Ding and Chimes", "Chopped Ring", "Insert and Mix", "Triple Echo Reverse", "Bass Ding", "Detuned Unison", "Ring Out Octaves", "Copy Paste Stutter"]
+  },
+  "determinism": {
+    "renders_compared": 2,
+    "all_bit_identical": true,
+    "min_envelope_corr": 1,
+    "vs_first": [
+      {
+        "bit_identical": true,
+        "max_abs_diff": 0,
+        "diff_rms_dbfs": -200,
+        "sample_corr": 1,
+        "envelope_corr": 1,
+        "envelope_shift_ms": 0,
+        "wav": "offline-repeat1.wav"
+      },
+      {
+        "bit_identical": true,
+        "max_abs_diff": 0,
+        "diff_rms_dbfs": -200,
+        "sample_corr": 1,
+        "envelope_corr": 1,
+        "envelope_shift_ms": 0,
+        "wav": "offline-repeat2.wav"
+      }
+    ]
+  },
+  "renders": {
+    "offline": {
+      "wav": "offline.wav",
+      "seconds": 27.957,
+      "load_s": 0.004,
+      "render_s": 16.735,
+      "unload_s": 0.031,
+      "latency_samples": 2880,
+      "latency_ms": 60,
+      "level": {
+        "peak": 0.589,
+        "peak_dbfs": -4.6,
+        "rms_dbfs": -28
+      },
+      "timing": {
+        "notes": 50,
+        "heard": 50,
+        "reported_latency_ms": 60,
+        "onset_error_median_ms": 17.2,
+        "onset_error_mean_ms": 16.4,
+        "onset_error_std_ms": 6.7,
+        "onset_error_min_ms": 5.8,
+        "onset_error_max_ms": 52.6,
+        "jitter_spread_ms": 46.9
+      },
+      "pitch": {
+        "reference_note": 60,
+        "notes_measured": 36,
+        "max_abs_cents_off": 2,
+        "mean_abs_cents_off": 1
+      },
+      "notes": [
+        {
+          "t": 0,
+          "note": 60,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 86,
+          "onset_error_ms": 26,
+          "peak": 0.298,
+          "fft_peak_hz": 783.7,
+          "interval_cents": 0,
+          "cents_off": 0
+        },
+        {
+          "t": 0.6,
+          "note": 62,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 82.6,
+          "onset_error_ms": 22.6,
+          "peak": 0.296,
+          "fft_peak_hz": 879.7,
+          "interval_cents": 199.9,
+          "cents_off": -0.1
+        },
+        {
+          "t": 1.2,
+          "note": 64,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 80.1,
+          "onset_error_ms": 20.1,
+          "peak": 0.298,
+          "fft_peak_hz": 987.4,
+          "interval_cents": 399.8,
+          "cents_off": -0.2
+        },
+        {
+          "t": 1.8,
+          "note": 65,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 79.2,
+          "onset_error_ms": 19.2,
+          "peak": 0.298,
+          "fft_peak_hz": 1046.1,
+          "interval_cents": 499.7,
+          "cents_off": -0.3
+        },
+        {
+          "t": 2.4,
+          "note": 67,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.297,
+          "fft_peak_hz": 1174.3,
+          "interval_cents": 699.5,
+          "cents_off": -0.5
+        },
+        {
+          "t": 3,
+          "note": 69,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 75.1,
+          "onset_error_ms": 15.1,
+          "peak": 0.298,
+          "fft_peak_hz": 1318.1,
+          "interval_cents": 899.4,
+          "cents_off": -0.6
+        },
+        {
+          "t": 3.6,
+          "note": 71,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 73.4,
+          "onset_error_ms": 13.4,
+          "peak": 0.294,
+          "fft_peak_hz": 1479.5,
+          "interval_cents": 1099.4,
+          "cents_off": -0.6
+        },
+        {
+          "t": 4.2,
+          "note": 72,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 72.5,
+          "onset_error_ms": 12.5,
+          "peak": 0.298,
+          "fft_peak_hz": 1567.5,
+          "interval_cents": 1199.5,
+          "cents_off": -0.5
+        },
+        {
+          "t": 4.8,
+          "note": 48,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 112.6,
+          "onset_error_ms": 52.6,
+          "peak": 0.298,
+          "fft_peak_hz": 391.9,
+          "interval_cents": -1198.3,
+          "cents_off": 1.7
+        },
+        {
+          "t": 5.4,
+          "note": 84,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 65.8,
+          "onset_error_ms": 5.8,
+          "peak": 0.298,
+          "fft_peak_hz": 3136.8,
+          "interval_cents": 2399.6,
+          "cents_off": -0.4
+        },
+        {
+          "t": 6.5,
+          "note": 60,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.588
+        },
+        {
+          "t": 6.5,
+          "note": 64,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.588
+        },
+        {
+          "t": 6.5,
+          "note": 67,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.588
+        },
+        {
+          "t": 7.5,
+          "note": 65,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 71.7,
+          "onset_error_ms": 11.7,
+          "peak": 0.589
+        },
+        {
+          "t": 7.5,
+          "note": 69,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 71.7,
+          "onset_error_ms": 11.7,
+          "peak": 0.589
+        },
+        {
+          "t": 7.5,
+          "note": 72,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 71.7,
+          "onset_error_ms": 11.7,
+          "peak": 0.589
+        },
+        {
+          "t": 8.5,
+          "note": 67,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 70,
+          "onset_error_ms": 10,
+          "peak": 0.588
+        },
+        {
+          "t": 8.5,
+          "note": 71,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 70,
+          "onset_error_ms": 10,
+          "peak": 0.588
+        },
+        {
+          "t": 8.5,
+          "note": 74,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 70,
+          "onset_error_ms": 10,
+          "peak": 0.588
+        },
+        {
+          "t": 9.5,
+          "note": 60,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.588
+        },
+        {
+          "t": 9.5,
+          "note": 64,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.588
+        },
+        {
+          "t": 9.5,
+          "note": 67,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.588
+        },
+        {
+          "t": 11,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.297,
+          "fft_peak_hz": 1174.5,
+          "interval_cents": 700.8,
+          "cents_off": 0.8
+        },
+        {
+          "t": 11.125,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 11.25,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 11.375,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 11.5,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 11.625,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 11.75,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 11.875,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 12,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 12.125,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 12.25,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 12.375,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 12.9,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.5,
+          "onset_error_ms": 12.5,
+          "peak": 0.298,
+          "fft_peak_hz": 1567.8,
+          "interval_cents": 1202,
+          "cents_off": 2
+        },
+        {
+          "t": 12.963,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.322,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.025,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.088,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.15,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.213,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.275,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.338,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.4,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.463,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.525,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.588,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 14.55,
+          "note": 60,
+          "section": "sustain",
+          "heard": true,
+          "onset_raw_ms": 86,
+          "onset_error_ms": 26,
+          "peak": 0.298,
+          "fft_peak_hz": 783.8,
+          "interval_cents": 1,
+          "cents_off": 1
+        },
+        {
+          "t": 15.05,
+          "note": 64,
+          "section": "sustain",
+          "heard": true,
+          "onset_raw_ms": 80.1,
+          "onset_error_ms": 20.1,
+          "peak": 0.298,
+          "fft_peak_hz": 987.5,
+          "interval_cents": 400.2,
+          "cents_off": 0.2
+        },
+        {
+          "t": 16.75,
+          "note": 60,
+          "section": "bend",
+          "heard": true,
+          "onset_raw_ms": 82.6,
+          "onset_error_ms": 22.6,
+          "peak": 0.296
+        },
+        {
+          "t": 17.55,
+          "note": 60,
+          "section": "bend",
+          "heard": true,
+          "onset_raw_ms": 86,
+          "onset_error_ms": 26,
+          "peak": 0.298
+        }
+      ]
+    },
+    "realtime": {
+      "wav": "realtime.wav",
+      "seconds": 27.957,
+      "load_s": 0.004,
+      "render_s": 27.979,
+      "unload_s": 0.03,
+      "latency_samples": 2880,
+      "latency_ms": 60,
+      "level": {
+        "peak": 0.589,
+        "peak_dbfs": -4.6,
+        "rms_dbfs": -28
+      },
+      "timing": {
+        "notes": 50,
+        "heard": 50,
+        "reported_latency_ms": 60,
+        "onset_error_median_ms": 17.2,
+        "onset_error_mean_ms": 16.4,
+        "onset_error_std_ms": 6.7,
+        "onset_error_min_ms": 5.8,
+        "onset_error_max_ms": 52.6,
+        "jitter_spread_ms": 46.9
+      },
+      "pitch": {
+        "reference_note": 60,
+        "notes_measured": 36,
+        "max_abs_cents_off": 2,
+        "mean_abs_cents_off": 1
+      },
+      "notes": [
+        {
+          "t": 0,
+          "note": 60,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 86,
+          "onset_error_ms": 26,
+          "peak": 0.298,
+          "fft_peak_hz": 783.7,
+          "interval_cents": 0,
+          "cents_off": 0
+        },
+        {
+          "t": 0.6,
+          "note": 62,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 82.6,
+          "onset_error_ms": 22.6,
+          "peak": 0.296,
+          "fft_peak_hz": 879.7,
+          "interval_cents": 199.9,
+          "cents_off": -0.1
+        },
+        {
+          "t": 1.2,
+          "note": 64,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 80.1,
+          "onset_error_ms": 20.1,
+          "peak": 0.298,
+          "fft_peak_hz": 987.4,
+          "interval_cents": 399.8,
+          "cents_off": -0.2
+        },
+        {
+          "t": 1.8,
+          "note": 65,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 79.2,
+          "onset_error_ms": 19.2,
+          "peak": 0.298,
+          "fft_peak_hz": 1046.1,
+          "interval_cents": 499.7,
+          "cents_off": -0.3
+        },
+        {
+          "t": 2.4,
+          "note": 67,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.297,
+          "fft_peak_hz": 1174.3,
+          "interval_cents": 699.5,
+          "cents_off": -0.5
+        },
+        {
+          "t": 3,
+          "note": 69,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 75.1,
+          "onset_error_ms": 15.1,
+          "peak": 0.298,
+          "fft_peak_hz": 1318.1,
+          "interval_cents": 899.4,
+          "cents_off": -0.6
+        },
+        {
+          "t": 3.6,
+          "note": 71,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 73.4,
+          "onset_error_ms": 13.4,
+          "peak": 0.294,
+          "fft_peak_hz": 1479.5,
+          "interval_cents": 1099.4,
+          "cents_off": -0.6
+        },
+        {
+          "t": 4.2,
+          "note": 72,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 72.5,
+          "onset_error_ms": 12.5,
+          "peak": 0.298,
+          "fft_peak_hz": 1567.5,
+          "interval_cents": 1199.5,
+          "cents_off": -0.5
+        },
+        {
+          "t": 4.8,
+          "note": 48,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 112.6,
+          "onset_error_ms": 52.6,
+          "peak": 0.298,
+          "fft_peak_hz": 391.9,
+          "interval_cents": -1198.3,
+          "cents_off": 1.7
+        },
+        {
+          "t": 5.4,
+          "note": 84,
+          "section": "scale",
+          "heard": true,
+          "onset_raw_ms": 65.8,
+          "onset_error_ms": 5.8,
+          "peak": 0.298,
+          "fft_peak_hz": 3136.8,
+          "interval_cents": 2399.6,
+          "cents_off": -0.4
+        },
+        {
+          "t": 6.5,
+          "note": 60,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.588
+        },
+        {
+          "t": 6.5,
+          "note": 64,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.588
+        },
+        {
+          "t": 6.5,
+          "note": 67,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.588
+        },
+        {
+          "t": 7.5,
+          "note": 65,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 71.7,
+          "onset_error_ms": 11.7,
+          "peak": 0.589
+        },
+        {
+          "t": 7.5,
+          "note": 69,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 71.7,
+          "onset_error_ms": 11.7,
+          "peak": 0.589
+        },
+        {
+          "t": 7.5,
+          "note": 72,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 71.7,
+          "onset_error_ms": 11.7,
+          "peak": 0.589
+        },
+        {
+          "t": 8.5,
+          "note": 67,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 70,
+          "onset_error_ms": 10,
+          "peak": 0.588
+        },
+        {
+          "t": 8.5,
+          "note": 71,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 70,
+          "onset_error_ms": 10,
+          "peak": 0.588
+        },
+        {
+          "t": 8.5,
+          "note": 74,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 70,
+          "onset_error_ms": 10,
+          "peak": 0.588
+        },
+        {
+          "t": 9.5,
+          "note": 60,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.588
+        },
+        {
+          "t": 9.5,
+          "note": 64,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.588
+        },
+        {
+          "t": 9.5,
+          "note": 67,
+          "section": "chords",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.588
+        },
+        {
+          "t": 11,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.297,
+          "fft_peak_hz": 1174.5,
+          "interval_cents": 700.8,
+          "cents_off": 0.8
+        },
+        {
+          "t": 11.125,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 11.25,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 11.375,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 11.5,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 11.625,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 11.75,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 11.875,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 12,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 12.125,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 12.25,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 12.375,
+          "note": 67,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 77.2,
+          "onset_error_ms": 17.2,
+          "peak": 0.3,
+          "fft_peak_hz": 1174.6,
+          "interval_cents": 700.9,
+          "cents_off": 0.9
+        },
+        {
+          "t": 12.9,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.5,
+          "onset_error_ms": 12.5,
+          "peak": 0.298,
+          "fft_peak_hz": 1567.8,
+          "interval_cents": 1202,
+          "cents_off": 2
+        },
+        {
+          "t": 12.963,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.322,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.025,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.088,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.15,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.213,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.275,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.338,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.4,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.463,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.525,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 13.588,
+          "note": 72,
+          "section": "repeats",
+          "heard": true,
+          "onset_raw_ms": 72.2,
+          "onset_error_ms": 12.2,
+          "peak": 0.323,
+          "fft_peak_hz": 1567.9,
+          "interval_cents": 1201.7,
+          "cents_off": 1.7
+        },
+        {
+          "t": 14.55,
+          "note": 60,
+          "section": "sustain",
+          "heard": true,
+          "onset_raw_ms": 86,
+          "onset_error_ms": 26,
+          "peak": 0.298,
+          "fft_peak_hz": 783.8,
+          "interval_cents": 1,
+          "cents_off": 1
+        },
+        {
+          "t": 15.05,
+          "note": 64,
+          "section": "sustain",
+          "heard": true,
+          "onset_raw_ms": 80.1,
+          "onset_error_ms": 20.1,
+          "peak": 0.298,
+          "fft_peak_hz": 987.5,
+          "interval_cents": 400.2,
+          "cents_off": 0.2
+        },
+        {
+          "t": 16.75,
+          "note": 60,
+          "section": "bend",
+          "heard": true,
+          "onset_raw_ms": 82.6,
+          "onset_error_ms": 22.6,
+          "peak": 0.296
+        },
+        {
+          "t": 17.55,
+          "note": 60,
+          "section": "bend",
+          "heard": true,
+          "onset_raw_ms": 86,
+          "onset_error_ms": 26,
+          "peak": 0.298
+        }
+      ],
+      "max_block_late_ms": 7179.6,
+      "vs_offline": {
+        "bit_identical": true,
+        "max_abs_diff": 0,
+        "diff_rms_dbfs": -200,
+        "sample_corr": 1,
+        "envelope_corr": 1,
+        "envelope_shift_ms": 0
+      }
+    }
+  },
+  "state_roundtrip": {
+    "state_file_bytes": 303,
+    "program": 3,
+    "program_name": "Reverse Ding Swell",
+    "component_state_bytes": 241,
+    "controller_state_bytes": 0,
+    "reloaded_state_equals_saved": true,
+    "reloaded_vs_original": {
+      "bit_identical": true,
+      "max_abs_diff": 0,
+      "diff_rms_dbfs": -200,
+      "sample_corr": 1,
+      "envelope_corr": 1,
+      "envelope_shift_ms": 0
+    },
+    "original_vs_default_program": {
+      "bit_identical": false,
+      "max_abs_diff": 0.571158,
+      "diff_rms_dbfs": -26.5,
+      "sample_corr": 0.122,
+      "envelope_corr": 0.541,
+      "envelope_shift_ms": -210
+    }
+  },
+  "vstpreset_roundtrip": {
+    "vstpreset_bytes": 337,
+    "program": 3,
+    "program_name": "Reverse Ding Swell",
+    "component_state_bytes": 241,
+    "controller_state_bytes": 0,
+    "reloaded_state_equals_saved": true,
+    "reloaded_vs_original": {
+      "bit_identical": true,
+      "max_abs_diff": 0,
+      "diff_rms_dbfs": -200,
+      "sample_corr": 1,
+      "envelope_corr": 1,
+      "envelope_shift_ms": 0
+    },
+    "original_vs_default_program": {
+      "bit_identical": false,
+      "max_abs_diff": 0.571158,
+      "diff_rms_dbfs": -26.5,
+      "sample_corr": 0.122,
+      "envelope_corr": 0.541,
+      "envelope_shift_ms": -210
+    }
+  },
+  "program_change": {
+    "wav": "progchange.wav",
+    "change_at_s": 8,
+    "program": 3,
+    "program_name": "Reverse Ding Swell",
+    "notes": 50,
+    "heard": 50,
+    "notes_dropped": 0,
+    "dropped_before_change": 0,
+    "dropped_after_change": 0,
+    "dropped_within_3s_of_change": 0,
+    "dropped": [],
+    "timing": {
+      "notes": 50,
+      "heard": 50,
+      "reported_latency_ms": 60,
+      "onset_error_median_ms": 11.7,
+      "onset_error_mean_ms": 53.1,
+      "onset_error_std_ms": 117.2,
+      "onset_error_min_ms": -28.1,
+      "onset_error_max_ms": 326.6,
+      "jitter_spread_ms": 354.8
+    },
+    "max_block_late_ms": 7470.5
+  },
+  "editor": {
+    "opened": true,
+    "size": "1024x768",
+    "resizable": true,
+    "steps": [
+      {
+        "t": 5.551,
+        "step": "wait 7"
+      },
+      {
+        "t": 12.563,
+        "step": "shot editor-before",
+        "file": "<testdir>\\h16\\editor-before.bmp",
+        "ok": true
+      },
+      {
+        "t": 12.6,
+        "step": "click 600 652"
+      },
+      {
+        "t": 12.703,
+        "step": "key end"
+      },
+      {
+        "t": 12.799,
+        "step": "key backspace"
+      },
+      {
+        "t": 12.908,
+        "step": "key backspace"
+      },
+      {
+        "t": 13.005,
+        "step": "key backspace"
+      },
+      {
+        "t": 13.095,
+        "step": "key backspace"
+      },
+      {
+        "t": 13.202,
+        "step": "key backspace"
+      },
+      {
+        "t": 13.298,
+        "step": "key backspace"
+      },
+      {
+        "t": 13.409,
+        "step": "key backspace"
+      },
+      {
+        "t": 13.505,
+        "step": "key backspace"
+      },
+      {
+        "t": 13.59,
+        "step": "key backspace"
+      },
+      {
+        "t": 13.697,
+        "step": "key backspace"
+      },
+      {
+        "t": 13.798,
+        "step": "key backspace"
+      },
+      {
+        "t": 13.906,
+        "step": "key backspace"
+      },
+      {
+        "t": 13.999,
+        "step": "key backspace"
+      },
+      {
+        "t": 14.115,
+        "step": "key backspace"
+      },
+      {
+        "t": 14.218,
+        "step": "key backspace"
+      },
+      {
+        "t": 14.292,
+        "step": "key backspace"
+      },
+      {
+        "t": 14.392,
+        "step": "key backspace"
+      },
+      {
+        "t": 14.496,
+        "step": "key backspace"
+      },
+      {
+        "t": 14.592,
+        "step": "key backspace"
+      },
+      {
+        "t": 14.691,
+        "step": "key backspace"
+      },
+      {
+        "t": 14.794,
+        "step": "key backspace"
+      },
+      {
+        "t": 14.891,
+        "step": "key backspace"
+      },
+      {
+        "t": 14.997,
+        "step": "key backspace"
+      },
+      {
+        "t": 15.093,
+        "step": "key backspace"
+      },
+      {
+        "t": 15.202,
+        "step": "key backspace"
+      },
+      {
+        "t": 15.296,
+        "step": "key backspace"
+      },
+      {
+        "t": 15.392,
+        "step": "key backspace"
+      },
+      {
+        "t": 15.498,
+        "step": "key backspace"
+      },
+      {
+        "t": 15.591,
+        "step": "key backspace"
+      },
+      {
+        "t": 15.702,
+        "step": "key backspace"
+      },
+      {
+        "t": 15.794,
+        "step": "type chimesE+;R900"
+      },
+      {
+        "t": 17.125,
+        "step": "key enter"
+      },
+      {
+        "t": 17.24,
+        "step": "wait 3"
+      },
+      {
+        "t": 20.264,
+        "step": "shot editor-after",
+        "file": "<testdir>\\h16\\editor-after.bmp",
+        "ok": true
+      },
+      {
+        "t": 20.29,
+        "step": "state",
+        "component_state_bytes": 240,
+        "state_text": "__dpf_program__.0.__dpf_state_begin__.state.BASILISK-SYNTH 1.dna chimesE+;R900.reference 0..__dpf_state_end__.__dpf_parameters_begin__.attack.0.decay.0.sustain.100.release.900.velocity.100.bend.2.gain.0.transpose.0.__dpf_parameters_end__..."
+      }
+    ],
+    "screenshots": ["<testdir>\\h16\\editor-before.bmp", "<testdir>\\h16\\editor-after.bmp"],
+    "wav": "editor.wav",
+    "level": {
+      "peak": 0.589,
+      "peak_dbfs": -4.6,
+      "rms_dbfs": -28.6
+    },
+    "final_state_bytes": 240,
+    "state_contains": "chimesE+;R900",
+    "state_contains_found": true
+  },
+  "multi_instance": {
+    "instances": [
+      {
+        "wav": "multi-0.wav",
+        "program": 0,
+        "level": {
+          "peak": 0.589,
+          "peak_dbfs": -4.6,
+          "rms_dbfs": -27.6
+        },
+        "timing": {
+          "notes": 50,
+          "heard": 50,
+          "reported_latency_ms": 60,
+          "onset_error_median_ms": 12.2,
+          "onset_error_mean_ms": 14,
+          "onset_error_std_ms": 7.8,
+          "onset_error_min_ms": 5.8,
+          "onset_error_max_ms": 52.6,
+          "jitter_spread_ms": 46.9
+        },
+        "pitch": {
+          "reference_note": 60,
+          "notes_measured": 36,
+          "max_abs_cents_off": 2,
+          "mean_abs_cents_off": 1.3
+        }
+      },
+      {
+        "wav": "multi-1.wav",
+        "program": 1,
+        "level": {
+          "peak": 0.517,
+          "peak_dbfs": -5.7,
+          "rms_dbfs": -24.7
+        },
+        "timing": {
+          "notes": 50,
+          "heard": 50,
+          "reported_latency_ms": 60,
+          "onset_error_median_ms": 51.3,
+          "onset_error_mean_ms": 76.8,
+          "onset_error_std_ms": 101,
+          "onset_error_min_ms": -193.3,
+          "onset_error_max_ms": 414.6,
+          "jitter_spread_ms": 607.9
+        },
+        "pitch": {
+          "reference_note": 60,
+          "notes_measured": 36,
+          "max_abs_cents_off": 150,
+          "mean_abs_cents_off": 4.9
+        }
+      }
+    ],
+    "child_processes_while_loaded": [],
+    "instance0_vs_instance1": {
+      "bit_identical": false,
+      "max_abs_diff": 0.627883,
+      "diff_rms_dbfs": -23.9,
+      "sample_corr": 0.214,
+      "envelope_corr": 0.775,
+      "envelope_shift_ms": -60
+    },
+    "load_s": 0.01,
+    "unload_s": 0.026
+  },
+  "orphans": {
+    "child_processes_seen": [],
+    "left_after_unload": [],
+    "left_now": []
+  },
+  "pass": {
+    "sound": true,
+    "determinism": true,
+    "realtime_sound": true,
+    "state_reload": true,
+    "vstpreset_reload": true,
+    "program_change_no_drops_near_change": true,
+    "editor_state_contains": true,
+    "editor_opened": true,
+    "multi_instance_sound": true,
+    "no_orphans": true
+  },
+  "all_pass": true
+}
