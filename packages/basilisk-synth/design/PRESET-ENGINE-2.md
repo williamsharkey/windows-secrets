@@ -27,6 +27,7 @@ Contents:
 12. Measurements to make first
 13. The prototypes
 14. Notes for the v2 lane
+15. Wish 8: kit mode (percussion kits)
 
 ---
 
@@ -62,19 +63,26 @@ Two consequences:
 1. v3 only adds. Every v1 and v2 string keeps its meaning.
 2. A v3 layer token starts with one of the letters `W N S Y V Z G`. No v1 or v2 layer token uses them.
 3. A v3 global token starts with `q` or `x`. No v1 or v2 global token uses them.
-4. After its letter, a token holds only its own lowercase subkeys, digits, `.`, `,` and `~`. Any other character
-   ends the token.
-   - **No sign characters.** In a v2 layer, `+` and `-` are steps (volume up, volume down).
-   - **No uppercase letters inside.** In a v2 layer they are steps or genes. In the v2 globals, `A D S R B V K G`
-     with a number set the envelope and other values.
-   - **A closed set of subkeys per letter.** A v2 macro `m21L0,200` directly after `q0` must not be read as part
-     of `q0`. The prototype found this bug, and the closed sets fix it.
+4. **Token boundaries are DNA.md 5.7's** (the v2 lane's "unknown tokens are kept" rule, now on `main`), so v2,
+   v3 and later parsers cut a string into the same tokens:
+   - a layer token is an uppercase letter, then lowercase letters, digits, `.`, `,` and `~`;
+   - a global token is a letter, then the same characters except `m` (`m` always starts a macro). In v3 the
+     global letters `q`, `x` and `k` also always start a new token;
+   - inside a v3 token a lowercase letter starts a subkey, and its value is the digits, `.`, `,` and `~` after it.
+     A subkey that v3 does not know is **kept in its token** (so a v4 subkey survives a v3 save);
+   - **no sign characters** (`+` `-` are v2 steps in a layer) and **no uppercase inside a token** (an uppercase
+     letter is a v2 step, gene or global). Signed values use two subkeys (`t` up / `b` down) or an offset (`h`
+     pan 0..200).
+   - This replaces the earlier "closed set of subkeys per letter". The bug that rule fixed (a macro `m21L0,200`
+     right after `q0` read as part of it) is fixed by the `m` boundary, as in 5.7.
 5. The position of a v3 token in a layer has no meaning. v3 tokens are genes, not steps. The canonical form writes
    them after the layer's v2 tokens, in the order `W N S Y V Z G`, one token per letter. In each token, the last
    value of a subkey wins.
 6. Fractions are written as the owner writes them: `0`, `1`, `.25`, `0.2`. Resolution: 1/10000.
-7. **Proof:** `design/proto/test_proto.cpp` gives 20,000 random mixed v2/v3 DNAs to core's v2 parser. In every
-   case, v2's canonical result is the same as v2's result for the string without the v3 tokens. The guest parsers
+7. **Proof:** `design/v3/test_v3.sh` gives 20,000 random mixed v2/v3 DNAs (and pure v1/v2 ones) to core's v2
+   parser, once with this branch's core and once with `main`'s core (5.7). In every case the v2 meaning equals the
+   v2 meaning of the string without its v3 tokens; with the 5.7 core every v3 token also survives a v2 save; and
+   for a v1/v2 string the v3 canonical form is exactly core's. The guest parsers
    (`guest/synth.c` in both editions) skip unknown characters in the same way. Their global parsers react only to
    `A D S R B V K G`, which v3 tokens never contain.
 
@@ -119,7 +127,7 @@ F is a fraction as in rule 6. A range `a~b` means "a new random value in [a, b] 
 | Token | Subkeys | Meaning |
 |---|---|---|
 | `q`id[`r`pc] | id 0-12, `r` root pitch class 0-11 | Scale for `Sd` and the sequencer: 0 major, 1 minor, 2 dorian, 3 phrygian, 4 lydian, 5 mixolydian, 6 locrian, 7 harmonic minor, 8 major pentatonic, 9 minor pentatonic, 10 whole tone, 11 blues, 12 chromatic. Without `r`, the root is the lowest held note. |
-| `x` | `d`n[`t`] division (4, 8, 16, 32, `t` triplet), `g`% gate, `s`% swing, `k`n kind (0 field, 1 count, 2 arp), `p`n notes per step, `a`n auto-dig cells, `o`n octaves, `l`n steps used, `b`bpm free tempo, `f` free run, `h` latch | Section 9 |
+| `x` | `d`n[`t`] division (4, 8, 16, 32, `t` triplet), `g`% gate, `s`% swing, `n`n kind (0 field, 1 count, 2 arp), `p`n notes per step, `a`n auto-dig cells, `o`n octaves, `l`n steps used, `b`bpm free tempo, `f` free run, `h` latch | Section 9 |
 
 Example (the owner's pad): `logon<#8Ws.2~.4l.1~.3;A400R900`. Each voice starts at a random point from 0.2 to
 0.4 of the buffer and plays a random 0.1 to 0.3 of it.
@@ -147,6 +155,8 @@ end of a line, so old parsers read the fields they know.
 | `newgame <dig>` | Start a new board in the mine game and dig `dig` safe cells (section 9.5). |
 | `board <w> <h> <mines> <cells>` | Restore a saved board (section 9.7). |
 | `desk <0\|1>` | Show the Windows desktop (1) or the synth (0) (section 10). |
+| `choke <rec> <fade_ms>` | Kit mode: end this recorder's hit with a fade (cut and mute groups, section 15.3). Sent before the `on` that caused it. |
+| `kit <0\|1>` | Kit mode on or off (the Kit tab follows; section 15.4). |
 
 ### Guest to host
 
@@ -154,6 +164,7 @@ end of a line, so old parsers read the fields they know.
 |---|---|
 | `hi 3 <edition> <state> <caps>` | Answer to `hi 3`. |
 | `grid <w> <h> <state> <cells>` | The mine board changed (section 9.4). |
+| `seg <layer> <f1> <f2> ...` | After a build: where each segment of the layer's buffer starts, in frames (the source at 0, then each Insert File; section 15.1). |
 | `desk <0\|1>` | The visitor changed the desktop mode inside Windows. |
 
 Link load: `rate` lines come at note rate. `lmod` and `lgrain` come only after a `dna` or a macro move. Wow and
@@ -600,10 +611,10 @@ Other kinds:
 
 | Kind | Rows | Number n |
 |---|---|---|
-| `xk1` count | octave band (bottom third, middle, top) | scale degree n of the scale (1 = root) |
-| `xk2` arp | octave band | held note n, counted from the lowest; it wraps to the next octave |
+| `xn1` count | octave band (one band per octave of `xo`, the bottom row is the lowest) | scale degree n of the scale (1 = root) |
+| `xn2` arp | octave band (as `xn1`) | held note n, counted from the lowest; it wraps to the next octave |
 
-`xk2` is the arpeggiator: only held notes sound, in the order the board gives.
+`xn2` is the arpeggiator: only held notes sound, in the order the board gives.
 
 ### 9.3 How to play it
 
@@ -744,30 +755,37 @@ Do these in a dev VM of our own, never in a machine that another session runs.
 | T6 | 3.11 SOUNDREC Play rate: plays per second, one recorder and 16 | 3.11 grain rate |
 | T7 | `winmine_probe.exe` on our XP image: address, cell codes, all game states | Section 9.4 |
 | T8 | 3.11 `WINMINE.EXE` data segment scan | Section 9.4 |
+| TK1 | Choke fade: XP streamed software gain (5, 10, 20 ms) against waveOutReset (hard cut); 3.11 card release (1, 5, 10 ms): click level | Section 15.3 |
+| TK2 | Retrigger of a stolen (sounding) recorder: XP reset + write on the same handle, 3.11 Stop + Play; time to sound and its spread | Section 15.3 |
+| TK3 | Segment boundaries: Insert File points as reported by the guest against the real buffer, both editions | Section 15.1 |
+| TK4 | XP multi-out: does our XP image have working drivers for a second emulated card (ES1370, SB16), each to its own audiodev? | Section 15.5 |
+| TK5 | Stress: 16th-note hats at 180 bpm with choke, plus kick and snare, for 60 s: link lines per second, missed or late hits | Section 15.3 |
 
 ---
 
-## 13. The prototypes (`design/proto/`)
+## 13. The code (`design/v3/`) and the probes (`design/proto/`)
+
+`design/v3/` is tested code, ready to fold into `core/` after the v1.2 releases. It does not touch `core/`,
+`guest/`, `plugin/` or the 3.11 package; it compiles a `core/dna.cpp` in, read-only.
 
 | File | Content |
 |---|---|
-| `dna3.h`, `dna3.cpp` | The v3 tokens: parse, canonical form, `strip3()` (the v2 subset). |
-| `engine3.h`, `engine3.cpp` | `window()` (frames for one voice, random ranges, velocity), `bakeSteps()`, `MonoPlan` (mono, legato, continue, glide, priority), `Grid` and `stepNotes()` (the mine-grid map, all three kinds, ties, accents, fills, rests). |
-| (not yet) | The v3 macro parameter letters of 2.1. `parse3()` leaves all `m` tokens to v2 core. |
-| `test_proto.cpp` | Unit checks plus the 20,000-case v2 degrade fuzz test against the real `core/dna.cpp`. |
-| `winmine_probe.c` | The XP board reader (memory, with a border check and a scan). Builds with tcc or `i686-w64-mingw32-gcc`. Not run yet (test T7). |
+| `dna3.h`, `dna3.cpp` | The v3 tokens (W N S Y V Z G, q x k, v3 macro letters): `parse3()`, `canonical3()` (core's canonical form plus the v3 tokens; idempotent; equals core's for v1/v2), `strip3()` (the v2 subset), `applyMacros3()`. Unknown subkeys are kept. |
+| `engine3.h`, `engine3.cpp` | `window()`, `bakeSteps()`, `MonoPlan` (poly, mono, mono + portamento, legato, continue; priority; repeated note-ons), stacking (`noteIntervals` for `Sr Sx Sd`, `unisonPan`, `strumDelayMs`, `groupPick`, `humanize`, `voiceSeed`), zones and `modCents`/`xpStaircase` (wow, flutter, scoop; the XP swap plan), `Grid`/`stepNotes`/`stepPpq` (the mine grid), kit mode (`pickPad`, `padCents`, `padGain`, `chokeTargets`, `padWindow`), and the wire (`parseHi3`, `onLine`, `rateLine`, `lmodLine`, `lgrainLine`). |
+| `test_v3.cpp`, `test_v3.sh` | About 29,900 checks, including the 20,000-string fuzz. `test_v3.sh [main checkout]` runs them against this branch's core and against `main`'s core (DNA.md 5.7). |
 
-Run the tests (build only under `$HOME`):
+Run (builds go to `~/pe2-build`):
 
 ```
-cd packages/basilisk-synth/design/proto
-g++ -std=c++17 -O1 -Wall -I../../core test_proto.cpp dna3.cpp engine3.cpp ../../core/dna.cpp -o ~/pe2-build/pe2
-~/pe2-build/pe2
+packages/basilisk-synth/design/v3/test_v3.sh /mnt/c/Users/willi/github/williamsharkey/windows-secrets
 ```
 
-The prototypes do not touch `core/`, `guest/`, `plugin/` or the 3.11 package. When v3 lands after the v1.2
-releases, `dna3.cpp` folds into `core/dna.cpp` (the `Layer` and `Globals` structs get the v3 fields), and
-`engine3.cpp` folds into `core/voices.cpp`.
+Folding in: `dna3.cpp` goes into `core/dna.cpp` (`Layer` and `Globals` get the v3 fields; `canonical3` becomes
+`parse().canonical`), `engine3.cpp` into `core/voices.cpp`.
+
+`design/proto/` holds the measurement tools (section 12): `xp_swaptest.c` and `xp_stream.c` (waveOut tests in
+XP), `sr_probe.c` (XP Sound Recorder: trackbar, Add Echo, lengths, speed round trips), `winmine_probe.c` (the XP
+board reader and the T7 scenario), and `xp_analyze.py` (the analysis of QEMU's wav recordings).
 
 ---
 
@@ -783,3 +801,161 @@ These came up while this proposal was written. None of them blocks v2.
    `A D S R B V K G` (2.1). A v2 fix: skip the whole bad macro token.
 3. The XP guest's `dna_parse` reads `@` as a percent only. `@t300` gives `@0`. The v2 lane has this on its list
    ("Guest: v2 tokens").
+
+---
+
+## 15. Wish 8: kit mode (percussion kits)
+
+Owner request (2026-11-13): kit-based presets where not every note follows pitch (some pads can, in a limited
+range), with the standard drum-sampler features: cut groups and the rest, and a tab where a check box turns kit
+mode on and helps to map it. Real Sound Recorders still play every hit.
+
+**Status:** format fixed (other lanes write kit maps against it, for example
+`library/research/electromech-presets.json`); parser, pad choice, pitch, velocity, choke and slice logic are
+tested code in `design/v3/` (`Pad`, `pickPad`, `padCents`, `padGain`, `chokeTargets`, `padWindow`). Guest work
+and the Kit tab come after v1.2, in phase 5b (section 11).
+
+### 15.1 The model
+
+- A **pad** maps a note or a note range to a **layer** of the DNA. The layer is the pad's sound: its source, its
+  Sound Recorder chain (steps), its genes (`#`, `L`, `Q`, `O`, `J`, `W`, `Y` ...). Several pads can use one layer.
+- A DNA with at least one pad is a **kit**. In a kit, notes sound only through pads. A note with no pad is silent.
+  Layers that no pad uses are silent too.
+- **Two ways to give a pad recorders.**
+  - *Reserved:* the pad has a layer of its own, with its own pool (`#N`). It can have its own chain. At most 8
+    layers per DNA, so at most 8 reserved sounds.
+  - *Shared (kit strip):* many pads share one layer whose buffer is several sounds in a row, built with real
+    Insert File steps: `kick_808@t30000Isnare_808@t30000Ihat_closed@t30000Ihat_open#8`. Each pad plays one
+    **segment** of that buffer (`j`). Every recorder of the layer holds every sound, so the pads share the pool
+    (any free recorder plays any of them). This is the tape-keyboard track trick (6.2) used for drums. The chain
+    steps after the inserts apply to the whole strip.
+- **Segments:** after a build the guest reports where each segment starts: `seg <layer> <f1> <f2> ...` (frames:
+  the source starts at 0, then each Insert File's insert point; scaled if later steps change the length). The
+  host uses frames only, so the window of a pad is exact on both editions (XP: the fast path writes those bytes;
+  3.11: the card window of 4.2).
+- v2 machines keep the pad tokens (DNA.md 5.7) but do not read them: there, every layer sounds on every note. So
+  kit presets ship only for v3 (as the tape category, 6.2: a category has a minimum DNA version).
+
+### 15.2 DNA: the `k` global token
+
+One `k` token per pad, in the globals. The token follows DNA.md 5.7 (a letter, then lowercase subkeys, digits,
+`.` `,` `~`; `m` ends it). In v3 the global letters `q`, `x` and `k` always start a new token, so they are never
+subkeys of another global token. That is why the sequencer's kind is `xn` (it was `xk`).
+
+`k`lo[`,`hi] then subkeys. All are optional; the defaults make a one-shot, fixed-pitch, full-length pad on layer 1.
+
+| Subkey | Meaning | Default |
+|---|---|---|
+| `l`n | layer 1..8 | 1 |
+| `j`n | segment of the layer's buffer: 0 the whole buffer, 1 the source as loaded, 2.. each Insert File in order | 0 |
+| `s`F[`~`F], `e`F[`~`F] | start and end inside the segment (fractions, random ranges as `W`) | 0, 1 |
+| `r`n | root note: plays at the buffer's own rate | lo |
+| `p`n | pitch tracking %: 0 fixed (drums), 100 full (pitched percussion), between: less | 0 |
+| `w`n | pitch range: at most n semitones from the root (limited-range pitched percussion); 0 = no limit | 0 |
+| `t`c / `b`c | tune up / down, in cents (no sign characters in v3 tokens) | 0 |
+| `i`n | level % (0..400) | 100 |
+| `h`n | pan 0..200, 100 = centre (no sign characters) | 100 |
+| `v`n | velocity curve: 0 linear, 1 soft (quiet hits come up), 2 hard, 3 fixed | 0 |
+| `a`n | velocity amount % | the global `V` |
+| `y`lo`,`hi | velocity window: the pad answers only these velocities (velocity layers) | 1,127 |
+| `g` | gated: note-off releases the pad (default one-shot: it plays to its end, R still shapes the tail) | off |
+| `c`n | cut (choke) group 1..16: a hit stops every sounding hit of that group, its own pad included | none |
+| `f`ms | choke fade | 10 |
+| `u`n[`,`n...] | mute groups: a hit stops the groups listed, one way (the muted pads do not stop this one) | none |
+| `n`n | voices for this pad: 1 = a new hit cuts its last one; 0 = the layer's pool decides | 0 |
+| `o`n | output pair 1..8 (15.5); 1 on editions without buses | 1 |
+| `z` | random choice among the pads that match a hit (default: round-robin) | off |
+
+A `k` token with no note is kit-wide: `kd` = kit off (the map stays in the DNA, the DNA plays as layers). The Kit
+tab's check box writes it. Unknown subkeys are kept in their token.
+
+**Round-robin and velocity layers** need no extra syntax: when several pads match a note and its velocity, they
+take turns, one per hit (`z` on any of them: a random one). Pads with the same notes and different `y` windows are
+velocity layers.
+
+Example: a small kit, with one strip of hats (shared pool) and reserved kick, snare and toms.
+
+```
+kick#2/snare#4/hats@t30000Ihat_closed@t30000Ihat_pedal@t30000Ihat_open#6/tom#4;A0R300V90
+k36 k38l2y1,90 k38l2i120y91,127 k42l3j2e.9c1 k44l3j3c1f20 k46l3j4c1 k47,53l4r50p100w3b15h70
+```
+
+(spaces added here for reading; the DNA has none). Kick on 36. Snare on 38 in two velocity layers, the hard one
+20 % louder. Closed, pedal and open hat are segments 2, 3, 4 of the hat strip, all in cut group 1, so each stops
+the others (the pedal hat with a 20 ms fade). Toms on 47..53, root 50, following pitch but at most 3 semitones
+either way, 15 cents flat, panned to 70 (left of centre).
+
+Canonical form: pad tokens in written order (order is meaningful: it is the round-robin order), after `q` and `x`;
+inside a pad the subkeys in the table's order, defaults left out.
+
+### 15.3 How the editions play it
+
+| Feature | XP | 3.11 |
+|---|---|---|
+| Pad window (segment, start, end) | fast path: write those frames. Exact. | card window (4.2, `BSC_ARM` with skip and limit). Exact. Until it exists: scroll bar seek (T1) |
+| Fixed pitch / tracking / range | the handle's open rate (as today) | `BSC_SETRATE` at the start |
+| One-shot vs gated | one-shot ignores `off` (the release still applies at the end of the window); gated: `off` as today | the same; `ARMSTOP` at the window end |
+| Choke fade | needs per-voice gain: the streamed software gain of 5.3 (T3 found waveOutSetVolume is global). Fade 10 ms (two 5 ms chunks) or more. Without it: waveOutReset, a hard cut (a click) | the card's per-voice release: exact, from 1 ms |
+| Retrigger of a stolen recorder | reset + write on the same handle (TK2) | Stop + Play in SOUNDREC (T6) |
+| Mute groups | as choke, one way | as choke |
+| Output pairs | not with one AC97 stream; possible with more emulated cards (TK4) | the card mixes per voice: per-voice buses in `bsynth.cpp`, a multi-out plugin |
+
+Host rules: a hit first chokes its targets (`chokeTargets`): for each sounding voice of those pads it sends
+`choke <rec> <fade_ms>`. Then it starts the pad. The order on the wire is choke first, so the guest never runs out
+of recorders because of a choked voice. Retriggering the same pad with `n1`: choke own pad, same order.
+
+### 15.4 The Kit tab
+
+The tab joins the tab strip of section 8 (id `kit`).
+
+**XP (real common controls, comctl32 v6):**
+
+```
+ [x] Kit mode          Bank [ 36-51  v]      [GM drum map]  [Auto-map...]  [Learn]  [Audition]
+ +- Pads (16 BUTTONs, 4 x 4, push-like) --+  +- Pad 42: Closed hat ------------------------------+
+ | [49 Crash ][50 Tom H ][51 Ride ][  -  ] |  | Sound  [hats: segment 2       v]  (Library tree) |
+ | [44 Ped.H1][45 Tom L ][46 Op.H 1][47 ..]|  | Pitch  (o) Fixed ( ) Follow ( ) Range +-[ 3 ]^v  |
+ | [40 Snr 2 ][41 Tom F ][42 Cl.H 1][43 ..]|  | Tune   |-------[]-------| -15 c   Level |---[]-| |
+ | [36 Kick  ][37 Rim   ][38 Snare ][39 ..]|  | Pan    |-----[]---------| L 30                   |
+ +-----------------------------------------+  | Start/End  |==[#####]=====|  (trackbar selection)  |
+ +- Map (ListView, Report) -------------------| Velocity [Linear v] Amount |---[]| From [1] To [127]|
+ | Note Name     Layer Seg Pitch Cut Mode Out|| Play (o) One-shot ( ) Gated   Voices [0]^v        |
+ | 36   Kick     1     -   fixed  -  shot  1 || Cut group [1 v] Fade |-[]---| 15 ms  Mutes [ ] ... |
+ | 42   Cl.hat   3     2   fixed  1  shot  1 || Output [1-2 v]  Recorders (o) Reserved ( ) Shared   |
+ +-------------------------------------------++--------------------------------------------------+
+```
+
+- Pads: 16 push-like BUTTONs; the text is note, short name and the cut group number, so choke groups are
+  visible at a glance; the Map list repeats them in a `Cut` column.
+- Click a pad, or a key of the keyboard strip (DNA.md 5.4) while the tab is open: that pad is selected.
+- Sound: a combo with the library categories, and a TreeView of the library disc (the Library tab's browser).
+- **Auto-map:** pick a library category (or a folder of the disc) and a first key; its sounds fill the next keys,
+  as segments of one strip (shared) or as layers (reserved, at most 8).
+- **GM drum map:** names the keys 35..81 by the General MIDI percussion map and fills the common ones from the
+  library by category (kick 36, snare 38, closed hat 42 / pedal 44 / open 46 in cut group 1, crash 49, ride 51,
+  toms 41..50). It is a starting point, not a rule.
+- **Learn:** the next note from the DAW (it arrives as a `show` line, DNA.md 5.4) moves the selected pad to that
+  note. No new wire line.
+- **Audition:** plays the pad through the host (`key` line), like a key of the keyboard strip.
+
+**3.11 (no ListView, TreeView, trackbar or up-down control):** the panel area (y 550-682, 1024 x 132 px):
+16 push buttons in a 4 x 4 block (40 x 24 px each) on the left; a LISTBOX with tab stops as the map (columns
+Note, Name, Layer, Seg, Pitch, Cut, Mode); the selected pad's settings as COMBOBOXes (sound, curve, cut group,
+output), radio buttons (Fixed/Follow/Range, One-shot/Gated), horizontal SCROLLBARs as sliders (tune, level, pan,
+start, end, fade) and EDIT fields for numbers. Buttons: GM map, Auto-map, Learn, Audition. The 3.11 kit uses the
+3.11 sounds and the 3.11 library drive.
+
+### 15.5 Output pairs
+
+The plugin gets up to 8 stereo outputs (DPF: more audio outputs; the main pair stays output 1, so a host that
+ignores the others hears everything).
+- **3.11:** the BSYN card already renders each voice. It can sum voices into up to 8 buses and hand them to the
+  plugin. Needs a card command (bus per voice) and a wider audio path from the core. Feasible.
+- **XP:** QEMU sends one stereo stream (AC97). More buses need more emulated sound cards, each with its own
+  audiodev pipe, and XP drivers for them (TK4). Until then `o` is kept but plays on output 1.
+
+### 15.6 Effort and risk
+
+Effort: **M** for the core and host (pads, choke, segments, buses on the plugin side); **S** per guest for `seg`
+and `choke`; **M** for the Kit tab on each edition. Risks: XP choke fades depend on the streamed gain path (5.3);
+3.11 retrigger speed (T6); multi-out on XP (TK4).
