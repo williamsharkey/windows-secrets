@@ -34,6 +34,7 @@ Contents:
 14. Notes for the v2 lane
 15. Wish 8: kit mode (percussion kits)
 16. The Library tab: sound packs as real discs
+17. Recipes: the DNA in words
 
 ---
 
@@ -109,7 +110,7 @@ revision is listed at the end of this section.
 - 7: XP grains are mixed into streams; the 3.11 grain rate is about 100 per second (it was expected to be low).
 - 8: layout fitted to the v1.2 keyboard strip and Macros frame; tab ids and `tab` lines; the `vis` collision.
 - 9: both boards confirmed in memory; 3.1 Beginner is 8 x 8; clicks are posted.
-- 15 (kit mode) and 16 (packs as real discs) are new owner requests; the owner decision "Windows images are built
+- 15 (kit mode), 16 (packs as real discs) and 17 (recipes: the DNA in words) are new owner requests; the owner decision "Windows images are built
   in" is in the status lines.
 - The prototypes are now tested code in `design/v3/` (13).
 
@@ -967,7 +968,8 @@ Measurement list (kept for reference):
 |---|---|
 | `dna3.h`, `dna3.cpp` | The v3 tokens (W N S Y V Z G, q x k, v3 macro letters): `parse3()`, `canonical3()` (core's canonical form plus the v3 tokens; idempotent; equals core's for v1/v2), `strip3()` (the v2 subset), `applyMacros3()`. Unknown subkeys are kept. |
 | `engine3.h`, `engine3.cpp` | `window()`, `bakeSteps()`, `MonoPlan` (poly, mono, mono + portamento, legato, continue; priority; repeated note-ons), stacking (`noteIntervals` for `Sr Sx Sd`, `unisonPan`, `strumDelayMs`, `groupPick`, `humanize`, `voiceSeed`), zones and `modCents`/`xpStaircase` (wow, flutter, scoop; the XP swap plan), `Grid`/`stepNotes`/`stepPpq` (the mine grid), kit mode (`pickPad`, `padCents`, `padGain`, `chokeTargets`, `padWindow`), and the wire (`parseHi3`, `onLine`, `rateLine`, `lmodLine`, `lgrainLine`). |
-| `test_v3.cpp`, `test_v3.sh` | About 29,900 checks, including the 20,000-string fuzz. `test_v3.sh [main checkout]` runs them against this branch's core and against `main`'s core (DNA.md 5.7). |
+| `recipe.h`, `recipe.cpp` | Recipes (section 17): `toRecipe` (multi-line, one-line, short) and `fromRecipe` (lenient, errors with position). |
+| `test_v3.cpp`, `test_recipe.cpp`, `test_v3.sh`, `collect_presets.py` | About 29,900 v3 checks and 61,900 recipe checks (every real preset and 20,000 fuzz strings in 3 forms). `test_v3.sh [main checkout] [aesthetic-presets.json]` runs them against this branch's core and against `main`'s core (DNA.md 5.7). |
 
 Run (builds go to `~/pe2-build`):
 
@@ -1003,7 +1005,10 @@ Status on `main` (2026-11-13) of the notes in the first version of this spec, an
    short sounds (DING: 0.524 s shown as 0.52; `@t400` near 403 ms). Use the real frame count.
 6. **New, 3.11:** Beginner in the 3.1 mine game is 8 x 8 (10 mines), not 9 x 9.
 7. **New, visualizers:** `vis <state>` in `design/VISUALIZERS.md` collides with v2's `vis <0|1>` (DNA.md 5.4).
-8. **New, aesthetic presets** (`design/AESTHETIC-PRESETS.md`, measured on both editions, section 12): Add Echo is
+8. **New, core:** the canonical form is not idempotent for an empty last layer: `canonical("a//")` is `a/`, but
+   `canonical("a/")` is `a` (the parser stops at the end after a `/`, the writer joins an empty last layer). Fix:
+   read `a/` as two layers, or never write an empty last layer.
+9. **New, aesthetic presets** (`design/AESTHETIC-PRESETS.md`, measured on both editions, section 12): Add Echo is
    one tap at 150 ms x0.25 and never lengthens the buffer; `<E>` gives a 75 ms echo (the doc says longer), `>E<`
    300 ms; `<>` is bit-identical (no filter); `><` and `>><<` darken with strong aliasing. That doc's `W`N wow gene
    is `Yd` here (v3 `W` is the window), its strum `Hs` is `Ss`, its round robin `Y` is `Sg` groups, its `Ja!3` loop
@@ -1248,3 +1253,115 @@ Effort: **M** (XP Explorer embedding and the QMP side), **M** (3.11 File Manager
 medium (Explorer inside the synth window under TCG; drive count on XP). Phase: with or after the Library tab
 (phase 7, section 11).
 
+---
+
+## 17. Recipes: the DNA in words
+
+Owner-approved (2026-11-13): a readable form of any DNA, in Sound Recorder's menu words. **Status:** tested code in
+`design/v3/recipe.h`, `recipe.cpp` (ready to fold into core after v1.2), tests in `test_recipe.cpp`, help topic
+`recipe` on `feat/help-and-site`.
+
+### 17.1 The three forms
+
+```
+multi-line   ding    faster, echo
+             tada    slower ×2, reverse, louder   4 recorders · notes +0 +12 · unison 2 ±9¢
+             env     attack 5ms · release 350ms
+one-line     ding faster echo / tada slower×2 reverse louder 4rec notes +0+12 unison 2±9¢ | atk 5ms rel 350ms
+short        ding fast echo / tada slowx2 rev loud 4r h+0+12 u2+-9c | a5 r350
+```
+
+(`ding>E/tada<<R+#4H0,12U2~9;A5R350`.)
+
+- **Multi-line:** one line per layer (the source NAME, the steps joined by ", ", the voice words joined by " · ", a
+  wide gap where they meet), then an `env` line for the globals. A layer with no sound is `-`.
+- **One-line:** the layers joined by " / ", the globals after " | ".
+- **Short:** the one-line form with short words and default units dropped. `toRecipe(d, Short, maxLen)` cuts a
+  longer one at a word and ends it with "…"; a recipe with "…" is a preview: `fromRecipe` refuses it (with that
+  message), so a cut form is never mistaken for a sound.
+- Tokens are written in canonical order, so steps and genes interleave as the DNA has them. Defaults that the DNA
+  does not write are not written either (`unison 2` is `U2~0`; a `U2~0` in the DNA prints as `unison 2`).
+
+### 17.2 Words
+
+Each word has three spellings (multi-line / one-line / short); the parser accepts all of them in every form.
+
+| DNA | Recipe (multi-line, one-line, short) |
+|---|---|
+| `+ - > < E R` | louder, softer, faster, slower, echo, reverse (short: loud, soft, fast, slow, echo, rev) |
+| `C P X` | copy, paste, mix paste (short mixp) |
+| `[ ]` | cut before, cut after (short cut<, cut>) |
+| `@45`, `@t250` | at 45%, at 250ms, at 1.5s (short @45%, @250ms) |
+| `I`NAME, `M`NAME | insert NAME, mix NAME (short ins, mix) |
+| any step n times in a row | step ×n (×n glued to a one-word step; x n accepted) |
+| `@N[`, `@N]` (`@tN` too) | cut before N%, cut after N% |
+| `@B]@C[` | trim A–B% where C = round(100 A / B); only written when that gives back exactly C |
+| `@tB]@tA[` | trim A–B ms (exact: absolute times) |
+| `@0CP` | double |
+| `#N`, `TN`, `H...` | N recorders (4rec, 4r), transpose +7 (tr+7), notes +0 +12 (notes+0+12, h+0+12; always signed) |
+| `UN~C`, `F`, `LN` | unison N ±C¢ (u2+-9c), fixed pitch (fixed, fix), level 80% (lv80) |
+| `ON`, `QN` | offset 120ms (o120), pan L40 / R40 / C |
+| `Ja...`, `Jp...` | amp env 0:0,30:100 (ms:level), pan env 0:-50,500:50 |
+| `W` | start 20–40%, end 90%, length 10–30%, velocity start 50%, tape 8s (fractions shown as percent, 0.01 % steps) |
+| `N` | poly 4, mono, legato, continue, glide 80ms, priority high/low |
+| `S` | round-robin, random note, random recorder, group 2 [random], strum 30ms, chord 3, spread 50% |
+| `Y` | random pitch ±8¢, random level 6%, random late 12ms, random pan 20, seed key, seed recorder |
+| `V` | wow 6¢ 0.6Hz, flutter 2¢ 11Hz, scoop 20¢ 60ms |
+| `Z` | keys C2–B3 root C3 (note names, C4 = 60; numbers accepted) |
+| `G` | grains pos 30% spray 10% size 60–120ms density 40/s pitch ±25¢ oct 20% shape rect/triangle/smooth/hit scan 0.5x back freeze streams 6 width 70% sync |
+| `A D S R` | attack 5ms, decay 300ms, sustain 70%, release 1.5s (atk/dec/sus/rel; a5 d300 s70 r1.5s) |
+| `B V K G` | bend ±12, velocity 80%, root C4, gain -6dB |
+| `mK=V`, `mKLPlo,hi` | macro1 50%; macro1 layer2 pan -100–100 (m1 L2 ..., all = every layer); targets offset pan level transpose spread envtime repeat start end length grainpos spray grainsize density scan wow glide |
+| `q` | scale minor root A (major minor dorian phrygian lydian mixolydian locrian harmonic-minor major-pent minor-pent whole-tone blues chromatic) |
+| `x` | seq 1/8t gate 60% swing 20% field/count/arp max 3 dig 5 octaves 3 steps 12 bpm 96 free-run latch |
+| `k` | pad 36 / pad 47–53, then layer 2, seg 6, start, end, root 72, pitch 100%, range ±12, tune -15¢, level 120%, pan L30, curve soft/hard/fixed, vel 80% (amount), vel 1–100 (window), gated, cut 1, fade 20ms, mutes 1,2, voices 1, out 2, random; `kd` = kit off |
+| anything else (a later version's token, a v3 token with an unknown subkey, a token with only defaults) | `{token}` verbatim, kept |
+
+### 17.3 Rules
+
+- **Lossless by construction.** `toRecipe` cuts `canonical3(dna)` into tokens and writes one phrase per token (a
+  sugar phrase covers 2-4 tokens). `fromRecipe` turns every phrase back into exactly those token texts. A sugar
+  phrase is written only if parsing it gives back the same tokens (checked when printing).
+- **Lenient input:** any case; ASCII for the symbols (x for ×, +- for ±, c for ¢, .. or - for the range dash, - for
+  the minus sign); commas and · are spacing; keywords may be glued to their value (`lv80`, `panl40`, `h+0+12`,
+  `slowx2`, `4rec`). The first word of a layer is always the source NAME (`-` for none).
+- **Errors** give the byte position and the word, and what was expected there:
+  `ding faster wobble echo` -> `wobble` at 12: "a Sound Recorder step (faster, slower, ...) or a voice word (...)".
+- A core quirk the parser mirrors: core writes two layers whose last one is empty as `a/`, but reads `a/` as one
+  layer. `fromRecipe` writes `a//` in that case, so the canonical form comes back identical (noted in 14).
+
+### 17.4 Tests and lengths
+
+`design/v3/test_v3.sh <main checkout> <aesthetic-presets.json>` collects every real preset (`collect_presets.py`),
+then runs the recipe test against this branch's core and against `main`'s core (5.7):
+
+| Corpus | DNAs | Result |
+|---|---|---|
+| 3.11 programs (`b16.tsv`, `overrides311.tsv`, the 3.11 `presets_gen.h`) | 37 + 72 | DNA -> recipe -> DNA identical canonical form, in all three forms |
+| XP presets (`library/presets/factory.tsv`, `plugin/presets_gen.h`) | 39 + 39 | same |
+| electromech (instruments and kits), preset targets, aesthetic presets, `site/sndrec/presets.json` | 52 + 198 + 102 + 71 | same |
+| fuzz: 20,000 random DNAs (v1/v2/v3 tokens, kit pads, sequencer, windows, macros, sugar sequences, unknown tokens) | 20,000 x 3 forms | same |
+| hand cases: every token family, empty DNA, globals only, empty layers, unknown subkeys, errors, lenient input | - | pass |
+
+All 610 real presets (426 distinct) and the 20,000 fuzz strings round-trip in all three forms, with both cores
+(61,888 checks per core).
+
+Length in characters over the 426 distinct real presets:
+
+| Form | Median | p90 | Max | Fit in 60 |
+|---|---|---|---|---|
+| one-line | 108 | 155 | 1309 (a kit) | 37 (9 %) |
+| short, uncut | 72 | 108 | 1122 (a kit) | 133 (31 %) |
+| short, cut to 60 with "…" | - | - | 60 | all; 293 of 426 are cut |
+
+By source (short, median / p90): 3.11 programs 46-54 / 98-102, aesthetic 73 / 109, preset targets 74 / 99,
+electromech 79 / 605 (kits). **So:** the one-line form does not fit one website line for most presets (a two-line
+cell or a wrapped line does); the short form fits 60 characters losslessly for about a third (most of the simple
+3.11 programs); for lists, use the short form cut to 60 with "…" and the full one-line form on hover or click.
+Kits are far longer than any line (every pad is a phrase): show "kit, N pads" in lists.
+
+### 17.5 Folding in
+
+`recipe.cpp` depends on `dna3` (`canonical3`, `parse3`) and core. It folds into core with v3; the plugin's DNA box
+accepts either form (a text with a space is a recipe, else a DNA), and the editor can show the multi-line form
+beside the DNA. Help: topic `recipe` (context 20) on `feat/help-and-site`, written to these words.
