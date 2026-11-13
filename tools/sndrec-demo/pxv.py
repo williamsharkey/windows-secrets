@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """pxv: a lossless screen-video format for the sndrec.html canvas player (pixel-exact, no YUV, no smoothing).
 
-    pxv.py encode FRAMES OUT_DIR NAME [--fps 30] [--tile 16] [--poster N]
+    pxv.py encode FRAMES OUT_DIR NAME [--fps 30] [--tile 16] [--poster N] [--reduce K] [--crop X,Y,W,H]
     pxv.py verify OUT_DIR NAME FRAMES          decode in Python and compare every frame with the source, byte for byte
 
 FRAMES: a lossless capture: a video file ffmpeg reads exactly (demo311's FFV1 .mkv), or a folder of numbered
@@ -9,6 +9,9 @@ FRAMES: a lossless capture: a video file ffmpeg reads exactly (demo311's FFV1 .m
     NAME.pxv            the index (below)
     NAME-0.png ...      atlases: frame 0 whole, then every changed rectangle of every later frame, packed in shelves
     NAME-poster.png     frame --poster, for the player before it loads
+--reduce K: the frames show each pixel as K x K screen pixels (an editor at a whole-pixel scale); every frame is
+checked to be exact K x K blocks and reduced to one pixel per block (it stops if a block is not uniform).
+--crop X,Y,W,H: keep that rectangle (after reducing), e.g. Windows' own screen inside an editor window.
 Index, little-endian: "PXV1", u16 width, u16 height, u16 fps, u16 atlases, u32 frames; then per frame a u16 count
 and that many rectangles of 7 u16: dst x, dst y, w, h, atlas, src x, src y. Frame n is frame n-1 with its rectangles
 drawn over it (frame 0: from nothing). Rectangles are runs of changed tile x tile cells, so every pixel copied is
@@ -99,10 +102,21 @@ def save_png(px, path):
     return len(u)
 
 
-def encode(src, out, name, fps=30, tile=16, poster=None):
+def reduce_exact(f, k, n):
+    h, w = f.shape[0] // k * k, f.shape[1] // k * k
+    f = f[:h, :w]
+    r = f[::k, ::k]
+    if not np.array_equal(np.repeat(np.repeat(r, k, 0), k, 1), f):
+        sys.exit('frame %d is not made of exact %dx%d blocks' % (n, k, k))
+    return r
+
+
+def encode(src, out, name, fps=30, tile=16, poster=None, reduce=1, crop=None):
     os.makedirs(out, exist_ok=True)
     at = Atlases(); index = []; prev = None; n = 0; post = None
     for f in frames(src):
+        if reduce > 1: f = reduce_exact(f, reduce, n)
+        if crop: x, y, cw, ch = crop; f = np.ascontiguousarray(f[y:y + ch, x:x + cw])
         h, w = f.shape[:2]
         rects = [(0, 0, w, h)] if prev is None else dirty_rects(prev, f, tile)
         recs = []
@@ -147,11 +161,12 @@ def decode(out, name):
 def main():
     a = sys.argv[1:]
     if a and a[0] == 'encode':
-        opt = dict(fps=30, tile=16, poster=None)
+        opt = dict(fps=30, tile=16, poster=None, reduce=1, crop=None)
         rest = []
         i = 1
         while i < len(a):
-            if a[i].startswith('--'): opt[a[i][2:]] = int(a[i + 1]); i += 2
+            if a[i] == '--crop': opt['crop'] = [int(x) for x in a[i + 1].split(',')]; i += 2
+            elif a[i].startswith('--'): opt[a[i][2:]] = int(a[i + 1]); i += 2
             else: rest.append(a[i]); i += 1
         encode(rest[0], rest[1], rest[2], **opt)
     elif a and a[0] == 'verify':

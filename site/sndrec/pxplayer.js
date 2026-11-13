@@ -37,7 +37,8 @@
     var self = this;
     this.root = root; this.clips = clips; this.canvas = root.querySelector('canvas');
     this.src = document.createElement('canvas');
-    this.src.width = +this.canvas.getAttribute('width'); this.src.height = +this.canvas.getAttribute('height');
+    var nat = (this.canvas.getAttribute('data-px') || '1024x768').split('x');   // native size (the canvas itself is in device pixels)
+    this.src.width = +nat[0]; this.src.height = +nat[1];
     this.ctx = this.src.getContext('2d', {alpha: false});
     this.ctx.imageSmoothingEnabled = false;
     this.canvas.pxSource = this.src;

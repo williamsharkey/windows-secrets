@@ -34,11 +34,12 @@
     var box = el.parentNode, cs = getComputedStyle(box);
     var avail = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
     var k = Math.floor(avail * dpr / nw + 1e-6), dw, dh, note = '', scale;
+    while (k >= 1 && exactSize(nw * k, dpr) > avail * dpr + 1e-6) k--;   // the padded size must fit the column too
     if (k >= 1) { dw = nw * k; dh = nh * k; scale = String(k); }
     else {
-      var n = 2; while (Math.floor(nw / n) > avail * dpr) n++;
+      var n = 2; while (exactSize(Math.floor(nw / n), dpr) > avail * dpr + 1e-6) n++;
       dw = Math.floor(nw / n); dh = Math.floor(nh / n); scale = '1/' + n;
-      note = 'Shown at 1/' + n + ' size to fit this screen; widen the window to see every pixel.';
+      note = 'Shown at 1/' + n + ' size to fit this screen (every ' + n + 'th pixel); widen the window, or turn the phone, to see every pixel.';
     }
     var P = exactSize(dw, dpr), Q = exactSize(dh, dpr);
     var bg = 'rgb(255, 255, 255)';   // padding pixels: the first background behind the picture
@@ -49,7 +50,7 @@
     place(el, box, cs, dpr, avail * dpr, P);
     draw(el);
     var nid = el.getAttribute('data-px-note'), ne = nid && document.getElementById(nid);
-    if (ne) { ne.textContent = note; ne.hidden = !note; }
+    if (ne) ne.textContent = note || ('Every Windows pixel is shown as ' + (k === 1 ? 'one screen pixel' : k + ' \u00d7 ' + k + ' screen pixels') + ', never resampled.');
   }
   function frac(x) { return Math.abs(x - Math.round(x)); }
   function place(el, box, cs, dpr, availDev, P) {   // centre it, with its left and top edges on whole device pixels
