@@ -226,7 +226,7 @@ And in the short form:
 | gain -6dB | The output level |
 | macro1 50%, m1 layer2 pan -100-100 | Macro 1's value; what a macro moves and over which range |
 ## Words of later versions
-Later versions add words such as `start 20%`, `mono`, `glide 80ms`, `keys C2-B3`, `grains ...`, `scale minor`, `seq ...` and `pad 36 ...`. A part this version cannot read is written in braces, such as `{Dl3}`. It is kept as it is.
+Later versions add words such as `start 20%`, `mono`, `glide 80ms`, `keys C2-B3`, `grains ...`, `scale minor`, `scale 1 3 5`, `seq ...` and `pad 36 ...`. A part this version cannot read is written in braces, such as `{Bl3}`. It is kept as it is.
 ## Typing a recipe
 - Upper and lower case are the same.
 - Spaces, commas and line breaks only separate words. Two spaces or one: both are fine.
