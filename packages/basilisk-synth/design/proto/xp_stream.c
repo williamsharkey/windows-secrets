@@ -306,6 +306,22 @@ int main(int argc, char **argv)
             }
             for (k = 0; k <= steps; k++) { int q; v[k]->active = 1; for (q = 0; q < NQ; q++) fill(v[k], q); }
             LeaveCriticalSection(&cs);
+            if (getenv("PE2_CORRECT")) {
+                /* kmixer starts each stream on its 10 ms grid; waveOutGetPosition shows the offset exactly (pair test).
+                   Move every later stream's not yet queued frames by its offset from stream 0. */
+                Sleep(60);
+                EnterCriticalSection(&cs);
+                {
+                    double t0 = played(v[0]) * 1000.0 / r[0];
+                    for (k = 1; k <= steps; k++) {
+                        double d = t0 - played(v[k]) * 1000.0 / r[k];      /* ms that stream k is behind */
+                        int f = (int)floor(d * r[k] / 1000.0 + 0.5);
+                        v[k]->srcOff += f; v[k]->zeroLeft -= f; if (v[k]->outAt >= 0) v[k]->outAt -= f;
+                        printf("correct stream %d by %.2f ms\n", k, d);
+                    }
+                }
+                LeaveCriticalSection(&cs);
+            }
             printf("%.1f plan trial %d steps %d\n", now(), i, steps);
             Sleep((DWORD)(hold + gms + 800));
             EnterCriticalSection(&cs); for (k = 0; k <= steps; k++) vstop(v[k]); LeaveCriticalSection(&cs);

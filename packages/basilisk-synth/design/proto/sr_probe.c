@@ -119,20 +119,29 @@ static void dump(const char *path)
 /* Sound Recorder's dialogs, answered the way srhook answers them: the Open dialog of Mix with File gets the file
    name; a message box ("All data after the position ... will be deleted. Continue?") gets OK. */
 static const char *mixName = "C:\\p\\sine2s.wav";
+static HWND dlgFound;
+static BOOL CALLBACK findDlg(HWND w, LPARAM l)
+{
+    char cls[16];
+    DWORD pid = 0;
+    GetWindowThreadProcessId(w, &pid);
+    GetClassNameA(w, cls, sizeof cls);
+    if (pid == pi.dwProcessId && IsWindowVisible(w) && !strcmp(cls, "#32770")) { dlgFound = w; return FALSE; }
+    return TRUE;
+}
 static DWORD WINAPI answer(LPVOID unused)
 {
     for (;;) {
-        HWND d = FindWindowA("#32770", NULL);
-        DWORD pid = 0;
-        if (d) GetWindowThreadProcessId(d, &pid);
-        if (d && pi.dwProcessId && pid == pi.dwProcessId) {
-            Sleep(200);
-            if (GetDlgItem(d, 0x47C) || GetDlgItem(d, 0x480)) {
-                SetDlgItemTextA(d, 0x47C, mixName);       /* the file name combo (cmb13) */
-                SetDlgItemTextA(d, 0x480, mixName);       /* edt1 (older layout) */
-            }
-            PostMessageA(d, WM_COMMAND, IDOK, 0);
+        dlgFound = NULL;
+        if (pi.dwProcessId) EnumWindows(findDlg, 0);
+        if (dlgFound) {
+            HWND d = dlgFound, e;
             Sleep(300);
+            e = GetDlgItem(d, 0x47C);              /* the file name combo (cmb13); its edit is the child */
+            if (e) { HWND ed = FindWindowExA(e, NULL, "Edit", NULL); SendMessageA(ed ? ed : e, WM_SETTEXT, 0, (LPARAM)mixName); }
+            if ((e = GetDlgItem(d, 0x480))) SendMessageA(e, WM_SETTEXT, 0, (LPARAM)mixName);
+            PostMessageA(d, WM_COMMAND, IDOK, 0);
+            Sleep(500);
         }
         Sleep(50);
     }
