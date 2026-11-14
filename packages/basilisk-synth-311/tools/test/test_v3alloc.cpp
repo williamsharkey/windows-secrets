@@ -129,6 +129,24 @@ int main()
         b16v3::KeyParams r; CHECK(r.readLine("key 3 7") && r.root == 3 && r.scale == 7 && r.readLine("keyopt 1 3 1 2 48") && r.usePreset == 1 && r.snap == 3 && r.remap == 1 && r.labels == 2 && r.anchor == 48);
         (void)s;
     }
+    {   // a kit (section 15): pads, velocity layers, a cut group, segments, a silent unmapped note, one-shot vs gated
+        const char *k = "ding#2/chord#4;k36k38l2y1,90k38l2i120y91,127k42l2j2c1k44l2j3c1f20k50l2g";
+        V3Alloc a = make(k);
+        CHECK(a.kit() && a.owns(0) && a.owns(1));
+        a.setSegments(1, {0, 10000, 30000});
+        std::vector<Out> o;
+        a.noteOn(36, 100, 1000, o); CHECK(count(o, bsynth::Cmd::On) == 1 && o[0].c.layer == 0); o.clear();
+        a.noteOn(38, 50, 2000, o); CHECK(count(o, bsynth::Cmd::On) == 1 && o[0].c.layer == 1); uint16_t soft = o[0].c.vol; o.clear();
+        a.noteOn(38, 100, 3000, o); CHECK(count(o, bsynth::Cmd::On) == 1 && o[0].c.vol > soft); o.clear();
+        a.noteOn(60, 100, 4000, o); CHECK(o.empty());
+        a.noteOn(42, 100, 5000, o); CHECK(count(o, bsynth::Cmd::On) == 1 && o[0].winFrom == 10000 && o[0].winTo == 30000); o.clear();
+        a.noteOn(44, 100, 6000, o);   // the pedal hat chokes the closed hat (cut group 1, its 20 ms fade)
+        int chokes = 0; for (auto &x : o) if (x.kind == Out::Choke) { chokes++; CHECK(x.fadeMs == 20); }
+        CHECK(chokes == 1 && count(o, bsynth::Cmd::On) == 1 && o.back().winFrom == 30000 && o.back().winTo == 44100);
+        std::printf("kit choke: %s\n", show(o).c_str()); o.clear();
+        a.noteOff(36, 7000, o); CHECK(o.empty());                         // one-shot: no off
+        a.noteOn(50, 100, 8000, o); o.clear(); a.noteOff(50, 9000, o); CHECK(count(o, bsynth::Cmd::Off) == 1);   // gated
+    }
     std::printf("%d checks: %s\n", checks, fails ? "FAILED" : "ok");
     return fails ? 1 : 0;
 }

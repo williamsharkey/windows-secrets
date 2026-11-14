@@ -15,6 +15,7 @@
 #include "../../basilisk-synth/core/voices.h"
 #include "../../basilisk-synth/core/proto.h"
 #include "../../basilisk-synth/core/state.h"
+#include <sstream>
 #include "V3Voice.h"
 #include "V3Alloc.h"
 
@@ -426,11 +427,17 @@ protected:
             }
             const int vel = (st == 0x90 && e.size >= 3) ? d[2] : 100;
             for (int k = 0; k < n; k++) v3_.follow(c[k], c[k].layer < kMaxLayers && audioFixed_[c[k].layer]);
-            auto sendCmd = [&](Cmd cm) {
+            auto sendCmd = [&](Cmd cm, uint32_t wf = 0, uint32_t wt = 0) {
                 char line[128];
                 if (cm.kind != Cmd::Panic && cm.rec < 16 && (recBusy_.load() >> cm.rec & 1)) return;   // recording there
                 uint64_t when = at;
                 if (cm.kind == Cmd::On) { when += b16v3::delay48(d3Audio_, cm, bpm_); cm.delayMs = 0; }   // O (v3: Wo, Wb, Wt; S strum): a later stamp
+                if (cm.kind == Cmd::On && wt > wf && capWin_) {   // a kit pad's window (its segment, start and end): exact
+                    std::snprintf(line, sizeof line, "on %d %u %u %d 0 %d %u %u", cm.rec, cm.rateHz, cm.vol, cm.pan, cm.layer, wf, wt);
+                    sendLine(line, ++nextId_, when);
+                    if (cm.rateHz) { char cl[32]; std::snprintf(cl, sizeof cl, "cut %d", cm.rec); sendLine(cl, ++nextId_, when + (uint64_t)((double)(wt - wf) * 48000.0 / cm.rateHz)); }
+                    return;
+                }
                 if (cm.kind == Cmd::On && capWin_) {   // DNA v3: the window and the per-note random draws (V3Voice.h)
                     const int L = cm.layer < kMaxLayers ? cm.layer : 0;
                     const b16v3::NoteOut o = b16v3::note(d3Audio_, cm, vel, when, audioFrames_[L], audioRate_[L], v3Counter_, d3Salt_, true, bpm_);
@@ -450,7 +457,12 @@ protected:
             };
             for (int k = 0; k < n; k++) sendCmd(c[k]);
             for (const b16v3::Out &o : vo_) {   // then v3's, in order (a Rate after the On it moves)
-                if (o.kind == b16v3::Out::Cmd) { sendCmd(o.c); continue; }
+                if (o.kind == b16v3::Out::Cmd) { sendCmd(o.c, o.winFrom, o.winTo); continue; }
+                if (o.kind == b16v3::Out::Choke) {   // a kit's cut group: the voice fades out over the pad's fade
+                    char line[48]; std::snprintf(line, sizeof line, "choke %d %d", o.rec, o.fadeMs);
+                    sendLine(line, ++nextId_, o.at);
+                    continue;
+                }
                 if (!capRate_) continue;
                 char line[64];
                 std::snprintf(line, sizeof line, "rate %d %u %d %d", o.rec, o.hz, o.glideMs, o.regate ? 1 : 0);
@@ -522,6 +534,7 @@ private:
     uint32_t keyVerAudio_ = 0, keyVerGuest_ = 0;
     b16v3::KeyParams keyAudio_;
     bool keyDnaChanged_ = true;
+    std::vector<uint32_t> pendSegs_[kMaxLayers]; bool segsDirty_ = false;   // the guest's seg lines (mtx_)
     b16v3::KeyParams keyParams() const
     {
         b16v3::KeyParams k;
@@ -703,6 +716,7 @@ private:
         }
         pendLayers_.clear(); pendLayerIdx_.clear();
         for (int r : pendEnds_) { voices_.end(r); v3_.end(r); }
+        if (segsDirty_) { for (int i = 0; i < kMaxLayers; i++) v3_.setSegments(i, pendSegs_[i]); segsDirty_ = false; }
         if (keyVerAudio_ != keyVer_.load() || keyDnaChanged_) { keyVerAudio_ = keyVer_.load(); keyDnaChanged_ = false; applyKey(); }
         pendEnds_.clear();
         mtx_.unlock();
@@ -1008,6 +1022,19 @@ private:
         if (line.rfind("keyset ", 0) == 0 || line.rfind("keyopt ", 0) == 0) {   // the visitor changed the key in Windows
             b16v3::KeyParams kp = keyParams();                                       // (`key <note> <vel>` is the strip's)
             if (kp.readLine(line.rfind("keyset ", 0) == 0 ? "key " + line.substr(7) : line)) setKeyParams(kp);
+            return;
+        }
+        if (line == "state save" || line == "state load") {   // design/STATE.md: the editor opens the file dialog
+            if (line == "state save") { const String st = getState("state"); std::lock_guard<std::mutex> l(sh_.fileMtx); sh_.stateText = st.buffer(); }
+            sh_.fileReq = line == "state save" ? 1 : 2;
+            if (sh_.editors.load() == 0) sendLine("state error open the plugin's editor to save or load a state", 0, 0);
+            return;
+        }
+        if (line.rfind("seg ", 0) == 0) {   // seg <layer> <f0> <f1> ...: where a layer's segments start (kit pads)
+            std::istringstream in(line.substr(4)); int L = -1; in >> L;
+            std::vector<uint32_t> v; uint32_t f; while (in >> f) v.push_back(f);
+            std::lock_guard<std::mutex> l(mtx_);
+            if (L >= 0 && L < kMaxLayers) { pendSegs_[L] = v; segsDirty_ = true; }
             return;
         }
         if (line.rfind("rsrc ", 0) == 0) { recSelf_ = line.compare(5, 4, "self") == 0; return; }   // the visitor chose the input (RECORDING.md 4.3)

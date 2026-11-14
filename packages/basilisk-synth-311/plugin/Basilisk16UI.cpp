@@ -6,6 +6,7 @@
 #include <vector>
 #include "DistrhoUI.hpp"
 #include "Shared.hpp"
+#include "../../basilisk-synth/core/userstore.h"
 #include "OpenGL.hpp"
 #include <cstring>
 #include <cstdio>
@@ -69,6 +70,33 @@ protected:
         }
         if (!sh_ || !sh_->S) return;
         if (sh_->S->vid_seq != seenSeq_) repaint();
+        if (const int req = sh_->fileReq.exchange(0)) {   // Windows asked for Save state / Load state
+            FileBrowserOptions o;
+            o.saving = req == 1; o.title = req == 1 ? "Save BASILISK 16 state" : "Load BASILISK 16 state";
+            o.defaultName = "BASILISK 16.b16";
+            fileSaving_ = req == 1;
+            openFileBrowser(o);
+        }
+    }
+    void uiFileBrowserSelected(const char *path) override
+    {
+        if (!path || !sh_) return;
+        if (fileSaving_) {
+            std::string text; { std::lock_guard<std::mutex> l(sh_->fileMtx); text = sh_->stateText; }
+            const std::vector<uint8_t> b = bsynth::b16Write(text);
+            FILE *f = std::fopen(path, "wb");
+            if (f && std::fwrite(b.data(), 1, b.size(), f) == b.size()) { std::fclose(f); return; }
+            if (f) std::fclose(f);
+            return;
+        }
+        FILE *f = std::fopen(path, "rb");
+        if (!f) return;
+        std::vector<uint8_t> b; uint8_t buf[65536]; size_t n;
+        while ((n = std::fread(buf, 1, sizeof buf, f)) > 0 && b.size() < (64u << 20)) b.insert(b.end(), buf, buf + n);
+        std::fclose(f);
+        std::string text, err;
+        if (bsynth::b16Read(b.data(), b.size(), text, &err)) setState("state", text.c_str());
+        else if (b.size() > 16 && std::memcmp(b.data(), "BASILISK-SYNTH", 14) == 0) setState("state", std::string(b.begin(), b.end()).c_str());   // a plain state text
     }
 
     void onDisplay() override
@@ -210,6 +238,7 @@ private:
     int scale_ = 1;
     unsigned shotFrames_ = 0;
     bool snapping_ = false;
+    bool fileSaving_ = false;
 
     // a host resize snaps to the nearest whole multiple of 1024x768 (where the host allows it; otherwise the screen
     // is centred at the largest whole scale, on the panel grey)

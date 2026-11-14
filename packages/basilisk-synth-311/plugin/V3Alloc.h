@@ -23,7 +23,9 @@
 namespace b16v3 {
 
 struct Out {
-    enum Kind { Cmd, Rate } kind = Cmd;
+    enum Kind { Cmd, Rate, Choke } kind = Cmd;
+    uint32_t winFrom = 0, winTo = 0;   // Cmd On of a kit pad: its window in the layer's buffer (0 0: the whole)
+    int fadeMs = 0;                    // Choke: `choke <rec> <fade_ms>`
     bsynth::Cmd c{bsynth::Cmd::On, 0, 0, 0, 0};   // Cmd: an On (delayMs = O plus strum), Off or Cut
     int rec = 0; uint32_t hz = 0; int glideMs = 0; bool regate = false;   // Rate
     uint64_t at = 0;                                                       // Rate: its stamp
@@ -56,7 +58,8 @@ public:
             L.plan = bsynth3::MonoPlan(L.n);
             (void)had;
         }
-        for (int r = 0; r < bsynth::kRecorders; r++) if (rec_[r].layer >= 0 && (rec_[r].layer >= n || !lay_[rec_[r].layer].own)) rec_[r].layer = -1;
+        kit_ = d3.g.kit(); pads_ = kit_ ? d3.g.pads : std::vector<bsynth3::Pad>();
+        for (int r = 0; r < bsynth::kRecorders; r++) if (rec_[r].layer >= 0 && (rec_[r].layer >= n || !owns(rec_[r].layer))) rec_[r].layer = -1;
     }
     void setLayerInfo(int i, int first, int count, int rate, int frames)
     {
@@ -66,7 +69,10 @@ public:
     }
     // A layer is ours when it has N, S or D, or when the key maps every note (remap, or a tuning that is not 12-TET:
     // section 18.4); core plays the rest chromatically, as always.
-    bool owns(int i) const { return i >= 0 && i < nlay_ && lay_[i].valid && (lay_[i].own || (keyMap_ && !lay_[i].fixed)); }
+    bool owns(int i) const { return i >= 0 && i < nlay_ && lay_[i].valid && (kit_ || lay_[i].own || (keyMap_ && !lay_[i].fixed)); }
+    bool kit() const { return kit_; }
+    // the guest's `seg <layer> <f0> <f1> ...`: where each segment of a layer's buffer starts (kit pads, section 15.1)
+    void setSegments(int layer, const std::vector<uint32_t> &starts) { if (layer >= 0 && layer < bsynth::kMaxLayers) segs_[layer] = starts; }
     void setBpm(double bpm) { bpm_ = bpm > 1 ? bpm : 120; }
     void setKey(const bsynth3::Key &k) { key_ = k; keyMap_ = k.remap || !k.tuning.twelve(); }
     bool keyMaps() const { return keyMap_; }
@@ -75,6 +81,7 @@ public:
     void noteOn(int note, int vel, uint64_t t, std::vector<Out> &out)
     {
         counter_++;
+        if (kit_) { kitOn(note, vel, t, out); return; }   // a kit: notes sound only through pads
         groupsDone_.clear();
         for (int li = 0; li < nlay_; li++) {
             Lay &L = lay_[li];
@@ -86,6 +93,16 @@ public:
     }
     void noteOff(int note, uint64_t t, std::vector<Out> &out)
     {
+        if (kit_) {   // only a gated pad answers a note-off (a one-shot plays to its end)
+            for (int r = 0; r < bsynth::kRecorders; r++) {
+                Rec &R = rec_[r];
+                if (R.layer < 0 || R.note != note || R.pad < 0 || R.released || !playing(r, t)) continue;
+                if (R.pad >= (int)pads_.size() || !pads_[(size_t)R.pad].gated) continue;
+                if (sustain_) { R.held = true; continue; }
+                R.released = true; pushCmd(out, bsynth::Cmd::Off, r, note);
+            }
+            return;
+        }
         for (int li = 0; li < nlay_; li++) {
             Lay &L = lay_[li];
             if (!owns(li)) continue;
@@ -161,7 +178,7 @@ private:
         std::vector<int> sustained;    // mono: key-ups held back by the pedal
     };
     struct Rec {
-        int layer = -1, note = -1; bool released = false, held = false;
+        int layer = -1, note = -1, pad = -1; bool released = false, held = false;
         uint64_t start = 0, finish = 0;
         double pos = 0; uint64_t posAt = 0; uint32_t hz = 0;   // where it plays (frames) and how fast, for the finish
         double cents = 0, semis = 0;                          // its unison detune and pitch (unbent), for Rate
@@ -179,6 +196,53 @@ private:
     uint32_t counter_ = 0, groupCount_[9] = {0};
     int groupPick_[9] = {0};
     std::vector<int> groupsDone_;
+    bool kit_ = false;
+    std::vector<bsynth3::Pad> pads_;
+    std::vector<uint32_t> segs_[bsynth::kMaxLayers];
+
+    // a kit hit (section 15.3): choke first (its cut group, its mutes, its own last hit with n1), then the pad
+    void kitOn(int note, int vel, uint64_t t, std::vector<Out> &out)
+    {
+        bsynth3::Rng rng(0x6B1Du ^ (counter_ * 2654435761u));
+        const int pi = bsynth3::pickPad(pads_, note, vel, counter_, rng);
+        if (pi < 0) return;
+        const bsynth3::Pad &p = pads_[(size_t)pi];
+        const int li = p.layer - 1;
+        if (li < 0 || li >= nlay_ || !lay_[li].valid || !lay_[li].info.known || lay_[li].info.count <= 0) return;
+        std::vector<int> targets = bsynth3::chokeTargets(pads_, pi);
+        if (p.voices == 1 && std::find(targets.begin(), targets.end(), pi) == targets.end()) targets.push_back(pi);
+        for (int r = 0; r < bsynth::kRecorders; r++) {
+            Rec &R = rec_[r];
+            if (R.layer < 0 || R.pad < 0 || !playing(r, t) || std::find(targets.begin(), targets.end(), R.pad) == targets.end()) continue;
+            const bsynth3::Pad &o = pads_[(size_t)R.pad];
+            Out c; c.kind = Out::Choke; c.rec = r; c.fadeMs = pads_[(size_t)pi].fadeMs > 0 ? pads_[(size_t)pi].fadeMs : o.fadeMs; c.at = t;
+            out.push_back(c);
+            R = Rec{}; live_[r].on = false;
+        }
+        Lay &L = lay_[li];
+        bool taken[bsynth::kRecorders] = {false};
+        const int r = pickRec(li, t, taken, out);
+        if (r < 0) return;
+        const double semis = bsynth3::padCents(p, note) / 100.0 + L.T;
+        const double bend = (p.pitchPct > 0 && !L.fixed) ? bend_ * bendRange_ * p.pitchPct / 100.0 : 0;
+        const uint32_t rate = bsynth::Voices::rateFor(L.info.rate, semis + bend, 0);
+        const bsynth3::Span w = bsynth3::padWindow(p, segs_[li], (uint32_t)L.info.frames, L.info.rate, rng);
+        Rec &R = rec_[r];
+        R = Rec{}; R.layer = li; R.note = note; R.pad = pi; R.start = t; R.semis = semis;
+        const uint64_t begin = t + (uint64_t)std::llround(L.offset * tscale(L) * 48.0);
+        const uint32_t len = (w.to > w.from) ? w.to - w.from : (uint32_t)L.info.frames;
+        R.pos = w.from; R.posAt = begin; R.hz = rate;
+        R.finish = rate ? begin + (uint64_t)((double)len * 48000.0 / rate) : t;
+        Out o;
+        const double g = bsynth3::padGain(p, vel, velocity_) * L.level / 100.0;
+        o.c = bsynth::Cmd{bsynth::Cmd::On, (uint8_t)r, (uint8_t)note, rate, (uint16_t)std::min(65535L, std::lround(65535.0 * g))};
+        o.c.pan = (int8_t)std::max(-100, std::min(100, L.pan + p.pan));
+        o.c.delayMs = (uint16_t)L.offset;
+        o.c.layer = (uint8_t)li;
+        if (w.to > w.from && (w.from > 0 || w.to < (uint32_t)L.info.frames)) { o.winFrom = w.from; o.winTo = w.to; }
+        out.push_back(o);
+        follow(o.c, p.pitchPct == 0 || L.fixed);
+    }
 
     static double ms(uint64_t t) { return t / 48.0; }
     double bendFactor(double norm) const { return std::pow(2.0, norm * bendRange_ / 12.0); }

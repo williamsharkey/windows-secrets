@@ -80,6 +80,16 @@ int envA, envD, envS = 100, envR = 120;
 int selLayer;
 #define NDIG 16
 static HWND hDig[NDIG];   /* the strips' Calculator keys 0-F */
+static HBITMAP digUp[NDIG], digDn[NDIG], digMask, digFace[NDIG];   /* digFace: 0 on the key's white face, 1 elsewhere */
+#define ID_KITBTN 1395
+#define ID_STATESAVE 1396
+#define ID_STATELOAD 1397
+static HWND hKitBtn, hPadCalc, hPads;   /* the kit button; the pad calculator (Calculator) and our pads in it */
+static int padNote[16], nPad, padLit[16], kitOn;
+static void pads_light(int note, int on);
+static void kit_from_dna(void);
+static HWND launch(const char *cmd, int show);
+static void wait_ms(DWORD ms);
 /* the tabs and pages (PRESET-ENGINE-2 section 8) */
 #define NTAB 3
 #define ID_TAB 1390
@@ -472,10 +482,14 @@ static void light_row(int r)
 }
 
 /* one layer's steps, on one recorder; returns its final length in centiseconds */
+/* Kit segments (PRESET-ENGINE-2 15.1): where each Insert File went in a layer's buffer, in centiseconds (the source
+   at 0), scaled if later steps change the length; reported as frames with the layer (`seg <layer> <f0> <f1> ...`) */
+static int segCs[NL][10], nSeg[NL];
 static int run_steps(int r, LAYER *L)
 {
-    int i, len, clip, first_c = -1, needcopy = 0;
+    int i, len, clip, first_c = -1, needcopy = 0, li = (int)(L - lay), lenAfterIns = -1;
     char lbl[32];
+    if (li >= 0 && li < NL) nSeg[li] = 0;
     if (assembled) { sprintf(lbl, "Open %.10s", L->source >= 1000 ? libName[L->source - 1000] : names[L->source]); op_label(r, lbl); }
     bs_arm(rt[r], 0, 0, 0);            /* Sound Recorder plays a dropped file: that play is silent */
     drop_file(r, sound_file(L->source));
@@ -518,12 +532,20 @@ static int run_steps(int r, LAYER *L)
         case 'C': menu(r, SR_COPY); clip = len; break;
         case 'P': menu(r, SR_PASTE); break;
         case 'X': menu(r, SR_PASTEMIX); break;
-        case 'I': HookPending(sound_file(s->sound)); menu(r, SR_INSERT); break;
+        case 'I': {
+            int at = field_cs(r, SR_POS); if (at > len) at = len;
+            HookPending(sound_file(s->sound)); menu(r, SR_INSERT);
+            if (li >= 0 && li < NL && nSeg[li] < 10) { if (!nSeg[li]) segCs[li][nSeg[li]++] = 0; segCs[li][nSeg[li]++] = at; lenAfterIns = -2; }
+            break; }
         case 'M': HookPending(sound_file(s->sound)); menu(r, SR_MIX); break;
         case '@': seek_pct(r, s->arg); break;
         case 't': seek_ms(r, s->arg, len); break;
         }
         len = length_cs(r);
+        if (lenAfterIns == -2) lenAfterIns = len;
+    }
+    if (li >= 0 && li < NL && nSeg[li] > 1 && lenAfterIns > 0 && len != lenAfterIns) {   /* later steps stretched or cut it */
+        int k; for (k = 0; k < nSeg[li]; k++) segCs[li][k] = (int)((long)segCs[li][k] * len / lenAfterIns);
     }
     press(r, SR_REW);
     if (assembled) op_label(r, "Stopped");
@@ -551,13 +573,21 @@ static int poll_host(void);
 static void dig_watch(void);
 static void dig_refresh_all(void);
 static void kb_repaint(void);
+static void paint_now(HWND w) { RedrawWindow(w, NULL, NULL, RDW_UPDATENOW | RDW_ALLCHILDREN); }   /* (see step_fly) */
 static void btn_text(HWND b, const char *t);
 static void page_values_layer(void);
 static void layer_replies(void)
 {
     int i;
     for (i = 0; i < nlay; i++)
-        if (lay[i].count) { layerFrames[i] = (long)layer_len[i] * sound_rate(lay[i].source) / 100; say("layer %d %d %d %d %ld", i, lay[i].first, lay[i].count, sound_rate(lay[i].source), layerFrames[i]); }
+        if (lay[i].count) {
+            layerFrames[i] = (long)layer_len[i] * sound_rate(lay[i].source) / 100; say("layer %d %d %d %d %ld", i, lay[i].first, lay[i].count, sound_rate(lay[i].source), layerFrames[i]);
+            if (nSeg[i] > 1) {   /* the kit's segments of this layer */
+                char t[160]; int k, n = sprintf(t, "seg %d", i);
+                for (k = 0; k < nSeg[i] && n < 140; k++) n += sprintf(t + n, " %ld", (long)segCs[i][k] * sound_rate(lay[i].source) / 100);
+                say("%s", (LPSTR)t);
+            }
+        }
         else say("layer %d %d 0 0 0", i, lay[i].first);
 }
 static void build(const char *dna)
@@ -910,6 +940,7 @@ static void kb_show(const char *what, const char *rest)    /* the host: incoming
     if (!strcmp(what, "show")) {
         int n = 0, v = 0;
         sscanf(rest, "%d %d", &n, &v);
+        pads_light(n, v > 0);
         if (n >= 0 && n < 128) { hostDown[n] = v > 0; key_visual(n); }
     } else if (!strcmp(what, "cc")) {
         int c = 0, v = 0;
@@ -929,9 +960,10 @@ static void keyboard_create(void)   /* at boot, hidden */
     hMod = mk("SCROLLBAR", "", WS_VISIBLE | SBS_VERT, 24, KBY, 17, KWH, 1154);
     SetScrollRange(hMod, SB_CTL, 0, 127, FALSE); SetScrollPos(hMod, SB_CTL, 127, TRUE);
     mk("STATIC", "Bend Mod", WS_VISIBLE, 46, KBY, 88, 14, -1);
-    hHold = mk("BUTTON", "Hold", WS_VISIBLE | BS_AUTOCHECKBOX, 46, KBY + 14, 80, 15, ID_HOLD);
-    hKeysChk = mk("BUTTON", "Keys", WS_VISIBLE | BS_AUTOCHECKBOX, 46, KBY + 29, 80, 15, ID_KEYS);
-    hOctLbl = mk("STATIC", "", WS_VISIBLE, 46, KBY + 44, 88, 14, -1);
+    hHold = mk("BUTTON", "Hold", WS_VISIBLE | BS_AUTOCHECKBOX, 46, KBY + 14, 50, 15, ID_HOLD);
+    hKeysChk = mk("BUTTON", "Keys", WS_VISIBLE | BS_AUTOCHECKBOX, 46, KBY + 29, 50, 15, ID_KEYS);
+    hOctLbl = mk("STATIC", "", WS_VISIBLE, 46, KBY + 44, 50, 14, -1);
+    hKitBtn = mk("BUTTON", "", WS_VISIBLE | BS_OWNERDRAW, 98, KBY + 17, 36, 36, ID_KITBTN);   /* the kit button (15.4b) */
     oct_label();
     mkGroup = -1;                      /* the keys are shown by keyboard_show's sweep */
     for (n = KLO; n <= KHI; n++) {     /* whites, then blacks on top of them */
@@ -979,7 +1011,7 @@ static void keyboard_show(void)     /* part of the assembly: wheels and switches
             if (!dw || !EndDeferWindowPos(dw)) { failed++;   /* (a batch can fail): one by one instead */
                 for (k = n; k < n + 12 && k <= KHI; k++) if (is_black(k) == pass) ShowWindow(hKey[k], SW_SHOWNA);
             }
-            for (k = n; k < n + 12 && k <= KHI; k++) if (is_black(k) == pass) UpdateWindow(hKey[k]);
+            { RECT kr; SetRect(&kr, 0, KBY - 2, 1024, KBY + KWH + 2); RedrawWindow(hMain, &kr, NULL, RDW_UPDATENOW | RDW_ALLCHILDREN); }   /* the batch, whole */
         }
         poll_host();
     }
@@ -1246,6 +1278,7 @@ static void panel_refresh(void)
 {
     int i; char t[48];
     dig_refresh_all();   /* the selected layer's keys show the focus rectangle */
+    kit_from_dna();
     if (curTab > 0) page_values_layer();   /* an open page follows the selected layer and the DNA */
     if (!hSb[0]) return;
     harmony_from_dna();
@@ -1591,9 +1624,15 @@ static void panel_create(int group)
         mk("STATIC", "DNA", WS_VISIBLE, 8, PANEL + 6, 30, 16, -1);
         {   /* the tabs: push buttons left of the Key and Scale boxes (the DNA edit field shrinks for them) */
             int k, tw = 0, x3;
+            int sw = btn_w("Save...") + btn_w("Load...") + 8, w4;
             for (k = 0; k < NTAB; k++) tw += btn_w(tabNames[k]) + 1;
             x3 = 40 + 830 - 236 - tw;
-            hDna = mk("EDIT", dnaText, WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 40, PANEL + 2, x3 - 44, 22, 1099);
+            hDna = mk("EDIT", dnaText, WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 40, PANEL + 2, x3 - 44 - sw, 22, 1099);
+            {   /* Save... / Load...: the whole state as a .b16 file, through the host's file dialog (design/STATE.md) */
+                int xs = x3 - 4 - sw + 4;
+                mkbtn("Save...", xs, PANEL + 1, 24, ID_STATESAVE, &w4); xs += w4 + 1;
+                mkbtn("Load...", xs, PANEL + 1, 24, ID_STATELOAD, &w4);
+            }
             for (k = 0; k < NTAB; k++) { int w2; hTab[k] = mkbtn(tabNames[k], x3, PANEL + 1, 24, ID_TAB + k, &w2); x3 += w2 + 1; }
             SendMessage(hTab[0], BM_SETSTATE, TRUE, 0L);
         }
@@ -1701,7 +1740,7 @@ static void panel_create(int group)
         panel_refresh();
         break;
     }
-    UpdateWindow(hMain);
+    paint_now(hMain);   /* a group appears whole */
 }
 
 
@@ -1946,6 +1985,154 @@ static void page_command(int id)
     }
 }
 
+/* ================================================================ the kit button and the pad calculator (15.4b)
+   The button shows Calculator's own icon (CALC.EXE's icon resource): drawn as it is when the DNA is a kit, else
+   greyed by Windows itself (GrayString, the disabled look) and disabled. A click opens a real Calculator; a window of
+   ours covers its keys with 16 pads in a 4 x 4 grid (MPC order: pad 1 bottom left), each a key as Calculator draws
+   its keys (the strip's captured key face), labelled with the computer key that plays it. Pads play through the host
+   like the strip's keys (`key <note> <vel>`); incoming notes light them (`show`). */
+static HICON hCalcIcon;
+static const char padKeys[16] = {'Z', 'X', 'C', 'V', 'A', 'S', 'D', 'F', 'Q', 'W', 'E', 'R', '1', '2', '3', '4'};
+static int padHeld = -1;
+#define PADW 39
+#define PADH 28
+#define PADGX 8
+#define PADGY 18
+static void kit_from_dna(void)   /* the kit's pads: the k tokens' first notes, in order; kd = kit off */
+{
+    const char *p = strchr(dnaText, ';'); int was = kitOn, off = 0;
+    nPad = 0;
+    if (p) for (p++; *p; p++) {
+        if (*p == 'k' && p[1] == 'd') { off = 1; continue; }
+        if (*p == 'k' && isdigit((unsigned char)p[1]) && nPad < 16) padNote[nPad++] = atoi(p + 1);
+    }
+    kitOn = nPad > 0 && !off;
+    if (hKitBtn && (was != kitOn || !IsWindowEnabled(hKitBtn) != !kitOn)) { EnableWindow(hKitBtn, kitOn); InvalidateRect(hKitBtn, NULL, TRUE); }
+    if (hPads) InvalidateRect(hPads, NULL, FALSE);
+}
+BOOL FAR PASCAL __export grey_icon(HDC dc, LPARAM l, int n) { DrawIcon(dc, 0, 0, hCalcIcon); return TRUE; }
+static void kitbtn_draw(const DRAWITEMSTRUCT FAR *d)
+{
+    RECT r = d->rcItem; HBRUSH face = CreateSolidBrush(GetSysColor(COLOR_BTNFACE));
+    int x = r.left + (r.right - r.left - 32) / 2, y = r.top + (r.bottom - r.top - 32) / 2;
+    BOOL down = (d->itemState & ODS_SELECTED) != 0;
+    FillRect(d->hDC, &r, face); DeleteObject(face);
+    if (!hCalcIcon) hCalcIcon = ExtractIcon(hInst, "C:\\WINDOWS\\CALC.EXE", 0);
+    if ((UINT)hCalcIcon <= 1) return;
+    if (down) { x++; y++; }
+    if (kitOn) DrawIcon(d->hDC, x, y, hCalcIcon);
+    else {   /* Windows' disabled drawing: the icon's shape, greyed */
+        static FARPROC fp;
+        if (!fp) fp = MakeProcInstance((FARPROC)grey_icon, hInst);
+        GrayString(d->hDC, GetStockObject(GRAY_BRUSH), (GRAYSTRINGPROC)fp, 0L, 0, x, y, 32, 32);
+    }
+    if (d->itemState & ODS_FOCUS) { RECT f = r; InflateRect(&f, -2, -2); DrawFocusRect(d->hDC, &f); }
+}
+static void pad_rect(int i, RECT *r)   /* pad i (0-based): column i % 4, row from the bottom i / 4 */
+{
+    int c = i % 4, row = 3 - i / 4;
+    r->left = PADGX + c * (PADW + 8); r->top = PADGY / 2 + row * (PADH + PADGY);
+    r->right = r->left + PADW; r->bottom = r->top + PADH;
+}
+static void pad_paint(HDC dc, int i)
+{
+    RECT r, f; char t[8]; HDC m = CreateCompatibleDC(dc); COLORREF ink = RGB(0, 0, 255);
+    BOOL down = padLit[i] || padHeld == i;
+    HFONT of;
+    pad_rect(i, &r);
+    if (digMask) {   /* Calculator's key: the face and outline of its keys, with this pad's computer key on it */
+        COLORREF tc = SetTextColor(dc, RGB(0, 0, 0)), bc = SetBkColor(dc, RGB(255, 255, 255));
+        SelectObject(m, digMask); BitBlt(dc, r.left, r.top, PADW, PADH, m, 0, 0, SRCAND);
+        SelectObject(m, down ? digDn[0] : digUp[0]); BitBlt(dc, r.left, r.top, PADW, PADH, m, 0, 0, SRCPAINT);
+        SelectObject(m, digUp[0]); ink = GetPixel(m, PADW / 2, 0);
+        SetTextColor(dc, tc); SetBkColor(dc, bc);
+    }
+    SetRect(&f, r.left + 4, r.top + 4, r.right - 4, r.bottom - 4);   /* the 0 goes: the face's own colour over it */
+    { HBRUSH b = CreateSolidBrush(down ? ink : RGB(255, 255, 255)); FillRect(dc, &f, b); DeleteObject(b); }
+    of = SelectObject(dc, GetStockObject(SYSTEM_FONT));
+    SetBkMode(dc, TRANSPARENT); SetTextColor(dc, down ? RGB(255, 255, 255) : ink);
+    t[0] = padKeys[i]; t[1] = 0;
+    DrawText(dc, t, 1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    if (i < nPad) {   /* under the key: its note */
+        static const char *nm[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+        RECT u; SetRect(&u, r.left - 4, r.bottom + 1, r.right + 4, r.bottom + 14);
+        SelectObject(dc, panelFont); SetTextColor(dc, RGB(0, 0, 0));
+        sprintf(t, "%s%d", nm[padNote[i] % 12], padNote[i] / 12 - 1);
+        DrawText(dc, t, -1, &u, DT_CENTER | DT_SINGLELINE);
+    }
+    SelectObject(dc, of);
+    DeleteDC(m);
+}
+static void pad_hit(int i, int on, int vel)
+{
+    if (i < 0 || i >= 16 || i >= nPad) return;
+    if (on) note_on(padNote[i], vel); else say("key %d 0", padNote[i]);
+}
+static void pads_light(int note, int on)
+{
+    int i;
+    if (!hPads) return;
+    for (i = 0; i < nPad; i++) if (padNote[i] == note && padLit[i] != on) {
+        RECT r; padLit[i] = on; pad_rect(i, &r); InvalidateRect(hPads, &r, FALSE);
+    }
+}
+long FAR PASCAL __export PadProc(HWND h, UINT msg, WPARAM w, LPARAM l)
+{
+    switch (msg) {
+    case WM_PAINT: {
+        PAINTSTRUCT ps; HDC dc = BeginPaint(h, &ps); int i;
+        for (i = 0; i < 16; i++) pad_paint(dc, i);
+        EndPaint(h, &ps); return 0; }
+    case WM_ERASEBKGND: { RECT r; HBRUSH b = CreateSolidBrush(GetSysColor(COLOR_WINDOW)); GetClientRect(h, &r); FillRect((HDC)w, &r, b); DeleteObject(b); return 1; }
+    case WM_LBUTTONDOWN: case WM_LBUTTONDBLCLK: {
+        int i; POINT p; p.x = LOWORD(l); p.y = HIWORD(l);
+        SetFocus(h);
+        for (i = 0; i < 16; i++) { RECT r; pad_rect(i, &r); if (PtInRect(&r, p)) {
+            SetCapture(h); padHeld = i; InvalidateRect(h, &r, FALSE);
+            pad_hit(i, 1, 40 + 87 * (p.y - r.top) / PADH);   /* nearer the front of the key, louder (as the strip) */
+            break; } }
+        return 0; }
+    case WM_LBUTTONUP:
+        if (GetCapture() == h) { RECT r; ReleaseCapture(); if (padHeld >= 0) { pad_rect(padHeld, &r); pad_hit(padHeld, 0, 0); padHeld = -1; InvalidateRect(h, &r, FALSE); } }
+        return 0;
+    case WM_KEYDOWN: case WM_KEYUP: {   /* while the pad calculator has the focus, its 16 keys play the pads */
+        int i;
+        if (msg == WM_KEYDOWN && (l & 0x40000000L)) return 0;   /* auto-repeat */
+        for (i = 0; i < 16; i++) if ((WPARAM)padKeys[i] == w) {
+            RECT r; pad_hit(i, msg == WM_KEYDOWN, 100);
+            if (i < nPad) { padLit[i] = msg == WM_KEYDOWN; pad_rect(i, &r); InvalidateRect(h, &r, FALSE); }
+            return 0;
+        }
+        break; }
+    case WM_GETDLGCODE: return DLGC_WANTALLKEYS;
+    case WM_DESTROY: hPads = NULL; hPadCalc = NULL; return 0;
+    }
+    return DefWindowProc(h, msg, w, l);
+}
+static void padcalc_open(void)
+{
+    RECT wr, cr; int cw = PADGX * 2 + 4 * PADW + 3 * 8, ch = 4 * (PADH + PADGY) + 8;   /* (the last row's note names fit) */
+    if (hPadCalc && IsWindow(hPadCalc)) { SetWindowPos(hPadCalc, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); if (hPads) SetFocus(hPads); return; }
+    hPadCalc = launch("CALC.EXE", SW_SHOWNORMAL);
+    if (!hPadCalc) { logf_("ERROR: the pad calculator: CALC.EXE did not start"); say("error padcalc: CALC.EXE did not start"); return; }
+    SendMessage(hPadCalc, WM_COMMAND, 306, 0L);   /* View > Standard: the smaller one */
+    wait_ms(150);                                  /* (it re-lays itself out) */
+    SetWindowLong(hPadCalc, GWL_STYLE, GetWindowLong(hPadCalc, GWL_STYLE) | WS_CLIPCHILDREN);   /* it never paints over the pads */
+    GetWindowRect(hPadCalc, &wr); GetClientRect(hPadCalc, &cr);
+    SetWindowPos(hPadCalc, HWND_TOP, 600, 300, (wr.right - wr.left) - cr.right + cw, (wr.bottom - wr.top) - cr.bottom + ch, 0);
+    {
+        static BOOL reg;
+        if (!reg) { WNDCLASS wc; memset(&wc, 0, sizeof wc); wc.lpfnWndProc = PadProc; wc.hInstance = hInst; wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+                    wc.hbrBackground = NULL; wc.lpszClassName = "BsPads"; RegisterClass(&wc); reg = TRUE; }
+    }
+    hPads = CreateWindow("BsPads", "", WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS, 0, 0, cw, ch, hPadCalc, NULL, hInst, NULL);
+    SetWindowPos(hPads, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+    { HWND c; for (c = GetWindow(hPadCalc, GW_CHILD); c; c = GetWindow(c, GW_HWNDNEXT)) if (c != hPads) ShowWindow(c, SW_HIDE); }   /* its own controls go */
+    InvalidateRect(hPadCalc, NULL, TRUE); paint_now(hPadCalc);
+    SetFocus(hPads);
+    say("padcalc 1");
+}
+
 /* ================================================================ assembly */
 typedef struct { RECT win; RECT part[NPART]; int stage; } FLY;
 static FLY fly[NR];
@@ -1974,18 +2161,21 @@ static void to_child(int r)
     SetParent(rw[r], hMain);
     SetWindowPos(rw[r], HWND_TOP, o.x, o.y, c.right, c.bottom, SWP_NOACTIVATE);
     ShowWindow(rw[r], SW_SHOWNA);
-    UpdateWindow(rw[r]);
+    paint_now(hMain);
 }
 
+/* Every window with something to paint, painted now, children included, before the next step of an animation:
+   UpdateWindow paints a window but not its children (another task's controls paint when that task runs), so a
+   frame could show a row half drawn. */
 static void step_fly(int r, long ms)   /* ms since this recorder's turn began */
 {
     FLY *F = &fly[r];
     int i;
-    if (F->stage == 0 && ms >= 0) { SetMenu(rw[r], NULL); DrawMenuBar(rw[r]); UpdateWindow(rw[r]); F->stage = 1; }
+    if (F->stage == 0 && ms >= 0) { SetMenu(rw[r], NULL); DrawMenuBar(rw[r]); paint_now(rw[r]); F->stage = 1; }
     if (F->stage == 1 && ms >= 90) { to_child(r); F->stage = 2; }
     if (F->stage == 2 && ms >= 180) {
         for (i = 0; i < 5; i++) ShowWindow(GetDlgItem(rw[r], hidden[i]), SW_HIDE);
-        UpdateWindow(rw[r]);
+        paint_now(rw[r]);
         GetWindowRect(rw[r], &F->win); ScreenToClient(hMain, (POINT *)&F->win.left); ScreenToClient(hMain, (POINT *)&F->win.right);
         for (i = 0; i < NPART; i++) {
             HWND c = GetDlgItem(rw[r], strip[i].id);
@@ -2019,8 +2209,7 @@ static void step_fly(int r, long ms)   /* ms since this recorder's turn began */
             for (i = 0; i < NPART; i++)   /* Sound Recorder moves its controls when resized: keep them in line */
                 SetWindowPos(GetDlgItem(rw[r], strip[i].id), NULL, strip[i].x, strip[i].y, strip[i].w, strip[i].h, SWP_NOZORDER | SWP_NOACTIVATE);
         }
-        UpdateWindow(hMain);
-        UpdateWindow(rw[r]);
+        paint_now(hMain);   /* (the recorder is BASILISK 16's child now: this paints it and its controls too) */
         if (f2 >= 1000) F->stage = 4;
     }
 }
@@ -2042,11 +2231,11 @@ static int poll_host(void);
 #define CALCX 272
 #define CALCY 214
 static HWND hCalc;
-static HBITMAP digUp[NDIG], digDn[NDIG], digMask, digFace[NDIG];   /* digFace: 0 on the key's white face, 1 elsewhere */
 static BOOL digShown[NDIG], digHeld[NDIG];
 static const int digKX[NDIG] = {221, 221, 264, 307, 221, 264, 307, 221, 264, 307, 221, 264, 307, 350, 393, 436};   /* Calculator's client */
 static const int digKY[NDIG] = {216, 180, 180, 180, 144, 144, 144, 108, 108, 108, 252, 252, 252, 252, 252, 252};
 static HWND launch(const char *cmd, int show);
+static void wait_ms(DWORD ms);
 
 static void wait_ms(DWORD ms) { DWORD t = timeGetTime(); while (timeGetTime() - t < ms) pump(); }
 static void calc_prepare(void)
@@ -2236,7 +2425,7 @@ static void calc_fly(void)
 static void assemble(void)
 {
     DWORD t0 = timeGetTime(), tStart = t0; long stage[6];
-    long gap = 140, first_extra = 200;   /* the first recorder is shown slowly; the rest follow (140: room for the Calculator keys in 6 s) */
+    long gap = 125, first_extra = 200;   /* the first recorder is shown slowly; the rest follow (140: room for the Calculator keys in 6 s) */
     int r, done = 0;
     RECT full;
     assembling = TRUE;
@@ -2272,9 +2461,9 @@ static void assemble(void)
             long f = ease((long)(timeGetTime() - t1) * 1000 / 300);
             lerp_rect(&q, &a, o.x, o.y, 132, 124, f);
             SetWindowPos(hClock, HWND_TOPMOST, q.left, q.top, q.right, q.bottom, SWP_NOACTIVATE);   /* above every recorder */
-            UpdateWindow(hClock);
-            for (k = 0; k < NR; k++) UpdateWindow(rw[k]);
-            UpdateWindow(hMain);
+            paint_now(hClock);
+            for (k = 0; k < NR; k++) paint_now(rw[k]);
+            paint_now(hMain);
             poll_host();
             if (f >= 1000) break;
         }
@@ -2307,6 +2496,7 @@ static void assemble(void)
             }
             if (fly[r].stage >= 4) done++;
         }
+        for (r = 0; r < NR; r++) if (fly[r].stage < 2 && rw[r]) paint_now(rw[r]);   /* recorders still on the desktop: uncovered parts painted now */
         poll_host();
         pump();
     }
@@ -2332,7 +2522,7 @@ static void assemble(void)
             long f = ease((long)(timeGetTime() - t1) * 1000 / 220);
             lerp_rect(&q, &a2, o.x, o.y, 133, 35, f);
             SetWindowPos(hEnvRec, HWND_TOPMOST, q.left, q.top, q.right, q.bottom, SWP_NOACTIVATE);
-            UpdateWindow(hEnvRec); UpdateWindow(hMain);
+            paint_now(hEnvRec); paint_now(hMain);
             poll_host();
             if (f >= 1000) break;
         }
@@ -2445,7 +2635,7 @@ static void host_line(char *s)
     if (a) *a = 0;
     if (!strcmp(s, "hi")) {
         int v = atoi(rest); v = v >= 3 ? 3 : v >= 2 ? 2 : 1;
-        if (v == 3) say("hi 3 311 %s win,desk,rate,loop,rec", assembled ? "ready" : "wait");   /* the v3 features this guest has */
+        if (v == 3) say("hi 3 311 %s win,desk,rate,loop,rec,kit", assembled ? "ready" : "wait");   /* the v3 features this guest has */
         else say("hi %d 311 %s", v, assembled ? "ready" : "wait");
     }
     else if (!strcmp(s, "desk")) { if (hMain && assembled) ShowWindow(hMain, atoi(rest) ? SW_MINIMIZE : SW_RESTORE); }
@@ -2460,6 +2650,10 @@ static void host_line(char *s)
     }
     else if (!strcmp(s, "off")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, envR); }
     else if (!strcmp(s, "cut")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, 5); }
+    else if (!strcmp(s, "choke")) {   /* choke <rec> <fade_ms>: a kit's cut group stops a hit (PRESET-ENGINE-2 15.3) */
+        int r = atoi(rest), f = strchr(rest, ' ') ? atoi(strchr(rest, ' ') + 1) : 10;
+        if (r >= 0 && r < NR) stop_rec(AR(r), curId, f > 0 ? f : 10);
+    }
     else if (!strcmp(s, "rate")) {   /* rate <rec> <hz> [<glide_ms> [<regate>]] (v3) */
         long f[4] = {-1, 0, 0, 0}; int nf = 0; char *p = rest;
         while (*p && nf < 4) { f[nf++] = atol(p); p = strchr(p, ' '); if (!p) break; p++; }
@@ -2642,7 +2836,10 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
         break; }
     case WM_MOUSEMOVE: if (GetCapture() == h) { kb_mouse(h, l, 0); return 0; } break;
     case WM_LBUTTONUP: if (GetCapture() == h) { ReleaseCapture(); kb_mouse(h, l, 1); return 0; } break;
-    case WM_DRAWITEM: if (w >= ID_DIG && w < ID_DIG + NDIG) { dig_drawitem((const DRAWITEMSTRUCT FAR *)l); return TRUE; } break;
+    case WM_DRAWITEM:
+        if (w >= ID_DIG && w < ID_DIG + NDIG) { dig_drawitem((const DRAWITEMSTRUCT FAR *)l); return TRUE; }
+        if (w == ID_KITBTN) { kitbtn_draw((const DRAWITEMSTRUCT FAR *)l); return TRUE; }
+        break;
     case WM_HSCROLL: if (!page_scroll((HWND)HIWORD(l), w, LOWORD(l))) panel_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
     case WM_VSCROLL: kb_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
     case WM_KEYDOWN: case WM_KEYUP: if (computer_key(w, l, m == WM_KEYDOWN)) return 0; break;
@@ -2657,6 +2854,8 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
     case WM_COMMAND: {
         int r;
         if (w >= 1100 && w < 1200) { panel_command(w, HIWORD(l)); return 0; }
+        if (w == ID_KITBTN) { if (HIWORD(l) == BN_CLICKED && kitOn) padcalc_open(); return 0; }
+        if (w == ID_STATESAVE || w == ID_STATELOAD) { if (HIWORD(l) == BN_CLICKED) say(w == ID_STATESAVE ? "state save" : "state load"); return 0; }
         if (w >= ID_TAB && w < ID_PG + 64) { if (HIWORD(l) == BN_CLICKED) page_command(w); return 0; }
         /* a reparented recorder's buttons report to us: hand the click to its recorder */
         for (r = 0; r < NALL; r++) if (rw[r] && (HWND)LOWORD(l) && GetParent((HWND)LOWORD(l)) == rw[r]) {

@@ -17,6 +17,7 @@
 #include "../../basilisk-synth/core/dna.h"
 #include "../../basilisk-synth/core/voices.h"
 #include "../../basilisk-synth/core/proto.h"
+#include <sstream>
 #include "../plugin/V3Voice.h"
 #include "../plugin/V3Alloc.h"
 
@@ -292,6 +293,11 @@ int main(int argc, char **argv)
         for (auto &l : ls) {
             if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str());   // Windows' replies, for debugging
             proto::Reply r = proto::parse(l);
+            if (l.rfind("seg ", 0) == 0) {   // the kit's segments, as the plugin
+                std::istringstream in(l.substr(4)); int L = -1; in >> L; std::vector<uint32_t> v; uint32_t f;
+                while (in >> f) v.push_back(f);
+                v3.setSegments(L, v);
+            }
             if (r.kind == proto::Reply::Layer) {
                 v3.setLayerInfo(r.layer, r.first, r.count, r.rate, r.frames);
                 voices.setLayerInfo(r.layer, r.first, v3.owns(r.layer) ? 0 : r.count, r.rate, r.frames);
@@ -331,9 +337,15 @@ int main(int argc, char **argv)
             else if (st == 0xB0 && (m.a == 120 || m.a == 123)) { n = voices.allOff(c); v3.allOff(); }
             else if (st == 0xE0) { bend = (((m.b << 7) | m.a) - 8192) / 8192.0; voices.bend(bend); if (rateCap) v3.bend(bend, at, vo); }
             for (int k = 0; k < n; k++) v3.follow(c[k], c[k].layer < dna.layers.size() && dna.layers[c[k].layer].fixed);
-            auto sendCmd = [&](Cmd cm) {
+            auto sendCmd = [&](Cmd cm, uint32_t wf = 0, uint32_t wt = 0) {
                 uint64_t when = at;
                 if (cm.kind == Cmd::On) { when += b16v3::delay48(d3, cm, bpm); cm.delayMs = 0; }   // O (v3: Wo, Wb, Wt; S strum), as the plugin
+                if (cm.kind == Cmd::On && wt > wf && win) {   // a kit pad's window, as the plugin
+                    char line[96]; std::snprintf(line, sizeof line, "on %d %u %u %d 0 %d %u %u", cm.rec, cm.rateHz, cm.vol, cm.pan, cm.layer, wf, wt);
+                    M.send(line, ++M.nextId, when);
+                    if (cm.rateHz) { char cl[32]; std::snprintf(cl, sizeof cl, "cut %d", cm.rec); M.send(cl, ++M.nextId, when + (uint64_t)((double)(wt - wf) * 48000.0 / cm.rateHz)); }
+                    return;
+                }
                 if (cm.kind == Cmd::On && win) {   // DNA v3 window and random draws, as the plugin (V3Voice.h)
                     const int L = cm.layer < kMaxLayers ? cm.layer : 0;
                     const b16v3::NoteOut o = b16v3::note(d3, cm, m.b, when, lframes[L], lrate[L], v3counter, d3salt, true, bpm);
@@ -347,7 +359,8 @@ int main(int argc, char **argv)
             };
             for (int k = 0; k < n; k++) sendCmd(c[k]);
             for (const b16v3::Out &o : vo) {
-                if (o.kind == b16v3::Out::Cmd) { sendCmd(o.c); continue; }
+                if (o.kind == b16v3::Out::Cmd) { sendCmd(o.c, o.winFrom, o.winTo); continue; }
+                if (o.kind == b16v3::Out::Choke) { char line[48]; std::snprintf(line, sizeof line, "choke %d %d", o.rec, o.fadeMs); M.send(line, ++M.nextId, o.at); continue; }
                 if (!rateCap) continue;
                 char line[64]; std::snprintf(line, sizeof line, "rate %d %u %d %d", o.rec, o.hz, o.glideMs, o.regate ? 1 : 0);
                 M.send(line, ++M.nextId, o.at);
