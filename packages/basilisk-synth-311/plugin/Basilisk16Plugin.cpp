@@ -18,6 +18,7 @@
 #include <sstream>
 #include "V3Voice.h"
 #include "V3Alloc.h"
+#include "V3Host.h"
 
 #include <atomic>
 #include <chrono>
@@ -153,7 +154,6 @@ public:
         : Plugin(pCount, kPresetCount, 1)
     {
         created_ = nowSec();
-        vo_.reserve(256);   // the audio thread never allocates for an ordinary chord
         setKeyParams(b16v3::KeyParams());
         testLive_ = std::getenv("BASILISK16_TEST_LIVE") != nullptr;   // test: take the live path in an offline host
         if (const char *d = std::getenv("BASILISK16_TEST_DUMP_DAC")) if (*d && !isDummyInstance()) dump_ = std::fopen(d, "wb");
@@ -412,64 +412,18 @@ protected:
             if (e.size < 2) continue;
             const uint64_t at = (uint64_t)std::floor(anchor_ + (double)(hcount_ + e.frame) * ratio) + kLatency48;
             const uint8_t st = d[0] & 0xF0;
-            Cmd c[kMaxCmds]; int n = 0;
-            vo_.clear();   // DNA v3: the layers with N, S or D (V3Alloc.h), and live bend
-            v3_.setBpm(bpm_);
-            if (st == 0x90 && e.size >= 3 && d[2] > 0) { n = voices_.noteOn(d[1], d[2], at, c); v3_.noteOn(d[1], d[2], at, vo_); if (!fromWindows) show(0, d[1], d[2]); }
-            else if (st == 0x80 || (st == 0x90 && e.size >= 3)) { n = voices_.noteOff(d[1], at, c); v3_.noteOff(d[1], at, vo_); if (!fromWindows) show(0, d[1], 0); }
-            else if (st == 0xB0 && e.size >= 3) {
-                if (d[1] == 64) { n = voices_.sustain(d[2] >= 64, at, c); v3_.sustain(d[2] >= 64, at, vo_); }
-                else if (d[1] == 120 || d[1] == 123) { n = voices_.allOff(c); v3_.allOff(); }
-                else if (d[1] == 1) { cc1_ = d[2]; if (!fromWindows) show(1, 1, d[2]); }   // the mod wheel: adds to Macro 1
-            } else if (st == 0xE0 && e.size >= 3) {
-                const int v = (d[1] | (d[2] << 7)) - 8192;
-                voices_.bend(v / 8192.0);
-                if (capRate_) v3_.bend(v / 8192.0, at, vo_);   // what already sounds follows the wheel
-                if (!fromWindows) show(2, 0, (uint32_t)(v + 8192));
-            }
-            const int vel = (st == 0x90 && e.size >= 3) ? d[2] : 100;
-            for (int k = 0; k < n; k++) v3_.follow(c[k], c[k].layer < kMaxLayers && audioFixed_[c[k].layer]);
-            auto sendCmd = [&](Cmd cm, uint32_t wf = 0, uint32_t wt = 0) {
-                char line[128];
-                if (cm.kind != Cmd::Panic && cm.rec < 16 && (recBusy_.load() >> cm.rec & 1)) return;   // recording there
-                uint64_t when = at;
-                if (cm.kind == Cmd::On) { when += b16v3::delay48(d3Audio_, cm, bpm_); cm.delayMs = 0; }   // O (v3: Wo, Wb, Wt; S strum): a later stamp
-                if (cm.kind == Cmd::On && wt > wf && capWin_) {   // a kit pad's window (its segment, start and end): exact
-                    std::snprintf(line, sizeof line, "on %d %u %u %d 0 %d %u %u", cm.rec, cm.rateHz, cm.vol, cm.pan, cm.layer, wf, wt);
-                    sendLine(line, ++nextId_, when);
-                    if (cm.rateHz) { char cl[32]; std::snprintf(cl, sizeof cl, "cut %d", cm.rec); sendLine(cl, ++nextId_, when + (uint64_t)((double)(wt - wf) * 48000.0 / cm.rateHz)); }
-                    return;
-                }
-                if (cm.kind == Cmd::On && capWin_) {   // DNA v3: the window and the per-note random draws (V3Voice.h)
-                    const int L = cm.layer < kMaxLayers ? cm.layer : 0;
-                    const b16v3::NoteOut o = b16v3::note(d3Audio_, cm, vel, when, audioFrames_[L], audioRate_[L], v3Counter_, d3Salt_, true, bpm_);
-                    std::snprintf(line, sizeof line, "%s", o.on);
-                    when = o.when;
-                    sendLine(line, ++nextId_, when);
-                    if (o.cut) { char cl[32]; std::snprintf(cl, sizeof cl, "cut %d", cm.rec); sendLine(cl, ++nextId_, o.cutAt); }
-                    if (o.gate && (!o.cut || o.gateAt < o.cutAt)) { char cl[32]; std::snprintf(cl, sizeof cl, "off %d", cm.rec); sendLine(cl, ++nextId_, o.gateAt); }
-                    if (trace_) std::fprintf(trace_, "%s id %u at %llu%s\n", line, nextId_, (unsigned long long)when, o.cut ? " (window cut stamped)" : "");
-                    return;
-                }
-                proto::cmd(line, sizeof line, cm);
-                line[std::strlen(line) - 1] = 0;
+            if (st == 0x90 && e.size >= 3 && d[2] > 0) { if (!fromWindows) show(0, d[1], d[2]); }
+            else if (st == 0x80 || (st == 0x90 && e.size >= 3)) { if (!fromWindows) show(0, d[1], 0); }
+            else if (st == 0xB0 && e.size >= 3 && d[1] == 1) { cc1_ = d[2]; if (!fromWindows) show(1, 1, d[2]); }   // the mod wheel: adds to Macro 1
+            else if (st == 0xE0 && e.size >= 3 && !fromWindows) show(2, 0, (uint32_t)((d[1] | (d[2] << 7))));
+            if (st == 0xB0 && (e.size < 3 || d[1] == 1)) continue;
+            // the notes: V3Host.h, the same code as render311 and the web edition
+            host_.bpm = bpm_; host_.capWin = capWin_; host_.capRate = capRate_; host_.recBusy = recBusy_.load();
+            host_.midi(d[0], d[1], e.size >= 3 ? d[2] : 0, at, [&](const char *line, uint64_t when) {
                 sendLine(line, ++nextId_, when);
                 if (trace_) std::fprintf(trace_, "%s id %u at %llu dacPos %.0f dac_w %llu late %u/%u max %u\n", line, nextId_,
                                          (unsigned long long)when, dacPos_, (unsigned long long)S->dac_w, S->sched_late, S->sched_ontime, S->sched_latemax);
-            };
-            for (int k = 0; k < n; k++) sendCmd(c[k]);
-            for (const b16v3::Out &o : vo_) {   // then v3's, in order (a Rate after the On it moves)
-                if (o.kind == b16v3::Out::Cmd) { sendCmd(o.c, o.winFrom, o.winTo); continue; }
-                if (o.kind == b16v3::Out::Choke) {   // a kit's cut group: the voice fades out over the pad's fade
-                    char line[48]; std::snprintf(line, sizeof line, "choke %d %d", o.rec, o.fadeMs);
-                    sendLine(line, ++nextId_, o.at);
-                    continue;
-                }
-                if (!capRate_) continue;
-                char line[64];
-                std::snprintf(line, sizeof line, "rate %d %u %d %d", o.rec, o.hz, o.glideMs, o.regate ? 1 : 0);
-                sendLine(line, ++nextId_, o.at);
-            }
+            });
         }
         // wait for the machine if it is behind (offline rendering runs faster than real time)
         const double need = dacPos_ + frames * ratio + 3;
@@ -559,14 +513,10 @@ private:
     void applyKey()
     {
         keyAudio_ = keyParams();
-        v3_.setKey(b16v3::effectiveKey(keyAudio_, d3Audio_));
-        for (int i = 0; i < kMaxLayers; i++)
-            if (layerCache_[i].known) voices_.setLayerInfo(i, layerCache_[i].first, v3_.owns(i) ? 0 : layerCache_[i].count, layerCache_[i].rate, layerCache_[i].frames);
+        host_.setKey(keyAudio_);
     }
     std::atomic<uint32_t> recBusy_{0};   // recorders that record now: notes leave them alone (a Stop would end the take)
-    b16v3::V3Alloc v3_;                  // DNA v3 voice modes, stacking, degree chords, live bend (audio thread)
-    std::vector<b16v3::Out> vo_;
-    bool audioFixed_[kMaxLayers] = {};   // the ADC records the synth's own output (else the sidechain)
+    b16v3::NoteHost host_;               // the notes (V3Host.h: core's voices, V3Alloc, the v3 draws), audio thread   // the ADC records the synth's own output (else the sidechain)
     uint64_t inNext_ = 0;                // the next DAC sample of input to write
     double lastParamEdit_ = 0;         // a DNA from parameters (automation) goes to Windows 300 ms after the last change
     // the keyboard strip: Windows' keys to the audio thread, and incoming MIDI to Windows' keys (single producer and
@@ -607,10 +557,8 @@ private:
     FILE *trace_ = nullptr;    // test: BASILISK16_TRACE=dir writes each note's stamps (one file per instance)     // test: BASILISK16_TEST_DUMP_DAC=file writes the card's DAC samples behind each output sample
 
     // audio thread only
-    Voices voices_{48000};
     bsynth3::Dna3 d3Audio_;
-    uint32_t d3Salt_ = 0, v3Counter_ = 0;
-    uint32_t audioFrames_[kMaxLayers] = {}; int audioRate_[kMaxLayers] = {};
+    uint32_t d3Salt_ = 0;
     double dacPos_ = -1, anchor_ = -1, lastRatio_ = 0;
     uint64_t hcount_ = 0;
     bool wasPlaying_ = false;
@@ -699,29 +647,20 @@ private:
     {
         if (!mtx_.try_lock()) return;
         if (dnaPending_) {
-            Cmd c[1];
-            voices_.setDna(dnaForAudio_, c);
             d3Audio_ = d3ForAudio_; d3Salt_ = d3SaltPending_;
-            v3_.setDna(dnaForAudio_, d3Audio_);
+            host_.adopt(dnaForAudio_, d3Audio_, d3Salt_);
             keyDnaChanged_ = true;   // (the DNA's q may be the key)
-            for (int i = 0; i < kMaxLayers; i++) audioFixed_[i] = i < (int)dnaForAudio_.layers.size() && dnaForAudio_.layers[i].fixed;
             for (int i = 0; i < kMaxLayers; i++)
-                if (layerCache_[i].known) {
-                    v3_.setLayerInfo(i, layerCache_[i].first, layerCache_[i].count, layerCache_[i].rate, layerCache_[i].frames);
-                    voices_.setLayerInfo(i, layerCache_[i].first, v3_.owns(i) ? 0 : layerCache_[i].count, layerCache_[i].rate, layerCache_[i].frames);
-                    audioFrames_[i] = (uint32_t)layerCache_[i].frames; audioRate_[i] = layerCache_[i].rate;
-                }
+                if (layerCache_[i].known) host_.layerInfo(i, layerCache_[i].first, layerCache_[i].count, layerCache_[i].rate, layerCache_[i].frames);
             gain_ = (float)std::pow(10.0, dnaForAudio_.g.gainDb / 20.0);
             dnaPending_ = false;
         }
         for (size_t i = 0; i < pendLayers_.size(); i++) {
-            v3_.setLayerInfo(pendLayerIdx_[i], pendLayers_[i].first, pendLayers_[i].count, pendLayers_[i].rate, pendLayers_[i].frames);
-            voices_.setLayerInfo(pendLayerIdx_[i], pendLayers_[i].first, v3_.owns(pendLayerIdx_[i]) ? 0 : pendLayers_[i].count, pendLayers_[i].rate, pendLayers_[i].frames);
-            if (pendLayerIdx_[i] >= 0 && pendLayerIdx_[i] < kMaxLayers) { audioFrames_[pendLayerIdx_[i]] = (uint32_t)pendLayers_[i].frames; audioRate_[pendLayerIdx_[i]] = pendLayers_[i].rate; }
+            host_.layerInfo(pendLayerIdx_[i], pendLayers_[i].first, pendLayers_[i].count, pendLayers_[i].rate, pendLayers_[i].frames);
         }
         pendLayers_.clear(); pendLayerIdx_.clear();
-        for (int r : pendEnds_) { voices_.end(r); v3_.end(r); }
-        if (segsDirty_) { for (int i = 0; i < kMaxLayers; i++) v3_.setSegments(i, pendSegs_[i]); segsDirty_ = false; }
+        for (int r : pendEnds_) host_.end(r);
+        if (segsDirty_) { for (int i = 0; i < kMaxLayers; i++) host_.segments(i, pendSegs_[i]); segsDirty_ = false; }
         if (keyVerAudio_ != keyVer_.load() || keyDnaChanged_) { keyVerAudio_ = keyVer_.load(); keyDnaChanged_ = false; applyKey(); }
         pendEnds_.clear();
         mtx_.unlock();

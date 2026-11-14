@@ -20,6 +20,7 @@
 #include <sstream>
 #include "../plugin/V3Voice.h"
 #include "../plugin/V3Alloc.h"
+#include "../plugin/V3Host.h"
 
 #include <algorithm>
 #include <chrono>
@@ -265,19 +266,17 @@ int main(int argc, char **argv)
     const Dna dna = applyMacros(written);   // what sounds (as the plugin does it)
     const bsynth3::Dna3 d3 = bsynth3::applyMacros3(bsynth3::parse3(written.canonical), written.g.macro);   // DNA v3
     const uint32_t d3salt = b16v3::salt(written.canonical);
-    uint32_t v3counter = 0, lframes[kMaxLayers] = {}; int lrate[kMaxLayers] = {};
     bool win = false, loopCap = false;
-    Voices voices(48000); Cmd c[kMaxCmds];
-    voices.setDna(dna, c);
-    b16v3::V3Alloc v3; v3.setDna(dna, d3); v3.setBpm(bpm);   // the layers with N, S or D, and live bend (as the plugin)
+    b16v3::NoteHost host;   // the notes, exactly as the plugin plays them (V3Host.h)
+    host.bpm = bpm;
+    host.adopt(dna, d3, d3salt);
     {   // the key and scale parameters (PRESET-ENGINE-2 18.2), as the plugin's
         b16v3::KeyParams kp;
         auto num = [&](const char *k, int &v) { if (a.count(k)) v = std::atoi(a[k].c_str()); };
         num("--key", kp.root); num("--scale", kp.scale); num("--use-preset-scale", kp.usePreset); num("--snap", kp.snap);
         num("--remap", kp.remap); num("--anchor", kp.anchor);
-        v3.setKey(b16v3::effectiveKey(kp, d3));
+        host.setKey(kp);
     }
-    std::vector<b16v3::Out> vo;
     bool rateCap = false;
     M.send("hi 3");   // DNA v3: the guest answers with its caps
     for (bool hi = false; !hi && S->state != BS_FAILED;) {   // Windows answers before it gets the sound (as the plugin does)
@@ -296,12 +295,10 @@ int main(int argc, char **argv)
             if (l.rfind("seg ", 0) == 0) {   // the kit's segments, as the plugin
                 std::istringstream in(l.substr(4)); int L = -1; in >> L; std::vector<uint32_t> v; uint32_t f;
                 while (in >> f) v.push_back(f);
-                v3.setSegments(L, v);
+                host.segments(L, v);
             }
             if (r.kind == proto::Reply::Layer) {
-                v3.setLayerInfo(r.layer, r.first, r.count, r.rate, r.frames);
-                voices.setLayerInfo(r.layer, r.first, v3.owns(r.layer) ? 0 : r.count, r.rate, r.frames);
-                if (r.layer >= 0 && r.layer < kMaxLayers) { lframes[r.layer] = (uint32_t)r.frames; lrate[r.layer] = r.rate; }
+                host.layerInfo(r.layer, r.first, r.count, r.rate, r.frames);
             }
             if (r.kind == proto::Reply::Built) built = true;
         }
@@ -322,53 +319,17 @@ int main(int argc, char **argv)
     const uint64_t total = (uint64_t)(endSec * 48000) + kLat;   // the first kLat samples are dropped at the end
     std::vector<float> out; out.reserve(total * 2);
     size_t ei = 0;
-    double bend = 0;
     for (uint64_t h = 0; h < total; h += kBlock) {
         const uint64_t blockEnd = h + kBlock;
         while (ei < ev.size() && (uint64_t)(ev[ei].t * 48000) < blockEnd) {
             const MidiEv &m = ev[ei++];
             const uint64_t at = anchor + (uint64_t)(m.t * 48000) + kLat;
-            const uint8_t st = m.st & 0xF0;
-            int n = 0;
-            vo.clear();
-            if (st == 0x90 && m.b > 0) { n = voices.noteOn(m.a, m.b, at, c); v3.noteOn(m.a, m.b, at, vo); }
-            else if (st == 0x80 || st == 0x90) { n = voices.noteOff(m.a, at, c); v3.noteOff(m.a, at, vo); }
-            else if (st == 0xB0 && m.a == 64) { n = voices.sustain(m.b >= 64, at, c); v3.sustain(m.b >= 64, at, vo); }
-            else if (st == 0xB0 && (m.a == 120 || m.a == 123)) { n = voices.allOff(c); v3.allOff(); }
-            else if (st == 0xE0) { bend = (((m.b << 7) | m.a) - 8192) / 8192.0; voices.bend(bend); if (rateCap) v3.bend(bend, at, vo); }
-            for (int k = 0; k < n; k++) v3.follow(c[k], c[k].layer < dna.layers.size() && dna.layers[c[k].layer].fixed);
-            auto sendCmd = [&](Cmd cm, uint32_t wf = 0, uint32_t wt = 0) {
-                uint64_t when = at;
-                if (cm.kind == Cmd::On) { when += b16v3::delay48(d3, cm, bpm); cm.delayMs = 0; }   // O (v3: Wo, Wb, Wt; S strum), as the plugin
-                if (cm.kind == Cmd::On && wt > wf && win) {   // a kit pad's window, as the plugin
-                    char line[96]; std::snprintf(line, sizeof line, "on %d %u %u %d 0 %d %u %u", cm.rec, cm.rateHz, cm.vol, cm.pan, cm.layer, wf, wt);
-                    M.send(line, ++M.nextId, when);
-                    if (cm.rateHz) { char cl[32]; std::snprintf(cl, sizeof cl, "cut %d", cm.rec); M.send(cl, ++M.nextId, when + (uint64_t)((double)(wt - wf) * 48000.0 / cm.rateHz)); }
-                    return;
-                }
-                if (cm.kind == Cmd::On && win) {   // DNA v3 window and random draws, as the plugin (V3Voice.h)
-                    const int L = cm.layer < kMaxLayers ? cm.layer : 0;
-                    const b16v3::NoteOut o = b16v3::note(d3, cm, m.b, when, lframes[L], lrate[L], v3counter, d3salt, true, bpm);
-                    M.send(o.on, ++M.nextId, o.when);
-                    if (o.cut) { char cl[32]; std::snprintf(cl, sizeof cl, "cut %d", cm.rec); M.send(cl, ++M.nextId, o.cutAt); }
-                    if (o.gate && (!o.cut || o.gateAt < o.cutAt)) { char cl[32]; std::snprintf(cl, sizeof cl, "off %d", cm.rec); M.send(cl, ++M.nextId, o.gateAt); }
-                    return;
-                }
-                char line[64]; proto::cmd(line, sizeof line, cm); line[std::strlen(line) - 1] = 0;
-                M.send(line, ++M.nextId, when);
-            };
-            for (int k = 0; k < n; k++) sendCmd(c[k]);
-            for (const b16v3::Out &o : vo) {
-                if (o.kind == b16v3::Out::Cmd) { sendCmd(o.c, o.winFrom, o.winTo); continue; }
-                if (o.kind == b16v3::Out::Choke) { char line[48]; std::snprintf(line, sizeof line, "choke %d %d", o.rec, o.fadeMs); M.send(line, ++M.nextId, o.at); continue; }
-                if (!rateCap) continue;
-                char line[64]; std::snprintf(line, sizeof line, "rate %d %u %d %d", o.rec, o.hz, o.glideMs, o.regate ? 1 : 0);
-                M.send(line, ++M.nextId, o.at);
-            }
+            host.capWin = win; host.capRate = rateCap;
+            host.midi(m.st, m.a, m.b, at, [&](const char *line, uint64_t when) { M.send(line, ++M.nextId, when); });
         }
         // Windows' `end` replies free recorders, as in the plugin
         std::vector<std::string> ls; M.lines(ls);
-        for (auto &l : ls) { proto::Reply r = proto::parse(l); if (r.kind == proto::Reply::End) { voices.end(r.rec); v3.end(r.rec); } }
+        for (auto &l : ls) { proto::Reply r = proto::parse(l); if (r.kind == proto::Reply::End) host.end(r.rec); }
         // the DAC for this block, exactly as the plugin reads it (host time h = DAC anchor + h); a note stamped at
         // t + kLat comes out kLat later, which is taken off at the end
         const uint64_t need = anchor + blockEnd;
