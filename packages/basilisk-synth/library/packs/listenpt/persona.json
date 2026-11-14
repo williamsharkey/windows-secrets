@@ -1,0 +1,292 @@
+{
+  "id": "listenpt",
+  "category": "Listening Post (library lane, round 2)",
+  "pack": {
+    "plan_id": "listening-post",
+    "library_id": "listening-post",
+    "title": "Listening Post",
+    "subtitle": "Sounds from the deep ocean",
+    "edition": "Data Volume 7",
+    "version": "7.0",
+    "date": "1997-09-08",
+    "label": "LISTENPOST",
+    "label_long": "Listening Post Vol 7",
+    "sources": {
+      "plan": "listening-post"
+    }
+  },
+  "maker": {
+    "name": "Fathom Line Scientific Media",
+    "short": "Fathom Line",
+    "kind": "ocean-data CD-ROM reseller",
+    "year": 1997,
+    "place": "Newport, Oregon, USA",
+    "contact": [
+      "Fathom Line Scientific Media",
+      "PO Box 2201",
+      "Newport, OR 97399",
+      "Voice (541) 555-0129  Fax (541) 555-0130",
+      "Orders by mail or fax only"
+    ],
+    "people": [
+      [
+        "R. Okafor",
+        "data curation"
+      ],
+      [
+        "J. Lindgren",
+        "sound design"
+      ]
+    ],
+    "voice": "sober, technical, a little awed; units and coordinates; 'recordings', 'sources', 'events'"
+  },
+  "look": {
+    "palette": [
+      "#02060c",
+      "#06182c",
+      "#0a2a4a",
+      "#1e5a7a",
+      "#3ac0a0",
+      "#9ae8d0",
+      "#e8f4f0",
+      "#ffb000"
+    ],
+    "dither": "bayer4",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#9ae8d0",
+    "paper": "#02060c",
+    "accent": "#3ac0a0",
+    "accent2": "#ffb000",
+    "fonts": {
+      "display": "lucon.ttf",
+      "body": "lucon.ttf",
+      "mono": "lucon.ttf",
+      "black": "arialbd.ttf"
+    },
+    "art": {
+      "bg": "aero/ocean-life-hihwnms-humpback-whale-breaching-s186.jpg",
+      "back": "aero/ice-glacier-features-iceberg-mcbride-s4101.jpg",
+      "mark": "global/marks/mk-dish-dish.png",
+      "object": "books/neets-frequency-spectrum-amplitude-vs-frequency-lines.png"
+    },
+    "title": {
+      "style": "flat",
+      "colors": [
+        "#9ae8d0"
+      ],
+      "font": "black",
+      "spacing": 4,
+      "text": "LISTENING POST"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#02060c"
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0,
+          0.24,
+          1,
+          0.74
+        ],
+        "tint": [
+          "#02060c",
+          "#3ac0a0"
+        ]
+      },
+      {
+        "t": "pattern",
+        "kind": "scanlines",
+        "box": [
+          0,
+          0.24,
+          1,
+          0.74
+        ],
+        "cols": [
+          "#02060c"
+        ]
+      },
+      {
+        "t": "text",
+        "s": "FATHOM LINE SCIENTIFIC MEDIA  //  DATA VOL. 7",
+        "font": "mono",
+        "size": 0.026,
+        "pos": [
+          0.05,
+          0.05
+        ],
+        "c": "#3ac0a0",
+        "maxw": 0.9
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.15
+        ],
+        "size": 0.07,
+        "maxw": 0.9
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "mono",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.21
+        ],
+        "anchor": "mm",
+        "c": "#ffb000"
+      },
+      {
+        "t": "lines",
+        "items": [
+          "SRC  hydrophone arrays, Pacific",
+          "EVT  upsweep * ice quakes * whale calls",
+          "EVT  ship traffic * deep trench",
+          "OUT  {count} presets: drone, texture, deep FX"
+        ],
+        "font": "mono",
+        "size": 0.027,
+        "pos": [
+          0.06,
+          0.78
+        ],
+        "c": "#9ae8d0",
+        "step": 1.35
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.955,
+          1,
+          1
+        ],
+        "c": "#3ac0a0"
+      }
+    ],
+    "spine_bg": "#06182c",
+    "spine_ink": "#9ae8d0",
+    "spine_title": "#ffb000",
+    "back_bg": "#02060c",
+    "back_ink": "#9ae8d0",
+    "back_head": "#ffb000",
+    "back_tint": [
+      "#02060c",
+      "#3ac0a0"
+    ],
+    "bullet": "> ",
+    "compat": {
+      "pos": [
+        0.97,
+        0.72
+      ],
+      "anchor": "rb",
+      "size": 0.11
+    },
+    "render_post": null
+  },
+  "box": {
+    "type": "dvd",
+    "price": [
+      "$59.00",
+      "list"
+    ],
+    "sticker": {
+      "bg": "#ffb000",
+      "ink": "#02060c",
+      "pos": [
+        0.8,
+        0.27
+      ]
+    },
+    "burst": null,
+    "stamp": null,
+    "features": [
+      "{count} presets from hydrophone recordings",
+      "Drones, textures and deep FX",
+      "Event notes and coordinates in the manual"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "full",
+    "ring": "FATHOM LINE SCIENTIFIC MEDIA * LISTENING POST * DATA VOLUME 7 * NEWPORT OREGON *",
+    "ring_ink": "#9ae8d0"
+  },
+  "icon": {
+    "motif": "scope",
+    "colors": [
+      "#3ac0a0",
+      "#000000",
+      "#06182c",
+      "#02060c"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENSE.TXT",
+    "hlp": "LISTENPT.HLP",
+    "pdf": "LISTENPT.PDF",
+    "pdf_size": "letter",
+    "pdf_style": "corporate",
+    "rtf": null,
+    "wri": null,
+    "splash": "LISTENPT.BMP",
+    "splash_bpp": 4,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "band": "#06182c",
+    "band2": "#3ac0a0",
+    "accent": "#06182c",
+    "line1": "Data Volume 7  -  Notes on the Recordings",
+    "heads": {
+      "Introduction": "About the Recordings",
+      "The Presets": "Presets and Sources",
+      "Getting Started": "Loading"
+    }
+  },
+  "hlp": {
+    "font": "Courier New",
+    "family": "modern",
+    "title_color": "#06182c"
+  },
+  "text": {
+    "tagline": "Sounds from the deep ocean.",
+    "blurb": "Underwater listening stations hear the ocean as nobody else can: the slow upsweep, ice cracking off a shelf, whales a basin away, ship screws, the deepest trench. {count} presets turn those recordings into drones, textures and deep effects.",
+    "intro": [
+      "Listening Post, Data Volume 7, collects {count} presets made from long-range hydrophone recordings of the Pacific. The sounds were sped up or slowed from frequencies too low or too high to hear, as the original researchers did to listen to them.",
+      "Each preset is named for its source event. The manual lists what each recording is, where it was made and how it was changed."
+    ],
+    "maker_note": [
+      "We resell public scientific data on disc for schools, libraries and the curious. This is the first volume we have made for musicians.",
+      "Fathom Line Scientific Media"
+    ],
+    "install": [
+      "Insert the disc. In the Library tab it appears as LISTENPOST.",
+      "Open a folder and double-click a preset to load it.",
+      "Notes on the recordings: LISTENPT.PDF. Credits and licences: CREDITS.TXT and LIBRARY.TSV."
+    ],
+    "license": [
+      "FATHOM LINE SCIENTIFIC MEDIA - LICENSE",
+      "The recordings on this disc are public domain or CC0 (see CREDITS.TXT). You may use the presets and the music you make with them freely.",
+      "Fathom Line Scientific Media is a fictional reseller and is not affiliated with any agency that made the recordings.",
+      "No warranty."
+    ],
+    "copyright": "(c) 1997 Fathom Line Scientific Media. Recordings: public domain / CC0 (see CREDITS.TXT)."
+  }
+}

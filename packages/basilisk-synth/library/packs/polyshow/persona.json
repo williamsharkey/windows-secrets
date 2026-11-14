@@ -1,0 +1,311 @@
+{
+  "id": "polyshow",
+  "category": "Polysynth Showroom (library lane, round 2)",
+  "pack": {
+    "plan_id": "polysynth-showroom",
+    "library_id": "polysynth-showroom",
+    "title": "Polysynth Showroom",
+    "subtitle": "The keyboard floor, 1985",
+    "edition": "In-Store Demo Edition",
+    "version": "1.0",
+    "date": "1992-11-27",
+    "label": "POLYSHOW85",
+    "label_long": "Polysynth Showroom 85",
+    "sources": {
+      "plan": "polysynth-showroom"
+    }
+  },
+  "maker": {
+    "name": "Neon Keys Music Superstores, Inc.",
+    "short": "Neon Keys",
+    "kind": "music-superstore chain's in-store demo disc",
+    "year": 1992,
+    "place": "Dallas, Texas, USA",
+    "contact": [
+      "Neon Keys Music Superstores, Inc.",
+      "Keyboard Department",
+      "2500 LBJ Freeway Plaza",
+      "Dallas, TX 75399",
+      "1-800-555-0188 (NEON KEYS)"
+    ],
+    "people": [
+      [
+        "The Neon Keys keyboard department",
+        "programming"
+      ],
+      [
+        "Store #4 demo team",
+        "listening"
+      ]
+    ],
+    "voice": "salesfloor enthusiasm; 'try it in store', 'ask a keyboard specialist'; 80s nostalgia already in 1992"
+  },
+  "look": {
+    "palette": "web216",
+    "dither": "fs",
+    "pixel": 2,
+    "aa": true,
+    "ink": "#ffffff",
+    "paper": "#0a0018",
+    "accent": "#ff2fb4",
+    "accent2": "#00e5ff",
+    "fonts": {
+      "display": "ariblk.ttf",
+      "body": "arial.ttf",
+      "mono": "lucon.ttf",
+      "black": "ariblk.ttf",
+      "italic": "arialbi.ttf"
+    },
+    "art": {
+      "bg": "global/mall-interior-of-a-shopping-mall-in.jpg",
+      "back": "global/expo-pa-convention-center-1993.jpg",
+      "mark": "global/marks/mk-star-colourful-star-shape.png",
+      "object": "global/marks/mk-key-computer-keyboard-key.png"
+    },
+    "title": {
+      "style": "chrome",
+      "colors": [
+        "#ffffff",
+        "#00e5ff",
+        "#ff2fb4",
+        "#3a0060",
+        "#000000"
+      ],
+      "font": "display",
+      "text": "POLYSYNTH"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#0a0018"
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0,
+          0.3,
+          1,
+          0.68
+        ],
+        "tint": [
+          "#0a0018",
+          "#ff2fb4"
+        ]
+      },
+      {
+        "t": "pattern",
+        "kind": "grid",
+        "box": [
+          0,
+          0.68,
+          1,
+          1
+        ],
+        "cols": [
+          "#00e5ff"
+        ]
+      },
+      {
+        "t": "text",
+        "s": "NEON KEYS MUSIC SUPERSTORES  presents",
+        "font": "italic",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.06
+        ],
+        "anchor": "mm",
+        "c": "#00e5ff",
+        "maxw": 0.9
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.15
+        ],
+        "size": 0.12,
+        "maxw": 0.92
+      },
+      {
+        "t": "text",
+        "s": "SHOWROOM",
+        "font": "display",
+        "size": 0.07,
+        "pos": [
+          0.5,
+          0.25
+        ],
+        "anchor": "mm",
+        "c": "#ff2fb4",
+        "spacing": 8,
+        "stroke": [
+          2,
+          "#000000"
+        ]
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "italic",
+        "size": 0.034,
+        "pos": [
+          0.5,
+          0.73
+        ],
+        "anchor": "mm",
+        "c": "#ffffff",
+        "stroke": [
+          2,
+          "#0a0018"
+        ]
+      },
+      {
+        "t": "text",
+        "s": "{count} polys, monos, FM pianos, vocoder choirs",
+        "font": "body",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.79
+        ],
+        "anchor": "mm",
+        "c": "#ffffff",
+        "stroke": [
+          2,
+          "#0a0018"
+        ],
+        "maxw": 0.9
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.83,
+          0.42
+        ],
+        "size": 0.25
+      }
+    ],
+    "spine_bg": "#0a0018",
+    "spine_ink": "#00e5ff",
+    "spine_title": "#ff2fb4",
+    "back_bg": "#0a0018",
+    "back_ink": "#ffffff",
+    "back_head": "#ff2fb4",
+    "back_tint": [
+      "#0a0018",
+      "#00e5ff"
+    ],
+    "bullet": "* ",
+    "compat": {
+      "pos": [
+        0.04,
+        0.95
+      ],
+      "anchor": "lb",
+      "size": 0.13
+    }
+  },
+  "box": {
+    "type": "bigbox",
+    "shape": "big",
+    "price": [
+      "$19.95",
+      "or FREE with any keyboard"
+    ],
+    "sticker": {
+      "bg": "#00e5ff",
+      "ink": "#0a0018",
+      "pos": [
+        0.83,
+        0.06
+      ]
+    },
+    "burst": [
+      "TRY IT",
+      "IN STORE!"
+    ],
+    "burst_fill": "#ff2fb4",
+    "burst_ink": "#ffffff",
+    "features": [
+      "{count} presets: polys, monos, FM keys, vocoders",
+      "The sounds of the 1985 keyboard floor",
+      "Ask a keyboard specialist"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "full",
+    "ring": "NEON KEYS MUSIC SUPERSTORES * POLYSYNTH SHOWROOM * IN-STORE DEMO EDITION * DALLAS *",
+    "ring_ink": "#ffffff"
+  },
+  "icon": {
+    "motif": "workstation",
+    "colors": [
+      "#ff2fb4",
+      "#000000",
+      "#c0c0c0",
+      "#0a0018"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENSE.TXT",
+    "hlp": "POLYSHOW.HLP",
+    "pdf": "POLYSHOW.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "corporate",
+    "rtf": null,
+    "wri": null,
+    "splash": "POLYSHOW.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "band": "#0a0018",
+    "band2": "#ff2fb4",
+    "accent": "#3a0060",
+    "line1": "In-Store Demo Guide",
+    "heads": {
+      "Introduction": "Welcome to the Keyboard Floor",
+      "The Presets": "The Showroom",
+      "Getting Started": "Try It"
+    }
+  },
+  "hlp": {
+    "font": "Arial",
+    "family": "swiss",
+    "title_color": "#c0108a"
+  },
+  "text": {
+    "tagline": "The keyboard floor, 1985.",
+    "blurb": "Walk the 1985 keyboard floor again: big polyphonic brass and strings, fat monophonic basses and leads, glassy FM pianos and clavs, and choirs from the vocoder corner. {count} presets for SNDWAVE2000 and BASILISK SYNTH.",
+    "intro": [
+      "Welcome to the Polysynth Showroom, the in-store demo disc of the Neon Keys keyboard department. Every preset recalls a sound from the great showroom floor of the mid-eighties: polyphonic pads and brass, monophonic basses and leads, FM pianos and clavs, vocoder choirs and string machines.",
+      "No keyboard was harmed, and none is named: our keyboard specialists rebuilt every sound for the Sound Recorder synthesizer."
+    ],
+    "maker_note": [
+      "Come down to any Neon Keys store, play the floor models, and ask for the Showroom disc at the counter.",
+      "The Neon Keys Keyboard Department"
+    ],
+    "install": [
+      "Insert the disc. In the Library tab it appears as POLYSHOW85.",
+      "Open a folder and double-click a preset to load it.",
+      "The demo guide is POLYSHOW.PDF; the sound credits are in CREDITS.TXT."
+    ],
+    "license": [
+      "NEON KEYS MUSIC SUPERSTORES - LICENSE",
+      "Free for in-store demonstration and for your own music. Not for resale.",
+      "The recordings on this disc are public domain or CC0 (see CREDITS.TXT).",
+      "No warranty."
+    ],
+    "copyright": "(c) 1992 Neon Keys Music Superstores, Inc."
+  }
+}

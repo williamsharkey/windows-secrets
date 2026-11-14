@@ -1,0 +1,309 @@
+{
+  "id": "officemc",
+  "category": "Office Machinery (library lane, round 2)",
+  "pack": {
+    "plan_id": "office-machinery",
+    "library_id": "office-machinery",
+    "title": "Office Machinery",
+    "subtitle": "Sounds of the computer room",
+    "edition": "Free Bonus Disc",
+    "version": "1.0",
+    "date": "1998-06-19",
+    "label": "OFFICEMACH",
+    "label_long": "Office Machinery Bonus",
+    "sources": {
+      "plan": "office-machinery"
+    }
+  },
+  "maker": {
+    "name": "Surplus City Computer Liquidators",
+    "short": "Surplus City",
+    "kind": "computer-surplus warehouse's free bonus disc",
+    "year": 1998,
+    "place": "Phoenix, Arizona, USA",
+    "contact": [
+      "Surplus City Computer Liquidators",
+      "4800 W. Industrial Way, Bay 9",
+      "Phoenix, AZ 85099",
+      "(602) 555-0156  Mon-Sat 9-6",
+      "WE BUY OFFICE CLOSE-OUTS"
+    ],
+    "people": [
+      [
+        "Duane 'Big D' Kowalczyk",
+        "owner"
+      ],
+      [
+        "The warehouse crew",
+        "recording the machines before they were sold"
+      ]
+    ],
+    "voice": "loud discount-store; ALL CAPS deals; 'as is', 'no returns', 'while supplies last'"
+  },
+  "look": {
+    "palette": "web216",
+    "dither": "bayer4",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#000000",
+    "paper": "#ffcc00",
+    "accent": "#cc0000",
+    "accent2": "#000000",
+    "fonts": {
+      "display": "impact.ttf",
+      "body": "arialbd.ttf",
+      "mono": "cour.ttf",
+      "black": "impact.ttf",
+      "hand": "comic.ttf"
+    },
+    "art": {
+      "bg": "global/comp-arc-1986-ac86-0583-12.jpg",
+      "back": "global/comp-mission-operations-control-roo.jpg",
+      "mark": "global/marks/mk-floppy-floppy-disc-drive-icon.png",
+      "object": "global/marks/mk-pc-monitor-icon.png"
+    },
+    "title": {
+      "style": "outline",
+      "colors": [
+        "#ffcc00",
+        "#000000"
+      ],
+      "font": "display",
+      "spacing": 1,
+      "text": "OFFICE MACHINERY"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#ffcc00"
+      },
+      {
+        "t": "pattern",
+        "kind": "checker",
+        "box": [
+          0,
+          0,
+          1,
+          0.06
+        ],
+        "cols": [
+          "#000000"
+        ]
+      },
+      {
+        "t": "text",
+        "s": "SURPLUS CITY COMPUTER LIQUIDATORS",
+        "font": "display",
+        "size": 0.06,
+        "pos": [
+          0.5,
+          0.12
+        ],
+        "anchor": "mm",
+        "c": "#000000",
+        "maxw": 0.94
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0.04,
+          0.2,
+          0.56,
+          0.86
+        ],
+        "frame": "bevel"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.58,
+          0.2,
+          0.96,
+          0.86
+        ],
+        "c": "#cc0000"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.77,
+          0.32
+        ],
+        "size": 0.13,
+        "maxw": 0.36
+      },
+      {
+        "t": "lines",
+        "items": [
+          "FLOPPY * HARD DISK",
+          "CRT * CD * VHS",
+          "PC SPEAKER * FANS",
+          "BUGLES * SIREN",
+          "{count} PRESETS",
+          "4 OFFICE KITS"
+        ],
+        "font": "body",
+        "size": 0.04,
+        "pos": [
+          0.61,
+          0.47
+        ],
+        "c": "#ffffff",
+        "step": 1.25
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.5,
+          0.86
+        ],
+        "size": 0.25
+      },
+      {
+        "t": "pattern",
+        "kind": "checker",
+        "box": [
+          0,
+          0.94,
+          1,
+          1
+        ],
+        "cols": [
+          "#000000"
+        ]
+      }
+    ],
+    "spine_bg": "#000000",
+    "spine_ink": "#ffcc00",
+    "back_bg": "#ffcc00",
+    "back_ink": "#000000",
+    "back_head": "#cc0000",
+    "bullet": "* ",
+    "posterize_final": true,
+    "compat": {
+      "pos": [
+        0.04,
+        0.92
+      ],
+      "anchor": "lb",
+      "size": 0.16
+    }
+  },
+  "box": {
+    "type": "bigbox",
+    "shape": "landscape",
+    "price": [
+      "FREE",
+      "w/ $50 purchase"
+    ],
+    "sticker": {
+      "bg": "#ffffff",
+      "ink": "#cc0000",
+      "shape": "round",
+      "pos": [
+        0.27,
+        0.27
+      ]
+    },
+    "burst": [
+      "FREE!",
+      "BONUS DISC"
+    ],
+    "burst_fill": "#cc0000",
+    "burst_ink": "#ffffff",
+    "features": [
+      "{count} presets: office kits, perc, FX, textures",
+      "Every machine recorded before it was sold",
+      "AS IS - NO RETURNS"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "sticker",
+    "paper": "#ffcc00",
+    "pic": "bg",
+    "lines": [
+      "OFFICE MACHINERY",
+      "free bonus disc - surplus city"
+    ],
+    "inks": [
+      "#000000",
+      "#cc0000"
+    ],
+    "side": [
+      "NOT FOR",
+      "RESALE"
+    ],
+    "ring": "SURPLUS CITY COMPUTER LIQUIDATORS * PHOENIX AZ * WE BUY OFFICE CLOSE-OUTS *",
+    "ring_ink": "#000000"
+  },
+  "icon": {
+    "motif": "server",
+    "colors": [
+      "#cc0000",
+      "#000000",
+      "#c0c0c0",
+      "#404040"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "TERMS.TXT",
+    "hlp": "OFFICEMC.HLP",
+    "pdf": "OFFICEMC.PDF",
+    "pdf_size": "letter",
+    "pdf_style": "corporate",
+    "rtf": null,
+    "wri": null,
+    "splash": "OFFICEMC.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "band": "#000000",
+    "band2": "#ffcc00",
+    "accent": "#cc0000",
+    "line1": "Bonus Disc Instructions  -  AS IS",
+    "heads": {
+      "Introduction": "THANKS FOR SHOPPING!",
+      "The Presets": "WHAT YOU GET",
+      "License": "THE FINE PRINT"
+    }
+  },
+  "hlp": {
+    "font": "Arial",
+    "family": "swiss",
+    "title_color": "#cc0000"
+  },
+  "text": {
+    "tagline": "Every machine recorded before it was sold.",
+    "blurb": "We sold off a thousand office computers this year. Before each pallet went out the door, the crew recorded it: floppy drives, hard disk spin-ups, monitors, CD trays, VCRs, PC speakers, server fans, and the bugle and siren from the old civil defense room. {count} presets. FREE with any purchase over $50!",
+    "intro": [
+      "THANK YOU for shopping at SURPLUS CITY! This FREE BONUS DISC has {count} presets made from the machines we liquidated this year: drives, monitors, fans, speakers and more, plus four office drum kits.",
+      "Every machine was recorded in the warehouse before it was sold. Some of them are in your office right now!"
+    ],
+    "maker_note": [
+      "If it plugs in, we buy it. If it beeps, we recorded it. Come see us on Industrial Way.",
+      "Big D, Surplus City"
+    ],
+    "install": [
+      "Put the disc in. In the Library tab it shows up as OFFICEMACH.",
+      "Open a folder and double-click a preset.",
+      "Credits for the recordings are in CREDITS.TXT."
+    ],
+    "license": [
+      "THE FINE PRINT",
+      "This disc is FREE with any purchase over $50. It is NOT FOR RESALE.",
+      "The recordings are public domain or CC0 (see CREDITS.TXT). Use the presets in your music any way you like.",
+      "AS IS. NO RETURNS. NO WARRANTY. Surplus City is not responsible for sounds of failing hard disks."
+    ],
+    "copyright": "(c) 1998 Surplus City Computer Liquidators."
+  }
+}

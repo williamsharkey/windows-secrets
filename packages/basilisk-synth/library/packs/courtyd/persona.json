@@ -1,0 +1,310 @@
+{
+  "id": "courtyd",
+  "category": "Courtyard & Chapel (library lane, round 2)",
+  "pack": {
+    "plan_id": "courtyard-chapel",
+    "library_id": "courtyard-chapel",
+    "title": "Courtyard & Chapel",
+    "subtitle": "Instruments of the cloister and the market square",
+    "edition": "Collegium Series, Volume 2",
+    "version": "1.0",
+    "date": "1995-05-12",
+    "label": "COURTYARD",
+    "label_long": "Courtyard and Chapel",
+    "sources": {
+      "plan": "courtyard-chapel"
+    }
+  },
+  "maker": {
+    "name": "Cantiga Early Music Press",
+    "short": "Cantiga",
+    "kind": "Dutch early-music society publisher",
+    "year": 1995,
+    "place": "Utrecht, the Netherlands",
+    "contact": [
+      "Cantiga Early Music Press",
+      "Oudegracht 312",
+      "NL-3511 XX Utrecht",
+      "Telefoon 030 - 555 01 31",
+      "Members' line 030 - 555 01 32"
+    ],
+    "people": [
+      [
+        "dr. Anneke van Leeuwen",
+        "editor"
+      ],
+      [
+        "Pieter Hoogstraten",
+        "recording and transcription"
+      ],
+      [
+        "the Collegium members",
+        "listening"
+      ]
+    ],
+    "voice": "scholarly but warm; programme notes; 'the courtyard', 'the chapel'; Dutch-English"
+  },
+  "look": {
+    "palette": [
+      "#1c1410",
+      "#5a1e1e",
+      "#8a2c2c",
+      "#1e2e5a",
+      "#c8a24a",
+      "#e9dcbc",
+      "#f6efdc",
+      "#3a5a2a"
+    ],
+    "dither": "fs",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#1c1410",
+    "paper": "#e9dcbc",
+    "accent": "#8a2c2c",
+    "accent2": "#1e2e5a",
+    "fonts": {
+      "display": "palab.ttf",
+      "body": "pala.ttf",
+      "mono": "cour.ttf",
+      "black": "palab.ttf",
+      "italic": "palai.ttf"
+    },
+    "art": {
+      "bg": "global/atrium-phillips-exeter-library-atrium.jpg",
+      "back": "books/chladni-1787-plate-iii.png",
+      "mark": "books/objects/chladni-1787-fig6-star.png",
+      "object": "books/objects/tyndall-sound-bell-in-vacuo.png"
+    },
+    "title": {
+      "style": "shadow",
+      "colors": [
+        "#8a2c2c",
+        "#c8a24a"
+      ],
+      "font": "display"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#e9dcbc"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.05,
+          0.04,
+          0.95,
+          0.96
+        ],
+        "c": null,
+        "outline": "#8a2c2c",
+        "w": 3
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.07,
+          0.055,
+          0.93,
+          0.945
+        ],
+        "c": null,
+        "outline": "#1e2e5a",
+        "w": 1
+      },
+      {
+        "t": "text",
+        "s": "CANTIGA  *  COLLEGIUM SERIES  *  II",
+        "font": "display",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.1
+        ],
+        "anchor": "mm",
+        "c": "#1e2e5a",
+        "spacing": 2,
+        "maxw": 0.8
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.2
+        ],
+        "size": 0.09,
+        "maxw": 0.8
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "italic",
+        "size": 0.032,
+        "pos": [
+          0.5,
+          0.29
+        ],
+        "anchor": "mm",
+        "c": "#1c1410",
+        "maxw": 0.8
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0.16,
+          0.34,
+          0.84,
+          0.76
+        ],
+        "tint": [
+          "#1c1410",
+          "#e9dcbc"
+        ],
+        "frame": "line",
+        "c": "#8a2c2c"
+      },
+      {
+        "t": "text",
+        "s": "Harpsichord * Harp * Psaltery * Kalimba * Mbira * Balafon * Bells * Gong",
+        "font": "italic",
+        "size": 0.026,
+        "pos": [
+          0.5,
+          0.81
+        ],
+        "anchor": "mm",
+        "c": "#5a1e1e",
+        "maxw": 0.8
+      },
+      {
+        "t": "text",
+        "s": "{count} instruments for SNDWAVE2000",
+        "font": "body",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.87
+        ],
+        "anchor": "mm",
+        "c": "#1c1410"
+      }
+    ],
+    "spine_bg": "#5a1e1e",
+    "spine_ink": "#e9dcbc",
+    "spine_title": "#c8a24a",
+    "back_bg": "#f6efdc",
+    "back_ink": "#1c1410",
+    "back_head": "#8a2c2c",
+    "back_tint": [
+      "#1c1410",
+      "#f6efdc"
+    ],
+    "bullet": "* ",
+    "compat": {
+      "pos": [
+        0.92,
+        0.93
+      ],
+      "anchor": "rb",
+      "size": 0.08
+    }
+  },
+  "box": {
+    "type": "jewel",
+    "price": [
+      "fl 39,50",
+      "leden fl 29,50"
+    ],
+    "sticker": {
+      "bg": "#f6efdc",
+      "ink": "#5a1e1e",
+      "pos": [
+        0.8,
+        0.07
+      ]
+    },
+    "burst": null,
+    "features": [
+      "{count} early-music and world instruments",
+      "Keys, plucks, mallets, bells and drones",
+      "Programme notes in the manual"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "silk",
+    "ink": "#5a1e1e",
+    "ink2": "#c8a24a",
+    "ring": "CANTIGA EARLY MUSIC PRESS * COLLEGIUM SERIES II * COURTYARD & CHAPEL * UTRECHT *",
+    "ring_ink": "#5a1e1e"
+  },
+  "icon": {
+    "motif": "chladni",
+    "colors": [
+      "#5a1e1e",
+      "#e9dcbc",
+      "#c8a24a",
+      "#1e2e5a"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENTIE.TXT",
+    "hlp": "COURTYD.HLP",
+    "pdf": "NOTES.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "corporate",
+    "rtf": null,
+    "wri": null,
+    "splash": "COURTYD.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "band": "#5a1e1e",
+    "band2": "#c8a24a",
+    "accent": "#8a2c2c",
+    "line1": "Programme Notes",
+    "heads": {
+      "Introduction": "To the Listener",
+      "The Presets": "The Instruments",
+      "License": "Licence"
+    }
+  },
+  "hlp": {
+    "font": "Book Antiqua",
+    "family": "roman",
+    "title_color": "#8a2c2c"
+  },
+  "text": {
+    "tagline": "Instruments of the cloister and the market square.",
+    "blurb": "The second volume of the Collegium Series gathers {count} instruments from the chapel and the courtyard: Flemish harpsichords, folk harp, psaltery, strumstick and dan tranh beside kalimbas, mbira, balafon, hand chimes, tubular bells, gong and didgeridoo.",
+    "intro": [
+      "Welcome to Courtyard & Chapel, the second volume of the Cantiga Collegium Series. Where the first volume stayed indoors, this one opens the doors: the instruments of the chapel stand beside those of the market square, as they did in many a town.",
+      "You will find keyboards and plucked strings, mallets and bells, a little percussion and a drone or two. The programme notes in NOTES.PDF describe each one."
+    ],
+    "maker_note": [
+      "Our members asked for instruments they could not keep at home: a harpsichord tuned for the season, a gong, a balafon. We hope this disc brings them into the study.",
+      "dr. Anneke van Leeuwen, for the Cantiga Early Music Press"
+    ],
+    "install": [
+      "Insert the disc. In the Library tab it appears as COURTYARD.",
+      "Open a folder and double-click a preset to load it.",
+      "The programme notes are NOTES.PDF; the sound credits are in CREDITS.TXT."
+    ],
+    "license": [
+      "CANTIGA EARLY MUSIC PRESS - LICENCE",
+      "You may use the presets on one computer and perform and record music made with them freely.",
+      "The recordings on this disc are public domain or CC0 (see CREDITS.TXT). The presets, notes and artwork are the Press's.",
+      "No warranty."
+    ],
+    "copyright": "(c) 1995 Cantiga Early Music Press, Utrecht."
+  }
+}
