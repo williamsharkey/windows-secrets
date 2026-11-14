@@ -2,7 +2,7 @@
 """Sound Pack Explorer previews on the release build: one clip per preset, its demo phrase chosen per preset
 (demophrases.py: role, pack mood, envelope; seeded by id), levelled to -16 LUFS, MP3 48 kbps + Opus 24 kbps.
 
-    LIBBUILD_V3=<release build> previews.py [--out ~/libbuild/previews] [--parallel 4]   data/library.json
+    LIBBUILD_V3=<release build> previews.py [--out ~/libbuild/previews] [--parallel 4] [--only slug ...]   data/library.json
 Writes OUT/<slug>.{mp3,ogg}, OUT/manifest.json and OUT/index.json (the same list).
 """
 import argparse, json, os, re, sys
@@ -17,8 +17,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', default=os.path.expanduser('~/libbuild/previews')); ap.add_argument('--parallel', type=int, default=4)
     ap.add_argument('--build', default=os.environ.get('SNDWAVE_BUILD', '?'))
+    ap.add_argument('--only', nargs='+', help='re-render just these slugs and merge them into OUT/manifest.json')
     a = ap.parse_args()
     L = load_json('library.json'); R = ratings()
+    if a.only: L = [p for p in L if p['slug'] in set(a.only)]
     os.makedirs(a.out, exist_ok=True)
     jobs, meta = [], []
     for p in L:
@@ -46,6 +48,11 @@ def main():
     doc = {'build': a.build, 'renderer': 'render311 (%s)' % a.build, 'lufs_target': -16, 'mp3': '48 kHz mono 48 kbps',
            'ogg': 'Opus mono 24 kbps', 'fade_s': 0.2, 'phrases': 'demophrases.py (original phrases, per role, pack mood and envelope)',
            'presets': index}
+    if a.only:
+        old = json.load(open(os.path.join(a.out, 'manifest.json')))
+        new = {e['slug']: e for e in index}
+        doc['presets'] = [new.pop(e['slug'], e) for e in old['presets']] + list(new.values())
+        index = doc['presets']
     for f in ('manifest.json', 'index.json'):
         json.dump(doc, open(os.path.join(a.out, f), 'w'), indent=1)
     tot = sum(os.path.getsize(os.path.join(a.out, f)) for f in os.listdir(a.out))
