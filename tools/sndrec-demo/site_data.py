@@ -21,7 +21,7 @@ import glob, io, json, os, re, struct, sys, zipfile
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 LIB = os.path.join(REPO, 'packages', 'basilisk-synth', 'library')
-PLUGIN = {'b16': 'BASILISK 16', 'xp': 'BASILISK SYNTH'}
+PLUGIN = {'b16': 'BASILISK 16', 'xp': 'BASILISK SYNTH', 'lib': 'BASILISK 16 1.3.0 library (owner\'s picks)'}
 
 # DNA.md 2.4: NAME -> XP file (C:\WINDOWS\Media)
 XP_NAMES = {'chimes': 'chimes.wav', 'chord': 'chord.wav', 'ding': 'ding.wav', 'notify': 'notify.wav', 'recycle': 'recycle.wav',
@@ -271,7 +271,7 @@ def main():
         names = []
         for r in rows: names += [n for n in dna_names(r['dna']) if n not in names]
         drive311 = os.environ.get('SNDREC_DRIVE311')   # BASILISK 16's drive.zip: to measure the 3.x files XP carries
-        sounds = {} if not machine else sound_table_311(machine, names, cat, research) if ed == 'b16' else sound_table_xp(machine, names, cat, research, drive311)
+        sounds = {} if not machine else sound_table_311(machine, names, cat, research) if ed in ('b16', 'lib') else sound_table_xp(machine, names, cat, research, drive311)
         names_file = None
         if machine and os.path.exists(os.path.join(machine, 'library.names.txt')): names_file = os.path.join(machine, 'library.names.txt')
         elif machine and ed == 'xp':   # the XP disc's names, for the recipe converter
@@ -280,7 +280,7 @@ def main():
         recs = recipes(cli, [r['dna'] for r in rows], names_file) if cli else {}
         out['editions'][ed] = {'plugin': PLUGIN.get(ed, ed), 'sounds': sounds, 'presets': [{
             'n': r['i'], 'cat': r['cat'].replace('B16 ', '') if r['cat'] != 'BASILISK 16' else 'Classic', 'program': r['cat'] + ': ' + r['name'],
-            'pack': pack(ed, r['cat']), 'name': r['name'], 'dna': r['dna'], 'phrase': r['phrase'], 'src': dna_names(r['dna']), 'rec': recs.get(r['dna']),
+            'pack': r.get('pack_name') or pack(ed, r['cat']), 'rating': r.get('rating'), 'v3': r.get('v3'), 'name': r['name'], 'dna': r['dna'], 'phrase': r['phrase'], 'src': dna_names(r['dna']), 'rec': recs.get(r['dna']),
             'file': ('sndrec/audio/%s/%s' % (ed, r['file'])) if r['file'] else None, 'sec': r['render_seconds'],
             'wave': [round(x * 100) for x in r['wave']], 'flags': [f for f in r['flags'] if not f.startswith('hot')],
             'hot': next((f for f in r['flags'] if f.startswith('hot')), None), 'note': r.get('note'),
