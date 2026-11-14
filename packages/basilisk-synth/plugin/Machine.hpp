@@ -122,6 +122,12 @@ private:
     void vncLoop();
     void blit(int x, int y, int w, int h, const uint8_t *p, uint32_t stride, uint32_t fmt);
     std::atomic<bool> dbusFrames_{false};
+    std::atomic<bool> screenWanted_{false};
+    unsigned long qpid_ = 0;
+public:
+    // an editor is open: the screen comes (D-Bus display listener, else VNC); none open: no screen work at all
+    void wantScreen(bool w);
+private:
     void fail(const std::string &e);
     void setStatus(const std::string &s);
     void kill();

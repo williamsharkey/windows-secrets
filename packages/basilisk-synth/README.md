@@ -1,6 +1,9 @@
 BASILISK SYNTH - sixteen Windows XP Sound Recorders, as one instrument in your DAW
 ==================================================================================
 
+**1.3.0 is the final version of the XP edition** (2026-11-14); development continues on BASILISK 16
+(`packages/basilisk-synth-311`, Windows 3.11).
+
 A VST3 instrument for Windows and macOS, plus AU and CLAP on macOS. Every note you play is played by a real
 `sndrec32.exe` inside a real Windows XP, through XP's own sound card. The plugin turns MIDI into instructions for
 those Sound Recorders and passes on what XP plays. It never makes a sound of its own.
@@ -13,7 +16,7 @@ out along the bottom, with Volume Control's sliders as the pitch bend, mod wheel
 
 Download
 --------
-https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.2.1
+https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.3.0
 
 | File | Contents |
 |---|---|
@@ -60,6 +63,43 @@ Playing it
   - a DNA box with Apply, Mutate and Undo
   - Play and Stop on any strip
   Every change is sent back to the DAW as the new DNA.
+- **Strip keys (1.3):** each strip's number is one of Calculator's own 0-F keys, taken from a real `calc.exe`
+  (Scientific view, Hex). A key is pressed while its recorder sounds, the selected layer's keys have the
+  default-button border, and holding a key auditions its recorder at the sound's own rate.
+
+Recording (1.3)
+---------------
+Sound Recorder records again, from your DAW. The plugin has a stereo sidechain input; whatever the DAW routes
+into it goes into XP's second sound card, an input-only AC97, and every strip's real Record button (and any program
+in XP) records it through `waveIn`.
+
+- **The path:** DAW sidechain -> the plugin (resampled to 48 kHz, held 40 ms ahead) -> QEMU's D-Bus audio
+  input, over a private peer-to-peer connection (no host sound device is touched) -> the AC97's capture -> XP.
+  The DAW's clock paces the recording.
+- **XP's side:** the second card is XP's preferred recording device; new recordings are CD Quality (44.1 kHz,
+  16-bit stereo). Edit the take with Sound Recorder's own Effects and Edit menus.
+- **Live only:** during an offline render the input is not passed on.
+- Takes can be recorded and edited in Sound Recorder; saving them as sounds (RECORDING.md X2-X3) is not supported.
+- Measured (Windows, our host): a 1 kHz tone into the sidechain records at 998.4 Hz (0.16 % off), with no
+  dropouts.
+
+Kit mode (1.3)
+--------------
+A DNA with `k` pad tokens (DNA.md, v3) is a kit: notes sound only through pads. A pad maps a note or a range to a
+layer, or to a segment of a layer built from Insert File steps, with pitch tracking, velocity layers, cut and mute
+groups (a choke ends the other hit with a short fade) and round-robin.
+
+- **The pad calculator:** the button with Calculator's icon at the right of the keyboard strip is active for a
+  kit. It opens a second, real Calculator whose sixteen keys are the pads, 4 x 4 in MPC order (pad 1 bottom left),
+  labelled 1234 / QWER / ASDF / ZXCV. Click or type them; the DAW's notes light them.
+
+DNA v3 (1.3)
+------------
+The notes go through the same note logic as the Windows 3.11 edition (BASILISK 16's `NoteHost`): DNA v3 voice
+modes, stacks, humanized draws, per-note windows (`W`, played exactly by the fast path), live pitch (`rate`, with
+glide) and kits. Windows answers `hi 3 xp <state> win,rate,kit`. Lines due later than the block they come from (a
+layer's offset, a window's end, a gate, a kit's choke) go ahead as `at <ms> <line>` and run on Windows' own clock;
+lines due now go at once (XP's timer under the emulator is coarser than the host's thread: measured).
 
 The DNA
 -------
@@ -82,6 +122,12 @@ Steps run in order, using Sound Recorder's real commands:
 
 Order matters, so the space of sounds is enormous.
 
+How the screen gets out of XP (1.3)
+-----------------------------------
+The editor's picture comes over QEMU's D-Bus display, on the same private connection as the recording input: QEMU
+pushes each changed rectangle as it happens (on macOS through shared memory), so an idle screen costs nothing and
+the build animation is not held back by VNC's polling. The mouse and keys still go in over VNC.
+
 How the sound gets out of XP
 ----------------------------
 - **The sound card:** XP has an AC97 card. QEMU's `wav` audio backend writes what the card plays into a pipe
@@ -93,7 +139,8 @@ How the sound gets out of XP
   notes up. It resamples to the session rate with 4-point Hermite interpolation and a slow drift correction.
 - **Pitch and shaping:** a small DLL injected into each Sound Recorder (`guest/srhook.c`) plays that recorder's
   own saved sound (its buffer, with its effects).
-  - It streams the sound to a card handle opened once at 48 kHz stereo, 20 ms at a time, four chunks ahead.
+  - It streams the sound to a card handle opened once at 48 kHz stereo, 20 ms at a time, six chunks ahead, refilled
+    the moment the card finishes one (1.2.2).
   - Pitch is the step through the source: the file's rate times 2^(semitones/12), in 16.16 fixed point with
     linear interpolation.
   - Velocity, level, pan and the envelope (ADSR or the drawn `Ja`/`Jp`) are applied to the samples on the way.
@@ -254,6 +301,9 @@ into the take. The window must stay visible on screen while it records.
 
 Builds
 ------
+- **DPF** at 4238e1c with `plugin/patches/dpf-clap-latency.patch` applied (CLAP: the latency set in activate() is
+  reported inside clap_plugin::activate, as clap-validator requires). The plugin also includes BASILISK 16's
+  `packages/basilisk-synth-311/plugin/V3Host.h` (the shared note logic): build from the repository layout.
 - **Windows:** `make WINDOWS=true CC=x86_64-w64-mingw32-gcc-posix CXX=x86_64-w64-mingw32-g++-posix` from Linux. Then put QEMU for Windows (Stefan Weil's build, as in packages/basilisk-xp), still zipped, at `BasiliskSynth.vst3/Contents/Resources/qemu-win64.zip` (the plugin unpacks it once into `%LOCALAPPDATA%\BASILISK SYNTH`, so no QEMU `.dll` sits in a VST folder for hosts to probe), and the machine (`tools/make_machine.py` output) in `Contents/Resources/machine`.
 - **macOS:** `make MACOS=true` with universal `-arch` flags. Then put the Homebrew QEMU builds from
   packages/basilisk-xp in `Contents/Resources/qemu-arm64` and `qemu-x86_64`, the machine in the VST3's

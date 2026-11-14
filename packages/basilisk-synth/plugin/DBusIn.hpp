@@ -50,6 +50,7 @@ public:
     // screen costs nothing. fn gets each changed rectangle in QEMU's pixman format.
     using RectFn = std::function<void(int x, int y, int w, int h, const uint8_t *p, uint32_t stride, uint32_t fmt)>;
     bool startDisplay(RectFn fn, unsigned long qemuPid);
+    void stopDisplay();                                  // the listener goes (QEMU drops it): no screen work meanwhile
     bool displayOn() const { return displayOn_.load(); }
     uint64_t displayUpdates() const { return updates_.load(); }
     bool displayMapped() const { return mapped_.load(); }

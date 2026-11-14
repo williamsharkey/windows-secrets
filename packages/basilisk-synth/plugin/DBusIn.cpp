@@ -550,6 +550,13 @@ void DBusIn::serveDisplay(intptr_t ls)
     displayOn_ = false;
 }
 
+void DBusIn::stopDisplay()
+{
+    if (dlistener_ >= 0) { CLOSESOCK((sock_t)dlistener_); dlistener_ = -1; }
+    if (dth_.joinable()) dth_.join();
+    displayOn_ = false; mapped_ = false;
+}
+
 void DBusIn::stop()
 {
     stop_ = true;

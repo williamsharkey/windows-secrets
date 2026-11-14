@@ -101,10 +101,10 @@ protected:
         p.hints = kParameterIsAutomatable;
         switch (i) {
         case kGain: p.name = "Gain"; p.symbol = "gain"; p.unit = "dB"; p.ranges.min = -60; p.ranges.max = 24; p.ranges.def = 0; break;
-        case kAttack: p.name = "Attack"; p.symbol = "attack"; p.unit = "ms"; p.ranges.min = 0; p.ranges.max = 5000; p.ranges.def = 0; break;
-        case kDecay: p.name = "Decay"; p.symbol = "decay"; p.unit = "ms"; p.ranges.min = 0; p.ranges.max = 5000; p.ranges.def = 0; break;
-        case kSustain: p.name = "Sustain"; p.symbol = "sustain"; p.unit = "%"; p.ranges.min = 0; p.ranges.max = 100; p.ranges.def = 100; break;
-        case kRelease: p.name = "Release"; p.symbol = "release"; p.unit = "ms"; p.ranges.min = 0; p.ranges.max = 10000; p.ranges.def = 120; break;
+        case kAttack: p.name = "Attack"; p.symbol = "attack"; p.unit = "ms"; p.ranges.min = 0; p.ranges.max = 5000; p.ranges.def = 2; break;   // the default DNA's A2 (a CLAP host checks it)
+        case kDecay: p.name = "Decay"; p.symbol = "decay"; p.unit = "ms"; p.ranges.min = 0; p.ranges.max = 5000; p.ranges.def = 300; break;
+        case kSustain: p.name = "Sustain"; p.symbol = "sustain"; p.unit = "%"; p.ranges.min = 0; p.ranges.max = 100; p.ranges.def = 70; break;
+        case kRelease: p.name = "Release"; p.symbol = "release"; p.unit = "ms"; p.ranges.min = 0; p.ranges.max = 10000; p.ranges.def = 250; break;
         case kVelocity: p.name = "Velocity"; p.symbol = "velocity"; p.unit = "%"; p.ranges.min = 0; p.ranges.max = 100; p.ranges.def = 100; break;
         case kBend: p.name = "Bend Range"; p.symbol = "bend"; p.unit = "st"; p.ranges.min = 0; p.ranges.max = 24; p.ranges.def = 2; p.hints |= kParameterIsInteger; break;
         case kTranspose: p.name = "Transpose"; p.symbol = "transpose"; p.unit = "st"; p.ranges.min = -48; p.ranges.max = 48; p.ranges.def = 0; p.hints |= kParameterIsInteger; break;
@@ -180,8 +180,11 @@ protected:
         // a new DNA from the pump: hand it to the voice allocator
         if (Dna *d = pendingDna_.exchange(nullptr)) {
             Cmd c[kMaxCmds];
-            int n = voices_.setDna(*d, c);   // (core's own rule: new sounds stop what sounds; genes alone do not)
-            sendCmds(c, n);
+            // core's rule says new sounds stop what sounds (a panic); it is not sent: what sounds goes on with the old
+            // sound until Windows loads the new one (it stops those recorders itself then). A note that went out just
+            // before a macro or program change (the DAW gives parameters at block starts) would otherwise be killed
+            // before it was heard (Macro Echoes: 3 of 8 chords)
+            int n = voices_.setDna(*d, c);
             {
                 // the notes (V3Host.h): the macro-applied DNA, its v3 tokens with the v3 macro maps, seeded by the text
                 int mac[4];
@@ -202,7 +205,16 @@ protected:
                 while (layersBuilt_.load() < layersSent_.load() && Machine::now() - w0 < 15.0) std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 const double waited = Machine::now() - w0;
                 wallStart_ += waited;
-                if (waited > 0.05) Machine::log("offline: waited %.2f s for new sounds before this block's notes", waited);
+                if (waited > 0.05) {
+                    Machine::log("offline: waited %.2f s for new sounds before this block's notes", waited);
+                    // what XP played during the wait is not part of the song (the playout skips it), so the notes
+                    // sent just before it (their block came before the DAW's change: Macro Echoes) go again now
+                    int again = 0;
+                    for (const RecentOn &r : recentOns_)
+                        if (r.due + (uint64_t)(0.1 * sr_) >= blockClock_ && r.line[0]) { queueLine(r.line, blockClock_); again++; }
+                    if (again) Machine::log("offline: %d note lines from just before the wait sent again", again);
+                }
+                for (RecentOn &r : recentOns_) r.line[0] = 0;
             }
         }
         LayerMsg lm;
@@ -410,6 +422,10 @@ private:
     struct QLine { uint64_t due; char line[112]; };
     static constexpr int kQLines = 512;
     QLine qlines_[kQLines];
+    struct RecentOn { uint64_t due = 0; char line[112] = {0}; };   // the last note lines sent (an offline wait resends)
+    static constexpr int kRecentOns = 48;
+    RecentOn recentOns_[kRecentOns];
+    unsigned recentAt_ = 0;
     int nLines_ = 0;
     void queueLine(const char *line, uint64_t due)
     {
@@ -434,10 +450,17 @@ private:
                 ms = (dueWall - Machine::now()) * 1000.0;
             } else ms = (double)((int64_t)q.due - (int64_t)blockClock_) * 1000.0 / sr_;
             char b[140];
-            const int d = ms < 1 ? 0 : ms > 5000 ? 5000 : (int)(ms + 0.5);
+            // XP's own timer is coarse under the emulator (a wait overshoots by about a tick, 10-15 ms: measured, the
+            // harness's onsets came +10 ms live and +36 ms offline): a line due soon goes now, as in 1.2.2, and only
+            // lines due later (a layer's O, a window's end, a gate, a kit's choke) wait on Windows' clock
+            const int d = ms < kAtMinMs ? 0 : ms > 5000 ? 5000 : (int)(ms + 0.5);
             if (d > 0) std::snprintf(b, sizeof b, "at %d %s\n", d, q.line); else std::snprintf(b, sizeof b, "%s\n", q.line);
             machine_.send(b);
-            if (!std::strncmp(q.line, "on ", 3)) sentNotes_++;
+            if (!std::strncmp(q.line, "on ", 3)) {
+                sentNotes_++;
+                RecentOn &r = recentOns_[recentAt_++ % kRecentOns];
+                r.due = q.due; std::snprintf(r.line, sizeof r.line, "%s", q.line);
+            }
         }
     }
 
@@ -654,12 +677,13 @@ private:
                 const char *ev = std::getenv("BSYNTH_VISIBLE_BUILD");
                 int vis = ev ? atoi(ev) : editors_.load() > 0;
                 if (vis != sentVis) { char l[16]; snprintf(l, sizeof l, "vis %d\n", vis); machine_.send(l); sentVis = vis; }
+                machine_.wantScreen(editors_.load() > 0);
             } else sentVis = -1;
             if (wantGo_ && !machine_.ready) machine_.touch();     // awake until the assembly is done
             // a test hook (RECORDING.md TR1): BSYNTH_RECTEST="SECONDS@DELAY" asks Windows to record from its recording
             // card DELAY s after the link is up and report the tone's quality in the log ("guest: rectest ...")
             if (const char *rt = std::getenv("BSYNTH_RECTEST")) {
-                static double linkedAt = 0; static bool sentRt = false;
+                double &linkedAt = rtLinkedAt_; bool &sentRt = rtSent_;   // per instance (a host's dummy instance has no machine)
                 if (machine_.linked && linkedAt == 0) linkedAt = Machine::now();
                 double delay = 0; int secs = std::atoi(rt);
                 if (const char *at = std::strchr(rt, '@')) delay = std::atof(at + 1);
@@ -756,8 +780,10 @@ private:
     std::atomic<int> wheel_{-1}, bendShown_{0}, editors_{0};
     std::atomic<bool> guestBuilding_{false}, dnaSentOnce_{false};
     std::atomic<uint32_t> layersSent_{0}, layersBuilt_{0};
-    uint64_t blockClock_ = 0;                 // sampleClock_ at the start of this block
-    static constexpr double kAheadS = 0.08;   // an offline render runs at most this far ahead of the clock (notes go ahead)
+    uint64_t blockClock_ = 0;
+    double rtLinkedAt_ = 0; bool rtSent_ = false;   // the BSYNTH_RECTEST hook                 // sampleClock_ at the start of this block
+    static constexpr double kAtMinMs = 25;   // lines due sooner than this are sent at once (see flushLines)
+    static constexpr double kAheadS = 0.02;   // an offline render runs at most this far ahead of the clock, as in 1.2.2 (more drains the jitter buffer: 30 ms gave the Mac short blocks); the notes keep their places through their delays
     std::atomic<size_t> sentLayersHash_{0};   // dna lines with new layers sent / built by Windows
     std::atomic<double> buildSentAt_{0};
     std::atomic<bool> showWheel_{false}, showBend_{false};

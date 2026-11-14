@@ -696,12 +696,8 @@ void Machine::run()
         else Machine::log("recording input: not available (%s)", input.error.c_str());
         // the screen over the same connection (EMULATOR-TUNING.md 5): QEMU pushes each change; VNC keeps the mouse
         // and keys. BSYNTH_DISPLAY=vnc keeps the old VNC screen (diagnosis)
-        const char *dm = getenv("BSYNTH_DISPLAY");
-        if (input.connected() && !(dm && !strcmp(dm, "vnc"))) {
-            if (input.startDisplay([this](int x, int y, int w, int h, const uint8_t *p, uint32_t stride, uint32_t fmt) { blit(x, y, w, h, p, stride, fmt); }, qpid))
-                Machine::log("screen: D-Bus display listener registered");
-            else Machine::log("screen: D-Bus display not available (%s), VNC", input.displayError.c_str());
-        }
+        qpid_ = qpid;
+        if (screenWanted_) { screenWanted_ = false; wantScreen(true); }   // an editor was already open
     }
     {
         // the library disc goes into the (empty) CD drive; the guest reads its catalogue when told "lib"
@@ -921,7 +917,8 @@ void Machine::vncLoop()
             // shares (single-threaded TCG), and the eye does not need more for XP
             double wait = 0.033 - (now() - lastReq);
             if (wait > 0) sleep_ms((int)(wait * 1000));
-            if (dbusFrames_) { sleep_ms(50); continue; }   // the D-Bus display delivers the screen: VNC is only the mouse and keys
+            // the D-Bus display delivers the screen (VNC is only the mouse and keys), or no editor wants one
+            if (dbusFrames_ || !screenWanted_) { sleep_ms(50); incremental = false; continue; }
             lastReq = now();
             uint8_t req[10] = {3, (uint8_t)incremental, 0, 0, 0, 0, (uint8_t)(kW >> 8), (uint8_t)(kW & 255), (uint8_t)(kH >> 8), (uint8_t)(kH & 255)};
             { std::lock_guard<std::mutex> g(vncSendMu_); if (!send_all(s, req, 10)) break; }
@@ -1001,6 +998,23 @@ done:
     CLOSESOCK(s);
 }
 
+void Machine::wantScreen(bool w)
+{
+    if (w == screenWanted_.load()) return;
+    screenWanted_ = w;
+    const char *dm = getenv("BSYNTH_DISPLAY");
+    if (dm && !strcmp(dm, "vnc")) return;                 // (diagnosis: VNC's screen only)
+    if (w && input.connected() && !input.displayOn()) {
+        if (input.startDisplay([this](int x, int y, int ww, int h, const uint8_t *p, uint32_t stride, uint32_t fmt) { blit(x, y, ww, h, p, stride, fmt); }, qpid_))
+            log("screen: D-Bus display listener registered");
+        else log("screen: D-Bus display not available (%s), VNC", input.displayError.c_str());
+    } else if (!w && input.displayOn()) {
+        input.stopDisplay();
+        dbusFrames_ = false;
+        log("screen: no editor open, the display listener is gone");
+    }
+}
+
 // one changed rectangle from the D-Bus display, in QEMU's pixman format, into the RGBA screen
 void Machine::blit(int x, int y, int w, int h, const uint8_t *p, uint32_t stride, uint32_t fmt)
 {
@@ -1034,6 +1048,17 @@ void Machine::blit(int x, int y, int w, int h, const uint8_t *p, uint32_t stride
     if (x + w > dx1_) dx1_ = x + w;
     if (y + h > dy1_) dy1_ = y + h;
     dbusFrames_ = true;
+    if (!dumpDir_) dumpDir_ = getenv("BSYNTH_DUMP_FRAMES");
+    if (dumpDir_ && now() - lastDump_ > 1.0) {   // BSYNTH_DUMP_FRAMES=dir: the screen as PPM once a second (checking)
+        lastDump_ = now();
+        char fn[600];
+        snprintf(fn, sizeof fn, "%s%c%06d.ppm", dumpDir_, SEP, (int)((lastDump_ - resumedAt.load()) * 1000));
+        if (FILE *pf = fopen(fn, "wb")) {
+            fprintf(pf, "P6\n%d %d\n255\n", kW, kH);
+            for (size_t q = 0; q < fb_.size(); q += 4) fwrite(&fb_[q], 1, 3, pf);
+            fclose(pf);
+        }
+    }
 }
 
 bool Machine::frame(std::vector<uint8_t> &rgba, int &x0, int &y0, int &x1, int &y1)

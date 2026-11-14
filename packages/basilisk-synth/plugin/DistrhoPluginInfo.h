@@ -13,6 +13,8 @@
 #define DISTRHO_PLUGIN_IS_RT_SAFE      1
 #define DISTRHO_PLUGIN_IS_SYNTH        1
 #define DISTRHO_PLUGIN_NUM_INPUTS      2   // a stereo sidechain: the recording input (RECORDING.md 1.1)
+#define DISTRHO_PLUGIN_AU_TYPE         aumu   // an instrument: DPF would call a synth with inputs a music effect (aumf),
+                                              // and DAWs would list it among effects. AU instruments take side chains
 #define DISTRHO_PLUGIN_NUM_OUTPUTS     2
 #define DISTRHO_PLUGIN_WANT_LATENCY    1
 #define DISTRHO_PLUGIN_WANT_MIDI_INPUT 1

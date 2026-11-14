@@ -1,0 +1,14 @@
+--- a/distrho/src/DistrhoPluginCLAP.cpp
++++ b/distrho/src/DistrhoPluginCLAP.cpp
+@@ -826,6 +826,11 @@
+         fPlugin.setSampleRate(sampleRate, true);
+         fPlugin.setBufferSize(maxFramesCount, true);
+         fPlugin.activate();
++       #if DISTRHO_PLUGIN_WANT_LATENCY
++        // BASILISK SYNTH: a latency set in activate() is reported here, inside clap_plugin::activate, as CLAP requires
++        checkForLatencyChanges(false, true);
++        reportLatencyChangeIfNeeded();
++       #endif
+     }
+ 
+     void deactivate()

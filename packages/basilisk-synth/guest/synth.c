@@ -1001,6 +1001,8 @@ static void dig_tick(void)
         }
         dig_held = held;
     }
+    /* nobody watching (no editor open: "vis 0"): no repaints in Calculator's process; the states catch up on "vis 1" */
+    if (!visible_build) { for (r = 0; r < SY_NREC; r++) dig_pressed[r] = dig_def[r] = -1; return; }
     for (r = 0; r < SY_NREC; r++) {
         int p, d;
         if (!hDig[r]) continue;

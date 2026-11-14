@@ -303,6 +303,74 @@ no QEMU build of our own is needed.
   Choir, Breathing Logon: every event audible but under 0.004); 1.2.1's sweep flagged 5. Logoff Strings renders at
   peak ~0.03 alone in both 1.2.1 and 1.2.2 but at 0.3 in some sweep takes: pre-existing build-state variance, open.
 
+## Final release / archived (2026-11-14)
+BASILISK SYNTH 1.3.0 is the last release of the XP edition (the owner's decision). Development continues on
+BASILISK 16 (`packages/basilisk-synth-311`). Known open issues, not to be worked on:
+- **Saving recordings (RECORDING.md X2-X3):** not built. The U: drive (USB stick hot-plugged after resume, FatFs
+  harvest, core/userstore), the R strip and Recorder tab, My recordings, To slot / To all 16, per-slot takes and
+  state embedding. 1.3.0 records the DAW's input into Sound Recorder (X1) and that is all.
+- **Resume stall:** EMULATOR-TUNING.md saw 2 of 4 Windows resumes answer `hi` without `ready` within 90 s; not
+  reproduced or fixed here. The plugin's watchdog restarts a machine that sends no sound for 8 s.
+- **Starvation under load:** with another project's compiles in WSL2/Hyper-V (load 7-10) XP's own stream starves
+  (50-90 gaps a minute in 1.2.2 and 1.3.0 alike); QEMU at High priority does not help. At low load 1.3.0 gave 0, 0
+  and 1 gaps a take. Starvation while the editor is captured at 30 fps (the site lane's clips) was not re-measured
+  with capture; a program change with the editor open was equal to 1.2.2.
+- **Library presets on XP:** the library lane's check of 672 of its 1007 presets against their 3.11 renders (on the
+  1.2.3 candidate = 1.3.0's build logic) gave 647 pass, 25 fail: 1 silent (Misty Low), 2 render failures with
+  library sounds and `@t...]` trims (Cedar Solo, Opal Ray), 5 with notes missing (Copper Rerun, News Break
+  Strings, Early Felt, Ballroom Prism, Laser Descent), 2 very short clicks 24-29 dB off (infobar), 16 near the
+  pitch/band thresholds. Numbers: library/builder/data/library.json (xp_check, commit 797daa7). The remaining 335
+  were not checked on XP.
+- Smaller: Win32.Map for the Windows screen (plain Update is used); Logoff Strings' level varies between builds;
+  Silent Orb's band balance differs from 3.11; XP's timer is too coarse under TCG for guest-scheduled note timing.
+
+## 1.3.0 (2026-11-14): recording, the D-Bus screen, Calculator keys, DNA v3 notes, kits
+- **X1 recording input.** A second, input-only AC97 backed by QEMU's `-audiodev dbus` on the p2p display
+  connection (plugin/DBusIn). Findings:
+  - The plugin added the input card before the playback card: devices take PCI slots in order and the snapshot
+    put XP's playback card in the first, so XP played into the input backend (no sound at all). The recording card
+    is now listed second, as make_machine.py builds it.
+  - The Windows auth line was built as std::string(literal, 34) from a 32-byte literal: two stray bytes before
+    BEGIN, and QEMU never answered RegisterInListener.
+  - QEMU 11.1's dbus input does not pace itself (`dbus_read`: its audio_rate_get_bytes is commented out): the
+    card takes whatever Read returns. Returning a full buffer (silence-padded) made XP record ~3x real time (pitch
+    532 Hz for 1 kHz). Read now returns only frames in hand, after a 40 ms cushion: the DAW's clock paces XP.
+  - XP's preferred recording device is set by synth.exe (winmm DRVM_MAPPER_PREFERRED_SET to the "(2)" card) as
+    well as the registry; new recordings default to CD Quality; strips keep Record (<< >> drop; slider -28 px).
+  - TR1: Windows 998.4 Hz for 1 kHz, 0-2 glitches, peak -6 dBFS as fed; Mac 998.3 Hz, 1 glitch. (bsynth-host feeds
+    live input a little faster than real time: 10 s recorded in ~6.6 s; a DAW is real time.)
+- **The screen over D-Bus** (EMULATOR-TUNING 5): Console_0 listener on the same connection, Unix.Map on macOS
+  (verified "mapped", colours right), plain Update on Windows (Win32.Map needs an AF_UNIX peer pid). QEMU pushes
+  ~28 updates/s even with no editor, so the listener is attached only while an editor is open (VNC does not poll
+  then either). VNC keeps the mouse and keys. Listener sockets are served before the Register call.
+- **Strip keys:** Calculator's real 0-F push buttons (window dump: ids 124-133, 134-139), reparented onto the
+  strips; pressed while sounding (BM_SETSTATE), default border on the selected layer (BM_SETSTYLE), held =
+  audition at the root rate. The Time group box ("&Time", id 104 of timedate.cpl's page) is hidden.
+- **DNA v3 notes:** BASILISK 16's NoteHost (V3Host.h) plays the notes; the guest answers `hi 3 xp <state>
+  win,rate,kit`, plays windows, `rate` (glide, regate) and `choke` (in-place fade of the queued chunks) in
+  srhook's streams, reports `seg` (Insert File points, scaled by later speed steps) and runs `at <ms> <line>` on its
+  own clock. Kit test (layer pads, cut group, pitched range) verified line by line.
+- **Kit pad calculator:** the Calculator-icon button right of the keyboard strip (disabled without `k` tokens)
+  opens a second, real Calculator whose 16 Standard-view keys are the pads (MPC order, 1234/QWER/ASDF/ZXCV).
+- **Builds and notes:** only a build whose layers match ends a wait; XP stays awake until then; 30 s give-up.
+  Offline: a block with new sounds waits for them; the note lines sent in the 100 ms before such a wait are sent
+  again after it (XP's sound during the wait is skipped): Macro Echoes 8/8 (was 5/8 on 1.2.2 and the first 1.3.0
+  build). No panic on new sounds (a note sent just before a DAW's block-start automation was killed). Offline
+  pacing stays at 1.2.2's 20 ms: 30 ms drained the Mac's 55 ms jitter buffer (short blocks).
+- **Validators (Mac):** auval passes (the AU is `aumu`: DPF called a synth with inputs a music effect, `aumf`);
+  pluginval 10 passes for VST3 and AU; clap-validator 34 passed, 0 failed (DPF patched: plugin/patches/
+  dpf-clap-latency.patch reports the latency inside activate; parameter defaults = the default DNA's ADSR).
+- **Guest-scheduled notes (item 5), measured and narrowed:** XP runs `at <ms> <line>` on its own clock, but under
+  TCG its waits overshoot by about a tick (10-15 ms): with every note scheduled, the harness's onsets moved +10 ms
+  live and +36 ms offline (and offline notes lost the 10-20 ms head start the 150 ms latency was calibrated on).
+  So only lines due >= 25 ms later use it (O offsets, window ends, gates, chokes); the rest go at once, as in 1.2.2.
+- **Strip keys and CPU:** with no editor open ("vis 0") the keys' pressed states are not repainted (a themed button
+  repaint in Calculator's process per note start/end is real CPU under TCG); they catch up on "vis 1".
+- **Load:** under heavy WSL load (another project's compiles, load 7-10) 1.2.2 and 1.3.0 starve alike inside XP
+  (1.2.2: 54-61 gaps a take, 1.3.0: 8-77); the playout itself stayed clean (0-1 short blocks). Program change with
+  the editor open (D-Bus screen vs 1.2.2's VNC), same load: 0-1 gaps each.
+- **Log:** each line carries the host pid; `BSYNTH_DUMP_FRAMES` works on the D-Bus screen.
+
 ## Next batched release: emulator tuning (design/EMULATOR-TUNING.md, a7a99df; steps in its section 5)
 - Editor display over D-Bus: RegisterListener on /org/qemu/Display1/Console_0 over the p2p connection DBusIn already
   opens, shared-memory scanout (Listener.Unix.Map on macOS, Listener.Win32.Map on Windows), ScanoutMap/UpdateMap
