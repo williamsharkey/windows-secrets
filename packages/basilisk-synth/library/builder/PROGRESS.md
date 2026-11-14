@@ -162,4 +162,5 @@ Nothing audio goes in git.
 - **Kit Manager 98 previews** (previews.py --kits): 39 kits. 7 use the x step sequencer, which in 1.3.0 played
   nothing until a Mines board existed (fixed in 7c81ca5, ships in 1.4). Their clips play the pads straight, with
   a note. **When 1.4 lands:** pin it and re-render those 7 with a board (render311 --grid "8 8 p <64 cells>",
-  steps follow --bpm) so they play the sequenced pattern, then drop the note.
+  steps follow --bpm) so they play the sequenced pattern, then drop the note. Also re-render the 11 kick-fixed
+  kits (packs/kitmgr/KICKFIX.TSV, KITMGR98 for 1.4 in cd70323): their previews still play the 1.3.0 kick.
