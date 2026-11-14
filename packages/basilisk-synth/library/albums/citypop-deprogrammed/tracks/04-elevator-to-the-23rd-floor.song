@@ -1,0 +1,45 @@
+# Var. III: Elevator to the 23rd Floor: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Var. III: Elevator to the 23rd Floor
+track    = 4
+note     = A bossa nova in B-flat at 120 bpm with the theme in augmentation (every note twice as long) on flute; a nylon-style guitar on a two-bar pattern, the glass piano on B, the motto traded in double time.
+pack     = rainy-loft
+kind     = original
+album    = CITYPOP DEPROGRAMMED
+composer = Algorithmic Industries (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+midi     = 04-elevator-to-the-23rd-floor.mid
+script   = 04-elevator-to-the-23rd-floor.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+fadeout  = 3.0
+
+[echo]
+time     = 3/8
+feedback = 0.3
+tone     = 2800
+pingpong = yes
+level    = -8
+lowcut   = 250
+
+[reverb]
+size     = 2.2
+predelay = 20
+tone     = 5000
+level    = -6
+seed     = 3114
+
+[tracks]
+# name      source  preset                                  mix
+lobby       ch13    "City Hush"                              lufs=-37
+chime       ch7     "Single Chime"                           lufs=-24 pan=20 verb=0.5 echo=0.2
+gtr         ch1     "courtyard-chapel:Faded Pluck"           lufs=-20 pan=-24 verb=0.2
+bass        ch2     "Fretless Harbour"                       lufs=-21
+flute       ch3     "Night Flute"                            lufs=-19 pan=10 verb=0.35 echo=0.14
+ep          ch4     "Glass Tine"                             lufs=-22 pan=28 verb=0.3 echo=0.1
+strings     ch5     "studio-archive:Waxed Aurora"            lufs=-28 pan=-38 verb=0.45
+vibes       ch6     "courtyard-chapel:Delta Tower"           lufs=-22 pan=40 verb=0.3 echo=0.12
+kit         ch10    "Loft Brushes"                           lufs=-23 verb=0.12
+perc        ch11    "Loft Percussion"                        lufs=-28 pan=30 verb=0.12

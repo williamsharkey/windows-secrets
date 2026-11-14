@@ -1,0 +1,53 @@
+# Rainy Loft Collection (rainy-loft): category	name	DNA. Sounds: ../sounds/build_sounds.py (the disc's \SOUNDS).
+Keys	Loft Tine	rl_ep_loft_c2#1Z0,41,36Vw3,5L42Q-36/rl_ep_loft_c3#4Z42,53,48Vw3,5L42Q-18/rl_ep_loft_c4#5Z54,65,60Vw3,5L42Q0/rl_ep_loft_c5#4Z66,77,72Vw3,5L42Q18/rl_ep_loft_c6#2Z78,127,84Vw3,5L42Q36;A0R420V80
+Keys	Loft Tine Bright	rl_ep_bright_c2#1Z0,41,36Vw2,5L42Q-36/rl_ep_bright_c3#4Z42,53,48Vw2,5L42Q-18/rl_ep_bright_c4#5Z54,65,60Vw2,5L42Q0/rl_ep_bright_c5#4Z66,77,72Vw2,5L42Q18/rl_ep_bright_c6#2Z78,127,84Vw2,5L42Q36;A0R360V90
+Keys	Glass Tine	rl_ep_glass_c3#4Z0,53,48Vw2,6L42Q-36/rl_ep_glass_c4#5Z54,65,60Vw2,6L42Q-8/rl_ep_glass_c5#4Z66,77,72Vw2,6L42Q8/rl_ep_glass_c6#3Z78,127,84Vw2,6L42Q36;A0R600V85
+Keys	Suitcase Night	rl_ep_suitcase_c3#4Z0,53,48Vw4,4L42Q-24Jp0,-45.240,45.480,-45Wp2/rl_ep_suitcase_c4#5Z54,65,60Vw4,4L42Q-8Jp0,-45.240,45.480,-45Wp2/rl_ep_suitcase_c5#4Z66,77,72Vw4,4L42Q8Jp0,-45.240,45.480,-45Wp2/rl_ep_suitcase_c6#3Z78,127,84Vw4,4L42Q24Jp0,-45.240,45.480,-45Wp2;A0R380V80
+Keys	Tape Loft Tine	rl_ep_loft_c3#5Z0,53,48Vw9,6f3,9Yd4kL42Q-36/rl_ep_loft_c4#6Z54,65,60Vw9,6f3,9Yd4kL42Q0/rl_ep_loft_c5#5Z66,127,72Vw9,6f3,9Yd4kL42Q36;A0R400V75
+Bass	Fretless Harbour	rl_bass_round_c1#4Z0,31,24Nlg70Vw4,4L80/rl_bass_round_c2#5Z32,43,36Nlg70Vw4,4L80/rl_bass_round_c3#4Z44,127,48Nlg70Vw4,4L80/rl_fretless_e1#3T8L35Nlg70;A2D700S55R140V85K36
+Bass	Pluck Avenue	rl_bass_pluck_c1#4Z0,31,24L80/rl_bass_pluck_c2#5Z32,43,36L80/rl_bass_pluck_c3#4Z44,127,48L80/rl_fingerbass_a1#3T3L40;A0D420S40R90V90K36
+Bass	Rubber Taxi	rl_bass_rubber_c1#4Z0,31,24L80/rl_bass_rubber_c2#6Z32,43,36L80/rl_bass_rubber_c3#6Z44,127,48L80;A0D320S35R70V95K36
+Bass	Night Pizz Bass	rl_pizz_cb#16;A0D900S20R160V90K30
+Lead	Harbour Reed	rl_reed_f4#6Nlg45Vw5,5f2,9s10,50Yd3;A30D500S85R260V75K65
+Lead	Night Flute	rl_flute_plain_e4#6Z0,71,64Nlg40Vw3,5/rl_flute_vib_e6#6Z72,127,88Nlg40Vw2,5;A45S100R300V65
+Lead	Late Flute	rl_flute_exp_e6#8Z0,127,88Nlg50Vw4,4;A60S100R380V60
+Lead	Harmon Glow	rl_harmon_gs4#6Z0,127,68Nlg35Vw4,6s15,60;A18S100R220V75
+Lead	Straight Mute	rl_straightmute_g4#6Z0,127,67Nlg35Vw4,6s15,60;A20S100R220V75
+Lead	Clarinet After Hours	rl_clarinet_f4#6Nlg40Vw3,5;A35S100R260V70K65
+Bell	Crystal Bb	rl_crystal_b3#12Z0,127,58;A0R1800V80
+Bell	Glass Ceiling	rl_glassbell_fs5#12Z0,127,78;A0R900V85
+Bell	Single Chime	rl_chime_as4#12Z0,127,70;A0R1400V80
+Bell	Harmonic Glass	rl_harmonic2_b3#8Z0,71,59/rl_harmonic_b5#8Z72,127,83;A0R1500V80
+Pluck	Pizzicato Night	rl_pizz_cb#4Z0,47,30/rl_pizz_vln#12Z48,127,67;A0D600S10R200V85
+Vocal	Mist Choir	choir_aah@t6000]@t300[#8U2~8Vw4,3/vocoder_choir_female_f4#8T-8L55Vw3,4;A700S90R1600V45K57
+Pad	Haze Strings	violin_section_sus_c4@t7500]@t200[#8U2~9Vw3,4/cello_section_sus_c3@t7500]@t200[#8T12L60;A500S95R1400V55K60
+Kit	Loft Brushes	gd_kit_tape_kick@t30000Irl_brush_rim@t30000Irl_brush_a@t30000Irl_clap_b@t30000Irl_brush_sw2@t30000Igd_kit_tape_lotom@t30000Igd_kit_tape_tighthat@t30000Igd_kit_tape_hat@t30000Igd_kit_tape_midtom@t30000Igd_kit_tape_openhat@t30000Igd_kit_tape_hitom@t30000Igd_kit_tape_crash@t30000Igd_kit_studio_ride@t30000Irl_brush_sw1#16;R160V100G-6k36j1i90k37j2h92k38j3k39j4i70h96k40j5i80k41j6i70h70k43j6i70t300h80k42j7c1i55h130k44j8c1i50h130k45j9i70h100k47j9i70t200h100k46j10c1i50h130k48j11i70h125k50j11i70t200h125k49j12i60h120k51j13i55h72k35j14
+Kit	Loft Sticks	gd_kit_studio_kick@t30000Irl_rim_a@t30000Igd_kit_studio_snare@t30000Irl_clap_a@t30000Igd_kit_studio_lotom@t30000Igd_kit_studio_tighthat@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_midtom@t30000Igd_kit_studio_openhat@t30000Igd_kit_studio_hitom@t30000Igd_kit_studio_crash@t30000Igd_kit_studio_ride@t30000Irl_brush_a#16;R140V100G-6k36j1k37j2i80h92k38j3k40j3i55k39j4i80h96k41j5i75h70k43j5i75t300h80k42j6c1i60h130k44j7c1i55h130k45j8i75h100k47j8i75t200h100k46j9c1i55h130k48j10i75h125k50j10i75t200h125k49j11i60h120k51j12i60h72k35j13
+Kit	Couch Disco	gd_kit_tape_kick@t30000Irl_rim_b@t30000Igd_kit_studio_snare@t30000Irl_clap_a@t30000Irl_clap_b@t30000Igd_kit_studio_tighthat@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_openhat@t30000Igd_kit_tape_crash@t30000Irl_tamb@t30000Igd_kit_tape_lotom@t30000Igd_kit_tape_midtom@t30000Igd_kit_tape_hitom#16;R140V100G-6k36j1k37j2i80h92k38j3k40j3i55k39j4i85h96k39j5i85h96k42j6c1i60h130k44j7c1i55h130k46j8c1i55h130k49j9i60h120k54j10i70h68k41j11i75h70k45j12i75h100k48j13i75h125
+Kit	Loft Percussion	rl_shaker1@t30000Irl_shaker2@t30000Irl_shaker3@t30000Irl_shaker4@t30000Irl_snap1@t30000Irl_snap3@t30000Irl_tamb@t30000Irl_cowbell@t30000Irl_triangle@t30000Irl_guiro@t30000Irl_conga@t30000Irl_clap_b@t30000Igd_kit_studio_cabasa@t30000Igd_kit_studio_bell@t30000Irl_tamb_b#16;R150V100G-6k58j1h136k58j2h136k58j3h136k58j4h136k57j5h85k57j6h85k54j7h68k56j8i70h60k59j9i60h140k60j10i70h80k62j11h66k63j11b400h72k64j11b700h78k39j12h96k52j13h120k53j14h115k55j15h136
+Texture	Rain on Glass	rl_rain_glass#4F;A2500R3000V70
+Texture	Rain on the Window	rl_rain_window#4F;A2500R3000V70
+Texture	Soft Rain	rl_rain_soft#4F;A2500R3000V70
+Texture	Balcony Rain	rl_rain_balcony#4F;A2500R3000V70
+Texture	Puddle Rain	rl_rain_puddle#4F;A1500R2000V70
+Texture	City Hush	rl_city_hush#4F;A2500R3000V70
+Texture	City at Night	rl_city_night#4F;A2500R3000V70
+Texture	Far City	rl_city_far#4F;A2500R3000V70
+Texture	Wet Traffic	rl_traffic_wet#4F;A2500R3000V70
+Texture	Night Insects	rl_insects#4F;A2500R3000V70
+Texture	Vinyl Bed	rl_vinyl#4F;A1500R2500V70
+Texture	Vinyl Dust	rl_vinyl_c#4F;A1500R2500V70
+FX	Espresso Bar	rl_espresso#4F;A20R1500V70
+FX	Espresso Automatic	rl_espresso_auto#4F;A20R1500V70
+FX	Steam Wand	rl_espresso_wave#4F;A200R1500V70
+FX	Cup and Spoon	rl_cup_stir#4F;A5R800V80
+FX	Teacup	rl_teacup#4F;A5R800V80
+FX	Lighter	rl_lighter#4F;A0R300V80
+FX	Needle Drop	rl_needle#4F;A0R1200V80
+FX	Cassette Deck	rl_cassette#4F;A0R500V80
+FX	Distant Train	rl_train_far#4F;A1500R3000V70
+FX	Passing Train	rl_train_pass#4F;A800R2500V70
+FX	Harbour Horn	rl_foghorn#4F;A400R3000V70
+FX	Far Horn	rl_foghorn_far#4F;A200R2000V70
+FX	Bicycle Bell	rl_bicycle_bell#4F;A0R800V80
+FX	Drip	rl_drip#8Yd30;A0R600V85K72

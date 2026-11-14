@@ -1,0 +1,46 @@
+# Var. IV: Answering Machine, 1:12 a.m.: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Var. IV: Answering Machine, 1:12 a.m.
+track    = 5
+note     = The theme in C minor at 72 bpm, lo-fi: a worn tape electric piano, a close muted trumpet, a far flute, swung drums, vinyl and rain; the phone rings twice, the machine answers, nobody speaks.
+pack     = rainy-loft
+kind     = original
+album    = CITYPOP DEPROGRAMMED
+composer = Algorithmic Industries (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+midi     = 05-answering-machine-1-12-am.mid
+script   = 05-answering-machine-1-12-am.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+fadeout  = 3.0
+
+[echo]
+time     = 3/16
+feedback = 0.35
+tone     = 2400
+pingpong = yes
+level    = -6
+lowcut   = 250
+
+[reverb]
+size     = 2.6
+predelay = 24
+tone     = 4500
+level    = -6
+seed     = 3115
+
+[tracks]
+# name      source  preset                                  mix
+rain        ch13    "Soft Rain"                              lufs=-33
+vinyl       ch14    "Vinyl Bed"                              lufs=-33 hp=200
+phone       ch7     'dna:em_fetap_ring#4F;A0R400V80'         lufs=-30 pan=-40 lp=3500 hp=300 verb=0.3
+ep          ch1     "Tape Loft Tine"                         lufs=-18 pan=-10 verb=0.22 lp=7000
+bass        ch2     "Fretless Harbour"                       lufs=-20 lp=1800
+trumpet     ch3     "Harmon Glow"                            lufs=-20 pan=12 verb=0.25 echo=0.12 lp=6000
+flute       ch4     "Late Flute"                             lufs=-24 pan=-34 verb=0.45 echo=0.2
+pad         ch5     "Mist Choir"                             lufs=-30 pan=26 verb=0.5
+bell        ch6     'dna:ringout#4;A2R300V60K60'             lufs=-30 pan=30 verb=0.3 lp=4000
+kit         ch10    "Loft Sticks"                            lufs=-21 lp=6500 verb=0.08
+perc        ch11    "Loft Percussion"                        lufs=-30 pan=24 lp=7000

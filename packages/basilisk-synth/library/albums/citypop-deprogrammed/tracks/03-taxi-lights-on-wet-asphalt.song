@@ -1,0 +1,46 @@
+# Var. II: Taxi Lights on Wet Asphalt: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Var. II: Taxi Lights on Wet Asphalt
+track    = 3
+note     = The theme in G at 104 bpm, every long note pushed a sixteenth early: slap bass, a plucked guitar in sixteenths, synth brass, the reed with a polysynth an octave above; two choruses; up to A-flat at the end.
+pack     = rainy-loft
+kind     = original
+album    = CITYPOP DEPROGRAMMED
+composer = Algorithmic Industries (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+midi     = 03-taxi-lights-on-wet-asphalt.mid
+script   = 03-taxi-lights-on-wet-asphalt.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+fadeout  = 3.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+pingpong = yes
+level    = -7
+lowcut   = 250
+
+[reverb]
+size     = 1.6
+predelay = 14
+tone     = 6000
+level    = -7
+seed     = 3113
+
+[tracks]
+# name      source  preset                                  mix
+street      ch13    "Wet Traffic"                            lufs=-34
+ep          ch1     "Loft Tine Bright"                       lufs=-21 pan=-22 verb=0.18 echo=0.04
+bass        ch2     "Rubber Taxi"                            lufs=-19
+sax         ch3     "Harbour Reed"                           lufs=-18 pan=6 verb=0.25 echo=0.12
+synlead     ch4     "polysynth-showroom:Tropic Signal"       lufs=-28 pan=-10 verb=0.25 echo=0.2 tune=-15
+brass       ch5     "polysynth-showroom:Signal Stab"         lufs=-24 pan=26 verb=0.2
+strings     ch6     "studio-archive:Daylight Bows"           lufs=-26 pan=-40 verb=0.4
+gtr         ch7     "courtyard-chapel:Kinetic Harp"          lufs=-26 pan=42 verb=0.12 echo=0.08
+glass       ch8     "Glass Tine"                             lufs=-24 pan=34 verb=0.3 echo=0.18
+kit         ch10    "Loft Sticks"                            lufs=-19 verb=0.08
+perc        ch11    "Loft Percussion"                        lufs=-28 pan=-30 verb=0.1

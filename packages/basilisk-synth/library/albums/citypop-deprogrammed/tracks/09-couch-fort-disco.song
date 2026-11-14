@@ -1,0 +1,46 @@
+# Var. VIII: Couch Fort Disco: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Var. VIII: Couch Fort Disco
+track    = 9
+note     = Four on the floor in E at 118: the theme in diminution (eight bars in four) on polysynth, then at its own speed on the reed; octave bass, clavinet, string runs, claps, congas, a wordless vocoder choir; it fades.
+pack     = rainy-loft
+kind     = original
+album    = CITYPOP DEPROGRAMMED
+composer = Algorithmic Industries (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+midi     = 09-couch-fort-disco.mid
+script   = 09-couch-fort-disco.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+fadeout  = 4.0
+
+[echo]
+time     = 1/8
+feedback = 0.3
+tone     = 3200
+pingpong = yes
+level    = -8
+lowcut   = 250
+
+[reverb]
+size     = 1.6
+predelay = 14
+tone     = 6000
+level    = -7
+seed     = 3119
+
+[tracks]
+# name      source  preset                                  mix
+room        ch13    "City at Night"                          lufs=-36
+ep          ch1     "Loft Tine Bright"                       lufs=-24 pan=-20 verb=0.15
+bass        ch2     "Rubber Taxi"                            lufs=-18
+synth       ch3     "polysynth-showroom:Violet Pilot"        lufs=-20 pan=6 verb=0.25 echo=0.15
+sax         ch4     "Harbour Reed"                           lufs=-19 pan=-6 verb=0.25 echo=0.1
+clav        ch5     "polysynth-showroom:Distant Parlour"     lufs=-24 pan=36 verb=0.1 tune=-22
+strings     ch6     "studio-archive:Daylight Bows"           lufs=-24 pan=-38 verb=0.35
+vox         ch7     "polysynth-showroom:Broadcast Vox"       lufs=-24 pan=20 verb=0.45 tune=-11
+brass       ch8     "polysynth-showroom:Noble Hit"           lufs=-24 pan=28 verb=0.2
+kit         ch10    "Couch Disco"                            lufs=-18 verb=0.08
+perc        ch11    "Loft Percussion"                        lufs=-26 pan=-26 verb=0.1

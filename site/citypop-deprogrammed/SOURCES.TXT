@@ -1,0 +1,156 @@
+CITYPOP DEPROGRAMMED: SOURCES
+
+Every note was played by SNDWAVE2000 (Windows 3.11 Sound Recorders in DOSBox Pure).
+The album's sound library, the Rainy Loft Collection, was prepared from these recordings:
+
+Recordings dedicated to the public domain (CC0 1.0), from Freesound:
+
+  Finger Snapping Sound (High Quality).wav
+    by Alexamin, CC0-1.0, https://freesound.org/people/Alexamin/sounds/547122/
+  wind chimes - single 04.wav
+    by Anthousai, CC0-1.0, https://freesound.org/people/Anthousai/sounds/398496/
+  Espresso Machine (Automatic)
+    by BageBoy, CC0-1.0, https://freesound.org/people/BageBoy/sounds/402845/
+  Finger snaps #002
+    by bassimat, CC0-1.0, https://freesound.org/people/bassimat/sounds/824675/
+  Crystal Bell — Bb3
+    by bassimat, CC0-1.0, https://freesound.org/people/bassimat/sounds/858114/
+  HandClap14.wav
+    by bastianpusch, CC0-1.0, https://freesound.org/people/bastianpusch/sounds/493717/
+  rain against window 2
+    by bastipictures, CC0-1.0, https://freesound.org/people/bastipictures/sounds/243781/
+  Rain Hitting Puddle
+    by blewis20, CC0-1.0, https://freesound.org/people/blewis20/sounds/369494/
+  Harmonic_b4
+    by brettrader, CC0-1.0, https://freesound.org/people/brettrader/sounds/683038/
+  Harmonic_b2
+    by brettrader, CC0-1.0, https://freesound.org/people/brettrader/sounds/683037/
+  Record Player Needle is dropped & Vinyl crackling
+    by Breviceps, CC0-1.0, https://freesound.org/people/Breviceps/sounds/556722/
+  Triangle_Open_04
+    by cabled_mess, CC0-1.0, https://freesound.org/people/cabled_mess/sounds/349504/
+  Coffee Espresso Machine Wave 44100hz.wav
+    by Cafezz, CC0-1.0, https://freesound.org/people/Cafezz/sounds/333948/
+  Egg Shaker - Open Groove 1
+    by connermusician, CC0-1.0, https://freesound.org/people/connermusician/sounds/199825/
+  Long Distant Foghorn.aiff
+    by Danjocross, CC0-1.0, https://freesound.org/people/Danjocross/sounds/507471/
+  water drop
+    by florianreichelt, CC0-1.0, https://freesound.org/people/florianreichelt/sounds/683102/
+  Shaker
+    by ForBrighterWorld24, CC0-1.0, https://freesound.org/people/ForBrighterWorld24/sounds/871621/
+  Train Passing By 146 with Engine, Horn (Distant).mp3
+    by FunWithSound, CC0-1.0, https://freesound.org/people/FunWithSound/sounds/593082/
+  Wind chimes 1
+    by giddster, CC0-1.0, https://freesound.org/people/giddster/sounds/437337/
+  City Traffic, Rainy Night
+    by HECKFRICKER, CC0-1.0, https://freesound.org/people/HECKFRICKER/sounds/723695/
+  Vinyl Crackle Analogue 1.wav
+    by HenKonen, CC0-1.0, https://freesound.org/people/HenKonen/sounds/682193/
+  Rhodes 2.wav
+    by HenKonen, CC0-1.0, https://freesound.org/people/HenKonen/sounds/682257/
+  SNARE_brushes1.wav
+    by jannevse, CC0-1.0, https://freesound.org/people/jannevse/sounds/614387/
+  Kitchen - coffee or tea being poured into mug and stirred.wav
+    by jodybruchon, CC0-1.0, https://freesound.org/people/jodybruchon/sounds/459462/
+  Glass Bell.WAV
+    by Joedozer, CC0-1.0, https://freesound.org/people/Joedozer/sounds/396423/
+  guitar-twang-muted-a.wav
+    by JoostDev, CC0-1.0, https://freesound.org/people/JoostDev/sounds/340293/
+  guitar-twang-muted-b.wav
+    by JoostDev, CC0-1.0, https://freesound.org/people/JoostDev/sounds/340292/
+  LighterFlick.WAV
+    by jrsevers3, CC0-1.0, https://freesound.org/people/jrsevers3/sounds/452869/
+  acoustic snare rimshot.wav
+    by KEVOY, CC0-1.0, https://freesound.org/people/KEVOY/sounds/82281/
+  vinyl record crackle nice stereo.flac
+    by kyles, CC0-1.0, https://freesound.org/people/kyles/sounds/637931/
+  28'20'019 - Brushed Snare - (+EQ)
+    by laffik, CC0-1.0, https://freesound.org/people/laffik/sounds/725845/
+  Ambience City Quiet Night Air Tone
+    by leonelmail, CC0-1.0, https://freesound.org/people/leonelmail/sounds/427841/
+  shaker5.wav
+    by letnothingdie, CC0-1.0, https://freesound.org/people/letnothingdie/sounds/105336/
+  Shin-Nakano_Rain_on_Balcony_Spring_2008.wav
+    by markystar, CC0-1.0, https://freesound.org/people/markystar/sounds/75069/
+  Rain On A Window.wav
+    by metaepitome, CC0-1.0, https://freesound.org/people/metaepitome/sounds/163690/
+  FX_Vinyl_Crackle.wav
+    by michael_grinnell, CC0-1.0, https://freesound.org/people/michael_grinnell/sounds/464396/
+  Fretless bass, open E, neck pickup
+    by mrforfs, CC0-1.0, https://freesound.org/people/mrforfs/sounds/412144/
+  Ambience city night DPA semibinaural
+    by Nimlos, CC0-1.0, https://freesound.org/people/Nimlos/sounds/454822/
+  Train_distant_1.wav
+    by o_ciz, CC0-1.0, https://freesound.org/people/o_ciz/sounds/475501/
+  Espresso machine.wav
+    by Ohrwurm, CC0-1.0, https://freesound.org/people/Ohrwurm/sounds/96906/
+  201122_05 A Nice Cup of Tea.WAV
+    by phonoflora, CC0-1.0, https://freesound.org/people/phonoflora/sounds/545874/
+  Tea Can Shaker 7 (Hard Hit)
+    by quatricise, CC0-1.0, https://freesound.org/people/quatricise/sounds/792560/
+  Tambourine_Single_Hit_1.wav
+    by radiopassiveboy, CC0-1.0, https://freesound.org/people/radiopassiveboy/sounds/219266/
+  city-night-quiet.wav
+    by ragamuffin, CC0-1.0, https://freesound.org/people/ragamuffin/sounds/197211/
+  Fog horn as heard from shore
+    by richwise, CC0-1.0, https://freesound.org/people/richwise/sounds/795709/
+  Cowbell - Single 01.wav
+    by RP1312, CC0-1.0, https://freesound.org/people/RP1312/sounds/350711/
+  Japan_Matsudo_Bicycle_Bell_2.wav
+    by RutgerMuller, CC0-1.0, https://freesound.org/people/RutgerMuller/sounds/364806/
+  Japan_Kashiwa_Insects_Far_and_Upclose.wav
+    by RutgerMuller, CC0-1.0, https://freesound.org/people/RutgerMuller/sounds/365257/
+  tambourine_hit_1.wav
+    by sacha669SG, CC0-1.0, https://freesound.org/people/sacha669SG/sounds/648735/
+  Rimshot (sweet)
+    by Sajmund, CC0-1.0, https://freesound.org/people/Sajmund/sounds/132418/
+  TRIANGLE - 2
+    by SamuelGremaud, CC0-1.0, https://freesound.org/people/SamuelGremaud/sounds/517646/
+  hand clap.wav
+    by semccab, CC0-1.0, https://freesound.org/people/semccab/sounds/154399/
+  Percussion - D#4 (Conga-HitN_v3_rr2_Sum.wav)
+    by sgossner, CC0-1.0, https://freesound.org/people/sgossner/sounds/373411/
+  Guiro (gurio_long4.wav)
+    by sgossner, CC0-1.0, https://freesound.org/people/sgossner/sounds/375654/
+  Flute - vibrato sustain - E6 (LDFlute_susvib_E5_v1_2.wav)
+    by sgossner, CC0-1.0, https://freesound.org/people/sgossner/sounds/373301/
+  Flute - expressive sustain - E6 (LDFlute_expvib_E5_v1_1.wav)
+    by sgossner, CC0-1.0, https://freesound.org/people/sgossner/sounds/373314/
+  Flute - non-vibrato sustain - E4 (LDFlute_susNV_E3_v3_1.wav)
+    by sgossner, CC0-1.0, https://freesound.org/people/sgossner/sounds/373287/
+  Clarinet - long sustain - E#4 (DCClar_susLong_F3_v3_rr1_sum.wav)
+    by sgossner, CC0-1.0, https://freesound.org/people/sgossner/sounds/372952/
+  Trumpet - harmon mute sustain - G4 (Sum_SHTrumpet_harmonM-sus_G#3_v3_r
+    by sgossner, CC0-1.0, https://freesound.org/people/sgossner/sounds/374060/
+  Trumpet - straight mute sustain - F#4 (Sum_SHTrumpet_straightM-sus_G3_
+    by sgossner, CC0-1.0, https://freesound.org/people/sgossner/sounds/374142/
+  Violin Section - pizzicato - F#3 (VlnEns_Pizz_G2_v2_rr2.wav)
+    by sgossner, CC0-1.0, https://freesound.org/people/sgossner/sounds/374531/
+  Solo Contrabass - pizzicato - F1 (BKCtbss_Pizz_F#0_v3_rr2.wav)
+    by sgossner, CC0-1.0, https://freesound.org/people/sgossner/sounds/373056/
+  Rain_Hitting_Window_9
+    by SignatureSoundsOrg, CC0-1.0, https://freesound.org/people/SignatureSoundsOrg/sounds/869851/
+  snarebrushrimshotloud.wav
+    by stomachache, CC0-1.0, https://freesound.org/people/stomachache/sounds/44868/
+  Clean Fingered Bass
+    by Streetpoptunez, CC0-1.0, https://freesound.org/people/Streetpoptunez/sounds/385868/
+  Hand Clap
+    by stuntstudio, CC0-1.0, https://freesound.org/people/stuntstudio/sounds/421711/
+  cassette_being_inserted_into_a_deck
+    by submergent, CC0-1.0, https://freesound.org/people/submergent/sounds/826353/
+  Bass-guitar Pluck 02
+    by TheEndOfACycle, CC0-1.0, https://freesound.org/people/TheEndOfACycle/sounds/660533/
+  fretless bass
+    by tootoos24, CC0-1.0, https://freesound.org/people/tootoos24/sounds/558779/
+  Finger snap 4
+    by zmobie, CC0-1.0, https://freesound.org/people/zmobie/sounds/319814/
+
+Electric piano and bass: the Bele Dance instruments (midigarden) by William Sharkey, rendered offline.
+Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly), from the Paulywaulophone pack.
+Other SNDWAVE2000 pack discs used: Tape Parlour, Polysynth Showroom, Courtyard Chapel, Studio Archive,
+  Garden Rhythm Works and the library disc. Their own LIBRARY.TSV files list their sources (CC0 / public domain).
+Paganini, Caprice No. 24 in A minor (published 1820): public domain; one bar is quoted in Var. VI.
+Windows for Workgroups 3.11 and Sound Recorder (c) Microsoft Corporation. DOSBox Pure: GPL-2.0-or-later.
+
+The compositions, arrangements and recordings of CITYPOP DEPROGRAMMED: CC0 1.0.

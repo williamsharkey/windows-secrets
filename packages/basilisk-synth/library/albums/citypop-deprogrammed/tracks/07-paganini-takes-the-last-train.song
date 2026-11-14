@@ -1,0 +1,47 @@
+# Var. VI: Paganini Takes the Last Train: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Var. VI: Paganini Takes the Last Train
+track    = 7
+note     = A minor at 112 on a train groove. Opens with the first figure of Paganini's Caprice No. 24 (1817, public domain) and the theme answering in the minor; B in C major; the caprice in the bass turns into the theme's pick-up; ends in A major as the train leaves.
+source   = Paganini, Caprice No. 24 in A minor, Op. 1 (published 1820): its opening figure only, quoted twice
+pack     = rainy-loft
+kind     = original
+album    = CITYPOP DEPROGRAMMED
+composer = Algorithmic Industries (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+midi     = 07-paganini-takes-the-last-train.mid
+script   = 07-paganini-takes-the-last-train.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+fadeout  = 3.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3000
+pingpong = yes
+level    = -8
+lowcut   = 250
+
+[reverb]
+size     = 1.8
+predelay = 16
+tone     = 5500
+level    = -7
+seed     = 3117
+
+[tracks]
+# name      source  preset                                  mix
+train       ch13    "Passing Train"                          lufs=-30 pan=-20
+crossing    ch8     "Glass Ceiling"                          lufs=-32 pan=60 verb=0.5 lp=6000
+pizz        ch1     "Pizzicato Night"                        lufs=-21 pan=-26 verb=0.25
+bass        ch2     "Rubber Taxi"                            lufs=-19
+trumpet     ch3     "Harmon Glow"                            lufs=-18 pan=8 verb=0.25 echo=0.12
+ep          ch4     "Suitcase Night"                         lufs=-21 pan=-12 verb=0.2
+strings     ch5     "studio-archive:Humid Swell"             lufs=-24 pan=36 verb=0.35
+flute       ch6     "Night Flute"                            lufs=-22 pan=-18 verb=0.3 echo=0.12
+glass       ch7     "Glass Tine"                             lufs=-21 pan=24 verb=0.3 echo=0.15
+kit         ch10    "Loft Sticks"                            lufs=-19 verb=0.08
+perc        ch11    "Loft Percussion"                        lufs=-28 pan=-30 verb=0.1

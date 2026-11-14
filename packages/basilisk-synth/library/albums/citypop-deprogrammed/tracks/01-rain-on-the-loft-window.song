@@ -1,0 +1,47 @@
+# Theme: Rain on the Loft Window: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Theme: Rain on the Loft Window
+track    = 1
+note     = The theme, stated plainly in E-flat: A, A, B, A, an electric piano chorus, B, A, ending on the IV. Brushes, fretless, reed lead, muted trumpet, vibraphone answers, the rain before and after.
+pack     = rainy-loft
+kind     = original
+album    = CITYPOP DEPROGRAMMED
+composer = Harborlight Audio Works House Ensemble (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+midi     = 01-rain-on-the-loft-window.mid
+script   = 01-rain-on-the-loft-window.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+fadeout  = 3.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 2800
+pingpong = yes
+level    = -6
+lowcut   = 200
+
+[reverb]
+size     = 2.4
+predelay = 22
+tone     = 5200
+level    = -5
+seed     = 3110
+
+[tracks]
+# name      source  preset                                  mix
+rain        ch13    "Rain on Glass"                          lufs=-30 width=1
+vinyl       ch14    "Vinyl Bed"                              lufs=-38 hp=120
+ep          ch1     "Loft Tine"                              lufs=-21 pan=-18 verb=0.24 echo=0.05
+bass        ch2     "Fretless Harbour"                       lufs=-20
+lead        ch3     "Harbour Reed"                           lufs=-18 pan=8 verb=0.3 echo=0.14
+vibes       ch4     "courtyard-chapel:Delta Tower"           lufs=-24 pan=48 verb=0.32 echo=0.15
+strings     ch5     "studio-archive:Humid Swell"             lufs=-26 pan=-42 verb=0.45
+pad         ch6     "polysynth-showroom:Hotel Wash"          lufs=-29 pan=38 verb=0.4 tune=11
+bell        ch7     "Crystal Bb"                             lufs=-26 pan=-50 verb=0.45 echo=0.25
+horn        ch8     "Harmon Glow"                            lufs=-19 pan=-10 verb=0.3 echo=0.12
+kit         ch10    "Loft Brushes"                           lufs=-21 verb=0.12
+perc        ch11    "Loft Percussion"                        lufs=-28 pan=34 verb=0.15

@@ -1,0 +1,45 @@
+# Var. V: Neon Waltz: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Var. V: Neon Waltz
+track    = 6
+note     = The theme in waltz time (each bar becomes two) in A-flat at 120: glass piano, folk harp, pizzicato bass, brushes, a music box; a harmonica takes it a tone higher; B on strings.
+pack     = rainy-loft
+kind     = original
+album    = CITYPOP DEPROGRAMMED
+composer = Algorithmic Industries (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+midi     = 06-neon-waltz.mid
+script   = 06-neon-waltz.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+fadeout  = 3.0
+
+[echo]
+time     = 1/4
+feedback = 0.3
+tone     = 2800
+pingpong = yes
+level    = -8
+lowcut   = 250
+
+[reverb]
+size     = 2.6
+predelay = 22
+tone     = 5200
+level    = -5
+seed     = 3116
+
+[tracks]
+# name      source  preset                                  mix
+night       ch13    "Night Insects"                          lufs=-38
+glass       ch1     "Glass Tine"                             lufs=-19 pan=-14 verb=0.3 echo=0.08
+harp        ch2     "courtyard-chapel:Faded Pluck"           lufs=-24 pan=34 verb=0.3
+bass        ch3     "Night Pizz Bass"                        lufs=-21
+strings     ch4     "studio-archive:Crystal Legato"          lufs=-24 pan=-36 verb=0.45
+flute       ch5     "Night Flute"                            lufs=-19 pan=12 verb=0.35 echo=0.12
+harmonica   ch6     "tape-parlour:Hollow Revival"            lufs=-20 pan=4 verb=0.3 echo=0.1
+box         ch7     "courtyard-chapel:Late Ladder"           lufs=-26 pan=42 verb=0.45 echo=0.2
+kit         ch10    "Loft Brushes"                           lufs=-26 verb=0.15
+perc        ch11    "Loft Percussion"                        lufs=-31 pan=-28 verb=0.2
