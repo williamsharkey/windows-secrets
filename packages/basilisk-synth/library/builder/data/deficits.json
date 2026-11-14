@@ -1,0 +1,177 @@
+{
+ "workgroup-house": {
+  "Bass": 11,
+  "Keys": 10,
+  "Organ": 6,
+  "Stab": 14,
+  "Pad": 8,
+  "Strings": 4,
+  "Lead": 4,
+  "Vocal": 4,
+  "Pluck": 6,
+  "FX": 10,
+  "Perc": 6
+ },
+ "techno-server": {
+  "Bass": 8,
+  "Stab": 10,
+  "Pad": 10,
+  "Lead": 6,
+  "Perc": 16,
+  "FX": 10,
+  "Texture": 10
+ },
+ "trance-connectivity": {
+  "Lead": 16,
+  "Pad": 8,
+  "Pluck": 12,
+  "Bass": 4,
+  "Chord": 4,
+  "FX": 6,
+  "Keys": 4
+ },
+ "breakbeat-resource": {
+  "Bass": 16,
+  "Vocal": 4,
+  "Pad": 12,
+  "Keys": 8,
+  "Stab": 12,
+  "Lead": 5,
+  "FX": 12,
+  "Perc": 8
+ },
+ "bass-enterprise": {
+  "Wobble": 16,
+  "Growl": 8,
+  "Sub": 8,
+  "Organ bass": 8,
+  "Reese": 6,
+  "Stab": 6,
+  "Vocal": 2,
+  "FX": 4
+ },
+ "beat-management": {
+  "Keys": 10,
+  "Bass 808": 8,
+  "Bell": 8,
+  "Pluck": 4,
+  "Lead": 6,
+  "Pad": 12,
+  "Vocal": 4,
+  "Texture": 14,
+  "Strings brass": 10,
+  "FX": 10
+ },
+ "retro-display": {
+  "Pad": 12,
+  "Keys": 16,
+  "Lead": 10,
+  "Bass": 8,
+  "Brass strings": 10,
+  "Snare tom": 6,
+  "FX": 6
+ },
+ "screen-saver": {
+  "Pad": 22,
+  "Drone": 18,
+  "Bell mallet": 16,
+  "Texture": 20,
+  "Lead": 6
+ },
+ "diagnostics": {
+  "Glitch FX": 12,
+  "Perc": 14,
+  "Bell": 6,
+  "Lead": 10,
+  "Pad grain": 4,
+  "Vocal": 6
+ },
+ "leisure": {
+  "Mallet": 10,
+  "Texture": 8,
+  "Keys": 6,
+  "Strings": 6,
+  "Perc": 6,
+  "Lead": 4
+ },
+ "game-port": {
+  "Lead": 14,
+  "Bass": 4,
+  "Perc": 8,
+  "FX": 10
+ },
+ "workstation-classics": {
+  "Lead": 14,
+  "Bass": 12,
+  "Pad": 12,
+  "Pluck": 12,
+  "Chord": 6,
+  "FX": 6
+ },
+ "studio-archive": {
+  "Keys": 24,
+  "Strings": 10,
+  "Brass": 10,
+  "Pad": 10,
+  "Bell mallet": 10,
+  "Perc impact": 4,
+  "Bass": 4
+ },
+ "w3x-heritage": {
+  "Bell": 10,
+  "Keys": 8,
+  "Pad": 10,
+  "Bass": 6,
+  "Lead": 6,
+  "Stab hit": 8,
+  "Perc": 8
+ },
+ "paulywaulophone": {
+  "Keys": 14,
+  "Pad": 10,
+  "Vocal": 10,
+  "Lead": 6,
+  "Bass": 8,
+  "Bell": 8,
+  "Kit": 6
+ },
+ "garden-rhythm": {
+  "Kit": 14,
+  "Stab": 10,
+  "Pad": 10,
+  "Vocal": 8,
+  "Perc": 8,
+  "Mallet": 8
+ },
+ "tape-parlour": {
+  "Strings": 10,
+  "Lead": 8,
+  "Vocal": 8,
+  "Brass": 6,
+  "Organ": 6,
+  "Keys": 4
+ },
+ "courtyard-chapel": {
+  "Keys": 8,
+  "Pluck": 10,
+  "Mallet": 8,
+  "Bell": 8,
+  "FX": 4,
+  "Drone": 2
+ },
+ "listening-post": {
+  "Drone": 10,
+  "Texture": 10,
+  "FX": 8
+ },
+ "office-machinery": {
+  "Kit": 4,
+  "Perc": 8,
+  "FX": 10,
+  "Texture": 6
+ },
+ "polysynth-showroom": {
+  "Strings": 4,
+  "Bass": 2
+ }
+}

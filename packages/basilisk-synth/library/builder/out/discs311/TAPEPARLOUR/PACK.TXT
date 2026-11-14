@@ -1,0 +1,32 @@
+Tape Parlour Ensemble
+=====================
+
+A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+
+Id: tape-parlour
+Title: Tape Parlour Ensemble
+Product: SNDWAVE2000 by Algorithmic Industries
+Version: 1.0
+Author: Hartwell & Daughters Ltd
+Date: 1994-10-03
+Presets: 38
+Presets311: 38
+PresetsXP: 0
+Favourites: 0
+Description: Eight seconds of tape behind every key.
+
+Sounds on this disc (SOUNDS\, listed in LIBRARY.TSV):
+  Alexander Holm (Salamander Grand Piano V3); soft layer by William Sharkey
+  BaDoink
+  Bocafloja_
+  Jim-Bretherick
+  Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)
+  TheEndOfACycle
+  Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition)
+  Versilian Studios LLC / Sam Gossner and contributors (VCSL)
+  William Sharkey
+  newlocknew
+  Rendered from William Sharkey's own instruments in midigarden / Bele Dance and ghosts.garden.
+  Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly): permission from the author, via the owner, 2026-11-14.
+
+Favourites (the owner's picks): FAVORITE\

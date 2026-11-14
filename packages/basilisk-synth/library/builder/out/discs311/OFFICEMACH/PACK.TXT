@@ -1,0 +1,38 @@
+Office Machinery
+================
+
+A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+
+Id: office-machinery
+Title: Office Machinery
+Product: SNDWAVE2000 by Algorithmic Industries
+Version: 1.0
+Author: Surplus City Computer Liquidators
+Date: 1998-06-19
+Presets: 27
+Presets311: 27
+PresetsXP: 0
+Favourites: 0
+Description: Every drive, fan and speaker in the building, on cue.
+
+Sounds on this disc (SOUNDS\, listed in LIBRARY.TSV):
+  CZghost
+  DailyMediaGroup
+  EzoGaming
+  KRAFTWERK2K1
+  Klerrp
+  SamsterBirdies
+  Skyrite
+  SomeOrdinaryDude
+  U. S. Army Ceremonial Band
+  U.S. Army
+  U.S. Army Bands
+  conath
+  micropolis
+  rufuz
+  soundjoao
+  stkthree03
+  telescapes
+  thaighaudio
+
+Favourites (the owner's picks): FAVORITE\

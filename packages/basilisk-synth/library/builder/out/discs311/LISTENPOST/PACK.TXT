@@ -1,0 +1,21 @@
+Listening Post
+==============
+
+A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+
+Id: listening-post
+Title: Listening Post
+Product: SNDWAVE2000 by Algorithmic Industries
+Version: 7.0
+Author: Fathom Line Scientific Media
+Date: 1997-09-08
+Presets: 21
+Presets311: 21
+PresetsXP: 0
+Favourites: 0
+Description: Three thousand metres down, something is singing.
+
+Sounds on this disc (SOUNDS\, listed in LIBRARY.TSV):
+  NOAA Pacific Marine Environmental Laboratory (PMEL) Acoustics Program
+
+Favourites (the owner's picks): FAVORITE\

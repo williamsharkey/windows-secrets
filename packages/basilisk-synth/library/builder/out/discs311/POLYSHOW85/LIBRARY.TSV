@@ -1,0 +1,38 @@
+# name	category	path	seconds	source/licence
+fm87_clav_c4	fm	\SOUNDS\FM87CLAV.WAV	6.58	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+fm87_epiano_c4	fm	\SOUNDS\FM87EPIA.WAV	7.42	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+fm87_piano_c4	fm	\SOUNDS\FM87PIAN.WAV	5.61	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+mono77_bargain_piano_b2	synth80s	\SOUNDS\MONO77BA.WAV	11.00	modularsamples, CC0-1.0
+mono77_cream_b0	synth80s	\SOUNDS\MONO77CR.WAV	12.00	modularsamples, CC0-1.0
+mono77_fm_rings_ds1	synth80s	\SOUNDS\MONO77FM.WAV	5.68	modularsamples, CC0-1.0
+mono77_iee_yah_f1	synth80s	\SOUNDS\MONO77IE.WAV	8.11	modularsamples, CC0-1.0
+mono77_pulse_2_g2	synth80s	\SOUNDS\MONO77PU.WAV	10.20	modularsamples, CC0-1.0
+mono79_filter_vel_bass_c3	synth80s	\SOUNDS\MONO79FI.WAV	5.09	modularsamples, CC0-1.0
+mono79_noisy_sqr_filter_vel_c3	synth80s	\SOUNDS\MONO79NO.WAV	3.17	modularsamples, CC0-1.0
+poly78_pwm_lady_c4	synth80s	\SOUNDS\POLY78PW.WAV	11.65	modularsamples, CC0-1.0
+poly78_res_organ_d4	synth80s	\SOUNDS\POLY78RE.WAV	10.23	modularsamples, CC0-1.0
+poly78_sad_wow_c3	synth80s	\SOUNDS\POLY78SA.WAV	10.91	modularsamples, CC0-1.0
+poly78_saxons_pad_c2	synth80s	\SOUNDS\POLY78S1.WAV	12.00	modularsamples, CC0-1.0
+poly78_thick_swishy_c2	synth80s	\SOUNDS\POLY78TH.WAV	6.07	modularsamples, CC0-1.0
+poly78_vikings_pad_2_osc_c2	synth80s	\SOUNDS\POLY78VI.WAV	12.00	modularsamples, CC0-1.0
+poly82_open_pad_c2	synth80s	\SOUNDS\POLY82OP.WAV	11.12	modularsamples, CC0-1.0
+poly82_open_pad_c3	synth80s	\SOUNDS\POLY82O1.WAV	11.25	modularsamples, CC0-1.0
+poly82_rich_pluck_c4	synth80s	\SOUNDS\POLY82RI.WAV	2.10	modularsamples, CC0-1.0
+poly83_big_c2	synth80s	\SOUNDS\POLY83BI.WAV	11.40	modularsamples, CC0-1.0
+poly83_brassy_f1	synth80s	\SOUNDS\POLY83BR.WAV	10.27	modularsamples, CC0-1.0
+poly83_gasflowers_c1	synth80s	\SOUNDS\POLY83GA.WAV	6.15	modularsamples, CC0-1.0
+poly83_on_off_strings_fs4	synth80s	\SOUNDS\POLY83ON.WAV	11.57	modularsamples, CC0-1.0
+poly83_slowone_c2	synth80s	\SOUNDS\POLY83SL.WAV	12.00	modularsamples, CC0-1.0
+poly83_snapbass_c2	synth80s	\SOUNDS\POLY83SN.WAV	2.58	modularsamples, CC0-1.0
+poly83_wobble_brass_c2	synth80s	\SOUNDS\POLY83WO.WAV	10.25	modularsamples, CC0-1.0
+poly84_simpleton_c3	synth80s	\SOUNDS\POLY84SI.WAV	8.07	modularsamples, CC0-1.0
+poly85_buzzy_lead_c3	synth80s	\SOUNDS\POLY85BU.WAV	10.08	modularsamples, CC0-1.0
+poly85_dark_pad_chorus_c2	synth80s	\SOUNDS\POLY85DA.WAV	12.00	modularsamples, CC0-1.0
+poly85_dark_pad_chorus_c3	synth80s	\SOUNDS\POLY85D1.WAV	12.00	modularsamples, CC0-1.0
+poly85_sensitive_square_c3	synth80s	\SOUNDS\POLY85SE.WAV	3.16	modularsamples, CC0-1.0
+poly85_synthetic_c3	synth80s	\SOUNDS\POLY85SY.WAV	11.98	modularsamples, CC0-1.0
+poly85_thin_brassy_c2	synth80s	\SOUNDS\POLY85TH.WAV	8.95	modularsamples, CC0-1.0
+vocoder_choir_female_ens_f5	synth80s	\SOUNDS\VOCODERC.WAV	11.97	Elektrik_Musik, CC0-1.0
+vocoder_choir_female_f4	synth80s	\SOUNDS\VOCODER1.WAV	10.26	Elektrik_Musik, CC0-1.0
+vocoder_choir_male_c4	synth80s	\SOUNDS\VOCODER2.WAV	10.31	Elektrik_Musik, CC0-1.0
+vocoder_strings_c4	synth80s	\SOUNDS\VOCODERS.WAV	10.50	Elektrik_Musik, CC0-1.0

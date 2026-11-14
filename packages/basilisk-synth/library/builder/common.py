@@ -47,7 +47,7 @@ def display_name(n):
 # ------------------------------------------------------------------ DNA v2 model
 NAME = r'[a-z0-9_]+'
 STEP_RE = re.compile(r'@t\d+|@\d+|[IM]' + NAME + r'|[-+<>ERCPX\[\]]')
-GENE_RE = re.compile(r'V(?:[wfs][\d,]*)+|W(?:[selvmobgtrp][\d.~]*)+|Y(?:[dltq]\d+|[kr])+|N(?:[mlcpgk][\dnhl]*)+|S(?:[rxpgsw][\d.x]*)+|D(?:[hbis][\d,]*)+|#\d+|T-?\d+|H-?\d+(?:,-?\d+)*|U\d+~\d+|F|L\d+|O\d+|Q-?\d+|Ja[\d,.]+|Jp[-\d,.]+')
+GENE_RE = re.compile(r'Z\d+(?:,\d+)*|V(?:[wfs][\d,]*)+|W(?:[selvmobgtrp][\d.~]*)+|Y(?:[dltq]\d+|[kr])+|N(?:[mlcpgk][\dnhl]*)+|S(?:[rxpgsw][\d.x]*)+|D(?:[hbis][\d,]*)+|#\d+|T-?\d+|H-?\d+(?:,-?\d+)*|U\d+~\d+|F|L\d+|O\d+|Q-?\d+|Ja[\d,.]+|Jp[-\d,.]+')
 GLOB_RE = re.compile(r'([kqx][0-9,.~a-jl-pr-wyz]*|m\d[^A-Za-z]*(?:[A-Z][-\d,.~]*)?|[A-Z]-?\d+)')
 
 
@@ -63,11 +63,11 @@ class Layer:
     def text(self):
         g = self.genes
         out = self.src + ''.join(self.steps)
-        for k in ('#', 'T', 'H', 'U', 'F', 'L', 'O', 'Q', 'Ja', 'Jp', 'W', 'N', 'S', 'Y', 'V', 'D'):
+        for k in ('#', 'T', 'H', 'U', 'F', 'L', 'O', 'Q', 'Ja', 'Jp', 'W', 'N', 'S', 'Y', 'V', 'Z', 'D'):
             if k not in g: continue
             v = g[k]
             if k == 'F': out += 'F'
-            elif k in 'WYNSDV': out += k + v
+            elif k in 'WYNSDVZ': out += k + v
             elif k == 'H': out += 'H' + ','.join(str(int(x)) for x in v)
             elif k == 'U': out += 'U%d~%d' % v
             elif k in ('Ja', 'Jp'): out += k + '.'.join('%d,%d' % (int(t), int(l)) for t, l in v)
@@ -100,7 +100,8 @@ class DNA:
                     L.steps.append(ms.group(0)); p = ms.end(); continue
                 if mg:
                     t = mg.group(0)
-                    if t[0] in 'WYNSDV': L.genes[t[0]] = L.genes.get(t[0], '') + t[1:]
+                    if t[0] == 'Z': L.genes['Z'] = t[1:]
+                    elif t[0] in 'WYNSDV': L.genes[t[0]] = L.genes.get(t[0], '') + t[1:]
                     elif t == 'F': L.genes['F'] = True
                     elif t[0] == '#': L.genes['#'] = int(t[1:])
                     elif t[0] == 'H': L.genes['H'] = [int(x) for x in t[1:].split(',')]
@@ -147,7 +148,7 @@ def edition(s):
 
 def uses_v3(s):
     d = DNA.parse(s)
-    return bool(d.pads) or any(k in L.genes for L in d.layers for k in 'WYNSDV')
+    return bool(d.pads) or any(k in L.genes for L in d.layers for k in 'WYNSDVZ')
 
 
 def origins(s):

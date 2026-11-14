@@ -1,0 +1,23 @@
+# name	category	path	seconds	source/licence
+bugle_adjutants_call	signals	\SOUNDS\BUGLEADJ.WAV	9.50	U.S. Army Bands, Public domain
+bugle_attention	signals	\SOUNDS\BUGLEATT.WAV	4.11	U. S. Army Ceremonial Band, Public domain
+bugle_drill_call	signals	\SOUNDS\BUGLEDRI.WAV	8.11	U.S. Army, Public domain
+pc_cd_seek_mouse	pcera	\SOUNDS\PCCDSEEK.WAV	13.19	EzoGaming, CC0-1.0
+pc_computer_12_drives	pcera	\SOUNDS\PCCOMPUT.WAV	29.94	rufuz, CC0-1.0
+pc_crt_degauss	pcera	\SOUNDS\PCCRTDEG.WAV	5.60	Skyrite, CC0-1.0
+pc_crt_tv_uhf_scan	pcera	\SOUNDS\PCCRTTVU.WAV	29.49	telescapes, CC0-1.0
+pc_fan_coil_whine	pcera	\SOUNDS\PCFANCOI.WAV	12.00	SomeOrdinaryDude, CC0-1.0
+pc_floppy_eject	pcera	\SOUNDS\PCFLOPPY.WAV	2.65	KRAFTWERK2K1, CC0-1.0
+pc_floppy_insert	pcera	\SOUNDS\PCFLOPP1.WAV	1.73	KRAFTWERK2K1, CC0-1.0
+pc_floppy_insert_latch	pcera	\SOUNDS\PCFLOPP2.WAV	2.92	micropolis, CC0-1.0
+pc_floppy_read_a	pcera	\SOUNDS\PCFLOPP3.WAV	13.49	KRAFTWERK2K1, CC0-1.0
+pc_floppy_read_b	pcera	\SOUNDS\PCFLOPP4.WAV	14.46	KRAFTWERK2K1, CC0-1.0
+pc_hdd_7200_idle	pcera	\SOUNDS\PCHDD720.WAV	30.00	conath, CC0-1.0
+pc_hdd_head_align	pcera	\SOUNDS\PCHDDHEA.WAV	19.68	micropolis, CC0-1.0
+pc_hdd_inductor_mic	pcera	\SOUNDS\PCHDDIND.WAV	18.17	SamsterBirdies, CC0-1.0
+pc_hdd_maxtor_10k	pcera	\SOUNDS\PCHDDMAX.WAV	26.73	Klerrp, CC0-1.0
+pc_hdd_spin_up	pcera	\SOUNDS\PCHDDSPI.WAV	11.15	DailyMediaGroup, CC0-1.0
+pc_opl3_elec_snare	pcera	\SOUNDS\PCOPL3EL.WAV	0.39	stkthree03, CC0-1.0
+pc_pc_speaker_error_beep	pcera	\SOUNDS\PCPCSPEA.WAV	0.87	CZghost, CC0-1.0
+pc_server_rack_fans	pcera	\SOUNDS\PCSERVER.WAV	30.00	thaighaudio, CC0-1.0
+pc_tape_deck_startup	pcera	\SOUNDS\PCTAPEDE.WAV	7.45	soundjoao, CC0-1.0

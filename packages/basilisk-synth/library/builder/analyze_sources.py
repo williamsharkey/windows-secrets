@@ -51,6 +51,16 @@ def segments(m, rate, env):
     return out
 
 
+def fundamental_check(m, rate, midi):
+    """spectrum level (dB) at a note's fundamental and at its octave, over the body of the sound"""
+    seg = m[int(0.1 * len(m)):int(0.1 * len(m)) + int(min(2.0, len(m) / rate * 0.8) * rate)]
+    if len(seg) < 2048: return None, None
+    S = np.abs(np.fft.rfft(seg * np.hanning(len(seg)))); fr = np.fft.rfftfreq(len(seg), 1 / rate)
+    def lev(f): b = (fr > f * 0.97) & (fr < f * 1.03); return float(20 * np.log10(S[b].max() + 1e-9)) if b.any() else None
+    f0 = 440 * 2 ** ((midi - 69) / 12)
+    return lev(f0), lev(2 * f0)
+
+
 def analyze(data):
     x, rate = read_wav(data)
     m = x.mean(axis=1)
@@ -100,7 +110,11 @@ def main():
             print('skip', n, e); continue
         r.update(name=n, origin='library', category=cat, file311=path, licence=p[4])
         nr = name_root(n)
-        if nr is not None: r['name_root'] = nr
+        if nr is not None:
+            r['name_root'] = nr
+            x, rate = read_wav(lz.read(path))
+            a0, a1 = fundamental_check(x.mean(axis=1), rate, nr)
+            r['named_f0_db'], r['named_2f0_db'] = (round(a0, 1) if a0 is not None else None), (round(a1, 1) if a1 is not None else None)
         out[n] = r
     # roles: tonal when the pitch is confident and the sound is not noise
     for n, r in out.items():
@@ -108,9 +122,13 @@ def main():
         if 'name_root' in r: tonal = True
         r['tonal'] = bool(tonal)
         if 'name_root' in r and r['root'] is not None:
-            # trust the name's pitch class; keep the measured fine tuning when it agrees within 60 cents
+            # trust the name's pitch class; keep the measured fine tuning when it agrees within 60 cents. The octave
+            # comes from the measurement when it is confident: VSCO-derived names follow C3 = middle C, an octave
+            # below scientific pitch (checked: no energy at the named fundamental, all of it an octave up)
             d = (r['root'] - r['name_root'] + 6) % 12 - 6
             r['root_used'] = round(r['name_root'] + (d if abs(d) < 0.6 else 0), 2)
+            if r.get('named_f0_db') is not None and r['named_f0_db'] < r['named_2f0_db'] - 30 and not n.startswith(('gd_', 'pw_')):
+                r['root_used'] = round(r['root_used'] + 12, 2); r['octave_from_measure'] = True
         else:
             r['root_used'] = r['root']
         r['role'] = ('click' if r['seconds'] < 0.12 else

@@ -31,7 +31,7 @@ FOLDER = {'workgroup-house': 'workgrp', 'techno-server': 'techsrv', 'trance-conn
           'retro-display': 'retrodsp', 'screen-saver': 'screensv', 'diagnostics': 'diagnost', 'leisure': 'leisure',
           'game-port': 'gameport', 'workstation-classics': 'workstn', 'studio-archive': 'studarch',
           'w3x-heritage': 'heritage', 'rom-reference': 'romref', 'lifestyle-aesthetics': 'lifestyl',
-          'electromech-heritage': 'emheritg', 'kit-manager': 'kitmgr', 'paulywaulophone': 'paulyw', 'garden-rhythm': 'gardenrw'}
+          'electromech-heritage': 'emheritg', 'kit-manager': 'kitmgr', 'paulywaulophone': 'paulyw', 'garden-rhythm': 'gardenrw', 'tape-parlour': 'tapeparl', 'courtyard-chapel': 'courtyd', 'listening-post': 'listenpt', 'office-machinery': 'officemc', 'polysynth-showroom': 'polyshow'}
 FAV_RATING = 6.5
 # the product strings (design/brand/sndwave2000/COPY.md when the names lane commits it)
 PRODUCT = os.environ.get('SNDWAVE_PRODUCT', 'SNDWAVE2000')
@@ -61,12 +61,12 @@ def persona(pid):
     return pk, kv
 
 
-PACK_CATEGORIES = ('garden', 'pauly')          # catalog categories that ship on pack discs, not on L:
+STOCK_CATEGORIES = ('aero', 'corporate', 'electromech', 'mechanical', 'nature', 'tonal', 'water')   # the stock L: drive (510)
 
 
 def stock_names():
-    """the NAMEs of the stock library disc (L:): every catalog sound outside the pack-disc categories"""
-    return {i for i, e in catalog().items() if e['category'] not in PACK_CATEGORIES}
+    """the NAMEs of the stock library disc (L:); every other catalog sound ships on the pack discs that use it"""
+    return {i for i, e in catalog().items() if e['category'] in STOCK_CATEGORIES}
 
 
 def catalog():
@@ -160,7 +160,7 @@ def main():
             ff = short83(p['name'], ftaken, '.BSP')
             files['FAVORITE/%s' % ff] = (crlf(dna + '\n'), 'Favourites/%s.bsp' % re.sub(r'[\\/:*?"<>|]', '', p['name']))
         # a pack's own sounds (the gardens packs): the NAMEs its presets use that the stock library disc lacks
-        lib_lines, credits = [], set()
+        lib_lines, credits, cats_used = [], set(), set()
         if pk.get('new'):
             from common import dna_names, BUILTIN
             stock = stock_names()
@@ -177,6 +177,7 @@ def main():
                 secs = (len(data) - 44) / 2 / 22050
                 lib_lines.append('%s\t%s\t\\SOUNDS\\%s\t%.2f\t%s' % (n, e['category'], fn, secs, e.get('license', '') if e.get('author', '') in e.get('license', '') else '%s, %s' % (e.get('author', ''), e.get('license', ''))))
                 credits.add(e.get('author', ''))
+                cats_used.add(e['category'])
         nxp = sum('XP' in p['ships'] for p in ps)
         n311 = sum('3.11' in p['ships'] for p in ps)
         info = [('Id', pk['id']), ('Title', title), ('Product', '%s by %s' % (PRODUCT, MAKER)), ('Version', pp.get('version') or kv.get('Version') or '1.0'),
@@ -186,7 +187,8 @@ def main():
         txt = '%s\n%s\n\nA sound pack for %s by %s (Windows 3.11).\n\n' % (title, '=' * len(title), PRODUCT, MAKER) + ''.join('%s: %s\n' % kv_ for kv_ in info)
         if pk.get('new'):
             txt += '\nSounds on this disc (SOUNDS\\, listed in LIBRARY.TSV):\n' + ''.join('  %s\n' % c for c in sorted(credits) if c)
-            txt += '  Rendered from William Sharkey\'s own instruments in midigarden / Bele Dance and ghosts.garden.\n'
+            if 'garden' in cats_used:
+                txt += '  Rendered from William Sharkey\'s own instruments in midigarden / Bele Dance and ghosts.garden.\n'
             if any('Paul Chauncy' in c for c in credits):
                 txt += '  Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly): permission from the author, via the owner, 2026-11-14.\n'
         txt += '\nFavourites (the owner\'s picks): FAVORITE\\\n' + ''.join('  %s (%s)\n' % (f[0]['name'], f[0]['category']) for f in favs)

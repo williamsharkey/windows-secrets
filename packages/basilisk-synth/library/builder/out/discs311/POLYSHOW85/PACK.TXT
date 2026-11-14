@@ -1,0 +1,23 @@
+Polysynth Showroom
+==================
+
+A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+
+Id: polysynth-showroom
+Title: Polysynth Showroom
+Product: SNDWAVE2000 by Algorithmic Industries
+Version: 1.0
+Author: Neon Keys Music Superstores, Inc.
+Date: 1992-11-27
+Presets: 45
+Presets311: 45
+PresetsXP: 0
+Favourites: 0
+Description: Every keyboard on the shop floor, plugged in at once.
+
+Sounds on this disc (SOUNDS\, listed in LIBRARY.TSV):
+  Elektrik_Musik
+  Versilian Studios LLC / Sam Gossner and contributors (VCSL)
+  modularsamples
+
+Favourites (the owner's picks): FAVORITE\

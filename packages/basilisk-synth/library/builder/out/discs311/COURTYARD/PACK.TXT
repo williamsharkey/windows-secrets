@@ -1,0 +1,22 @@
+Courtyard & Chapel
+==================
+
+A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+
+Id: courtyard-chapel
+Title: Courtyard & Chapel
+Product: SNDWAVE2000 by Algorithmic Industries
+Version: 1.0
+Author: Cantiga Early Music Press
+Date: 1995-05-12
+Presets: 33
+Presets311: 33
+PresetsXP: 0
+Favourites: 0
+Description: Harpsichords in the hall, bells in the tower, harps in the garden.
+
+Sounds on this disc (SOUNDS\, listed in LIBRARY.TSV):
+  Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition)
+  Versilian Studios LLC / Sam Gossner and contributors (VCSL)
+
+Favourites (the owner's picks): FAVORITE\

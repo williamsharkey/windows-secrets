@@ -1,0 +1,22 @@
+# SNDWAVE2000 by Algorithmic Industries presets: category	name	DNA	pack	editions	rating	verdict	file
+Drone	Dial Depth	pmel_atlantic_fin@t10500]@t3000[@0CP@0CP>>#14H0,7U3~15/pmel_earthquake_pioneer#2T14L55;A1089S100R2735V83K55G-5	listening-post	3.11		-	DRONE\DIALD.BSP
+Drone	Lattice Dormant	pmel_blue_south_pacificE>#12H0,12U3~9/pmel_atlantic_blueR#2T19L25O327Q0/pmel_challenger_deep_modem#2T-7L69;A921S100R2733V92K60G-8	listening-post	3.11		-	DRONE\LATTICED.BSP
+Drone	Saffron Dormant	singing_bowl_long@t12000]@t200[CRP#13U4~23/pmel_upsweep#3FL11;A847S100R2911V96K73G-14	listening-post	3.11		-	DRONE\SAFFROND.BSP
+FX	Global Surge	pmel_ron_brown_arrivalRE#8/pmel_ron_brown_arrivalEE#8T24L29O373Q-5;A25S100R742V70K32G-1	listening-post	3.11		-	FX\GLOBALS.BSP
+FX	Lattice Dive	pmel_upsweepCRPU3~16;A137S100R846V74G-6	listening-post	3.11		-	FX\LATTICED.BSP
+FX	Rose Dive	pmel_sound_sourceCRP#8/pmel_damselfish#8FL23;A115S100R329V90K50G-1	listening-post	3.11		-	FX\ROSEDIVE.BSP
+FX	Second Launch	pmel_ship_overheadEEE#8/pmel_upsweep#8FL33;A109S100R1227V85K33G-4	listening-post	3.11		-	FX\SECONDL.BSP
+FX	Still Lift	pmel_tremorRE#5/pmel_damselfish#5FL31Ja0,100.196,30.453,0/pmel_ron_brown_arrivalE#6T21L33O76Q44;A9S100R574V88K41G-3	listening-post	3.11		-	FX\STILLL.BSP
+FX	Tropic Sweep	pmel_upsweep@t6000]<U2~10;A24S100R526V75G-4	listening-post	3.11		-	FX\TROPICS.BSP
+FX	Washed Dive	pmel_blue_whale_netsREQ-17;A11D0S100R365V96K30G-3	listening-post	3.11		-	FX\WASHEDD.BSP
+FX	Yellow Burst	pmel_ron_brown_arrivalR#5/pmel_atlantic_minke>#5T-17L29O385Q40/pmel_bloop#6T-11L32;A4S100R712V89K32G1	listening-post	3.11		-	FX\YELLOWB.BSP
+Texture	Broadcast Murmur	pmel_ship_overhead@t2073]C@50XFQ-31;A471S100R563V77G-3	listening-post	3.11		-	TEXTURE\BROADCAM.BSP
+Texture	Cedar Murmur	pmel_bloop<#11U2~19/pmel_blue_whale_netsE#5T9L23O111Q-24;A52S100R1557V76K19G-4	listening-post	3.11		-	TEXTURE\CEDARM.BSP
+Texture	Granite Ambience	pmel_ron_brown_arrival;A578S100R2042V80K32G1	listening-post	3.11		-	TEXTURE\GRANITEA.BSP
+Texture	Ocean Shoreline	pmel_humpback_ship_sbnms#8U2~16/pmel_harmonic_tremor#4L54/pmel_sound_source#4L52;A105S100R1094V91G-10	listening-post	3.11		-	TEXTURE\OCEANS.BSP
+Texture	Office Crowd	pmel_humpback_ship_samoa@t3406]<#8F/pmel_humpback_ship_samoa#8L21Ja0,100.178,30.694,0;A112S100R1396V96G1	listening-post	3.11		-	TEXTURE\OFFICEC.BSP
+Texture	Pewter Weather	pmel_bloop@t4136]C@50X#8/pmel_atlantic_minke>#8T-18L33O344Q-2;A153S100R663V75K31G5	listening-post	3.11		-	TEXTURE\PEWTERW.BSP
+Texture	Swift Room	pmel_iceberg_calving@t12000]<;A63S100R641V84K17	listening-post	3.11		-	TEXTURE\SWIFTR.BSP
+Texture	Warm Murmur	pmel_bloop#8F/pmel_atlantic_fin#8L23;A961S100R430V81G7	listening-post	3.11		-	TEXTURE\WARMM.BSP
+Texture	Waxed Murmur	pmel_airguns#8/pmel_small_shipEE#8T29L15O132Q36;A294S100R465V74K38G2	listening-post	3.11		-	TEXTURE\WAXEDM.BSP
+Texture	White Shoreline	pmel_blue_whale_nets#8/pmel_atlantic_finEE#8T5L33O95Q-25;A43S100R1704V74K30G-5	listening-post	3.11		-	TEXTURE\WHITES.BSP

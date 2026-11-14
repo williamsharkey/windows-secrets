@@ -173,3 +173,91 @@ GROUP_ONLY.update({
     ('tape-parlour', 'Organ'): ['organ_pipe_open_13', 'organ_pipe_open_31', 'organ_pipe_open_49', 'organ_hammond_m100_flute_c', 'pw_bee_organ'],
     ('tape-parlour', 'Keys'): ['vibraphone_c_low', 'gd_piano_a3', 'gd_piano_a4', 'gd_ep_tine_c4', 'gd_ep_reed_c4'],
 })
+
+# Tape Parlour Ensemble, rebuilt on the research lane's tape set: one family (or two, as two tracks) per preset,
+# every sample in its own key zone (gen.tape_zone_dna)
+F = lambda *names: [(n, None, None) for n in names]
+TAPE_SPECS = {
+    'Strings': [F('tape_cellos'), F('tape_violins'), F('tape_violins_trem'), F('tape_violas'), F('tape_violin_solo'),
+                F('tape_contrabass'), F('tape_cellos', 'tape_violins'), F('tape_violas', 'tape_violins'),
+                F('tape_psaltery_bowed'), F('tape_contrabass', 'tape_cellos'), F('tape_violins_trem', 'tape_cellos')],
+    'Lead': [F('tape_flute_vib'), F('tape_flute_plain'), F('tape_piccolo'), F('tape_recorder_alto'), F('tape_recorder_tenor'),
+             F('tape_recorder_soprano'), F('tape_recorder_bass'), F('tape_ocarina'), F('tape_oboe'), F('tape_clarinet'),
+             F('tape_flute_vib', 'tape_clarinet')],
+    'Vocal': [F('choir_breathing_pad_c4'), F('choir_full_octave_first_note'), F('choir_drone_practice'),
+              F('voice_man_singing_note'), F('voice_low_note'), F('choir_marching_drone'), F('choir_aah'),
+              F('crowd_sing_aah_f'), F('pw_hmm_held')],
+    'Brass': [F('tape_trumpet'), F('tape_trumpet_harmon'), F('tape_trombone'), F('tape_horn'), F('tape_tuba'),
+              F('tape_saxello'), F('tape_bassoon'), F('tape_trumpet', 'tape_trombone')],
+    'Organ': [F('tape_organ_8ft'), F('tape_organ_full'), F('tape_organ_quiet'), F('tape_harmonica'),
+              F('tape_organ_8ft', 'tape_recorder_bass'), F('pw_bee_organ')],
+    'Keys': [F('gd_piano'), F('gd_ep_tine'), F('gd_ep_reed'), F('tape_vibes_bowed')],
+}
+
+# ------------------------------------------------------------------ packs from the research lane's round 2 (PD/CC0)
+OCEAN = ['pmel_airguns', 'pmel_ak_whale_52', 'pmel_atlantic_blue', 'pmel_atlantic_fin', 'pmel_atlantic_minke', 'pmel_bloop',
+         'pmel_blue_ne_pacific', 'pmel_blue_south_pacific', 'pmel_blue_w_pacific', 'pmel_blue_whale_nets', 'pmel_challenger_deep_modem',
+         'pmel_damselfish', 'pmel_earthquake_pioneer', 'pmel_harmonic_tremor', 'pmel_humpback_ship_samoa', 'pmel_humpback_ship_sbnms',
+         'pmel_iceberg_calving', 'pmel_noise_97139', 'pmel_ron_brown_arrival', 'pmel_ship_overhead', 'pmel_small_ship',
+         'pmel_sound_source', 'pmel_tremor', 'pmel_upsweep', 'pmel_whistle']
+PCFX = ['pc_crt_degauss', 'pc_crt_tv_on_off_static', 'pc_floppy_eject', 'pc_floppy_insert_latch', 'pc_hdd_spin_up',
+        'pc_hdd_spin_up_down', 'pc_tape_deck_startup', 'pc_pc_speaker_gsm_buzz', 'pc_cd_seek_mouse', 'pc_crt_tv_uhf_scan',
+        'pc_hdd_head_align', 'pc_floppy_read_a', 'pc_floppy_read_b', 'civil_defense_siren_waver'] + \
+       ['bugle_adjutants_call', 'bugle_assembly', 'bugle_attention', 'bugle_drill_call', 'bugle_mail_call', 'bugle_officers_call', 'bugle_recall']
+PCTEX = ['pc_server_rack_fans', 'pc_vhs_tape_hiss', 'pc_vhs_ntsc_hum', 'pc_crt_tv_hum', 'pc_fan_coil_whine', 'pc_hdd_7200_idle',
+         'pc_hdd_maxtor_10k', 'pc_hdd_inductor_mic', 'pc_cassette_squeaky', 'pc_computer_12_drives', 'pc_cdrom_pickup_coil']
+PCPERC = ['pc_floppy_access', 'pc_floppy_insert', 'pc_opl3_elec_snare', 'pc_pc_speaker_error_beep', 'floppy_seek_clunk',
+          'key_mechanical_hard', 'key_spacebar', 'mouse_click', 'light_switch_on', 'relay_click', 'dtmf_digits', 'key_press_down']
+PACKS2 += [
+    dict(id='courtyard-chapel', name='Courtyard & Chapel', blurb='Harpsichords in the hall, bells in the tower, harps in the garden.',
+         new=True, groups=[G('Keys', 8), G('Pluck', 10), G('Mallet', 8), G('Bell', 8), G('FX', 4), G('Drone', 2)]),
+    dict(id='listening-post', name='Listening Post', blurb='Three thousand metres down, something is singing.',
+         new=True, groups=[G('Drone', 10), G('Texture', 10), G('FX', 8)]),
+    dict(id='office-machinery', name='Office Machinery', blurb='Every drive, fan and speaker in the building, on cue.',
+         new=True, groups=[G('Kit', 4), G('Perc', 8), G('FX', 10), G('Texture', 6)]),
+]
+for p in PACKS2[-3:]:
+    PACKS.append(p); PACK_BY_ID[p['id']] = p
+ZONE_SPECS = {
+    ('courtyard-chapel', 'Keys'): [F('harpsichord_flemish'), F('harpsichord_flemish_hi'), F('upright_yamaha'),
+                                   F('harpsichord_flemish', 'harpsichord_flemish_hi'), F('upright_yamaha', 'harpsichord_flemish')],
+    ('courtyard-chapel', 'Pluck'): [F('folk_harp'), F('dan_tranh'), F('dan_tranh_vib'), F('dan_tranh_trem'), F('psaltery_pluck'),
+                                    F('strumstick'), F('nyunga'), F('mbira_mavembe'), F('kalimba_tanzania'), F('kalimba_kenya')],
+    ('courtyard-chapel', 'Mallet'): [F('balafon'), F('vibes_soft'), F('vibes_hard'), F('tubular_glock'), F('kalimba_tanzania', 'balafon')],
+    ('courtyard-chapel', 'Bell'): [F('tubular_bell'), F('hand_chime'), F('tubular_glock'), F('hand_chime', 'tubular_bell')],
+}
+GROUP_ONLY.update({
+    ('courtyard-chapel', 'Bell'): ['nepalese_bell_a', 'nepalese_bell_b', 'gong_mf', 'bell_tree_stroke', 'vibraslap_ring'],
+    ('courtyard-chapel', 'FX'): ['glock_gliss_down_penta', 'glock_gliss_up', 'mark_tree_down', 'mark_tree_slow_up', 'flexatone_long',
+                                 'toy_train_whistle_fall', 'siren_whistle_b', 'gong_scrape', 'cymbal_bowed', 'dan_tranh_gliss_up', 'dan_tranh_gliss_down'],
+    ('courtyard-chapel', 'Drone'): ['didgeridoo_sus_a', 'didgeridoo_phrase', 'organ_blower', 'cymbal_bowed', 'gong_mf'],
+    ('listening-post', 'Drone'): OCEAN + ['choir_aah', 'singing_bowl_long', 'gd_fog_temple_c4', 'tape_cellos_c1'],
+    ('listening-post', 'Texture'): OCEAN,
+    ('listening-post', 'FX'): OCEAN,
+    ('office-machinery', 'Perc'): PCPERC,
+    ('office-machinery', 'FX'): PCFX,
+    ('office-machinery', 'Texture'): PCTEX,
+})
+KITS2['office-machinery'] = [('office', 'office'), ('office2', 'office'), ('pcspeaker', 'office'), ('typing', 'office')]
+
+# the polysynth / FM pack (research round 2, brand-neutral IDs; models are credited in the catalog only)
+PACKS2.append(dict(id='polysynth-showroom', name='Polysynth Showroom', blurb='Every keyboard on the shop floor, plugged in at once.',
+                   new=True, groups=[G('Keys', 8), G('Pad', 10), G('Strings', 6), G('Vocal', 6), G('Brass', 6), G('Bass', 8), G('Lead', 8)]))
+PACKS.append(PACKS2[-1]); PACK_BY_ID['polysynth-showroom'] = PACKS2[-1]
+ZONE_SPECS.update({
+    ('polysynth-showroom', 'Keys'): [F('fm87_epiano'), F('fm87_piano'), F('fm87_clav'), F('fm87_epiano', 'fm87_clav')],
+    ('polysynth-showroom', 'Strings'): [F('poly83_on_off_strings'), F('vocoder_strings'), F('vocoder_strings', 'poly83_on_off_strings')],
+    ('polysynth-showroom', 'Vocal'): [F('vocoder_choir_male'), F('vocoder_choir_female'), F('vocoder_choir_male_ens'),
+                                      F('vocoder_choir_female_ens'), F('vocoder_choir_male', 'vocoder_choir_female')],
+})
+GROUP_ONLY.update({
+    ('polysynth-showroom', 'Keys'): ['poly78_roger_piano_c3', 'mono77_bargain_piano_b2', 'poly82_rich_pluck_c4', 'poly84_simpleton_c3'],
+    ('polysynth-showroom', 'Pad'): ['poly78_saxons_pad_c2', 'poly78_vikings_pad_2_osc_c2', 'poly78_vikings_pad_2_osc_c3', 'poly82_open_pad_c2',
+                                    'poly82_open_pad_c3', 'poly85_dark_pad_chorus_c2', 'poly85_dark_pad_chorus_c3', 'poly85_mod_pad_c2',
+                                    'poly83_slowone_c2', 'poly78_thick_swishy_c2', 'poly78_shimmer_c3', 'poly83_gasflowers_c1', 'poly78_sad_wow_c3'],
+    ('polysynth-showroom', 'Brass'): ['poly83_brassy_f1', 'poly85_thin_brassy_c2', 'poly83_wobble_brass_c2', 'poly83_big_c2', 'poly85_synthetic_c3'],
+    ('polysynth-showroom', 'Bass'): ['poly83_snapbass_c2', 'poly85_slow_bass_d3', 'mono79_filter_vel_bass_c3', 'mono77_cream_b0',
+                                     'mono77_fm_rings_ds1', 'mono77_iee_yah_f1', 'poly83_big_c2'],
+    ('polysynth-showroom', 'Lead'): ['poly85_buzzy_lead_c3', 'mono77_curious_lead_c3', 'poly85_sensitive_square_c3', 'mono77_pulse_2_g2',
+                                     'poly78_pwm_lady_c4', 'mono79_noisy_sqr_filter_vel_c3', 'poly83_cease_ds5', 'poly78_res_organ_d4'],
+})

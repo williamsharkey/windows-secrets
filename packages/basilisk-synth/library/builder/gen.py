@@ -433,6 +433,19 @@ PAULY_KIT = [(36, 'pw_boop'), (35, 'pw_bass'), (38, 'pw_doo'), (37, 'gd_kit_stud
              (40, 'gd_kit_studio_snare'), (42, 'gd_kit_studio_hat'), (44, 'gd_kit_studio_tighthat'),
              (46, 'gd_kit_studio_openhat'), (45, 'pw_sax'), (47, 'pw_guitar_pad'), (50, 'pw_flutecorder'),
              (49, 'pw_glock'), (51, 'pw_fork'), (54, 'gd_kit_studio_tamb'), (56, 'pw_bee_organ')]
+OFFICE_KITS = {
+    'office': [(36, 'floppy_seek_clunk'), (38, 'pc_opl3_elec_snare'), (37, 'relay_click'), (39, 'key_mechanical_hard'), (42, 'key_press_down'),
+               (44, 'mouse_click'), (46, 'pc_floppy_access'), (49, 'pc_pc_speaker_error_beep'), (45, 'key_spacebar'), (47, 'light_switch_on'),
+               (50, 'dtmf_digits'), (51, 'pc_floppy_insert')],
+    'office2': [(36, 'pc_floppy_insert'), (38, 'key_mechanical_hard'), (37, 'mouse_click_b'), (39, 'relay_loud_click'), (42, 'key_press_single_a'),
+                (44, 'key_press_single_b'), (46, 'pc_floppy_access'), (49, 'em_stamp_a'), (45, 'floppy_seek_clunk'), (47, 'em_metal_click_a'),
+                (50, 'em_switch_a'), (51, 'pc_opl3_elec_snare')],
+    'pcspeaker': [(36, 'pc_pc_speaker_error_beep'), (38, 'pc_opl3_elec_snare'), (42, 'menu'), (44, 'start'), (46, 'xpstart'), (39, 'balloon'),
+                  (37, 'infobar'), (49, 'popup'), (45, 'dtmf_digits'), (47, 'floppy_seek_clunk')],
+    'typing': [(36, 'key_spacebar'), (38, 'key_mechanical_hard'), (42, 'key_press_down'), (44, 'key_press_single_a'), (46, 'key_press_single_b'),
+               (39, 'em_typewriter_key_a'), (37, 'em_selectric_key_a'), (40, 'em_selectric_key_b'), (49, 'em_typewriter_bell_a'),
+               (45, 'em_typewriter_return_a'), (47, 'em_stamp_b')],
+}
 MODAL_PADS = {'taiko': ['odaiko', 'shime', 'nagadolo', 'nagado', 'okedo', 'atarigane', 'chappa', 'ka'],
               'tabla': ['ge', 'na', 'ke', 'tin', 'tun', 'te', 'gheglide', 'ra'],
               'glitch': ['kick', 'snap', 'grit', 'zap', 'tick', 'fuzz', 'blip', 'err'],
@@ -444,6 +457,7 @@ def kit_map(kit, style):
     """[(note, NAME)] for a kit, in note order"""
     from packs import GM, HANDS
     if style == 'pauly': m = PAULY_KIT
+    elif style == 'office': m = OFFICE_KITS[kit]
     elif style in ('rosewood', 'mouth'):
         m = [(n, 'gd_kit_%s_%s' % (kit, p)) for p, n in GM[style].items()]
     elif style == 'hands':
@@ -504,3 +518,144 @@ def tapeify(d, rng):
         L.genes.pop('U', None) if rng.random() < 0.5 else None
     d.glob.update(A=rng.choice([25, 40, 60]), D=0, S=100, R=rng.choice([120, 180, 250]), V=rng.choice([20, 30, 45]))
     return d
+
+
+# ------------------------------------------------------------------ tape keyboards with key zones (PRESET-ENGINE-2 6.1)
+def tape_family(prefix):
+    """the multi-samples of one family, sorted by root: [(root, NAME)]. Note-named members only (prefix_c4,
+    prefix_as3, prefix_131); one octave shift for the whole family, from the names and the measured roots (a single
+    member's estimate can jump an octave), so zones keep the names' order"""
+    from analyze_sources import name_root
+    mem = [n for n in SRC if known(n) and SRC[n].get('root_used') is not None and
+           (re.fullmatch(re.escape(prefix) + r'_[a-g]s?\d', n) or re.fullmatch(re.escape(prefix) + r'_\d+', n))]
+    if not mem:
+        return [(SRC[prefix]['root_used'], prefix)] if known(prefix) and SRC.get(prefix, {}).get('root_used') is not None else []
+    named = [(n, name_root(n)) for n in mem]
+    if all(r is not None for _, r in named):
+        import statistics
+        shift = 12 * round(statistics.median((SRC[n]['root_used'] - r) / 12 for n, r in named))
+        out = []
+        for n, r in named:
+            fine = ((SRC[n]['root_used'] - r + 6) % 12) - 6
+            out.append((r + shift + (fine if abs(fine) < 0.6 else 0), n))
+        return sorted(out)
+    return sorted((SRC[n]['root_used'], n) for n in mem)
+
+
+ZONES_OK = False   # Z key zones (PRESET-ENGINE-2 6.1) are phase 4 on 3.11, not built yet: one sample per family until then
+
+
+def tape_genes(rng, depth=1.0):
+    return {'W': 'm8000', 'Y': 'd%dl%dk' % (rng.choice([3, 4, 5, 6]), rng.choice([0, 4, 8])),
+            'V': 'w%d,%df%d,%ds%d,%d' % (int(round(rng.choice([4, 5, 6, 8]) * depth)), rng.choice([5, 6, 7, 8]),
+                                       rng.choice([2, 3, 4]), rng.choice([8, 10, 12]), rng.choice([15, 20, 25]), rng.choice([50, 65, 80]))}
+
+
+def tape_zone_dna(families, rng, click=None, octave=False, depth=1.0):
+    """one layer per sample, each in its key zone (Z lo,hi,root), so every key plays its own recording at a rate
+    ratio near 1; an optional key-click layer (fixed pitch, quiet) with the tones starting 10-20 ms after it"""
+    layers = []
+    zmax = 4 if len(families) == 1 else 3
+    for fam, lo_all, hi_all in families:
+        zs = tape_family(fam)
+        if not zs: continue
+        if not ZONES_OK:     # no zones yet: the family's sample nearest the middle of the keyboard plays everything
+            zs = [min(zs, key=lambda z: abs(z[0] - 64))]
+        if len(zs) > zmax:   # spread the zones: enough recorders per zone for chords
+            idx = sorted({round(i * (len(zs) - 1) / (zmax - 1)) for i in range(zmax)})
+            zs = [zs[i] for i in idx]
+        if lo_all is None: lo_all = int(zs[0][0]) - 12
+        if hi_all is None: hi_all = int(zs[-1][0]) + 7
+        for i, (r, n) in enumerate(zs):
+            lo = lo_all if i == 0 else int((zs[i - 1][0] + r) // 2) + 1
+            hi = hi_all if i == len(zs) - 1 else int((r + zs[i + 1][0]) // 2)
+            if hi < lo: continue
+            L = Layer(n, ['@t40', '['])                     # the tape's own lead-in off
+            L.genes.update(tape_genes(rng, depth))
+            if ZONES_OK: L.genes['Z'] = '%d,%d,%d' % (lo, hi, int(round(r)))
+            if click: L.genes['O'] = rng.choice([10, 15, 20])
+            if octave: L.genes['H'] = [0, 12]
+            if len(families) > 1: L.genes['L'] = 80 if fam == families[0][0] else 55
+            layers.append(L)
+    layers = layers[:7 if click else 8]
+    if click:
+        C = Layer(click, [], {'F': True, 'L': rng.choice([12, 18, 25]), 'W': 'm8000', '#': 2})
+        layers.append(C)
+    tones = [L for L in layers if not L.genes.get('F')]
+    left = 16 - (2 if click else 0)
+    for i, L in enumerate(tones): L.genes['#'] = left // len(tones) + (1 if i < left % len(tones) else 0)
+    g = {'A': rng.choice([10, 20, 35]), 'D': 0, 'S': 100, 'R': rng.choice([80, 110, 150]), 'V': rng.choice([20, 30, 40])}
+    if not ZONES_OK:
+        # without zones the first layer's own root is the key centre; other tracks follow it by their roots
+        r0 = SRC[layers[0].src]['root_used'] if layers else 60
+        g['K'] = int(round(r0))
+        for L in layers[1:]:
+            if L.genes.get('F'): continue
+            t = int(round(r0 - SRC[L.src]['root_used']))
+            while t > 12: t -= 12
+            while t < -12: t += 12
+            if t: L.genes['T'] = t
+    d = DNA(layers, g)
+    return d
+
+
+def tape_mutate(d, rng):
+    d = d.copy()
+    op = rng.choice(['wow', 'rel', 'att', 'vel', 'click'])
+    for L in d.layers:
+        if op == 'wow' and 'V' in L.genes: L.genes['V'] = tape_genes(rng)['V']
+    if op == 'rel': d.glob['R'] = rng.choice([70, 90, 120, 150, 200])
+    elif op == 'att': d.glob['A'] = rng.choice([5, 15, 25, 40])
+    elif op == 'vel': d.glob['V'] = rng.choice([15, 25, 35, 50])
+    elif op == 'click':
+        for L in d.layers:
+            if L.genes.get('F'): L.genes['L'] = rng.choice([8, 14, 20, 28])
+    return d, [op]
+
+
+def zone_dna(families, cat, rng):
+    """a multi-sampled instrument: each sample in its key zone (Z), no tape genes; envelope from the category"""
+    c = CATS[cat]
+    d = tape_zone_dna(families, rng)
+    for L in d.layers:
+        for k in ('W', 'Y', 'V', 'O'): L.genes.pop(k, None)
+        L.steps = []                                       # these are clean one-note samples: keep their attack
+        if rng.random() < 0.25: L.steps.append('E')
+    g = {}
+    if c['A'][1] > 0: g['A'] = int(rng.uniform(*c['A']))
+    if c['D'][1] > 0: g['D'] = int(loguni(rng, c['D'][0], c['D'][1]))
+    g['S'] = int(rng.uniform(*c['S'])) if c['S'][0] != c['S'][1] else c['S'][0]
+    g['R'] = int(loguni(rng, c['R'][0], c['R'][1]))
+    g['V'] = int(rng.uniform(*c['V']))
+    if rng.random() < 0.3:   # a light Windows sparkle an octave up on top, the Sound Recorder signature
+        sh = rng.choice(['dingxp', 'chimesxp', 'print', 'default'])
+        r = SRC[sh]['root_used']
+        S = Layer(sh, rng.choice([['E'], ['R', 'E'], ['>']]), {'#': 2, 'L': int(rng.uniform(10, 22)), 'Q': int(rng.uniform(-40, 40)),
+                                                             'O': int(rng.uniform(20, 120))})
+        t = int(round(60 - (r + steps_speed(S.steps)))) + 12
+        while t > 36: t -= 12
+        while t < -36: t += 12
+        S.genes['T'] = t
+        tones = d.layers
+        for i, L in enumerate(tones): L.genes['#'] = max(2, L.genes['#'] - (1 if i < 2 else 0))
+        d.layers.append(S)
+    g['K'] = 60 if ZONES_OK else d.glob.get('K', 60)
+    d.glob = g
+    return d
+
+
+def zone_mutate(d, cat, rng):
+    d = d.copy(); c = CATS[cat]
+    op = rng.choice(['env', 'env', 'echo', 'vel'])
+    if op == 'env':
+        k = rng.choice('DSR')
+        if k == 'S': d.glob['S'] = clampi(d.glob.get('S', 50) + rng.uniform(-25, 25), 0, 100)
+        else:
+            lo, hi = c[k]
+            if hi > 0: d.glob[k] = clampi(max(5, d.glob.get(k, (lo + hi) / 2)) * 2 ** rng.gauss(0, 0.5), max(lo // 2, 1), hi * 1.5)
+    elif op == 'echo':
+        for L in d.layers:
+            if not L.genes.get('F') and 'Z' in L.genes:
+                L.steps = [] if 'E' in L.steps else ['E']
+    else: d.glob['V'] = clampi(d.glob.get('V', 90) + rng.uniform(-15, 15), 50, 100)
+    return d, [op]

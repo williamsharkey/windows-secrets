@@ -160,6 +160,17 @@ def plan_targets(a, rng):
                                     role='kit', seed=None, alts=[], v3=None, character='', priority=2, kit=(kit, style)))
                     continue
                 if getattr(a, 'kits_only', False): continue
+                from packs import ZONE_SPECS
+                for i, fams in enumerate(ZONE_SPECS.get((p['id'], name), [])):
+                    TT.append(T(id='%s-%s-zone%02d' % (p['id'], name.lower(), i), src='zonefam', name='', pack=p['id'], group=name,
+                                scat=cat, role=name.lower(), seed=None, alts=[], v3=None, character='', priority=2, zfams=fams))
+                if (p['id'], name) in ZONE_SPECS and (p['id'], name) not in GROUP_ONLY: continue
+                if p.get('tape'):
+                    from packs import TAPE_SPECS
+                    for i, fams in enumerate(TAPE_SPECS.get(name, [])):
+                        TT.append(T(id='%s-%s-z%02d' % (p['id'], name.lower(), i), src='tapefam', name='', pack=p['id'], group=name,
+                                    scat=cat, role=name.lower(), seed=None, alts=[], v3=None, character='', priority=2, fams=fams))
+                    continue
                 only = GROUP_ONLY.get((p['id'], name))
                 for i in range(int(round(n2 * a.fill * 1.8))):
                     TT.append(T(id='%s-%s-%03d' % (p['id'], name.lower(), i), src='fill', name='', pack=p['id'], group=name,
@@ -205,6 +216,12 @@ def lineages(t, rng):
             g = [x for x in pk['groups'] if x[0] == t.group]
             if t.v3: out.append(('v3', t.v3))
             elif g and g[0][3] > 0 or t.scat in gen.V3W: out.append(('v3', gen.humanize(d, t.scat, rng).text()))
+    elif getattr(t, 'zfams', None):
+        for i in range(3): out.append(('v3-zone%d' % i, gen.zone_dna(t.zfams, t.scat, rng).text()))
+    elif getattr(t, 'fams', None):
+        out.append(('v3-tape-plain', gen.tape_zone_dna(t.fams, rng).text()))
+        out.append(('v3-tape-click', gen.tape_zone_dna(t.fams, rng, click=rng.choice(['menu', 'xpstart'])).text()))
+        out.append(('v3-tape-deep', gen.tape_zone_dna(t.fams, rng, click='menu', depth=1.6).text()))
     elif getattr(t, 'kit', None):
         kit, style = t.kit
         for st in ('', 'E', '<'):
@@ -332,6 +349,12 @@ def main():
                 cn.append((ti, lin, gen.retune(d, best['info']['retune']).text(), 'retune'))
             n = 1 if best['ok'] else 2
             for _ in range(n):
+                if getattr(t, 'zfams', None):
+                    m, log = gen.zone_mutate(d, t.scat, rng)
+                    cn.append((ti, lin, m.text(), 'mutant:' + '+'.join(log))); continue
+                if getattr(t, 'fams', None):
+                    m, log = gen.tape_mutate(d, rng)
+                    cn.append((ti, lin, m.text(), 'mutant:' + '+'.join(log))); continue
                 if t.scat == 'Kit':
                     m, log = gen.kit_mutate(d, rng)
                     cn.append((ti, lin, m.text(), 'mutant:' + '+'.join(log))); continue

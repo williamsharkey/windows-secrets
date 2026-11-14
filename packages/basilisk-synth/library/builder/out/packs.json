@@ -438,22 +438,106 @@
   "id": "tape-parlour",
   "name": "Tape Parlour Ensemble",
   "blurb": "Eight seconds of tape behind every key.",
-  "presets": 41,
+  "presets": 38,
   "xp": 0,
-  "w311_badge": 41,
-  "v3": 41,
-  "library": 41,
+  "w311_badge": 21,
+  "v3": 38,
+  "library": 38,
   "categories": {
    "Brass": 6,
    "Keys": 4,
    "Lead": 8,
-   "Organ": 5,
-   "Strings": 10,
-   "Vocal": 8
+   "Organ": 6,
+   "Strings": 7,
+   "Vocal": 7
   },
   "files": {
    "w311": "w311/tape-parlour.tsv",
    "xp": "xp/tape-parlour.tsv"
+  }
+ },
+ {
+  "id": "courtyard-chapel",
+  "name": "Courtyard & Chapel",
+  "blurb": "Harpsichords in the hall, bells in the tower, harps in the garden.",
+  "presets": 33,
+  "xp": 0,
+  "w311_badge": 26,
+  "v3": 0,
+  "library": 33,
+  "categories": {
+   "Bell": 8,
+   "Drone": 2,
+   "FX": 4,
+   "Keys": 3,
+   "Mallet": 6,
+   "Pluck": 10
+  },
+  "files": {
+   "w311": "w311/courtyard-chapel.tsv",
+   "xp": "xp/courtyard-chapel.tsv"
+  }
+ },
+ {
+  "id": "listening-post",
+  "name": "Listening Post",
+  "blurb": "Three thousand metres down, something is singing.",
+  "presets": 21,
+  "xp": 0,
+  "w311_badge": 21,
+  "v3": 0,
+  "library": 21,
+  "categories": {
+   "Drone": 3,
+   "FX": 8,
+   "Texture": 10
+  },
+  "files": {
+   "w311": "w311/listening-post.tsv",
+   "xp": "xp/listening-post.tsv"
+  }
+ },
+ {
+  "id": "office-machinery",
+  "name": "Office Machinery",
+  "blurb": "Every drive, fan and speaker in the building, on cue.",
+  "presets": 27,
+  "xp": 0,
+  "w311_badge": 25,
+  "v3": 4,
+  "library": 27,
+  "categories": {
+   "FX": 10,
+   "Kit": 4,
+   "Perc": 7,
+   "Texture": 6
+  },
+  "files": {
+   "w311": "w311/office-machinery.tsv",
+   "xp": "xp/office-machinery.tsv"
+  }
+ },
+ {
+  "id": "polysynth-showroom",
+  "name": "Polysynth Showroom",
+  "blurb": "Every keyboard on the shop floor, plugged in at once.",
+  "presets": 45,
+  "xp": 0,
+  "w311_badge": 40,
+  "v3": 0,
+  "library": 45,
+  "categories": {
+   "Bass": 6,
+   "Brass": 6,
+   "Keys": 8,
+   "Lead": 8,
+   "Pad": 9,
+   "Strings": 2,
+   "Vocal": 6
+  },
+  "files": {
+   "w311": "w311/polysynth-showroom.tsv",
+   "xp": "xp/polysynth-showroom.tsv"
   }
  }
 ]
