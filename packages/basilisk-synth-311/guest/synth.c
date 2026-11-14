@@ -3278,6 +3278,11 @@ static void host_line(char *s)
         }
     }
     else if (!strcmp(s, "user")) rec_user(rest);
+    else if (!strcmp(s, "recstop")) {   /* stop recording now (an offline render): Sound Recorder's own Stop */
+        if (recording == NR && hRecRec) SendMessage(hRecRec, WM_COMMAND, SR_STOP, MAKELPARAM(GetDlgItem(hRecRec, SR_STOP), BN_CLICKED));
+        else if (recording >= 0) SendMessage(rw[AR(recording)], WM_COMMAND, SR_STOP, MAKELPARAM(GetDlgItem(rw[AR(recording)], SR_STOP), BN_CLICKED));
+        watch_rec();
+    }
     else if (!strcmp(s, "reccur")) lstrcpyn(recCur, rest, sizeof recCur);   /* test aid: the Recorder holds this recording */
     else if (!strcmp(s, "recdump") && hRecRec) {   /* test aid: the Recorder's window and controls */
         HWND c; RECT r; char t[24];

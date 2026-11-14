@@ -366,6 +366,7 @@ protected:
         // (live, process() never waits: silence until Windows is ready, and a late block is played as it is)
         const bool offline = !testLive_ && isProcessingOffline();
         S->offline = offline ? 1 : 0;
+        offlineNow_ = offline;
         bool waited = false;
         if (engine_ && offline && S->state < BS_RUNNING) {
             for (int k = 0; k < 20000 && S->state < BS_RUNNING && S->state != BS_FAILED && !quit_; k++) std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -559,6 +560,7 @@ private:
         keyAudio_ = keyParams();
         host_.setKey(keyAudio_);
     }
+    std::atomic<bool> offlineNow_{false}, recR_{false};   // an offline render; the Recorder records (rec start R)
     std::atomic<uint32_t> recBusy_{0};   // recorders that record now: notes leave them alone (a Stop would end the take)
     b16v3::NoteHost host_;               // the notes (V3Host.h: core's voices, V3Alloc, the v3 draws), audio thread   // the ADC records the synth's own output (else the sidechain)
     uint64_t inNext_ = 0;                // the next DAC sample of input to write
@@ -977,6 +979,10 @@ private:
                 dnaToGuest_ = true;
             }
             if (hello && sh_.importReady.exchange(false)) importNow();
+            {   // an offline render while something records: stop it cleanly (RECORDING.md 4.3, TR8)
+                static thread_local double lastStop = 0;
+                if (hello && offlineNow_.load() && (recBusy_.load() || recR_.load()) && nowSec() - lastStop > 0.5) { lastStop = nowSec(); sendLine("recstop", 0, 0); }
+            }
             const uint32_t seq = paramSeq_.load();
             if (paramsDirty_.exchange(false)) {
                 std::string d;
@@ -1131,8 +1137,8 @@ private:
             return;
         }
         if (line.rfind("rsrc ", 0) == 0) { recSelf_ = line.compare(5, 4, "self") == 0; return; }   // the visitor chose the input (RECORDING.md 4.3)
-        if (line.rfind("rec start ", 0) == 0) { if (line[10] == 'R') return; const int r = std::atoi(line.c_str() + 10); if (r >= 0 && r < 16) recBusy_ |= 1u << r; return; }   // R: the Recorder
-        if (line.rfind("rec stop ", 0) == 0) { if (line[9] == 'R') return; const int r = std::atoi(line.c_str() + 9); if (r >= 0 && r < 16) recBusy_ &= ~(1u << r); return; }
+        if (line.rfind("rec start ", 0) == 0) { if (line[10] == 'R') { recR_ = true; return; } const int r = std::atoi(line.c_str() + 10); if (r >= 0 && r < 16) recBusy_ |= 1u << r; return; }   // R: the Recorder
+        if (line.rfind("rec stop ", 0) == 0) { if (line[9] == 'R') { recR_ = false; return; } const int r = std::atoi(line.c_str() + 9); if (r >= 0 && r < 16) recBusy_ &= ~(1u << r); return; }
         if (line.rfind("rec saved ", 0) == 0) { recSaved(line.substr(10)); return; }
         if (line.rfind("rec export ", 0) == 0) {   // the host's save dialog, the exact bytes (RECORDING.md 2.6)
             const std::string n = line.substr(11);
