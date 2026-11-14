@@ -19,6 +19,7 @@ python3 -I ../../tools/fetch.py freesound citypop <id>            # sources (see
 python3 sounds/build_sounds.py ~/cpd/sounds                       # needs the private Bele Dance render harness for the EP and bass
 python3 pack/make_disc.py ~/cpd/sounds ~/cpd/disc/RAINYLOFT --install ~/cpd/machine/packs
 for f in tracks/[0-9]*.py; do python3 $f; done
+# render311 with --lookahead 150 (073d464), e.g. a wrapper as SONGRENDER_RENDER311
 SONGRENDER_MACHINE=~/cpd/machine songrender.py tracks/*.song --stems --keep-wav --out-dir ~/cpd/out
 python3 tools/analyze.py ~/cpd/out <slug> --song tracks/<slug>.song
 python3 tools/build_site.py ~/cpd/out site/citypop-deprogrammed --master
