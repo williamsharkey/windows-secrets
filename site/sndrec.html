@@ -4,168 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sound Recorder Synths</title>
-<meta name="description" content="BASILISK 16 and BASILISK SYNTH: sixteen real Windows Sound Recorders, from Windows 3.11 and Windows XP, played as one instrument in your DAW. Hear every preset, recorded from the plugins.">
+<meta name="description" content="BASILISK 16: sixteen real Windows 3.11 Sound Recorders played as one instrument in your DAW, and in your browser. Hear every preset, recorded from the plugin.">
 <meta property="og:title" content="Sound Recorder Synths">
 <meta property="og:description" content="Sixteen real Windows Sound Recorders played as one instrument. Hear every preset, recorded from the plugin.">
-<meta property="og:image" content="https://williamsharkey.com/sndrec/video/b16-play.png">
-<style>
-:root {
-  --desk: #008080; --face: #c0c0c0; --hi: #ffffff; --lo: #808080; --ink: #000000;
-  --title: #000080; --title-ink: #ffffff; --paper: #ffffff; --muted: #404040; --link: #000080;
-  --sel: #000080; --sel-ink: #ffffff; --wave: #008000; --wave-dim: #9fc79f; --warn: #ffffcc; --scr: #000000;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --desk: #003838; --paper: #dcdcdc; --face: #b4b4b4; --muted: #303030; }
-}
-:root[data-theme="dark"] { --desk: #003838; --paper: #dcdcdc; --face: #b4b4b4; --muted: #303030; }
-* { box-sizing: border-box; }
-html { background: var(--desk); }
-body { margin: 0; color: var(--ink); background: var(--desk);
-  font: 15px/1.55 "MS Sans Serif", "Microsoft Sans Serif", Arial, Helvetica, sans-serif; }
-a { color: var(--link); }
-.wrap { max-width: 1124px; margin: 0 auto; padding: 22px 16px 40px; }
-.win { background: var(--paper); border: 1px solid var(--ink); box-shadow: 0 0 0 3px var(--face), 0 0 0 4px var(--ink); margin: 8px 4px 30px; }
-.cap { display: flex; align-items: center; height: 22px; background: var(--title); color: var(--title-ink); border-bottom: 1px solid var(--ink); font-weight: 700; }
-.cap .box { width: 22px; height: 21px; background: var(--face); border-right: 1px solid var(--ink); display: grid; place-items: center; flex: none; }
-.cap .box::before { content: ""; width: 12px; height: 3px; background: var(--paper); border: 1px solid var(--ink); }
-.cap .t { flex: 1; text-align: center; letter-spacing: .02em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0 6px; }
-.body { padding: 16px 20px 18px; }
-h1 { font-size: 24px; margin: 0 0 6px; }
-h2 { font-size: 17px; margin: 0 0 8px; }
-h3 { font-size: 15px; margin: 0 0 4px; }
-p { margin: 0 0 10px; }
-.lede { font-size: 16px; max-width: 72ch; }
-.btn { display: inline-block; text-decoration: none; color: var(--ink); background: var(--face); border: 1px solid var(--ink); border-radius: 3px;
-  box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo); padding: 6px 12px; margin: 2px 6px 6px 0; font: inherit; cursor: pointer; }
-.btn:active, .btn[aria-pressed="true"] { box-shadow: inset 2px 2px 0 var(--lo); }
-.btn:focus-visible, button:focus-visible, input:focus-visible, video:focus-visible { outline: 1px dotted var(--ink); outline-offset: 2px; }
-code { font: 13px "Fixedsys Excelsior", "Lucida Console", ui-monospace, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
-.note { font-size: 13.5px; color: var(--muted); }
-/* video */
-figcaption { font-size: 13.5px; color: var(--muted); margin-top: 6px; }
-/* features */
-.feat { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 14px 22px; }
-.feat div { border-top: 1px solid var(--face); padding-top: 8px; }
-table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 6px 0 10px; }
-td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var(--face); vertical-align: top; }
-/* preset browser */
-.tabs { display: flex; gap: 2px; flex-wrap: wrap; margin: 0 0 -1px; position: relative; }
-.tab { font: inherit; padding: 5px 14px; background: var(--face); border: 1px solid var(--ink); border-bottom: 0; border-radius: 4px 4px 0 0; cursor: pointer; color: var(--ink); }
-.tab[aria-selected="true"] { background: var(--paper); font-weight: 700; padding-bottom: 6px; }
-.panel { border: 1px solid var(--ink); padding: 12px; }
-.chips { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 0 0 8px; align-items: center; }
-.chips .lbl { font-size: 13px; color: var(--muted); min-width: 64px; }
-.chip { font: 13px inherit; font-family: inherit; padding: 2px 9px; background: var(--face); border: 1px solid var(--ink); border-radius: 2px; cursor: pointer; color: var(--ink);
-  box-shadow: inset 1px 1px 0 var(--hi), inset -1px -1px 0 var(--lo); }
-.chip[aria-pressed="true"] { background: var(--sel); color: var(--sel-ink); box-shadow: none; }
-.find { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 0 0 10px; }
-.find input { font: inherit; padding: 3px 6px; border: 2px solid; border-color: var(--lo) var(--hi) var(--hi) var(--lo); background: #fff; color: #000; width: 16em; max-width: 100%; }
-.count { font-size: 13px; color: var(--muted); }
-.list { list-style: none; margin: 0; padding: 0; }
-.row { display: grid; grid-template-columns: 40px minmax(0, 1fr) 150px; gap: 4px 12px; align-items: center; padding: 8px 4px; border-top: 1px solid var(--face); }
-.row.playing { background: #ffffe0; }
-.play { width: 36px; height: 30px; padding: 0; display: grid; place-items: center; margin: 0; }
-.play svg { width: 14px; height: 14px; }
-.meta { min-width: 0; }
-.nm { display: flex; align-items: center; gap: 8px; min-width: 0; height: 22px; }
-.nm .t { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; min-width: 3em; }
-/* pixel-exact screen captures and screenshots: pxfit.js sizes them in whole device pixels */
-.pxbox { position: relative; display: flex; justify-content: flex-start; align-items: flex-start; background: var(--scr); padding: 0; line-height: 0; }
-.pxbox.pximg { background: transparent; }
-.pxbox canvas, .pxbox img { display: block; image-rendering: pixelated; image-rendering: crisp-edges; flex: none; max-width: 100%; height: auto; }   /* until pxfit sizes them (inline, before first paint) */
-.pxbox canvas:focus-visible { outline: 2px dotted #fff; outline-offset: -3px; }
-.pxbig { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 64px; height: 48px; font-size: 26px; line-height: 1; cursor: pointer;
-  background: var(--face); color: var(--ink); border: 1px solid var(--ink); box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo); }
-.pxp.pxon .pxbig, .pxp.pxloaded .pxbig { display: none; }
-.pxstatus { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; color: #fff; font-size: 13px; line-height: 1.4; margin: 0; text-shadow: 0 0 3px #000; }
-.pxctl { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0 4px; }
-.pxctl .btn { margin: 0; min-width: 64px; }
-.pxtime { font: 12px "Lucida Console", ui-monospace, monospace; min-width: 8.5em; }
-.pxseek { flex: 1 1 160px; min-width: 120px; }
-.pxloop { font-size: 13px; white-space: nowrap; }
-.pxclips { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 0 0 6px; align-items: center; }
-.pxclips .lbl { font-size: 13px; color: var(--muted); min-width: 11.5em; }
-.pxcap { margin: 0 0 6px; min-height: 4.65em; }   /* room for the longest caption, so switching clips moves nothing */
-.pxnote { min-height: 2.9em; margin: 0 0 6px; }   /* always there (it states the scale), so nothing shifts when it changes */
-/* source-sound badges: one line in the empty space between the name and the waveform; overflow folds into +N */
-.srcs { flex: 1 0 30px; min-width: 30px; display: flex; justify-content: center; gap: 4px; overflow: hidden; }
-.src { flex: none; display: inline-flex; align-items: stretch; height: 18px; padding: 0; margin: 0; cursor: help; font: 11px/16px inherit; font-family: inherit;
-  background: #fff; color: #000; border: 1px solid var(--lo); border-radius: 2px; max-width: 150px; }
-.src .nmx { padding: 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.src.fb { border: 1px dashed #806000; background: #fff8d8; }
-.src.more { padding: 0 6px; font-weight: 700; }
-.chip.xpplay { padding: 0 6px; margin-left: 6px; font-size: 11px; vertical-align: 1px; }
-.chip.xpplay svg { width: 9px; height: 9px; vertical-align: -1px; }
-.srcs.compact .src:not(.more) .nmx { display: none; }
-.src[hidden] { display: none; }
-.src:hover, .src:focus-visible, .src[aria-expanded="true"] { border-color: var(--ink); outline: none; box-shadow: 0 0 0 1px var(--ink); }
-.mk { display: inline-block; font: bold 9px/16px "Courier New", ui-monospace, monospace; letter-spacing: -.02em; padding: 0 3px; flex: none; }
-.mk.m311 { background: #000080; color: #fff; }
-.mk.m31 { background: #000080; color: #ffff00; }
-.mk.mxp { background: #245edb; color: #fff; }
-.mk.mfb { background: #ffcc00; color: #000; }
-.mk.mboth { background: #000080; color: #fff; box-shadow: inset -12px 0 0 #245edb; }
-.mk.mcc0, .mk.mpd { background: #c0c0c0; color: #000; border-right: 1px solid var(--lo); }
-.mk.msyn { background: #800080; color: #fff; }
-.mk.munk { background: #800000; color: #fff; }
-.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12.5px; color: var(--muted); margin: 0 0 8px; align-items: center; }
-.legend span { display: inline-flex; align-items: center; gap: 4px; }
-.legend .mk { border: 1px solid var(--lo); }
-#pop { position: fixed; z-index: 50; overflow-y: auto; overscroll-behavior: contain; max-width: min(340px, calc(100vw - 16px)); background: #ffffe1; color: #000; border: 1px solid #000;
-  box-shadow: 2px 2px 0 rgba(0,0,0,.5); padding: 6px 8px; font-size: 12.5px; line-height: 1.4; display: none; }
-#pop.on { display: block; }
-#pop h4 { margin: 0 0 3px; font-size: 13px; display: flex; gap: 6px; align-items: center; }
-#pop dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 1px 8px; }
-#pop dt { color: #404040; } #pop dd { margin: 0; overflow-wrap: anywhere; }
-#pop .item + .item { border-top: 1px solid #c0c0c0; margin-top: 5px; padding-top: 5px; }
-#pop .warn { background: #ffcc00; padding: 1px 4px; margin: 2px 0 4px; }
-/* what is original */
-.orig { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 12px 20px; margin: 8px 0; }
-.orig div { border: 1px solid var(--face); padding: 8px 10px; }
-.orig h3 .mk { margin-right: 6px; vertical-align: 1px; }
-.orig ul { margin: 4px 0 0; padding-left: 18px; }
-.chain { font: 12.5px/1.5 "Lucida Console", ui-monospace, Menlo, Consolas, monospace; background: #fff; color: #000; border: 1px solid var(--face); padding: 8px 10px; overflow-x: auto; white-space: pre; margin: 6px 0 10px; }
-.chain b { color: #000080; } .chain i { color: #806000; font-style: normal; }
-.sub { font-size: 12.5px; color: var(--muted); }
-.wave { height: 28px; position: relative; cursor: pointer; border: 1px solid; border-color: var(--lo) var(--hi) var(--hi) var(--lo); background: #000; }
-.wave svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.wave .done { clip-path: inset(0 100% 0 0); }
-.dna { grid-column: 2 / 4; display: flex; gap: 8px; align-items: flex-start; min-width: 0; }
-.dna code { flex: 1; min-width: 0; background: #fff; color: #000; border: 1px solid var(--face); padding: 2px 5px; }
-.copy { font: 12px inherit; font-family: inherit; padding: 1px 7px; margin: 0; flex: none; white-space: nowrap; }
-/* recipes (PRESET-ENGINE-2.md 17): the one-line form when it fits the cell, else one line per layer; never cut */
-.rec { flex: 1; min-width: 0; background: #fff; color: #000; border: 1px solid var(--face); padding: 2px 6px;
-  font: 12px/1.45 "Lucida Console", Consolas, "DejaVu Sans Mono", Menlo, ui-monospace, monospace; }
-.rec .ln { white-space: pre-wrap; overflow-wrap: anywhere; }
-.rec .one { white-space: nowrap; }
-.rec.ascii .one { white-space: pre-wrap; overflow-wrap: anywhere; }
-.rec.ascii { background: #ffffe8; }
-.rec:focus-visible { outline: 1px dotted var(--ink); outline-offset: 1px; }
-.rec .ln.env { color: #404040; }
-.rec details summary { cursor: pointer; white-space: pre-wrap; overflow-wrap: anywhere; }
-.rec details[open] summary { margin-bottom: 2px; }
-.rec .pad { padding-left: 2ch; }
-.issue { grid-column: 2 / 4; background: var(--warn); border: 1px dashed var(--ink); font-size: 13px; padding: 3px 8px; }
-.badge { display: inline-block; font-size: 11px; border: 1px solid var(--muted); padding: 0 4px; margin-left: 4px; vertical-align: 1px; color: var(--muted); font-weight: 400; }
-.soon { padding: 18px 6px; }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.packs td:first-child { white-space: nowrap; font-weight: 700; }
-.dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-@media (max-width: 600px) {
-  .body { padding: 12px 12px 14px; } h1 { font-size: 20px; } .lede { font-size: 15px; }
-  /* captures edge to edge, so a 3x phone shows every Windows pixel 1:1 */
-  .pxbox { width: 100vw; margin-left: calc(50% - 50vw); }
-  .row { grid-template-columns: 40px minmax(0, 1fr); }
-  .wave { grid-column: 2; grid-row: 2; }
-  /* the recipe gets the whole width; Copy DNA sits in the free cell under the play button */
-  .dna { display: contents; }
-  .dna .copy { grid-column: 1; grid-row: 2; width: 40px; padding: 0; font-size: 10px; line-height: 1.1; white-space: normal; align-self: stretch; }
-  .dna .rec, .dna code { grid-column: 1 / 3; }
-  .issue { grid-column: 1 / 3; }
-  .chips .lbl { min-width: 0; width: 100%; }
-  table { font-size: 13px; }
-}
-</style>
+<meta property="og:image" content="https://williamsharkey.com/sndrec/pxv/b16-play-poster.png">
+<link rel="stylesheet" href="sndrec/sndrec.css">
 <script src="sndrec/pxfit.js"></script>
 </head>
 <body>
@@ -175,13 +18,10 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
   <div class="cap"><span class="box"></span><span class="t">Sound Recorder Synths</span></div>
   <div class="body">
     <h1>Sixteen Sound Recorders, one instrument</h1>
-    <p class="lede">BASILISK 16 and BASILISK SYNTH are instrument plugins for your DAW. Each one runs a real old Windows inside the plugin, opens sixteen copies of Sound Recorder, and plays your notes on them. Every sound is built with Sound Recorder's own menu commands. The plugin never makes a sound of its own, and everything on this page was recorded from it.</p>
+    <p class="lede">BASILISK 16 is an instrument plugin for your DAW. It runs Windows for Workgroups 3.11 inside the plugin, opens sixteen copies of Sound Recorder, and plays your notes on them. Every sound is built with Sound Recorder's own menu commands. The plugin never makes a sound of its own, and everything on this page was recorded from it.</p>
     <div class="pxp" id="hero">
       <div class="pxclips" role="group" aria-label="Clip">
         <span class="lbl">BASILISK 16 (3.11)</span><button type="button" class="chip pxclip" aria-pressed="true">Loading</button><button type="button" class="chip pxclip" aria-pressed="false">Playing</button><button type="button" class="chip pxclip" aria-pressed="false">Preset change</button><button type="button" class="chip pxclip" aria-pressed="false">Mod wheel</button>
-      </div>
-      <div class="pxclips" role="group" aria-label="BASILISK SYNTH clip">
-        <span class="lbl">BASILISK SYNTH (XP)</span><button type="button" class="chip pxclip" aria-pressed="false">Loading</button><button type="button" class="chip pxclip" aria-pressed="false">Playing</button><button type="button" class="chip pxclip" aria-pressed="false">Preset change</button><button type="button" class="chip pxclip" aria-pressed="false">Macro 1</button>
       </div>
       <div class="pxclips" role="group" aria-label="Library clip">
         <span class="lbl">Owner's picks (1.3.0)</span><button type="button" class="chip pxclip" aria-pressed="false">Workgroup House</button><button type="button" class="chip pxclip" aria-pressed="false">More picks</button>
@@ -199,20 +39,20 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
   <div class="cap"><span class="box"></span><span class="t">Features</span></div>
   <div class="body">
     <h2>What you can do with it</h2>
-    <p>A sound is a <i>DNA</i>, one line of text: layers of Sound Recorder commands, then settings. <code>chimesE+;R900</code> is CHIMES.WAV with Add Echo and Increase Volume, and a 900 ms release. Type one into the editor, pick a preset, or click the Effects buttons. The same DNA plays in both instruments.</p>
+    <p>A sound is a <i>DNA</i>, one line of text: layers of Sound Recorder commands, then settings. <code>chimesE+;R900</code> is CHIMES.WAV with Add Echo and Increase Volume, and a 900 ms release. Type one into the editor, pick a preset, or click the Effects buttons.</p>
     <div class="feat">
       <div><h3>Layers</h3><p>Up to 8 layers per sound, each on its own recorders, with its own start offset, pan, level, transpose, harmony and unison. One note can sound up to 16 recorders.</p></div>
       <div><h3>Four macros</h3><p>Automatable from the DAW. The DNA says what each one moves: a layer's level, pan, offset, transpose, unison spread, envelope speed or echo count. The mod wheel adds to Macro 1.</p></div>
-      <div><h3>Envelopes on a real Windows graph</h3><p>Each layer can have drawn volume and pan envelopes of up to 8 points. In BASILISK 16 a seventeenth Sound Recorder draws the selected envelope in its green wave view.</p></div>
+      <div><h3>Envelopes on a real Windows graph</h3><p>Each layer can have drawn volume and pan envelopes of up to 8 points. A seventeenth Sound Recorder draws the selected envelope in its green wave view.</p></div>
       <div><h3>Keyboard, Mod and Bend</h3><p>Five octaves of Windows push-button keys, Bend and Mod scroll bars, and Hold. Turn on Keys to play from the computer keyboard. Incoming MIDI holds the keys down and moves the wheels.</p></div>
       <div><h3>Sound you can watch being built</h3><p>A new sound is built in front of you with Sound Recorder's own menus: Increase Speed, Add Echo, Reverse, Insert File, Mix with File, Copy and Paste. The recorder's row lights up and its status line names each command as it runs.</p></div>
-      <div><h3>The library disc</h3><p>249 public-domain and CC0 sounds (pianos, bells, choirs, bowls, birds, weather, machines) on a drive of their own, used by name: <code>marimba_c4E#16</code>. Collages mix and insert them at any time in a sound: <code>ding@t200Mthunder_rumble</code>.</p></div>
-      <div><h3>Presets everywhere</h3><p>76 programs in BASILISK 16 (43 in BASILISK SYNTH), in your DAW's preset list and in a Preset drop-down inside Windows. Saving a preset saves its DNA, so a sound copied from this page pastes straight into the editor.</p></div>
+      <div><h3>The library disc</h3><p>510 public-domain and CC0 sounds (pianos, bells, choirs, bowls, birds, weather, machines) on a drive of their own, used by name: <code>marimba_c4E#16</code>. Collages mix and insert them at any time in a sound: <code>ding@t200Mthunder_rumble</code>.</p></div>
+      <div><h3>Presets everywhere</h3><p>76 programs, in your DAW's preset list and in a Preset drop-down inside Windows. Saving a preset saves its DNA, so a sound copied from this page pastes straight into the editor.</p></div>
       <div><h3>Batch rendering</h3><p><code>render311</code> renders a DNA plus a MIDI file to a WAV through the real machine, faster than real time and bit-identical on Windows, macOS and Linux. The preset demos below were made with it, except the six macro presets, which were rendered by the VST3 in a test host with Macro 1 automated.</p></div>
     </div>
 
     <h2 style="margin-top:18px">Windows Help, the old way</h2>
-    <p>Each instrument has a help file for its own Windows' help viewer: WINHELP.EXE in Windows 3.11, winhlp32 in XP. It has a contents page, Search, glossary popups, the strips and panels explained, and a full DNA reference. It is compiled from plain text by a small WinHelp compiler written for this project, without Microsoft's tools. These are screenshots of it in the real Windows 3.11 viewer. The help files are written and tested and will ship in the next releases of both plugins.</p>
+    <p>BASILISK 16 has a help file for Windows 3.11's own help viewer, WINHELP.EXE. It has a contents page, Search, glossary popups, the strips and panels explained, and a full DNA reference. It is compiled from plain text by a small WinHelp compiler written for this project, without Microsoft's tools. These are screenshots of it in the real Windows 3.11 viewer. It is written and tested, and ships in a coming release.</p>
     <div class="pxg" id="helpg">
       <div class="pxclips" role="group" aria-label="Help topic">
         <button type="button" class="chip" aria-pressed="true" data-src="sndrec/help/contents.png" data-size="682x500" data-alt="BASILISK 16 Help contents in Windows 3.11's WINHELP.EXE: Getting Started, Making Sounds, Using Windows and Reference topics">Contents</button><button type="button" class="chip" aria-pressed="false" data-src="sndrec/help/strips.png" data-size="682x400" data-alt="The Strips topic: what each column of a Sound Recorder strip shows">The Strips</button><button type="button" class="chip" aria-pressed="false" data-src="sndrec/help/search.png" data-size="682x420" data-alt="WinHelp's Search dialog listing keywords such as minimize, Mix with File and offsets">Search</button><button type="button" class="chip" aria-pressed="false" data-src="sndrec/help/minimize.png" data-size="682x400" data-alt="The topic on minimizing the synth to use Windows">Using Windows</button>
@@ -229,33 +69,26 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     <h2>What is original, what is ours</h2>
     <p>The sound of a preset is made by Windows' own programs from Windows' own files. What we added plays those sounds as notes and shapes them.</p>
     <div class="orig">
-      <div><h3><span class="mk m311">3.11</span><span class="mk mxp">XP</span>Original: the program and its commands</h3>
-        <p>Every DNA step is one of Sound Recorder's own menu commands, run by the real Sound Recorder (SOUNDREC.EXE in 3.11, sndrec32.exe in XP) in its own process, on its own buffer:</p>
+      <div><h3><span class="mk m311">3.11</span>Original: the program and its commands</h3>
+        <p>Every DNA step is one of Sound Recorder's own menu commands, run by the real Sound Recorder (SOUNDREC.EXE) in its own process, on its own buffer:</p>
         <ul><li>Increase / Decrease Volume, Increase / Decrease Speed</li><li>Add Echo (Sound Recorder's real echo) and Reverse</li><li>Delete Before / After Current Position</li><li>Copy, Paste Insert, Paste Mix</li><li>Insert File and Mix with File</li></ul>
         <p style="margin-top:6px">Our program in Windows only picks the menu items and moves the position slider; it never edits the samples.</p></div>
       <div><h3><span class="mk m311">3.11</span><span class="mk m31">3.1</span><span class="mk mxp">XP</span>Original: the sounds</h3>
-        <p>The Windows sounds are the files of the Windows install itself:</p>
-        <ul><li>BASILISK 16: CHIMES, DING, RINGIN and RINGOUT from Windows for Workgroups 3.11, plus CHORD and TADA from Windows 3.1 (3.11's disks had dropped them). Since 1.2.1 it also carries XP's sound files, converted to PCM that Sound Recorder 3.1 opens, so one name means one file in both instruments: <code>ding</code> is the 3.x recording, <code>ding-xp</code> XP's.</li>
-        <li>BASILISK SYNTH: the 35 sounds in XP's C:\WINDOWS\Media, and since 1.2.1 the Windows 3.x recordings too, so one name means one file in both.</li></ul>
+        <p>The Windows sounds are files from the Windows installs themselves:</p>
+        <ul><li>CHIMES, DING, RINGIN and RINGOUT from Windows for Workgroups 3.11, plus CHORD and TADA from Windows 3.1 (3.11's disks had dropped them).</li>
+        <li>Windows XP's 35 sounds, converted to PCM that Sound Recorder 3.1 opens, in C:\XPSOUNDS. One name means one file: <code>ding</code> is the 3.x recording, <code>ding-xp</code> XP's.</li></ul>
         <p style="margin-top:6px"><span class="mk mcc0">CC0</span> <span class="mk mpd">PD</span> The library disc is added material: 249 CC0 and public-domain recordings, each credited on the disc (hover a badge in the preset list). For 3.11 they are converted to 22050 Hz 16-bit mono so Sound Recorder 3.1 can open them.</p></div>
       <div><h3>Ours: playing notes</h3>
         <ul><li>The voice allocator: which recorder plays which note</li><li>Note pitch, transpose, harmony and unison voices, velocity, pitch bend</li><li>Layer levels, pan and start offsets, the ADSR and drawn envelopes</li><li>The four macros and the mod wheel</li><li>The assembled screen: our program in Windows strips the real recorders of their menus and title bars, lines them up, and adds panels and a keyboard built from Windows' own controls</li></ul></div>
     </div>
     <h3 style="margin-top:6px">How a note is played</h3>
-    <p><b>BASILISK 16 (Windows 3.11).</b> Our program presses the recorder's own Rewind and Play. Sound Recorder plays its own buffer through the normal Windows sound calls. We added a 32-voice sound card to the emulator, and a Windows 3.11 driver for it; the card sets each voice's rate (the pitch, with 4-point Hermite interpolation), volume, pan and envelope.</p>
+    <p>Our program presses the recorder's own Rewind and Play. Sound Recorder plays its own buffer through the normal Windows sound calls. We added a 32-voice sound card to the emulator, and a Windows 3.11 driver for it; the card sets each voice's rate (the pitch, with 4-point Hermite interpolation), volume, pan and envelope.</p>
     <div class="chain" role="img" aria-label="BASILISK 16 note path: MIDI, the plugin's voice allocator, our SYNTH.EXE presses Rewind and Play, SOUNDREC.EXE plays its own buffer, our BSYNTH.DRV driver, our BSYN card in DOSBox Pure, the plugin's output"><i>ours </i> MIDI -&gt; plugin: voice allocator, pitch, pan, envelope
 <i>ours </i> SYNTH.EXE (in Windows): presses Rewind, Play on recorder n
 <b>3.11 </b> SOUNDREC.EXE: waveOutOpen / waveOutWrite of its own buffer
 <i>ours </i> BSYNTH.DRV -&gt; BSYN card (in DOSBox Pure): rate, volume, pan, envelope -&gt; 48 kHz
 <i>ours </i> plugin: fixed latency, resampled to your session's rate, Output Gain -&gt; DAW</div>
-    <p><b>BASILISK SYNTH (Windows XP).</b> A small DLL of ours is loaded into each sndrec32 process. When a note comes, it plays that recorder's own saved sound (its buffer, with its effects): it streams it to a sound-card handle opened once at 48 kHz, and applies the note's pitch itself, as a 16.16 fixed-point step through the sound, with linear interpolation in fixed point (integer arithmetic only: floating point is slow in the emulator), and the velocity, level, pan and envelope, on the samples, inside XP. Before 1.2 it opened the card at the note's own rate so that XP's mixer resampled, and shaped notes with XP's per-stream volume, which turned out to be one volume for the whole card on this XP.</p>
-    <div class="chain" role="img" aria-label="BASILISK SYNTH note path: MIDI, the plugin's voice allocator, our synth.exe signals the recorder, sndrec32.exe's own saved sound, our srhook.dll inside it applies pitch, velocity, level, pan and envelope, XP's mixer and sound card in QEMU, the plugin's output"><i>ours </i> MIDI -&gt; plugin: voice allocator, pitch, pan, envelope
-<i>ours </i> synth.exe (in Windows): signals recorder n
-<b>XP   </b> sndrec32.exe: its own saved sound, with its effects
-<i>ours </i> srhook.dll (inside sndrec32): pitch step, velocity, level, pan, envelope -&gt; card at 48 kHz
-<b>XP   </b> XP's mixer -&gt; AC97 sound card (in QEMU) -&gt; a pipe to the plugin
-<i>ours </i> plugin: fixed latency, resampled to your session's rate, Output Gain -&gt; DAW</div>
-    <p><b>The emulators</b> are DOSBox Pure (3.11) and QEMU (XP). The plugin never makes a sound of its own. It delays the emulated machine's output by a fixed, reported latency, resamples it to your session's rate, and applies Output Gain.</p>
+    <p><b>The emulator</b> is DOSBox Pure, with our sound card added. The plugin never makes a sound of its own. It delays the emulated machine's output by a fixed, reported latency, resamples it to your session's rate, and applies Output Gain.</p>
   </div>
 </div>
 
@@ -275,26 +108,25 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     <table class="packs" id="packs"><tbody>
       <tr><td>3.11 originals</td><td>BASILISK 16's own: Windows 3.11's CHIMES, DING, RINGIN and RINGOUT, sped up, slowed, reversed, echoed, stacked and spliced.</td></tr>
       <tr><td>Library disc</td><td>Layered instruments built from the library disc's sounds: Glass Piano, Bowl Swell, Cello Breath, Kalimba Train and more.</td></tr>
-      <tr><td>Factory</td><td>The presets shared by both instruments. Many use Windows XP's sounds; since 1.2.1 BASILISK 16 carries those files too, so they sound the same in both.</td></tr>
+      <tr><td>Factory</td><td>The factory presets. Many use Windows XP's sounds, which BASILISK 16 carries in C:\XPSOUNDS.</td></tr>
     </tbody></table>
 
     <h2 style="margin-top:16px">Hear every preset</h2>
     <p>Each preset plays a short phrase of the kind it is made for: pads play slow chords, basses a bassline, plucks an arpeggio, bells a melody. The phrases are MIDI, rendered through the real plugin, then only levelled to the same loudness. Presets that sound wrong are marked, not hidden. Under each name is its recipe: the DNA in Sound Recorder's words, on one line when it fits, else a line per layer. <b>Copy DNA</b> copies the exact string.</p>
-    <div class="tabs" role="tablist" aria-label="Plugin">
-      <button class="tab" role="tab" id="tab-b16" aria-controls="panel" aria-selected="true" data-ed="b16">BASILISK 16 (3.11)</button>
-      <button class="tab" role="tab" id="tab-xp" aria-controls="panel" aria-selected="false" data-ed="xp" tabindex="-1">BASILISK SYNTH (XP)</button>
+    <div class="tabs" role="tablist" aria-label="Presets">
+      <button class="tab" role="tab" id="tab-b16" aria-controls="panel" aria-selected="true" data-ed="b16">BASILISK 16 1.2.1</button>
       <button class="tab" role="tab" id="tab-lib" aria-controls="panel" aria-selected="false" data-ed="lib" tabindex="-1">Owner's picks (1.3.0)</button>
     </div>
-    <div class="panel" id="panel" role="tabpanel" aria-labelledby="tab-b16">
+    <div class="panel" id="panel" role="tabpanel" aria-labelledby="tab-b16" data-src="sndrec/presets.json" data-soundfilter>
       <div id="filters">
-        <div class="chips" id="edchips" role="group" aria-label="Windows sounds used: all presets, those using only Windows 3.x sounds, or those using Windows XP files"></div>
+        <div class="chips" id="edchips" role="group" aria-label="Windows sounds used: all presets, those using only the Windows 3.x sounds, or those using Windows XP's sounds (C:\XPSOUNDS)"></div>
         <div class="chips" id="packchips" role="group" aria-label="Sound pack"></div>
         <div class="chips" id="catchips" role="group" aria-label="Category"></div>
         <div class="legend" aria-label="Where each sound comes from">
           <span><span class="mk m311">3.11</span>Windows for Workgroups 3.11 file</span>
           <span><span class="mk m31">3.1</span>Windows 3.1 file</span>
-          <span><span class="mk mxp">XP</span>Windows XP file</span>
-          <span><span class="mk mboth">3.11=XP</span>the same file in both</span>
+          <span><span class="mk mxp">XP</span>Windows XP file (C:\XPSOUNDS)</span>
+          <span><span class="mk mboth">3.11=XP</span>the same file in 3.11 and XP</span>
           <span><span class="mk mcc0">CC0</span><span class="mk mpd">PD</span>library recording</span>
           <span><span class="mk msyn">SYN</span>synthesized</span>
         </div>
@@ -302,7 +134,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
       </div>
       <p class="note" id="ednote"></p>
       <ul class="list" id="list"></ul>
-      <p class="soon" id="soon" hidden>No demos for this plugin yet.</p>
+      <p class="soon" id="soon" hidden>No demos here yet.</p>
       <noscript><p>The preset players need JavaScript. The recordings are MP3 files in <a href="sndrec/audio/b16/">sndrec/audio/b16/</a>.</p></noscript>
     </div>
   </div>
@@ -311,13 +143,11 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
 <div class="win" id="download">
   <div class="cap"><span class="box"></span><span class="t">Download</span></div>
   <div class="body">
-    <h2>Get them</h2>
-    <p>BASILISK 16's download is complete: the plugin, Windows 3.11 and its Sound Recorders, the library disc and the batch renderer, with nothing else to install or find. BASILISK SYNTH 1.2.2 ships the same way, with Windows XP built in.</p>
+    <h2>Get it</h2>
+    <p>BASILISK 16's download is complete: the plugin, Windows 3.11 and its Sound Recorders, the library disc and the batch renderer, with nothing else to install or find.</p>
     <div class="dl">
       <div><h3>BASILISK 16 1.2.1</h3><p>Windows 3.11's SOUNDREC.EXE. VST3 for Windows and macOS, and AU on macOS.</p>
         <p><a class="btn" href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-311-v1.2.1">Release 1.2.1</a></p></div>
-      <div><h3>BASILISK SYNTH 1.2.2</h3><p>Windows XP's sndrec32.exe. VST3 for Windows and macOS, and AU and CLAP on macOS.</p>
-        <p><a class="btn" href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.2.2">Release 1.2.2</a></p></div>
     </div>
 <!-- b16-try: begin. "Try it online": BASILISK 16 in the browser (tools/basilisk16-web; files in sndrec/try/). Keep this block together. -->
 <style>
@@ -399,16 +229,16 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
   <p class="note b16stat" aria-live="polite"></p>
   <p class="note">Click the screen, then use Windows: the on-screen keys, <b>Keys</b> to play from the computer keyboard (<code>a w s e d f t g y h u j k</code>, <code>z</code>/<code>x</code> change octave), the Preset and Sound lists, the DNA line and every Sound Recorder button. Web MIDI is optional: it plays notes and follows the mod wheel and pitch bend. It pauses while the page is hidden, and stops itself if the browser cannot keep up.</p>
   <p class="note b16mobile" hidden>Best on a desktop or laptop computer: it needs a mouse, a keyboard and a fast processor.</p>
-  <p class="note">BASILISK SYNTH (XP edition): download only. Its Windows XP machine is about 1 GB and needs a fast virtual PC, which a browser cannot run in real time.</p>
 </div>
 <script src="sndrec/try/b16-ui.js?v=806134b8ac" defer></script>
 <script src="sndrec/try/b16-try.js?v=806134b8ac" defer></script>
 <!-- b16-try: end -->
     <p><a class="btn" href="sndrec-download.html">All downloads and install steps</a><a class="btn" href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">Source</a></p>
-    <p class="note">Windows XP, Windows for Workgroups 3.11, their sounds and Sound Recorder are Microsoft's, included as part of this art project. The Windows images came from Windows for Workgroups 3.11 and Windows XP Professional SP3 as preserved by the <a href="https://archive.org/details/wfw311-disk">Internet Archive</a>. The library disc's sounds are public domain and CC0; each one's source is listed on the disc. The emulators are <a href="https://www.qemu.org/">QEMU</a> and DOSBox Pure (GPLv2), and the plugins are built with <a href="https://github.com/DISTRHO/DPF">DPF</a>.</p>
+    <p class="note">Windows for Workgroups 3.11, Windows 3.1 and Windows XP sounds, and Sound Recorder are Microsoft's, included as part of this art project. The Windows images came from Windows for Workgroups 3.11 and Windows XP Professional SP3 as preserved by the <a href="https://archive.org/details/wfw311-disk">Internet Archive</a>. The library disc's sounds are public domain and CC0; each one's source is listed on the disc. The emulators are <a href="https://www.qemu.org/">QEMU</a> and DOSBox Pure (GPLv2), and the plugins are built with <a href="https://github.com/DISTRHO/DPF">DPF</a>.</p>
   </div>
 </div>
 
+<p class="archived">Also: <a href="sndrec-xp.html">the Windows XP edition (archived)</a></p>
 </div>
 <audio id="player" preload="none"></audio>
 <div id="pop" role="tooltip"></div>
@@ -426,16 +256,6 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
      caption: '<b>Changing preset while playing.</b> Kalimba Glass becomes Choir Pad. Sound Recorder rebuilds the recorders one at a time; the row being built lights yellow, and the old sound keeps playing until the new one is ready.'},
     {base: 'sndrec/pxv/b16-macro', seconds: 9.8, title: 'The mod wheel moving Macro 1 on Macro Swell',
      caption: '<b>The mod wheel.</b> On Macro Swell, the wheel (the Mod scroll bar, bottom left) adds to Macro 1, which stretches chord\'s envelope and swings ding\'s echo across the stereo field.'},
-    // BASILISK SYNTH 1.2.2 (loading, playing, Macro 1) and 1.2.1 (preset change): bsynth-host --editor --shots (grabs on their own thread, each within a frame of its audio
-    // time; tools/sndrec-demo/xp_check.py), the editor window's own pixels every 1/30 s on the audio clock
-    {base: 'sndrec/pxv/xp-assembly', seconds: 20.1, title: 'BASILISK SYNTH loading: Windows XP wakes and its sixteen Sound Recorders assemble, then Chord Organ plays',
-     caption: '<b>BASILISK SYNTH loading</b> (1.2.2). Windows XP wakes inside the plugin, its sixteen Sound Recorders line up beside the DNA box, the library browser, Task Manager\'s graphs and the macros, and Chord Organ plays.'},
-    {base: 'sndrec/pxv/xp-play', seconds: 10.5, title: 'Wide Chimes playing on BASILISK SYNTH',
-     caption: '<b>BASILISK SYNTH playing</b> (1.2.2). Wide Chimes: three layers of chimes.wav and ding.wav, panned left and right. Each note plays one recorder\'s own saved sound, and its key goes down.'},
-    {base: 'sndrec/pxv/xp-change', seconds: 18.7, title: 'A preset change on BASILISK SYNTH: Windows XP rebuilds the recorders',
-     caption: '<b>BASILISK SYNTH changing preset</b> (1.2.1; no 1.2.2 take passed the audio check yet). Kalimba Glass becomes Choir Pad mid-phrase. XP rebuilds the recorders with Sound Recorder\'s own commands, Open dialog and all; the notes played while it builds are silent until the new sound is ready. <i>The audio gaps come from the 1.2.1 plugin\'s output and are being fixed.</i>'},
-    {base: 'sndrec/pxv/xp-macro', seconds: 10.9, title: 'Macro 1 moving on Macro Swell in BASILISK SYNTH',
-     caption: '<b>BASILISK SYNTH, Macro 1</b> (1.2.2). Automation steps Macro 1 to 35, 70, 100 and 20 % on Macro Swell: XP\'s DNA box and Macros panel follow each step, and ding\'s echo swings from left to right.'},
     // the owner's picks from the 1.3.0 library (tools/sndrec-demo/videos/lib-*.txt): demo311 on the 1.2.1 machine; these DNAs are v2
     {base: 'sndrec/pxv/lib-house', seconds: 39.6, title: 'The owner\'s picks from Workgroup House Edition: Shaded End, Granite Cloud and Shaded Tremolo on BASILISK 16',
      caption: '<b>Workgroup House Edition</b> (coming in 1.3.0). The owner\'s three top-rated presets on BASILISK 16: Shaded End (a bass of XP\'s Ding slowed down, with Battery Low), then Granite Cloud (a flute, trimmed, echoed and slowed, with XP\'s Ringout) and Shaded Tremolo (XP\'s Startup and 3.11\'s Chimes). Between them Windows builds each new sound in view. Played on the 1.2.1 machine.'},
@@ -452,327 +272,6 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
   });
 })();
 </script>
-<script>
-(function () {
-  'use strict';
-  var data = null, ed = 'b16', edf = 'All', pack = 'All', cat = 'All', current = null;
-  var player = document.getElementById('player');
-  var list = document.getElementById('list'), countEl = document.getElementById('count');
-  var PLAY = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z" fill="currentColor"/></svg>';
-  var STOP = '<svg viewBox="0 0 14 14" aria-hidden="true"><rect x="2.5" y="2.5" width="9" height="9" fill="currentColor"/></svg>';
-
-  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); }
-  function waveSvg(w, color) {
-    var r = '', n = w.length;
-    for (var i = 0; i < n; i++) { var h = Math.max(1, w[i] / 100 * 22); r += '<rect x="' + (i * 2 + 0.3) + '" y="' + (12 - h / 2) + '" width="1.4" height="' + h + '"/>'; }
-    return '<svg viewBox="0 0 ' + (n * 2) + ' 24" preserveAspectRatio="none" aria-hidden="true" fill="' + color + '">' + r + '</svg>';
-  }
-  // ---- source sounds: a badge per sound, its origin mark, full facts in a popover (hover, focus or tap)
-  var MARK = {'311': ['m311', '3.11', 'Windows for Workgroups 3.11 original'], '31': ['m31', '3.1', 'Windows 3.1 original'],
-    'xp': ['mxp', 'XP', 'Windows XP original'], 'both': ['mboth', '3.11=XP', 'The same file in Windows 3.11 and XP'], 'fb': ['mfb', '\u2192DING', 'XP name: DING.WAV plays on 3.11'],
-    'cc0': ['mcc0', 'CC0', 'Library recording, CC0'], 'pd': ['mpd', 'PD', 'Library recording, public domain'],
-    'syn': ['msyn', 'SYN', 'Synthesized (library)'], 'unk': ['munk', '?', 'Unknown name']};
-  function mk(o) { var m = MARK[o] || MARK.unk; return '<span class="mk ' + m[0] + '" aria-hidden="true">' + m[1] + '</span>'; }
-  function facts(n, S) {
-    var x = S[n] || {o: 'unk'}, m = MARK[x.o] || MARK.unk, r = '<div class="item"><h4>' + mk(x.o) + '<span>' + esc(x.d || n) + '</span></h4>';
-    if (x.o === 'fb') r += '<div class="warn">Not an original 3.11 sound: <b>' + esc(x.xp) + '</b> is a Windows XP file, so BASILISK 16 plays DING.WAV for it.</div>';
-    r += '<dl><dt>Origin</dt><dd>' + esc(x.from || m[2]) + '</dd>';
-    if (x.path) r += '<dt>File</dt><dd><code>' + esc(x.path) + '</code></dd>';
-    if (x.dur != null) r += '<dt>Length</dt><dd>' + x.dur + ' s</dd>';
-    if (x.fmt) r += '<dt>Format</dt><dd>' + esc(x.fmt) + '</dd>';
-    r += '<dt>Root</dt><dd>' + (x.root ? esc(x.root) : 'not pitched / not given') + '</dd>';
-    if (x.what) r += '<dt>Sound</dt><dd>' + esc(x.what) + '</dd>';
-    if (x.how) r += '<dt>Made by</dt><dd>' + esc(x.how) + '</dd>';
-    if (x.author) r += '<dt>Author</dt><dd>' + esc(x.author) + '</dd>';
-    if (x.lic) r += '<dt>Licence</dt><dd>' + esc(x.lic) + '</dd>';
-    if (x.url) r += '<dt>Source</dt><dd><a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.url.replace(/^https?:\/\/(www\.)?/, '').slice(0, 60)) + '</a></dd>';
-    return r + '</dl></div>';
-  }
-  function srcBadges(p, S) {
-    var box = el('div', 'srcs');
-    box.setAttribute('role', 'list'); box.setAttribute('aria-label', 'Sounds used');
-    (p.src || []).forEach(function (n) {
-      var x = S[n] || {o: 'unk'}, b = el('button', 'src' + (x.o === 'fb' ? ' fb' : ''), mk(x.o) + '<span class="nmx">' + esc(x.d || n) + '</span>');
-      b.type = 'button'; b.setAttribute('role', 'listitem');
-      b.setAttribute('aria-label', (x.d || n) + ': ' + (MARK[x.o] || MARK.unk)[2] + (x.path ? ', ' + x.path : ''));
-      b._html = function () { return facts(n, S); };
-      box.appendChild(b);
-    });
-    var more = el('button', 'src more', '+0'); more.type = 'button'; more.hidden = true;
-    more._html = function () {
-      return [].filter.call(box.children, function (c) { return c !== more && c.hidden; }).map(function (c) { return c._html(); }).join('');
-    };
-    box.appendChild(more);
-    return box;
-  }
-  function fit(box) {   // all badges; else marks only; else as many marks as fit, and +N for the rest
-    var kids = [].slice.call(box.children), more = kids.pop();
-    kids.forEach(function (k) { k.hidden = false; }); more.hidden = true; box.classList.remove('compact');
-    if (box.scrollWidth <= box.clientWidth + 1) return;
-    box.classList.add('compact');
-    if (box.scrollWidth <= box.clientWidth + 1) return;
-    more.hidden = false;
-    for (var i = kids.length - 1; i >= 0 && box.scrollWidth > box.clientWidth + 1; i--) {
-      kids[i].hidden = true;
-      var h = kids.filter(function (k) { return k.hidden; }).length;
-      more.textContent = '+' + h; more.setAttribute('aria-label', h + ' more sound' + (h > 1 ? 's' : ''));
-    }
-  }
-  // recipes: the converter's one-line form if it fits the cell's width in its own font, else its lines
-  var meas = document.createElement('canvas').getContext('2d');
-  // Recipes (PRESET-ENGINE-2.md 17.1b): shown pretty; selecting, focusing or double-clicking one turns it into its ASCII
-  // form, which is what is typed and copied. Both forms come from the converter (toRecipe, prettify) at build time.
-  function recHTML(r, asc, one) {
-    function ln(t, cls) { return '<div class="ln' + (cls ? ' ' + cls : '') + '">' + esc(t) + '</div>'; }
-    if (r.kit) {
-      var lay = asc ? r.kit.layers : r.kit.players, env = asc ? r.kit.env : r.kit.penv, pads = asc ? r.kit.pads : r.kit.ppads;
-      var srcs = r.kit.layers.map(function (l) { return l.split(/\s+/)[0]; });
-      return '<details' + (asc ? ' open' : '') + '><summary>kit ' + (asc ? '' : '\u00b7 ') + r.kit.n + ' pads ' + (asc ? '' : '\u00b7 ') + esc(srcs.join(', ')) + '</summary>' +
-        lay.map(function (l) { return ln(l); }).join('') + (env ? ln(env, 'env') : '') + pads.map(function (l) { return ln(l, 'pad'); }).join('') + '</details>';
-    }
-    if (one) return ln(asc ? r.one : r.pone, 'one');
-    return (asc ? r.lines : r.plines).map(function (l) { return ln(l, /^env\s/.test(l) ? 'env' : ''); }).join('');
-  }
-  function fitRec(box) {   // the one-line form if its pretty text fits the cell in its own font, else a line per layer
-    var r = box._p.rec, cs = getComputedStyle(box);
-    var w = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-    meas.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
-    var one = !r.kit && meas.measureText(r.pone).width <= w;
-    if (box._one === one && box._drawn) return;
-    box._one = one; setRec(box, !!box._asc, true);
-  }
-  function setRec(box, asc, force) {
-    if (!force && !!box._asc === asc) return;
-    var open = box.querySelector('details') && box.querySelector('details').open;
-    box._asc = asc; box._drawn = true;
-    box.classList.toggle('ascii', asc);
-    box.innerHTML = recHTML(box._p.rec, asc, box._one);
-    if (open) box.querySelector('details').open = true;
-  }
-  function recOf(n) { while (n && n.nodeType !== 1) n = n.parentNode; return n && n.closest ? n.closest('.rec') : null; }
-  list.addEventListener('mousedown', function (e) { var b = recOf(e.target); if (b && !(e.target.closest && e.target.closest('summary'))) setRec(b, true); });
-  list.addEventListener('focusin', function (e) { if (e.target.classList && e.target.classList.contains('rec')) setRec(e.target, true); });
-  list.addEventListener('focusout', function (e) { var b = e.target.classList && e.target.classList.contains('rec') ? e.target : null; if (b) setTimeout(revertRecs, 0); });
-  function revertRecs() {   // back to pretty when nothing in it is selected or focused
-    var sel = window.getSelection(), r = sel.rangeCount && !sel.isCollapsed ? sel.getRangeAt(0) : null;
-    [].forEach.call(document.querySelectorAll('.rec.ascii'), function (b) {
-      if (document.activeElement === b || (r && r.intersectsNode(b))) return;
-      setRec(b, false);
-    });
-  }
-  document.addEventListener('selectionchange', function () {
-    var sel = window.getSelection();
-    if (!sel.rangeCount || sel.isCollapsed) { revertRecs(); return; }
-    var r = sel.getRangeAt(0), a = recOf(sel.anchorNode), f = recOf(sel.focusNode);
-    // a recipe wholly inside a selection that spans rows: switch it too (its own text is not a boundary of the range)
-    [].forEach.call(list.querySelectorAll('.rec:not(.ascii)'), function (b) { if (b !== a && b !== f && r.intersectsNode(b)) setRec(b, true); });
-  });
-  // copy: always ASCII. Selections in recipes already are; a recipe the selection only enters at its far end is still
-  // pretty, so its symbols go back through the converter's own substitution (17.1: × x, ± +-, ¢ c, – -, " · " two spaces, … ...)
-  document.addEventListener('copy', function (e) {
-    var sel = window.getSelection();
-    if (!sel.rangeCount || sel.isCollapsed) return;
-    var r = sel.getRangeAt(0), hit = [].some.call(document.querySelectorAll('.rec'), function (b) { return r.intersectsNode(b); });
-    if (!hit) return;
-    var t = sel.toString().replace(/ \u00b7 /g, '  ').replace(/\u00d7/g, 'x').replace(/\u00b1/g, '+-').replace(/\u00a2/g, 'c')
-      .replace(/\u2013/g, '-').replace(/\u2026/g, '...').replace(/\u2192/g, '->').replace(/\u00b7/g, '-');
-    e.clipboardData.setData('text/plain', t); e.preventDefault();
-  });
-  function fitAll() {
-    [].forEach.call(document.querySelectorAll('.srcs'), fit);
-    [].forEach.call(document.querySelectorAll('.rec'), fitRec);
-  }
-  var fitT = 0;
-  window.addEventListener('resize', function () { cancelAnimationFrame(fitT); fitT = requestAnimationFrame(function () { fitAll(); hidePop(); }); });
-
-  var pop = document.getElementById('pop'), popFor = null, popTimer = 0;
-  function showPop(b) {
-    clearTimeout(popTimer);
-    if (popFor && popFor !== b) popFor.setAttribute('aria-expanded', 'false');
-    popFor = b; b.setAttribute('aria-expanded', 'true');
-    pop.innerHTML = b._html(); pop.classList.add('on');
-    place();
-  }
-  function place() {   // under the badge, or above it near the bottom; always inside the window
-    var b = popFor; if (!b) return;
-    var r = b.getBoundingClientRect(), vw = document.documentElement.clientWidth, vh = window.innerHeight;
-    var below = vh - r.bottom - 14, above = r.top - 14;
-    pop.style.maxHeight = 'none';
-    var w = pop.offsetWidth, h = pop.offsetHeight, y;
-    if (h <= below) y = r.bottom + 6;
-    else if (h <= above) y = r.top - h - 6;
-    else if (below >= above) { pop.style.maxHeight = below + 'px'; y = r.bottom + 6; }   // never over its badge: scroll inside
-    else { pop.style.maxHeight = above + 'px'; y = 8; }
-    var x = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, vw - w - 8));
-    pop.style.left = x + 'px'; pop.style.top = y + 'px';
-  }
-  function hidePop() { clearTimeout(popTimer); pop.classList.remove('on'); if (popFor) popFor.setAttribute('aria-expanded', 'false'); popFor = null; }
-  function laterHide() { clearTimeout(popTimer); popTimer = setTimeout(hidePop, 180); }
-  var touch = false;
-  document.addEventListener('touchstart', function () { touch = true; }, {passive: true});
-  list.addEventListener('mouseover', function (e) { var b = e.target.closest && e.target.closest('.src'); if (b && !touch) showPop(b); });
-  list.addEventListener('mouseout', function (e) { var b = e.target.closest && e.target.closest('.src'); if (b && !touch) laterHide(); });
-  var focusedAt = 0;
-  list.addEventListener('focusin', function (e) { var b = e.target.closest && e.target.closest('.src'); if (b) { showPop(b); focusedAt = Date.now(); } });
-  list.addEventListener('focusout', function (e) { if (e.target.closest && e.target.closest('.src') && !pop.contains(e.relatedTarget)) laterHide(); });
-  list.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('.src'); if (!b) return; if (popFor === b && pop.classList.contains('on') && Date.now() - focusedAt > 400) hidePop(); else showPop(b); });
-  pop.addEventListener('mouseenter', function () { clearTimeout(popTimer); });
-  pop.addEventListener('mouseleave', laterHide);
-  document.addEventListener('click', function (e) { if (!pop.contains(e.target) && !(e.target.closest && e.target.closest('.src'))) hidePop(); });
-  window.addEventListener('scroll', function () {
-    if (!popFor) return;
-    var r = popFor.getBoundingClientRect();
-    if (r.bottom < 0 || r.top > window.innerHeight) hidePop(); else place();
-  }, {passive: true});
-
-  function stop() {
-    if (!current) return;
-    player.pause();
-    current.row.classList.remove('playing');
-    current.btn.innerHTML = current.btn._idle || PLAY; current.btn.setAttribute('aria-pressed', 'false');
-    current.btn.setAttribute('aria-label', 'Play ' + current.p.name);
-    current.done.style.clipPath = 'inset(0 100% 0 0)';
-    current = null;
-  }
-  function play(p, row, btn, done) {
-    if (current && current.p === p) { stop(); return; }
-    stop();
-    pauseVideos();
-    var me = current = {p: p, row: row, btn: btn, done: done};
-    player.src = p.file;
-    var pr = player.play();
-    if (pr && pr.catch) pr.catch(function (e) { if (current === me && e && e.name !== 'AbortError') stop(); });
-    row.classList.add('playing');
-    btn.innerHTML = btn._busy || STOP; btn.setAttribute('aria-pressed', 'true'); btn.setAttribute('aria-label', 'Stop ' + p.name);
-    tick();
-  }
-  function tick() {
-    if (!current) return;
-    var d = player.duration || current.p.sec, f = d ? Math.min(1, player.currentTime / d) : 0;
-    current.done.style.clipPath = 'inset(0 ' + ((1 - f) * 100).toFixed(2) + '% 0 0)';
-    if (!player.paused) requestAnimationFrame(tick);
-  }
-  player.addEventListener('ended', stop);
-  player.addEventListener('play', tick);
-  function pauseVideos() { if (window.PxPlayer) PxPlayer.pauseAll(); }
-  window.onPxPlay = function () { stop(); };   // a capture playing stops the preset player
-
-  function copy(text, b) {
-    function ok() { var t = b.textContent; b.textContent = 'Copied'; setTimeout(function () { b.textContent = t; }, 1200); }
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, fallback); else fallback();
-    function fallback() {
-      var t = document.createElement('textarea'); t.value = text; t.setAttribute('readonly', ''); t.style.position = 'fixed'; t.style.opacity = '0';
-      document.body.appendChild(t); t.select();
-      try { document.execCommand('copy'); ok(); } catch (e) {}
-      document.body.removeChild(t);
-    }
-  }
-
-  function chips(box, label, values, sel, on) {
-    box.innerHTML = '';
-    box.appendChild(el('span', 'lbl', label));
-    values.forEach(function (v) {
-      var b = el('button', 'chip', esc(v[0]) + (v[1] != null ? ' <span class="sr">(' + v[1] + ' presets)</span><span aria-hidden="true"> ' + v[1] + '</span>' : ''));
-      b.type = 'button'; b.setAttribute('aria-pressed', String(v[0] === sel));
-      b.addEventListener('click', function () { on(v[0]); });
-      box.appendChild(b);
-    });
-  }
-  function tally(rows, key) {
-    var m = {}, order = [];
-    rows.forEach(function (p) { if (!(p[key] in m)) { m[p[key]] = 0; order.push(p[key]); } m[p[key]]++; });
-    return [['All', rows.length]].concat(order.map(function (k) { return [k, m[k]]; }));
-  }
-
-  function render() {
-    var E = data && data.editions[ed];
-    document.getElementById('filters').hidden = !E;
-    document.getElementById('soon').hidden = !!E;
-    list.innerHTML = '';
-    if (!E) { countEl.textContent = ''; return; }
-    var all = E.presets;
-    document.getElementById('ednote').innerHTML = ed === 'lib'
-      ? '<b>Coming in BASILISK 16 1.3.0.</b> The owner\'s favourites from the new library (1,039 presets in 17 sound packs), rated 6.5 to 8.5 of 10 on the review page. They are not in a released plugin yet. Each demo is the file the owner rated: rendered by <code>render311</code> through the real Windows 3.11 machine (main 4bda617), checked that every note sounds. Their level is the preset\'s own, so some are a little quieter than the other demos.'
-      : ed === 'xp'
-      ? 'BASILISK SYNTH 1.2.2 (Windows XP), 43 programs, all rendered with 1.2.2 (no more dropouts). XP\'s timing is not sample-accurate, so its renders differ a little run to run; each demo is the best of up to four takes.'
-      : 'BASILISK 16 1.2.1 (Windows 3.11), 76 programs, rendered with <code>render311</code>, which gives the same result on every run.';
-    // DNA.md 2.4: a preset is XP when it uses any XP file, else W3.11 (library sounds do not count)
-    all.forEach(function (p) { p.edl = p.ed === 'xp' ? 'XP' : 'W3.11'; });
-    var eds = tally(all, 'edl').sort(function (a, b) { var o = {All: 0, 'W3.11': 1, XP: 2}; return o[a[0]] - o[b[0]]; });
-    chips(document.getElementById('edchips'), 'Windows', eds, edf, function (v) { edf = v; pack = 'All'; cat = 'All'; render(); });
-    var inEd = all.filter(function (p) { return edf === 'All' || p.edl === edf; });
-    chips(document.getElementById('packchips'), 'Sound pack', tally(inEd, 'pack'), pack, function (v) { pack = v; cat = 'All'; render(); });
-    var inPack = inEd.filter(function (p) { return pack === 'All' || p.pack === pack; });
-    chips(document.getElementById('catchips'), 'Category', tally(inPack, 'cat'), cat, function (v) { cat = v; render(); });
-    var q = document.getElementById('q').value.trim().toLowerCase();
-    var rows = inPack.filter(function (p) {
-      return (cat === 'All' || p.cat === cat) && (!q || (p.name + ' ' + p.dna + ' ' + p.cat + ' ' + (p.rec ? p.rec.one : '') + ' ' + (p.src || []).join(' ')).toLowerCase().indexOf(q) >= 0);
-    });
-    countEl.textContent = rows.length + ' of ' + all.length + ' presets';
-    rows.forEach(function (p) {
-      var li = el('li', 'row');
-      var btn = el('button', 'btn play', PLAY); btn.type = 'button';
-      var meta = el('div', 'meta', '<div class="nm"><span class="t">' + esc(p.name) + '</span></div><div class="sub">' + esc(p.cat) + ' &middot; ' + esc(p.phrase) +
-        (p.rating ? ' &middot; ' + esc(p.pack) + ' &middot; rated ' + p.rating + '/10' : ' &middot; program ' + (p.n + 1)) + (p.xp ? ' <button type="button" class="chip xpplay">' + PLAY + ' XP</button>' : '') + (p.macro ? '<span class="badge">Macro 1 moves</span>' : '') + (p.flags.length ? '<span class="badge">issue</span>' : '') + '</div>');
-      meta.firstChild.appendChild(srcBadges(p, E.sounds || {}));
-      var xb = meta.querySelector('.xpplay');
-      if (xb) {   // the owner's pick played by BASILISK SYNTH 1.2.2 (the XP render)
-        var px = {name: p.name + ' on XP', file: p.xp.file, sec: p.xp.sec};
-        xb._idle = PLAY + ' XP'; xb._busy = STOP + ' XP';
-        xb.setAttribute('aria-label', 'Play ' + p.name + ' as BASILISK SYNTH 1.2.2 renders it'); xb.setAttribute('aria-pressed', 'false');
-        xb.addEventListener('click', function () { play(px, li, xb, done); });
-      }
-      var wave = el('div', 'wave');
-      var done = el('div', 'done');
-      wave.innerHTML = waveSvg(p.wave, '#3a7a3a');
-      done.innerHTML = waveSvg(p.wave, '#00ff00');
-      done.style.position = 'absolute'; done.style.inset = '0';
-      wave.appendChild(done);
-      if (p.file) {
-        btn.setAttribute('aria-label', 'Play ' + p.name); btn.setAttribute('aria-pressed', 'false');
-        btn.addEventListener('click', function () { play(p, li, btn, done); });
-        wave.addEventListener('click', function () { play(p, li, btn, done); });
-      } else {
-        btn.disabled = true; btn.setAttribute('aria-label', p.name + ': silent, nothing to play');
-      }
-      var dna = el('div', 'dna');
-      var code = p.rec ? el('div', 'rec') : el('code', null, esc(p.dna));
-      if (p.rec) { code._p = p; code.tabIndex = 0; code.setAttribute('aria-label', 'Recipe of ' + p.name + ' (focus for the typable form): ' + p.rec.one); }
-      var cp = el('button', 'btn copy', 'Copy DNA'); cp.type = 'button'; cp.title = p.dna; cp.setAttribute('aria-label', 'Copy the DNA of ' + p.name + ': ' + p.dna);
-      cp.addEventListener('click', function () { copy(p.dna, cp); });
-      dna.appendChild(code); dna.appendChild(cp);
-      li.appendChild(btn); li.appendChild(meta); li.appendChild(wave); li.appendChild(dna);
-      if (p.flags.length || p.note) {
-        var note = p.note || p.flags.join('; ');
-        li.appendChild(el('div', 'issue', '<b>' + (p.flags.length ? 'Issue' : 'Note') + ':</b> ' + esc(note)));
-      }
-      if (current && current.p === p) { current.row = li; current.btn = btn; current.done = done; li.classList.add('playing'); btn.innerHTML = STOP; btn.setAttribute('aria-pressed', 'true'); }
-      list.appendChild(li);
-    });
-    fitAll();
-  }
-
-  document.getElementById('q').addEventListener('input', render);
-  var tabs = [].slice.call(document.querySelectorAll('.tab'));
-  function selectTab(t, focus) {
-    tabs.forEach(function (o) { var s = o === t; o.setAttribute('aria-selected', String(s)); o.tabIndex = s ? 0 : -1; });
-    document.getElementById('panel').setAttribute('aria-labelledby', t.id);
-    if (focus) t.focus();
-    if (ed !== t.dataset.ed) { stop(); ed = t.dataset.ed; edf = 'All'; pack = 'All'; cat = 'All'; render(); }
-  }
-  document.getElementById('libgo').addEventListener('click', function () { selectTab(document.getElementById('tab-lib')); });
-  tabs.forEach(function (t, i) {
-    t.addEventListener('click', function () { selectTab(t); });
-    t.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); selectTab(tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length], true); }
-    });
-  });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if (popFor) { var f = popFor; hidePop(); f.focus(); } else stop(); } });
-
-  fetch('sndrec/presets.json').then(function (r) { return r.json(); }).then(function (d) { data = d; render(); })
-    .catch(function () { list.innerHTML = '<li class="note">The preset list could not be loaded.</li>'; });
-})();
-</script>
+<script src="sndrec/browser.js"></script>
 </body>
 </html>

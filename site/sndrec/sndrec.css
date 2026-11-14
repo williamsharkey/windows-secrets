@@ -1,0 +1,161 @@
+/* sndrec.html and sndrec-xp.html: the Windows 3.1-style page, the preset browser, badges, recipes, the canvas player */
+:root {
+  --desk: #008080; --face: #c0c0c0; --hi: #ffffff; --lo: #808080; --ink: #000000;
+  --title: #000080; --title-ink: #ffffff; --paper: #ffffff; --muted: #404040; --link: #000080;
+  --sel: #000080; --sel-ink: #ffffff; --wave: #008000; --wave-dim: #9fc79f; --warn: #ffffcc; --scr: #000000;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --desk: #003838; --paper: #dcdcdc; --face: #b4b4b4; --muted: #303030; }
+}
+:root[data-theme="dark"] { --desk: #003838; --paper: #dcdcdc; --face: #b4b4b4; --muted: #303030; }
+* { box-sizing: border-box; }
+html { background: var(--desk); }
+body { margin: 0; color: var(--ink); background: var(--desk);
+  font: 15px/1.55 "MS Sans Serif", "Microsoft Sans Serif", Arial, Helvetica, sans-serif; }
+a { color: var(--link); }
+.wrap { max-width: 1124px; margin: 0 auto; padding: 22px 16px 40px; }
+.win { background: var(--paper); border: 1px solid var(--ink); box-shadow: 0 0 0 3px var(--face), 0 0 0 4px var(--ink); margin: 8px 4px 30px; }
+.cap { display: flex; align-items: center; height: 22px; background: var(--title); color: var(--title-ink); border-bottom: 1px solid var(--ink); font-weight: 700; }
+.cap .box { width: 22px; height: 21px; background: var(--face); border-right: 1px solid var(--ink); display: grid; place-items: center; flex: none; }
+.cap .box::before { content: ""; width: 12px; height: 3px; background: var(--paper); border: 1px solid var(--ink); }
+.cap .t { flex: 1; text-align: center; letter-spacing: .02em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0 6px; }
+.body { padding: 16px 20px 18px; }
+h1 { font-size: 24px; margin: 0 0 6px; }
+h2 { font-size: 17px; margin: 0 0 8px; }
+h3 { font-size: 15px; margin: 0 0 4px; }
+p { margin: 0 0 10px; }
+.lede { font-size: 16px; max-width: 72ch; }
+.btn { display: inline-block; text-decoration: none; color: var(--ink); background: var(--face); border: 1px solid var(--ink); border-radius: 3px;
+  box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo); padding: 6px 12px; margin: 2px 6px 6px 0; font: inherit; cursor: pointer; }
+.btn:active, .btn[aria-pressed="true"] { box-shadow: inset 2px 2px 0 var(--lo); }
+.btn:focus-visible, button:focus-visible, input:focus-visible, video:focus-visible { outline: 1px dotted var(--ink); outline-offset: 2px; }
+code { font: 13px "Fixedsys Excelsior", "Lucida Console", ui-monospace, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+.note { font-size: 13.5px; color: var(--muted); }
+/* video */
+figcaption { font-size: 13.5px; color: var(--muted); margin-top: 6px; }
+/* features */
+.feat { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 14px 22px; }
+.feat div { border-top: 1px solid var(--face); padding-top: 8px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 6px 0 10px; }
+td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var(--face); vertical-align: top; }
+/* preset browser */
+.tabs { display: flex; gap: 2px; flex-wrap: wrap; margin: 0 0 -1px; position: relative; }
+.tab { font: inherit; padding: 5px 14px; background: var(--face); border: 1px solid var(--ink); border-bottom: 0; border-radius: 4px 4px 0 0; cursor: pointer; color: var(--ink); }
+.tab[aria-selected="true"] { background: var(--paper); font-weight: 700; padding-bottom: 6px; }
+.panel { border: 1px solid var(--ink); padding: 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 0 0 8px; align-items: center; }
+.chips .lbl { font-size: 13px; color: var(--muted); min-width: 64px; }
+.chip { font: 13px inherit; font-family: inherit; padding: 2px 9px; background: var(--face); border: 1px solid var(--ink); border-radius: 2px; cursor: pointer; color: var(--ink);
+  box-shadow: inset 1px 1px 0 var(--hi), inset -1px -1px 0 var(--lo); }
+.chip[aria-pressed="true"] { background: var(--sel); color: var(--sel-ink); box-shadow: none; }
+.find { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 0 0 10px; }
+.find input { font: inherit; padding: 3px 6px; border: 2px solid; border-color: var(--lo) var(--hi) var(--hi) var(--lo); background: #fff; color: #000; width: 16em; max-width: 100%; }
+.count { font-size: 13px; color: var(--muted); }
+.list { list-style: none; margin: 0; padding: 0; }
+.row { display: grid; grid-template-columns: 40px minmax(0, 1fr) 150px; gap: 4px 12px; align-items: center; padding: 8px 4px; border-top: 1px solid var(--face); }
+.row.playing { background: #ffffe0; }
+.play { width: 36px; height: 30px; padding: 0; display: grid; place-items: center; margin: 0; }
+.play svg { width: 14px; height: 14px; }
+.meta { min-width: 0; }
+.nm { display: flex; align-items: center; gap: 8px; min-width: 0; height: 22px; }
+.nm .t { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; min-width: 3em; }
+/* pixel-exact screen captures and screenshots: pxfit.js sizes them in whole device pixels */
+.pxbox { position: relative; display: flex; justify-content: flex-start; align-items: flex-start; background: var(--scr); padding: 0; line-height: 0; }
+.pxbox.pximg { background: transparent; }
+.pxbox canvas, .pxbox img { display: block; image-rendering: pixelated; image-rendering: crisp-edges; flex: none; max-width: 100%; height: auto; }   /* until pxfit sizes them (inline, before first paint) */
+.pxbox canvas:focus-visible { outline: 2px dotted #fff; outline-offset: -3px; }
+.pxbig { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 64px; height: 48px; font-size: 26px; line-height: 1; cursor: pointer;
+  background: var(--face); color: var(--ink); border: 1px solid var(--ink); box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo); }
+.pxp.pxon .pxbig, .pxp.pxloaded .pxbig { display: none; }
+.pxstatus { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; color: #fff; font-size: 13px; line-height: 1.4; margin: 0; text-shadow: 0 0 3px #000; }
+.pxctl { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0 4px; }
+.pxctl .btn { margin: 0; min-width: 64px; }
+.pxtime { font: 12px "Lucida Console", ui-monospace, monospace; min-width: 8.5em; }
+.pxseek { flex: 1 1 160px; min-width: 120px; }
+.pxloop { font-size: 13px; white-space: nowrap; }
+.pxclips { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 0 0 6px; align-items: center; }
+.pxclips .lbl { font-size: 13px; color: var(--muted); min-width: 11.5em; }
+.pxcap { margin: 0 0 6px; min-height: 4.65em; }   /* room for the longest caption, so switching clips moves nothing */
+.pxnote { min-height: 2.9em; margin: 0 0 6px; }   /* always there (it states the scale), so nothing shifts when it changes */
+/* source-sound badges: one line in the empty space between the name and the waveform; overflow folds into +N */
+.srcs { flex: 1 0 30px; min-width: 30px; display: flex; justify-content: center; gap: 4px; overflow: hidden; }
+.src { flex: none; display: inline-flex; align-items: stretch; height: 18px; padding: 0; margin: 0; cursor: help; font: 11px/16px inherit; font-family: inherit;
+  background: #fff; color: #000; border: 1px solid var(--lo); border-radius: 2px; max-width: 150px; }
+.src .nmx { padding: 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.src.fb { border: 1px dashed #806000; background: #fff8d8; }
+.src.more { padding: 0 6px; font-weight: 700; }
+.chip.xpplay { padding: 0 6px; margin-left: 6px; font-size: 11px; vertical-align: 1px; }
+.chip.xpplay svg { width: 9px; height: 9px; vertical-align: -1px; }
+.srcs.compact .src:not(.more) .nmx { display: none; }
+.src[hidden] { display: none; }
+.src:hover, .src:focus-visible, .src[aria-expanded="true"] { border-color: var(--ink); outline: none; box-shadow: 0 0 0 1px var(--ink); }
+.mk { display: inline-block; font: bold 9px/16px "Courier New", ui-monospace, monospace; letter-spacing: -.02em; padding: 0 3px; flex: none; }
+.mk.m311 { background: #000080; color: #fff; }
+.mk.m31 { background: #000080; color: #ffff00; }
+.mk.mxp { background: #245edb; color: #fff; }
+.mk.mfb { background: #ffcc00; color: #000; }
+.mk.mboth { background: #000080; color: #fff; box-shadow: inset -12px 0 0 #245edb; }
+.mk.mcc0, .mk.mpd { background: #c0c0c0; color: #000; border-right: 1px solid var(--lo); }
+.mk.msyn { background: #800080; color: #fff; }
+.mk.munk { background: #800000; color: #fff; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12.5px; color: var(--muted); margin: 0 0 8px; align-items: center; }
+.legend span { display: inline-flex; align-items: center; gap: 4px; }
+.legend .mk { border: 1px solid var(--lo); }
+#pop { position: fixed; z-index: 50; overflow-y: auto; overscroll-behavior: contain; max-width: min(340px, calc(100vw - 16px)); background: #ffffe1; color: #000; border: 1px solid #000;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.5); padding: 6px 8px; font-size: 12.5px; line-height: 1.4; display: none; }
+#pop.on { display: block; }
+#pop h4 { margin: 0 0 3px; font-size: 13px; display: flex; gap: 6px; align-items: center; }
+#pop dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 1px 8px; }
+#pop dt { color: #404040; } #pop dd { margin: 0; overflow-wrap: anywhere; }
+#pop .item + .item { border-top: 1px solid #c0c0c0; margin-top: 5px; padding-top: 5px; }
+#pop .warn { background: #ffcc00; padding: 1px 4px; margin: 2px 0 4px; }
+/* what is original */
+.orig { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 12px 20px; margin: 8px 0; }
+.orig div { border: 1px solid var(--face); padding: 8px 10px; }
+.orig h3 .mk { margin-right: 6px; vertical-align: 1px; }
+.orig ul { margin: 4px 0 0; padding-left: 18px; }
+.chain { font: 12.5px/1.5 "Lucida Console", ui-monospace, Menlo, Consolas, monospace; background: #fff; color: #000; border: 1px solid var(--face); padding: 8px 10px; overflow-x: auto; white-space: pre; margin: 6px 0 10px; }
+.chain b { color: #000080; } .chain i { color: #806000; font-style: normal; }
+.sub { font-size: 12.5px; color: var(--muted); }
+.wave { height: 28px; position: relative; cursor: pointer; border: 1px solid; border-color: var(--lo) var(--hi) var(--hi) var(--lo); background: #000; }
+.wave svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.wave .done { clip-path: inset(0 100% 0 0); }
+.dna { grid-column: 2 / 4; display: flex; gap: 8px; align-items: flex-start; min-width: 0; }
+.dna code { flex: 1; min-width: 0; background: #fff; color: #000; border: 1px solid var(--face); padding: 2px 5px; }
+.copy { font: 12px inherit; font-family: inherit; padding: 1px 7px; margin: 0; flex: none; white-space: nowrap; }
+/* recipes (PRESET-ENGINE-2.md 17): the one-line form when it fits the cell, else one line per layer; never cut */
+.rec { flex: 1; min-width: 0; background: #fff; color: #000; border: 1px solid var(--face); padding: 2px 6px;
+  font: 12px/1.45 "Lucida Console", Consolas, "DejaVu Sans Mono", Menlo, ui-monospace, monospace; }
+.rec .ln { white-space: pre-wrap; overflow-wrap: anywhere; }
+.rec .one { white-space: nowrap; }
+.rec.ascii .one { white-space: pre-wrap; overflow-wrap: anywhere; }
+.rec.ascii { background: #ffffe8; }
+.rec:focus-visible { outline: 1px dotted var(--ink); outline-offset: 1px; }
+.rec .ln.env { color: #404040; }
+.rec details summary { cursor: pointer; white-space: pre-wrap; overflow-wrap: anywhere; }
+.rec details[open] summary { margin-bottom: 2px; }
+.rec .pad { padding-left: 2ch; }
+.issue { grid-column: 2 / 4; background: var(--warn); border: 1px dashed var(--ink); font-size: 13px; padding: 3px 8px; }
+.badge { display: inline-block; font-size: 11px; border: 1px solid var(--muted); padding: 0 4px; margin-left: 4px; vertical-align: 1px; color: var(--muted); font-weight: 400; }
+.soon { padding: 18px 6px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.packs td:first-child { white-space: nowrap; font-weight: 700; }
+.dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+@media (max-width: 600px) {
+  .body { padding: 12px 12px 14px; } h1 { font-size: 20px; } .lede { font-size: 15px; }
+  /* captures edge to edge, so a 3x phone shows every Windows pixel 1:1 */
+  .pxbox { width: 100vw; margin-left: calc(50% - 50vw); }
+  .row { grid-template-columns: 40px minmax(0, 1fr); }
+  .wave { grid-column: 2; grid-row: 2; }
+  /* the recipe gets the whole width; Copy DNA sits in the free cell under the play button */
+  .dna { display: contents; }
+  .dna .copy { grid-column: 1; grid-row: 2; width: 40px; padding: 0; font-size: 10px; line-height: 1.1; white-space: normal; align-self: stretch; }
+  .dna .rec, .dna code { grid-column: 1 / 3; }
+  .issue { grid-column: 1 / 3; }
+  .chips .lbl { min-width: 0; width: 100%; }
+  table { font-size: 13px; }
+}
+
+/* the quiet link to the archived Windows XP edition, at the very bottom */
+.archived { text-align: center; font-size: 12.5px; margin: 6px 0 0; color: #d0e0e0; }
+.archived a { color: #e8f0f0; }

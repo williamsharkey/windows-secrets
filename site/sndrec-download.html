@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sound Recorder Synths: Download</title>
-<meta name="description" content="Download BASILISK SYNTH (Windows XP) and BASILISK 16 (Windows 3.11): plugin instruments made of sixteen real Sound Recorders, for Windows and macOS.">
+<meta name="description" content="Download BASILISK 16: a plugin instrument made of sixteen real Windows 3.11 Sound Recorders, for Windows and macOS.">
 <style>
 :root {
   --desk: #008080; --face: #c0c0c0; --hi: #ffffff; --lo: #808080; --ink: #000000;
@@ -30,6 +30,8 @@ h1 { font-size: 22px; margin: 0 0 6px; }
 h2 { font-size: 16px; margin: 18px 0 6px; }
 p { margin: 0 0 10px; }
 .shot { margin: 6px 0 14px; }
+.archived { text-align: center; font-size: 12.5px; margin: 6px 0 0; color: #d0e0e0; }
+.archived a { color: #e8f0f0; }
 /* screenshots at a whole number of device pixels per Windows pixel, never resampled (sndrec/pxfit.js) */
 .pxbox { display: flex; justify-content: flex-start; align-items: flex-start; line-height: 0; }
 .pxbox canvas, .pxbox img { display: block; flex: none; image-rendering: pixelated; image-rendering: crisp-edges; }
@@ -66,7 +68,7 @@ th { font-weight: 700; }
   <div class="cap"><span class="box"></span><span class="t">Sound Recorder Synths: Downloads</span></div>
   <div class="body">
     <h1>Sixteen Sound Recorders in your DAW</h1>
-    <p>Two plugin instruments, each complete in one download with its Windows built in: BASILISK 16 plays Windows 3.11's Sound Recorder, BASILISK SYNTH plays Windows XP's. Every note is played by a real Sound Recorder inside the emulated Windows. Hear every preset and watch them build on <a href="sndrec.html">the synths page</a>. Looking for Claude Code in old Windows? That is on <a href="basilisk-download.html">BASILISK downloads</a>.</p>
+    <p>BASILISK 16 is a plugin instrument, complete in one download with Windows for Workgroups 3.11 built in. Every note is played by a real Sound Recorder inside the emulated Windows. Hear every preset and watch it build on <a href="sndrec.html">the synth's page</a>, or try it in your browser there. Looking for Claude Code in old Windows? That is on <a href="basilisk-download.html">BASILISK downloads</a>.</p>
   </div>
 </div>
 
@@ -122,32 +124,7 @@ th { font-weight: 700; }
   </div>
 </div>
 
-<div class="win" id="basilisk-synth">
-  <div class="cap"><span class="box"></span><span class="t">BASILISK SYNTH &mdash; an instrument made of sixteen Windows XP Sound Recorders</span></div>
-  <div class="body">
-    <div class="pxbox shot"><img data-px="1024x768" src="basilisk-download/basilisk-synth.png" width="1024" height="768" loading="lazy" alt="BASILISK SYNTH 1.2: Windows XP with sixteen Sound Recorder strips in a column, colour-coded by layer; under them the envelope editor (eight upright sliders and a Task Manager style graph) and a keyboard of push buttons with bend and mod sliders; beside them the DNA box, the layers, the library browser, Task Manager's CPU graphs, four macro sliders and the clock."></div>
-    <p>A plugin instrument: VST3 for Windows and macOS, plus Audio Unit and CLAP on macOS. Each copy runs its own Windows XP. Open the editor and sixteen real <code>sndrec32.exe</code> windows come apart on XP's desktop and line up into one tape machine, one visible change at a time: menu bar, then title bar, then the buttons they don't need, then the glide into place (about five seconds; it can already play after one). Task Manager's CPU graphs, the clock, four macro sliders and a keyboard of real push buttons follow. Every note you play is played by one of those Sound Recorders, through XP's own sound card, and that sound is what reaches your DAW. Inside each Sound Recorder a small DLL streams its own sound to the card, at the note's pitch, with the note's level, pan and envelope applied.</p>
-    <p>The sound is a <b>DNA</b> line, the same format as BASILISK 16. It lists layers of Windows sounds, each run through Sound Recorder's Effects and Edit menus in order. Since 1.2.1 a name means the same file in both editions: <code>ding</code>, <code>chimes</code>, <code>chord</code> and <code>tada</code> are the Windows 3.x recordings, XP's own versions are <code>ding-xp</code>, <code>chimes-xp</code>, <code>chord-xp</code> and <code>tada-xp</code> (written <code>dingxp</code> in a DNA), and the XP startup, shutdown and the rest keep their names (39 in all). Projects saved by 1.2.0 keep their sound. It also sets harmony, unison, transpose and the envelope, and since 1.2 each layer's offset from the note, its pan and a drawn envelope, collages (mix or insert another sound at a position) and four macros you can automate. A library disc in XP's CD drive adds 510 public-domain sounds (instruments, glass and bells, nature, machines, office, water). <code>chord#10/ding&gt;&gt;E#6;A2D300S70R250</code> is a chord on ten recorders over a sped-up, echoed ding on six. Edit it inside XP (menus, the envelope sliders, the library browser, Mutate) and watch each step being picked from that recorder's own menu, play it from XP's keyboard, use the DAW's parameters, or start from the 43 factory programs (Keys, Bells, Pads, Bass, Plucks, Percussion, Collage, FX, Macro, Brass, Library, Windows 3.x), filtered by [All] [W3.11] [XP] in Windows' browser. Your DAW saves it with the project.</p>
-    <div class="dl">
-      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-v1.2.2/BASILISK-SYNTH-windows-x64.zip"><b>Windows 10 / 11</b><span>VST3 &middot; x64 &middot; .zip &middot; <!--SIZE-bswin-->952 MB</span></a>
-      <a href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-v1.2.2/BASILISK-SYNTH-macos.dmg"><b>macOS</b><span>VST3 + AU + CLAP &middot; Apple silicon and Intel &middot; .dmg &middot; <!--SIZE-bsmac-->933 MB</span></a>
-    </div>
-    <p class="note">Complete: Windows XP and the library disc are inside the plugin, so nothing is downloaded when you first use it. Checksums and the batch renderer are on the <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-v1.2.2">release page</a>. 1.2.2 removes the dropouts in XP&rsquo;s own sound (1.2.1 lost about 450 slices of 10&nbsp;ms a minute on a busy PC), and on Windows XP&rsquo;s sound card now runs at its true rate, so notes are in tune with the Mac.</p>
-
-    <h2>Install</h2>
-    <table>
-      <tr><th>Windows</th><td>Unzip and copy the <b>BasiliskSynth.vst3</b> folder to <code>C:\Program Files\Common Files\VST3</code>, then rescan plugins. It is an instrument called BASILISK SYNTH.</td></tr>
-      <tr><th>macOS</th><td>Open the .dmg and copy <b>BasiliskSynth.vst3</b> to <code>~/Library/Audio/Plug-Ins/VST3</code>, <b>BasiliskSynth.component</b> to <code>~/Library/Audio/Plug-Ins/Components</code>, and <b>BasiliskSynth.clap</b> to <code>~/Library/Audio/Plug-Ins/CLAP</code>. The AU and CLAP use the machine inside the VST3, so copy the VST3 even if you use only those. They are not notarized, so run this once in Terminal, then restart the DAW:
-        <pre>xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/*/BasiliskSynth.*</pre></td></tr>
-    </table>
-
-    <h2>Good to know</h2>
-    <p>Notes go through a whole emulated PC, and come back about a tenth of a second later. The plugin reports a fixed latency (<!--LAT-win-->150 ms on Windows, <!--LAT-mac-->100 ms on macOS), which DAWs compensate for on playback; after that, notes land within about 10 ms (Mac) to 40 ms (a busy PC) of the grid rather than on the sample. Offline renders wait for Windows, and for a new sound to be built after a program change, and play it in real time, so they come out like a live bounce. The emulated PC uses about a fifth (Mac) to a half (PC) of one core while it waits with its editor open, about one core while it plays, and next to nothing asleep: it goes to sleep after four quiet seconds with its editor closed and wakes on the next note or when the transport plays. Sixteen voices per instance; a seventeenth note steals the oldest, with a 5 ms fade.</p>
-
-    <h2>What is in it</h2>
-    <p class="note">Windows XP, its sounds and Sound Recorder (&copy; Microsoft), included as part of this art project. The emulator is <a href="https://www.qemu.org/">QEMU</a> (GPLv2), with no window of its own: the plugin draws XP's screen and sends your mouse and keys in. XP's AC97 sound goes into a pipe the plugin reads. Inside XP, a small program assembles the recorders, and a DLL in each Sound Recorder streams its sound to the card with the note's pitch, level, pan and envelope. Both are compiled in XP with tcc. The plugin is built with <a href="https://github.com/DISTRHO/DPF">DPF</a>. Sources are in <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth">packages/basilisk-synth</a>.</p>
-  </div>
-</div>
+<p class="archived">Also: <a href="sndrec-xp.html">the Windows XP edition (archived)</a></p>
 </div>
 <nav class="sib" aria-label="Related pages"><a href="windows-secrets.html">Windows Secrets</a><i>&middot;</i><a href="inside-windows.html">Inside Windows</a><i>&middot;</i><a href="tribute.html">Tribute</a><i>&middot;</i><a href="basilisk.html">BASILISK</a><i>&middot;</i><a href="basilisk-term.html">BASILISK III</a><i>&middot;</i><a href="basilisk-31.html">BASILISK 3.11</a><i>&middot;</i><a href="xp-live.html">Live</a><i>&middot;</i><a href="puppetry.html">Window Puppetry</a><i>&middot;</i><a href="valentine-xp.html">XP Valentine</a><i>&middot;</i><a href="valentine-31.html">Valentine 3.11</a><i>&middot;</i><a href="basilisk-31-browser.html">3.11 in your browser</a><i>&middot;</i><a href="basilisk-download.html">Download</a><i>&middot;</i><a href="sndrec.html">Synths</a><i>&middot;</i><b>Synth downloads</b></nav>
 <script src="sndrec/pxfit.js"></script>
