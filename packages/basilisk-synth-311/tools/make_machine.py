@@ -33,9 +33,12 @@ if xpsounds:
 # the brand kit (design/brand/sndwave2000): the title screen, the Program Manager icons, the Read Me
 brand = sys.argv[sys.argv.index('--brand') + 1] if '--brand' in sys.argv else os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'design', 'brand', 'sndwave2000')
 if os.path.isdir(brand):
-    from PIL import Image
-    t = Image.open(os.path.join(brand, 'screens', 'title-640.png')).convert('RGB')
-    t.quantize(colors=16, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(drive, 'BS', 'TITLE.BMP'))   # (4 colours: exact)
+    if os.path.exists(os.path.join(brand, 'TITLE.BMP')):   # made already (tools/build.sh, for a Mac without Pillow)
+        shutil.copy(os.path.join(brand, 'TITLE.BMP'), os.path.join(drive, 'BS', 'TITLE.BMP'))
+    else:
+        from PIL import Image
+        t = Image.open(os.path.join(brand, 'screens', 'title-640.png')).convert('RGB')
+        t.quantize(colors=16, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(drive, 'BS', 'TITLE.BMP'))   # (4 colours: exact)
     for src, dst in (('sndwave2000', 'SNDWAVE'), ('16-recorders', 'RECORDRS'), ('voice-mixer', 'MIXER'), ('read-me', 'README'), ('setup', 'SETUP')):
         shutil.copy(os.path.join(brand, 'icons', src + '.ico'), os.path.join(drive, 'BS', dst + '.ICO'))
     open(os.path.join(drive, 'BS', 'README.TXT'), 'wb').write((

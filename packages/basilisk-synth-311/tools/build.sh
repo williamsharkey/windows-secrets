@@ -37,17 +37,22 @@ python3 "$PKG/tools/make_library311.py" "$W/library.zip"
 # XP's sounds for C:\XPSOUNDS, from your own XP image (XP_IMAGE: BASILISK SYNTH's base.qcow2) through the sound-archaeology
 # extractor (EXTRACTOR: packages/basilisk-synth/archaeology/extract.py)
 python3 "$PKG/tools/xpsounds311.py" "${XP_IMAGE:?XP_IMAGE}" "$W/xpsounds" --extractor "${EXTRACTOR:?EXTRACTOR}"
-sh "$PKG/../basilisk-synth/help/build.sh"   # the help: BASIL16.HLP
-BS311_ENGINE="$W/engine" BS311_OFFS="$W/offs" python3 "$PKG/tools/make_machine.py" "$W/wfw" "$W/gout" "$W/dosbox-pure/dosbox_pure_libretro.so" "$W/machine" --library "$W/library.zip" --xpsounds "$W/xpsounds" --help "$PKG/../basilisk-synth/help/out/BASIL16.HLP"
+sh "$PKG/../basilisk-synth/help/build.sh"   # the help: SNDWAVE.HLP
+# the pack discs (drive P:, the Library tab): the packs lane's final set (PACKS_DIR, default its out/discs)
+python3 "$PKG/tools/make_packs311.py" "${PACKS_DIR:-$PKG/../basilisk-synth/library/packs/out/discs}" "$W/packs"
+# the brand kit (title screen, Program Manager icons); TITLE.BMP made here (the Mac may lack Pillow)
+rm -rf "$W/brand"; cp -r "$REPO/design/brand/sndwave2000" "$W/brand"
+python3 -c "from PIL import Image;import sys;Image.open(sys.argv[1]).convert('RGB').quantize(colors=16,dither=0).save(sys.argv[2])" "$W/brand/screens/title-640.png" "$W/brand/TITLE.BMP"
+BS311_ENGINE="$W/engine" BS311_OFFS="$W/offs" python3 "$PKG/tools/make_machine.py" "$W/wfw" "$W/gout" "$W/dosbox-pure/dosbox_pure_libretro.so" "$W/machine" --library "$W/library.zip" --xpsounds "$W/xpsounds" --packs "$W/packs" --brand "$W/brand" --help "$PKG/../basilisk-synth/help/out/SNDWAVE.HLP"
 
 # --- the Windows plugin (its program list: tools/make_presets311.py)
 python3 "$PKG/tools/make_presets311.py"
 (cd "$PKG/plugin" && make DPF_PATH="$W/DPF" DPF_TARGET_DIR="$W/win" DPF_BUILD_DIR="$W/obj-win" WINDOWS=true \
   CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ -j"$(nproc)" vst3 >/dev/null)
-M="$W/win/Basilisk16.vst3/Contents/Resources/machine"
+M="$W/win/SNDWAVE2000.vst3/Contents/Resources/machine"
 rm -rf "$M"; mkdir -p "$M"
 cp "$W/dbp-win/dosbox_pure_libretro.dll" "$W/machine/w31.conf" "$W/machine/w31.state" "$W/machine/drive.zip" "$M/"
-cp "$W/machine/library.zip" "$W/machine/library.names.txt" "$M/"
+cp "$W/machine/library.zip" "$W/machine/library.names.txt" "$M/"; cp -r "$W/machine/packs" "$M/"
 
 # --- inputs for the Mac build
 rm -rf "$W/macsrc"; mkdir -p "$W/macsrc"
@@ -55,4 +60,6 @@ cp -r "$W/dosbox-pure" "$W/macsrc/dosbox-pure"; rm -rf "$W/macsrc/dosbox-pure/bu
 cp -r "$W/DPF" "$W/macsrc/DPF"; rm -rf "$W/macsrc/DPF/build" "$W/macsrc/DPF/.git"
 cp -r "$PKG" "$W/macsrc/pkg"; cp -r "$PKG/../basilisk-synth/core" "$W/macsrc/core"
 cp -r "$W/wfw" "$W/macsrc/wfw"; cp -r "$W/gout" "$W/macsrc/gout"; cp "$W/library.zip" "$W/library.names.txt" "$W/macsrc/"; cp -r "$W/xpsounds" "$W/macsrc/xpsounds"
+cp -r "$W/packs" "$W/macsrc/packs"; cp -r "$W/brand" "$W/macsrc/brand"; cp "$PKG/../basilisk-synth/help/out/SNDWAVE.HLP" "$W/macsrc/"
+cp -r "$PKG/../basilisk-synth/help/install" "$W/macsrc/helpinstall"
 echo "built: $W/win (Windows), $W/macsrc (copy to a Mac, run pkg/tools/mac_build.sh there)"

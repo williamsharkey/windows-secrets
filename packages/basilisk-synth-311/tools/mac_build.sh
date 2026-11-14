@@ -15,7 +15,8 @@ done
 lipo -create dbp-arm64/dosbox_pure_libretro.dylib dbp-x86_64/dosbox_pure_libretro.dylib -output dosbox_pure_libretro.dylib
 codesign --force -s - dosbox_pure_libretro.dylib
 mkdir -p basilisk-synth/core basilisk-synth-311
-rm -rf basilisk-synth/core basilisk-synth-311; mkdir -p basilisk-synth; cp -R core basilisk-synth/core; cp -R pkg basilisk-synth-311
+rm -rf basilisk-synth/core basilisk-synth-311; mkdir -p basilisk-synth/help; cp -R core basilisk-synth/core; cp -R pkg basilisk-synth-311
+rm -rf basilisk-synth/help/install; cp -R helpinstall basilisk-synth/help/install   # (make_machine.py's help installer)
 cd basilisk-synth-311/plugin
 make DPF_PATH="$W/DPF" DPF_TARGET_DIR="$W/out" DPF_BUILD_DIR="$W/obj" \
   CFLAGS="-arch x86_64 -arch arm64 -mmacosx-version-min=10.15 -ffp-contract=off" CXXFLAGS="-arch x86_64 -arch arm64 -mmacosx-version-min=10.15 -ffp-contract=off" \
@@ -26,7 +27,7 @@ for a in arm64 x86_64; do
   cc -O2 -arch $a -o "engine-$a" basilisk-synth-311/engine/engine.c basilisk-synth-311/engine/engine_main.c -Ibasilisk-synth-311/engine
   cc -O2 -arch $a -o "offs-$a" -Ibasilisk-synth-311/engine basilisk-synth-311/tools/offs.c
   BS311_ENGINE="$W/engine-$a" BS311_OFFS="$W/offs-$a" arch -$a /usr/bin/python3 basilisk-synth-311/tools/make_machine.py \
-    "$W/wfw" "$W/gout" "$W/dosbox_pure_libretro.dylib" "$W/machine-$a" --library "$W/library.zip" --xpsounds "$W/xpsounds" --help "$W/BASIL16.HLP"
+    "$W/wfw" "$W/gout" "$W/dosbox_pure_libretro.dylib" "$W/machine-$a" --library "$W/library.zip" --xpsounds "$W/xpsounds" --packs "$W/packs" --brand "$W/brand" --help "$W/SNDWAVE.HLP"
 done
 cmp machine-arm64/drive.zip machine-x86_64/drive.zip
 # render311 (tools/render311.cpp): the batch renderer, universal
@@ -35,7 +36,7 @@ c++ -std=c++17 -O2 -ffp-contract=off -arch x86_64 -arch arm64 -mmacosx-version-m
   basilisk-synth/core/dna.cpp basilisk-synth/core/voices.cpp basilisk-synth/core/dna3.cpp basilisk-synth/core/engine3.cpp basilisk-synth/core/scales.cpp basilisk-synth/core/userstore.cpp "$W/engine-r.o"
 codesign --force -s - "$W/render311"
 cd "$W/out"
-for b in Basilisk16.vst3 Basilisk16.component; do
+for b in SNDWAVE2000.vst3 SNDWAVE2000.component; do
   M="$b/Contents/Resources/machine"
   rm -rf "$M"; mkdir -p "$M"
   cp "$W/dosbox_pure_libretro.dylib" "$M/"
@@ -43,6 +44,7 @@ for b in Basilisk16.vst3 Basilisk16.component; do
   cp "$W/machine-arm64/w31.state" "$M/w31-arm64.state"
   cp "$W/machine-x86_64/w31.state" "$M/w31-x86_64.state"
   cp "$W/machine-arm64/drive.zip" "$W/machine-arm64/library.zip" "$W/machine-arm64/library.names.txt" "$M/"
+  cp -R "$W/machine-arm64/packs" "$M/"
   codesign --force --deep -s - "$b"
 done
 ls -la "$W/out"
