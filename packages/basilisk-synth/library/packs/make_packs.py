@@ -155,10 +155,24 @@ def build_pack(p, opt):
         # the library lane owns the content: copy its disc folder as built (PRESETS.TSV, PACK.INF, LIBRARY.TSV, the
         # category folders, FAVORITE); this lane adds the identity (AUTORUN, icon, PACK.TXT, docs, help, art)
         cd_ = data['content_dir']
+        listed = {('%s/%s' % (x['folder83'], x['file83'])).upper() for x in data['presets']}
+        lib_tsv = os.path.join(cd_, 'LIBRARY.TSV')
+        sounds = set()
+        if os.path.exists(lib_tsv):
+            for l in open(lib_tsv, encoding='utf-8', errors='replace'):
+                f_ = l.rstrip('\n').split('\t')
+                if len(f_) > 2 and not l.startswith('#'):
+                    sounds.add(f_[2].strip('\\').replace('\\', '/').upper())
         for root_, dirs_, fns in os.walk(cd_):
             for fn in fns:
                 rel = os.path.relpath(os.path.join(root_, fn), cd_).replace(os.sep, '/')
                 if rel in ('AUTORUN.INF', 'PACK.TXT'):
+                    continue
+                if rel.upper().startswith('SOUNDS/') and sounds and rel.upper() not in sounds:
+                    print('  [%s] skipped %s: not in the content LIBRARY.TSV (stale)' % (pid, rel))
+                    continue
+                if rel.upper().endswith('.BSP') and not rel.upper().startswith('FAVORITE/') and rel.upper() not in listed:
+                    print('  [%s] skipped %s: not in the content PRESETS.TSV (stale)' % (pid, rel))
                     continue
                 files[rel] = open(os.path.join(root_, fn), 'rb').read()
         ptxt = os.path.join(cd_, 'PACK.TXT')
@@ -170,8 +184,8 @@ def build_pack(p, opt):
             t = inf.replace('[Pack]\n', '%s\n%s\n\nfor %s and %s\n\n' % (pk['title'], '=' * len(pk['title']), brand.SW, brand.XP))
         files['PACK.TXT'] = texts.enc(t)
         if data.get('credits'):
-            files['CREDITS.TXT'] = texts.enc('%s - SOUND CREDITS\n\n%s\n\nEverything else on this disc (the maker, the art, the texts): %s, a fictional company.\n'
-                                             % (pk['title'].upper(), '\n'.join('  ' + c for c in data['credits']), p['maker']['name']))
+            files['CREDITS.TXT'] = texts.enc('%s - SOUND CREDITS\n\n%s\n\nAll other material on this disc (c) %d %s.\n'
+                                             % (pk['title'].upper(), '\n'.join('  ' + c for c in data['credits']), p['maker']['year'], p['maker']['name']))
         for x in data['presets']:
             joliet['%s/%s' % (x['folder83'], x['file83'])] = '%s/%s' % (x['folder'], x['joliet'])
     else:

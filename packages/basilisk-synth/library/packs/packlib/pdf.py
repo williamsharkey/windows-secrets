@@ -284,7 +284,6 @@ def build(p, data, cover_png, credits, out_path):
     P('Picture credits', 'h2')
     for cr in credits:
         P(cr, 'small')
-    P('All names of people, companies and products in this pack are fictional.', 'small')
     doc.build(F)
     # PDF 1.3 header (nothing in the file needs 1.4)
     with open(out_path, 'r+b') as f:

@@ -115,7 +115,7 @@ def write(page, packs_dir, personas):
     doc = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sound Packs Review</title><style>{CSS}</style></head><body>
 <header><h1>BASILISK sound packs: makers and discs</h1>
-<p>{len(cards)} packs, each from its own fictional maker. Every name of a person, company, product, board or domain on these discs is invented; the pictures are public-domain art from the names-page library (credits in each PDF).</p>
+<p>{len(cards)} packs, each from its own maker. The pictures are public-domain art from the names-page library (credits in each PDF).</p>
 <p class="note">Renders: Blender 4.2 Cycles (shrink-wrap film, price sticker, shadow catcher). Flat art is shown at print resolution, never smooth-scaled. Links open the files in place in the repo (packages/basilisk-synth/library/packs/).</p>
 <nav>{''.join(nav)}</nav></header><main>{''.join(cards)}</main></body></html>"""
     with open(page, 'w', encoding='utf-8') as f:

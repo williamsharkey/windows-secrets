@@ -227,7 +227,7 @@
     "burst": null,
     "features": [
       "{count} early-music and world instruments",
-      "Keys, plucks, mallets, bells and drones",
+      "Keys, plucks, mallets, bells and a little FX",
       "Programme notes in the manual"
     ],
     "barcode": true
@@ -285,10 +285,10 @@
   },
   "text": {
     "tagline": "Instruments of the cloister and the market square.",
-    "blurb": "The second volume of the Collegium Series gathers {count} instruments from the chapel and the courtyard: Flemish harpsichords, folk harp, psaltery, strumstick and dan tranh beside kalimbas, mbira, balafon, hand chimes, tubular bells, gong and didgeridoo.",
+    "blurb": "The second volume of the Collegium Series gathers {count} instruments from the chapel and the courtyard: Flemish harpsichords, folk harp, psaltery, strumstick and dan tranh beside kalimbas, mbira, balafon, hand chimes, tubular bells and gong.",
     "intro": [
       "Welcome to Courtyard & Chapel, the second volume of the Cantiga Collegium Series. Where the first volume stayed indoors, this one opens the doors: the instruments of the chapel stand beside those of the market square, as they did in many a town.",
-      "You will find keyboards and plucked strings, mallets and bells, a little percussion and a drone or two. The programme notes in NOTES.PDF describe each one."
+      "You will find keyboards and plucked strings, mallets and bells, and a few sound effects from the square. The programme notes in NOTES.PDF describe each one."
     ],
     "maker_note": [
       "Our members asked for instruments they could not keep at home: a harpsichord tuned for the season, a gong, a balafon. We hope this disc brings them into the study.",

@@ -53,7 +53,7 @@ def export(here, personas, out=None):
              'price': ' '.join(B['price']), 'starburst': ' '.join(B['burst']) if B.get('burst') else None,
              'presets': meta.get('presets'), 'presets_xp': meta.get('presets_xp'), 'for': [brand.SW, brand.XP],
              'favourites': meta.get('favourites'), 'sound_credits': meta.get('credits') or ([T['credit']] if T.get('credit') else []),
-             'files': files, 'fictional_maker': True}
+             'files': files}
         with open(os.path.join(dst, 'pack.json'), 'w', encoding='utf-8') as f:
             json.dump(j, f, ensure_ascii=False, indent=1)
         allp.append(j)

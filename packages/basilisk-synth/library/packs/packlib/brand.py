@@ -1,5 +1,5 @@
 """The two instruments the packs are for, named in one place. The 3.11 edition is SNDWAVE2000 by Algorithmic
-Industries (fictional; brand kit in design/brand/sndwave2000/, strings in COPY.md); the XP edition is BASILISK SYNTH.
+Industries (brand kit in design/brand/sndwave2000/, strings in COPY.md); the XP edition is BASILISK SYNTH.
 Persona texts may write {sw} and {xp} for these names."""
 import os
 
