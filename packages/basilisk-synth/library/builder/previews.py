@@ -24,7 +24,7 @@ def main():
     if a.kits:
         pk, kits = kit_manager()
         for k in kits:
-            # render311 has no host clock, so the x step sequencer (swing, divisions) stays silent there: the clip
+            # the x step sequencer steps through a Mines board; with none (1.3.0 played nothing, fixed in 2c15cf8) the clip
             # plays the kit's pads straight and says so
             if re.search(r';[^/]*x[a-z]', k['dna']):
                 k = dict(k, dna=re.sub(r'(;[^/]*?)x[a-z][a-z0-9]*?(?=k\d)', r'\1', k['dna']),
