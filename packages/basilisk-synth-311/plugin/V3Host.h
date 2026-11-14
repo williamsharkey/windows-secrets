@@ -22,6 +22,7 @@ public:
     double bpm = 120;          // the host's tempo (v3 Wt, Wb, Wg)
     bool capWin = false;       // the guest's caps (hi 3): v3 windows, rate lines
     bool capRate = false;
+    bool capTape = false;      // the guest's card bends a voice's rate itself for the V genes (wow, flutter, scoop)
     uint32_t recBusy = 0;      // recorders that record now: notes leave them alone (RECORDING.md 4.3)
 
     // a DNA the audio adopts: the macro-applied v2 DNA, its v3 tokens and their salt (V3Voice salt)
@@ -84,7 +85,7 @@ private:
     bsynth::Voices voices_{48000};
     V3Alloc v3_;
     bsynth3::Dna3 d3_;
-    uint32_t salt_ = 0, counter_ = 0;
+    uint32_t salt_ = 0, counter_ = 0, modCount_ = 0;
     uint32_t frames_[bsynth::kMaxLayers] = {};
     int rate_[bsynth::kMaxLayers] = {};
     bool fixed_[bsynth::kMaxLayers] = {};
@@ -104,6 +105,14 @@ private:
         if (cm.kind != bsynth::Cmd::Panic && cm.rec < 16 && (recBusy >> cm.rec & 1)) return;   // recording there
         uint64_t when = at;
         if (cm.kind == bsynth::Cmd::On) { when += delay48(d3_, cm, bpm); cm.delayMs = 0; }   // O (v3: Wo, Wb, Wt; S strum)
+        if (cm.kind == bsynth::Cmd::On && capTape && cm.layer < d3_.layers.size()) {   // V: tape (before its `on`)
+            const bsynth3::Mod &m = d3_.layers[cm.layer].v;
+            if (m.wowCents || m.fluCents || m.scoopCents) {
+                const uint32_t ph = (salt_ * 2654435761u ^ ++modCount_ * 40503u ^ (uint32_t)cm.rec * 977u) % 1000u;   // its own phase
+                std::snprintf(line, sizeof line, "mod %d %d %d %d %d %d %d %u", cm.rec, m.wowCents, m.wowDeciHz, m.fluCents, m.fluHz, m.scoopCents, m.scoopMs, ph);
+                sink(line, when);
+            }
+        }
         if (cm.kind == bsynth::Cmd::On && wt > wf && capWin) {   // a kit pad's window (its segment, start and end): exact
             std::snprintf(line, sizeof line, "on %d %u %u %d 0 %d %u %u", cm.rec, cm.rateHz, cm.vol, cm.pan, cm.layer, wf, wt);
             sink(line, when);

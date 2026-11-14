@@ -76,6 +76,18 @@ static void bs_arm2(HTASK task, DWORD id, DWORD hz, WORD gain, int pan, int laye
     outpw(BS_CMD, BSC_ARM);
     _enable();
 }
+/* v3: arm with the layer's tape modulation (V: wow cents, wow 0.1 Hz, flutter cents, flutter Hz, scoop cents,
+   scoop ms, the voice's phase 0..999); the card bends the voice's rate itself, sample by sample */
+static void bs_arm3(HTASK task, DWORD id, DWORD hz, WORD gain, int pan, int layer, const int *mod)
+{
+    int k;
+    _disable();
+    bs_put((WORD)task); bs_put(LOWORD(id)); bs_put(HIWORD(id)); bs_put(LOWORD(hz)); bs_put(HIWORD(hz)); bs_put(gain);
+    bs_put((WORD)(pan + 100)); bs_put((WORD)(layer + 1));
+    for (k = 0; k < 7; k++) bs_put((WORD)mod[k]);
+    outpw(BS_CMD, BSC_ARM);
+    _enable();
+}
 /* v2: a layer's drawn envelope (kind 0 amplitude, levels 0..100; 1 pan, levels -100..100), n breakpoints */
 static void bs_lenv(int layer, int kind, int n, const int *t, const int *l, int loop)
 {

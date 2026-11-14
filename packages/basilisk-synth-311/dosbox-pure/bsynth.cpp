@@ -84,6 +84,9 @@ struct BSVoice {
 	Bit64u mute_at; Bit32u mute_len, mute_left; bool muted;
 	Bit64u mute_next_at; Bit32u mute_next_len;   /* a later end, sent ahead, that a regate before it brings into force */
 	Bit32u kill_fade;
+	/* v3 V genes (tape): wow, flutter and a start scoop bend the rate by cents(t) (core modCents), updated every 32
+	   samples; sine and 2^x by our own polynomials, so every platform makes the same samples */
+	bool mod; float m_wow, m_wowhz, m_flu, m_fluhz, m_scoop, m_scoopms, m_phase, m_fac; Bit64u m_age;
 };
 
 static struct {
@@ -94,7 +97,7 @@ static struct {
 	Bit16u chtask[BS_CH];
 	Bit64u dac;                    /* DAC samples produced so far */
 	/* arms: task -> (event id, rate, gain) for the next open / stop by that task */
-	struct Arm { Bit16u task; Bit32u id; Bit32u hz; float gain; float pan; int layer; Bit32u fade; bool stop; bool used; } arms[64];
+	struct Arm { Bit16u task; Bit32u id; Bit32u hz; float gain; float pan; int layer; Bit32u fade; bool stop; bool used; int mod[7]; bool hasMod; } arms[64];
 	BSEnv lenv_a[8], lenv_p[8];          /* the layers' envelopes (LENV), for voices armed with a layer */
 	Bit32u env_a, env_d; float env_s;   /* the envelope new voices get (ENV) */
 	/* host -> guest events, guest -> host reports */
@@ -236,13 +239,40 @@ static void voice_finish_front(BSVoice &v)
 	v.q.pop_front();
 }
 
+/* sin(2 pi x) and 2^x with + and * only (no libm: the same bits on every platform) */
+static double det_sin_turns(double x)
+{
+	x -= (double)(Bit64s)x; if (x < 0) x += 1.0;                    /* 0..1 turns */
+	double s = 1.0; if (x > 0.5) { x -= 0.5; s = -1.0; }           /* 0..0.5 */
+	if (x > 0.25) x = 0.5 - x;                                     /* 0..0.25 */
+	const double r = x * 6.283185307179586, r2 = r * r;            /* 0..pi/2 */
+	return s * r * (1.0 + r2 * (-1.0 / 6 + r2 * (1.0 / 120 + r2 * (-1.0 / 5040 + r2 * (1.0 / 362880 + r2 * (-1.0 / 39916800))))));
+}
+static double det_exp2(double x)
+{
+	Bit64s i = (Bit64s)x; if ((double)i > x) i--;
+	double f = (x - (double)i) * 0.6931471805599453, e = 1.0, term = 1.0;
+	for (int k = 1; k < 12; k++) { term = term * f / k; e += term; }
+	for (; i > 0; i--) e *= 2.0;
+	for (; i < 0; i++) e *= 0.5;
+	return e;
+}
+static float mod_factor(const BSVoice &v)   /* core modCents (engine3.cpp), as a rate factor */
+{
+	const double tMs = (double)v.m_age * 1000.0 / BS_RATE;
+	double c = 0;
+	if (v.m_wow != 0) c += v.m_wow * det_sin_turns(v.m_phase + tMs / 1000.0 * v.m_wowhz);
+	if (v.m_flu != 0) c += v.m_flu * det_sin_turns(v.m_phase * 7.0 + tMs / 1000.0 * v.m_fluhz);
+	if (v.m_scoop != 0 && tMs < v.m_scoopms) c -= v.m_scoop * (1.0 - tMs / v.m_scoopms);
+	return (float)det_exp2(c / 1200.0);
+}
 static void render(float *out, Bitu len)
 {
 	memset(out, 0, len * 2 * sizeof(float));
 	for (int vi = 0; vi < BS_CH * 2; vi++) {
 		BSVoice &v = bs.v[vi];
 		if (!v.on || v.paused) continue;
-		double step = (double)v.srate * v.rate * v.armrate * bs.master / BS_RATE;
+		double step = (double)v.srate * v.rate * v.armrate * bs.master * (v.mod ? v.m_fac : 1.f) / BS_RATE;
 		const float master = bs.master;
 		const bool panning = v.pan != 0.f || v.ep.n > 0;
 		for (Bitu s = 0; s < len; s++) {
@@ -263,7 +293,11 @@ static void render(float *out, Bitu len)
 				Bit64u k = t - v.rt_at;
 				if (k >= v.rt_len || v.rt_from <= 0.f) { v.armrate = v.rt_to; v.rt_on = false; }
 				else v.armrate = v.rt_from * powf(v.rt_to / v.rt_from, (float)k / (float)v.rt_len);
-				step = (double)v.srate * v.rate * v.armrate * master / BS_RATE;
+				step = (double)v.srate * v.rate * v.armrate * master * (v.mod ? v.m_fac : 1.f) / BS_RATE;
+			}
+			if (v.mod) {   /* tape: the factor moves every 32 samples of the voice's life */
+				if ((v.m_age & 31) == 0) { v.m_fac = mod_factor(v); step = (double)v.srate * v.rate * v.armrate * master * v.m_fac / BS_RATE; }
+				v.m_age++;
 			}
 			if (t >= v.kill_at && !v.fade_left) { v.fade_len = v.kill_fade; v.fade_left = v.kill_fade; v.kill_at = ~(Bit64u)0; v.stop_at = ~(Bit64u)0; }
 			float fg = 1.f;
@@ -448,6 +482,12 @@ static void command(Bit16u c)
 			v.gain = bs.arms[a].gain; bs.arms[a].used = false;
 			v.env_a = bs.env_a; v.env_d = bs.env_d; v.env_s = bs.env_s;
 			v.pan = bs.arms[a].pan;
+			if (bs.arms[a].hasMod) {
+				const int *m = bs.arms[a].mod;
+				v.mod = m[0] || m[2] || m[4];
+				v.m_wow = (float)m[0]; v.m_wowhz = m[1] / 10.f; v.m_flu = (float)m[2]; v.m_fluhz = (float)m[3];
+				v.m_scoop = (float)m[4]; v.m_scoopms = (float)m[5]; v.m_phase = m[6] / 1000.f; v.m_fac = 1.f; v.m_age = 0;
+			}
 			if (bs.arms[a].layer >= 0 && bs.arms[a].layer < 8) {
 				v.ea = bs.lenv_a[bs.arms[a].layer]; v.ep = bs.lenv_p[bs.arms[a].layer];
 				if (v.ea.n) { v.env_a = 0; v.env_d = 0; v.env_s = 1.f; }   /* a drawn envelope replaces A, D, S */
@@ -523,6 +563,8 @@ static void command(Bit16u c)
 			/* v2: pan (0..200 = -100..100) and layer (0 = none, else layer + 1) */
 			A.pan = bs.args.size() > 6 ? ((int)arg(6) - 100) / 100.f : 0.f;
 			A.layer = bs.args.size() > 7 ? (int)arg(7) - 1 : -1;
+			A.hasMod = bs.args.size() > 14;   /* v3: the tape modulation */
+			for (int k = 0; k < 7; k++) A.mod[k] = A.hasMod ? (int)arg(8 + k) : 0;
 		}
 		else A.fade = (Bit32u)arg(3) * (BS_RATE / 1000);
 		break; }

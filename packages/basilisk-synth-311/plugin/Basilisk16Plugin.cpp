@@ -460,7 +460,7 @@ protected:
             else if (st == 0xE0 && e.size >= 3 && !fromWindows) show(2, 0, (uint32_t)((d[1] | (d[2] << 7))));
             if (st == 0xB0 && (e.size < 3 || d[1] == 1)) continue;
             // the notes: V3Host.h, the same code as render311 and the web edition
-            host_.bpm = bpm_; host_.capWin = capWin_; host_.capRate = capRate_; host_.recBusy = recBusy_.load();
+            host_.bpm = bpm_; host_.capWin = capWin_; host_.capRate = capRate_; host_.capTape = capTape_; host_.recBusy = recBusy_.load();
             host_.midi(d[0], d[1], e.size >= 3 ? d[2] : 0, at, [&](const char *line, uint64_t when) {
                 sendLine(line, ++nextId_, when);
                 if (trace_) std::fprintf(trace_, "%s id %u at %llu dacPos %.0f dac_w %llu late %u/%u max %u\n", line, nextId_,
@@ -530,7 +530,7 @@ private:
     // DNA v3 (design/PRESET-ENGINE-2.md): the parsed v3 tokens, beside the v2 DNA (same staging); the guest's caps
     bsynth3::Dna3 d3ForAudio_, stagedD3_;
     uint32_t d3SaltPending_ = 0;
-    std::atomic<bool> capWin_{false}, capDesk_{false}, capLoop_{false}, capRate_{false};
+    std::atomic<bool> capWin_{false}, capDesk_{false}, capLoop_{false}, capRate_{false}, capTape_{false};
     std::atomic<double> bpm_{120};   // the host's tempo (v3 Wt, Wb, Wg)
     std::atomic<bool> tempoDirty_{false};
     std::atomic<bool> recSelf_{false};
@@ -1170,7 +1170,7 @@ private:
         case proto::Reply::Hi: {
             const std::vector<std::string> caps = bsynth3::parseHi3(line);
             capWin_ = bsynth3::hasCap(caps, "win"); capDesk_ = bsynth3::hasCap(caps, "desk");
-            capLoop_ = bsynth3::hasCap(caps, "loop"); capRate_ = bsynth3::hasCap(caps, "rate");
+            capLoop_ = bsynth3::hasCap(caps, "loop"); capRate_ = bsynth3::hasCap(caps, "rate"); capTape_ = bsynth3::hasCap(caps, "tape");
             break; }
         case proto::Reply::Built: {
             std::lock_guard<std::mutex> l(mtx_);

@@ -646,6 +646,7 @@ static int run_steps(int r, LAYER *L)
 
 static void stop_rec(int r, DWORD id, int fade_ms);
 
+static int modArg[NR][7], modOn[NR];   /* `mod` (v3 V genes) for the next `on` of a recorder */
 static char lastSig[1400];
 static int layer_len[NL];
 static long layerFrames[NL];   /* each layer's length in frames, as told to the host (v3 windows are in these frames) */
@@ -772,7 +773,11 @@ static void play_rec(int r, DWORD id, DWORD hz, WORD vol, int pan, int layer, lo
         else press(r, SR_REW);
     }
     t2 = timeGetTime();
-    bs_arm2(rt[r], id, hz, vol, pan, layer < 0 ? rlayer[r] : layer);
+    {   /* the tape modulation the host sent for this note (`mod`), once */
+        int rr = r % NR;
+        if (modOn[rr]) { bs_arm3(rt[r], id, hz, vol, pan, layer < 0 ? rlayer[r] : layer, modArg[rr]); modOn[rr] = 0; }
+        else bs_arm2(rt[r], id, hz, vol, pan, layer < 0 ? rlayer[r] : layer);
+    }
     pStartLo[r] = bs_stamp_lo(id, &pStartHi[r]); pHz[r] = hz; pFrom[r] = from > 0 ? from : 0;
     pLayer[r] = layer >= 0 && layer < NL ? layer : rlayer[r];
     press(r, SR_PLAY);
@@ -3205,7 +3210,7 @@ static void host_line(char *s)
     if (a) *a = 0;
     if (!strcmp(s, "hi")) {
         int v = atoi(rest); v = v >= 3 ? 3 : v >= 2 ? 2 : 1;
-        if (v == 3) say("hi 3 311 %s win,desk,rate,loop,rec,kit", assembled ? "ready" : "wait");   /* the v3 features this guest has */
+        if (v == 3) say("hi 3 311 %s win,desk,rate,loop,rec,kit,tape", assembled ? "ready" : "wait");   /* the v3 features this guest has */
         else say("hi %d 311 %s", v, assembled ? "ready" : "wait");
     }
     else if (!strcmp(s, "desk")) { if (hMain && assembled) ShowWindow(hMain, atoi(rest) ? SW_MINIMIZE : SW_RESTORE); }
@@ -3217,6 +3222,11 @@ static void host_line(char *s)
         long f[8] = {0, 0, 65535, 0, 0, -1, 0, 0}; int nf = 0; char *p = rest;
         while (*p && nf < 8) { f[nf++] = atol(p); p = strchr(p, ' '); if (!p) break; p++; }
         play_rec((int)f[0], curId, (DWORD)f[1], (WORD)f[2], (int)f[3], (int)f[5], f[6]);
+    }
+    else if (!strcmp(s, "mod")) {   /* mod <rec> <wow c> <wow 0.1Hz> <flutter c> <flutter Hz> <scoop c> <scoop ms> <phase 0..999> */
+        int f[8] = {-1, 0, 0, 0, 0, 0, 0, 0}, nf = 0, k; char *p = rest;
+        while (*p && nf < 8) { f[nf++] = atoi(p); p = strchr(p, ' '); if (!p) break; p++; }
+        if (f[0] >= 0 && f[0] < NR) { for (k = 0; k < 7; k++) modArg[f[0]][k] = f[k + 1] < 0 ? 0 : f[k + 1]; modOn[f[0]] = 1; }
     }
     else if (!strcmp(s, "off")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, envR); }
     else if (!strcmp(s, "cut")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, 5); }

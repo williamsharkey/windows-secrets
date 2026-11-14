@@ -298,12 +298,12 @@ int main(int argc, char **argv)
         num("--remap", kp.remap); num("--anchor", kp.anchor);
         host.setKey(kp);
     }
-    bool rateCap = false;
+    bool rateCap = false, tapeCap = false;
     M.send("hi 3");   // DNA v3: the guest answers with its caps
     for (bool hi = false; !hi && S->state != BS_FAILED;) {   // Windows answers before it gets the sound (as the plugin does)
         M.step(4800);
         std::vector<std::string> ls; M.lines(ls);
-        for (auto &l : ls) { if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str()); if (l.rfind("hi ", 0) == 0) { hi = true; win = bsynth3::hasCap(bsynth3::parseHi3(l), "win"); loopCap = bsynth3::hasCap(bsynth3::parseHi3(l), "loop"); rateCap = bsynth3::hasCap(bsynth3::parseHi3(l), "rate"); } }
+        for (auto &l : ls) { if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str()); if (l.rfind("hi ", 0) == 0) { hi = true; win = bsynth3::hasCap(bsynth3::parseHi3(l), "win"); loopCap = bsynth3::hasCap(bsynth3::parseHi3(l), "loop"); rateCap = bsynth3::hasCap(bsynth3::parseHi3(l), "rate"); tapeCap = bsynth3::hasCap(bsynth3::parseHi3(l), "tape"); } }
     }
     for (auto &u : userLines) M.send(u);    // My recordings (before the DNA that may name them)
     M.send("dna " + written.canonical);     // as written: Windows does N itself
@@ -346,7 +346,7 @@ int main(int argc, char **argv)
         while (ei < ev.size() && (uint64_t)(ev[ei].t * 48000) < blockEnd) {
             const MidiEv &m = ev[ei++];
             const uint64_t at = anchor + (uint64_t)(m.t * 48000) + kLat;
-            host.capWin = win; host.capRate = rateCap;
+            host.capWin = win; host.capRate = rateCap; host.capTape = tapeCap;
             host.midi(m.st, m.a, m.b, at, [&](const char *line, uint64_t when) { M.send(line, ++M.nextId, when); });
         }
         // Windows' `end` replies free recorders, as in the plugin
