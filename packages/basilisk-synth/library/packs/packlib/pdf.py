@@ -277,6 +277,10 @@ def build(p, data, cover_png, credits, out_path):
     P('Contact', 'h2')
     for c in M['contact']:
         P(c, 'mono')
+    if data.get('credits'):
+        P('Sound credits', 'h2')
+        for c in data['credits']:
+            P(c, 'small')
     P('Picture credits', 'h2')
     for cr in credits:
         P(cr, 'small')

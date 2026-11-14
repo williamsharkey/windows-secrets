@@ -16,7 +16,7 @@ import json
 import os
 import shutil
 
-from . import brand
+from . import brand, data as pdata
 
 
 def export(here, personas, out=None):
@@ -45,13 +45,15 @@ def export(here, personas, out=None):
         except OSError:
             meta = {}
         pk, M, T, B = p['pack'], p['maker'], p['text'], p['box']
-        j = {'id': pid, 'pack_id': pk.get('plan_id') or pk.get('library_id') or pid, 'title': pk['title'], 'subtitle': pk.get('subtitle', ''),
+        lid = pk.get('library_id') or pdata.LIBMAP.get(pid) or ('kit-manager' if pid == 'kitmgr' else pk.get('plan_id') or pid)
+        j = {'id': pid, 'pack_id': lid, 'title': pk['title'], 'subtitle': pk.get('subtitle', ''),
              'edition': pk.get('edition', ''), 'version': pk['version'], 'date': pk['date'], 'label': pk['label'],
              'iso': pk['label'] + '.ISO', 'maker': {'name': M['name'], 'kind': M['kind'], 'year': M['year'], 'place': M['place']},
              'tagline': T['tagline'], 'blurb': T['blurb'], 'package': B['type'],
              'price': ' '.join(B['price']), 'starburst': ' '.join(B['burst']) if B.get('burst') else None,
              'presets': meta.get('presets'), 'presets_xp': meta.get('presets_xp'), 'for': [brand.SW, brand.XP],
-             'credit': T.get('credit'), 'files': files, 'fictional': True}
+             'favourites': meta.get('favourites'), 'sound_credits': meta.get('credits') or ([T['credit']] if T.get('credit') else []),
+             'files': files, 'fictional_maker': True}
         with open(os.path.join(dst, 'pack.json'), 'w', encoding='utf-8') as f:
             json.dump(j, f, ensure_ascii=False, indent=1)
         allp.append(j)

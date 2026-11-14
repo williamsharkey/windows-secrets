@@ -161,8 +161,17 @@ def build_pack(p, opt):
                 if rel in ('AUTORUN.INF', 'PACK.TXT'):
                     continue
                 files[rel] = open(os.path.join(root_, fn), 'rb').read()
-        inf = open(os.path.join(cd_, 'PACK.INF'), encoding='cp1252', errors='replace').read().replace('\r\n', '\n')
-        files['PACK.TXT'] = texts.enc(inf.replace('[Pack]\n', '%s\n%s\n\nfor %s and %s\n\n' % (pk['title'], '=' * len(pk['title']), brand.SW, brand.XP)))
+        ptxt = os.path.join(cd_, 'PACK.TXT')
+        if os.path.exists(ptxt):     # the content's PACK.TXT, with this maker filled in where the content left it blank
+            t = open(ptxt, encoding='cp1252', errors='replace').read().replace('\r\n', '\n')
+            t = t.replace('Author: \n', 'Author: %s\n' % p['maker']['name']).replace('Date: \n', 'Date: %s\n' % pk['date'])
+        else:
+            inf = open(os.path.join(cd_, 'PACK.INF'), encoding='cp1252', errors='replace').read().replace('\r\n', '\n')
+            t = inf.replace('[Pack]\n', '%s\n%s\n\nfor %s and %s\n\n' % (pk['title'], '=' * len(pk['title']), brand.SW, brand.XP))
+        files['PACK.TXT'] = texts.enc(t)
+        if data.get('credits'):
+            files['CREDITS.TXT'] = texts.enc('%s - SOUND CREDITS\n\n%s\n\nEverything else on this disc (the maker, the art, the texts): %s, a fictional company.\n'
+                                             % (pk['title'].upper(), '\n'.join('  ' + c for c in data['credits']), p['maker']['name']))
         for x in data['presets']:
             joliet['%s/%s' % (x['folder83'], x['file83'])] = '%s/%s' % (x['folder'], x['joliet'])
     else:
@@ -218,7 +227,8 @@ def build_pack(p, opt):
         os.utime(fp, (datetime.datetime(date.year, date.month, date.day, 12).timestamp(),) * 2)
     with open(os.path.join(build, 'meta.json'), 'w', encoding='utf-8') as f:
         json.dump({'source': data['source'], 'placeholder': data['placeholder'], 'presets': len(data['presets']),
-                   'presets_xp': sum(1 for x in data['presets'] if 'XP' in x.get('ships', ['XP']))}, f)
+                   'presets_xp': sum(1 for x in data['presets'] if 'XP' in x.get('ships', ['XP'])),
+                   'credits': data.get('credits', []), 'favourites': len(data.get('favourites', []))}, f)
     with open(os.path.join(build, 'previews.json'), 'w', encoding='utf-8') as f:
         json.dump(previews, f, ensure_ascii=False, indent=1)
 
@@ -294,6 +304,34 @@ def _bare_disc(im, p):
     d.ellipse((c - 7.5 * s, c - 7.5 * s, c + 7.5 * s, c + 7.5 * s), fill=(0, 0, 0, 0))
 
 
+def write_index(out):
+    """out/discs/DISCS.TSV: the library lane's index rows, with this lane's volume labels and ISO names, listing only
+    the discs that exist in out/discs/ (so the 3.11 lane never meets a missing folder). XP-ONLY.TSV is copied."""
+    src = os.path.join(pdata.CONTENT, 'DISCS.TSV')
+    if not os.path.exists(src) or not os.path.isdir(out):
+        return
+    labels = {}
+    for p in personas([]):
+        lid = p['pack'].get('library_id') or pdata.LIBMAP.get(p['id']) or ('kit-manager' if p['id'] == 'kitmgr' else p['pack'].get('plan_id'))
+        labels[lid] = p['pack']['label']
+    rows = []
+    for line in open(src, encoding='utf-8'):
+        if line.startswith('#') or not line.strip():
+            rows.append(line.rstrip('\n'))
+            continue
+        f = line.rstrip('\n').split('\t')
+        lab = labels.get(f[0], f[1])
+        if not os.path.exists(os.path.join(out, lab + '.ISO')):
+            continue
+        f[1], f[2] = lab, lab + '.ISO'
+        rows.append('\t'.join(f))
+    with open(os.path.join(out, 'DISCS.TSV'), 'w', encoding='utf-8', newline='\n') as fo:
+        fo.write('\n'.join(rows) + '\n')
+    x = os.path.join(pdata.CONTENT, 'XP-ONLY.TSV')
+    if os.path.exists(x):
+        shutil.copy2(x, os.path.join(out, 'XP-ONLY.TSV'))
+
+
 def main():
     a = sys.argv[1:]
     opt = {'no_render': '--no-render' in a, 'no_iso': '--no-iso' in a, 'render_only': '--render-only' in a}
@@ -308,10 +346,7 @@ def main():
         results.append(build_pack(p, opt))
     if not opt.get('no_iso') and not opt.get('render_only'):
         out = os.path.join(HERE, 'out', 'discs')
-        for idx in ('DISCS.TSV', 'XP-ONLY.TSV'):          # the library lane's index of the set, labels as on the discs
-            src = os.path.join(pdata.CONTENT, idx)
-            if os.path.exists(src) and os.path.isdir(out):
-                shutil.copy2(src, os.path.join(out, idx))
+        write_index(out)
     if web:
         from packlib import webexport
         webexport.export(HERE, [p for p in personas([])])

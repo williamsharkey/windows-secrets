@@ -153,7 +153,22 @@ def load(persona):
             x['dfolder'], x['dfile'] = x['disp'].split('\\')
             out.append(x)
         favs = sorted(os.listdir(os.path.join(cdir, 'FAVORITE'))) if os.path.isdir(os.path.join(cdir, 'FAVORITE')) else []
-        return {'presets': out, 'sounds': [], 'placeholder': False, 'favourites': favs, 'content_dir': cdir,
+        credits = []      # 'Sounds on this disc' from the content's PACK.TXT (real people: the sound credits)
+        pt = os.path.join(cdir, 'PACK.TXT')
+        if os.path.exists(pt):
+            on = False
+            for l in open(pt, encoding='cp1252', errors='replace').read().splitlines():
+                if l.startswith('Sounds on this disc'):
+                    on = True
+                    continue
+                if on:
+                    if not l.strip():
+                        break
+                    c = l.strip()
+                    if c not in credits and not any(c.startswith(x.split(':')[0]) and x != c and len(x) > len(c) for x in credits):
+                        credits.append(c)
+        credits = [c for c in credits if not any(o != c and o.startswith(c) for o in credits)]
+        return {'presets': out, 'sounds': [], 'placeholder': False, 'favourites': favs, 'content_dir': cdir, 'credits': credits,
                 'source': 'library disc content ' + os.path.relpath(cdir, LIB)}
     if lib:
         for x in lib:

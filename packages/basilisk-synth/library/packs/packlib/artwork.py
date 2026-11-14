@@ -755,6 +755,17 @@ def icon(p, n):
         d.rectangle(S(7, 15, 24, 28), fill='#ffffff', outline=C[1])
         for y in (18, 21, 24):
             d.line(S(9, y, 22, y), fill=C[0])
+    elif m == 'reel':        # two tape reels and the tape between them
+        for cx in (9, 22):
+            d.ellipse(S(cx - 7, 5, cx + 7, 19), fill=C[0], outline=C[1])
+            d.ellipse(S(cx - 2, 10, cx + 2, 14), fill=C[3], outline=C[1])
+            for ang in (0, 120, 240):
+                r = math.radians(ang)
+                d.line(S(cx, 12, cx + 5 * math.cos(r), 12 + 5 * math.sin(r)), fill=C[1])
+        d.line(S(2, 12, 2, 26), fill=C[1])
+        d.line(S(2, 26, 29, 26), fill=C[2], width=W1)
+        d.line(S(29, 26, 29, 12), fill=C[1])
+        d.rectangle(S(12, 23, 19, 28), fill=C[2], outline=C[1])
     elif m == 'chip':
         d.rectangle(S(7, 7, 24, 24), fill=C[3], outline=C[1])
         for i in range(8, 24, 3):

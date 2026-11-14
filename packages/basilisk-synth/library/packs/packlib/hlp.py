@@ -164,6 +164,10 @@ def build(p, data, workdir, out_path):
     d.head('Contact')
     for c in M['contact']:
         d.mono(c)
+    if data.get('credits'):
+        d.head('Sounds')
+        for c in data['credits']:
+            d.p(c, fs=18)
     d.p('Pictures: public-domain engravings and photographs (see CREDITS in the manual).', fs=16)
     d.p('All names in this pack are fictional.', fs=16)
     d.end()

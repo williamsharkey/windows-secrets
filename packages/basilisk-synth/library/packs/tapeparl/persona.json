@@ -1,0 +1,329 @@
+{
+  "id": "tapeparl",
+  "category": "Tape Parlour Ensemble (library lane, new)",
+  "pack": {
+    "plan_id": "tape-parlour",
+    "library_id": "tape-parlour",
+    "title": "Tape Parlour Ensemble",
+    "subtitle": "Eight seconds of tape behind every key",
+    "edition": "Restored Edition",
+    "version": "1.0",
+    "date": "1994-10-03",
+    "label": "TAPEPARLOUR",
+    "label_long": "Tape Parlour Ensemble",
+    "sources": {
+      "plan": "tape-parlour"
+    }
+  },
+  "maker": {
+    "name": "Hartwell & Daughters Ltd",
+    "short": "Hartwell",
+    "kind": "family firm of keyboard-instrument restorers",
+    "year": 1994,
+    "place": "Leeds, England",
+    "contact": [
+      "Hartwell & Daughters Ltd",
+      "Musical Instrument Restorers since 1931",
+      "Unit 3, Canal Wharf Works",
+      "Leeds LS99 2HD",
+      "Telephone 0113 555 0172"
+    ],
+    "people": [
+      [
+        "Edith Hartwell",
+        "restoration and recording"
+      ],
+      [
+        "Ruth Hartwell",
+        "tape splicing, accounts"
+      ],
+      [
+        "Arthur Hartwell (1906-1979)",
+        "founder"
+      ]
+    ],
+    "voice": "proud, old-fashioned, careful; three generations of repair work; 'we' and 'our workshop'"
+  },
+  "look": {
+    "palette": [
+      "#101c12",
+      "#1f3a24",
+      "#2a4a2e",
+      "#d8b45a",
+      "#f0dca0",
+      "#8a6a2a",
+      "#f4f1e8",
+      "#5a1a1a"
+    ],
+    "dither": "atkinson",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#101c12",
+    "paper": "#2a4a2e",
+    "accent": "#d8b45a",
+    "accent2": "#f0dca0",
+    "fonts": {
+      "display": "palab.ttf",
+      "body": "pala.ttf",
+      "mono": "cour.ttf",
+      "black": "palab.ttf",
+      "italic": "palai.ttf"
+    },
+    "art": {
+      "bg": "books/neets-capstan-tape-drive-with-supply-and-take-up-packs.png",
+      "back": "books/telharmonium-console-1897.png",
+      "mark": "books/objects/tyndall-sound-bell-in-vacuo.png",
+      "object": "books/neets-capstan-tape-drive-with-supply-and-take-up-packs.png"
+    },
+    "title": {
+      "style": "gold",
+      "colors": [
+        "#fff0b8",
+        "#d8b45a",
+        "#8a6a2a",
+        "#101c12"
+      ],
+      "font": "display"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#2a4a2e"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.04,
+          0.03,
+          0.96,
+          0.97
+        ],
+        "c": null,
+        "outline": "#d8b45a",
+        "w": 3
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.06,
+          0.045,
+          0.94,
+          0.955
+        ],
+        "c": null,
+        "outline": "#d8b45a",
+        "w": 1
+      },
+      {
+        "t": "text",
+        "s": "HARTWELL & DAUGHTERS",
+        "font": "display",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.09
+        ],
+        "anchor": "mm",
+        "c": "#d8b45a",
+        "spacing": 3
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.2
+        ],
+        "size": 0.085,
+        "maxw": 0.82
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "italic",
+        "size": 0.034,
+        "pos": [
+          0.5,
+          0.29
+        ],
+        "anchor": "mm",
+        "c": "#f0dca0",
+        "maxw": 0.8
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0.16,
+          0.34,
+          0.84,
+          0.74
+        ],
+        "tint": [
+          "#101c12",
+          "#f4f1e8"
+        ],
+        "frame": "line",
+        "c": "#d8b45a"
+      },
+      {
+        "t": "text",
+        "s": "{edition}  -  {count} voices on tape",
+        "font": "body",
+        "size": 0.032,
+        "pos": [
+          0.5,
+          0.79
+        ],
+        "anchor": "mm",
+        "c": "#f0dca0"
+      },
+      {
+        "t": "text",
+        "s": "Strings  *  Flutes  *  Choirs  *  Brass  *  Organs",
+        "font": "italic",
+        "size": 0.028,
+        "pos": [
+          0.5,
+          0.84
+        ],
+        "anchor": "mm",
+        "c": "#d8b45a",
+        "maxw": 0.8
+      },
+      {
+        "t": "text",
+        "s": "Restorers of keyboard instruments since 1931  *  Leeds",
+        "font": "body",
+        "size": 0.024,
+        "pos": [
+          0.5,
+          0.92
+        ],
+        "anchor": "mm",
+        "c": "#d8b45a",
+        "maxw": 0.82
+      }
+    ],
+    "spine_bg": "#1f3a24",
+    "spine_ink": "#f0dca0",
+    "spine_title": "#d8b45a",
+    "back_bg": "#f4f1e8",
+    "back_ink": "#101c12",
+    "back_head": "#2a4a2e",
+    "back_tint": [
+      "#101c12",
+      "#f4f1e8"
+    ],
+    "bullet": "* ",
+    "compat": {
+      "pos": [
+        0.9,
+        0.9
+      ],
+      "anchor": "rb",
+      "size": 0.1
+    }
+  },
+  "box": {
+    "type": "bigbox",
+    "shape": "big",
+    "price": [
+      "£24.95",
+      "inc. VAT"
+    ],
+    "sticker": {
+      "bg": "#f4f1e8",
+      "ink": "#5a1a1a",
+      "pos": [
+        0.8,
+        0.05
+      ]
+    },
+    "burst": null,
+    "stamp": null,
+    "features": [
+      "{count} voices: strings, flutes, choirs, brass, organs",
+      "Eight seconds of tape behind every key",
+      "Wow, flutter and the tape-start scoop"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "silk",
+    "ink": "#1f3a24",
+    "ink2": "#d8b45a",
+    "tint_mark": true,
+    "ring": "HARTWELL & DAUGHTERS LTD * TAPE PARLOUR ENSEMBLE * RESTORED EDITION * LEEDS *",
+    "ring_ink": "#1f3a24"
+  },
+  "icon": {
+    "motif": "reel",
+    "colors": [
+      "#d8b45a",
+      "#101c12",
+      "#5a1a1a",
+      "#f4f1e8"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENCE.TXT",
+    "hlp": "TAPEPARL.HLP",
+    "pdf": "TAPEPARL.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "corporate",
+    "rtf": "WORKSHOP.RTF",
+    "wri": null,
+    "splash": "TAPEPARL.BMP",
+    "splash_bpp": 4,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#101c12",
+    "accent": "#2a4a2e",
+    "band": "#1f3a24",
+    "band2": "#d8b45a",
+    "line1": "Owner's Handbook  -  Restored Edition",
+    "heads": {
+      "Introduction": "From Our Workshop",
+      "The Presets": "The Ensemble",
+      "License": "Licence"
+    }
+  },
+  "hlp": {
+    "font": "Book Antiqua",
+    "family": "roman",
+    "title_color": "#1f3a24"
+  },
+  "text": {
+    "tagline": "Eight seconds of tape behind every key.",
+    "blurb": "For sixty years our workshop has kept tape-replay keyboards playing. This disc puts one in your computer: {count} voices of strings, flutes, choirs, brass and organs, each with eight seconds of tape behind the key, and the wow, flutter and start-up scoop of a well-loved machine.",
+    "intro": [
+      "Welcome to the Tape Parlour Ensemble, Restored Edition. Behind every key of a tape-replay keyboard is a strip of tape about eight seconds long. Press the key and the tape is drawn across a head; hold it past eight seconds and the note simply ends.",
+      "We have recorded strings, flutes, choirs, brass and organs onto your computer the same way, with the same small faults that make these instruments sound alive: a little wow, a little flutter, and the scoop as the tape gets up to speed."
+    ],
+    "maker_note": [
+      "My grandfather Arthur Hartwell opened the workshop in 1931 to repair harmoniums. My mother learned tape splicing on the parlour instruments that came in during the sixties. Ruth and I still keep them running.",
+      "Play gently, and let each note finish before the tape runs out.",
+      "Edith Hartwell, Hartwell & Daughters Ltd"
+    ],
+    "install": [
+      "Insert the disc. In the Library tab it appears as TAPEPARLOUR.",
+      "Open a folder (STRINGS, LEAD, VOCAL, BRASS, ORGAN, KEYS) and double-click a preset.",
+      "The disc's own recordings are in SOUNDS; the handbook is TAPEPARL.PDF."
+    ],
+    "license": [
+      "HARTWELL & DAUGHTERS LTD - LICENCE",
+      "You may use the presets on one computer and use the music you make with them freely.",
+      "Some recordings on this disc are by Paul Chauncy (Uncle Homunculus / Paulywauly), used with his permission; they may not be extracted or redistributed. See CREDITS.TXT.",
+      "Hartwell & Daughters Ltd accept no liability for tape that has run out."
+    ],
+    "copyright": "(c) 1994 Hartwell & Daughters Ltd, Leeds."
+  }
+}
