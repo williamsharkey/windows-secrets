@@ -217,10 +217,10 @@
     "bullet": "* ",
     "compat": {
       "pos": [
-        0.9,
-        0.9
+        0.17,
+        0.345
       ],
-      "anchor": "rb",
+      "anchor": "lt",
       "size": 0.1
     }
   },
