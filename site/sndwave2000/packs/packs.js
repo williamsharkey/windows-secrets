@@ -432,7 +432,7 @@
     side.innerHTML = '<div class="maker"><p class="kicker">The company</p><address>' + (m.contact || [m.name, m.place]).map(esc).join('<br>') + '</address>' +
       (m.kind ? '<p class="note">' + esc(m.kind) + '. ' + esc(m.place) + '.</p>' : '') +
       (m.people && m.people.length ? '<ul class="people">' + m.people.map(function (x) { return '<li><b>' + esc(x[0]) + '</b>, ' + esc(x[1]) + '</li>'; }).join('') + '</ul>' : '') +
-      (p.copyright ? '<p class="note">' + esc(p.copyright) + '</p>' : '') + '<p class="note">The company and its people are fictional.</p></div>';
+      (p.copyright ? '<p class="note">' + esc(p.copyright) + '</p>' : '') + '</div>';
   }
 
   // the shelf
