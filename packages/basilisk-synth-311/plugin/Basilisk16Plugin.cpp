@@ -20,6 +20,7 @@
 #include "V3Alloc.h"
 #include "V3Host.h"
 #include "UserRec.h"
+#include "V3Seq.h"
 
 #include <atomic>
 #include <chrono>
@@ -463,11 +464,27 @@ protected:
             if (st == 0xB0 && (e.size < 3 || d[1] == 1)) continue;
             // the notes: V3Host.h, the same code as render311 and the web edition
             host_.bpm = bpm_; host_.capWin = capWin_; host_.capRate = capRate_; host_.capTape = capTape_; host_.recBusy = recBusy_.load();
+            if (seq_.input(d[0], d[1], e.size >= 3 ? d[2] : 0, d3Audio_.g.x)) continue;   // a sequencer DNA: played notes choose its root
             host_.midi(d[0], d[1], e.size >= 3 ? d[2] : 0, at, [&](const char *line, uint64_t when) {
                 sendLine(line, ++nextId_, when);
                 if (trace_) std::fprintf(trace_, "%s id %u at %llu dacPos %.0f dac_w %llu late %u/%u max %u\n", line, nextId_,
                                          (unsigned long long)when, dacPos_, (unsigned long long)S->dac_w, S->sched_late, S->sched_ontime, S->sched_latemax);
             });
+        }
+        {   // the mine-grid sequencer (V3Seq.h): its steps on the host's transport, stamped like the notes
+            if (gridDirty_.load() && mtx_.try_lock()) { seq_.setGrid(gridLine_); gridDirty_ = false; mtx_.unlock(); }
+            if (d3Audio_.g.x.on && seq_.haveGrid()) {
+                const TimePosition &tp = getTimePosition();
+                const uint64_t s0 = (uint64_t)std::floor(anchor_ + (double)hcount_ * ratio) + kLatency48;
+                const uint64_t len = (uint64_t)std::llround(frames * ratio);
+                const double ppq = tp.bbt.valid ? (tp.bbt.bar - 1) * tp.bbt.beatsPerBar + (tp.bbt.beat - 1) + tp.bbt.tick / std::max(1.0, tp.bbt.ticksPerBeat) : 0.0;
+                const int kpScale = keyAudio_.scale <= 12 ? keyAudio_.scale : 0;
+                const int stepBefore = seq_.stepCol();
+                seq_.block(host_, d3Audio_, rootAudio_, s0, len, tp.playing && tp.bbt.valid, ppq, bpm_.load(),
+                           [&](const char *line, uint64_t when) { sendLine(line, ++nextId_, when); },
+                           d3Audio_.g.scale >= 0 ? d3Audio_.g.scale : kpScale, d3Audio_.g.rootPc);
+                if (seq_.stepCol() != stepBefore) stepShow_ = seq_.stepCol();   // the playhead (the worker sends `step`)
+            }
         }
         {   // grains due by this block's end (V3Host.h), stamped like its notes
             const uint64_t upTo = (uint64_t)std::floor(anchor_ + (double)(hcount_ + frames) * ratio) + kLatency48;
@@ -614,6 +631,9 @@ private:
 
     // audio thread only
     bsynth3::Dna3 d3Audio_;
+    b16v3::Sequencer seq_;                 // audio thread
+    std::string gridLine_; std::atomic<bool> gridDirty_{false};   // Windows' last `grid` line (guarded by mtx_)
+    std::atomic<int> stepShow_{-1}; int rootAudio_ = 60;
     uint32_t d3Salt_ = 0;
     double dacPos_ = -1, anchor_ = -1, lastRatio_ = 0;
     uint64_t hcount_ = 0;
@@ -709,6 +729,7 @@ private:
             for (int i = 0; i < kMaxLayers; i++)
                 if (layerCache_[i].known) host_.layerInfo(i, layerCache_[i].first, layerCache_[i].count, layerCache_[i].rate, layerCache_[i].frames);
             gain_ = (float)std::pow(10.0, dnaForAudio_.g.gainDb / 20.0);
+            rootAudio_ = dnaForAudio_.g.root;
             dnaPending_ = false;
         }
         for (size_t i = 0; i < pendLayers_.size(); i++) {
@@ -1007,6 +1028,10 @@ private:
                 dnaToGuest_ = true;
             }
             if (hello && sh_.importReady.exchange(false)) importNow();
+            {   // the sequencer's playhead, for the bar under the game
+                const int st = stepShow_.exchange(-1);
+                if (hello && st >= 0) { char b[24]; std::snprintf(b, sizeof b, "step %d", st); sendLine(b, 0, 0); }
+            }
             if (hello && sh_.scalaReady.exchange(false)) scalaNow();
             {   // an offline render while something records: stop it cleanly (RECORDING.md 4.3, TR8)
                 static thread_local double lastStop = 0;
@@ -1166,6 +1191,7 @@ private:
             if (L >= 0 && L < kMaxLayers) { pendSegs_[L] = v; segsDirty_ = true; }
             return;
         }
+        if (line.rfind("grid ", 0) == 0) { std::lock_guard<std::mutex> l(mtx_); gridLine_ = line; gridDirty_ = true; return; }   // the mine-grid board
         if (line.rfind("rsrc ", 0) == 0) { recSelf_ = line.compare(5, 4, "self") == 0; return; }   // the visitor chose the input (RECORDING.md 4.3)
         if (line.rfind("rec start ", 0) == 0) { if (line[10] == 'R') { recR_ = true; return; } const int r = std::atoi(line.c_str() + 10); if (r >= 0 && r < 16) recBusy_ |= 1u << r; return; }   // R: the Recorder
         if (line.rfind("rec stop ", 0) == 0) { if (line[9] == 'R') { recR_ = false; return; } const int r = std::atoi(line.c_str() + 9); if (r >= 0 && r < 16) recBusy_ &= ~(1u << r); return; }

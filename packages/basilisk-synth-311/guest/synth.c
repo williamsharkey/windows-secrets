@@ -86,7 +86,7 @@ int selLayer;
 #define NDIG 16
 static HWND hDig[NDIG];   /* the strips' Calculator keys 0-F */
 static HBITMAP digUp[NDIG], digDn[NDIG], digMask, digFace[NDIG];   /* digFace: 0 on the key's white face, 1 elsewhere */
-#define ID_KITBTN 1395
+#define ID_KITBTN 1398
 #define ID_STATESAVE 1396
 #define ID_STATELOAD 1397
 static HWND hKitBtn, hPadCalc, hPads;   /* the kit button; the pad calculator (Calculator) and our pads in it */
@@ -98,12 +98,12 @@ static void wait_ms(DWORD ms);
 static void page_add(HWND w);
 static void scales_values(void);
 /* the tabs and pages (PRESET-ENGINE-2 section 8) */
-#define NTAB 5
+#define NTAB 6
 #define ID_TAB 1390
 #define ID_PG 1400
 #define ID_RECPG 1480     /* + 0..6: the Rec page's controls */
-static const char *tabNames[NTAB] = {"Main", "Voices", "Playback", "Scales", "Rec"};
-static const char *tabIds[NTAB] = {"main", "voices", "play", "scales", "rec"};
+static const char *tabNames[NTAB] = {"Main", "Voices", "Playback", "Scales", "Rec", "Mines"};
+static const char *tabIds[NTAB] = {"main", "voices", "play", "scales", "rec", "seq"};
 static HWND hTab[NTAB], pgWin[64], pgSb[24], pgVal[24], pgBtn[24];
 static int curTab, npg, npgSb, npgBtn;
 static const COLORREF layerColor[NL] = {RGB(0, 128, 0), RGB(0, 0, 160), RGB(160, 0, 0), RGB(128, 0, 128),
@@ -872,6 +872,7 @@ static void watch_rec(void)
 static void stops_due(void);
 static void rec_scan(void);
 static void rec_keep(void);
+static void mine_poll(void);
 static void watch_ends(void)
 {
     static DWORD last; int r;
@@ -879,7 +880,7 @@ static void watch_ends(void)
     if (timeGetTime() - last < 25) return;
     last = timeGetTime();
     watch_rec();
-    if (assembled) { rec_keep(); rec_scan(); }
+    if (assembled) { rec_keep(); rec_scan(); mine_poll(); }
     dig_watch();
     for (r = 0; r < NR; r++) if (rplay[AR(r)] && !is_playing(AR(r))) { rplay[AR(r)] = FALSE; say("end %d", r); }
 }
@@ -1959,7 +1960,7 @@ static const PC pagePlay[] = {
     {"at", 'V', 'f', 1, 30, K_PAIR1, "Hz", 1}, {"Scoop", 'V', 's', 0, 200, K_PAIR0, "c", 1}, {"over", 'V', 's', 0, 2000, K_PAIR1, "ms", 1},
     {"Delay", 'W', 'o', 0, 30000, K_INT, "ms", 2}, {"Beat delay", 'W', 'b', 0, 64, K_INT, "/16", 2}, {"Gate", 'W', 'g', 0, 64, K_INT, "/16", 2},
     {"Tempo sync", 'W', 't', 0, 0, K_FLAG, "", 2}, {"Loop amp", 'W', 'r', 0, 8, K_INT, "", 2}, {"Loop pan", 'W', 'p', 0, 8, K_INT, "", 2}, {NULL}};
-static const PC *pgDef[NTAB] = {NULL, pageVoices, pagePlay, NULL, NULL};
+static const PC *pgDef[NTAB] = {NULL, pageVoices, pagePlay, NULL, NULL, NULL};
 /* the Scales page (PRESET-ENGINE-2 18.6): the key options and the 12 notes from the root; it edits the host's Key
    parameters (keyopt / keymask lines), not the DNA */
 #define ID_SC (ID_PG + 48)
@@ -2085,6 +2086,8 @@ static void page_close(void)
 static void page_add(HWND w) { if (npg < 64) pgWin[npg++] = w; }
 static void rec_page(int y0);
 static void rec_leave(void);
+static void mine_page(int y0);
+static void mine_hide(void);
 static void rec_command(int k);
 static void rec_open_whole(int y);
 static void page_open(int t)
@@ -2094,6 +2097,7 @@ static void page_open(int t)
     DWORD t0 = timeGetTime();
     if (t < 0 || t >= NTAB) return;
     if (curTab == 4 && t != 4) rec_leave();   /* the Recorder goes back to the header */
+    if (curTab == 5 && t != 5) mine_hide();   /* the game goes out of sight (it keeps the pattern) */
     if (t == 4) rec_open_whole(PANEL + 30);    /* or comes down to the page, whole */
     SendMessage(hMain, WM_SETREDRAW, FALSE, 0L);   /* one repaint at the end, not one per window */
     page_close();
@@ -2114,6 +2118,7 @@ static void page_open(int t)
     }
 
     if (t == 4) rec_page(y0);   /* the Rec page (the Recorder came down before: see above) */
+    else if (t == 5) mine_page(y0);   /* the mine-grid sequencer */
     else if (t == 3) {   /* the Scales page */
         page_add(mk("STATIC", "Key", WS_VISIBLE, 8, y0 + 4, 80, 16, -1));
         scales_page(y0);
@@ -2712,6 +2717,104 @@ static void rec_keep(void)
         if (!rec_at(SR_WAVE, 0, -6, RECW) || !rec_at(SR_PLAY, 76, 25, 36) || IsWindowVisible(GetDlgItem(hRecRec, SR_SCROLL))) { rec_compact_parts(); fix = TRUE; }
     }
     if (fix) RedrawWindow(hRecRec, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+}
+
+/* ================================================================ the mine-grid sequencer (PRESET-ENGINE-2 9)
+   The real Minesweeper (WINMINE.EXE) holds the pattern. It runs as itself, an owned window over the strips while
+   the Mines tab is open; its board is read from its own data segment (Win16: the instance handle is the selector;
+   T8: the board at DGROUP:0x440, rows of 32 with a border of 0x10, width 0x3C6, height 0x3C8) 20 times a second,
+   and `grid <w> <h> <state> <cells>` goes to the host when it changes. The host plays it on its transport. After New
+   Game (the smiley, F2, or the host's `newgame`) we dig `xa` safe cells, by posting the clicks a player makes. */
+static HWND hMine, hMinePos; static DWORD mineRepaint;
+#define MINEX 470
+#define MINEY 300
+static int mine_autodig(void)   /* xa<n> in the DNA's globals (3) */
+{
+    const char *g = strchr(dnaText, ';'), *p;
+    if (g) for (p = g; *p; p++) if (p[0] == 'x' && p[1] == 'a' && p[2] >= '0' && p[2] <= '9') return atoi(p + 2);
+    return 3;
+}
+static void mine_show(void)
+{
+    LONG st;
+    RECT was; BOOL first = !hMine;
+    if (!hMine) {
+        hMine = launch("WINMINE.EXE", SW_SHOWNOACTIVATE);
+        if (!hMine) return;
+        st = GetWindowLong(hMine, GWL_STYLE);
+        SetWindowWord(hMine, GWW_HWNDPARENT, (WORD)hMain);   /* owned: above BASILISK 16 */
+        (void)st;
+    }
+    GetWindowRect(hMine, &was);
+    {   POINT o; o.x = MINEX; o.y = MINEY; ClientToScreen(hMain, &o);
+        SetWindowPos(hMine, HWND_TOP, o.x, o.y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW); }
+    if (first) {   /* where it opened (Windows' default place): painted again now, the strips under it included */
+        int r; POINT a, b2; a.x = was.left; a.y = was.top; b2.x = was.right; b2.y = was.bottom;
+        ScreenToClient(hMain, &a); ScreenToClient(hMain, &b2); SetRect(&was, a.x, a.y, b2.x, b2.y);
+        RedrawWindow(hMain, &was, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+        for (r = 0; r < NR; r++) if (rw[r]) paint_now(rw[r]);
+        if (hEnvRec) paint_now(hEnvRec); if (hRecRec) paint_now(hRecRec);
+        mineRepaint = timeGetTime() | 1;   /* and once more when it has settled (it gives back saved screen bits) */
+    }
+}
+static void mine_hide(void) { if (hMine) ShowWindow(hMine, SW_HIDE); }
+static void mine_page(int y0)
+{
+    int w;
+    mine_show();
+    page_add(mklbl("Rows are notes of the scale, columns are steps. Numbers play (1 soft .. 8 loud), flags play loud,", 8, y0 + 4, 16, &w));
+    page_add(mklbl("? holds the note on its left. Click the smiley (or F2) for a new pattern: a few safe cells are dug for you.", 8, y0 + 22, 16, &w));
+    page_add(mklbl("Lose, and the mines' columns jump an octave. Hold a chord: its lowest note is the root.", 8, y0 + 40, 16, &w));
+    if (!hMine) page_add(mk("STATIC", "WINMINE.EXE did not start.", WS_VISIBLE, 8, y0 + 60, 300, 16, -1));
+    hMinePos = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, 8, y0 + 62, 400, 14, -1); page_add(hMinePos);   /* the playhead */
+    SetScrollRange(hMinePos, SB_CTL, 0, 29, FALSE);
+}
+static void mine_step(int col) { if (hMinePos && curTab == 5) SetScrollPos(hMinePos, SB_CTL, col, TRUE); }
+static void mine_dig(int n)   /* n safe cells, clicked as a player clicks */
+{
+    BYTE FAR *ds; int w, h, x, y, k, tries;
+    if (!hMine || n <= 0) return;
+    ds = (BYTE FAR *)MK_FP((WORD)GetWindowWord(hMine, GWW_HINSTANCE), 0);
+    w = *(int FAR *)(ds + 0x3C6); h = *(int FAR *)(ds + 0x3C8);
+    if (w < 1 || w > 30 || h < 1 || h > 24) return;
+    for (k = 0, tries = 0; k < n && tries < 400; tries++) {
+        x = 1 + (int)((timeGetTime() * 7 + tries * 13) % (DWORD)w); y = 1 + (int)((timeGetTime() * 3 + tries * 29) % (DWORD)h);
+        if (ds[0x440 + y * 32 + x] != 0x0F) continue;   /* hidden, no mine */
+        PostMessage(hMine, WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(12 + 16 * (x - 1) + 8, 55 + 16 * (y - 1) + 8));
+        PostMessage(hMine, WM_LBUTTONUP, 0, MAKELPARAM(12 + 16 * (x - 1) + 8, 55 + 16 * (y - 1) + 8));
+        k++;
+    }
+}
+static void mine_poll(void)
+{
+    static DWORD last; static char prev[760]; static char buf[760]; static int wasNew;
+    BYTE FAR *ds; int w, h, x, y, n = 0, hidden = 0, open = 0, lost = 0, blankHidden = 0, si; char *o;
+    if (!hMine || timeGetTime() - last < 50) return;
+    last = timeGetTime();
+    if (mineRepaint && last - mineRepaint > 300) { mineRepaint = 0; RedrawWindow(hMain, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN); }
+    if (!IsWindow(hMine)) { hMine = NULL; return; }
+    ds = (BYTE FAR *)MK_FP((WORD)GetWindowWord(hMine, GWW_HINSTANCE), 0);
+    w = *(int FAR *)(ds + 0x3C6); h = *(int FAR *)(ds + 0x3C8);
+    if (w < 1 || w > 30 || h < 1 || h > 24 || ds[0x440] != 0x10) return;   /* (the guard: the bordered grid) */
+    si = wsprintf(buf, "grid %d %d ", w, h);   /* the state goes at buf[si] */
+    buf[si] = '?'; buf[si + 1] = ' '; o = buf + si + 2;
+    for (y = 1; y <= h; y++) for (x = 1; x <= w; x++) {
+        BYTE c = ds[0x440 + y * 32 + x], lo = c & 0x1F; char ch;
+        if (c & 0x40) { ch = (char)('0' + (lo & 0x0F)); open++; }
+        else if (lo == 0x0E) ch = 'F';
+        else if (lo == 0x0D) ch = '?';
+        else if (lo == 0x0A) ch = '*';
+        else if (lo == 0x0C) { ch = 'X'; lost = 1; }
+        else if (lo == 0x0B) ch = 'x';
+        else { ch = '.'; hidden++; if (!(c & 0x80)) blankHidden++; }
+        *o++ = ch; n++;
+    }
+    *o = 0;
+    buf[si] = lost ? 'l' : (blankHidden == 0 && open > 0) ? 'w' : open == 0 ? 'n' : 'p';
+    if (open == 0 && hidden == w * h) {   /* a new board: dig xa safe cells (once) */
+        if (!wasNew) { wasNew = 1; mine_dig(mine_autodig()); }
+    } else wasNew = 0;
+    if (lstrcmp(buf, prev)) { lstrcpy(prev, buf); say("%s", (LPSTR)buf); }
 }
 /* R: (My Recordings): a new or changed WAV is reported, `rec saved R:\NAME.WAV`, once a second */
 #define NRF 80
@@ -3323,6 +3426,8 @@ static void host_line(char *s)
         }
     }
     else if (!strcmp(s, "user")) rec_user(rest);
+    else if (!strcmp(s, "step")) mine_step(atoi(rest));   /* the sequencer's playhead */
+    else if (!strcmp(s, "newgame") && hMine) PostMessage(hMine, WM_KEYDOWN, VK_F2, 0L);   /* the host's Randomize */
     else if (!strcmp(s, "scala")) {   /* scala ok <steps> <name> | scala error <message> */
         if (!strncmp(rest, "ok ", 3)) { char *n = strchr(rest + 3, ' '), *c; wsprintf(scalaText, "Scala: %s (%d notes)", (LPSTR)(n ? n + 1 : ""), atoi(rest + 3)); for (c = scalaText; *c; c++) if (*c == '_') *c = ' '; }
         else if (!strcmp(rest, "off")) scalaText[0] = 0;

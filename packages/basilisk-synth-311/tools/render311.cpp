@@ -5,6 +5,7 @@
 //             [--key 0-11] [--scale ID] [--use-preset-scale 0|1] [--snap 1-4] [--remap 0|1] [--anchor NOTE]   (the plugin's
 //             Key, Scale, Use Preset Scale, Snap, Remap Keys and Remap Anchor parameters: PRESET-ENGINE-2 18.2)
 //             [--scala FILE.scl]   (an imported tuning, as the Scales page's Scala... button)
+//             [--grid "<w> <h> <state> <cells>"]   (a Minesweeper board for a DNA with x tokens: the sequencer)
 //             [--user-dir DIR]   (My Recordings: index.tsv and the WAVs; their u_ names play, RECORDING.md 4.4)
 //
 // --score: notes as t:note:velocity:duration in seconds (the format of packages/basilisk-synth/tools/batch_render.py).
@@ -24,6 +25,7 @@
 #include "../plugin/V3Alloc.h"
 #include "../plugin/V3Host.h"
 #include "../plugin/UserRec.h"
+#include "../plugin/V3Seq.h"
 
 #include <algorithm>
 #include <chrono>
@@ -343,6 +345,8 @@ int main(int argc, char **argv)
 
     // play: every note stamped kLat DAC samples after its time; the output starts kLat after the anchor
     const uint32_t kLat = 2880, kBlock = 512;
+    b16v3::Sequencer seq;
+    if (a.count("--grid")) seq.setGrid("grid " + a["--grid"]);   // a board as Windows reports it: "<w> <h> <state> <cells>"
     const uint64_t anchor = S->dac_w + 1;
     const double endSec = (ev.empty() ? 0 : ev.back().t) + tail;
     const uint64_t total = (uint64_t)(endSec * 48000) + kLat;   // the first kLat samples are dropped at the end
@@ -354,8 +358,13 @@ int main(int argc, char **argv)
             const MidiEv &m = ev[ei++];
             const uint64_t at = anchor + (uint64_t)(m.t * 48000) + kLat;
             host.capWin = win; host.capRate = rateCap; host.capTape = tapeCap;
+            if (seq.input(m.st, m.a, m.b, d3.g.x)) continue;   // a sequencer DNA: played notes choose its root and notes
             host.midi(m.st, m.a, m.b, at, [&](const char *line, uint64_t when) { M.send(line, ++M.nextId, when); });
         }
+        if (seq.haveGrid())   // the mine-grid sequencer: the transport plays from 0 at --bpm
+            seq.block(host, d3, dna.g.root, anchor + h + kLat, kBlock, true, (double)h / 48000.0 * bpm / 60.0, bpm,
+                      [&](const char *line, uint64_t when) { M.send(line, ++M.nextId, when); },
+                      d3.g.scale >= 0 ? d3.g.scale : (a.count("--scale") ? std::atoi(a["--scale"].c_str()) : 0), d3.g.rootPc);
         host.tick(anchor + blockEnd + kLat, [&](const char *line, uint64_t when) { M.send(line, ++M.nextId, when); });   // grains
         // Windows' `end` replies free recorders, as in the plugin
         std::vector<std::string> ls; M.lines(ls);
