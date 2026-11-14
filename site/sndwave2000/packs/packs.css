@@ -113,7 +113,7 @@ main.wait { min-height: 180vh; }   /* until packs.json is in: the footer stays b
 .mp-lcd .len { font-size: 12px; color: #00a000; font-weight: 400; }
 .mp-scopebox { background: #000; border: 1px solid #000; line-height: 0; display: flex; justify-content: center; }
 .mp-scopebox canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; max-width: 100%; height: auto; }
-.mp-now { background: #fff; border: 1px solid #000; box-shadow: inset 1px 1px 0 var(--lo); padding: 5px 7px; display: flex; flex-direction: column; gap: 1px; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.mp-now { background: #fff; border: 1px solid #000; box-shadow: inset 1px 1px 0 var(--lo); padding: 5px 7px; display: flex; flex-direction: column; gap: 1px; flex: 1 1 auto; min-height: 0; overflow-y: auto; }
 .mp-now .nm { font-size: 14.5px; overflow-wrap: anywhere; }
 .mp-now .st { color: #8a1c1c; }
 .mp-now .rt { font: 700 11px/16px Arial, sans-serif; background: #8a1c1c; color: #fff; padding: 0 4px; }

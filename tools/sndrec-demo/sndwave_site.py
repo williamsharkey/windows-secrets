@@ -85,7 +85,7 @@ def main():
     a = sys.argv[1:]
     site = a.pop(0)
     opt = lambda k, dflt=None: a[a.index(k) + 1] if k in a else dflt
-    cli, prev = opt('--recipe-cli'), opt('--previews')
+    cli, prev, songsdir = opt('--recipe-cli'), opt('--previews'), opt('--songs')
     out = os.path.join(site, 'sndwave2000', 'packs')
     os.makedirs(os.path.join(out, 'data'), exist_ok=True)
     picks = product_presets(site)
@@ -125,8 +125,13 @@ def main():
         tsv_rows[lid] = rows
     alldna = [x['dna'] for x in lib] + [x['dna'] for r in tsv_rows.values() for x in r]
     recs = recipes(cli, alldna) if cli else {}
+    songs = json.load(open(os.path.join(songsdir, 'index.json')))['packs'] if songsdir else {}
     index = []
+    discs = os.path.join(LIB, 'packs', 'out', 'discs', 'DISCS.TSV')   # the released discs: a pack still being made is left out
+    released = {l.split('\t')[0] for l in open(discs) if l.strip() and not l.startswith('#')} if os.path.exists(discs) else None
     for pid, P, W, lid, pdir in entries:
+        if released is not None and lid not in released:
+            print('skip', pid, '(not on a released disc)'); continue
         rows = by_pack.get(lid) or tsv_rows.get(lid)
         if not rows:
             print('skip', pid, '(no presets)'); continue
@@ -198,8 +203,18 @@ def main():
             presets.append(q)
         if not presets:
             print('skip', pid, '(no presets for 3.11)'); continue
+        presets_only = len(presets)
         cats = {}
         for q in presets: cats[q['c']] = cats.get(q['c'], 0) + 1
+        nsongs = 0
+        for g in (songs.get(lid) or {}).get('songs', []):   # the pack's song demos (tools/songrender), before its presets
+            q = {'k': 'song', 's': 'song-' + g['slug'], 'n': g['title'], 'c': 'Songs', 'sec': g.get('seconds'),
+                 'song': {k: g.get(k) for k in ('kind', 'composer', 'arranger', 'source', 'licence', 'proof', 'credits', 'note', 'length', 'bpm', 'presets', 'tracks')}, 'au': {}}
+            for ext in ('ogg', 'mp3'):
+                if g.get(ext) and os.path.exists(os.path.join(songsdir, g[ext])):
+                    d2 = os.path.join(out, 'songs', os.path.dirname(g[ext])); os.makedirs(d2, exist_ok=True)
+                    copy(os.path.join(songsdir, g[ext]), os.path.join(out, 'songs', g[ext])); q['au'][ext] = 'songs/' + g[ext]
+            presets.insert(nsongs, q); nsongs += 1
         json.dump({'id': pid, 'presets': presets}, open(os.path.join(out, 'data', pid + '.json'), 'w'), separators=(',', ':'))
         W = W or {}
         index.append({'id': pid, 'lib': lid, 'title': W.get('title') or P['pack']['title'], 'subtitle': W.get('subtitle') or P['pack'].get('subtitle'),
@@ -210,9 +225,9 @@ def main():
                       'blurb': (W.get('blurb') or T.get('blurb') or '').replace('{count}', str(len(presets))) or None,
                       'intro': [s.replace('{count}', str(len(presets))) for s in T.get('intro', [])],
                       'note': T.get('maker_note', []), 'copyright': T.get('copyright'),
-                      'accent': P.get('look', {}).get('accent'), 'n': len(presets), 'cats': cats,
+                      'accent': P.get('look', {}).get('accent'), 'n': presets_only, 'cats': cats,
                       'fav': sum(1 for q in presets if q.get('fav')), 'picks': sum(1 for q in presets if q.get('rt', 0) >= 6.5),
-                      'art': art, 'files': files, 'booklet': booklet})
+                      'art': art, 'files': files, 'booklet': booklet, 'songs': nsongs})
         print(pid, lid, len(presets), 'presets', files.get('pdf', {}).get('pages'), 'pages', 'web' if W else 'renders')
     index.sort(key=lambda p: -p['n'])
     json.dump({'packs': index, 'total': sum(p['n'] for p in index), 'previews': bool(prev)},

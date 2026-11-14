@@ -26,14 +26,23 @@
       .then(function (d) { d.presets.forEach(function (x) { x.pk = id; }); d.presets.sort(byCat); return d.presets; });
     return DATA[id];
   }
-  function byCat(a, b) { return a.c < b.c ? -1 : a.c > b.c ? 1 : a.n < b.n ? -1 : a.n > b.n ? 1 : 0; }
+  function byCat(a, b) {   // the pack's songs first, then its presets by category and name
+    var sa = a.k === 'song' ? 0 : 1, sb = b.k === 'song' ? 0 : 1;
+    if (sa !== sb) return sa - sb;
+    if (!sa) return 0;
+    return a.c < b.c ? -1 : a.c > b.c ? 1 : a.n < b.n ? -1 : a.n > b.n ? 1 : 0;
+  }
   function audioOf(x) {
+    if (x.k === 'song') return (x.au.ogg && audio.canPlayType('audio/ogg; codecs="opus"')) ? x.au.ogg : (x.au.mp3 || null);
     if (x.a) return x.a;
     if (x.ogg && audio.canPlayType('audio/ogg; codecs="opus"')) return 'audio/' + x.s + '.ogg';
     if (x.mp3) return 'audio/' + x.s + '.mp3';
     return null;
   }
   function recipeLines(x) {
+    if (x.k === 'song') return ['Presets used (' + (x.song.tracks || x.song.presets.length) + ' tracks):'].concat(x.song.presets.map(function (s) {
+      var i = s.indexOf(':'), lid = s.slice(0, i), t = null; PACKS.forEach(function (p) { if (p.lib === lid) t = p.title; });
+      return '  ' + s.slice(i + 1) + '   (' + (t || lid) + ')'; }));
     var r = x.r || {};
     return r.kit ? r.kit.layers.concat(r.kit.pads, r.kit.env ? [r.kit.env] : []) : (r.lines && r.lines.length ? r.lines : [r.one || '']);
   }
@@ -130,7 +139,7 @@
     booklet(x.pk).then(function (B) {
       if (tok !== artToken) return;
       if (!B) { drawCrop(x, tok); return; }
-      var file = B.by_category[x.c], pg = null;
+      var file = x.k === 'song' ? 'cover.png' : B.by_category[x.c], pg = null;
       B.pages.forEach(function (q) { if (q.file === (file || 'cover.png')) pg = q; });
       if (!pg) pg = B.pages[0];
       var url = x.pk + '/booklet/' + pg.file;
@@ -246,11 +255,11 @@
     cur.items = cur.all.filter(visible);
     var last = null, frag = document.createDocumentFragment(), nPlay = 0;
     cur.items.forEach(function (x, i) {
-      var head = cur.pack === ALL ? BY[x.pk].title : x.c;
+      var head = cur.pack === ALL ? BY[x.pk].title : x.c;   // (a song's category is "Songs")
       if (head !== last) { frag.appendChild(el('div', 'mp-cat', esc(head))); last = head; }
       var ok = !!audioOf(x); if (ok) nPlay++;
       var it = el('div', 'mp-it' + (ok ? '' : ' na') + (x === playingX ? ' on' : ''),
-        '<span class="pl" aria-hidden="true"></span><span class="nm">' + esc(x.n) + '</span>' + (x.fav ? '<span class="st" aria-label="favourite">&#9733;</span>' : '') +
+        '<span class="pl" aria-hidden="true"></span><span class="nm">' + esc(x.n) + '</span>' + (x.k === 'song' ? '<span class="rt">' + esc(x.song.length || fmt(x.sec)) + '</span>' : '') + (x.fav ? '<span class="st" aria-label="favourite">&#9733;</span>' : '') +
         (x.fl && x.fl.length ? '<span class="flg" title="' + esc(x.fl.join(', ')) + '">!</span>' : '') +
         (x.rt ? '<span class="rt">' + x.rt + '</span>' : '') + (ok ? '' : '<span class="soon">preview coming</span>'));
       it.id = 'mp-i' + i; it.setAttribute('role', 'option'); it.setAttribute('aria-selected', 'false'); it.dataset.i = i;
@@ -258,7 +267,8 @@
     });
     listEl.appendChild(frag);
     if (!cur.items.length) listEl.appendChild(el('div', 'mp-cat', 'No presets match.'));
-    countEl.textContent = cur.items.length + ' presets, ' + nPlay + ' with previews';
+    var ns = cur.items.filter(function (x) { return x.k === 'song'; }).length;
+    countEl.textContent = (ns ? ns + (ns === 1 ? ' song, ' : ' songs, ') : '') + (cur.items.length - ns) + ' presets';
     var i = playingX ? cur.items.indexOf(playingX) : -1;
     if (i < 0) for (var j = 0; j < cur.items.length; j++) if (audioOf(cur.items[j])) { i = j; break; }   // else the first with a preview
     select(i >= 0 ? i : (cur.items.length ? 0 : -1), false);
@@ -284,17 +294,40 @@
     if (!x) return;
     shown = x;
     var p = BY[x.pk], f = p.files;
+    if (x.k === 'song') return songShow(x, p, f);
+    $('mp-cdna').hidden = false;
     $('mp-now').innerHTML = '<b class="nm">' + esc(x.n) + (x.fav ? ' <span class="st" title="An owner\'s favourite">&#9733;</span>' : '') + (x.rt ? ' <span class="rt" title="The owner\'s rating">' + x.rt + '/10</span>' : '') + '</b>' +
       '<span>' + esc(x.c) + (x.ph ? ', plays ' + esc(x.ph) : '') + '</span>' +
       '<span><a href="#' + p.id + '" class="pk">' + esc(p.title) + '</a></span><span class="mk">' + esc(p.maker.name) + '</span>' +
       (x.fl && x.fl.length ? '<span class="fl" title="From the check on the release build">Note: ' + esc(x.fl.join(', ')) + '</span>' : '');
-    $('mp-recipe').textContent = recipeLines(x).join('\n');
+    $('mp-recipe').textContent = recipeLines(x).join('\n'); $('mp-recipe').style.whiteSpace = '';
     $('mp-links').innerHTML = (f.pdf ? '<a href="' + p.id + '/' + esc(f.pdf.name) + '" target="_blank" rel="noopener">Manual</a>' : '') +
       (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + (f.iso ? '<a href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image</a>' : '') + '<a href="#pack" class="about">About this pack</a>';
     $('mp-title').textContent = 'SNDWAVE2000 Media Player - ' + x.n.toUpperCase();
     drawArt(x);
     if (!audioOf(x)) { tEl.textContent = '--:--.-'; lenEl.textContent = 'preview coming'; }
     else if (x !== playingX) { tEl.textContent = fmt(0); lenEl.textContent = fmt(x.sec || 0); }
+  }
+  function links(p, f) {
+    $('mp-links').innerHTML = (f.pdf ? '<a href="' + p.id + '/' + esc(f.pdf.name) + '" target="_blank" rel="noopener">Manual</a>' : '') +
+      (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + (f.iso ? '<a href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image</a>' : '') + '<a href="#pack" class="about">About this pack</a>';
+  }
+  // a song: its credits as given (composer, arranger, source, licence, proof), the presets it plays
+  function songShow(x, p, f) {
+    var g = x.song, url = function (u, t) { return u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(t || u) + '</a>' : ''; };
+    $('mp-cdna').hidden = true;
+    $('mp-now').innerHTML = '<b class="nm">' + esc(x.n) + '</b>' +
+      '<span>Song, ' + esc(g.length || fmt(x.sec)) + (g.bpm ? ', ' + Math.round(g.bpm) + ' bpm' : '') + '</span>' +
+      (g.composer ? '<span class="mk">Music: ' + esc(g.composer) + '</span>' : '') + (g.arranger ? '<span class="mk">Arranged by ' + esc(g.arranger) + '</span>' : '') +
+      (g.source ? '<span class="mk">Source: ' + esc(g.source) + '</span>' : '') + (g.licence ? '<span class="mk">Licence: ' + esc(g.licence) + '</span>' : '') +
+      (g.proof ? '<span class="mk">' + url(g.proof, 'Source page') + '</span>' : '') + (g.credits ? '<span class="mk">' + esc(g.credits) + '</span>' : '') +
+      '<span><a href="#' + p.id + '" class="pk">' + esc(p.title) + '</a></span>';
+    $('mp-recipe').textContent = (g.note ? g.note + '\n\n' : '') + recipeLines(x).join('\n');
+    $('mp-recipe').style.whiteSpace = 'pre-wrap';
+    links(p, f);
+    $('mp-title').textContent = 'SNDWAVE2000 Media Player - ' + x.n.toUpperCase();
+    drawArt(x);
+    if (x !== playingX) { tEl.textContent = fmt(0); lenEl.textContent = fmt(x.sec || 0); }
   }
   $('mp-cdna').addEventListener('click', function () { if (shown) copy(shown.d, this); });
   $('mp-crec').addEventListener('click', function () { if (shown) copy(recipeLines(shown).join('\n'), this); });
@@ -502,7 +535,7 @@
     var cats = Object.keys(p.cats).sort(function (x, y) { return p.cats[y] - p.cats[x]; });
     a.appendChild(el('b', null, esc(p.title)));
     a.appendChild(el('span', 'mk', esc(p.maker.name) + '<br>' + esc(p.label) + ' &middot; ' + esc(p.year)));
-    a.appendChild(el('span', 'ct', p.n + ' presets' + (p.fav ? ' &middot; <span class="star" aria-label="favourites">&#9733;</span> ' + p.fav : '') +
+    a.appendChild(el('span', 'ct', p.n + ' presets' + (p.songs ? ' &middot; ' + p.songs + (p.songs === 1 ? ' song' : ' songs') : '') + (p.fav ? ' &middot; <span class="star" aria-label="favourites">&#9733;</span> ' + p.fav : '') +
       '<br><i>' + esc(cats.slice(0, 5).join(', ')) + (cats.length > 5 ? ' &hellip;' : '') + '</i>'));
     return a;
   }
