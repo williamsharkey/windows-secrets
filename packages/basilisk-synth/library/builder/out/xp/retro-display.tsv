@@ -4,23 +4,30 @@ Bass	Quiet End	bass_guitar_gs@t2500]E#11U2~11/xprecycle#5L30;A3D239S52R128V72K44
 Bass	Radiant Sub	ems_ks_wire_c3E<#11U2~4/organ_pedal_25@t3000]@t300[#5T-24L63;A5D261S57R126V74K36G-10
 Bass	Remote Basement	ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+<#8Ja0,100.80,40.110,0;A0D400S0R40V80K35G6
 Bass	Tokyo Slap	xpding@20]<<+++C@50X#5/balloon<#5FL50Ja0,100.32,33.249,0/hwfail#6T-25L68;A0D350S40R80V95K35G1
+Bass	Urban Floor	contrabass_pizz_e1>#11U2~10/hwfail#5T-20L54;A3D298S72R171V78K40G-3
 Bass	Western Cellar	contrabass_sus_d1@t2500]#11H0,12/key_press_down#5FL38;A0D436S69R64V94K26G-4
 Brass	Azure Chamber	startup@t1690[#14H0,-12U3~11/xpding#2T-32L53;A87S98R1238V93K39
 Brass	Coral Section	contrabass_sus_d1@t7500]@t200[>>H0,-12U2~12;A409S96R1162V86K50G-14
+Brass	Digital Swell	startup@t1690[E#12U3~17Q-67/batlow#4T-9L31;A338S97R964V98K39G3
 Brass	Lagoon Quartet	violin_section_sus_c4#10U2~8/tada<#6T8L30;A250S90R1200K60G-5
+Brass	Night Window Strings	violin_section_sus_c4#10U2~8/logon<#6T4L30;A250S90R1200K60G-4
 Brass	Silver Bows	xpding#12U3~12/organ_pedal_25@t3000]@t300[#4T-1L56;A89S88R1411V74K59G-4
 Brass	Waxed Orchestra	tadaxp>U3~11;A293S98R401V84K60G4
 Brass	Western Violins	violin_section_sus_c4@t7500]@t200[#12U3~15/xprecycle#4FL26;A238S88R605V92K60G-8
 FX	Azure Descent	xpdingR#5/hwfail#5T-1L50/glass_pingE#6T-14L37O98Q47;A6S100R1166V94K59G5
 FX	Dial Swoosh	xprecycle<RE#6/minimize<#6;A200R900G20
 FX	Laser Grid Sweep	restore<RE#6/minimize<#6;A200R900G22
+FX	Rapid Lift	tadaxpR#8/air_duster@t2000]@t500[#8FL14;A69S100R1995V81K48G11
+FX	White Sweep	minimize<<#12U3~21/wind_chime_single@t2000]E#4T-31L15O166Q-20;A120S100R1941V98K4G20
 Keys	Cedar Upright	logon>#8U2~3/xpding#4T-3L60Q6/xpringout#4T-1L53Q38;A3D2398S12R161V71K56G4
 Keys	Dial Chords	default#6/xpding@25]#6T4L60;A0D2200S20R700K87G6
+Keys	Digital Hammers	print@30]<E#8/default@20]<<#6T-5L40;A20D2000S40R900K46G14
 Keys	Faded Postcard Keys	xpding@30]<E#5/default@20]<<#5T-4L40/glass_ping#6T-33L26Q-7;A20D2000S40R900K47G6
 Keys	Glass Study	piano_upright_cs4E#5/glockenspiel_c6#5T-4L19Q-17/xpding#6T2L42Q-22;A3D1298S41R600V95K61G-3
 Keys	Humid Felt	dingxpE<<#11U2~5/hwfail#5T7L67Q4;A3D1416S4R481V91K55
 Keys	Lunar Ballad	piano_upright_cs3+>#5/default#5T10L23O11Q-34/balloon#6FL19;A5D1863S24R268V89K61G-4
 Keys	Office Etude	logon>#11U2~3/crystal_bell_bb5@t2000]#5T-14L23Q-4;A0D2401S24R176V74K56G1
+Keys	Office Study	piano_upright_cs4#8/xpding#8T14L51Q15;A3D1011S27R182V96K61G-3
 Keys	Rusty Upright	defaultE#5/balloon#5FL26/default#6T19L29O14Q-1;A5D471S4R189V76K63G9
 Keys	Satin Lounge	piano_upright_cs5+#8/xpding#8T14L25Q18;A1D939S5R465V91K73G-6
 Keys	Second Ballad	dingxp+<<#5/kalimba_c4@t1500]#5T7L54Q34/dingxp#6L16Q-14;A5D1112S27R453V84K55G2
@@ -38,6 +45,8 @@ Lead	Sun Glare Lead	print@10[@60]@0CP@0CP#10U2~14;A40R500K82G13
 Pad	Civic Glow	xpringout@t349]@t99[@0CP@0CP@0CP<#11U2~17/chimes>#5T-3L18O338Q-59;A277D438S79R997V80K57G6
 Pad	Inland Tide	logon@20[@60]<E#10U2~12;A800S95R2500K56G17
 Pad	Kinetic Veil	violin_section_sus_c4@t7500]@t300[E#8U2~9/chimesRE#4T5L25O346Q20/contrabass_sus_d1@t3000]@t200[+#4T22L55;A1569D677S94R1388V91K60G-6
+Pad	Laser Glow	xpringout@t349]@t99[@0CP@0CP@0CPEE<#10U3~12/dingxp>#3T-22L33O228Q12/xpding#3T-14L39Q26;A579D17S72R2592V96K57G8
+Pad	Mild Pad	violin_section_sus_c4@t7500]@t300[E#11U4~16Ja0,0.1464,100.1968,83/dingxpR>#3T-12L18O314Q17/xpding>#2T8L33O110Q35;A604D79S75R2903V74K60G-11
 Pad	Northern Bloom	startup@10[#8U2~10/print@10[@50]#6T-2U2~8L35;A500S90R1500K56
 Pad	Shaded Cloud	choir_aah@t6000]@t300[E<H0,12U3~13;A1533D548S88R1177V77K57G-7
 Perc	Long Block	logon<;D92S0R47V83K32G21

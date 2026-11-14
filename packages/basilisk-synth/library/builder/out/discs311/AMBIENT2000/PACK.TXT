@@ -1,0 +1,16 @@
+Ambient Screen Saver Collection
+===============================
+
+Id: screen-saver
+Title: Ambient Screen Saver Collection
+Version: 2000
+Author: Corvane Business Systems, Inc.
+Date: 1999-11-29
+Presets: 64
+Presets311: 64
+PresetsXP: 60
+Favourites: 1
+Description: Protects your monitor and your nervous system.
+
+Favourites (the owner's picks): FAVORITE\
+  Frosted Peal (Bell)

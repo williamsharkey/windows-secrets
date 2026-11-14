@@ -24,6 +24,30 @@ The builder only writes `library/builder/out/`; it does not touch either plugin.
 - v3: `v3: true` presets use only W and Y (available in BASILISK 16 at main 4bda617). Ship them in BASILISK 16
   1.3.0. XP gets them when its v3 phase lands; until then they are left out of `out/xp/`.
 
+## Disc images for the Library tab (PRESET-ENGINE-2.md 16)
+
+`make_discs.py` writes `out/discs311/` for BASILISK 16. `--edition xp` writes `out/discsxp/`, which holds only
+the XP-shipping presets and their XP DNA.
+
+| File | Contents |
+|---|---|
+| `<LABEL>.ISO` | ISO 9660 level 1 (8.3 names, for DOSBox Pure `imgmount -t iso`) + Joliet (long names); volume id = LABEL |
+| `<LABEL>/` | the same files as a folder (for a DOSBox `mount` or a zip) |
+| `DISCS.TSV` | one line per disc: id, label, iso, title, presets, presets_xp, favourites |
+
+On each disc:
+- `PACK.INF` (`[Pack]` Id, Title, Version, Author, Date, Presets, PresetsXP, Favourites, Description). `PACK.TXT` is
+  the same as text, for Notepad, plus the favourites list.
+- `AUTORUN.INF` (label).
+- `PRESETS.TSV` (category, name, DNA, pack, editions, rating, verdict, file). Readers that take the first three
+  columns see the plugins' preset table.
+- `LIBRARY.TSV` (header only: the packs use the built-in sounds and drive L:).
+- `<CATEGORY>\<NAME>.BSP` (one CRLF line, the DNA) and `FAVORITE\<NAME>.BSP`: the owner's keeps and presets rated
+  6.5 or more, from `builder/ratings/`.
+
+Pack ids, volume labels, titles, authors and dates follow the packs lane's personas (`library/packs/*/persona.json`).
+Their retail discs (`library/packs/out/*.ISO`, with manuals and art) are the same packs.
+
 ## Steps
 
 1. **As disc packs (pack-plan 1.1):** give `out/<edition>/<pack>.tsv` to `packs/make_packs.py` as the pack's

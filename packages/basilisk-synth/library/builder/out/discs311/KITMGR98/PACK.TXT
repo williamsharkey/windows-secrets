@@ -1,0 +1,15 @@
+Kit Manager 98
+==============
+
+Id: kit-manager
+Title: Kit Manager 98
+Version: 1.02
+Author: Fennwick Systems Corporation
+Date: 1998-08-24
+Presets: 39
+Presets311: 27
+PresetsXP: 39
+Favourites: 0
+Description: Map any drum to any key. Restart not required.
+
+Favourites (the owner's picks): FAVORITE\

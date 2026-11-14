@@ -1,0 +1,16 @@
+DIAGNOSTICS
+===========
+
+Id: diagnostics
+Title: DIAGNOSTICS
+Version: 1.0
+Author: Wendmoor Center for Computer Music
+Date: 1994-05-20
+Presets: 50
+Presets311: 50
+PresetsXP: 43
+Favourites: 1
+Description: Finds errors. Plays them back in time.
+
+Favourites (the owner's picks): FAVORITE\
+  Molten Glock (Bell)

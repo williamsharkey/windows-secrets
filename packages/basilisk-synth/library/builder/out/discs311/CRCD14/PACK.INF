@@ -1,0 +1,11 @@
+[Pack]
+Id=beat-management
+Title=Beat Management Console
+Version=1.0
+Author=Computer Rhythm magazine
+Date=1998-11-26
+Presets=90
+Presets311=90
+PresetsXP=75
+Favourites=0
+Description=Centralised administration of the boom and the bap.

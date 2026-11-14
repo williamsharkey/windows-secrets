@@ -60,12 +60,19 @@ def main():
     import shutil
     shutil.rmtree(os.path.join(OUT, 'vstpreset'), ignore_errors=True)
     os.makedirs(os.path.join(OUT, 'w311'), exist_ok=True); os.makedirs(os.path.join(OUT, 'xp'), exist_ok=True)
+    from make_discs import ratings
+    RAT = ratings()                                  # the owner's review exports (builder/ratings), by slug
     # XP: the presets checked on the XP machine (xpcheck.py) that lose a quarter of their notes or fall silent there
     # ship to BASILISK 16 only; a measured level difference becomes the XP row's own G (peaks kept under -1 dBFS)
     from common import DNA
     for p in L:
         p['xp_dna'] = p['canonical']
-        xc = p.get('xp_check')
+        # the XP verdict: the 1.2.3 candidate's check where it ran (XP's last fixed build); otherwise 1.2.1's, because
+        # 1.2.2 sent notes to the default sound (its regression), so its results say nothing about the preset
+        hs = {h.get('xpver', '1.2.1'): h for h in p.get('xp_check_history') or []}
+        if p.get('xp_check'): hs[p['xp_check'].get('xpver', '1.2.1')] = p['xp_check']
+        xc = hs.get('1.2.3c') or hs.get('1.2.1')
+        p['xp_check_effective'] = xc
         if not xc or 'XP' not in p['ships']: continue
         # the coordinator's rule for 1.2.1 (streaming gaps until 1.2.2): only a silent take, missing notes or layers, or the
         # wrong pitch keeps a preset off XP; levels are not changed from an XP 1.2.1 render
@@ -107,8 +114,11 @@ def main():
                              score=p['score'], novelty=p['novelty'], gain_db=p['G'], phrase=p['phrase'],
                              phrase_lufs=p.get('phrase_lufs'), phrase_peak_dbfs=p.get('phrase_peak'),
                              rendered_by='render311 (BASILISK 16, Windows 3.11 machine, main 4bda617)',
-                             xp_check=p.get('xp_check'), xp_dna=p['xp_dna'] if 'XP' in p['ships'] else None,
-                             xp_excluded=p.get('xp_excluded'), slug=p['slug']))
+                             xp_check=p.get('xp_check_effective'), xp_checks={k: v for k, v in
+                                 ({h.get('xpver', '1.2.1'): h for h in (p.get('xp_check_history') or []) + ([p['xp_check']] if p.get('xp_check') else [])}).items()}, xp_dna=p['xp_dna'] if 'XP' in p['ships'] else None,
+                             xp_excluded=p.get('xp_excluded'), xp_check_history=p.get('xp_check_history'), slug=p['slug'],
+                             rating=RAT.get(p['slug'], {}).get('rating'), verdict=RAT.get(p['slug'], {}).get('verdict'),
+                             favourite=bool(RAT.get(p['slug'], {}).get('verdict') == 'keep' or (RAT.get(p['slug'], {}).get('rating') or 0) >= 6.5)))
         # .vstpreset
         for plug, cfg in PLUGINS.items():
             sel = ps if plug == 'BASILISK 16' else [p for p in ps if 'XP' in p['ships']]

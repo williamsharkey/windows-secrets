@@ -1,0 +1,20 @@
+Leisure Accessories Pack
+========================
+
+Id: leisure
+Title: Leisure Accessories Pack
+Version: 3.0
+Author: Makai Lounge Music Services, Ltd.
+Date: 1996-03-18
+Presets: 39
+Presets311: 39
+PresetsXP: 39
+Favourites: 5
+Description: For the executive lounge.
+
+Favourites (the owner's picks): FAVORITE\
+  Crystal Recital (Keys)
+  Honey Study (Keys)
+  Late Toll (Mallet)
+  Lunar Glock (Mallet)
+  Noble Steeple (Mallet)

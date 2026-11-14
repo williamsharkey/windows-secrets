@@ -1,0 +1,40 @@
+Trance Connectivity Kit 2000
+============================
+
+Id: trance-connectivity
+Title: Trance Connectivity Kit 2000
+Version: 2.0
+Author: StarLite Productions
+Date: 1999-07-04
+Presets: 56
+Presets311: 56
+PresetsXP: 47
+Favourites: 25
+Description: Connects your hands to the ceiling.
+
+Favourites (the owner's picks): FAVORITE\
+  Waxed Weight (Bass)
+  Brushed Herald (Chord)
+  Paper Brass (Chord)
+  Dusk Burst (FX)
+  Midnight Riser (FX)
+  Plaza Riser (FX)
+  Breakdown Grand (Keys)
+  Hollow Salon (Keys)
+  Ocean Parlour (Keys)
+  Cedar Solo (Lead)
+  Frosted Lead (Lead)
+  Gentle Call (Lead)
+  Lucid Pilot (Lead)
+  Neon Solo (Lead)
+  Clear Veil (Pad)
+  Grey Mist (Pad)
+  Misty Veil (Pad)
+  Remote Veil (Pad)
+  Basement Pick (Pluck)
+  Broadcast Harp (Pluck)
+  Echo Plink (Pluck)
+  Echo Pluck 138 (Pluck)
+  Quiet Plink (Pluck)
+  Signal Plink (Pluck)
+  Tinted Pluck (Pluck)

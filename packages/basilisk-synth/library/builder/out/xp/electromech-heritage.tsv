@@ -12,12 +12,10 @@ Bell	Typewriter Bell Keys	em_typewriter_bell_b-#5Ja0,100.272,74.1094,3/ui_glass_
 Drone	Drum Memory Drone	ems_drum_memory#10Ja0,0.300,100;R900V50K56G-8
 Drone	Electric Bell Drone	em_electric_bell_loopE@0CPJa0,0.1459,100.3271,66;R500V50K84G-7
 Drone	Gear Whine Pad	ems_motor_whine_a4#16U4~18Ja0,0.800,100;R1500V40K69G-20
-Drone	Motor Room	ems_motor_drone_c3#10U2~10Ja0,0.600,100/ems_tty_motor#6FL35Ja0,0.800,100;R1200V40K48G-11
 FX	Digital Trunk	emh_modem_crush#8FQ-30/ems_crushed_line_noise#8FL60Q30;R400V60G-3
 FX	Newsroom	ems_tty_burst#8FQ-40Ja0,0.200,100/em_tty_machine_loop#8FL70Q40;R800V60G-4
 FX	Party Line	ems_crosstalk#6F/ems_line_crackle#5FL80/ems_mains_hum#5L40;R500V50K35G-3m1=30m11L20,200m12L20,200
 FX	Relay Rain	ems_relay_rack_chatter#8U2~30FQ-50/em_relays_fast_loop#8FL80Q50;R600V70m1=0m11Q-100,100m12Q100,-100
-Keys	Sounder Keys	ems_fm_sounder_c4#8/glockenspiel_c6#8L34O21Q5;R305V90G1
 Keys	Sunlit Parlour	ems_relay_mallet_c5#4/ems_relay_mallet_c5#4T7O133Q-40/ems_relay_mallet_c5#4T12O267Q40/ems_tabulator_cycle#4FL55;R250V90K72G-11
 Lead	CSIRAC Pulse	ems_csirac_pulse_e4#16;A2R80V60K64G-3
 Lead	Ferranti Hoot	ems_ferranti_hoot_c4Ja0,100.563,54.1420,25;A3R60V60G-5

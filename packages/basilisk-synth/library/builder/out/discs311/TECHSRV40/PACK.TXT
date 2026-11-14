@@ -1,0 +1,46 @@
+Techno Server 4.0
+=================
+
+Id: techno-server
+Title: Techno Server 4.0
+Version: 4.0
+Author: Jadewave Electronics Co., Ltd.
+Date: 1997-03-18
+Presets: 70
+Presets311: 70
+PresetsXP: 63
+Favourites: 31
+Description: Mission-critical repetition, now with dub delay.
+
+Favourites (the owner's picks): FAVORITE\
+  Wired Foundation (Bass)
+  Brass Launch (FX)
+  Jade Uplink (FX)
+  Rose Sweep (FX)
+  Steady Surge (FX)
+  Transmission Voice (FX)
+  Tropic Swoosh (FX)
+  Soft Pilot (Lead)
+  Azure Field (Pad)
+  Cold Canopy (Pad)
+  Cold Wash (Pad)
+  Electric Haze (Pad)
+  Fog Chord Pad (Pad)
+  Motor City Strings (Pad)
+  Northern Haze (Pad)
+  Urban Mist (Pad)
+  Balloon Blip Tom (Perc)
+  Coded Click (Perc)
+  Copper Hat (Perc)
+  Coral Click (Perc)
+  Early Block (Perc)
+  Hotel Snap (Perc)
+  Relay Wood Tick (Perc)
+  Vinyl Shaker (Perc)
+  Washed Snap (Perc)
+  Slow Section (Stab)
+  Slow Stab (Stab)
+  Dusk Texture (Texture)
+  Humid Grain (Texture)
+  Marble Current (Texture)
+  Opal Rain (Texture)

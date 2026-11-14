@@ -13,7 +13,6 @@ Bell	Sunday Chimes	glockenspiel_g4<#5/print#5T-3L30Q10/marimba_c4#6T-5L54Q33;A0D
 Bell	Tinted Carillon	dingEE<<#8/crystal_glass_tapEE#8T-9L20O381Q-51;A2D2348S9R646V86K55G4
 Bell	Water Marimba	marimba_c4#10/drop_single_a#6FL40;A0R900K60G1
 Bell	White Glock	singing_bowl_soft_hit@t6000]H0,7;A0D2362S20R997V83K51G-10
-Bell	Winter Peal	dingxp<<#12H0,12,24/default@t300]#4T11L14O8Q-8;A5D2421S7R607V87K55G5
 Bell	Yellow Gong	dingE<<#5/print#5T-8L13Q-25/mouse_click@t150]#6FL37;A1D1591S12R565V73K55G3
 Drone	Northern Dormant	singing_bowl_long@t12000]@t200[<U3~11;A1135S100R1548V70K61G2
 Drone	Urban Reservoir	singing_bowl_long@t12000]@t200[<#14H0,7U3~9/air_duster@t2000]@t500[#2FL31;A1085S100R3432V96K61G-5
@@ -33,7 +32,6 @@ Pad	Lagoon Atrium	logon@t210[EE#8U2~10/kalimba_c4@t1500]#4T-28L27Q15/dingxpE#4T-
 Pad	Late Canopy	ringout@t328]@t93[@0CP@0CP@0CPU4~13;A440D282S75R1023V72K69G-11
 Pad	Midnight Halo	flute_vib_c5@t7500]@t400[<U3~11;A972D758S75R1986V74K60G-8
 Pad	Opal Bloom	organ_pipe_open_49@t6000]@t300[E<C@50X#8U2~10/batlow#4T12L33/chimesxpR#4T5L39O384Q6;A323D134S91R1283V83K60G-10
-Pad	Opal Canopy	xpnotifyE<#10U3~10/crystal_glass_tapEE#3T-1L34O176Q26/xpding#3T11L65Q25;A526D328S99R1853V88K58G9
 Pad	Opal Veil	logon<<U3~7;A1500S90R4000K44G10
 Pad	Paper Canopy	shutdown@t260[E>>#8U2~9/soft_wind@t4000]@t1000[#4L10/chimesxpEE#4T8L27O283Q-40;A577D403S74R2582V97K63G4
 Pad	Quiet Drift	crystal_bowl_ab4@t7000]@t100[<#8U2~6/ringout#4T-13L29Q37/dingxpR>#4T-23L19O199Q-15;A281D231S73R1665V97K56G1

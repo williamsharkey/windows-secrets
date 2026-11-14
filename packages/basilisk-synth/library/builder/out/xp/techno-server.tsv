@@ -2,11 +2,14 @@
 Bass	Dot Sub	ringout@20[@40]@0CP@0CP@0CP<<@15]U2~4;A0S88R40V90K45G-2
 Bass	Felt Sub	ringout@20[@40]@0CP@0CP@0CP<<#8;A30D0S100R250V60K45G-2
 Bass	Late Line	contrabass_pizz_e1;A1D242S39R78V84K28G2
+Bass	Mild Bottom	cello_section_sus_g1@t2500]+#11H0,12/xpstart#5FL35;A2D301S29R148V83K31G-1
+Bass	Mild Rumble	xpding+#8/xpstart>#8FL34;A5D718S20R51V74K59G7
 Bass	Quiet Sub	tuba_sus_f1@t2000];A1D200S76R77V95K29G-2
 Bass	Urban Thump	hwfail<Q24;A0D561S23R89V86K36G11
 Bass	Wired Foundation	harp_a2@t2500]EH0,-12Q-29;A2D334S21R55V71K45G-1
 FX	Brass Launch	modem_dialup_a@t9000]@t3000[R#5/hwfail#5L40/chimes#6L43;A8S100R807V82G4
 FX	Copper Dive	restoreEE#8;A0R1500K55G24
+FX	Crystal Riser	shutdown<#11U2~7Q20/chimesE#5T-16L31O75Q-49;A13S100R822V78K27
 FX	Jade Uplink	startupRE#8/contrabass_sus_d1@t3000]@t200[#8T6L55;A635S100R515V93K44G3
 FX	Rose Sweep	whoosh_floating_slow@t6000]CRP;A60S100R1658V78
 FX	Spring Tank Hit	ems_ks_spring_g3EE#8;A0R1500K55G4
@@ -25,15 +28,21 @@ Pad	Cold Wash	choir_aah@t6000]@t300[#6U2~10/hwfail#3T9L65/defaultR#3T30L39O263Q1
 Pad	Electric Haze	singing_bowl_long@t8000]@t200[R<#8U2~8/defaultEE#4T22L16O383Q-55/batlow#4T13L58;A319D771S91R2276V87K61G-12
 Pad	Fog Chord Pad	logon<E-C@50XU3~12;A1200S90R3000K44G8
 Pad	Global Glow	cello_section_sus_c3@t7500]@t300[<#11U2~8/chimesRE#5T-19L38O182Q-8;A561D463S80R982V91K36G-7
+Pad	Motor City Strings	startup@20[@50]<C@50X#12U3~14/logon<@20[#4L35;A600S90R1500K56G-3
+Pad	Northern Haze	startup<EH0,12U3~12Ja0,0.969,100.2290,77;A1200S90R3000K44G-2
 Pad	Quiet Wash	ringout@t328]@t93[@0CP@0CP@0CPEU3~12;A287D639S80R2148V81K69G-8
+Pad	Urban Mist	flute_vib_c5@t7500]@t400[#11U2~8/chimesxpR>#5T12L19O49Q0;A745D851S92R1109V90K72G-3
 Perc	Balloon Blip Tom	balloon<E#8/organ_pedal_25@t3000]@t300[#8L39;A0R80V100K69G7
 Perc	Coded Click	light_switch_onF;D149S0R94V83G2
 Perc	Copper Hat	startFQ47Ja0,100.99,56.345,0;D203S0R55V80G12
 Perc	Coral Click	ding@t120]#8F/em_metal_click_a>#8FL32;D85S0R42V86G11
 Perc	Early Block	popup#8F/xprecycle#8L34;D63S0R123V72G17
+Perc	Indigo Clap	logon>#8FQ-15/air_duster@t2000]@t500[#8FL32;D246S0R81V80G11
 Perc	Menu Click Perc	menuE#8/organ_pedal_25@t3000]@t300[#8L25;A0R40V100K60G11
 Perc	Relay Wood Tick	ems_relay_pull#8F/infobar#8;A0R50V100K67G-4
 Perc	Rural Tick	ems_relay_pull#8F/ding#8;A0R50V100K67G-2
+Perc	Tinted Tick	xprecycle@t300]#8/contrabass_sus_d1@t3000]@t200[#8L48;D151S0R83V70G9
+Perc	Vinyl Shaker	start#8F/batlow#8L28;D98S0R83V80G12
 Perc	Western Clap	key_press_down+F;D60S0R106V98G8
 Perc	Woven Tap	xpding#8F/start#8FL35;D100S0R147V83G12
 Stab	Eastside Minor Stab	default@15]<#8H0,3,7,10/default@15]<<#4H0,7L60;A0D350S0R180V85K63G5
@@ -42,6 +51,7 @@ Stab	Lattice Hit	tadaxp@t130[>#8/relay_click>#8FL42;A6D201S89R275V95K60G3
 Stab	Molten Salute	chord@20]E#4H0,3,7,10/xpding@20]EE#4T-2H0,3,7,10L45O375Q-50/xpding@20]EE<>#4T-2H0,3,7,10L28O750Q50/xpding@20]EEE<>#4T-2H0,3,7,10L16O1125Q-30;A0D400S10R1200V70K58m32L0,90m33L0,56m34L0,32m3=50K59
 Stab	One-Finger Dub Chord	ding@10]<<EH0,3,7;A5D200S0R150V80K55G5
 Stab	Second Accent	tada+#12H0,12U3~11/key_press_down#2FL16/minimize#2L31;A10D298S18R251V78K64G-6
+Stab	Slow Section	critstop@t40[+#11U2~5/organ_pedal_25@t3000]@t300[#5T-24L50;A25D276S46R312V96K36G-5
 Stab	Washed Fanfare	chord@15]<#11H0,3,7,10Q18/default@15]<<#5T6H0,7L60;A0D350S6R180V84K69G3
 Stab	Waxed Horns	logon+>Q-41;A4D233S31R233V94K56G12
 Stab	Zinc Section	xpding@20]EC@50X#4H0,3,7,10U1~8Q-15/xpding@20]EE#4H0,3,7,10L45O375Q-50/xpding@20]EE<>#4H0,3,7,10L28O750Q50/xpding@20]EE<>#4H0,3,7,10L16O1125Q-30;A60D400S85R900V70G6m32L0,90m33L0,56m34L0,32m3=50K59
@@ -50,4 +60,5 @@ Texture	Humid Grain	creek_loop@t10000]@t1000[#8F/chimes#8L22;A603S100R1858V99G4
 Texture	Marble Current	startupEF;A360S100R622V85G4
 Texture	Opal Rain	koshi_wind_chime@t10000]<#5F/chimesxp#5L53/chimesxp#6L25;A1167S100R1217V78G-1
 Texture	Shaded Weather	em_relays_fast_loopEF;A187S100R1357V92G2
+Texture	Tape Hiss Fog	xprecycle<<<EE#6F/recycle<<<E#4FL60;A1500S100R3000G20
 Texture	Western Traffic	xpstart#5/xpding#5L41/organ_pedal_25@t3000]@t300[#6L55;A727S100R700V83G3

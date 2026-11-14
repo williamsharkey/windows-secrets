@@ -6,6 +6,7 @@ Bass	Broadcast Groove	cello_section_sus_g1@t2500]+>#8/ems_relay_release>#8FL39;A
 Bass	Brushed Thump	contrabass_sus_d1@t2500]#11U2~4/xpding#5T-33L54;A1D358S77R98V95K26G-6
 Bass	Cathode Sub	contrabass_pizz_e1>;A5D668S31R105V81K40G2
 Bass	Cold Basement	piano_upright_cs2@t3000]#11U2~5/hwfail#5T-23L50;A2D477S32R145V84K37G-6
+Bass	Dusk Anchor	hwfailE<#8/batlow#8T-12L34;A3D393S34R104V84K36G5
 Bass	Echo Sub	batlowH0,-12;A5D548S74R62V90K36G-3
 Bass	Error Growl	error@5]+++C@2XC@4X<<<@0CP@0CP#16U2~20;A0R100K51G-6
 Bass	Flat Weight	tuba_sus_f1@t2000]>#8/menu#8FL44;A2D662S60R122V71K41G-3
@@ -14,6 +15,7 @@ Bass	Granite Bottom	ringout<<#13H0,12U2~11/xprecycle#3FL18Ja0,100.134,30.800,0;A
 Bass	Lagoon Thump	batcrit@t800]@t200[+#11U2~5/xprecycle#5L14;A1D276S55R100V98K36G-7
 Bass	Night Cellar	organ_pedal_25@t2500]+#8/soft_wind@t4000]@t1000[#8FL24;A2D305S17R70V87K60G7
 Bass	Night Thump	critstop@t40[H0,-12U2~8;A5D825S56R59V70K36G-7
+Bass	Noble Cellar	bass_guitar_gs@t2500]E#8/xprecycle#8FL25;A2D303S45R76V95K44G2
 Bass	Northern Low	ringout<<#11U2~6/organ_pedal_25@t3000]@t300[#5T-15L42;A2D199S62R91V84K45G-4
 Bass	Ocean Bass	bass_guitar_gs@t2500]+;A0D789S40R98V72K44G-3
 Bass	Pale Basement	marimba_c2#8/ringout#8T-33L49;A1D165S28R128V86K36G-2
@@ -23,6 +25,7 @@ Bass	Rubber Foundation	xpding<<;A2D660S56R122V82K35G8
 Bass	Rubber Thump	ringoutE<<#8/xpding#8T-26L33;A0D671S35R158V75K45G3
 Bass	Rusty End	bass_guitar_gs@t2500]#8/batlow#8T-4L32;A0D870S62R93V93K44G-2
 Bass	Satin Low	organ_pedal_25@t2500]<<H0,12;A5D418S56R87V97K36
+Bass	Satin Sub	xpringout<<#11U2~5/ems_line_hiss@t1500]#5FL16;A0D228S36R150V75K45G8
 Bass	Slow Anchor	marimba_c2;A0D279S17R161V87K36G-2
 Bass	Wobbly Speed Sub	ringout@20[@40]@0CP@0CP@0CP++<<<#12Ja0,100.111,30.222,100.333,30.444,100;A0R100K33G-2
 FX	Basement Swoosh	restore<<E#6/balloon<<<#4FL80/minimize<<#4FL60;A0R1500K24G21
@@ -38,5 +41,6 @@ Sub	Half-Step Sub	print@15[@50]@0CP@0CP@0CP<<<#8;A5S100R150K46G19
 Sub	Kinetic Weight	ringout@15[@50]@0CP@0CP@0CP<<<#8;A5S100R150K45
 Sub	Northern Thump	piano_upright_cs2@t3000]#8/batlow#8T-11L60;A0D291S57R91V99K37G-3
 Sub	Office Floor	batlow#11U2~5/ems_line_hiss@t1500]#5FL13;A5D405S59R106V80K36G-7
+Sub	Sunlit Pulse	hwfail#11H0,12/start#5FL22;A2D470S37R110V75K48G6
 Vocal	Marble Vowel	organ_pedal_25#12U3~14/chimes>#4T-7L25O51Q-40;A776D105S93R1592V81K60G-11
 Vocal	Rose Vox	bass_guitar_gs#12U3~15/air_duster@t2000]@t500[#4FL25Ja0,100.180,30.563,0;A117D461S82R602V92K44G2

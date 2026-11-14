@@ -1,0 +1,48 @@
+Workgroup House Edition
+=======================
+
+Id: workgroup-house
+Title: Workgroup House Edition
+Version: 1.0
+Author: Velvetline Multimedia, Inc.
+Date: 1997-09-22
+Presets: 84
+Presets311: 84
+PresetsXP: 82
+Favourites: 33
+Description: Four-on-the-floor productivity for the whole department.
+
+Favourites (the owner's picks): FAVORITE\
+  Acid Accent Line (Bass)
+  Cedar Pulse (Bass)
+  Chrome Anchor (Bass)
+  Shaded End (Bass)
+  Ember Ascent (FX)
+  Frosted Burst (FX)
+  Misty Warp (FX)
+  Pastel Uplink (FX)
+  Polar Ascent (FX)
+  Afterhours Tine (Keys)
+  Cable Upright (Keys)
+  Gentle Revival (Organ)
+  Felt Field (Pad)
+  Granite Cloud (Pad)
+  Marble Atrium (Pad)
+  Midnight Haze (Pad)
+  Saffron Bloom (Pad)
+  Brass Pluck (Pluck)
+  Lucid Strum (Pluck)
+  Rural Strum (Pluck)
+  Solar Snap (Pluck)
+  Steel Flick (Pluck)
+  Tinted Pizz (Pluck)
+  Hotel Brass (Stab)
+  Lattice Section (Stab)
+  Radiant Blast (Stab)
+  Cathode Strings (Strings)
+  Sampled Strings Swell (Strings)
+  Shaded Tremolo (Strings)
+  Warm Quartet (Strings)
+  Folded Hymn (Vocal)
+  Lobby Ahh (Vocal)
+  Plaza Cantor (Vocal)

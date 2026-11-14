@@ -1,0 +1,11 @@
+[Pack]
+Id=techno-server
+Title=Techno Server 4.0
+Version=4.0
+Author=Jadewave Electronics Co., Ltd.
+Date=1997-03-18
+Presets=70
+Presets311=70
+PresetsXP=63
+Favourites=31
+Description=Mission-critical repetition, now with dub delay.

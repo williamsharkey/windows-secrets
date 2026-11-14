@@ -1,0 +1,11 @@
+[Pack]
+Id=bass-enterprise
+Title=Bass Enterprise Edition
+Version=1.0
+Author=Lowfold Sound System Ltd
+Date=1999-10-11
+Presets=49
+Presets311=49
+PresetsXP=45
+Favourites=0
+Description=Low-end infrastructure for medium and large businesses.

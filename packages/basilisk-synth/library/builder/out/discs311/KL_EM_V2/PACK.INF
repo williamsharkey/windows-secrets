@@ -1,0 +1,11 @@
+[Pack]
+Id=electromech-heritage
+Title=ELEKTROMECHANIK
+Version=2.0
+Author=Kessler & Lohrmann Studiotechnik GmbH
+Date=1996-10-07
+Presets=26
+Presets311=26
+PresetsXP=24
+Favourites=17
+Description=Relays, typewriters, telephones.

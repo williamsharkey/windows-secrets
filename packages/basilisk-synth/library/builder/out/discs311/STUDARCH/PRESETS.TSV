@@ -1,0 +1,72 @@
+# category	name	DNA	pack	editions	rating	verdict	file
+Bass	Coded Line	xpringout<<U2~6;A2D278S33R67V76K45G12	studio-archive	3.11	5	-	BASS\CODEDL.BSP
+Bass	Daylight End	piano_upright_cs4<<;A0D438S73R85V73K37G-4	studio-archive	3.11 XP	5	-	BASS\DAYLIGHE.BSP
+Bass	Signal Bass	marimba_c2;A2D502S69R130V74K36G-4	studio-archive	3.11 XP	5	-	BASS\SIGNALB.BSP
+Bass	Silver Sub	horn_sus_c3<#8/em_metal_click_a#8FL39;A0D224S39R139V72K36G3	studio-archive	3.11 XP	5	-	BASS\SILVERS.BSP
+Bell	Amber Gong	steel_tongue_drum_f3>H0,7;A3D1749S27R1473V90K65G-6	studio-archive	3.11 XP	5	-	BELL\AMBERG.BSP
+Bell	Basement Chimes	glockenspiel_g4<#8/print>#8T-27L37O269Q2;A3D824S26R501V83K55G2	studio-archive	3.11 XP	5	-	BELL\BASEMENC.BSP
+Bell	Crystal Toll	glockenspiel_g4E<#11H0,7/printR#5T-15L25O92Q28;A0D2595S7R823V78K55G-1	studio-archive	3.11 XP	5	-	BELL\CRYSTALT.BSP
+Bell	Global Glock	steel_tongue_drum_f3>#8/balloon>#8FL29;A0D2161S0R657V84K65G-2	studio-archive	3.11 XP	5	-	BELL\GLOBALG.BSP
+Bell	Kinetic Peal	marimba_c6E<<;A5D753S21R675V98K60G1	studio-archive	3.11 XP	5	-	BELL\KINETICP.BSP
+Bell	Late Tower	emh_relay_ping_e5<;A0D663S4R2350V85K64G1	studio-archive	3.11 XP	5	-	BELL\LATET.BSP
+Bell	Mint Chimes	chimes@t300[EE#13H0,12U2~3/ding#3L36O8Q16;A5D758S6R602V91K67G4	studio-archive	3.11 XP	5	-	BELL\MINTC.BSP
+Bell	Slow Vibes	kalimba_c4#8U2~4/chimesR>#4T5L23O287Q-48/menu#4FL39;A5D1124S9R859V94K60G-1	studio-archive	3.11 XP	5	-	BELL\SLOWV.BSP
+Bell	Steady Tower	ems_exchange_bell_c4EE#13H0,7U2~4/print#3T-3L35Q-9;A0D1410S27R1846V90K60G-7	studio-archive	3.11 XP	5	-	BELL\STEADYT.BSP
+Bell	Still Toll	ems_typewriter_bellEE<<<#11H0,7/xpdingE#5T8L15O257Q29;A2D1712S27R1056V92K55G-5	studio-archive	3.11 XP	5	-	BELL\STILLT.BSP
+Brass	Bright Hit	epiano_yamaha_vibe+U3~11;A8D391S15R272V99K36G-11	studio-archive	3.11 XP	5	-	BRASS\BRIGHTH.BSP
+Brass	Electric Blast	trombone_sus_c3@t3000]>#8Q69/relay_click#8FL24;A3D242S42R412V80K60G-5	studio-archive	3.11 XP	5	-	BRASS\ELECTRIB.BSP
+Brass	Flat Horns	tadaE#13H0,7U2~7/contrabass_sus_d1@t3000]@t200[#3T26L35;A2D472S47R213V77K64G-6	studio-archive	3.11 XP	5	-	BRASS\FLATH.BSP
+Brass	Global Hit	cello_section_sus_c3>H0,7U3~10;A17D290S59R246V94K60G-9	studio-archive	3.11 XP	5	-	BRASS\GLOBALH.BSP
+Brass	Opal Fanfare	horn_sus_c3@t3000]E>;A4D271S55R212V72K60G-7	studio-archive	3.11 XP	5	-	BRASS\OPALF.BSP
+Brass	Open Fanfare	horn_sus_c3@t3000]E#11U2~7/hwfail#5L52Q-39;A32D497S52R336V76K48G-12	studio-archive	3.11	5	-	BRASS\OPENF.BSP
+Brass	Swift Fanfare	horn_sus_c3@t3000]E#12H0,7U3~8/hwfail#2T-12L58/xpding#2T1L35Q-18;A1D895S8R212V86K48G-13	studio-archive	3.11 XP	5	-	BRASS\SWIFTF.BSP
+Brass	Twilight Horns	trombone_sus_c3@t3000]+>H0,7;A43D860S6R405V72K60G-14	studio-archive	3.11 XP	5	-	BRASS\TWILIGHH.BSP
+Brass	Upper Horns	trombone_sus_c3@t3000]>#8U2~7/vibraphone_c_low#4T19L26Q35/hwfail#4L54;A1D778S47R297V97K60G-9	studio-archive	3.11 XP	5	-	BRASS\UPPERH.BSP
+Brass	White Stab	trumpet_sus_c4@t3000]#5/kalimba_c4@t1500]#5T12L57Q14/em_metal_click_a>#6FL41;A1D383S87R144V85K62G-9	studio-archive	3.11 XP	5	-	BRASS\WHITES.BSP
+Keys	Ballroom Practice	hwfailE>#5/ding#5T-7L14O22Q-10/ui_glass_ping#6T-19L38Q-20;A3D1430S17R335V78K60G5	studio-archive	3.11 XP	5	-	KEYS\BALLROOP.BSP
+Keys	Brushed Parlour	dingE<<H0,12;A0D1161S32R201V77K55G-2	studio-archive	3.11 XP	5	-	KEYS\BRUSHEDP.BSP
+Keys	Daylight Salon	trumpet_sus_c4;A0D1842S9R317V86K62G-7	studio-archive	3.11 XP	5	-	KEYS\DAYLIGHS.BSP
+Keys	Dusty Practice	dingxp<<;A0D524S43R400V71K55G5	studio-archive	3.11 XP	5	-	KEYS\DUSTYP.BSP
+Keys	Early Felt	marimba_c4#5/organ_hammond_m100_flute_c@t3000]@t300[#5T-24L52Q23/ui_glass_ping#6T-19L12O12Q11;A1D757S2R343V86K60G-3	studio-archive	3.11	5	-	KEYS\EARLYF.BSP
+Keys	Ember Chords	horn_sus_c3+>#11U2~3/ding#5T-7L35Q-28;A0D1927S23R276V97K60G-12	studio-archive	3.11 XP	5	-	KEYS\EMBERC.BSP
+Keys	Field Hammers	piano_upright_cs3#5/music_box_note#5T-3L38Q32/ding#6T-11L31Q-11;A0D1989S26R335V95K49G-5	studio-archive	3.11 XP	5	-	KEYS\FIELDH.BSP
+Keys	Frosted Salon	vibraphone_c_low>>>#8/crystal_bell_bb5@t2000]#8T2L17Q20;A1D2036S2R535V83K60G-4	studio-archive	3.11 XP	5	-	KEYS\FROSTEDS.BSP
+Keys	Global Etude	piano_upright_cs3#11U2~5/ems_relay_release#5FL28;A0D670S4R537V92K49G-8	studio-archive	3.11 XP	5	-	KEYS\GLOBALE.BSP
+Keys	Harbor Study	horn_sus_c3>#8/xpding#8T-11L69Q-36;A3D568S37R192V91K60G-6	studio-archive	3.11	5	-	KEYS\HARBORS.BSP
+Keys	Hotel Felt	piano_upright_cs4+#11U2~4/floppy_seek_clunk#5FL27;A3D1446S11R554V94K61G-7	studio-archive	3.11	5	-	KEYS\HOTELF.BSP
+Keys	Matte Etude	piano_upright_cs4E#5/crystal_bell_bb5@t2000]#5T3L18O5Q22/xpringout#6T-8L32Q-28;A5D1146S15R153V79K61G-5	studio-archive	3.11 XP	5	-	KEYS\MATTEE.BSP
+Keys	Mild Ivories	piano_upright_cs4#11U2~3/ringout#5T-20L55Q18;A2D2460S15R251V83K61G-9	studio-archive	3.11 XP	5	-	KEYS\MILDI.BSP
+Keys	Mild Parlour	emh_typewriter_ks#5/print#5T-8L32Q-24/vibraphone_c_low#6T21L65Q0;A1D1029S9R292V74K62G-4	studio-archive	3.11 XP	5	-	KEYS\MILDP.BSP
+Keys	Northern Study	dingxp<<#11U2~5/glass_ping#5T-12L29Q15;A3D400S28R155V99K55G4	studio-archive	3.11 XP	5	-	KEYS\NORTHERS.BSP
+Keys	Pearl Etude	harp_c5@t2500]#5/kalimba_g5@t1200]#5T5L13Q-3/glass_ping#6T4L21Q7;A0D503S40R296V70K72G-3	studio-archive	3.11 XP	5	-	KEYS\PEARLE.BSP
+Keys	Shaded Etude	organ_hammond_m100_flute_c<#8/ringout#8T3L29Q29;A2D1143S8R635V87K60G-7	studio-archive	3.11 XP	5	-	KEYS\SHADEDE.BSP
+Keys	Soft Keys	violin_section_sus_c4+#11U2~5/vibraphone_c_low#5T31L42Q-33;A2D630S16R212V84K60	studio-archive	3.11	5	-	KEYS\SOFTKEYS.BSP
+Keys	Solar Recital	marimba_c4;A5D2344S38R250V70K60G-5	studio-archive	3.11 XP	5	-	KEYS\SOLARR.BSP
+Keys	Steady Etude	horn_sus_c3>#8U2~5/ding#4L20O19Q-25/ding#4T-7L30Q-30;A2D2210S31R632V85K60G-11	studio-archive	3.11 XP	5	-	KEYS\STEADYE.BSP
+Keys	Velvet Etude	piano_upright_cs4#8/ui_glass_ping#8T-11L37O24Q-10;A0D438S2R187V90K61G-1	studio-archive	3.11 XP	5	-	KEYS\VELVETE.BSP
+Keys	Wide Hammers	cello_section_sus_c3>#11U2~4/xylophone_c5#5T7L17Q6;A2D862S10R208V86K60G-2	studio-archive	3.11 XP	5	-	KEYS\WIDEH.BSP
+Keys	Wired Felt	organ_hammond_m100_flute_c<U2~8;A0D919S27R222V93K60G-9	studio-archive	3.11 XP	5	-	KEYS\WIREDF.BSP
+Keys	Woven Hammers	xpnotify@t130[<#8/marimba_c4#8T-2L54Q25;A2D1156S13R339V70K58G1	studio-archive	3.11	5	-	KEYS\WOVENH.BSP
+Pad	Daylight Atrium	horn_sus_c3@t7500]@t300[#11U2~6/printE#5T-15L26O156Q-28;A1342D438S98R1006V80K48G-13	studio-archive	3.11 XP	5	-	PAD\DAYLIGHA.BSP
+Pad	Meadow Horizon	singing_bowl_long@t8000]@t200[E<#11U2~15/vibraphone_c_low#5T32L51Q36;A550D341S78R953V92K61G12	studio-archive	3.11 XP	5	-	PAD\MEADOWH.BSP
+Pad	Metro Veil	choir_aah@t6000]@t300[<#11U2~6/xprecycle#5FL10Ja0,100.96,30.601,0;A669D709S81R1981V85K57G-4	studio-archive	3.11 XP	5	-	PAD\METROV.BSP
+Pad	Pale Wash	ringout@t328]@t93[@0CP@0CP@0CP<#12U3~10/hwfail#4T-3L57Q-37;A267D722S94R1086V93K57G-8	studio-archive	3.11 XP	5	-	PAD\PALEWASH.BSP
+Pad	Soft Tide	horn_sus_c3@t7500]@t300[>#11U2~10/recycle#5FL23Ja0,100.196,30.693,0;A443D368S88R2098V79K60G-14	studio-archive	3.11 XP	5	-	PAD\SOFTTIDE.BSP
+Pad	Velvet Field	piano_upright_cs3>#12U3~15/wind_chime_single@t2000]E#4T14L29O259Q19;A606D33S95R2385V76K61G-2	studio-archive	3.11 XP	5	-	PAD\VELVETF.BSP
+Pad	Vinyl Atrium	cello_section_sus_c3@t7500]@t300[>#13H0,7U2~9/chimesRE#3T5L38O399Q-26;A585D158S94R2322V71K60G-14	studio-archive	3.11 XP	5	-	PAD\VINYLA.BSP
+Pad	Waxed Aurora	violin_section_sus_c4@t7500]@t300[RU2~6;A504D748S75R2396V94K60G-9	studio-archive	3.11 XP	5	-	PAD\WAXEDA.BSP
+Pad	Zinc Wash	ringout@t328]@t93[@0CP@0CP@0CP<#14H0,12U3~13/defaultR#2T18L38O372Q-42;A733D508S95R1109V84K57G-10	studio-archive	3.11 XP	5	-	PAD\ZINCWASH.BSP
+Perc	Clear Snap	bubble_pop_a#8/organ_pedal_25@t3000]@t300[#8L52;D90S0R91V82G8	studio-archive	3.11 XP	5	-	PERC\CLEARS.BSP
+Perc	Honey Click	chord@t200]>#8F/mouse_click@t150]#8FL15;D123S0R77V94G5	studio-archive	3.11 XP	5	-	PERC\HONEYC.BSP
+Perc	Warm Tap	ding@t120]#8F/xpding#8L25;D62S0R95V94G13	studio-archive	3.11	5	-	PERC\WARMTAP.BSP
+Perc	Wired Tap	glass_tap>#8/floppy_seek_clunk#8FL38;D82S0R100V73K107G5	studio-archive	3.11 XP	5	-	PERC\WIREDTAP.BSP
+Strings	Basement Chamber	piano_upright_cs4E#13H0,12U2~7/air_duster@t2000]@t500[#3FL16Ja0,100.89,30.605,0;A103S86R861V86K61G-6	studio-archive	3.11 XP	5	-	STRINGS\BASEMENC.BSP
+Strings	Crystal Legato	cello_section_sus_c3@t7500]@t200[>U3~12;A192S87R1473V84K60G-12	studio-archive	3.11 XP	5	-	STRINGS\CRYSTALL.BSP
+Strings	Daylight Bows	violin_section_sus_c4@t7500]@t200[H0,12U2~11;A435S85R766V95K60G-10	studio-archive	3.11 XP	5	-	STRINGS\DAYLIGHB.BSP
+Strings	Humid Swell	violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K60G-9	studio-archive	3.11 XP	5	-	STRINGS\HUMIDS.BSP
+Strings	Indigo Quartet	cello_section_sus_c3@t7500]@t200[#12H0,-12U3~12/recycle#2FL15/organ_pedal_25@t3000]@t300[#2T-12L47;A281S93R1413V81K48G-12	studio-archive	3.11 XP	5	-	STRINGS\INDIGOQ.BSP
+Strings	Lagoon Bows	cello_section_sus_c3@t7500]@t200[>#13H0,12U2~10/organ_pedal_25@t3000]@t300[#3L56;A550S86R641V98K60G-10	studio-archive	3.11 XP	5	-	STRINGS\LAGOONB.BSP
+Strings	Late Legato	piano_upright_cs4<#8U2~10/ringout#4T-32L38Q22/organ_hammond_m100_flute_c@t3000]@t300[#4T-35L47Q-39;A377S85R1279V81K49G-7	studio-archive	3.11 XP	5	-	STRINGS\LATEL.BSP
+Strings	Spare Violins	horn_sus_c3>#12U3~13/air_duster@t2000]@t500[#4FL17;A338S86R1280V91K60G-13	studio-archive	3.11 XP	5	-	STRINGS\SPAREV.BSP
+Strings	Static Swell	piano_upright_cs4E#11U2~11/hwfail#5T1L43;A147S86R812V83K61G-6	studio-archive	3.11 XP	5	-	STRINGS\STATICS.BSP
+Strings	Topaz Bows	piano_upright_cs3>#10U3~11/spirit_breath#3FL21Ja0,100.95,30.367,0/epiano_bell_c3@0CP#3T25L37Q-18;A348S93R546V76K61G-2	studio-archive	3.11 XP	5	-	STRINGS\TOPAZB.BSP

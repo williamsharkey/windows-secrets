@@ -1,0 +1,32 @@
+# category	name	DNA	pack	editions	rating	verdict	file
+Bass	Bakelite Bass	marimba_c2#13H0,12U2~6/balloon>#3FL19;A0D175S48R50V82K36G-8	game-port	3.11	5	-	BASS\BAKELITB.BSP
+Bass	Cobalt Anchor	ringout@20[@40]@0CP@0CP@0CP<<<#8;A0D400S60R20V0K33G1	game-port	3.11 XP	5	-	BASS\COBALTA.BSP
+Bass	Lagoon Rumble	hwfail<H0,12;A0D220S22R176V99K36G11	game-port	3.11 XP	5	-	BASS\LAGOONR.BSP
+Bass	Saffron Sub	ringout@20[@40]@0CP@0CP@0CP<<#8Ja0,100.62,100.72,8.125,8.126,100Wr4t/infobar#8FL21;A0S100R20V0K45G-1	game-port	3.11	5	-	BASS\SAFFRONS.BSP
+Bass	Satin Basement	batcrit@t800]@t200[#11H0,12/contrabass_sus_d1@t3000]@t200[#5T-2L66;A5D257S66R51V88K36G-6	game-port	3.11 XP	5	-	BASS\SATINB.BSP
+Bass	Waxed Line	ringout@20[@40]@0CP@0CP@0CP<<#8Yd4l22t10;A0R20V0K45G1	game-port	3.11	5	-	BASS\WAXEDL.BSP
+FX	Coin Jingle	ding>>@30]Iding>>>#12;A0R100K127G6	game-port	3.11 XP	5	-	FX\COINJ.BSP
+FX	Digital Sweep	pc_286_startup@t6000]RH0,12;A449S100R365V90K29G-4	game-port	3.11 XP	5	-	FX\DIGITALS.BSP
+FX	Distant Surge	minimizeR#8/chimesxpRE#8T-15L33O295Q28;A72S100R2154V70K28G20	game-port	3.11 XP	5	-	FX\DISTANTS.BSP
+FX	Kinetic Riser	whoosh_inEEE#11H0,12/glass_ping#5L56;A40S100R1688V96G-2	game-port	3.11 XP	5	-	FX\KINETICR.BSP
+FX	Late Sweep	chimesxp<#8H0,-12/crystal_glass_tapE#4T-16L25O312Q50/chimesE#4T7L22O208Q-10;A138S100R2326V88K55G7	game-port	3.11 XP	5	-	FX\LATES.BSP
+FX	Matte Ascent	chimesEEE#8/dingxpR#8T12L21O219Q-21;A1S100R1102V70K67G2	game-port	3.11 XP	5	-	FX\MATTEA.BSP
+FX	Matte Uplink	logoff<#8H0,12/air_duster@t2000]@t500[#4L19Ja0,100.91,30.348,0/chimesxpRE#4T-28L34O329Q-50;A149S100R1319V83K27G13	game-port	3.11 XP	5	-	FX\MATTEU.BSP
+FX	Violet Burst	hdd_conner_spin@t5000]<RH0,12U2~4Q-47;A5S100R323V80K39G7	game-port	3.11 XP	5	-	FX\VIOLETB.BSP
+FX	Woven Lift	popup<<#11U2~9/organ_pedal_25@t3000]@t300[#5L58;A1S100R319V82G1	game-port	3.11 XP	5	-	FX\WOVENL.BSP
+Lead	Cold Voice	ringout@t328]@t93[@0CP@0CP@0CP+#12U3~17/default@t300]#4T30L39O15Q-6;A2D560S95R272V95K69G-9	game-port	3.11 XP	5	-	LEAD\COLDV.BSP
+Lead	Harbor Whistle	print@t693]@t198[@0CP@0CPE#8/menu#8FL32;A11D311S87R102V85K58G16	game-port	3.11 XP	5	-	LEAD\HARBORW.BSP
+Lead	Ivory Signal	popup@t116]@t33[@0CP@0CP@0CP+#14H0,7U4~16/organ_pedal_25@t3000]@t300[#2L35;A4D282S93R260V87G5	game-port	3.11	5	-	LEAD\IVORYS.BSP
+Lead	Lucid Line	popup@t116]@t33[@0CP@0CP@0CPE#13H0,12U2~6/hwfail#3L38;A2D235S93R312V86G20	game-port	3.11 XP	5	-	LEAD\LUCIDL.BSP
+Lead	Midnight Signal	ems_csirac_pulse_e4EU3~16;A1D528S93R309V72K64G-8	game-port	3.11 XP	5	-	LEAD\MIDNIGHS.BSP
+Lead	Pastel Signal	ringout@t328]@t93[@0CP@0CP@0CP<#11H0,12/glass_ping#5T-10L34O23Q16;A1D485S72R196V80K57G-5	game-port	3.11 XP	5	-	LEAD\PASTELS.BSP
+Lead	Satin Lead	ding#14H0,-12U3~19/minimize#2FL13;A3D11S79R232V94K79G-2	game-port	3.11 XP	5	-	LEAD\SATINL.BSP
+Lead	Second Ray	ding#8/dingxp#8T19L37Q-33;A3D349S71R84V71K79G3	game-port	3.11 XP	5	-	LEAD\SECONDR.BSP
+Lead	Warm Lead	ringout@t328]@t93[@0CP@0CP@0CPH0,7;A2D349S70R240V88K69G-4	game-port	3.11 XP	5	-	LEAD\WARMLEAD.BSP
+Lead	Zinc Ray	ringout@t328]@t93[@0CP@0CP@0CP<#8/relay_click>#8FL32;A14D72S83R150V91K57G2	game-port	3.11 XP	5	-	LEAD\ZINCRAY.BSP
+Perc	Chrome Snap	relay_loud_click#8F/mouse_click@t150]#8FL29;D195S0R143V77G3	game-port	3.11 XP	5	-	PERC\CHROMES.BSP
+Perc	Glass Rim	em_metal_click_aE;D157S0R60V89G5	game-port	3.11 XP	5	-	PERC\GLASSRIM.BSP
+Perc	Lagoon Click	popup<#8F/air_duster@t2000]@t500[#8FL21Ja0,100.169,30.706,0;D221S0R37V77G14	game-port	3.11 XP	5	-	PERC\LAGOONC.BSP
+Perc	Silver Block	balloon#8F/batlow#8L20;D282S0R40V72G15	game-port	3.11 XP	5	-	PERC\SILVERB.BSP
+Perc	Slate Tick	em_stamp_a#8/recycle#8FL10Ja0,100.192,30.616,0;D261S0R41V99G7	game-port	3.11 XP	5	-	PERC\SLATET.BSP
+Perc	Sunlit Knock	start;D188S0R113V85G12	game-port	3.11	5	-	PERC\SUNLITK.BSP

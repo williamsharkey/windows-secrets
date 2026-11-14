@@ -14,7 +14,6 @@ from common import load_json, save_json, REPO, WORK
 import analyze, phrases
 from audio import ebur128
 
-XPDIR = '/mnt/c/Users/willi/libbuild-xp'
 
 
 def _mono(path, offset=0.0):
@@ -99,23 +98,30 @@ def gaps(path):
     return round(k * 60.0 / (len(x) / 48000), 1)
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument('--rejudge', action='store_true')
-    ap.add_argument('--n', type=int, default=0); ap.add_argument('--parallel', type=int, default=2)
-    a = ap.parse_args()
-    if a.rejudge: return rejudge()
-    L = load_json('library.json')
-    sel = [p for p in L if 'XP' in p['ships'] and p['edition'] == 'xp' and not p.get('xp_check')]
-    if a.n:
-        import random
-        by = {}
-        for p in sel: by.setdefault(p['pack'], []).append(p)
-        rng = random.Random(7); out = []
-        while len(out) < a.n and any(by.values()):
-            for k in sorted(by):
-                if by[k] and len(out) < a.n: out.append(by[k].pop(rng.randrange(len(by[k]))))
-        sel = out
+REVIEW_AUDIO = os.environ.get('REVIEW_AUDIO', '/mnt/c/Users/willi/Desktop/sndrec-library/audio')
+XPVER = os.environ.get('XPVER', '1.2.2')
+XPDIR = os.environ.get('XPDIR', '/mnt/c/Users/willi/libbuild-xp122')
+PAUSE = os.path.join(WORK, 'xp-pause')          # touch it to pause between chunks (a synth lane's timing window)
+
+
+PARFILE = os.path.join(WORK, 'xp-parallel')     # the VM count for the next chunk (the coordinator's 3-4 rule)
+
+
+def lower_priority():
+    """our QEMU and host processes (by their folder) to Below Normal, so other lanes keep their timing; returns the
+    Windows CPU load in % (or None)"""
+    tag = os.path.basename(XPDIR)
+    r = subprocess.run(['powershell.exe', '-NoProfile', '-Command',
+                        "Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*%s*' -and $_.Name -ne 'powershell.exe' } | "
+                        "ForEach-Object { try { (Get-Process -Id $_.ProcessId).PriorityClass = 'BelowNormal' } catch {} }; "
+                        "(Get-CimInstance Win32_Processor | Measure-Object -Property LoadPercentage -Average).Average" % tag],
+                       capture_output=True, text=True, timeout=60)
+    try: return float(r.stdout.strip().splitlines()[-1])
+    except Exception: return None
+
+
+def render_chunk(sel, a):
+    import threading
     out = os.path.join(XPDIR, 'out')
     os.makedirs(out, exist_ok=True)
     jobs, meta = [], {}
@@ -126,15 +132,27 @@ def main():
         meta[o] = (p, notes, tail)
     jp = os.path.join(XPDIR, 'jobs.json'); json.dump(jobs, open(jp, 'w'))
     t0 = time.time()
-    subprocess.run([sys.executable, os.path.join(REPO, 'packages', 'basilisk-synth', 'tools', 'batch_render.py'), jp,
-                    '--host', os.path.join(XPDIR, 'bsynth-host.exe'), '--plugin', os.path.join(XPDIR, 'BasiliskSynth.vst3'),
-                    '--parallel', str(a.parallel), '--out-dir', out])
+    log = open(os.path.join(WORK, 'xp-batch.log'), 'a')
+    pr = subprocess.Popen(['nice', '-n', '10', sys.executable, os.path.join(REPO, 'packages', 'basilisk-synth', 'tools', 'batch_render.py'), jp,
+                           '--host', os.path.join(XPDIR, 'bsynth-host.exe'), '--plugin', os.path.join(XPDIR, 'BasiliskSynth.vst3'),
+                           '--parallel', str(a.parallel), '--out-dir', out], stdout=log, stderr=subprocess.STDOUT, text=True)
+    open(os.path.join(WORK, 'run', 'xpcheck-batch.pid'), 'w').write(str(pr.pid))
+    cpu = []
+    while pr.poll() is None:
+        try:
+            c = lower_priority()
+            if c is not None: cpu.append(c)
+        except Exception: pass
+        time.sleep(15)
     wall = time.time() - t0
+    a.cpu = sum(cpu) / len(cpu) if cpu else None
     n_ok = 0
     for o, (p, notes, tail) in meta.items():
         w = os.path.join(out, o)
         if not os.path.exists(w):
-            p['xp_check'] = {'ok': False, 'why': ['XP render failed']}; continue
+            prev = p.get('xp_check')
+            if prev and prev.get('xpver') != XPVER: p.setdefault('xp_check_history', []).append(prev)
+            p['xp_check'] = {'ok': False, 'why': ['XP render failed'], 'xpver': XPVER, 'plugin': 'BASILISK SYNTH %s release' % XPVER}; continue
         # XP's render starts the score after the machine wakes and builds (warmup + build wait): align on the
         # first onset (every phrase has a note at t = 0)
         from audio import read_wav, frames_rms
@@ -152,17 +170,57 @@ def main():
         elif r['onsets'] and r['heard'] < 0.5 * r['onsets']:
             why.append('%d of %d notes missing' % (r['onsets'] - r['heard'], r['onsets']))
         ref = os.path.join(WORK, 'mp3', p['slug'] + '.mp3')
+        if not os.path.exists(ref): ref = os.path.join(REVIEW_AUDIO, p['slug'] + '.mp3')
         cmp = compare(w, on, ref) if os.path.exists(ref) and 'silent' not in why else None
         why += verdict(p, cmp)
         d = (I - p['phrase_lufs']) if (I is not None and p.get('phrase_lufs') is not None) else None
+        prev = p.get('xp_check')
+        if prev and prev.get('xpver') != XPVER: p.setdefault('xp_check_history', []).append(prev)
         p['xp_check'] = {'ok': not why, 'why': why, 'offset_s': round(on, 2),
-                         'plugin': 'BASILISK SYNTH 1.2.1 release (10 ms streaming gaps; re-render on 1.2.2)', 'rerender_on': '1.2.2',
+                         'plugin': 'BASILISK SYNTH %s release' % XPVER, 'xpver': XPVER,
                          'lufs': I, 'peak_db': r['peak_db'], 'vs_311_db': round(d, 1) if d is not None else None,
                          'onsets': r['onsets'], 'heard': r['heard'], 'gaps_10ms': gaps(w), **(cmp or {})}
         n_ok += not why
-        os.remove(w)
-    save_json('library.json', L)
-    print('XP check: %d/%d pass, %.0f s wall for %d renders' % (n_ok, len(meta), wall, len(meta)))
+        if getattr(a, 'keep', None):
+            import shutil; os.makedirs(a.keep, exist_ok=True); shutil.move(w, os.path.join(a.keep, '%s-%s.wav' % (p['slug'], XPVER)))
+        else:
+            os.remove(w)
+    return n_ok, len(meta), wall
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--rejudge', action='store_true')
+    ap.add_argument('--all', action='store_true', help='every preset that ships to XP (v2), checked again on XPVER')
+    ap.add_argument('--chunk', type=int, default=60)
+    ap.add_argument('--names', help='only these preset names (comma-separated)')
+    ap.add_argument('--keep', help='keep the WAVs in this folder')
+    ap.add_argument('--n', type=int, default=0); ap.add_argument('--parallel', type=int, default=2)
+    a = ap.parse_args()
+    if a.rejudge: return rejudge()
+    L = load_json('library.json')
+    done = lambda p: p.get('xp_check') and p['xp_check'].get('xpver') == XPVER
+    if a.all: sel = [p for p in L if not p['v3'] and not done(p)]
+    else: sel = [p for p in L if 'XP' in p['ships'] and p['edition'] == 'xp' and not p.get('xp_check')]
+    if a.names:
+        want = [n.strip() for n in a.names.split(',')]
+        sel = [p for p in L if p['name'] in want]
+    if a.n: sel = sel[:a.n]
+    by_slug = {p['slug']: p for p in L}
+    tot_ok = tot = 0; t0 = time.time()
+    for k in range(0, len(sel), a.chunk):
+        while os.path.exists(PAUSE): time.sleep(20)
+        part = [by_slug[p['slug']] for p in sel[k:k + a.chunk]]
+        try: a.parallel = max(1, min(4, int(open(PARFILE).read().strip())))
+        except Exception: pass
+        ok, n, wall = render_chunk(part, a)
+        if a.cpu is not None and a.cpu > 85 and a.parallel > 3:
+            open(PARFILE, 'w').write('3\n')          # Windows stayed busy: back to 3 VMs
+        print('  chunk with %d VMs, Windows CPU %s%%' % (a.parallel, '%.0f' % a.cpu if a.cpu is not None else '?'), flush=True)
+        tot_ok += ok; tot += n
+        save_json('library.json', L)
+        print('chunk %d: %d/%d pass (%.0f s); total %d/%d of %d, %.0f s' % (k // a.chunk, ok, n, wall, tot_ok, tot, len(sel), time.time() - t0), flush=True)
+    print('XP check (%s): %d/%d pass, %.0f s' % (XPVER, tot_ok, tot, time.time() - t0))
 
 
 if __name__ == '__main__':

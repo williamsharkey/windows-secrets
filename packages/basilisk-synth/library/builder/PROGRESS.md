@@ -86,3 +86,28 @@ Nothing audio goes in git.
 - 20:00. Coordinator: XP 1.2.1 has 10 ms streaming gaps (1.2.2 fixes them). The XP check now counts only silent
   takes, missing notes or layers and wrong pitch, compared against the 3.11 render's MP3 (chroma and band levels).
   All XP-badge presets are checked; failures ship 3.11-only, and every check is flagged for a re-render on 1.2.2.
+- 2026-11-14 05:30. Resumed with two jobs.
+  - Job A: the XP re-check on the released BASILISK SYNTH 1.2.2 (sha 16a990ae, pinned in
+    C:\Users\willi\libbuild-xp122). It covers all 1007 v2 presets that ship to XP, including those held back
+    after 1.2.1. It runs 3 VMs, batch_render under nice -n 10 and QEMU at BelowNormal, in chunks of 60; touch
+    ~/libbuild/xp-pause to hold it. 1.2.1 results move to `xp_check_history`. No preset is removed. The
+    reference is the review page's MP3 of each 3.11 render (the Linux work folder ~/libbuild had been emptied).
+  - Job B: `make_discs.py`, the packs as 3.11 disc images with the owner's ratings, for the Library tab.
+    `out/library.json` also carries rating, verdict and favourite.
+  - tools/build_library.py: guards so a NaN pitch never reaches the manifest (empty median set in yin_f0,
+    non-finite prominence, any non-finite float written as null).
+- 2026-11-14 06:00-10:30. XP re-check on 1.2.2. 12 of the first 63 presets had passed on 1.2.1 and failed on
+  1.2.2: spectrum 10-23 dB off the 3.11 render, notes missing. I reported them to the XP lane. Their cause: the
+  machine woke with its default sound still building, and 1.2.2 took that late "built" for the DNA's build, so
+  notes went to the default sound. On their 1.2.3 candidate, 11 of the 12 match 3.11 closely (chroma 0.91-1.00,
+  bands 0.1-2.9 dB). Silent Orb sits about 10 dB off on every build, its own layer balance.
+- The full run moved to the candidate (1 or 2 VMs, as the XP lane asked; paused twice for their windows) and
+  stopped when XP development ended (BASILISK SYNTH 1.3.0 is the last XP release). 672 presets were checked on
+  1.2.3c, 647 pass.
+- The XP verdict in `out/library.json` (`xp_check`) is the 1.2.3c check where it ran, otherwise 1.2.1's, because
+  1.2.2's results are meaningless after its regression. `xp_checks` keeps every version. 946 presets ship to XP; 93
+  ship to 3.11 only (32 v3, 61 failing on XP). No preset was removed. All XP copies and scratch are deleted
+  (Linux side, then fstrim).
+- Job B: `out/discs311/` holds 18 discs: the 17 packs plus Kit Manager 98 with the packs lane's 39 kits as they are,
+  27 for 3.11 and XP and 12 electromech kits XP-only. `DISCS.TSV` indexes them and `XP-ONLY.TSV` lists the 12 kits.
+  152 favourites, from the owner's 152 keeps.

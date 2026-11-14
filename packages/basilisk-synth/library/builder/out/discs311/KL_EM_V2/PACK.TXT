@@ -1,0 +1,32 @@
+ELEKTROMECHANIK
+===============
+
+Id: electromech-heritage
+Title: ELEKTROMECHANIK
+Version: 2.0
+Author: Kessler & Lohrmann Studiotechnik GmbH
+Date: 1996-10-07
+Presets: 26
+Presets311: 26
+PresetsXP: 24
+Favourites: 17
+Description: Relays, typewriters, telephones.
+
+Favourites (the owner's picks): FAVORITE\
+  Signal Bell (Bell)
+  Teletype Bell Keyboard (Bell)
+  Typewriter Bell Keys (Bell)
+  Drum Memory Drone (Drone)
+  Electric Bell Drone (Drone)
+  Gear Whine Pad (Drone)
+  Motor Room (Drone)
+  Digital Trunk (FX)
+  Newsroom (FX)
+  Party Line (FX)
+  Relay Rain (FX)
+  Sounder Keys (Keys)
+  Sunlit Parlour (Keys)
+  Dial Tone Organ (Pad)
+  Contact Spring (Pluck)
+  Typewriter Pluck (Pluck)
+  1961 Vowel (Vocal)

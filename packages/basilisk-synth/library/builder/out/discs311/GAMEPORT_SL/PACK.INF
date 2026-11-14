@@ -1,0 +1,11 @@
+[Pack]
+Id=game-port
+Title=Game Port Sound Set
+Version=1.0
+Author=Static Lagoon
+Date=1995-08-14
+Presets=31
+Presets311=31
+PresetsXP=26
+Favourites=0
+Description=Joystick not included.

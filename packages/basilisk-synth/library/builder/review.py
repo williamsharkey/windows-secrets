@@ -136,6 +136,8 @@ def main():
             if p['library']: bd += '<span class="bd lib">LIB</span>'
             if p['v3']: bd += '<span class="bd v3">v3</span>'
             xc = p.get('xp_check')
+            if xc and xc.get('xpver') == '1.2.2':   # 1.2.2's regression: its results say nothing; 1.2.1's do
+                xc = next((h for h in p.get('xp_check_history') or [] if h.get('xpver', '1.2.1') == '1.2.1'), None)
             if xc:
                 bad = not xc['ok']
                 bd += '<span class="bd" title="%s">%s</span>' % (esc('; '.join(xc['why']) or 'checked on the XP machine'),

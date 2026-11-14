@@ -1,0 +1,49 @@
+ROM Reference Library
+=====================
+
+Id: rom-reference
+Title: ROM Reference Library
+Version: 1.0
+Author: Halvorsen Audio Archives
+Date: 1994-02-14
+Presets: 116
+Presets311: 116
+PresetsXP: 111
+Favourites: 34
+Description: The great workstations, archived.
+
+Favourites (the owner's picks): FAVORITE\
+  Lattice Bottom (Bass)
+  Lobby Cellar (Bass)
+  Neon Basement (Bass)
+  Ballroom Prism (Bell)
+  Noble Gloss (Bell)
+  Opal Prism (Bell)
+  Daylight Continuum (Drone)
+  Slate Lift (FX)
+  Soft Warp (FX)
+  Wide Wake (FX)
+  Echo Bulletin (Keys)
+  Harbor Recital (Keys)
+  Folded Wire (Lead)
+  Lunar Spark (Lead)
+  Global Veil (Pad)
+  Jade Wash (Pad)
+  Neon Pad (Pad)
+  Pewter Mist (Pad)
+  Topaz Atrium (Pad)
+  Vinyl Glow (Pad)
+  White Canopy (Pad)
+  Zinc Field (Pad)
+  Blue Market (Pluck)
+  Rapid Drum (Pluck)
+  Silver Snap (Pluck)
+  Lunar Brass (Stab)
+  Blue Swell (Strings)
+  Distant Quartet (Strings)
+  Lobby Ensemble (Strings)
+  Violet Legato (Strings)
+  Zinc Ensemble (Strings)
+  Dusty Hymn (Vocal)
+  Hollow Vowel (Vocal)
+  Slate Vox (Vocal)

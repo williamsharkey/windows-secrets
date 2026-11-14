@@ -1,0 +1,51 @@
+# category	name	DNA	pack	editions	rating	verdict	file
+Bell	Amber Bells	marimba_c6E#11H0,12/ems_typebar#5FL38;A5D813S17R1306V95K84G-3	diagnostics	3.11 XP	5	-	BELL\AMBERB.BSP
+Bell	Broken Music Box	music_box_note><E#10;A0D3000S0R1500K78G-4	diagnostics	3.11 XP	5	-	BELL\BROKENMB.BSP
+Bell	Coded Bells	steel_tongue_drum_f3EE#5/relay_click#5FL17/print#6T-5L20O6Q20;A2D1538S19R746V77K53G-2	diagnostics	3.11 XP	5	-	BELL\CODEDB.BSP
+Bell	Federal Carillon	marimba_c4E#8/relay_click>#8FL44;A3D1202S9R2075V93K60	diagnostics	3.11 XP	5	-	BELL\FEDERALC.BSP
+Bell	Molten Glock	music_box_note><E#10H0,3,7,10Ss60;A0D3000S0R1500K83G-13	diagnostics	3.11	6.5	keep	BELL\MOLTENG.BSP
+Bell	Noble Bell	ems_fm_register_bell_c6H0,12;A0D1038S10R1301V71K84G-9	diagnostics	3.11 XP	5	-	BELL\NOBLEB.BSP
+Bell	Static Bell	ding><E#10;A0D3000S0R1500K79G5	diagnostics	3.11 XP	5	-	BELL\STATICB.BSP
+FX	Ballroom Surge	startupE#8/crystal_glass_tap>#8T-27L27O86Q47;A374S100R705V73K44G3	diagnostics	3.11 XP	5	-	FX\BALLROOS.BSP
+FX	Daylight Descent	hwfail<RU2~11;A1248S100R1019V78K36G18	diagnostics	3.11 XP	5	-	FX\DAYLIGHD.BSP
+FX	Elevated Riser	degausser<H0,-12;A109S100R1366V97K23G-8	diagnostics	3.11 XP	5	-	FX\ELEVATER.BSP
+FX	Laser Surge	whoosh_inRH0,-12U2~10;A1S100R619V93G-5	diagnostics	3.11 XP	5	-	FX\LASERS.BSP
+FX	Matte Riser	chimesRU2~10Q13;A1249S100R318V80K67G7	diagnostics	3.11 XP	5	-	FX\MATTER.BSP
+FX	Midnight Ascent	whoosh_floating_slow@t6000]<R#10U3~21/batlow#3L48/chimesxp#3L40;A11S100R1553V77G-7	diagnostics	3.11 XP	5	-	FX\MIDNIGHA.BSP
+FX	Midnight Sweep	wine_glass_hit_hard@10]@0CP@0CP@0CP@0CP>#8Ws.27e.75Yd9l13;A0R200G3	diagnostics	3.11	5	-	FX\MIDNIGHS.BSP
+FX	Mild Descent	minimizeE#11H0,-12/contrabass_sus_d1@t3000]@t200[#5T-10L34;A12S100R1602V89K28G8	diagnostics	3.11 XP	5	-	FX\MILDD.BSP
+FX	Rapid Uplink	batcrit<U2~8;A88S100R403V82K24G-1	diagnostics	3.11 XP	5	-	FX\RAPIDU.BSP
+FX	Shatter Transition	wine_glass_hit_hard@10]@0CP@0CP@0CP@0CP>#8;A0R200K89G1	diagnostics	3.11 XP	5	-	FX\SHATTERT.BSP
+FX	Silent Ascent	ems_crushed_line_noise<EH0,-12U2~12Q48;A242S100R698V84G-6	diagnostics	3.11 XP	5	-	FX\SILENTA.BSP
+FX	Stutter Copy Paste	tadaxp@30[@4]@0CP@0CP@0CP@0CP@0CP#10;A0R60K60G15	diagnostics	3.11 XP	5	-	FX\STUTTECP.BSP
+FX	Tinted Ascent	tadaxp@30[@4]@0CP@0CP@0CP@0CP@0CP#10Ws.28~.39l.32Yd12l30q25;A0R60K60G18	diagnostics	3.11	5	-	FX\TINTEDA.BSP
+FX	Warm Swoosh	tadaxp@30[@4]@0CP@0CP@0CP@0CP@0CP#10;A0D250S0R200K60G19	diagnostics	3.11 XP	5	-	FX\WARMS.BSP
+Lead	Azure Ray	flute_vib_c5@t6000]@t300[<U3~14;A11D576S81R111V93K60G-4	diagnostics	3.11 XP	5	-	LEAD\AZURERAY.BSP
+Lead	Brushed Wire	ems_csirac_pulse_e4;A2D488S88R183V72K64G-2	diagnostics	3.11 XP	5	-	LEAD\BRUSHEDW.BSP
+Lead	Hollow Song	erhu_d3@t4000]>U2~8Q-51;A1D245S89R282V75K62G-7	diagnostics	3.11	5	-	LEAD\HOLLOWS.BSP
+Lead	Lagoon Spark	ems_morse_cwE#8/hwfail#8T17L53;A10D459S98R149V90K77G-7	diagnostics	3.11 XP	5	-	LEAD\LAGOONS.BSP
+Lead	Office Ray	tadaxp>H0,12U3~14;A2D131S77R121V84K60G5	diagnostics	3.11 XP	5	-	LEAD\OFFICER.BSP
+Lead	Orbital Spark	tada@40[@20]@0CP@0CP@0CP@0CP>+++#12U4~30;A0R200K72G-9	diagnostics	3.11 XP	5	-	LEAD\ORBITALS.BSP
+Lead	Plastic Sevenfold	tadaxp@40[@20]@0CP@0CP@0CP@0CP>+++EU4~30;A2R200K72	diagnostics	3.11 XP	5	-	LEAD\PLASTICS.BSP
+Pad	Candy Trance Pad	startup@20[@50]>#12U3~20;A200S90R900K80G-2	diagnostics	3.11 XP	5	-	PAD\CANDYTP.BSP
+Pad	Copper Veil	cello_section_sus_c3@t7500]@t300[>U2~18Q20;A755D624S85R1066V73K60G-11	diagnostics	3.11 XP	5	-	PAD\COPPERV.BSP
+Pad	Digital Veil	error<<EU2~10Ja0,0.365,100.1446,61Yd10l20q24;A500S90R2000K63G1	diagnostics	3.11	5	-	PAD\DIGITALV.BSP
+Perc	Coral Clap	relay_loud_click+#8F/batlow#8L27;D262S0R71V88G1	diagnostics	3.11 XP	5	-	PERC\CORALC.BSP
+Perc	Echo Click	critstop@t400]@t40[<#8/xprecycle#8L21Ja0,100.46,30.526,0;D108S0R48V95K24G5	diagnostics	3.11 XP	5	-	PERC\ECHOC.BSP
+Perc	Electric Snare	em_stamp_a>#8/key_press_down>#8FL27;D261S0R74V79G3	diagnostics	3.11 XP	5	-	PERC\ELECTRIS.BSP
+Perc	Floppy Seek Perc	floppy_seek_clunk#8Q30/mouse_click@40]#8;A0D2R80K46G2	diagnostics	3.11 XP	5	-	PERC\FLOPPYSP.BSP
+Perc	Glass Click	critstop@t400]@t40[#8/recycle#8FL11;D86S0R56V94K36G5	diagnostics	3.11 XP	5	-	PERC\GLASSC.BSP
+Perc	Hotel Snare	em_splitflap_a>F;D70S0R109V81G3	diagnostics	3.11 XP	5	-	PERC\HOTELS.BSP
+Perc	Lagoon Clack	critstop@t400]@t40[<;D300S0R30V88K24G1	diagnostics	3.11 XP	5	-	PERC\LAGOONC.BSP
+Perc	Laser Block	critstop@t400]@t40[#11U2~9F/ems_typebar#5FL27;D248S0R39V99G-2	diagnostics	3.11 XP	5	-	PERC\LASERB.BSP
+Perc	Lunar Tick	em_stamp_a+F;D123S0R93V94G6	diagnostics	3.11 XP	5	-	PERC\LUNART.BSP
+Perc	Rubber Block	light_switch_onE;D68S0R104V89G4	diagnostics	3.11 XP	5	-	PERC\RUBBERB.BSP
+Perc	Satin Tap	infobar>;D96S0R32V75K67G2	diagnostics	3.11	5	-	PERC\SATINTAP.BSP
+Perc	Violet Click	relay_loud_click+F;D285S0R61V84G2	diagnostics	3.11 XP	5	-	PERC\VIOLETC.BSP
+Vocal	Bakelite Ahh	crowd_sing_aah_f>#8H0,12Ja0,100.62,100.72,8.125,8.126,100Wr4t/choir_aah>#6T-4L60;A0S100R300K65G-1	diagnostics	3.11	5	-	VOCAL\BAKELITA.BSP
+Vocal	Chrome Voices	ringout@t328]@t93[@0CP@0CP@0CP#8U2~9/dingxpR#4T14L20O91Q20/glass_ping>#4T-10L24O351Q-54;A159D342S85R821V83K69G-7	diagnostics	3.11 XP	5	-	VOCAL\CHROMEV.BSP
+Vocal	Helium Choir Stack	crowd_sing_aah_f>#13H0,12U2~3/choir_aah>#3T-4L60;A10R300K65G-8	diagnostics	3.11 XP	5	-	VOCAL\HELIUMCS.BSP
+Vocal	Inland Cantor	choir_aah@t6000]@t300[E<#8U2~8Q-46/organ_pedal_25@t3000]@t300[#4T-3L54/batlow#4T9L46;A189D40S83R536V75K57G-5	diagnostics	3.11 XP	5	-	VOCAL\INLANDC.BSP
+Vocal	Opal Chant	ems_704_vowel_a3#8U2~7/ems_line_hiss@t1500]#4FL19Ja0,100.148,30.661,0/xprecycle#4FL17;A848D175S95R1058V97K57G-11	diagnostics	3.11 XP	5	-	VOCAL\OPALC.BSP
+Vocal	Paper Ahh	notify>#8H0,12/choir_aah>#6T-7L60;A10R300K62G3	diagnostics	3.11 XP	5	-	VOCAL\PAPERAHH.BSP
+Vocal	Zinc Vowel	choir_aah@t6000]@t300[<#11U2~8/minimize#5L24;A846D357S88R743V97K57G-1	diagnostics	3.11 XP	5	-	VOCAL\ZINCV.BSP

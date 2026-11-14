@@ -1,0 +1,27 @@
+# category	name	DNA	pack	editions	rating	verdict	file
+Bell	Crossbar Gong	emh_crossbar_gong_c3#12/ems_crossbar_select#4FL50O0;R1500V80K48G1	electromech-heritage	3.11 XP	5	-	BELL\CROSSBAG.BSP
+Bell	Exchange Ringer	ems_exchange_bell_c4#12H0,12L85/ems_relay_pull#4FL35;R1800V80G-4	electromech-heritage	3.11 XP	5	-	BELL\EXCHANGR.BSP
+Bell	Margin Bell Lo-Fi	ems_crushed_tty_bell#10U2~8/ems_typebar#6FL40;R700K78G-2	electromech-heritage	3.11 XP	5	-	BELL\MARGINBL.BSP
+Bell	Relay Mallet	ems_relay_mallet_c5#12/ems_relay_pull#4FL55Q-25;A0R450V90K72G-3	electromech-heritage	3.11 XP	5	-	BELL\RELAYM.BSP
+Bell	Relay Marimba	ems_relay_marimba_c4E#11U2~4L78/ems_relay_release#5FL40Q25;R350V95G-3	electromech-heritage	3.11 XP	5	-	BELL\RELAYM1.BSP
+Bell	Relay Ping	emh_relay_ping_e5#14U2~6;R500V90K76G-4	electromech-heritage	3.11 XP	5	-	BELL\RELAYP.BSP
+Bell	Signal Bell	em_signal_bell#12H0,12,24/ems_clutch_trip#4FL30;R1200K82G1	electromech-heritage	3.11 XP	5.5	keep	BELL\SIGNALB.BSP
+Bell	Strowger Glock	ems_relay_mallet_c5#10H0,12L80/ems_stepper_step#6FL45;R600K72G-3	electromech-heritage	3.11 XP	5	-	BELL\STROWGEG.BSP
+Bell	Teletype Bell Keyboard	ems_ttybell_g5#12/ems_selector_magnet#4FL45;R900V85K79G-5	electromech-heritage	3.11 XP	5.5	keep	BELL\TELETYBK.BSP
+Bell	Typewriter Bell Keys	em_typewriter_bell_b-#5Ja0,100.272,74.1094,3/ui_glass_ping#5T6L19O8Q26/ringout#6T16L18Q8;A5R600V90K73G10	electromech-heritage	3.11 XP	6	keep	BELL\TYPEWRBK.BSP
+Drone	Drum Memory Drone	ems_drum_memory#10Ja0,0.300,100;R900V50K56G-8	electromech-heritage	3.11 XP	6	keep	DRONE\DRUMMD.BSP
+Drone	Electric Bell Drone	em_electric_bell_loopE@0CPJa0,0.1459,100.3271,66;R500V50K84G-7	electromech-heritage	3.11 XP	6	keep	DRONE\ELECTRBD.BSP
+Drone	Gear Whine Pad	ems_motor_whine_a4#16U4~18Ja0,0.800,100;R1500V40K69G-20	electromech-heritage	3.11 XP	6	keep	DRONE\GEARWP.BSP
+Drone	Motor Room	ems_motor_drone_c3#10U2~10Ja0,0.600,100/ems_tty_motor#6FL35Ja0,0.800,100;R1200V40K48G-11	electromech-heritage	3.11	5.5	keep	DRONE\MOTORR.BSP
+FX	Digital Trunk	emh_modem_crush#8FQ-30/ems_crushed_line_noise#8FL60Q30;R400V60G-3	electromech-heritage	3.11 XP	6.5	keep	FX\DIGITALT.BSP
+FX	Newsroom	ems_tty_burst#8FQ-40Ja0,0.200,100/em_tty_machine_loop#8FL70Q40;R800V60G-4	electromech-heritage	3.11 XP	6.5	keep	FX\NEWSROOM.BSP
+FX	Party Line	ems_crosstalk#6F/ems_line_crackle#5FL80/ems_mains_hum#5L40;R500V50K35G-3m1=30m11L20,200m12L20,200	electromech-heritage	3.11 XP	6.5	keep	FX\PARTYL.BSP
+FX	Relay Rain	ems_relay_rack_chatter#8U2~30FQ-50/em_relays_fast_loop#8FL80Q50;R600V70m1=0m11Q-100,100m12Q100,-100	electromech-heritage	3.11 XP	5.5	keep	FX\RELAYR.BSP
+Keys	Sounder Keys	ems_fm_sounder_c4#8/glockenspiel_c6#8L34O21Q5;R305V90G1	electromech-heritage	3.11	5	keep	KEYS\SOUNDERK.BSP
+Keys	Sunlit Parlour	ems_relay_mallet_c5#4/ems_relay_mallet_c5#4T7O133Q-40/ems_relay_mallet_c5#4T12O267Q40/ems_tabulator_cycle#4FL55;R250V90K72G-11	electromech-heritage	3.11 XP	6.5	keep	KEYS\SUNLITP.BSP
+Lead	CSIRAC Pulse	ems_csirac_pulse_e4#16;A2R80V60K64G-3	electromech-heritage	3.11 XP	5	-	LEAD\CSIRACP.BSP
+Lead	Ferranti Hoot	ems_ferranti_hoot_c4Ja0,100.563,54.1420,25;A3R60V60G-5	electromech-heritage	3.11 XP	5	-	LEAD\FERRANTH.BSP
+Pad	Dial Tone Organ	ems_dial_toneRJa0,0.60,100;R400V40K69G-14	electromech-heritage	3.11 XP	5.5	keep	PAD\DIALTO.BSP
+Pluck	Contact Spring	ems_ks_spring_g3#12U2~5/ems_relay_release#4FL35;R350V90K55G-6	electromech-heritage	3.11 XP	5.5	keep	PLUCK\CONTACTS.BSP
+Pluck	Typewriter Pluck	emh_typewriter_ks#14;R400V95K62G-3	electromech-heritage	3.11 XP	5	keep	PLUCK\TYPEWRIP.BSP
+Vocal	1961 Vowel	ems_704_vowel_a3#12U3~8;A40R400V70K57G-17	electromech-heritage	3.11 XP	5	keep	VOCAL\1961V.BSP

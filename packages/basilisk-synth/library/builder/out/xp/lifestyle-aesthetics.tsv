@@ -6,27 +6,31 @@ Bell	Droplet Marimba	xpdingMdrop_plink#12;A0D800S0R400K59G2
 Bell	Eco Wind Chimes	wind_chime_528hz#8/bird_hermit_thrush-#8FL40O400;A0D2500S0R677K72G7
 Bell	Glass Keyboard	default@25]#8/ringout@25[@35]#8T-6L60;A0D1600S30R700K75G7
 Bell	Hydro Kalimba	kalimba_c4#10/droplet_soft#4FL45O5;A0D900S0R500G2
+Bell	Lens Flare Riser	restore<<E#8FJa0,100.114,45.1289,21/chimes#8L31;A0S100R600K79G14
 Bell	Polyphonic Ringtone	batlow@5[@20]@0CP@0CP@0CP++>#8;A0D180S55R40K60G-1
 Bell	Reef Pad	underwater_movement-#5FL40/logon<#11U2~8L60Ja0,100.233,59.1105,34;A1200S90R3500V0K44G9
 Bell	Reflection Ping	ui_glass_ping#6Q-40/ui_glass_ping#5L55O300Q70/ui_glass_ping#5L30O600Q-70;A0S100R600K91G5
-Bell	Rounded Corner Chord	xpnotify#12H0,4,7,11;A0D1500S0R1100K70G13
 Bell	Sparkle Cascade	chimesR#8H0,12/chimesR#4T7O90/chimesR#4T12O135;A0D1800S0R1500K79G1
 Bell	Tank Bubbles	balloon<E>#8/hwout>@30]#4T-3L40;A0D400S0R300K81G22
+Keys	Atrium Keys	xpding@25]<E#8U2~9Q-20/default@30]<<E#6T-4U2~6L45O20Q25;A8D1800S30R1400V70K47G2
 Keys	Atrium Marimba	xpding;A0D700S0R400V90K59G8
 Keys	Barber Chair Organ	ringout@20[@30]@0CP@0CP@0CP#12H0,12,19;A20D300S70R150K69G-4
 Keys	Dial Tone Drone	phone_dial_tone_us@50]<<EU2~6Ja0,100.439,79.2661,7;A1000D2S100R3000K41G-12
 Keys	Disco Ball Stab	chord@40]+#6/chord@40]<<>>#6;A0D350S20R150K57G3m1=50m11L0,120m12L120,0
+Keys	Escalator Ascent	logoff@30[<<#12U3~10Ja0,0.900,100.4000,85Jp0,-60.6000,60/ding#4T-28L22O16Q-29;R3500K39G17
 Keys	Faraway Choir	choir_aah<><EEJa0,100.157,43.1633,5;A90S95R4000V100K45G6
 Keys	Fluorescent Hum	ringout@30[@20]@0CP@0CP@0CP@0CP<<+#4/office_ambience_01-#2FL25;A800S100R2000V0K45G-10
 Keys	Food Court Nylon	default@20]EE><#10/menu<#4FL30;A0D900S0R300V90K75G10
 Keys	Fountain Coins	ding<E>#10/droplet_soft#4FL50O10;A0D2500S0R1800K79
 Keys	Gabber Brick	critstop@20]<<++++#4;A0D250S0R80V100K36G-2
+Keys	Goodbye Pad	logoff<<E#12U2~10;A400S95R3000K39G9
 Keys	Hold Music Loop	holdmusic_lunar_hold_music@20[@10]@0CP@0CPE#6F;A20S100R800G-9
 Keys	Hoover Alarm	batcrit@10[@20]@0CP@0CP@0CP+++#8U4~25;A0S100R200K48G-15
 Keys	Liminal Pool Room	droplet_echoed<EE#8F;A0S100R3000G-5
 Keys	Login Wish	logon<EU2~8Q18;A100S95R2500V89K44G6
 Keys	Logon Stutter	logon@10[@15]@0CP@0CP@0CP@99Ilogon<#8;A5S100R800K44G4
 Keys	Midnight Tines	xpding@20]#5U2~10/ringout@25[@35]><#5T2U2~12L70/recycle<<<#3FL10/xpringout#3T2L52Q-13;A5D2000S30R700V80K59G1
+Keys	Off-Air Hiss	recycle>>><<<@0CP@0CP@0CP@0CP-#8F/marimba_c4#8L44;A400S100R800G12
 Keys	Rainy Window Keys	default@40]<#10U2~6/rain_on_window-#2FL30;A5D1600S20R900K63G5
 Keys	Reverse Ding Loop	dingR@40[@0CP@0CPE#10;A10S100R1200K79
 Keys	Satellite Bulletin	newsreel_tiros_ii_satellite_1960@10[@12]E#4F;A0S100R600G-7
@@ -34,4 +38,6 @@ Keys	Screwed Kit	critstop@15]<<#8/menu<#8FL50;A0S100R80K48G4
 Keys	Sidechain Pad	logon@20[@0CPU3~9Ja0,0.200,100.254,10.454,100.508,10.708,100.762,10.962,100;R300K56G15
 Keys	Slow Jam Bass	error<<@30]+#4;A2D500S60R180V80K63G-3
 Keys	Test Pattern Tone	ringout@30[@20]@0CP@0CP@0CP@0CPU2~4;A30S100R300K70G-7
+Keys	VHS Bell Pad	logon@20[<><E#10U3~20/chimesR#6T1U2~15L60;A250S90R2000K44G11
+Keys	Vapor Sub Boom	ringout@20[@40]<<<#8/start<#8FL50;A0D3588S40R200B7K33G2
 Keys	Weather Map Pad	startup@30[<E#8U2~8Q-25Ja0,100.545,66.2090,10/logon<<#8U2~12L50Q25;A700S95R2500K56G1

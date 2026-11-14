@@ -1,0 +1,11 @@
+[Pack]
+Id=retro-display
+Title=Retro Display Properties
+Version=1.0
+Author=Northshore Pixelworks
+Date=1991-09-09
+Presets=61
+Presets311=61
+PresetsXP=55
+Favourites=1
+Description=Adjust your colour depth to 1985.

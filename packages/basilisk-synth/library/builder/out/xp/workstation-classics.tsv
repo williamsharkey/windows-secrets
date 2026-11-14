@@ -4,6 +4,7 @@ Bass	Ivory Bottom	organ_pedal_25@t2500]<<#8/menu#8FL44;A0D187S20R78V98K36G13
 Bass	Ladder Mono Bass	ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<+#4/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+#4L50Q-58/ringout@20[@40]@0CP@0CP@0CP<<<#8T2U2~8L60;A0D500S60R100K35G-6
 Bass	Lucid End	contrabass_sus_d1@t2500]#8/key_press_down#8FL17;A3D460S23R68V84K26G1
 Bass	Meadow Low	tuba_sus_f1@t2000]E>#8/batlow#8T-7L42;A1D171S57R61V86K41G-2
+Bass	Pearl Basement	critstop@t40[#11U2~5/batlow#5T-12L55;A2D352S35R75V89K36G-5
 Bass	Topaz Anchor	xpding#8/mouse_click@t150]>#8FL28;A0D188S73R58V96K59G8
 Bass	Vowel Mid Bass	ems_704_vowel_a3@30[@20]@0CP@0CP@0CP@0CP++<#10/ringout@20[@40]@0CP@0CP@0CP<<#6L60;A0R100K45G-7
 Bass	Warp Growl	default@t40[@t20]@25]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP+++C@3X<<#16U2~15;A0R120K29G-5
@@ -12,6 +13,7 @@ Chord	Elevated Horns	logon#12U3~11/organ_pedal_25@t3000]@t300[#4T-16L32;A24D539S
 Chord	Flat Salute	trombone_sus_c3@t3000]+>#13H0,-12U2~6/vibraphone_c_low#3T19L49Q-37;A4D344S38R176V79K60G-12
 Chord	Modular Horns	ringout+<#5/ringout#5T-12L55Q29/organ_pedal_25@t3000]@t300[#6T-3L68;A6D241S26R190V87K57G-4
 Chord	Molten Stab	xpringout<#11U2~6/organ_hammond_m100_flute_c@t3000]@t300[#5T-3L36Q-27;A28D410S75R254V90K57
+Chord	Poly Brass Circuit	tadaxp@40[@20]@0CP@0CP@0CP@0CP#12U2~12Ja0,0.80,100.400,75;A0R250K60G8
 Chord	Washed Salute	tada@t190[#8/xpringout#8T-5L64Q35;A2D802S79R389V83K64G-2
 FX	Brass Lift	tadaxpRE#10U3~20/air_duster@t2000]@t500[#3L28/crystal_glass_tap>#3T-28L23O93Q25;A1S100R1650V70K48G4
 FX	Clear Warp	bubbles_in_water_burstE#10U3~19/crystal_glass_tap#3L56/print#3L43;A470S100R1320V90G-2
@@ -46,4 +48,5 @@ Pluck	Folded Spool	tadaxpE#8U2~4Q-64/ems_relay_release#4FL44Ja0,100.40,62.280,0/
 Pluck	Glass Pluck Plus	default@15]#8H0,12/default@15]<E>#6L35O250;A0D350S0R250K75G6
 Pluck	Ivory Snap	logon>#5/balloon#5FL30/hwfail#6T8L34Q12;A0D348S4R181V87K56G11
 Pluck	Ultra Ladder	default@12]#8/xpding@15]<#6T4L40;A0D300S0R200K75G9
+Pluck	Washed Pluck	steel_tongue_drum_f3@t1500]>#11U2~8/balloon#5FL36;A2D344S5R110V77K65G-9
 Pluck	Yellow Ladder	print@t600]@t240[#8U2~5/hwfail#4T3L35Q-10/vibraphone_c_low#4T34L30Q-21;A3D122S1R215V91K63G11
