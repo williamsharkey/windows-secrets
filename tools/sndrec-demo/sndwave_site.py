@@ -88,7 +88,8 @@ def main():
     lib = json.load(open(os.path.join(LIB, 'builder', 'out', 'library.json')))
     manifest = {}
     if prev:
-        m = json.load(open(os.path.join(prev, 'manifest.json')))
+        mfile = next(f for f in (os.path.join(prev, 'manifest.json'), os.path.join(prev, 'index.json')) if os.path.exists(f))
+        m = json.load(open(mfile))
         for r in (m['presets'] if isinstance(m, dict) else m): manifest[r['slug']] = r
         os.makedirs(os.path.join(out, 'audio'), exist_ok=True)
     by_pack = {}
