@@ -1610,10 +1610,15 @@ COMBOBOXes, check boxes and radio buttons.
 - **The host resolves every pitch.** For each voice the host computes cents (key, scale, degrees, snap, remap,
   transpose, unison, bend) and sends the rate, as today. So a batch render with the same DNA, parameters and state
   is the same on every run and on both editions. The guest never computes a scale.
-- host -> guest `key <root> <id> <n> <period> <c1,c2,...> <remap> <anchor> <labels> <mask>`: what the strip and the
-  Scales tab show (sent on change; the steps are listed so a user slot or a disc scale needs nothing in Windows).
-- guest -> host `key <root> <id>` / `keymask <mask>` / `keyopt <remap> <anchor> <labels> <snap>`: the visitor
-  changed it in Windows; the host sets the parameters (so the DAW sees and automates them).
+- host -> guest `key <root> <id> <n> <period> <c1,c2,...> <remap> <anchor> <labels> <mask> <use> <snap>`: what the
+  strip and the Scales tab show (sent on change; the steps are listed so a user slot or a disc scale needs nothing in
+  Windows). As built on 3.11 (main 02926ea): also `scale <id> <category> <label>` once per library scale after the
+  handshake (the Scale box; spaces in the category as `_`), and `klabels <first> <l|l|...>` for the keyboard
+  strip, two lines for keys 36-66 and 67-96: each key's label (empty: none; `~`: out of a 12-note scale, dimmed).
+- guest -> host `keyset <root> <id>` / `keymask <mask>` / `keyopt <use> <snap> <remap> <labels> <anchor>`: the visitor
+  changed it in Windows; the host sets the parameters (so the DAW sees and automates them). (`keyset`, not `key`:
+  `key <note> <vel>` is the strip's note line, below. The state keeps the same fields as `key <root> <id>` and
+  `keyopt ...` lines: STATE.md on main.)
 - `key <note> <vel>` from the strip keeps sending MIDI note numbers (anchor + step in remap), so the host maps the
   strip and MIDI the same way.
 - Automating Key or Scale changes the next notes; parameter changes are sample-accurate in the host, like notes.
