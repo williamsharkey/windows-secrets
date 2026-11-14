@@ -275,6 +275,18 @@ no QEMU build of our own is needed.
   Choir, Breathing Logon: every event audible but under 0.004); 1.2.1's sweep flagged 5. Logoff Strings renders at
   peak ~0.03 alone in both 1.2.1 and 1.2.2 but at 0.3 in some sweep takes: pre-existing build-state variance, open.
 
+## Next batched release: emulator tuning (design/EMULATOR-TUNING.md, a7a99df; steps in its section 5)
+- Editor display over D-Bus: RegisterListener on /org/qemu/Display1/Console_0 over the p2p connection DBusIn already
+  opens, shared-memory scanout (Listener.Unix.Map on macOS, Listener.Win32.Map on Windows), ScanoutMap/UpdateMap
+  blitted into fb_, plain Scanout/Update as fallback; cursor ignored. Mac measured: after-idle lag 66/157 ms -> 13/32 ms
+  (median/max), build animation p95 gap 111 -> 31 ms. The stills come from QEMU's VNC refresh timer backing off to 3 s
+  when idle. Fallback: eager VNC (one request always outstanding, no 33 ms sleep). Windows D-Bus display: untested,
+  prove it (emubench --vnc-mode dbus, xp_check.py; react max <= 40 ms, p95 <= 35 ms).
+- Keep QEMU 11.1, TCG thread=single, tb-size 1024. Ruled out: WHPX (blocks savevm, slower); icount and QEMU 8.2.2
+  (break the assembly).
+- Check: 2 of 4 Windows resumes in the study answered `hi` but never sent `ready` within 90 s. Reproduce with the
+  plugin's real COM link (repeated resumes, count hi-without-ready) and fix if real.
+
 ## Round 2 status (2026-11-13, before -> after)
 - Assembly, plugin load -> ready: Windows 11.5 s -> 5.6-6.1 s; macOS 11.3 s -> 4.4-4.5 s (1 vCPU, idle patch,
   single-threaded TCG tb-size 1024, sequential reshape+glide, "go" sent with the first COM1 lines, VNC <= 30 fps).
