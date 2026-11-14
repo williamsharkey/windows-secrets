@@ -22,7 +22,12 @@ rm -rf "$W/src"; mkdir -p "$W/src"
 git -C "$REPO" archive HEAD packages/basilisk-synth-311 packages/basilisk-synth/core | tar -x -C "$W/src"
 git -C "$REPO" rev-parse HEAD > "$W/srcrev.txt"
 P=$W/src/packages/basilisk-synth-311
-[ -d "$DBP" ] || { git clone -q https://codeberg.org/schelling/dosbox-pure.git "$DBP"; (cd "$DBP" && git checkout -q "$(cat "$P/dosbox-pure/UPSTREAM.txt")" && git apply "$P/dosbox-pure/dosbox-pure.patch"); }
+[ -d "$DBP" ] || { git clone -q https://codeberg.org/schelling/dosbox-pure.git "$DBP"; (cd "$DBP" && git checkout -q "$(cat "$P/dosbox-pure/UPSTREAM.txt")" && git apply "$P/dosbox-pure/dosbox-pure.patch") && md5sum < "$P/dosbox-pure/dosbox-pure.patch" > "$DBP/.b16-patch"; }
+# the patch as it is now (an earlier build's tree gets it again when it changed: bsynth.cpp and the patch go together)
+PSUM=$(md5sum < "$P/dosbox-pure/dosbox-pure.patch")
+if [ "$(cat "$DBP/.b16-patch" 2>/dev/null)" != "$PSUM" ]; then
+  (cd "$DBP" && git checkout -q -- . && git apply "$P/dosbox-pure/dosbox-pure.patch") && echo "$PSUM" > "$DBP/.b16-patch"
+fi
 cp "$P/dosbox-pure/bsynth.cpp" "$DBP/src/hardware/bsynth.cpp"
 [ -d "${OW:=$W/ow}" ] || { mkdir -p "$OW"; (cd "$OW" && gh release download Current-build -R open-watcom/open-watcom-v2 -p ow-snapshot.tar.xz && tar xf ow-snapshot.tar.xz && rm ow-snapshot.tar.xz); }
 

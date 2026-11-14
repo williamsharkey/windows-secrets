@@ -71,7 +71,7 @@ float outGain = 1.f;               // the DNA's G, read by the AudioWorklet (as 
 uint32_t *frameBuf = nullptr; uint32_t frameSeq = 0xFFFFFFFF, frameW = 0, frameH = 0;
 // DNA v3 (design/PRESET-ENGINE-2.md): as the plugin
 bsynth3::Dna3 d3Audio, stagedD3;
-bool capWin = false, capDesk = false, capLoop = false, capRate = false;
+bool capWin = false, capDesk = false, capLoop = false, capRate = false, capTape = false;
 double bpm = 120;                  // the tempo for Wt, Wb, Wg (the page has no transport: 120 unless set)
 b16v3::KeyParams keyParams;        // the key and scale (PRESET-ENGINE-2 18.2): host-side pitches only
 uint32_t keyVer = 1, keyVerGuest = 0;
@@ -206,7 +206,7 @@ void playMidi(uint8_t st0, uint8_t d1, uint8_t d2, bool fromWindows, uint64_t at
         if (!fromWindows && hello) { std::snprintf(t, sizeof t, "bend %d", (d1 | (d2 << 7)) - 8192); sendLine(t); }
     }
     // the notes: V3Host.h, the same code as the plugin and render311
-    noteHost.bpm = bpm; noteHost.capWin = capWin; noteHost.capRate = capRate; noteHost.recBusy = recBusy;
+    noteHost.bpm = bpm; noteHost.capWin = capWin; noteHost.capRate = capRate; noteHost.capTape = capTape; noteHost.recBusy = recBusy;
     noteHost.midi(st0, d1, d2, at, [](const char *line, uint64_t when) {
         sendLine(line, ++nextId, when);
         if (!std::strncmp(line, "on ", 3)) notesSent++;
@@ -268,7 +268,7 @@ void onLine(const std::string &line)
     case proto::Reply::Hi: {
         const std::vector<std::string> caps = bsynth3::parseHi3(line);
         capWin = bsynth3::hasCap(caps, "win"); capDesk = bsynth3::hasCap(caps, "desk");
-        capLoop = bsynth3::hasCap(caps, "loop"); capRate = bsynth3::hasCap(caps, "rate");
+        capLoop = bsynth3::hasCap(caps, "loop"); capRate = bsynth3::hasCap(caps, "rate"); capTape = bsynth3::hasCap(caps, "tape");
         break; }
     case proto::Reply::Built:
         if (inFlight) {   // the new sound is in the recorders: the audio switches to it now

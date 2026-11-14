@@ -28,6 +28,7 @@ void bsyn_host_stats(uint32_t *ontime, uint32_t *late, uint32_t *latemax);
 void bsyn_host_input(uint64_t at, const float *lr, int n);
 void bsyn_host_insrc(int src);
 int bsyn_host_instate(uint64_t *start, uint32_t *bytes, uint32_t *overruns);
+void bsyn_host_gate(int on);
 
 volatile int web_snapshot_request;
 
@@ -73,6 +74,7 @@ static void *web_dlsym(void *h, const char *n)
     {"bsyn_host_event", (void *)bsyn_host_event}, {"bsyn_host_reports", (void *)web_reports}, {"bsyn_host_dac", (void *)bsyn_host_dac},
     {"bsyn_host_read", (void *)bsyn_host_read}, {"bsyn_host_stats", (void *)bsyn_host_stats},
     {"bsyn_host_input", (void *)bsyn_host_input}, {"bsyn_host_insrc", (void *)bsyn_host_insrc}, {"bsyn_host_instate", (void *)bsyn_host_instate},
+    {"bsyn_host_gate", (void *)bsyn_host_gate},
   };
   size_t i;
   (void)h;
