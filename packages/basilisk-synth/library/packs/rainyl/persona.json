@@ -1,0 +1,330 @@
+{
+  "id": "rainyl",
+  "category": "Rainy Loft Collection (album lane, CITYPOP DEPROGRAMMED)",
+  "pack": {
+    "plan_id": "rainy-loft",
+    "library_id": "rainy-loft",
+    "title": "Rainy Loft Collection",
+    "subtitle": "Sound Library for Evening Production",
+    "edition": "Onomichi Studio Series",
+    "version": "1.0",
+    "date": "1988-06-21",
+    "label": "RAINYLOFT",
+    "label_long": "Rainy Loft Collection",
+    "content": "~/cpd/disc/RAINYLOFT",
+    "sources": {
+      "plan": "rainy-loft"
+    }
+  },
+  "maker": {
+    "name": "Harborlight Audio Works Co., Ltd.",
+    "name_ja": "ハーバーライト・オーディオ・ワークス",
+    "short": "Harborlight",
+    "kind": "harbour-town recording studio's sound library",
+    "year": 1988,
+    "place": "Onomichi Studio, Onomichi, Hiroshima, Japan",
+    "contact": [
+      "Harborlight Audio Works Co., Ltd.",
+      "Onomichi Studio",
+      "Onomichi, Hiroshima, Japan",
+      "Enquiries by post"
+    ],
+    "people": [
+      [
+        "Onomichi Studio engineers",
+        "recording, late evenings"
+      ],
+      [
+        "the house band",
+        "keys, bass, reeds"
+      ]
+    ],
+    "voice": "deadpan, late-evening; a quiet studio above the harbour; rain on the skylight"
+  },
+  "look": {
+    "palette": [
+      "#0d1030",
+      "#23215a",
+      "#6a2a74",
+      "#8c3478",
+      "#b0507e",
+      "#2a1a1c",
+      "#5a3a2c",
+      "#c89058",
+      "#d8d0f0",
+      "#f4ecf8",
+      "#000000",
+      "#3a3a7a",
+      "#4a5aa0",
+      "#e0a070",
+      "#7a6a9a",
+      "#ffffff"
+    ],
+    "dither": "bayer4",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#d8d0f0",
+    "paper": "#0d1030",
+    "accent": "#c89058",
+    "accent2": "#b0507e",
+    "fonts": {
+      "display": "georgiaz.ttf",
+      "body": "tahoma.ttf",
+      "mono": "lucon.ttf",
+      "black": "georgiab.ttf",
+      "italic": "georgiai.ttf",
+      "ja": "msgothic.ttc"
+    },
+    "art": {
+      "bg": "/mnt/c/Users/willi/github/williamsharkey/windows-secrets/site/citypop-deprogrammed/art/scene.png",
+      "back": "global/earth-city-lights-illuminate-the-nil.jpg",
+      "mark": "global/marks/mk-ring-10-concentric-circles-in-bla.png",
+      "object": "/mnt/c/Users/willi/github/williamsharkey/windows-secrets/site/citypop-deprogrammed/art/scene.png"
+    },
+    "title": {
+      "style": "shadow",
+      "colors": [
+        "#d8d0f0",
+        "#6a2a74"
+      ],
+      "font": "display"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#0d1030"
+      },
+      {
+        "t": "text",
+        "s": "HARBORLIGHT AUDIO WORKS",
+        "font": "body",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.06
+        ],
+        "anchor": "mm",
+        "c": "#c89058",
+        "spacing": 3,
+        "maxw": 0.86
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0.12,
+          0.1,
+          0.88,
+          0.72
+        ],
+        "frame": "line",
+        "c": "#6a2a74"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.8
+        ],
+        "size": 0.075,
+        "maxw": 0.86
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "italic",
+        "size": 0.032,
+        "pos": [
+          0.5,
+          0.87
+        ],
+        "anchor": "mm",
+        "c": "#b0507e",
+        "maxw": 0.86
+      },
+      {
+        "t": "text",
+        "s": "夜の制作のための音素材集",
+        "font": "ja",
+        "size": 0.026,
+        "pos": [
+          0.5,
+          0.925
+        ],
+        "anchor": "mm",
+        "c": "#d8d0f0",
+        "aa": true
+      },
+      {
+        "t": "text",
+        "s": "ONOMICHI STUDIO  1988",
+        "font": "body",
+        "size": 0.022,
+        "pos": [
+          0.5,
+          0.965
+        ],
+        "anchor": "mm",
+        "c": "#c89058",
+        "spacing": 2
+      }
+    ],
+    "spine_bg": "#23215a",
+    "spine_ink": "#d8d0f0",
+    "spine_title": "#c89058",
+    "back_bg": "#0d1030",
+    "back_ink": "#d8d0f0",
+    "back_head": "#c89058",
+    "back_tint": [
+      "#0d1030",
+      "#b0507e"
+    ],
+    "bullet": "* ",
+    "compat": {
+      "pos": [
+        0.9,
+        0.7
+      ],
+      "anchor": "rb",
+      "size": 0.12
+    }
+  },
+  "box": {
+    "type": "jewel",
+    "obi": null,
+    "price": [
+      "¥2,800",
+      "(税込)"
+    ],
+    "sticker": {
+      "bg": "#d8d0f0",
+      "ink": "#23215a",
+      "font": "ja",
+      "pos": [
+        0.83,
+        0.13
+      ]
+    },
+    "burst": null,
+    "features": [
+      "{count} presets: keys, bass, reeds, bells and four kits",
+      "Rain, city, vinyl, espresso, trains and foghorns",
+      "For after the club"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "full",
+    "ring": "",
+    "ring_ink": "#d8d0f0"
+  },
+  "icon": {
+    "motif": "moon",
+    "colors": [
+      "#d8d0f0",
+      "#0d1030",
+      "#c89058",
+      "#23215a"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENSE.TXT",
+    "hlp": "RAINYLFT.HLP",
+    "pdf": "RAINYLFT.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "corporate",
+    "rtf": null,
+    "wri": null,
+    "splash": "RAINYLFT.BMP",
+    "splash_bpp": 4,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "band": "#23215a",
+    "band2": "#c89058",
+    "accent": "#6a2a74",
+    "ink": "#0d1030",
+    "line1": "Library Notes  -  Onomichi Studio",
+    "heads": {
+      "Introduction": "After Hours",
+      "The Presets": "The Library",
+      "Getting Started": "Loading"
+    }
+  },
+  "hlp": {
+    "font": "Tahoma",
+    "family": "swiss",
+    "title_color": "#6a2a74"
+  },
+  "booklet": {
+    "mode": "art",
+    "signature": "Onomichi Studio",
+    "theme": [
+      "night",
+      "city",
+      "lights",
+      "rain",
+      "harbor",
+      "sea",
+      "night sky"
+    ],
+    "quotes": {
+      "Texture": "Rain on the skylight. Trains across the water.",
+      "FX": "The harbour, after midnight.",
+      "Keys": "The tine piano by the window.",
+      "Bass": "Fretless, unhurried.",
+      "Kit": "Brushes, sticks and a couch.",
+      "Lead": "Muted trumpet, two floors down."
+    },
+    "subjects": {
+      "Texture": [
+        "rain",
+        "city",
+        "night",
+        "water"
+      ],
+      "FX": [
+        "sea",
+        "harbor",
+        "night",
+        "lights"
+      ],
+      "Keys": [
+        "piano",
+        "interior",
+        "night"
+      ]
+    }
+  },
+  "text": {
+    "tagline": "Sound library for evening production.",
+    "blurb": "Recorded after hours at our Onomichi studio: tine and glass electric pianos, fretless bass, reeds, muted trumpet, bells, four drum kits, and the weather outside. {count} presets for late-evening production.",
+    "intro": [
+      "The Rainy Loft Collection is the evening library of Harborlight Audio Works. It was recorded in our Onomichi studio after the day sessions had gone home, with the skylight open to the rain.",
+      "You will find electric pianos, fretless and plucked basses, a reed, flutes, muted trumpets, bells, four drum kits, and the sounds of the town: rain, traffic, records, the espresso machine, trains and the foghorn."
+    ],
+    "maker_note": [
+      "Play them quietly. The best take of the night is usually the last one.",
+      "Onomichi Studio, Harborlight Audio Works Co., Ltd."
+    ],
+    "install": [
+      "Insert the disc. In the Library tab it appears as RAINYLOFT.",
+      "Open a folder and double-click a preset to load it.",
+      "The disc's own recordings are in SOUNDS; their sources and licences are in LIBRARY.TSV and CREDITS.TXT."
+    ],
+    "license": [
+      "HARBORLIGHT AUDIO WORKS - LICENCE",
+      "You may use these presets and the music you make with them in your own productions.",
+      "The field and instrument recordings are CC0 (Freesound) or the owner's own instruments; see CREDITS.TXT.",
+      "No warranty."
+    ],
+    "copyright": "(c) 1988 Harborlight Audio Works Co., Ltd."
+  }
+}

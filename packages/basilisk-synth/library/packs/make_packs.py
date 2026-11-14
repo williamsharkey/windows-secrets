@@ -249,7 +249,7 @@ def build_pack(p, opt):
 
     # ---- ISO
     if not opt.get('no_iso'):
-        out = os.path.join(HERE, 'out', os.environ.get('PACK_DISCS', 'discs'))          # the final disc set: <LABEL>/ folders, <LABEL>.ISO, DISCS.TSV
+        out = os.path.join(HERE, 'out', os.environ.get('PACK_DISCS', 'discs-1.4'))          # the final disc set: <LABEL>/ folders, <LABEL>.ISO, DISCS.TSV
         os.makedirs(out, exist_ok=True)
         ents = [('/' + k, '/' + joliet.get(k, k), v) for k, v in files.items()]
         iso.build(os.path.join(out, pk['label'] + '.ISO'), pk['label'], pk['label_long'], ents, date)
@@ -345,6 +345,14 @@ def write_index(out):
             continue
         f[1], f[2] = lab, lab + '.ISO'
         rows.append('\t'.join(f))
+    listed = {r.split('\t')[0] for r in rows if not r.startswith('#')}
+    for p in personas([]):     # discs handed over directly (pack.content), not yet in the library lane's index
+        lid = p['pack'].get('library_id') or p['pack'].get('plan_id')
+        mf = os.path.join(HERE, p['id'], 'build', 'meta.json')
+        if p['pack'].get('content') and lid not in listed and os.path.exists(os.path.join(out, p['pack']['label'] + '.ISO')) and os.path.exists(mf):
+            mt = json.load(open(mf))
+            rows.append('\t'.join([lid, p['pack']['label'], p['pack']['label'] + '.ISO', p['pack']['title'], str(mt['presets']),
+                                    str(mt['presets']), str(mt['presets_xp']), str(mt.get('favourites', 0))]))
     with open(os.path.join(out, 'DISCS.TSV'), 'w', encoding='utf-8', newline='\n') as fo:
         fo.write('\n'.join(rows) + '\n')
     x = os.path.join(pdata.CONTENT, 'XP-ONLY.TSV')
@@ -366,7 +374,7 @@ def main():
     for p in personas(ids):
         results.append(build_pack(p, opt))
     if not opt.get('no_iso') and not opt.get('render_only'):
-        out = os.path.join(HERE, 'out', os.environ.get('PACK_DISCS', 'discs'))
+        out = os.path.join(HERE, 'out', os.environ.get('PACK_DISCS', 'discs-1.4'))
         write_index(out)
     if book:   # booklet pages for the site's player (packlib/booklet.py), one per category, from the content as built
         from packlib import booklet

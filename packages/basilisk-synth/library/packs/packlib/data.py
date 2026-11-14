@@ -89,8 +89,23 @@ CONTENT = os.environ.get('PACK_CONTENT', os.path.join(BUILDER_OUT, 'discs311')) 
 def content_dir(persona):
     """The library lane's folder for this pack's disc (make_discs.py: PRESETS.TSV, category folders, FAVORITE,
     PACK.INF, LIBRARY.TSV), found through DISCS.TSV by pack id or by volume label; or None."""
+    own = persona['pack'].get('content')          # a disc folder handed over directly (e.g. by the album lane)
+    if own:
+        own = os.path.expanduser(own)
+        if not os.path.isabs(own):
+            own = os.path.normpath(os.path.join(HERE, '..', '..', '..', '..', own))
     idx = os.path.join(CONTENT, 'DISCS.TSV')
     lid = persona['pack'].get('library_id') or LIBMAP.get(persona['id']) or persona['pack'].get('plan_id')
+    if os.path.exists(idx):
+        lab = persona['pack']['label']
+        for line in open(idx, encoding='utf-8'):
+            f = line.rstrip('\n').split('\t')
+            if not line.startswith('#') and len(f) > 1 and (f[0] == lid or f[1] == lab):
+                dd = os.path.join(CONTENT, f[1])
+                if os.path.exists(os.path.join(dd, 'PRESETS.TSV')):
+                    return dd                     # once the library lane carries it, its copy wins
+    if own and os.path.exists(os.path.join(own, 'PRESETS.TSV')):
+        return own
     if not os.path.exists(idx):
         return None
     for line in open(idx, encoding='utf-8'):
@@ -167,6 +182,18 @@ def load(persona):
                     c = l.strip()
                     if c not in credits and not any(c.startswith(x.split(':')[0]) and x != c and len(x) > len(c) for x in credits):
                         credits.append(c)
+        if not credits and os.path.exists(os.path.join(cdir, 'LIBRARY.TSV')):    # else from the sounds' licence column
+            for l in open(os.path.join(cdir, 'LIBRARY.TSV'), encoding='utf-8', errors='replace'):
+                f = l.rstrip('\n').split('\t')
+                if l.startswith('#') or len(f) < 5:
+                    continue
+                c = f[4].split(';')[0].strip()
+                if c.startswith('William Sharkey'):
+                    c = "Rendered from William Sharkey's own instruments"
+                elif 'Freesound' in c:
+                    c = c.split(',')[0].rstrip(')') + '), CC0'
+                if c and c not in credits:
+                    credits.append(c)
         credits = [c for c in credits if not any(o != c and o.startswith(c) for o in credits)]
         return {'presets': out, 'sounds': [], 'placeholder': False, 'favourites': favs, 'content_dir': cdir, 'credits': credits,
                 'source': 'library disc content ' + os.path.relpath(cdir, LIB)}

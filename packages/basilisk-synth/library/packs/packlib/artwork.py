@@ -766,6 +766,13 @@ def icon(p, n):
         d.line(S(2, 26, 29, 26), fill=C[2], width=W1)
         d.line(S(29, 26, 29, 12), fill=C[1])
         d.rectangle(S(12, 23, 19, 28), fill=C[2], outline=C[1])
+    elif m == 'moon':        # a moon over the harbour water, its light on the waves
+        d.rectangle(S(0, 0, 31, 31), fill=C[1])
+        d.ellipse(S(16, 3, 27, 14), fill=C[0])
+        d.ellipse(S(13, 2, 23, 12), fill=C[1])
+        d.rectangle(S(0, 20, 31, 31), fill=C[3])
+        for y, x0, x1 in ((22, 17, 25), (25, 15, 27), (28, 18, 24)):
+            d.line(S(x0, y, x1, y), fill=C[2])
     elif m == 'chip':
         d.rectangle(S(7, 7, 24, 24), fill=C[3], outline=C[1])
         for i in range(8, 24, 3):
