@@ -69,7 +69,7 @@ def product_presets(site):
             p['program'] = p['program'].replace('BASILISK 16', PRODUCT)
     d['editions']['b16']['note'] = ('The 76 factory programs of 1.2.1, released as BASILISK 16, rendered with <code>render311</code>, '
                                     'which gives the same result on every run.')
-    d['editions']['lib']['note'] = ('<b>Coming in 1.3.0.</b> The owner\'s favourites from the new library, rated 6.5 to 8.5 of 10 when '
+    d['editions']['lib']['note'] = ('<b>In 1.3.0.</b> The owner\'s favourites from the new library, rated 6.5 to 8.5 of 10 when '
                                     'it held 1,039 presets. Each demo is the file the owner rated, rendered by <code>render311</code> '
                                     'through the real Windows 3.11 machine and checked that every note sounds. Their level is the preset\'s '
                                     'own, so some are a little quieter than the other demos. Every pack is in the <a href="packs/">Sound Pack Explorer</a>.')
@@ -160,6 +160,9 @@ def main():
             copy(src, os.path.join(dst, name))
             files[k] = {'name': name, 'kb': max(1, round(os.path.getsize(src) / 1024))}
             if k == 'pdf': files[k]['pages'] = pdf_pages(src); files[k]['size'] = fl.get('pdf_size')
+        iso = W and W.get('iso') and os.path.join(LIB, 'packs', 'out', 'discs', W['iso'])
+        if iso and os.path.exists(iso):   # the disc image (it also ships inside the release, on drive P:)
+            copy(iso, os.path.join(dst, W['iso'])); files['iso'] = {'name': W['iso'], 'kb': max(1, round(os.path.getsize(iso) / 1024))}
         M, T = P['maker'], P.get('text', {})
         presets = []
         for x in rows:

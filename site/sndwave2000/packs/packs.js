@@ -243,7 +243,7 @@
       '<span><a href="#' + p.id + '" class="pk">' + esc(p.title) + '</a></span><span class="mk">' + esc(p.maker.name) + '</span>';
     $('mp-recipe').textContent = recipeLines(x).join('\n');
     $('mp-links').innerHTML = (f.pdf ? '<a href="' + p.id + '/' + esc(f.pdf.name) + '" target="_blank" rel="noopener">Manual</a>' : '') +
-      (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + '<a href="#pack" class="about">About this pack</a>';
+      (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + (f.iso ? '<a href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image</a>' : '') + '<a href="#pack" class="about">About this pack</a>';
     $('mp-title').textContent = 'SNDWAVE2000 Media Player - ' + x.n.toUpperCase();
     drawArt(x);
     if (!audioOf(x)) { tEl.textContent = '--:--.-'; lenEl.textContent = 'preview coming'; }
@@ -424,7 +424,9 @@
     if (facts.length) t += '<p class="facts">' + facts.map(esc).join(' &middot; ') + '</p>';
     t += '<p class="files">' + (f.pdf ? '<a class="btn def" href="' + p.id + '/' + esc(f.pdf.name) + '" target="_blank" rel="noopener">Manual (PDF' + (f.pdf.pages ? ', ' + f.pdf.pages + ' pages' : '') + ', ' + f.pdf.kb + ' KB)</a>' : '') +
       (f.hlp ? '<a class="btn" href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help file (' + esc(f.hlp.name) + ', ' + f.hlp.kb + ' KB)</a>' : '') +
-      (f.readme ? '<a class="btn" href="' + p.id + '/' + esc(f.readme.name) + '" target="_blank" rel="noopener">README.TXT</a>' : '') + '</p>';
+      (f.readme ? '<a class="btn" href="' + p.id + '/' + esc(f.readme.name) + '" target="_blank" rel="noopener">README.TXT</a>' : '') +
+      (f.iso ? '<a class="btn" href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image (' + esc(f.iso.name) + ', ' + (f.iso.kb >= 1024 ? (f.iso.kb / 1024).toFixed(1) + ' MB' : f.iso.kb + ' KB') + ')</a>' : '') + '</p>' +
+      (f.iso ? '<p class="note">The disc is already in SNDWAVE2000 1.3.0 (Library tab, drive P:). The image is for another machine, or to keep.</p>' : '');
     if (p.credits && p.credits.length) t += '<div class="credits"><p class="kicker">Sound credits</p><ul>' + p.credits.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul></div>';
     if (p.note && p.note.length) t += '<blockquote class="mnote"><p class="kicker">From the maker</p>' + p.note.map(function (s) { return '<p>' + esc(s) + '</p>'; }).join('') + '</blockquote>';
     txt.innerHTML = t;
@@ -471,7 +473,7 @@
     PACKS.forEach(function (p) { grid.appendChild(card(p)); });
     [].forEach.call(grid.querySelectorAll('[data-px]'), function (i) { pxfit.fit(i); });
     $('status').textContent = PACKS.length + ' packs, ' + num(d.total) + ' presets. ' +
-      (d.previews ? 'Every preview was rendered by the real Windows 3.11 machine.' : 'The previews for 1.3.0 are being rendered on the release build; until then the owner\'s top picks play the demos already made, and the rest say "preview coming".');
+      (d.previews ? 'Every preview was rendered by the real Windows 3.11 machine.' : 'Every disc ships with SNDWAVE2000 1.3.0. Previews of every preset are being rendered on the release build; until then the owner\'s top picks play the demos already made, and the rest say "preview coming".');
     if (!route(false)) {   // first visit: the pack with the most previews
       var best = PACKS.slice().sort(function (a, b) { return (b.picks || 0) - (a.picks || 0) || b.fav - a.fav; })[0];
       packSel.value = best.id; openPack(best.id);

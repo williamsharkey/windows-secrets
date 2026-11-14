@@ -76,7 +76,7 @@
   </div>
 
   <h3 class="subh">Windows Help, the old way</h3>
-  <p>A help file for Windows 3.11's own help viewer, WINHELP.EXE: a contents page, Search, glossary popups, the strips and panels explained, and a full DNA reference. It is compiled from plain text by a small WinHelp compiler written for this project, without Microsoft's tools. These are screenshots of it in the real Windows 3.11 viewer, taken while the instrument was still called BASILISK 16. It is written and tested, and ships in a coming release.</p>
+  <p>A help file for Windows 3.11's own help viewer, WINHELP.EXE: a contents page, Search, glossary popups, the strips and panels explained, and a full DNA reference. It is compiled from plain text by a small WinHelp compiler written for this project, without Microsoft's tools. These are screenshots of it in the real Windows 3.11 viewer, taken while the instrument was still called BASILISK 16. It ships in 1.3.0 as SNDWAVE.HLP.</p>
   <div class="win">
     <div class="cap"><span class="box"></span><span class="t">Help</span></div>
     <div class="body">
@@ -93,7 +93,7 @@
 
 <section class="ch" id="packs" aria-labelledby="h-packs">
   <div class="chh"><span class="no">§ 3</span><h2 id="h-packs">Sound packs</h2></div>
-  <p>Version 1.3.0 brings a library of 1,357 presets on 25 sound-pack discs, each from an independent publisher: a Reston multimedia house, a Bielefeld studio-equipment maker, a Hsinchu electronics firm, a London garage label turned limited company. Every disc has its box, its manual and its Windows help file. The <a href="packs/">Sound Pack Explorer</a> has them all, with a preview of every preset and its recipe.</p>
+  <p>Version 1.3.0 ships with a library of 1,357 presets on 25 sound-pack discs, each from an independent publisher: a Reston multimedia house, a Bielefeld studio-equipment maker, a Hsinchu electronics firm, a London garage label turned limited company. Every disc has its box, its manual and its Windows help file, and every disc is in the download, on drive P:. The <a href="packs/">Sound Pack Explorer</a> has them all, with a preview of every preset and its recipe.</p>
   <div class="shelf">
     <a href="packs/#workgrp"><span class="pxbox pximg"><img src="packs/workgrp/thumb.png" width="192" height="205" data-px="192x205" alt=""></span><b>Workgroup House Edition</b><span>Velvetline Multimedia, Inc.</span></a>
     <a href="packs/#emheritg"><span class="pxbox pximg"><img src="packs/emheritg/thumb.png" width="240" height="200" data-px="240x200" alt=""></span><b>ELEKTROMECHANIK</b><span>Kessler &amp; Lohrmann Studiotechnik GmbH</span></a>
@@ -185,22 +185,25 @@
 
 <section class="ch" id="download" aria-labelledby="h-dl">
   <div class="chh"><span class="no">§ 7</span><h2 id="h-dl">Download</h2></div>
-  <p>SNDWAVE2000 is a sixteen-voice synthesizer built from real Sound Recorders. The download is complete: the plugin, Windows 3.11 and its Sound Recorders, the library disc and the batch renderer, with nothing else to install or find. The current release is <b>1.2.1, released as BASILISK 16</b>: it installs as <code>Basilisk16.vst3</code> and appears in your DAW as BASILISK 16. The first release under the SNDWAVE2000 name will be 1.3.0, with the sound packs.</p>
+  <p>SNDWAVE2000 is a sixteen-voice synthesizer built from real Sound Recorders. The download is complete: the plugin, Windows 3.11 and its Sound Recorders, the library disc, all 25 sound-pack discs (on drive P:) and the batch renderer, with nothing else to install or find. The current release is <b>SNDWAVE2000 1.3.0</b>: VST3 and CLAP for Windows and macOS, and Audio Unit for macOS.</p>
+  <p>Up to 1.2.1 it was released as BASILISK 16. Projects, presets and <code>.b16</code> files saved with BASILISK 16 open unchanged: SNDWAVE2000 keeps the same plugin IDs and state format.</p>
   <div class="dlbox"><div class="pxbox pximg"><img class="pix" src="art/box-3d-render.png" width="420" height="357" data-px="420x357" loading="lazy" alt="The SNDWAVE2000 box: Algorithmic Industries, the wordmark and Grid sun on the striped cream front, CD-ROM, 16-bit and 32-bit desktops"></div><script>pxfit.fit(document.querySelector('.dlbox [data-px]'))</script>
   <div>
   <div class="dlrow">
-    <a class="dlk" href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-311-v1.2.1/BASILISK-16-windows-x64.zip"><b>Windows 10 / 11</b><span>VST3 &middot; x64 &middot; .zip &middot; 125 MB</span></a>
-    <a class="dlk" href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-311-v1.2.1/BASILISK-16-macos-universal.zip"><b>macOS</b><span>VST3 + AU &middot; Apple silicon and Intel &middot; .zip &middot; 250 MB</span></a>
+    <a class="dlk" href="https://github.com/williamsharkey/windows-secrets/releases/download/sndwave2000-v1.3.0/SNDWAVE2000-1.3.0-windows-x64.zip"><b>Windows 10 / 11</b><span>VST3 + CLAP &middot; x64 &middot; .zip &middot; 235 MB</span></a>
+    <a class="dlk" href="https://github.com/williamsharkey/windows-secrets/releases/download/sndwave2000-v1.3.0/SNDWAVE2000-1.3.0-macos-universal.zip"><b>macOS</b><span>VST3 + AU + CLAP &middot; Apple silicon and Intel &middot; .zip &middot; 473 MB</span></a>
   </div>
-  <p class="note">1.2.1, released as BASILISK 16. Checksums, the patched DOSBox Pure source and the batch renderer are on the <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-311-v1.2.1">release page</a>. Source: <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">packages/basilisk-synth-311</a>.</p>
+  <p class="note">SNDWAVE2000 1.3.0. <a href="https://github.com/williamsharkey/windows-secrets/releases/download/sndwave2000-v1.3.0/SHA256SUMS.txt">SHA256SUMS</a> and the emulator source as built (<a href="https://github.com/williamsharkey/windows-secrets/releases/download/sndwave2000-v1.3.0/dosbox-pure-sndwave2000-source.tar.gz">DOSBox Pure with the BSYN card</a>, GPLv2+) are on the <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/sndwave2000-v1.3.0">release page</a>. Source: <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">packages/basilisk-synth-311</a>. The previous release, 1.2.1 as BASILISK 16, is <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-311-v1.2.1">still available</a>.</p>
   </div></div>
   <h3 class="subh">Install</h3>
   <dl class="spec">
-    <dt>Windows</dt><dd>Unzip and copy the <b>Basilisk16.vst3</b> folder to <code>C:\Program Files\Common Files\VST3</code>, then rescan plugins in your DAW. It is not code-signed (there is no signing identity); DAWs load it like any other unsigned plugin.</dd>
-    <dt>macOS</dt><dd>Unzip. Copy <b>Basilisk16.vst3</b> to <code>~/Library/Audio/Plug-Ins/VST3</code> and <b>Basilisk16.component</b> to <code>~/Library/Audio/Plug-Ins/Components</code>. It is ad-hoc signed but not notarized (no Apple developer identity), so run this once in Terminal, then restart the DAW:
-      <pre>xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Basilisk16.vst3 ~/Library/Audio/Plug-Ins/Components/Basilisk16.component</pre></dd>
+    <dt>Windows</dt><dd>Unzip. Copy the <b>SNDWAVE2000.vst3</b> folder to <code>C:\Program Files\Common Files\VST3</code> and, for CLAP hosts, <b>SNDWAVE2000.clap</b> to <code>C:\Program Files\Common Files\CLAP</code> (it uses the installed VST3's machine). Rescan plugins in your DAW. It is not code-signed; DAWs load it like any other unsigned plugin. The batch renderer is in <code>batch\render311.exe</code>.</dd>
+    <dt>macOS</dt><dd>Unzip. Copy <b>SNDWAVE2000.vst3</b> to <code>~/Library/Audio/Plug-Ins/VST3</code>, <b>SNDWAVE2000.component</b> to <code>~/Library/Audio/Plug-Ins/Components</code> and <b>SNDWAVE2000.clap</b> to <code>~/Library/Audio/Plug-Ins/CLAP</code>. It is ad-hoc signed but not notarized, so run this once in Terminal, then restart the DAW:
+      <pre>xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/*/SNDWAVE2000.*</pre></dd>
+    <dt>From 1.2.1</dt><dd>Remove <b>Basilisk16.vst3</b> (and on macOS <b>Basilisk16.component</b>) first: SNDWAVE2000 uses the same plugin IDs, so your BASILISK 16 projects open in it.</dd>
   </dl>
   <h3 class="subh">Good to know</h3>
+  <p class="new"><b>New in 1.3.0:</b> the title screen, a Program Manager group, the About box and a Windows help file (SNDWAVE.HLP); Voices, Playback, Scales, Rec, Mines and Library tabs; DNA v3 (voice modes and stacks, humanize, tape wow and flutter, key zones, grains, kits, the mine-grid sequencer); key and scale parameters with Scala import; a Recorder for your own takes from a stereo sidechain, saved with the project; Minesweeper's board as a step sequencer that follows your DAW; the 25 sound-pack discs on drive P:; Save and Load of <code>.b16</code> states. Full notes are on the <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/sndwave2000-v1.3.0">release page</a>.</p>
   <p>No account and no API key. The 76 programs are in your DAW's preset list and in Windows' Preset drop-down, and you can also type a DNA straight into Windows. A new sound is built while the old one keeps playing: Windows rebuilds one recorder at a time and plays your notes in between, so a preset change never interrupts you. Offline renders wait for the build and come out bit-identical every time, including after reloading the project; live playback never waits (it is silent for the few seconds Windows takes to assemble). It reports a fixed latency of 60 ms, which DAWs compensate for on playback; you hear it when you play live. Each instance is an emulated PC that rests when it has nothing to do: about 13% of one core idle and 35% while playing, on the PC it was built on. Sixteen voices per instance; a seventeenth note steals the oldest.</p>
 </section>
 
@@ -248,9 +251,9 @@
     {base: '/sndrec/pxv/b16-macro', seconds: 9.8, title: 'The mod wheel moving Macro 1 on Macro Swell',
      caption: '<b>The mod wheel.</b> On Macro Swell, the wheel (the Mod scroll bar, bottom left) adds to Macro 1, which stretches chord\'s envelope and swings ding\'s echo across the stereo field.'},
     {base: '/sndrec/pxv/lib-house', seconds: 39.6, title: 'The owner\'s picks from Workgroup House Edition: Shaded End, Granite Cloud and Shaded Tremolo',
-     caption: '<b>Workgroup House Edition</b> (coming in 1.3.0). The owner\'s three top-rated presets from the pack: Shaded End (a bass of XP\'s Ding slowed down, with Battery Low), then Granite Cloud (a flute, trimmed, echoed and slowed, with XP\'s Ringout) and Shaded Tremolo (XP\'s Startup and 3.11\'s Chimes). Between them Windows builds each new sound in view. Played on the 1.2.1 machine.'},
+     caption: '<b>Workgroup House Edition</b> (in 1.3.0). The owner\'s three top-rated presets from the pack: Shaded End (a bass of XP\'s Ding slowed down, with Battery Low), then Granite Cloud (a flute, trimmed, echoed and slowed, with XP\'s Ringout) and Shaded Tremolo (XP\'s Startup and 3.11\'s Chimes). Between them Windows builds each new sound in view. Played on the 1.2.1 machine.'},
     {base: '/sndrec/pxv/lib-picks', seconds: 21.8, title: 'Misty Warp and Afterhours Tine',
-     caption: '<b>More picks</b> (coming in 1.3.0). Misty Warp (bubbles in water with XP\'s Chimes and Ding) holds two notes, then Afterhours Tine plays chords and a melody. Played on the 1.2.1 machine.'}];
+     caption: '<b>More picks</b> (in 1.3.0). Misty Warp (bubbles in water with XP\'s Chimes and Ding) holds two notes, then Afterhours Tine plays chords and a melody. Played on the 1.2.1 machine.'}];
   window.heroPlayer = new PxPlayer(document.getElementById('hero'), clips);
   var g = document.getElementById('helpg'), shot = function () { return g.querySelector('[data-px]'); };
   [].forEach.call(g.querySelectorAll('.chip'), function (b) {
