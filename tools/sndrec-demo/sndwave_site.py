@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """The data and media for williamsharkey.com/sndwave2000/ (the SNDWAVE2000 site) and its Sound Pack Explorer.
 
-    sndwave_site.py SITE_DIR [--recipe-cli recipe_cli] [--previews DIR] [--presets sndrec/presets.json]
+    sndwave_site.py SITE_DIR [--recipe-cli recipe_cli] [--previews DIR] [--songs DIR] [--discs DISCS.TSV]
 
 SITE_DIR is the staged docroot (it holds sndrec/ and sndwave2000/). Writes:
   sndwave2000/presets.json         sndrec/presets.json for the product page: SNDWAVE2000 names, root-relative audio
@@ -127,7 +127,9 @@ def main():
     recs = recipes(cli, alldna) if cli else {}
     songs = json.load(open(os.path.join(songsdir, 'index.json')))['packs'] if songsdir else {}
     index = []
-    discs = os.path.join(LIB, 'packs', 'out', 'discs', 'DISCS.TSV')   # the released discs: a pack still being made is left out
+    # the released discs: a pack staged for a later release (Rainy Loft Collection, 1.4) is left out until then;
+    # --discs packages/basilisk-synth/library/packs/out/discs-1.4/DISCS.TSV switches the 1.4 set on
+    discs = opt('--discs') or os.path.join(LIB, 'packs', 'out', 'discs', 'DISCS.TSV')
     released = {l.split('\t')[0] for l in open(discs) if l.strip() and not l.startswith('#')} if os.path.exists(discs) else None
     for pid, P, W, lid, pdir in entries:
         if released is not None and lid not in released:
