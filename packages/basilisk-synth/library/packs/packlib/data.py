@@ -297,7 +297,24 @@ def kits():
     for x in em['kits']:
         # both editions: the 3.11 lane tested all 12 in kit mode on 3.11 (every mapped pad sounds, 2026-11-14)
         presets.append({'category': 'Electromech', 'name': clean_name(x['name']), 'dna': x['dna'], 'ships': ['3.11', 'XP']})
+    fixes = {}
+    fx = os.path.join(HERE, 'kitmgr', 'KICKFIX.TSV')       # release 1.4: quiet kick layers replaced, once measured
+    if os.path.exists(fx):
+        for l in open(fx, encoding='utf-8'):
+            if l.startswith('#') or not l.strip():
+                continue
+            f = l.rstrip('\n').split('\t')
+            if f[1] == 'pass':
+                fixes[f[0]] = (f[3], f[4])
+    for p in presets:
+        if p['name'] in fixes:
+            new, old = fixes[p['name']]
+            p['dna'] = new if p['dna'] == old or canonical_ok(p['dna'], old) else p['dna']
     return kit_canonical(presets)
+
+
+def canonical_ok(a, b):
+    return a.replace('\r', '') == b.replace('\r', '')
 
 
 def write_kits_tsv(path):
