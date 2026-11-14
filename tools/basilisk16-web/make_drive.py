@@ -34,9 +34,9 @@ if '--xpsounds' in sys.argv:
         zx = zipfile.ZipFile(xp)
         for i in zx.infolist():
             if i.filename.upper().startswith('XPSOUNDS/') and i.filename.upper().endswith('.WAV'): files['XPSOUNDS/' + i.filename.split('/')[-1].upper()] = zx.read(i)
-        # and, from the plugin's drive, its help: C:\BS\BASIL16.HLP, the BASILISK 16 group and Program Manager's list of
-        # groups (F1 in BASILISK 16 opens the help with WINHELP.EXE, which drive-keep.txt keeps)
-        for n in ('BS/BASIL16.HLP', 'WINDOWS/BASIL16.GRP', 'WINDOWS/PROGMAN.INI'):
+        # and, from the plugin's drive, its help: C:\BS\SNDWAVE.HLP, the SNDWAVE2000 group and Program Manager's list of
+        # groups (F1 opens the help with WINHELP.EXE, which drive-keep.txt keeps); BASIL16.* in drives from before the rename
+        for n in ('BS/SNDWAVE.HLP', 'WINDOWS/SNDWAVE.GRP', 'BS/BASIL16.HLP', 'WINDOWS/BASIL16.GRP', 'WINDOWS/PROGMAN.INI'):
             if n in zx.namelist(): files[n] = zx.read(n)
     else:
         for f in sorted(os.listdir(xp)):
