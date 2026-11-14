@@ -251,6 +251,7 @@
       var ok = !!audioOf(x); if (ok) nPlay++;
       var it = el('div', 'mp-it' + (ok ? '' : ' na') + (x === playingX ? ' on' : ''),
         '<span class="pl" aria-hidden="true"></span><span class="nm">' + esc(x.n) + '</span>' + (x.fav ? '<span class="st" aria-label="favourite">&#9733;</span>' : '') +
+        (x.fl && x.fl.length ? '<span class="flg" title="' + esc(x.fl.join(', ')) + '">!</span>' : '') +
         (x.rt ? '<span class="rt">' + x.rt + '</span>' : '') + (ok ? '' : '<span class="soon">preview coming</span>'));
       it.id = 'mp-i' + i; it.setAttribute('role', 'option'); it.setAttribute('aria-selected', 'false'); it.dataset.i = i;
       frag.appendChild(it);
@@ -285,7 +286,8 @@
     var p = BY[x.pk], f = p.files;
     $('mp-now').innerHTML = '<b class="nm">' + esc(x.n) + (x.fav ? ' <span class="st" title="An owner\'s favourite">&#9733;</span>' : '') + (x.rt ? ' <span class="rt" title="The owner\'s rating">' + x.rt + '/10</span>' : '') + '</b>' +
       '<span>' + esc(x.c) + (x.ph ? ', plays ' + esc(x.ph) : '') + '</span>' +
-      '<span><a href="#' + p.id + '" class="pk">' + esc(p.title) + '</a></span><span class="mk">' + esc(p.maker.name) + '</span>';
+      '<span><a href="#' + p.id + '" class="pk">' + esc(p.title) + '</a></span><span class="mk">' + esc(p.maker.name) + '</span>' +
+      (x.fl && x.fl.length ? '<span class="fl" title="From the check on the release build">Note: ' + esc(x.fl.join(', ')) + '</span>' : '');
     $('mp-recipe').textContent = recipeLines(x).join('\n');
     $('mp-links').innerHTML = (f.pdf ? '<a href="' + p.id + '/' + esc(f.pdf.name) + '" target="_blank" rel="noopener">Manual</a>' : '') +
       (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + (f.iso ? '<a href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image</a>' : '') + '<a href="#pack" class="about">About this pack</a>';
@@ -527,7 +529,7 @@
     PACKS.forEach(function (p) { grid.appendChild(card(p)); });
     [].forEach.call(grid.querySelectorAll('[data-px]'), function (i) { pxfit.fit(i); });
     $('status').textContent = PACKS.length + ' packs, ' + num(d.total) + ' presets. ' +
-      (d.previews ? 'Every preview was rendered by the real Windows 3.11 machine.' : 'Every disc ships with SNDWAVE2000 1.3.0. Previews of every preset are being rendered on the release build; until then the owner\'s top picks play the demos already made, and the rest say "preview coming".');
+      (d.previews ? 'Every preview was rendered by the real Windows 3.11 machine on the 1.3.0 release build; the few that missed a check are marked with a note. Kit Manager 98\'s kit previews are still to come.' : 'Every disc ships with SNDWAVE2000 1.3.0. Previews of every preset are being rendered on the release build; until then the owner\'s top picks play the demos already made, and the rest say "preview coming".');
     if (!route(false)) {   // first visit: the pack with the most previews
       var best = PACKS.slice().sort(function (a, b) { return (b.picks || 0) - (a.picks || 0) || b.fav - a.fav; })[0];
       packSel.value = best.id; openPack(best.id);
