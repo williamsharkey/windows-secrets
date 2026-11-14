@@ -15,7 +15,7 @@
     "sources": {
       "plan": "rainy-loft"
     },
-    "stage": false
+    "stage": true
   },
   "maker": {
     "name": "Harborlight Audio Works Co., Ltd.",
