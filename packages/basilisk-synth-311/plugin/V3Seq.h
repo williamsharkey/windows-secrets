@@ -23,7 +23,7 @@ public:
     // a note played in (it chooses the root, or the notes of the arpeggiator); returns true if the sequencer took it
     bool input(uint8_t status, uint8_t d1, uint8_t d2, const bsynth3::Seq &x)
     {
-        if (!x.on) return false;
+        if (!x.on || !have_) return false;   // no board yet (the Mines tab never opened, a render without --grid): notes play
         const uint8_t st = status & 0xF0;
         if (st == 0x90 && d2 > 0) { if (std::find(held_.begin(), held_.end(), d1) == held_.end()) held_.push_back(d1); std::sort(held_.begin(), held_.end()); latched_.clear(); return true; }
         if (st == 0x80 || st == 0x90) {
