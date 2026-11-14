@@ -295,7 +295,8 @@ def kits():
                             'dna': x['v3_dna'], 'ships': ['3.11', 'XP']})
     em = json.load(open(os.path.join(LIB, 'research', 'electromech-presets.json')))
     for x in em['kits']:
-        presets.append({'category': 'Electromech', 'name': clean_name(x['name']), 'dna': x['dna'], 'ships': ['XP']})
+        # both editions: the 3.11 lane tested all 12 in kit mode on 3.11 (every mapped pad sounds, 2026-11-14)
+        presets.append({'category': 'Electromech', 'name': clean_name(x['name']), 'dna': x['dna'], 'ships': ['3.11', 'XP']})
     return kit_canonical(presets)
 
 
