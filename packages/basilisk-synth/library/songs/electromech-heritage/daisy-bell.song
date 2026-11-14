@@ -1,0 +1,55 @@
+# Daisy Bell: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Daisy Bell
+pack     = electromech-heritage
+kind     = world
+composer = Harry Dacre (1857-1922)
+source   = Daisy Bell (Bicycle Built for Two), song (1892): the first strain of the chorus, written out from the song.
+licence  = The work: public domain (published 1892; the composer died 1922). This arrangement: CC0-1.0.
+proof    = https://en.wikipedia.org/wiki/Daisy_Bell
+arranger = Algorithmic Industries house band
+note     = A waltz at 120 bpm, the chorus's first strain four times: the 1961 vowel voice, a relay-marimba oom-pah-pah, a Ferranti-hoot bass, the CSIRAC pulse, exchange ringer, typewriter bell, dial-tone organ, sounder keys, a motor drone. Drums: Kit Manager 98 (Teletype 33).
+midi     = daisy-bell.mid
+script   = daisy-bell.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+
+[echo]
+time     = 1/4
+feedback = 0.3
+tone     = 3000
+level    = -6
+
+[reverb]
+size     = 1.8
+predelay = 15
+tone     = 5000
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+vowel       ch1     "1961 Vowel"                             lufs=-19 pan=4 echo=0.15 verb=0.35
+marimba     ch2     "Relay Marimba"                          lufs=-23 pan=-20 verb=0.2
+hootbass    ch3     "Ferranti Hoot"                          lufs=-21
+pulse       ch4     "CSIRAC Pulse"                           lufs=-21 pan=12 echo=0.2 verb=0.15
+ringer      ch5     "Exchange Ringer"                        lufs=-24 pan=-10 verb=0.4
+typebell    ch6     "Typewriter Bell Keys"                   lufs=-26 pan=30 echo=0.3 verb=0.4
+organ       ch7     "Dial Tone Organ"                        lufs=-26 pan=18 verb=0.3
+motor       ch8     "Motor Room"                             lufs=-30 verb=0.2
+kit         ch10    "kit-manager:Teletype 33"                lufs=-23 verb=0.1
+sounder     ch9     "Sounder Keys"                           lufs=-26 pan=-16 verb=0.2
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"electromech-heritage:1961 Vowel" = ems_704_vowel_a3#12U3~8;A40R400V70K57G-17
+"electromech-heritage:CSIRAC Pulse" = ems_csirac_pulse_e4#16;A2R80V60K64G-3
+"electromech-heritage:Dial Tone Organ" = ems_dial_toneRJa0,0.60,100;R400V40K69G-14
+"electromech-heritage:Exchange Ringer" = ems_exchange_bell_c4#12H0,12L85/ems_relay_pull#4FL35;R1800V80G-4
+"electromech-heritage:Ferranti Hoot" = ems_ferranti_hoot_c4Ja0,100.563,54.1420,25;A3R60V60G-5
+"electromech-heritage:Motor Room" = ems_motor_drone_c3#10U2~10Ja0,0.600,100/ems_tty_motor#6FL35Ja0,0.800,100;R1200V40K48G-11
+"electromech-heritage:Relay Marimba" = ems_relay_marimba_c4E#11U2~4L78/ems_relay_release#5FL40Q25;R350V95G-3
+"electromech-heritage:Sounder Keys" = ems_fm_sounder_c4#8/glockenspiel_c6#8L34O21Q5;R305V90G1
+"electromech-heritage:Typewriter Bell Keys" = em_typewriter_bell_b-#5Ja0,100.272,74.1094,3/ui_glass_ping#5T6L19O8Q26/ringout#6T16L18Q8;A5R600V90K73G10
+"kit-manager:Teletype 33" = ems_tty_char@t30000Iems_tty_cr@t30000Iems_tty_lf@t30000Iems_selector_magnet@t30000Iems_tty_bell@t30000Iems_typebar@t30000Iem_tty_machine_hit_a@t30000Iem_tty_machine_hit_b#9/ems_tty_motor_start#2/ems_tty_motor_stop#1/ems_tty_burst#2/ems_tape_punch_burst#2;R200V90k36j2k37j3k38j1k39j7k40j8k41j4k42j6k44l2c2k45l3c2k46l4gc1k47l5gc1k72,84j5r78p100w7

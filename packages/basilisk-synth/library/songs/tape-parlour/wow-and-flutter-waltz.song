@@ -1,0 +1,52 @@
+# Wow and Flutter Waltz: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Wow and Flutter Waltz
+pack     = tape-parlour
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = A baroque-pop waltz in A minor, 3/4 at 118 bpm, on tape-replay voices: bowed psaltery, a solo violin, violins, a harmonica-organ waltz, a tuba bass, the ocarina and a horn in the middle, the choir, a parlour piano intro. Drums: Kit Manager 98 (Half-Time Kit).
+midi     = wow-and-flutter-waltz.mid
+script   = wow-and-flutter-waltz.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+
+[echo]
+time     = 1/4
+feedback = 0.2
+tone     = 2800
+level    = -9
+
+[reverb]
+size     = 1.9
+predelay = 20
+tone     = 4500
+level    = -4
+
+[tracks]
+# name      source  preset                                  mix
+psaltery    ch1     "Warm Ensemble"                          lufs=-20 pan=-10 verb=0.3
+violin      ch2     "Signal Legato"                          lufs=-20 pan=8 verb=0.3
+violins     ch3     "Quiet Quartet"                          lufs=-23 pan=22 verb=0.35
+organ       ch4     "Hollow Revival"                         lufs=-25 pan=-18 verb=0.25
+tuba        ch5     "Cathode Brass"                          lufs=-21
+ocarina     ch6     "Zinc Pilot"                             lufs=-20 pan=4 echo=0.1 verb=0.35
+choir       ch7     "Steady Hymn"                            lufs=-26 verb=0.4
+piano       ch8     "Lattice Recital"                        lufs=-22 pan=14 verb=0.25
+horn        ch9     "Violet Section"                         lufs=-24 pan=-20 verb=0.35
+kit         ch10    "kit-manager:Half-Time Kit"              lufs=-22 verb=0.12 lp=8000
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Half-Time Kit" = ringout@20[@40]@0CP<<<+Ja0,100.80,50.400,0#3F/recycle@20]+E#4F/xprecycle>>>@40]#5F/critstop<@10]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"tape-parlour:Cathode Brass" = tape_tuba_d2@t40[#16Wm8000Yd4kVw6,5f2,10s25,80;A35D0S100R80V40K50G-13
+"tape-parlour:Hollow Revival" = tape_harmonica_c3@t40[#14O10Wm8000Yd3kVw10,7f4,12s20,65/menu#2FL20Wm8000;A10D0S100R150V40K60G-10
+"tape-parlour:Lattice Recital" = gd_piano_a4@t40[#16Wm8000Yd6l8kVw5,5f4,8s25,50;A10D0S100R110V20K69G-11
+"tape-parlour:Quiet Quartet" = tape_violins_trem_a3@t40[#14O20Wm8000Yd3l4kVw5,6f2,8s25,65/menu#2FL25Wm8000;A20D0S100R110V30K69G-5
+"tape-parlour:Signal Legato" = tape_violin_solo_c4@t40[#16Wm8000Yd3l4kVw8,5f4,10s25,65;A35D0S100R80V30K60G-9
+"tape-parlour:Steady Hymn" = choir_marching_drone@t40[#14O15Wm8000Yd6kVw4,6f3,10s20,80/xpstart#2FL25Wm8000;A25D0S100R110V20K29G-13
+"tape-parlour:Violet Section" = tape_horn_c3@t40[#16Wm8000Yd4l4kVw5,6f4,10s25,80;A35D0S100R110V20K60G-15
+"tape-parlour:Warm Ensemble" = tape_psaltery_bowed_c4@t40[#16Wm8000Yd6l4kVw4,7f4,10s25,65;A35D0S100R80V30K72G-7
+"tape-parlour:Zinc Pilot" = tape_ocarina_a3@t40[#16Wm8000Yd4l4kVw4,7f4,10s25,80;A10D0S100R150V30K69G-5

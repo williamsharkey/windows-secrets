@@ -1,0 +1,48 @@
+# Uninstall Complete: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Uninstall Complete
+pack     = kit-manager
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = Drum and bass at 172 bpm, all on Kit Manager 98: breaks on the Breaker Box, Noise Channel and Twelve-Bit Crate kits, the bass line on Mainframe Hall's tuned keys, the tune on Teletype 33's, bells on Message Center, a Card Room arpeggio and the Echo Chamber kit in the breakdown.
+midi     = uninstall-complete.mid
+script   = uninstall-complete.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/8
+feedback = 0.3
+tone     = 3500
+level    = -5
+
+[reverb]
+size     = 1.8
+predelay = 15
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+breakerbox  ch1     "Breaker Box Kit"                        lufs=-17 verb=0.05
+noisechannel ch2     "Noise Channel Kit"                      lufs=-18 verb=0.05
+twelvebit   ch3     "Twelve-Bit Crate Kit"                   lufs=-18 verb=0.05
+mainframe   ch4     "Mainframe Hall"                         lufs=-19 verb=0.1
+teletype    ch5     "Teletype 33"                            lufs=-20 pan=8 echo=0.2 verb=0.25
+message     ch6     "Message Center"                         lufs=-25 pan=-24 echo=0.3 verb=0.4
+cardroom    ch7     "Card Room"                              lufs=-23 pan=24 echo=0.2 verb=0.3
+echochamber ch8     "Echo Chamber Kit"                       lufs=-19 verb=0.2
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"kit-manager:Card Room" = ems_card_punch_col@t30000Iems_card_feed@t30000Iems_card_stack@t30000Iems_punch_magnet@t30000Iems_tabulator_cycle@t30000Iem_papertape_a@t30000Iems_adding_machine_pull@t30000Iem_adder_ratchet_a@t30000Iems_clutch_trip@t30000Iems_typewriter_bell#10/ems_card_punch_dup#2/ems_sorter_run#2/ems_tabulator_run#2;R200V90k36j5k37j3k38j1k39j4k40j2k41j9k42j8k43j7k44j6k46l2gc1k47l3gc1k48l4gc1k72,79j10r79p100w4
+"kit-manager:Echo Chamber Kit" = ringout@20[@40]@0CP@0CP@0CP<<<Ja0,100.80,40.300,0#3F/xpstart>EE#4F/xprecycle>>>@40]#5F/balloon<E#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"kit-manager:Mainframe Hall" = ems_lineprinter_line@t30000Iems_print_hammer@t30000Iems_drum_write@t30000Iems_card_feed@t30000Iems_relay_pull@t30000Iem_dotmatrix_hit_a@t30000Iems_tape_reader#8/ems_lineprinter_page#1/ems_tape_drive_shuttle#1/ems_drum_memory#1/em_dotmatrix_burst_a#1/ems_ferranti_hoot_c4#2/ems_csirac_pulse_e4#2;R200V90k36j1k37j2k38j3k39j4k40j5k41j6k42j7gc1k43l2gc1k44l3gc2k45l4gc2k46l5gc1k60,71l6p100w12gk72,84l7r76p100w12g
+"kit-manager:Message Center" = ems_tty_bell@t30000Iems_tty_char@t30000Iems_tty_cr@t30000Iems_tty_lf@t30000Iems_card_punch_col@t30000Iems_card_feed@t30000Iems_card_stack@t30000Iems_drum_write@t30000Iems_lineprinter_line@t30000Iems_splitflap@t30000Iems_flipdot@t30000Iems_selectric_char@t30000Iems_tty_motor_start@t30000Iem_splitflap_a#9/ems_tty_burst#1/ems_tape_punch_burst#1/ems_tty_message_received#1/ems_splitflap_board#1/ems_flipdot_wipe#1/ems_modem_handshake#1/ems_lineprinter_page#1;R150V85k36j1k37j13k38j2k39l2gc1k40j3u1k41j4k48l3gc2k49j6k50j5k51j7u2k52j8k60j9k61j10k62j11k63j12k64l8gc3k65j14k72l4c4k73l7c4k74l5c4k75l6c4k84,96j1r90p100w6
+"kit-manager:Noise Channel Kit" = ding<<<@35]#3F/ringin<@20]+#4F/ringin>>@12]#5F/ding>>@5]#4;R100V100k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"kit-manager:Teletype 33" = ems_tty_char@t30000Iems_tty_cr@t30000Iems_tty_lf@t30000Iems_selector_magnet@t30000Iems_tty_bell@t30000Iems_typebar@t30000Iem_tty_machine_hit_a@t30000Iem_tty_machine_hit_b#9/ems_tty_motor_start#2/ems_tty_motor_stop#1/ems_tty_burst#2/ems_tape_punch_burst#2;R200V90k36j2k37j3k38j1k39j7k40j8k41j4k42j6k44l2c2k45l3c2k46l4gc1k47l5gc1k72,84j5r78p100w7
+"kit-manager:Twelve-Bit Crate Kit" = ding<<<@35]><#3F/chord>>@15]+E><#4F/ringin>>@12]><#5F/ding>>@4]><#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

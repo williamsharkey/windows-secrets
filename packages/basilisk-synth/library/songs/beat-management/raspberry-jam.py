@@ -1,0 +1,12 @@
+"""Raspberry Jam (congusbongus, CC0), re-voiced for the beat-management pack: the notes of a FastTracker 2 module from OpenGameArt played on
+the pack's own presets (sources/cc0/raspberry_jam.notes.mid, converted by tools/songrender/trackers.py)."""
+import os, sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+from _lib import *
+
+PLAN = {8: ('kit', 10, 'pad', 36, 1.0), 3: ('kit', 10, 'pad', 38, 1.0), 10: ('kit', 10, 'pad', 42, 0.8), 5: ('kit', 10, 'pad', 45, 0.9), 6: ('kit', 10, 'pad', 46, 0.7), 7: ('scratch', 8, 0, 60, 72, 1.0), 4: ('hit', 9, 0, 60, 76, 1.0), 2: ('bass', 2, -24, 33, 52, 1.0), 1: ('stab', 3, 0, 55, 76, 0.9), 9: ('guitar', 4, 0, 55, 79, 0.85), 11: ('piano', 5, 0, 48, 76, 0.9), 12: ('flute', 6, -12, 60, 81, 0.9)}
+HEADER = {'title': 'Raspberry Jam', 'pack': 'beat-management', 'kind': 'chiptune', 'composer': 'congusbongus', 'source': 'Raspberry Jam, a FastTracker 2 module (raspberry_jam.xm) from OpenGameArt (https://opengameart.org/sites/default/files/raspberry_jam.zip). Its notes are played here; its samples or chip voices are not used.', 'licence': 'The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.', 'proof': 'https://opengameart.org/content/raspberry-jam', 'arranger': 'Algorithmic Industries house band', 'source_sha256': '60f248dddd95ce0bfb9116f3ec574f11a7c331d3e55c1491470cc14d41d7b8ee', 'note': "Boom bap at 112 bpm: the module's funky stab on violins, its guitar on the tine EP, its piano on the upright, its synth on the flute, its bass on the upright bass, its scratches and orchestra hit, its drums on Kit Manager 98 (Twelve-Bit Crate Kit)."}
+TRACKS = [('kit', 'ch10', 'kit-manager:Twelve-Bit Crate Kit', {'lufs': -17, 'verb': 0.06}), ('scratch', 'ch8', 'Desk Scratch', {'lufs': -24, 'pan': -8}), ('hit', 'ch9', 'Ember Orchestra', {'lufs': -23, 'verb': 0.3}), ('bass', 'ch2', 'Upright Thump', {'lufs': -19}), ('stab', 'ch3', 'Golden Section', {'lufs': -23, 'pan': -20, 'verb': 0.25}), ('guitar', 'ch4', 'Wide Flick', {'lufs': -23, 'pan': 22, 'verb': 0.2}), ('piano', 'ch5', 'Cedar Study', {'lufs': -21, 'pan': -10, 'verb': 0.25}), ('flute', 'ch6', 'Civic Wire', {'lufs': -21, 'pan': 8, 'echo': 0.2, 'verb': 0.3})]
+module_song(__file__, 'raspberry_jam.notes.mid', 112, PLAN, HEADER, TRACKS, master={'loudness': -15, 'ceiling': -1.0},
+            echo={'time': '3/16', 'feedback': 0.3, 'tone': 3500, 'level': -6},
+            reverb={'size': 2.0, 'predelay': 16, 'tone': 5500, 'level': -6})

@@ -1,0 +1,56 @@
+# Sow Your Breaks in Spring: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Sow Your Breaks in Spring
+pack     = garden-rhythm
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = Early-90s rave in A minor, 140 bpm: a talking machine says hello, taiko hits, breakbeats from the radio kit, rave piano, rave-organ bass, the hoover riff, a scream, a steelpan breakdown with a robot choir, a tabla kit on the last run. All from the pack.
+midi     = sow-your-breaks-in-spring.mid
+script   = sow-your-breaks-in-spring.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.38
+tone     = 3500
+level    = -4
+
+[reverb]
+size     = 2.0
+predelay = 15
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "Second Bloom"                           lufs=-16.5 verb=0.05
+taiko       ch9     "Gentle Bloom"                           lufs=-21 verb=0.3
+tabla       ch11    "Coded Bloom"                            lufs=-24 pan=24 verb=0.1
+ravepiano   ch1     "Lucid Punch"                            lufs=-20 pan=-10 verb=0.2 tune=-10
+organbass   ch2     "Molten Brass"                           lufs=-20
+hoover      ch3     "Lagoon Stab"                            lufs=-20 pan=8 width=1.3 verb=0.15
+scream      ch4     "Global Salute"                          lufs=-23 echo=0.3 verb=0.3
+pad         ch5     "Bakelite Bloom"                         lufs=-25 verb=0.35 width=1.4
+hello       ch6     "Rubber Ahh"                             lufs=-21 echo=0.35 verb=0.3
+robot       ch7     "Grey Choir"                             lufs=-25 pan=-14 verb=0.4
+steelpan    ch8     "Digital Tower"                          lufs=-21 pan=16 echo=0.3 verb=0.3
+shaker      ch12    "Swift Shaker"                           lufs=-29 pan=-30
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"garden-rhythm:Bakelite Bloom" = gd_rave_organ_c2@t5599]@t1599[@0CP@0CP>>U3~15Q-29;A1001D823S81R1214V79K60G-5
+"garden-rhythm:Coded Bloom" = gd_tabla_ge@t30000Igd_tabla_na@t30000Igd_tabla_ke@t30000Igd_tabla_tin@t30000Igd_tabla_tun@t30000Igd_tabla_te@t30000Igd_tabla_gheglide@t30000Igd_tabla_ra#16;R300V90G-12k36j1k37j2k38j3k39j4k40j5k41j6k42j7k43j8
+"garden-rhythm:Digital Tower" = gd_steelpan_octave<#8H0,12/gd_steelpan_octave#4T7L29O21Q15/gd_steelpan_octave#4T-12L38Q9;A1D885S3R513V82K60G-3
+"garden-rhythm:Gentle Bloom" = gd_taiko_odaiko@t30000Igd_taiko_shime@t30000Igd_taiko_nagadolo@t30000Igd_taiko_nagado@t30000Igd_taiko_okedo@t30000Igd_taiko_atarigane@t30000Igd_taiko_chappa@t30000Igd_taiko_ka#16;R160V90G-9k36j1k37j2k38j3k39j4k40j5k41j6k42j7k43j8
+"garden-rhythm:Global Salute" = gd_rave_scream_c2@t3199]#5/gd_rave_chord_c4#5T-36L54Q-15/gd_rave_hoover_c6#6T-36L40Q20;A53D670S85R141V93K36G-5
+"garden-rhythm:Grey Choir" = gd_voice_sam_robot@t814]@t232[@0CP@0CPU3~10;A264D562S86R816V70K60G-14
+"garden-rhythm:Lagoon Stab" = gd_rave_hoover_c2+>>#5/gd_rave_piano_c4#5L34Q-37/gd_rave_reese_c2#6T24L48Q-33;A7D548S53R404V70K60G-5
+"garden-rhythm:Lucid Punch" = gd_rave_piano_c4+H0,-12U2~8Q-29;A22D201S7R750V70K60G-15
+"garden-rhythm:Molten Brass" = gd_rave_organ_c2@t3199]>>#12U3~9/gd_rave_reese_c6#4T-12L54Q3;A3D711S12R148V79K60G-10
+"garden-rhythm:Rubber Ahh" = gd_voice_klatt_hello@t570]@t163[@0CP@0CP#11U2~9/gd_voice_klatt_dance#5FL21Ja0,100.158,30.609,0;A306D82S99R1593V86K60G-10
+"garden-rhythm:Second Bloom" = gd_kit_radio_lowkick@t30000Igd_kit_radio_bkick@t30000Igd_kit_radio_click@t30000Igd_kit_radio_ksnare@t30000Igd_kit_radio_kesnare@t30000Igd_kit_radio_pfsnare@t30000Igd_kit_radio_tightkick@t30000Igd_kit_radio_tshat@t30000Igd_kit_radio_dumm@t30000Igd_kit_radio_that@t30000Igd_kit_radio_dum@t30000Igd_kit_radio_opents@t30000Igd_kit_radio_dom@t30000Igd_kit_radio_pfrim@t30000Igd_kit_radio_psh@t30000Igd_kit_radio_hum@t30000Igd_kit_radio_kh@t30000Igd_kit_radio_double@t30000Igd_kit_radio_tchhat@t30000Igd_kit_radio_wub<#16;R300V100G-20k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k53j19k55j20
+"garden-rhythm:Swift Shaker" = gd_taiko_shime@t205]<#8/gd_taiko_okedo#8T-1L45;D67S0R96V99K61G3

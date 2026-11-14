@@ -1,0 +1,54 @@
+# Keyword: Teamwork: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Keyword: Teamwork
+pack     = workgroup-house
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = French-touch filter house in G minor, 124 bpm: an organ riff, a disco bass, strings, sixteenth plucks, the robot mouth's hook, a choir and tine-EP breakdown, a sweep, the modem in the outro. Drums: Kit Manager 98 (Jack Box Kit).
+midi     = keyword-teamwork.mid
+script   = keyword-teamwork.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.38
+tone     = 3200
+level    = -4
+
+[reverb]
+size     = 1.8
+predelay = 16
+tone     = 6000
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Jack Box Kit"               lufs=-17 verb=0.05
+organ       ch1     "Humid Organ"                            lufs=-20 pan=-8 echo=0.15 verb=0.15
+bass        ch2     "Round Floor Sub"                        lufs=-19 tune=-83
+strings     ch3     "Cathode Strings"                        lufs=-25 pan=20 verb=0.35
+robot       ch4     "Robot Mouth Lead"                       lufs=-20 pan=6 echo=0.25 verb=0.2
+choir       ch5     "Felt Field"                             lufs=-25 verb=0.45 width=1.3
+keys        ch6     "Coral Ballad"                           lufs=-23 pan=-20 echo=0.15 verb=0.25
+fx          ch7     "Low-Pass Sweep Wash"                    lufs=-25 echo=0.3 verb=0.3
+modem       ch8     "Polar Ascent"                           lufs=-25 echo=0.3 verb=0.3
+dialhat     ch9     "Dial Hat"                               lufs=-28 pan=30
+pluck       ch11    "Steel Flick"                            lufs=-25 pan=26 echo=0.25
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Jack Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.60,70.350,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"workgroup-house:Cathode Strings" = cello_section_sus_c3@t7500]@t200[EE#12U3~9/hwfailC@50X#4T-12L67;A120S87R715V74K48G-12
+"workgroup-house:Coral Ballad" = epiano_yamaha_vibeE>>#8/print#8T-3L31O20Q-28;A5D421S26R460V80K60G-4
+"workgroup-house:Dial Hat" = chord@t200]EF;D298S0R145V82G4
+"workgroup-house:Felt Field" = crowd_sing_aah_f@t7500]@t500[RE#12U3~5/printE#4T-5L39O50Q-47;A344D187S82R2537V77K53G-11
+"workgroup-house:Humid Organ" = ems_ferranti_hoot_c4#14H0,12,19U2~2/menu#2FL36;A9S100R209V96K60G-18
+"workgroup-house:Low-Pass Sweep Wash" = restore<<E#8/xprecycle<<<E#8FL70;A1200S100R2500G23
+"workgroup-house:Polar Ascent" = modem_dialup_a@t9000]@t3000[RU2~11;A8S100R1948V95G1
+"workgroup-house:Robot Mouth Lead" = ems_704_vowel_a3@30[@30]@0CP@0CP@0CP@0CP#8/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#4T-2L30;A20R150V80K57G-7
+"workgroup-house:Round Floor Sub" = xpringout@20[@40]@0CP@0CP@0CP<<#11U2~4/balloon<<@40]E#5FL35;A0D450S35R120V90K45G11
+"workgroup-house:Steel Flick" = harp_c5@t1500]<#11H0,12/dingxp#5L33O16Q23;A1D188S7R256V82K60G-4

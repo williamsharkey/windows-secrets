@@ -1,0 +1,54 @@
+# Compost Heap Hardcore: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Compost Heap Hardcore
+pack     = garden-rhythm
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = Early-90s hardcore in D minor, 150 bpm: taiko on the build, breakbeats from the radio kit with the hands kit on top, rave-piano fifths, rave-organ bass, the hoover riff, the scream, timpani, a goose-voice chant, a reese and the crystal-fantasia pad in the breakdown. All from the pack.
+midi     = compost-heap-hardcore.mid
+script   = compost-heap-hardcore.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.38
+tone     = 3500
+level    = -4
+
+[reverb]
+size     = 2.0
+predelay = 15
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "Humid Haze"                             lufs=-17 verb=0.05
+hands       ch9     "Wired Drift"                            lufs=-24 pan=24 verb=0.1
+taiko       ch11    "Gentle Bloom"                           lufs=-20 verb=0.3
+ravepiano   ch1     "Rural Brass"                            lufs=-20 pan=-10 verb=0.2 tune=-13
+hoover      ch2     "Lagoon Stab"                            lufs=-20 pan=6 width=1.3 verb=0.15
+scream      ch3     "Global Salute"                          lufs=-23 echo=0.3 verb=0.3
+organbass   ch4     "Brass Blast"                            lufs=-20
+pad         ch5     "Electric Canopy"                        lufs=-26 verb=0.35 width=1.4
+chant       ch6     "Warm Chant"                             lufs=-22 echo=0.3 verb=0.35
+timpani     ch7     "Lucid Haze"                             lufs=-24 verb=0.3
+reese       ch8     "Electric Stab"                          lufs=-24 width=1.3
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"garden-rhythm:Brass Blast" = gd_rave_organ_c2@t3199]E>>#11U2~5/gd_rave_chord_c6#5T-36L31;A8D898S47R155V99K60G-6
+"garden-rhythm:Electric Canopy" = gd_crystal_fantasia_c6@t5599]@t1599[@0CP@0CPRR#13U4~16Q29/gd_rave_organ_c4#3T12L50;A486D553S96R1308V70K84G-11
+"garden-rhythm:Electric Stab" = gd_rave_reese_c6<<U2~7;A1D416S63R341V96K60G-9
+"garden-rhythm:Gentle Bloom" = gd_taiko_odaiko@t30000Igd_taiko_shime@t30000Igd_taiko_nagadolo@t30000Igd_taiko_nagado@t30000Igd_taiko_okedo@t30000Igd_taiko_atarigane@t30000Igd_taiko_chappa@t30000Igd_taiko_ka#16;R160V90G-9k36j1k37j2k38j3k39j4k40j5k41j6k42j7k43j8
+"garden-rhythm:Global Salute" = gd_rave_scream_c2@t3199]#5/gd_rave_chord_c4#5T-36L54Q-15/gd_rave_hoover_c6#6T-36L40Q20;A53D670S85R141V93K36G-5
+"garden-rhythm:Humid Haze" = gd_kit_radio_lowkick@t30000Igd_kit_radio_bkick@t30000Igd_kit_radio_click@t30000Igd_kit_radio_ksnare@t30000Igd_kit_radio_kesnare@t30000Igd_kit_radio_pfsnare@t30000Igd_kit_radio_tightkick@t30000Igd_kit_radio_tshat@t30000Igd_kit_radio_dumm@t30000Igd_kit_radio_that@t30000Igd_kit_radio_dum@t30000Igd_kit_radio_opents@t30000Igd_kit_radio_dom@t30000Igd_kit_radio_pfrim@t30000Igd_kit_radio_psh@t30000Igd_kit_radio_hum@t30000Igd_kit_radio_kh@t30000Igd_kit_radio_double@t30000Igd_kit_radio_tchhat@t30000Igd_kit_radio_wub#16;R220V90G-20k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k53j19k55j20
+"garden-rhythm:Lagoon Stab" = gd_rave_hoover_c2+>>#5/gd_rave_piano_c4#5L34Q-37/gd_rave_reese_c2#6T24L48Q-33;A7D548S53R404V70K60G-5
+"garden-rhythm:Lucid Haze" = gd_timpani_c3@t30000Igd_timpani_d3@t30000Igd_timpani_e3@t30000Igd_timpani_g3@t30000Igd_timpani_a3@t30000Igd_timpani_c4@t30000Igd_timpani_d4@t30000Igd_timpani_e4#16;R160V90G-6k36j1k37j2k38j3k39j4k40j5k41j6k42j7k43j8
+"garden-rhythm:Rural Brass" = gd_rave_piano_c6@t831]<<;A9D766S11R185V72K60G-6
+"garden-rhythm:Warm Chant" = gd_voice_sam_goose#5/gd_voice_sam_lala#5T-12L35/gd_voice_sam_boopRE#6T12L26O101Q-59;A510D77S92R1367V75K60G-10
+"garden-rhythm:Wired Drift" = gd_kit_hands_tumba@t30000Igd_kit_hands_conga@t30000Igd_kit_hands_slap@t30000Igd_kit_hands_mute@t30000Igd_kit_hands_cajon@t30000Igd_kit_hands_bongohi@t30000Igd_kit_hands_bongolo@t30000Igd_kit_hands_slap2@t30000Igd_kit_hands_talking@t30000Igd_kit_hands_frame@t30000Igd_kit_hands_blockhi@t30000Igd_kit_hands_blockmid@t30000Igd_kit_hands_blocklo@t30000Igd_kit_hands_claves@t30000Igd_kit_hands_agogohi@t30000Igd_kit_hands_agogolo@t30000Igd_kit_hands_triangle@t30000Igd_kit_hands_mutetri@t30000Igd_kit_hands_shaker@t30000Igd_kit_hands_back<#16;R120V100G-11k36j1k37j2k38j3k39j4k40j5k41j6k42j7k43j8k44j9k45j10k46j11k47j12k48j13k49j14k50j15k51j16k52j17k53j18k54j19k55j20

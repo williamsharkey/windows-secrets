@@ -1,0 +1,55 @@
+# In the Hall of the Mountain King: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = In the Hall of the Mountain King
+pack     = game-port
+kind     = world
+composer = Edvard Grieg (1843-1907)
+source   = In the Hall of the Mountain King, Peer Gynt Suite No. 1, Op. 46 No. 4 (1875), piano version. Score: The Mutopia Project, from The University Society (1918).
+licence  = The work: public domain (composed 1875; the composer died 1907). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1888
+arranger = Algorithmic Industries house band
+note     = A chiptune: the theme on a pulse bass, then square leads and chord arpeggios over noise drums, the tempo climbing from 96 to 200 bpm, a 286 boot at the start and a coin at the end.
+midi     = hall-of-the-mountain-king.mid
+script   = hall-of-the-mountain-king.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 1/8
+feedback = 0.25
+tone     = 4000
+level    = -7
+
+[reverb]
+size     = 1.2
+predelay = 10
+tone     = 6000
+level    = -9
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Midnight Signal"                        lufs=-20 pan=-6 echo=0.12 verb=0.1
+lead2       ch2     "Second Ray"                             lufs=-21 pan=20 echo=0.12
+arp         ch3     "Lucid Line"                             lufs=-26 pan=-24
+bass        ch4     "Waxed Line"                             lufs=-19 tune=-58
+kick        ch5     "Silver Block"                           lufs=-21
+snare       ch6     "Chrome Snap"                            lufs=-23
+hat         ch7     "Slate Tick"                             lufs=-29 pan=18
+coin        ch8     "Coin Jingle"                            lufs=-24 echo=0.2
+boot        ch9     "Digital Sweep"                          lufs=-24 verb=0.2
+riser       ch11    "Kinetic Riser"                          lufs=-27 verb=0.3
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"game-port:Chrome Snap" = relay_loud_click#8F/mouse_click@t150]#8FL29;D195S0R143V77G3
+"game-port:Coin Jingle" = ding>>@30]Iding>>>#12;A0R100K127G6
+"game-port:Digital Sweep" = pc_286_startup@t6000]RH0,12;A449S100R365V90K29G-4
+"game-port:Kinetic Riser" = whoosh_inEEE#11H0,12/glass_ping#5L56;A40S100R1688V96G-2
+"game-port:Lucid Line" = popup@t116]@t33[@0CP@0CP@0CPE#13H0,12U2~6/hwfail#3L38;A2D235S93R312V86G20
+"game-port:Midnight Signal" = ems_csirac_pulse_e4EU3~16;A1D528S93R309V72K64G-8
+"game-port:Second Ray" = ding#8/dingxp#8T19L37Q-33;A3D349S71R84V71K79G3
+"game-port:Silver Block" = balloon#8F/batlow#8L20;D282S0R40V72G15
+"game-port:Slate Tick" = em_stamp_a#8/recycle#8FL10Ja0,100.192,30.616,0;D261S0R41V99G7
+"game-port:Waxed Line" = ringout@20[@40]@0CP@0CP@0CP<<#8Yd4l22t10;A0R20V0K45G1

@@ -1,0 +1,44 @@
+# Chill: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Chill
+pack     = tape-parlour
+kind     = chiptune
+composer = Phillip Miller (redactionary)
+source   = chill (23), a FamiTracker module (nes_23-chill.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/free-nes-music-pack
+arranger = Algorithmic Industries house band
+source_sha256= a4adce0acd373c153bc0f7c26cee5e9a02335a31c50d07f0727932857db1a64d
+note     = Played three times through on tape-replay voices: the NES module's pulse 1 on the flute, pulse 2 on the violas, the triangle on the contrabass, the noise on Kit Manager 98 (Half-Time Kit).
+midi     = chill.mid
+script   = chill.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+flute       ch1     "Digital Call"                           lufs=-19 pan=-8 verb=0.3
+violas      ch2     "Clear Bows"                             lufs=-22 pan=20 verb=0.35
+bass        ch3     "Lunar Bows"                             lufs=-21
+kit         ch10    "kit-manager:Half-Time Kit"              lufs=-20 verb=0.12 lp=9000
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Half-Time Kit" = ringout@20[@40]@0CP<<<+Ja0,100.80,50.400,0#3F/recycle@20]+E#4F/xprecycle>>>@40]#5F/critstop<@10]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"tape-parlour:Clear Bows" = tape_violas_a3@t40[#16Wm8000Yd3l8kVw6,8f4,8s25,50;A35D0S100R80V40K69G-10
+"tape-parlour:Digital Call" = tape_flute_vib_c4@t40[#8L80Wm8000Yd3l8kVw4,6f3,8s25,80/tape_clarinet_d3@t40[#8T10L55Wm8000Yd6l4kVw4,8f4,8s25,80;A35D0S100R110V20K72G-9
+"tape-parlour:Lunar Bows" = tape_contrabass_a1@t40[#16Wm8000Yd6l4kVw4,6f4,8s20,80;A10D0S100R110V20K45G-14

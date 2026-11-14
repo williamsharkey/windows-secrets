@@ -1,0 +1,490 @@
+{
+ "battleCLEAN.notes.mid": {
+  "title_in_file": "",
+  "module": "battleCLEAN.it",
+  "page": "https://opengameart.org/content/haydenwoffle-it-soundtrack",
+  "download": "https://opengameart.org/sites/default/files/OST.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "d1bbd78bf5367647f078945be36546bdc93aefabc357eb0576b14583baf2ddcb",
+  "instruments": [
+   "ins   1 sqr                       2560 notes  43-91",
+   "ins   2 hihat2                     686 notes  44-82",
+   "ins   3 ohgully2_9                 253 notes  43-60",
+   "ins   4 ohgully2_8                 164 notes  45-69",
+   "ins   5 kick1                      248 notes  43-77",
+   "ins   6 pluck                      128 notes  48-71",
+   "ins   7 Lead 14                    320 notes  26-50",
+   "ins   8 some sorta pad               3 notes  43-50",
+   "ins   9 lead                       162 notes  33-84",
+   "ins  10 chugga                     192 notes  31-76",
+   "ins  11 dist.git                    90 notes  35-67",
+   "ins  12 cymbalism                    1 notes  68-68",
+   "ins  14 grand chit                   8 notes  45-76",
+   "ins  15 tri                        777 notes  35-69",
+   "ins  18 piano                      114 notes  21-62"
+  ]
+ },
+ "blue_intermission.notes.mid": {
+  "title_in_file": "Blue Intermission",
+  "module": "blue_intermission.xm",
+  "page": "https://opengameart.org/content/blue-intermission",
+  "download": "https://opengameart.org/sites/default/files/blue_intermission.xm_.zip",
+  "author": "congusbongus",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "f28c417be6b073f49281e4c3ce1800dc6ef38d3f138cbb5cf1f99567975a009e",
+  "instruments": [
+   "ins   1 House Bass                 441 notes  60-74",
+   "ins   2 Snare Drum                 174 notes  65-65",
+   "ins   3 Shaker                    1080 notes  60-62",
+   "ins   4 Rhodes Soft                636 notes  45-79",
+   "ins   5 Bass Drum                  292 notes  60-60",
+   "ins   6 Ride Cymbal                156 notes  71-71"
+  ]
+ },
+ "doggoCLEAN.notes.mid": {
+  "title_in_file": "",
+  "module": "doggoCLEAN.it",
+  "page": "https://opengameart.org/content/haydenwoffle-it-soundtrack",
+  "download": "https://opengameart.org/sites/default/files/OST.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "9362e4128d8fa85cafc44198b66ecc801fe6c3cf60999d3fadd86a237d1aea5a",
+  "instruments": [
+   "ins   1 WOOF                        13 notes  69-77",
+   "ins   2 saxopupphone                26 notes  52-60",
+   "ins   3 puppianole                 517 notes  38-81",
+   "ins   4 pupperole                  262 notes  41-69",
+   "ins   5 ohgully2_24                 63 notes  38-57",
+   "ins   6 basset                     187 notes  38-57"
+  ]
+ },
+ "forestCLEAN.notes.mid": {
+  "title_in_file": "",
+  "module": "forestCLEAN.it",
+  "page": "https://opengameart.org/content/haydenwoffle-it-soundtrack",
+  "download": "https://opengameart.org/sites/default/files/OST.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "578ba7fa3d652d87383c16b039eb5db38550e1c2b945c499d5b725ba02d107eb",
+  "instruments": [
+   "ins   1 wind                         7 notes  54-54",
+   "ins   2 forest harp                151 notes  40-81",
+   "ins   3 wardrum                    545 notes  64-75",
+   "ins   4 flute                      107 notes  59-77",
+   "ins   5 bagpipe                     69 notes  57-76",
+   "ins   6 harpsiclavichord           439 notes  33-74"
+  ]
+ },
+ "glimmerCLEAN.notes.mid": {
+  "title_in_file": "ANOTHER GLIMMER",
+  "module": "glimmerCLEAN.it",
+  "page": "https://opengameart.org/content/haydenwoffle-it-soundtrack",
+  "download": "https://opengameart.org/sites/default/files/OST.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "be2f7c15efd2b36d2274e9fb029d091e806c361f699380a4a54b72ba39c497fb",
+  "instruments": []
+ },
+ "haydenCLEAN.notes.mid": {
+  "title_in_file": "Hayden's Theme",
+  "module": "haydenCLEAN.it",
+  "page": "https://opengameart.org/content/haydenwoffle-it-soundtrack",
+  "download": "https://opengameart.org/sites/default/files/OST.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "711dcf5a03e21306d87b1ab4e08e5aefe40a234759fe2f590d10137c45d77a71",
+  "instruments": [
+   "ins   1 Puppiano                  1025 notes  48-99",
+   "ins   2                           1459 notes  35-49",
+   "ins   3 Basset                     612 notes  22-51"
+  ]
+ },
+ "headspin.notes.mid": {
+  "title_in_file": "Headspin",
+  "module": "headspin.xm",
+  "page": "https://opengameart.org/content/headspin",
+  "download": "https://opengameart.org/sites/default/files/headspin.xm_.zip",
+  "author": "congusbongus",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "0d217fe3e41273ba673c66fc6b0bccaaa573bd13204763da4522d961eebd464c",
+  "instruments": [
+   "ins   1 Rp Verby Bass Drum         451 notes  72-72",
+   "ins   2 Rp Silverware             1600 notes  79-79",
+   "ins   3 Rp Hyp Snare Drum          219 notes  65-65",
+   "ins   4 Rp 808 High Hat Open       736 notes  76-76",
+   "ins   5 Rp VS Bass                 505 notes  62-79",
+   "ins   6 Rp X Guitar                302 notes  62-89",
+   "ins   7 Synth                      270 notes  67-89",
+   "ins   8 Rhodes                     422 notes  53-72",
+   "ins   9 Rez Pad                     68 notes  57-72",
+   "ins  12                             12 notes  84-84",
+   "ins 196                              1 notes  76-76"
+  ]
+ },
+ "hideoutCLEAN.notes.mid": {
+  "title_in_file": "Squirrel's Hideout",
+  "module": "hideoutCLEAN.it",
+  "page": "https://opengameart.org/content/haydenwoffle-it-soundtrack",
+  "download": "https://opengameart.org/sites/default/files/OST.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "229116f843b375c5321efd1c823b0c5e8667e8887500642566a32b58ac32ec97",
+  "instruments": [
+   "ins   1 timpuppy                   306 notes  76-83",
+   "ins   2 Rendered Sample 04          10 notes  67-74",
+   "ins   3 Rendered Sample 06         170 notes  49-72",
+   "ins   4 Rendered Sample 10          46 notes  67-98",
+   "ins   5 Rendered Sample 12          34 notes  55-67",
+   "ins   6 Rendered Sample 13         175 notes  67-71",
+   "ins   7 Rendered Sample 16         159 notes  45-88",
+   "ins   8 Rendered Sample 17           1 notes  72-72",
+   "ins   9 Rendered Sample 18          52 notes  69-91",
+   "ins  10 Rendered Sample 19          20 notes  57-91",
+   "ins  11                             18 notes  67-88"
+  ]
+ },
+ "midnight_drive.notes.mid": {
+  "title_in_file": "Midnight Drive",
+  "module": "midnight_drive.xm",
+  "page": "https://opengameart.org/content/midnight-drive",
+  "download": "https://opengameart.org/sites/default/files/midnight_drive_0.zip",
+  "author": "congusbongus",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "10c01f72019b649f0a1fc5af04e357dfaf59ee3083d9b57534d5e8d3da8aad13",
+  "instruments": [
+   "ins   1 Bass Drum                  415 notes  48-72",
+   "ins   2 Snare Drum                 237 notes  48-72",
+   "ins   3 High Hat Closed            662 notes  48-72",
+   "ins   4 Syn th                    1001 notes  79-93",
+   "ins   5 TB-303 Bass                464 notes  60-74",
+   "ins   6 Synth                      327 notes  65-89",
+   "ins   7 Synth                     1194 notes  72-86",
+   "ins   8 Ride Cymbal                137 notes  72-72",
+   "ins   9 Crash Cymbal                 8 notes  74-74"
+  ]
+ },
+ "my_street.notes.mid": {
+  "title_in_file": "My Street",
+  "module": "my_street.xm",
+  "page": "https://opengameart.org/content/my-street",
+  "download": "https://opengameart.org/sites/default/files/my_street.xm_.zip",
+  "author": "congusbongus",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "197939b5bba8297f1b352259d18e4b1575daa699c7b6fa49ff747bed63587b9e",
+  "instruments": [
+   "ins   1 Square                     375 notes  81-103",
+   "ins   2 Noise                      923 notes  36-72",
+   "ins   3 Trianzgle                  367 notes  55-72",
+   "ins   4 Wav1                       661 notes  74-91",
+   "ins   5 Sine                       881 notes  72-107",
+   "ins   6 Long                        15 notes  72-95"
+  ]
+ },
+ "napping_on_a_cloud.notes.mid": {
+  "title_in_file": "Napping on a cloud",
+  "module": "napping_on_a_cloud.xm",
+  "page": "https://opengameart.org/content/napping-on-a-cloud",
+  "download": "https://opengameart.org/sites/default/files/napping_on_a_cloud.xm_.zip",
+  "author": "congusbongus",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "5d0ff2a44bc0ff7c0eaad9a91da605f37f1d323e7af241b1521cc279dd3d1f9a",
+  "instruments": [
+   "ins   1 melody                     427 notes  64-96",
+   "ins   2 bass                       543 notes  58-72",
+   "ins   3 perc                       351 notes  24-60",
+   "ins   4 hat                        578 notes  72-72",
+   "ins   5 dub                        618 notes  65-77",
+   "ins   6 buzz                       437 notes  64-84"
+  ]
+ },
+ "nes_02-doom.notes.mid": {
+  "title_in_file": "Doooooom (2)",
+  "module": "nes_02-doom.ftm",
+  "page": "https://opengameart.org/content/free-nes-music-pack",
+  "download": "https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip",
+  "author": "Phillip Miller (redactionary)",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "4e8d89f104ef349e369e3f3bec1b2a69484da8ca6bc6cfd22667e6d544ede2f9",
+  "instruments": [
+   "ins   1 Pulse 1                    119 notes  21-38",
+   "ins   2 Pulse 2                    115 notes  28-65",
+   "ins   3 Triangle                   123 notes  33-57",
+   "ins   4 Noise                      130 notes  38-38"
+  ]
+ },
+ "nes_02-incomplete.notes.mid": {
+  "title_in_file": "New song",
+  "module": "nes_02-incomplete.ftm",
+  "page": "https://opengameart.org/content/free-nes-music-pack",
+  "download": "https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip",
+  "author": "Phillip Miller (redactionary)",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "485de6337dedd6f8f546e9c901cd5eac4fe64a1f88feb37471816652e8df3d2d",
+  "instruments": [
+   "ins   1 Pulse 1                      1 notes  61-61",
+   "ins   2 Pulse 2                      1 notes  64-64",
+   "ins   3 Triangle                    30 notes  37-65",
+   "ins   4 Noise                       83 notes  38-42",
+   "ins   6 VRC6 Pulse 1                 1 notes  68-68"
+  ]
+ },
+ "nes_03-blues.notes.mid": {
+  "title_in_file": "Blues For Yous (3)",
+  "module": "nes_03-blues.ftm",
+  "page": "https://opengameart.org/content/free-nes-music-pack",
+  "download": "https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip",
+  "author": "Phillip Miller (redactionary)",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "bb3b14858de49ac130b274d22e34cb90e86c37a8afa17e3805fa47eb8138441c",
+  "instruments": [
+   "ins   1 Pulse 1                    228 notes  47-65",
+   "ins   2 Pulse 2                    252 notes  52-67",
+   "ins   3 Triangle                   316 notes  50-62",
+   "ins   4 Noise                      307 notes  38-42"
+  ]
+ },
+ "nes_03-cheery.notes.mid": {
+  "title_in_file": "cheery",
+  "module": "nes_03-cheery.ftm",
+  "page": "https://opengameart.org/content/free-nes-music-pack",
+  "download": "https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip",
+  "author": "Phillip Miller (redactionary)",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "067e24b44b43fb785afcfc1a1f55a0a5980506ee8658add9eb27c1e9333c1f53",
+  "instruments": [
+   "ins   1 Pulse 1                    119 notes  38-38",
+   "ins   2 Pulse 2                    150 notes  42-59",
+   "ins   3 Triangle                     8 notes  74-74",
+   "ins   4 Noise                      119 notes  38-42",
+   "ins   6 VRC6 Pulse 1                34 notes  59-71"
+  ]
+ },
+ "nes_05-hectic.notes.mid": {
+  "title_in_file": "hectic song",
+  "module": "nes_05-hectic.ftm",
+  "page": "https://opengameart.org/content/free-nes-music-pack",
+  "download": "https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip",
+  "author": "Phillip Miller (redactionary)",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "678f3481bd0af420c5ca5d4cf6a807c5e767f2890bd6b4165f965fa11c0546f2",
+  "instruments": [
+   "ins   1 Pulse 1                    136 notes  52-83",
+   "ins   2 Pulse 2                    441 notes  40-50",
+   "ins   3 Triangle                   246 notes  62-81",
+   "ins   4 Noise                      698 notes  38-42",
+   "ins   5 DPCM                       471 notes  36-36",
+   "ins   6 VRC6 Pulse 1               241 notes  50-74",
+   "ins   7 VRC6 Pulse 2               275 notes  50-54",
+   "ins   8 VRC6 Saw                   224 notes  50-62"
+  ]
+ },
+ "nes_07-jazz.notes.mid": {
+  "title_in_file": "World 7-8",
+  "module": "nes_07-jazz.ftm",
+  "page": "https://opengameart.org/content/free-nes-music-pack",
+  "download": "https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip",
+  "author": "Phillip Miller (redactionary)",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "fa685b8f913b3c6288be4af510930a2126b188acc57cc9886f99cf8ff26e4a47",
+  "instruments": [
+   "ins   1 Pulse 1                    301 notes  53-72",
+   "ins   2 Pulse 2                    330 notes  45-79",
+   "ins   3 Triangle                   364 notes  43-60",
+   "ins   4 Noise                      746 notes  38-42"
+  ]
+ },
+ "nes_07-simple.notes.mid": {
+  "title_in_file": "simple track",
+  "module": "nes_07-simple.ftm",
+  "page": "https://opengameart.org/content/free-nes-music-pack",
+  "download": "https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip",
+  "author": "Phillip Miller (redactionary)",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "19770b2556b4d37c3d0c2225ba08193ece5a22c62376e7064941bae166579490",
+  "instruments": [
+   "ins   2 Pulse 2                     16 notes  58-67",
+   "ins   3 Triangle                    78 notes  48-60",
+   "ins   4 Noise                       90 notes  38-38"
+  ]
+ },
+ "nes_11-soft_then_loud.notes.mid": {
+  "title_in_file": "soft then loud (11)",
+  "module": "nes_11-soft_then_loud.ftm",
+  "page": "https://opengameart.org/content/free-nes-music-pack",
+  "download": "https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip",
+  "author": "Phillip Miller (redactionary)",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "1086c5b6d9edfcb98954bd8bf576e0e5e22a5af12752b12cf6c00ea0513045a1",
+  "instruments": [
+   "ins   1 Pulse 1                     65 notes  52-57",
+   "ins   2 Pulse 2                    121 notes  45-67",
+   "ins   3 Triangle                   160 notes  38-52",
+   "ins   4 Noise                      394 notes  38-42"
+  ]
+ },
+ "nes_19-upbeat.notes.mid": {
+  "title_in_file": "upbeat (19)",
+  "module": "nes_19-upbeat.ftm",
+  "page": "https://opengameart.org/content/free-nes-music-pack",
+  "download": "https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip",
+  "author": "Phillip Miller (redactionary)",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "50e5bd238a2e9f437d03f30ee1a3bb52504d6827ea57e5bf4e06e9ea1829a676",
+  "instruments": [
+   "ins   1 Pulse 1                     36 notes  49-52",
+   "ins   2 Pulse 2                     36 notes  52-57",
+   "ins   3 Triangle                   208 notes  33-50",
+   "ins   4 Noise                      270 notes  38-42"
+  ]
+ },
+ "nes_23-chill.notes.mid": {
+  "title_in_file": "chill (23)",
+  "module": "nes_23-chill.ftm",
+  "page": "https://opengameart.org/content/free-nes-music-pack",
+  "download": "https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip",
+  "author": "Phillip Miller (redactionary)",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "a4adce0acd373c153bc0f7c26cee5e9a02335a31c50d07f0727932857db1a64d",
+  "instruments": [
+   "ins   1 Pulse 1                     24 notes  57-64",
+   "ins   2 Pulse 2                     36 notes  50-59",
+   "ins   3 Triangle                   138 notes  52-66",
+   "ins   4 Noise                       81 notes  38-38"
+  ]
+ },
+ "prisonCLEAN.notes.mid": {
+  "title_in_file": "Prison Ship",
+  "module": "prisonCLEAN.it",
+  "page": "https://opengameart.org/content/haydenwoffle-it-soundtrack",
+  "download": "https://opengameart.org/sites/default/files/OST.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "d16d566da8a057901569644bf5e0007e82b8feaefe6b10830cd3166d2de58e46",
+  "instruments": [
+   "ins   1 Rendered Sample 01           1 notes  60-60",
+   "ins   2 Rendered Sample 04         119 notes  54-90",
+   "ins   3 Rendered Sample 05         288 notes  51-62",
+   "ins   4 Rendered Sample 07          85 notes  49-73",
+   "ins   5 Rendered Sample 08         104 notes  51-56",
+   "ins   6 [S] VST: CM-505 (Pad 1     288 notes  36-70",
+   "ins   7 Rendered Sample 10           1 notes  65-65",
+   "ins   8 Rendered Sample 11          12 notes  59-66",
+   "ins   9 Rendered Sample 13         120 notes  49-73"
+  ]
+ },
+ "puppylandCLEAN.notes.mid": {
+  "title_in_file": "",
+  "module": "puppylandCLEAN.it",
+  "page": "https://opengameart.org/content/haydenwoffle-it-soundtrack",
+  "download": "https://opengameart.org/sites/default/files/OST.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "3167f1933bc1ff94e7c27ab10640cbbc3dd21083256ab93073137c5acb76a3cb",
+  "instruments": [
+   "ins   1 bass                       367 notes  33-53",
+   "ins   2 bell                       256 notes  57-73",
+   "ins   5 303-like delay reverb hih   400 notes  55-55",
+   "ins   7 303-like delay reverb sna    18 notes  45-45",
+   "ins   9 kick1                      200 notes  55-55",
+   "ins  10 ohgully2_19                775 notes  31-65",
+   "ins  11 ohgully2_14                 66 notes  67-74"
+  ]
+ },
+ "raspberry_jam.notes.mid": {
+  "title_in_file": "",
+  "module": "raspberry_jam.xm",
+  "page": "https://opengameart.org/content/raspberry-jam",
+  "download": "https://opengameart.org/sites/default/files/raspberry_jam.zip",
+  "author": "congusbongus",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "60f248dddd95ce0bfb9116f3ec574f11a7c331d3e55c1491470cc14d41d7b8ee",
+  "instruments": [
+   "ins   1 Rp Funky Stab               58 notes  67-77",
+   "ins   2 Rp VS Bazxss               404 notes  61-75",
+   "ins   3 Rp Hyp Snare Drum          169 notes  65-65",
+   "ins   4 Rp Orchestra Hit            17 notes  76-76",
+   "ins   5 Rp R8 Electric Tom          12 notes  74-86",
+   "ins   6 Ride Bell                   29 notes  77-77",
+   "ins   7 Rp Scratch                  16 notes  74-82",
+   "ins   8 Rp Verby Bass Drum         360 notes  72-72",
+   "ins   9 Rp X Guitar                527 notes  61-85",
+   "ins  10 High Hat Chip             1152 notes  60-62",
+   "ins  11 Piano                      262 notes  51-73",
+   "ins  12 Synth                      204 notes  70-87"
+  ]
+ },
+ "rhythmove.mid": {
+  "title_in_file": "",
+  "module": "rhythmove.mid",
+  "page": "https://opengameart.org/content/rhythmove",
+  "download": "https://opengameart.org/sites/default/files/rhythmove.mid",
+  "author": "northivanastan",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "c37e73690ce553261a794f70a1ec1aed3d6bac82e91c32e9826486e9c1683c55",
+  "instruments": []
+ },
+ "subterrain.notes.mid": {
+  "title_in_file": "subterrain",
+  "module": "subterrain.xm",
+  "page": "https://opengameart.org/content/subterrain",
+  "download": "https://opengameart.org/sites/default/files/subterrain.xm_.zip",
+  "author": "congusbongus",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "241c6c57aced4a669c98a0252831480694fabc93c1ccb4ae7f5796b15d622b16",
+  "instruments": [
+   "ins   1 Novation Bass              588 notes  67-73",
+   "ins   2 Bass Drum                  641 notes  65-65",
+   "ins   3 Snare Drum                 450 notes  55-67",
+   "ins   4 Ride Cymbal                893 notes  72-72",
+   "ins   5 Korg Synth                1280 notes  94-101",
+   "ins   6 Rez Pad                     54 notes  67-73",
+   "ins   7 Power Chord                 48 notes  67-70",
+   "ins   8 Power Chord Muted          112 notes  67-70",
+   "ins   9 FX Filter Sweep             91 notes  58-64",
+   "ins  10 FX Bounce                  692 notes  72-78",
+   "ins  11 Synth                      384 notes  67-82"
+  ]
+ },
+ "the_fridge_is_hungry.notes.mid": {
+  "title_in_file": "The fridge is hungry",
+  "module": "the_fridge_is_hungry.xm",
+  "page": "https://opengameart.org/content/the-fridge-is-hungry",
+  "download": "https://opengameart.org/sites/default/files/the_fridge_is_hungry.xm_.zip",
+  "author": "congusbongus",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "2ef31100b67bfc79f565901dd8b8e67336da36c7251536b468339103267a9050",
+  "instruments": [
+   "ins   1 Oboe                       200 notes  65-86",
+   "ins   2 ting                       338 notes  79-93",
+   "ins   3 Cowbell                    116 notes  67-67",
+   "ins   4 Shaker                    1086 notes  74-77",
+   "ins   5 Marimba                   1107 notes  66-86",
+   "ins   6 Trumpet                     66 notes  54-74",
+   "ins   7 bass                       466 notes  41-61",
+   "ins   8 Bass Drum                  254 notes  60-60",
+   "ins   9 Clave                      143 notes  65-65",
+   "ins  10 tingg                       10 notes  72-80"
+  ]
+ },
+ "victoryCLEAN.notes.mid": {
+  "title_in_file": "Victory's fanfare",
+  "module": "victoryCLEAN.it",
+  "page": "https://opengameart.org/content/haydenwoffle-it-soundtrack",
+  "download": "https://opengameart.org/sites/default/files/OST.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "931912000fc29a7fd65aa3f4b7a11512d4ff8a3a6c22b5b9271a9aa0729489d9",
+  "instruments": [
+   "ins   1 Rendered Sample 01          27 notes  77-100",
+   "ins   2 Rendered Sample 02          36 notes  74-100",
+   "ins   3 ohgully2_8                  23 notes  44-61",
+   "ins   4 Rendered Sample 04          98 notes  54-63",
+   "ins   5 New Sample 01               44 notes  49-51",
+   "ins   6 Rendered Sample 10         257 notes  47-58",
+   "ins   7 Rendered Sample 13         610 notes  50-104",
+   "ins   8 Rendered Sample 14          40 notes  59-59",
+   "ins   9 Rendered Sample 20          36 notes  61-61"
+  ]
+ }
+}

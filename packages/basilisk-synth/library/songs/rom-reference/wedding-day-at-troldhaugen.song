@@ -1,0 +1,55 @@
+# Wedding Day at Troldhaugen: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Wedding Day at Troldhaugen
+pack     = rom-reference
+kind     = world
+composer = Edvard Grieg (1843-1907)
+source   = Wedding Day at Troldhaugen, Lyric Pieces Op. 65 No. 6 (1896): bars 1-48 and the last eight bars. Score: The Mutopia Project, from Schirmer (1903).
+licence  = The work: public domain (published 1896; the composer died 1907). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=781
+arranger = Algorithmic Industries house band
+note     = Late-80s workstation pop at 116 bpm: the tune on a lead over brass stabs, the left hand on bass and piano, a vocal pad then string swells, gamelan and harp runs, an organ on the last chord. Drums: Kit Manager 98 (Breaker Box Kit).
+midi     = wedding-day-at-troldhaugen.mid
+script   = wedding-day-at-troldhaugen.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.32
+tone     = 3500
+level    = -5
+
+[reverb]
+size     = 2.6
+predelay = 20
+tone     = 6000
+level    = -4
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Cathode Lead"                           lufs=-19 pan=4 echo=0.2 verb=0.35
+brass       ch2     "Lunar Brass"                            lufs=-23 pan=16 verb=0.25
+piano       ch3     "Lagoon Piano"                           lufs=-23 pan=-18 verb=0.3
+bass        ch4     "Neon Basement"                          lufs=-20
+strings     ch5     "Blue Swell"                             lufs=-24 pan=-10 verb=0.4 width=1.3
+gamelan     ch6     "Hazy Gamelan"                           lufs=-26 pan=-26 echo=0.3 verb=0.3 tune=-57
+harp        ch7     "Copper Harp"                            lufs=-26 pan=30 echo=0.2 verb=0.35
+vox         ch8     "Slate Vox"                              lufs=-26 verb=0.45 width=1.3
+organ       ch9     "Pastel Bark"                            lufs=-26 pan=24 verb=0.2
+kit         ch10    "kit-manager:Breaker Box Kit"            lufs=-18 verb=0.12
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"rom-reference:Blue Swell" = logoff@25[#10U3~12/shutdown@30[<#6U2~8L50;A250S95R1500K39G15
+"rom-reference:Cathode Lead" = ringout@20[@40]>U2~6Ja0,100.221,77.1072,7;A60S100R300B12K81G1
+"rom-reference:Copper Harp" = chimes@20]#8U2~22/chimes@20]>#6U2~18L60;A0D2000S0R900K62G12
+"rom-reference:Hazy Gamelan" = ringout@30[@40]#3/recycle>>@8]#2F;A15D400S70R250V80K69G1
+"rom-reference:Lagoon Piano" = xpding@20]#11H0,12U2~6Ja0,100.480,51.2902,5/ringout@25[@35]#3L80/kalimba_c4@t1500]#2T-13L35Q28;A0D1800S30R500K59G2
+"rom-reference:Lunar Brass" = tada@20]+#10H0,4,7;A0D200S20R150G2
+"rom-reference:Neon Basement" = hwin<@10[@40]+++#8/hwout<@10[@40]++#8L80;A0D200S50R80K43G8
+"rom-reference:Pastel Bark" = ringout@20[@30]@0CP@0CP@0CP#8H0,12,19/start>#4FL70;A0D220S35R90K69
+"rom-reference:Slate Vox" = notify<R#8U3~10/notify<#6U2~8L70;A600S90R1800K57G11

@@ -1,0 +1,56 @@
+# Fax Machine Fanfare: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Fax Machine Fanfare
+pack     = office-machinery
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = An industrial march in C, 104 bpm: a bugle call, march and trio on the civil-defence bugle, the PC speaker on the trio, twelve drives on the bass, a spacebar-kit side drum, OPL3 snare, floppy drives, keyboard clacks, a floppy latch, a hard disk spinning up.
+midi     = fax-machine-fanfare.mid
+script   = fax-machine-fanfare.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 1/4
+feedback = 0.2
+tone     = 3000
+level    = -10
+
+[reverb]
+size     = 1.6
+predelay = 12
+tone     = 5000
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+bugle       ch1     "Signal Uplink"                          lufs=-19 pan=-4 verb=0.3
+lowbugle    ch2     "White Dive"                             lufs=-23 pan=-18 verb=0.3
+beep        ch3     "Cedar Hat"                              lufs=-23 pan=16 echo=0.15 tune=78
+drives      ch4     "Ocean Crowd"                            lufs=-20
+kit         ch10    "Solar Haze"                             lufs=-18 verb=0.08
+beepkit     ch9     "Winter Canopy"                          lufs=-27 pan=-22
+floppy      ch5     "Silent Uplink"                          lufs=-26 pan=26 echo=0.2
+clack       ch6     "Electric Clack"                         lufs=-29 pan=32
+opl3        ch7     "Bright Block"                           lufs=-26 pan=4 verb=0.15
+spinup      ch8     "Open Uplink"                            lufs=-24 verb=0.2
+hum         ch11    "Honey Murmur"                           lufs=-32 width=1.3
+latch       ch12    "Lucid Surge"                            lufs=-25 pan=-28
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"office-machinery:Bright Block" = pc_opl3_elec_snare;D75S0R113V75G2
+"office-machinery:Cedar Hat" = pc_pc_speaker_error_beepEF;D327S0R61V95G-4
+"office-machinery:Electric Clack" = key_press_down>U2~6Q-39;D92S0R35V88G3
+"office-machinery:Honey Murmur" = pc_hdd_maxtor_10k@t10690]<#8F/pc_hdd_7200_idle#8L44;A737S100R686V74G9
+"office-machinery:Lucid Surge" = pc_floppy_insert_latch@t1352]EH0,-12Q-24;A3S100R819V73K56G3
+"office-machinery:Ocean Crowd" = pc_computer_12_drives<#11U2~19/pc_hdd_maxtor_10kE#5T-4L23O111Q-24;A52S100R1557V76K29G1
+"office-machinery:Open Uplink" = pc_hdd_spin_up@t4458]<;A235S100R1289V75K30G3
+"office-machinery:Signal Uplink" = bugle_attentionE#11U2~8/bugle_drill_call#5T-15L62;A384S100R2059V93K74G-5
+"office-machinery:Silent Uplink" = pc_floppy_read_aE;A483S100R459V91G7
+"office-machinery:Solar Haze" = key_spacebar@t30000Iem_selectric_key_a@t30000Ikey_mechanical_hard@t30000Iem_typewriter_key_a@t30000Iem_selectric_key_b@t30000Ikey_press_down@t30000Ikey_press_single_a@t30000Iem_typewriter_return_a@t30000Ikey_press_single_b@t30000Iem_stamp_b@t30000Iem_typewriter_bell_a<#16;R120V100G-3k36j1k37j2k38j3k39j4k40j5k42j6k44j7k45j8k46j9k47j10k49j11
+"office-machinery:White Dive" = bugle_attention<<#5/pc_crt_degauss#5FL12Ja0,100.98,30.890,0/pc_cd_seek_mouse#6L26Ja0,100.175,30.802,0;A71S100R1901V91K50G-2
+"office-machinery:Winter Canopy" = pc_pc_speaker_error_beep@t30000Iinfobar@t30000Ipc_opl3_elec_snare@t30000Iballoon@t30000Imenu@t30000Istart@t30000Idtmf_digits@t30000Ixpstart@t30000Ifloppy_seek_clunk@t30000Ipopup<#16;R160V100G-17k36j1k37j2k38j3k39j4k42j5k44j6k45j7k46j8k47j9k49j10

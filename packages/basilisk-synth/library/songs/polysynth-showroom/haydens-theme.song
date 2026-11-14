@@ -1,0 +1,42 @@
+# Hayden's Theme: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Hayden's Theme
+pack     = polysynth-showroom
+kind     = chiptune
+composer = Spring Spring
+source   = Hayden's Theme, an Impulse Tracker module (haydenCLEAN.it) from OpenGameArt (https://opengameart.org/sites/default/files/OST.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/haydenwoffle-it-soundtrack
+arranger = Algorithmic Industries house band
+source_sha256= 711dcf5a03e21306d87b1ab4e08e5aefe40a234759fe2f590d10137c45d77a71
+note     = The module's puppy piano on an FM piano, its middle line on poly brass, its basset on the cream mono bass.
+midi     = haydens-theme.mid
+script   = haydens-theme.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+fmpiano     ch1     "Violet Keys"                            lufs=-19 pan=-6 echo=0.15 verb=0.3
+brass       ch2     "Metro Chord"                            lufs=-22 pan=14 verb=0.3
+bass        ch3     "Dial Bass"                              lufs=-20
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"polysynth-showroom:Dial Bass" = mono77_cream_b0#11U2~6/mono77_fm_rings_ds1#5T-16L45;A5D236S61R173V92K23G-5
+"polysynth-showroom:Metro Chord" = poly85_thin_brassy_c2+>>;A3D548S74R194V88K60
+"polysynth-showroom:Violet Keys" = fm87_piano_c4E#16;A1D2333S10R445V80K60G-8

@@ -1,0 +1,56 @@
+# Saturday on the Keyboard Floor: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Saturday on the Keyboard Floor
+pack     = polysynth-showroom
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = 1985 synth-pop in D minor, 120 bpm: poly brass stabs, a cream mono bass in eighths, FM piano and clav, a PWM lead, vocoder strings, male and female vocoder choirs, a buzzy solo, FM EP arpeggios. Drums: Kit Manager 98 (Breaker Box Kit).
+midi     = saturday-on-the-keyboard-floor.mid
+script   = saturday-on-the-keyboard-floor.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.35
+tone     = 3500
+level    = -4
+
+[reverb]
+size     = 2.2
+predelay = 18
+tone     = 6000
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Breaker Box Kit"            lufs=-17 verb=0.12
+bass        ch2     "Broadcast Cellar"                       lufs=-19
+brass       ch3     "Copper Salute"                          lufs=-20 pan=-8 verb=0.2 width=1.2
+fmpiano     ch4     "Empty Hammers"                          lufs=-23 pan=-20 verb=0.25
+clav        ch5     "Distant Parlour"                        lufs=-25 pan=26 tune=-22
+lead        ch6     "Grey Beam"                              lufs=-19 pan=6 echo=0.2 verb=0.25
+solo        ch7     "Amber Line"                             lufs=-20 pan=-4 echo=0.25 verb=0.25
+vstrings    ch8     "Hollow Swell"                           lufs=-24 pan=14 verb=0.35 width=1.3 tune=-14
+vchoir      ch9     "Marble Chorus"                          lufs=-25 pan=-12 verb=0.4 tune=-14
+pad         ch11    "Wide Field"                             lufs=-26 verb=0.35 width=1.3
+ep          ch12    "Broadcast Etude"                        lufs=-25 pan=30 echo=0.3 verb=0.2
+female      ch13    "Broadcast Vox"                          lufs=-23 pan=8 verb=0.4 tune=-11
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"polysynth-showroom:Amber Line" = poly85_buzzy_lead_c3@t7053]@t2015[@0CP@0CP>EQ55;A29D320S81R129V87K60G-2
+"polysynth-showroom:Broadcast Cellar" = mono77_cream_b0;A3D242S68R71V85K23G-1
+"polysynth-showroom:Broadcast Etude" = fm87_epiano_c4#16;A4D2188S37R474V71K60G-8
+"polysynth-showroom:Broadcast Vox" = vocoder_choir_female_f4#16;A221D362S78R669V80K65G-7
+"polysynth-showroom:Copper Salute" = poly83_big_c2>>#11U2~6/poly83_wobble_brass_c2#5T12L43Q-47;A15D362S32R229V81K60G-10
+"polysynth-showroom:Distant Parlour" = fm87_clav_c4#15/chimesxpRE#2T5L12O111Q-8;A3D892S37R329V80K60G-6
+"polysynth-showroom:Empty Hammers" = fm87_piano_c4#15/dingxp>#2T-19L20O92Q6;A3D806S5R374V81K60G-7
+"polysynth-showroom:Grey Beam" = poly78_pwm_lady_c4E#12U3~14/poly78_res_organ_d4#4T10L32O6Q-21;A36D120S82R103V99K60G-9
+"polysynth-showroom:Hollow Swell" = vocoder_strings_c4E#15/dingxp>#2T-19L12O98Q-24;A186S95R912V70K60G-3
+"polysynth-showroom:Marble Chorus" = vocoder_choir_male_c4#16;A534D308S88R1001V92K60G-5
+"polysynth-showroom:Wide Field" = poly78_saxons_pad_c2@t8399]@t2400[@0CP@0CP>>#12U3~14/poly85_dark_pad_chorus_c3#4L50Q15;A398D716S91R1112V94K60G-13

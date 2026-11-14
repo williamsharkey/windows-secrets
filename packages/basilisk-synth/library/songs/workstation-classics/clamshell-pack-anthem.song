@@ -1,0 +1,52 @@
+# Clamshell Pack Anthem: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Clamshell Pack Anthem
+pack     = workstation-classics
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = Happy-trance pop in F, 136 bpm: an offbeat bass, glass plucks, a ladder arpeggio, a choir hook, the flute solo lead on the chorus, arena-pluck chords, a salute stab, a pad. Drums: Kit Manager 98 (Punch Kick Kit).
+midi     = clamshell-pack-anthem.mid
+script   = clamshell-pack-anthem.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.32
+tone     = 3500
+level    = -4
+
+[reverb]
+size     = 2.0
+predelay = 15
+tone     = 6000
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Punch Kick Kit"             lufs=-16.5 verb=0.06
+bass        ch1     "Neon Rumble"                            lufs=-19
+pluck       ch2     "Glass Pluck Plus"                       lufs=-23 pan=-18 echo=0.2 verb=0.15
+ladder      ch3     "Ultra Ladder"                           lufs=-25 pan=22 echo=0.25
+chords      ch4     "Elevated Horns"                         lufs=-22 pan=12 verb=0.2
+choir       ch5     "Night Mist"                             lufs=-21 pan=-6 verb=0.4
+lead        ch6     "Global Solo"                            lufs=-19 pan=4 echo=0.25 verb=0.3
+pad         ch7     "Rapid Glow"                             lufs=-26 verb=0.4 width=1.3
+fx          ch8     "Rusty Ascent"                           lufs=-26 verb=0.4
+stab        ch9     "Washed Salute"                          lufs=-25 pan=-14 echo=0.3 verb=0.2
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Punch Kick Kit" = ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"workstation-classics:Elevated Horns" = logon#12U3~11/organ_pedal_25@t3000]@t300[#4T-16L32;A24D539S49R492V78K44G2
+"workstation-classics:Glass Pluck Plus" = default@15]#8H0,12/default@15]<E>#6L35O250;A0D350S0R250K75G6
+"workstation-classics:Global Solo" = flute_vib_c5@t6000]@t300[#13U4~19/ding#3T12L17Q27;A1D14S94R334V81K72G-10
+"workstation-classics:Neon Rumble" = xpringout<<#11U2~9/batlow#5T-3L39;A0D558S35R57V71K45G5
+"workstation-classics:Night Mist" = choir_aah@t6000]@t300[<;A847D341S80R1206V95K57G1
+"workstation-classics:Rapid Glow" = xpringout@t349]@t99[@0CP@0CP@0CPE<E#11U2~6/crystal_glass_tapR#5T-2L34O208Q8;A254D195S98R2027V85K57G3
+"workstation-classics:Rusty Ascent" = default<;A8S100R1806V87K51G11
+"workstation-classics:Ultra Ladder" = default@12]#8/xpding@15]<#6T4L40;A0D300S0R200K75G9
+"workstation-classics:Washed Salute" = tada@t190[#8/xpringout#8T-5L64Q35;A2D802S79R389V83K64G-2

@@ -1,0 +1,56 @@
+# The Fridge Is Hungry: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = The Fridge Is Hungry
+pack     = leisure
+kind     = chiptune
+composer = congusbongus
+source   = The fridge is hungry, a FastTracker 2 module (the_fridge_is_hungry.xm) from OpenGameArt (https://opengameart.org/sites/default/files/the_fridge_is_hungry.xm_.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/the-fridge-is-hungry
+arranger = Algorithmic Industries house band
+source_sha256= 2ef31100b67bfc79f565901dd8b8e67336da36c7251536b468339103267a9050
+note     = Exotica at 119 bpm: the module's oboe on the lounge flute, its marimba, trumpet, tings and bells on the pack's marimba, solo, bells and glockenspiel, its bass on the cello, its bass drum, clave, cowbell and shaker on the pack's percussion.
+midi     = the-fridge-is-hungry.mid
+script   = the-fridge-is-hungry.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+flute       ch1     "Polished Call"                          lufs=-20 pan=4 echo=0.15 verb=0.35
+marimba     ch2     "Island Marimba"                         lufs=-22 pan=-20 verb=0.3
+trumpet     ch3     "Tidal Solo"                             lufs=-22 pan=14 verb=0.3
+bells       ch4     "Soft Bells"                             lufs=-25 pan=26 echo=0.2 verb=0.4
+glock       ch5     "Late Toll"                              lufs=-26 pan=-28 verb=0.4
+cello       ch6     "Opal Section"                           lufs=-21 verb=0.15
+kick        ch7     "Grey Clack"                             lufs=-22
+claves      ch8     "Steel Block"                            lufs=-27 pan=-30
+cowbell     ch9     "Distant Knock"                          lufs=-27 pan=24
+shaker      ch11    "Twilight Tap"                           lufs=-29 pan=32
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"leisure:Distant Knock" = flute_vib_c5E#8F/batlow#8L44;D60S0R78V83G14
+"leisure:Grey Clack" = emh_cardpunch_thumpU2~6;D152S0R121V95G-3
+"leisure:Island Marimba" = marimba_c4E#10;A0R600K60G1
+"leisure:Late Toll" = glockenspiel_g4EH0,12;A3D827S7R1871V98K67
+"leisure:Opal Section" = cello_section_sus_c3@t7500]@t200[E>#10U3~15/marimba_c4#3T-12L41Q24/ringout#3T-21L55;A197S96R1086V78K60G-12
+"leisure:Polished Call" = flute_vib_c5@t6000]@t300[E<#8/infobar#8FL16;A35D513S86R162V78K60
+"leisure:Soft Bells" = crystal_bell_bb5@t4000]<<#8/chimesR>#8T-2L33O128Q10;A1D1543S1R1143V86K58G-4
+"leisure:Steel Block" = relay_loud_click#8F/air_duster@t2000]@t500[#8FL13Ja0,100.94,30.738,0;D185S0R71V96G4
+"leisure:Tidal Solo" = xpringout@t349]@t99[@0CP@0CP@0CPE<#11H0,12/batlow#5T9L40;A2D421S96R132V78K57G5
+"leisure:Twilight Tap" = glass_harp#8F/ems_typebar>#8FL32;D63S0R40V72G13

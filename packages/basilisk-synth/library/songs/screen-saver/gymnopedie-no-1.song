@@ -1,0 +1,53 @@
+# Gymnopedie No. 1: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Gymnopedie No. 1
+pack     = screen-saver
+kind     = world
+composer = Erik Satie (1866-1925)
+source   = Gymnopedie No. 1 for piano (1888). Score: The Mutopia Project, typeset from the Dover edition.
+licence  = The work: public domain (published 1888; the composer died 1925). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=37
+arranger = Algorithmic Industries house band
+note     = The whole piece at 66 bpm: breathy flute melody, glass-harp chords, singing-bowl bass, marimba, chimes, string pad in the middle phrase, the sea and a hermit thrush.
+tail     = 6
+midi     = gymnopedie-no-1.mid
+script   = gymnopedie-no-1.py
+
+[master]
+loudness = -17
+ceiling  = -1.0
+fadeout  = 3
+
+[echo]
+time     = 3/8
+feedback = 0.35
+tone     = 3000
+level    = -5
+
+[reverb]
+size     = 3.6
+predelay = 30
+tone     = 5000
+level    = -3
+
+[tracks]
+# name      source  preset                                  mix
+flute       ch1     "Breath Flute"                           lufs=-20 pan=4 echo=0.15 verb=0.45
+glass       ch2     "Ivory Canopy"                           lufs=-24 pan=-14 verb=0.4
+bassbowl    ch3     "Northern Dormant"                       lufs=-24 verb=0.3 tune=13
+marimba     ch4     "Water Marimba"                          lufs=-27 pan=-26 echo=0.25 verb=0.35
+chimes      ch5     "Sunday Chimes"                          lufs=-27 pan=28 echo=0.3 verb=0.5 tune=76
+waves       ch6     "Ocean Shelf"                            lufs=-31 width=1.4
+strings     ch7     "Lunar Canopy"                           lufs=-27 pan=12 verb=0.45 width=1.3
+bird        ch8     "Thrush Morning"                         lufs=-29 pan=38 verb=0.4
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"screen-saver:Breath Flute" = flute_vib_c5#12/recycle>>@8]#4FL30;A40R400K72G2
+"screen-saver:Ivory Canopy" = glass_harp@t8000]@t500[E<EU2~10;A306D321S96R1238V98K64G-5
+"screen-saver:Lunar Canopy" = violin_section_sus_c4@t7500]@t300[#12U3~9/xpding#4T-11L68;A367D269S89R941V87K60G-9
+"screen-saver:Northern Dormant" = singing_bowl_long@t12000]@t200[<U3~11;A1135S100R1548V70K61G2
+"screen-saver:Ocean Shelf" = nps_ocean_waves<#4F;A2000S100R3000G5
+"screen-saver:Sunday Chimes" = glockenspiel_g4<#5/print#5T-3L30Q10/marimba_c4#6T-5L54Q33;A0D697S13R2035V95K55G2
+"screen-saver:Thrush Morning" = bird_hermit_thrushE#8Ja0,100.178,69.2525,5/ringout#8T8L40Q25;K89G13
+"screen-saver:Water Marimba" = marimba_c4#10/drop_single_a#6FL40;A0R900K60G1

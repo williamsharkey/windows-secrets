@@ -1,0 +1,44 @@
+# World 7-8: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = World 7-8
+pack     = rom-reference
+kind     = chiptune
+composer = Phillip Miller (redactionary)
+source   = World 7-8, a FamiTracker module (nes_07-jazz.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/free-nes-music-pack
+arranger = Algorithmic Industries house band
+source_sha256= fa685b8f913b3c6288be4af510930a2126b188acc57cc9886f99cf8ff26e4a47
+note     = Jazz-fusion on workstation voices at 112 bpm: the NES module's pulse 1 on the lead, pulse 2 on the tines, the triangle on the bass, the noise on Kit Manager 98 (Breaker Box Kit).
+midi     = world-7-8.mid
+script   = world-7-8.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Cathode Lead"                           lufs=-19 pan=4 echo=0.2 verb=0.3
+tines       ch2     "Jade Tines"                             lufs=-22 pan=-16 echo=0.15 verb=0.3
+bass        ch3     "Neon Basement"                          lufs=-20
+kit         ch10    "kit-manager:Breaker Box Kit"            lufs=-18 verb=0.1
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"rom-reference:Cathode Lead" = ringout@20[@40]>U2~6Ja0,100.221,77.1072,7;A60S100R300B12K81G1
+"rom-reference:Jade Tines" = xpding@20]#9H0,24U2~4/ringout@25[@35]#2L70/logoff@30[C@50X#5U2~10L50;A0D1500S40R1350V100K63G2
+"rom-reference:Neon Basement" = hwin<@10[@40]+++#8/hwout<@10[@40]++#8L80;A0D200S50R80K43G8

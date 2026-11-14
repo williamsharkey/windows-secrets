@@ -1,0 +1,48 @@
+# The Leaning Cloister Galliard: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = The Leaning Cloister Galliard
+pack     = courtyard-chapel
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = A galliard in D Dorian, 3/4, with hemiola cadences: psaltery, harpsichord continuo, folk harp, strumstick, didgeridoo bourdon, hand-chime and tubular bells, balafon tabor.
+midi     = galliard-leaning-cloister.mid
+script   = galliard-leaning-cloister.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+
+[echo]
+time     = 3/8
+feedback = 0.3
+tone     = 3000
+level    = -4
+
+[reverb]
+size     = 2.6
+predelay = 24
+tone     = 5000
+level    = -3
+
+[tracks]
+# name      source  preset                                  mix
+psaltery    ch1     "Slate Pick"                             lufs=-19 pan=8 echo=0.05 verb=0.32
+harpsi      ch2     "Soft Etude"                             lufs=-22 pan=-28 verb=0.22
+harp        ch3     "Faded Pluck"                            lufs=-24 pan=34 echo=0.12 verb=0.3
+strum       ch4     "Kinetic Harp"                           lufs=-23 pan=-8 verb=0.15
+drone       ch5     "White Dormant"                          lufs=-28 pan=0 verb=0.35
+bells       ch6     "Marble Tower"                           lufs=-24 pan=22 echo=0.15 verb=0.45 tune=16
+tabor       ch7     "Brushed Carillon"                       lufs=-25 pan=-36 verb=0.25
+swoosh      ch8     "Global Swoosh"                          lufs=-28 pan=0 echo=0.3 verb=0.5
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"courtyard-chapel:Brushed Carillon" = balafon_cs3#16;A1D1290S3R2437V72K61G1
+"courtyard-chapel:Faded Pluck" = folk_harp_c3#16;A2D416S4R83V75K60G-2
+"courtyard-chapel:Global Swoosh" = glock_gliss_upR#5/toy_train_whistle_fallEE#5T30L34O221Q37/glock_gliss_upEE#6T12L31O387Q48;A324S100R1588V79K74G9
+"courtyard-chapel:Kinetic Harp" = strumstick_g2#16;A2D155S8R154V96K55
+"courtyard-chapel:Marble Tower" = hand_chime_c3E#8L80/tubular_bell_c4#8L55;A2D1021S21R795V89K60G-1
+"courtyard-chapel:Slate Pick" = psaltery_pluck_c4#15/defaultRE#2T9L10O53Q26;A2D201S2R136V78K72G-1
+"courtyard-chapel:Soft Etude" = harpsichord_flemish_c3#16;A4D2188S37R474V71K60G-8
+"courtyard-chapel:White Dormant" = didgeridoo_sus_a>>#13U4~18/didgeridoo_phrase#3T-3L41;A769D0S100R836V93K61G-6

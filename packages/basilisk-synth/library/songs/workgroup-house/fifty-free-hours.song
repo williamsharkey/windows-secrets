@@ -1,0 +1,56 @@
+# Fifty Free Hours: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Fifty Free Hours
+pack     = workgroup-house
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = Deep house in F minor, 122 bpm. The modem dials up, a one-finger minor-ninth stab, organ bass stab, talking-robot hook, choir breakdown. Drums: Kit Manager 98 (Jack Box Kit).
+midi     = fifty-free-hours.mid
+script   = fifty-free-hours.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.38
+tone     = 3200
+level    = -3
+
+[reverb]
+size     = 1.8
+predelay = 16
+tone     = 6000
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Jack Box Kit"               lufs=-17 pan=0 verb=0.05
+bass        ch2     "Slap Disco Bass"                        lufs=-19 pan=0 tune=-16
+stab        ch3     "Velvet Minor Nine"                      lufs=-21 pan=-12 echo=0.18 verb=0.18
+organ       ch4     "Jack Organ"                             lufs=-24 pan=18 verb=0.15
+keys        ch5     "Afterhours Tine"                        lufs=-24 pan=-25 echo=0.15 verb=0.25
+pad         ch6     "Midnight Haze"                          lufs=-25 pan=0 verb=0.35 width=1.3 tune=-11
+lead        ch7     "Robot Mouth Lead"                       lufs=-20 pan=6 echo=0.25 verb=0.2
+choir       ch8     "Plaza Cantor"                           lufs=-23 pan=-6 verb=0.45
+modem       ch9     "Polar Ascent"                           lufs=-24 pan=0 echo=0.3 verb=0.3
+dialhat     ch11    "Dial Hat"                               lufs=-27 pan=30
+shaker      ch12    "Bright Shaker"                          lufs=-29 pan=-34
+strings     ch13    "Sampled Strings Swell"                  lufs=-25 pan=22 verb=0.35
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Jack Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.60,70.350,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"workgroup-house:Afterhours Tine" = xpding@25]#5/print@5[@60]<E#11T1U2~6L50Q-20Ja0,100.302,42.1572,31;A0D1800S30R500V85G13m11L20,90m1=40K59
+"workgroup-house:Bright Shaker" = em_stamp_a#8F/infobar#8FL34;D372S0R52V97G3
+"workgroup-house:Dial Hat" = chord@t200]EF;D298S0R145V82G4
+"workgroup-house:Jack Organ" = ringout@20[@40]@0CP@0CP@0CP+#12H0,12,19/ding>>@5]#4FL40;A0D250S45R90V70K69G-5
+"workgroup-house:Midnight Haze" = crowd_sing_aah_f@t7500]@t500[CRP>EH0,12U2~10;A646D872S78R1010V82K65G-13
+"workgroup-house:Plaza Cantor" = choir_aah@t6000]@t300[U2~10;A236D346S80R722V82K69G-3
+"workgroup-house:Polar Ascent" = modem_dialup_a@t9000]@t3000[RU2~11;A8S100R1948V95G1
+"workgroup-house:Robot Mouth Lead" = ems_704_vowel_a3@30[@30]@0CP@0CP@0CP@0CP#8/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#4T-2L30;A20R150V80K57G-7
+"workgroup-house:Sampled Strings Swell" = violin_section_sus_c4@10[E#10U2~10Ja0,20.300,100.484,30.540,100;A0R600K60G-6
+"workgroup-house:Slap Disco Bass" = xpding@30]<<++#8/balloon<@30]#4FL60;A0D300S50R80V95K35G5
+"workgroup-house:Velvet Minor Nine" = xpding@25]<#6H0,3,7,10,14/xpding@25]<E#5H0,3,7,10L30O375Q-45/xpding@25]<#5H0,3,7L18O750Q45;A0D700S20R450V80K47G3

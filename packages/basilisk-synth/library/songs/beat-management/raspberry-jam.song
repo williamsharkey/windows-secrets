@@ -1,0 +1,52 @@
+# Raspberry Jam: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Raspberry Jam
+pack     = beat-management
+kind     = chiptune
+composer = congusbongus
+source   = Raspberry Jam, a FastTracker 2 module (raspberry_jam.xm) from OpenGameArt (https://opengameart.org/sites/default/files/raspberry_jam.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/raspberry-jam
+arranger = Algorithmic Industries house band
+source_sha256= 60f248dddd95ce0bfb9116f3ec574f11a7c331d3e55c1491470cc14d41d7b8ee
+note     = Boom bap at 112 bpm: the module's funky stab on violins, its guitar on the tine EP, its piano on the upright, its synth on the flute, its bass on the upright bass, its scratches and orchestra hit, its drums on Kit Manager 98 (Twelve-Bit Crate Kit).
+midi     = raspberry-jam.mid
+script   = raspberry-jam.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Twelve-Bit Crate Kit"       lufs=-17 verb=0.06
+scratch     ch8     "Desk Scratch"                           lufs=-24 pan=-8
+hit         ch9     "Ember Orchestra"                        lufs=-23 verb=0.3
+bass        ch2     "Upright Thump"                          lufs=-19
+stab        ch3     "Golden Section"                         lufs=-23 pan=-20 verb=0.25
+guitar      ch4     "Wide Flick"                             lufs=-23 pan=22 verb=0.2
+piano       ch5     "Cedar Study"                            lufs=-21 pan=-10 verb=0.25
+flute       ch6     "Civic Wire"                             lufs=-21 pan=8 echo=0.2 verb=0.3
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"beat-management:Cedar Study" = piano_upright_cs4#5/glass_ping#5T-7L20Q-31/epiano_bell_c3#6T25L66Q-8;A0D2251S14R506V70K61G-7
+"beat-management:Civic Wire" = flute_vib_c5@t6000]@t300[E<H0,-12U3~14;A13D48S71R300V91K60G-8
+"beat-management:Desk Scratch" = recycle>R#6F/restore>#6;A0R80B12G19
+"beat-management:Ember Orchestra" = epiano_yamaha_vibe>>H0,-12U3~13;A218S88R550V90K60G-8
+"beat-management:Golden Section" = violin_section_sus_c4@t7500]@t200[U2~8;A103S92R803V95K60G-6
+"beat-management:Upright Thump" = contrabass_pizz_e1><#10;A0D600S20R150K28G2
+"beat-management:Wide Flick" = epiano_yamaha_vibe>>;A2D170S6R99V71K60G-1
+"kit-manager:Twelve-Bit Crate Kit" = ding<<<@35]><#3F/chord>>@15]+E><#4F/ringin>>@12]><#5F/ding>>@4]><#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

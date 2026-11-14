@@ -1,0 +1,55 @@
+# Fur Elise: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Fur Elise
+pack     = beat-management
+kind     = world
+composer = Ludwig van Beethoven (1770-1827)
+source   = Bagatelle No. 25 in A minor, WoO 59, "Fur Elise" (1810, first published 1867). Score: The Mutopia Project, from Breitkopf & Hartel (1888).
+licence  = The work: public domain. The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=931
+arranger = Algorithmic Industries house band
+note     = A lo-fi beat in 6/8 at 100 bpm, the whole bagatelle: upright piano, tines on the left hand, vibes, a flute in the F major episode, strings under the stormy part, the choir at the end, upright bass, rain and scratches. Drums: Kit Manager 98 (Twelve-Bit Crate Kit).
+midi     = fur-elise.mid
+script   = fur-elise.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 2500
+level    = -6
+
+[reverb]
+size     = 1.6
+predelay = 15
+tone     = 4500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+piano       ch1     "Cedar Study"                            lufs=-19 pan=-8 verb=0.25 lp=9000
+tines       ch2     "Wide Flick"                             lufs=-23 pan=16 verb=0.25
+vibes       ch3     "Study Vibes"                            lufs=-25 pan=26 echo=0.2 verb=0.3 tune=-17
+bass        ch4     "Upright Thump"                          lufs=-20
+flute       ch5     "Civic Wire"                             lufs=-21 pan=6 echo=0.2 verb=0.3
+strings     ch6     "Golden Section"                         lufs=-25 pan=-20 verb=0.35
+rain        ch7     "Window Rain Room"                       lufs=-31 width=1.4
+scratch     ch8     "Desk Scratch"                           lufs=-25 pan=-8
+choir       ch9     "Winter Choir"                           lufs=-27 verb=0.45 width=1.3
+kit         ch10    "kit-manager:Twelve-Bit Crate Kit"       lufs=-18 verb=0.06
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"beat-management:Cedar Study" = piano_upright_cs4#5/glass_ping#5T-7L20Q-31/epiano_bell_c3#6T25L66Q-8;A0D2251S14R506V70K61G-7
+"beat-management:Civic Wire" = flute_vib_c5@t6000]@t300[E<H0,-12U3~14;A13D48S71R300V91K60G-8
+"beat-management:Desk Scratch" = recycle>R#6F/restore>#6;A0R80B12G19
+"beat-management:Golden Section" = violin_section_sus_c4@t7500]@t200[U2~8;A103S92R803V95K60G-6
+"beat-management:Study Vibes" = vibraphone_c_low#8Ja0,100.250,70.500,100.750,70.1000,100/chimesEE#8T-7L26O272Q53;A0R900K48G3
+"beat-management:Upright Thump" = contrabass_pizz_e1><#10;A0D600S20R150K28G2
+"beat-management:Wide Flick" = epiano_yamaha_vibe>>;A2D170S6R99V71K60G-1
+"beat-management:Window Rain Room" = rain_on_window<E#4F;A2000S100R3000G5
+"beat-management:Winter Choir" = choir_aah@t6000]@t300[E#11U2~10/dingxpR#5T2L34O74Q16;A93D544S94R1335V78K69G-7
+"kit-manager:Twelve-Bit Crate Kit" = ding<<<@35]><#3F/chord>>@15]+E><#4F/ringin>>@12]><#5F/ding>>@4]><#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

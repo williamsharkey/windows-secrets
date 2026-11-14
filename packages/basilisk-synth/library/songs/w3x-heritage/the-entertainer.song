@@ -1,0 +1,53 @@
+# The Entertainer: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = The Entertainer
+pack     = w3x-heritage
+kind     = world
+composer = Scott Joplin (1868-1917)
+source   = The Entertainer, a ragtime two-step (1902). Score: The Mutopia Project, from a reproduction of the original 1902 edition.
+licence  = The work: public domain (published 1902; the composer died 1917). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=263
+arranger = Algorithmic Industries house band
+note     = The intro and the A and B strains on a ding piano with a stride left hand, the B strain doubled by the ringout whistle, chimes bells on each strain, ding brushes, and the rag's last bars on the tada fanfare. Only the six Windows 3.1 sounds.
+midi     = the-entertainer.mid
+script   = the-entertainer.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+
+[echo]
+time     = 1/8
+feedback = 0.2
+tone     = 3000
+level    = -9
+
+[reverb]
+size     = 1.5
+predelay = 15
+tone     = 5000
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+righthand   ch1     "Still Upright"                          lufs=-19 pan=6 verb=0.25
+inner       ch2     "Elevated Ballad"                        lufs=-24 pan=14 verb=0.25
+stridebass  ch3     "Field Bass"                             lufs=-21 pan=-10 verb=0.15
+stridechords ch4     "Western Chords"                         lufs=-24 pan=-16 verb=0.2
+whistle     ch5     "Gentle Whistle"                         lufs=-22 pan=20 echo=0.15 verb=0.3 tune=-31
+bells       ch6     "Urban Ring"                             lufs=-25 pan=28 verb=0.4
+fanfare     ch7     "Honey Hit"                              lufs=-22 pan=-4 verb=0.35
+snare       ch8     "Basement Snare"                         lufs=-29 pan=10
+shaker      ch9     "Hollow Shaker"                          lufs=-31 pan=-24
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"w3x-heritage:Basement Snare" = ding@t120]F;D64S0R67V95G11
+"w3x-heritage:Elevated Ballad" = ding#6/ding@25]#6L60;A0D2200S20R700K79
+"w3x-heritage:Field Bass" = ding<<<+#8/ringout@20[@40]@0CP@0CP@0CP<<<#6L60;A0D3000S40R300K43
+"w3x-heritage:Gentle Whistle" = ringout@t328]@t93[@0CP@0CP@0CP<#8/ding#8T-10L32Q3;A10D146S73R303V82K57
+"w3x-heritage:Hollow Shaker" = ding@t120]#8FQ63/chord#8T3L52;D196S0R81V83G6
+"w3x-heritage:Honey Hit" = tada@t190[+#8U2~5/ringout#4T7L45Q1/ringout#4T-5L36Q-8;A6D506S81R483V79K64G-7
+"w3x-heritage:Still Upright" = ding@10]#6U2~6Q-20/ding@5[@60]#6T12U2~6L60Q20;A0D2500S25R600V85K79G-1
+"w3x-heritage:Urban Ring" = chimes@t300[EE<;A2D690S5R730V88K55G9
+"w3x-heritage:Western Chords" = dingE<<#8/ding#8L35O17Q15;A0D750S26R222V93K55G3

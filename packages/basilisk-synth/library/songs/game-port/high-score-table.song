@@ -1,0 +1,51 @@
+# High Score Table: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = High Score Table
+pack     = game-port
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = A chiptune at 144 bpm: a name-entry jingle, then the credits theme in C and a minor-key strain on pulse leads with a soft echo lead a sixteenth behind, a harmony line, chord arpeggios, an octave bass, noise drums from the pack's percussion, a coin and a 286 shutting down.
+midi     = high-score-table.mid
+script   = high-score-table.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 1/8
+feedback = 0.25
+tone     = 4000
+level    = -8
+
+[reverb]
+size     = 1.2
+predelay = 10
+tone     = 6000
+level    = -9
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Ivory Signal"                           lufs=-19 pan=-8 verb=0.1
+echolead    ch2     "Ivory Signal"                           lufs=-26 pan=24
+arp         ch3     "Pastel Signal"                          lufs=-26 pan=-24 tune=-56
+bass        ch4     "Cobalt Anchor"                          lufs=-19 tune=-57
+kick        ch5     "Silver Block"                           lufs=-21
+snare       ch6     "Sunlit Knock"                           lufs=-23
+hat         ch7     "Lagoon Click"                           lufs=-29 pan=18
+coin        ch8     "Coin Jingle"                            lufs=-24 echo=0.2
+fx          ch9     "Matte Uplink"                           lufs=-25 verb=0.3
+harmony     ch11    "Warm Lead"                              lufs=-24 pan=14
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"game-port:Cobalt Anchor" = ringout@20[@40]@0CP@0CP@0CP<<<#8;A0D400S60R20V0K33G1
+"game-port:Coin Jingle" = ding>>@30]Iding>>>#12;A0R100K127G6
+"game-port:Ivory Signal" = popup@t116]@t33[@0CP@0CP@0CP+#14H0,7U4~16/organ_pedal_25@t3000]@t300[#2L35;A4D282S93R260V87G5
+"game-port:Lagoon Click" = popup<#8F/air_duster@t2000]@t500[#8FL21Ja0,100.169,30.706,0;D221S0R37V77G14
+"game-port:Matte Uplink" = logoff<#8H0,12/air_duster@t2000]@t500[#4L19Ja0,100.91,30.348,0/chimesxpRE#4T-28L34O329Q-50;A149S100R1319V83K27G13
+"game-port:Pastel Signal" = ringout@t328]@t93[@0CP@0CP@0CP<#11H0,12/glass_ping#5T-10L34O23Q16;A1D485S72R196V80K57G-5
+"game-port:Silver Block" = balloon#8F/batlow#8L20;D282S0R40V72G15
+"game-port:Sunlit Knock" = start;D188S0R113V85G12
+"game-port:Warm Lead" = ringout@t328]@t93[@0CP@0CP@0CPH0,7;A2D349S70R240V88K69G-4

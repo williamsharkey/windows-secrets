@@ -1,0 +1,56 @@
+# Press Fire to Calibrate: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Press Fire to Calibrate
+pack     = game-port
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = A chiptune in A minor, 150 bpm: the 286 boots, pulse leads with a counter-melody, sixteenth-note chord arpeggios, an octave-jumping bass, noise drums from the pack's percussion, a coin.
+midi     = press-fire-to-calibrate.mid
+script   = press-fire-to-calibrate.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 4000
+level    = -5
+
+[reverb]
+size     = 1.2
+predelay = 10
+tone     = 6000
+level    = -9
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Midnight Signal"                        lufs=-19 pan=-8 echo=0.15 verb=0.12
+lead2       ch2     "Cold Voice"                             lufs=-23 pan=22 echo=0.2 verb=0.15 tune=-49
+arp         ch3     "Lucid Line"                             lufs=-25 pan=-26 echo=0.1
+bass        ch4     "Waxed Line"                             lufs=-19 tune=-58
+kick        ch5     "Silver Block"                           lufs=-20
+snare       ch6     "Chrome Snap"                            lufs=-22 verb=0.1
+hat         ch7     "Slate Tick"                             lufs=-28 pan=18
+rim         ch8     "Glass Rim"                              lufs=-29 pan=-20
+boot        ch9     "Digital Sweep"                          lufs=-23 verb=0.2
+coin        ch11    "Coin Jingle"                            lufs=-24 pan=10 echo=0.2
+riser       ch12    "Kinetic Riser"                          lufs=-26 verb=0.3
+voice       ch13    "Pastel Signal"                          lufs=-23 pan=4 echo=0.3 verb=0.3 tune=-56
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"game-port:Chrome Snap" = relay_loud_click#8F/mouse_click@t150]#8FL29;D195S0R143V77G3
+"game-port:Coin Jingle" = ding>>@30]Iding>>>#12;A0R100K127G6
+"game-port:Cold Voice" = ringout@t328]@t93[@0CP@0CP@0CP+#12U3~17/default@t300]#4T30L39O15Q-6;A2D560S95R272V95K69G-9
+"game-port:Digital Sweep" = pc_286_startup@t6000]RH0,12;A449S100R365V90K29G-4
+"game-port:Glass Rim" = em_metal_click_aE;D157S0R60V89G5
+"game-port:Kinetic Riser" = whoosh_inEEE#11H0,12/glass_ping#5L56;A40S100R1688V96G-2
+"game-port:Lucid Line" = popup@t116]@t33[@0CP@0CP@0CPE#13H0,12U2~6/hwfail#3L38;A2D235S93R312V86G20
+"game-port:Midnight Signal" = ems_csirac_pulse_e4EU3~16;A1D528S93R309V72K64G-8
+"game-port:Pastel Signal" = ringout@t328]@t93[@0CP@0CP@0CP<#11H0,12/glass_ping#5T-10L34O23Q16;A1D485S72R196V80K57G-5
+"game-port:Silver Block" = balloon#8F/batlow#8L20;D282S0R40V72G15
+"game-port:Slate Tick" = em_stamp_a#8/recycle#8FL10Ja0,100.192,30.616,0;D261S0R41V99G7
+"game-port:Waxed Line" = ringout@20[@40]@0CP@0CP@0CP<<#8Yd4l22t10;A0R20V0K45G1

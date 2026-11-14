@@ -1,0 +1,52 @@
+# Registration Rag: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Registration Rag
+pack     = w3x-heritage
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = A piano rag, 92 bpm: intro, A strain in C, B strain in F, A strain, coda. Every sound is one of the six that came with Windows 3.1: a ding piano with a stride left hand, chimes bells, a ringout whistle and lead, a tada fanfare, ding and ringin brushes.
+midi     = registration-rag.mid
+script   = registration-rag.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+
+[echo]
+time     = 1/8
+feedback = 0.25
+tone     = 3000
+level    = -8
+
+[reverb]
+size     = 1.6
+predelay = 15
+tone     = 5000
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+righthand   ch1     "Still Upright"                          lufs=-19 pan=6 verb=0.25
+stridebass  ch2     "Field Bass"                             lufs=-21 pan=-10 verb=0.15
+stridechords ch3     "Western Chords"                         lufs=-24 pan=-16 verb=0.2
+whistle     ch4     "Gentle Whistle"                         lufs=-22 pan=20 echo=0.15 verb=0.3 tune=-31
+bells       ch5     "Urban Ring"                             lufs=-25 pan=28 verb=0.4
+fanfare     ch6     "Honey Hit"                              lufs=-22 pan=-4 verb=0.35
+snare       ch7     "Basement Snare"                         lufs=-28 pan=10
+shaker      ch8     "Hollow Shaker"                          lufs=-31 pan=-24
+pad         ch9     "Honey Haze"                             lufs=-30 verb=0.4
+lead        ch11    "Slate Pilot"                            lufs=-21 pan=14 echo=0.15 verb=0.3 tune=-56
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"w3x-heritage:Basement Snare" = ding@t120]F;D64S0R67V95G11
+"w3x-heritage:Field Bass" = ding<<<+#8/ringout@20[@40]@0CP@0CP@0CP<<<#6L60;A0D3000S40R300K43
+"w3x-heritage:Gentle Whistle" = ringout@t328]@t93[@0CP@0CP@0CP<#8/ding#8T-10L32Q3;A10D146S73R303V82K57
+"w3x-heritage:Hollow Shaker" = ding@t120]#8FQ63/chord#8T3L52;D196S0R81V83G6
+"w3x-heritage:Honey Haze" = ringout@t328]@t93[@0CP@0CP@0CPE<#11U2~10/chimesRE#5T14L32O124Q57;A939D734S71R1710V97K57G-4
+"w3x-heritage:Honey Hit" = tada@t190[+#8U2~5/ringout#4T7L45Q1/ringout#4T-5L36Q-8;A6D506S81R483V79K64G-7
+"w3x-heritage:Slate Pilot" = ringout@t328]@t93[@0CP@0CP@0CP<H0,-12U2~8;A5D598S91R178V83K57G-8
+"w3x-heritage:Still Upright" = ding@10]#6U2~6Q-20/ding@5[@60]#6T12U2~6L60Q20;A0D2500S25R600V85K79G-1
+"w3x-heritage:Urban Ring" = chimes@t300[EE<;A2D690S5R730V88K55G9
+"w3x-heritage:Western Chords" = dingE<<#8/ding#8L35O17Q15;A0D750S26R222V93K55G3

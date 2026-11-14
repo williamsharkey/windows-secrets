@@ -1,0 +1,48 @@
+# Forest: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Forest
+pack     = courtyard-chapel
+kind     = chiptune
+composer = Spring Spring
+source   = Forest, an Impulse Tracker module (forestCLEAN.it) from OpenGameArt (https://opengameart.org/sites/default/files/OST.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/haydenwoffle-it-soundtrack
+arranger = Algorithmic Industries house band
+source_sha256= 578ba7fa3d652d87383c16b039eb5db38550e1c2b945c499d5b725ba02d107eb
+note     = Medieval-style: the module's forest harp on the folk harp, its flute on the psaltery, its bagpipe on the high harpsichord, its harpsiclavichord on the Flemish harpsichord, its war drum on the balafon tabor, its wind on a dan tranh glissando.
+midi     = forest.mid
+script   = forest.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+harp        ch1     "Faded Pluck"                            lufs=-20 pan=20 echo=0.1 verb=0.3
+psaltery    ch2     "Slate Pick"                             lufs=-20 pan=-6 echo=0.05 verb=0.32
+felt        ch3     "Noble Felt"                             lufs=-22 pan=-20 verb=0.25
+harpsichord ch4     "Soft Etude"                             lufs=-22 pan=-30 verb=0.22
+tabor       ch5     "Brushed Carillon"                       lufs=-23 pan=30 verb=0.25
+warp        ch6     "Winter Warp"                            lufs=-27 verb=0.4
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"courtyard-chapel:Brushed Carillon" = balafon_cs3#16;A1D1290S3R2437V72K61G1
+"courtyard-chapel:Faded Pluck" = folk_harp_c3#16;A2D416S4R83V75K60G-2
+"courtyard-chapel:Noble Felt" = harpsichord_flemish_hi_cs3E#16;A1D2333S10R445V80K61G-5
+"courtyard-chapel:Slate Pick" = psaltery_pluck_c4#15/defaultRE#2T9L10O53Q26;A2D201S2R136V78K72G-1
+"courtyard-chapel:Soft Etude" = harpsichord_flemish_c3#16;A4D2188S37R474V71K60G-8
+"courtyard-chapel:Winter Warp" = dan_tranh_gliss_down<#8/siren_whistle_b>#8T-35L33O386Q30;A8S100R659V73K49G2

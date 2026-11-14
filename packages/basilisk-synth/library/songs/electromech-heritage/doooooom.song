@@ -1,0 +1,44 @@
+# Doooooom: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Doooooom
+pack     = electromech-heritage
+kind     = chiptune
+composer = Phillip Miller (redactionary)
+source   = Doooooom (2), a FamiTracker module (nes_02-doom.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/free-nes-music-pack
+arranger = Algorithmic Industries house band
+source_sha256= 4e8d89f104ef349e369e3f3bec1b2a69484da8ca6bc6cfd22667e6d544ede2f9
+note     = Played twice through: the NES module's pulse 1 on the Ferranti hoot, pulse 2 on the CSIRAC pulse, the triangle on the relay marimba, the noise on Kit Manager 98 (Relay Room).
+midi     = doooooom.mid
+script   = doooooom.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+hootbass    ch1     "Ferranti Hoot"                          lufs=-19
+pulse       ch2     "CSIRAC Pulse"                           lufs=-20 pan=10 echo=0.2 verb=0.15
+marimba     ch3     "Relay Marimba"                          lufs=-22 pan=-18 verb=0.2
+kit         ch10    "kit-manager:Relay Room"                 lufs=-19 verb=0.08
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"electromech-heritage:CSIRAC Pulse" = ems_csirac_pulse_e4#16;A2R80V60K64G-3
+"electromech-heritage:Ferranti Hoot" = ems_ferranti_hoot_c4Ja0,100.563,54.1420,25;A3R60V60G-5
+"electromech-heritage:Relay Marimba" = ems_relay_marimba_c4E#11U2~4L78/ems_relay_release#5FL40Q25;R350V95G-3
+"kit-manager:Relay Room" = ems_relay_pull@t30000Iems_relay_release@t30000Iems_relay_pair@t30000Iems_relay_bouncy@t30000Iems_relay_tiny@t30000Iems_contactor_pull@t30000Iems_contactor_release@t30000Iem_relay_click_a@t30000Iem_relay_click_b@t30000Iem_relay_hs_a@t30000Iem_relay_large_a@t30000Iem_contactor_a#10/ems_relay_rack_chatter#2/ems_relay_buzz_ac#2/ems_relay_mallet_c5#2;R200V90k36j6k37j7k38j1y1,100k38j4i120y101,127k39j2k40j3k41j5k42j8h70k43j9h130k44j10k45j11k46j12k47l2gc1k48l3gc1k60,72l4r72p100w12

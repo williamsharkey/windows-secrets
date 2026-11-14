@@ -1,0 +1,58 @@
+# March of the Wooden Soldiers: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = March of the Wooden Soldiers
+pack     = techno-server
+kind     = world
+composer = Pyotr Ilyich Tchaikovsky (1840-1893)
+source   = March of the Wooden Soldiers, Album for the Young, Op. 39 No. 5 (1878). Score: The Mutopia Project, from Schirmer (1904).
+licence  = The work: public domain (published 1878; the composer died 1893). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1806
+arranger = Algorithmic Industries house band
+note     = Techno at 126 bpm: the march three times, on morse blips with dub chords, then the motor-whine lead with Detroit strings, then everything with relay ticks; a transmission before the second pass. Drums: Kit Manager 98 (Long Boom Kit).
+midi     = march-of-the-wooden-soldiers.mid
+script   = march-of-the-wooden-soldiers.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.5
+tone     = 2400
+level    = -3
+lowcut   = 250
+
+[reverb]
+size     = 2.2
+predelay = 20
+tone     = 4500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Long Boom Kit"              lufs=-16.5 verb=0.04
+morse       ch1     "Granite Line"                           lufs=-21 pan=-12 echo=0.4 verb=0.15
+lead        ch2     "Soft Pilot"                             lufs=-20 pan=8 echo=0.3 verb=0.2
+dub         ch3     "One-Finger Dub Chord"                   lufs=-22 pan=-6 echo=0.55 verb=0.25
+strings     ch4     "Motor City Strings"                     lufs=-24 pan=14 verb=0.35 width=1.3
+sub         ch5     "Dot Sub"                                lufs=-19 tune=-55
+tick        ch6     "Relay Wood Tick"                        lufs=-28 pan=30 echo=0.25
+hat         ch7     "Copper Hat"                             lufs=-28 pan=18
+clap        ch8     "Indigo Clap"                            lufs=-26 pan=-6 verb=0.2
+voice       ch9     "Transmission Voice"                     lufs=-22 echo=0.3 verb=0.3
+hum         ch11    "Dusk Texture"                           lufs=-30 verb=0.2
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Long Boom Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.900,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"techno-server:Copper Hat" = startFQ47Ja0,100.99,56.345,0;D203S0R55V80G12
+"techno-server:Dot Sub" = ringout@20[@40]@0CP@0CP@0CP<<@15]U2~4;A0S88R40V90K45G-2
+"techno-server:Dusk Texture" = em_hum_mains_loopU2~12;A24S100R1458V75K54G-8
+"techno-server:Granite Line" = ems_morse_cw<H0,12;A2D285S73R257V92K65G-10
+"techno-server:Indigo Clap" = logon>#8FQ-15/air_duster@t2000]@t500[#8FL32;D246S0R81V80G11
+"techno-server:Motor City Strings" = startup@20[@50]<C@50X#12U3~14/logon<@20[#4L35;A600S90R1500K56G-3
+"techno-server:One-Finger Dub Chord" = ding@10]<<EH0,3,7;A5D200S0R150V80K55G5
+"techno-server:Relay Wood Tick" = ems_relay_pull#8F/infobar#8;A0R50V100K67G-4
+"techno-server:Soft Pilot" = ems_motor_whine_a4@t3500]@t300[#14H0,7U3~13/hwfail#2T9L69;A6D223S85R109V77K69G-18
+"techno-server:Transmission Voice" = nasa_apollo8_go_for_tli@20[@40]<E#6;A20R600

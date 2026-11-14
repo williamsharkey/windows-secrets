@@ -1,0 +1,57 @@
+# Hsinchu Night Shift: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Hsinchu Night Shift
+pack     = techno-server
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = Minimal techno in A minor, 128 bpm: a morse-code sequence shifting a step every eight bars, a minor-seventh stab and the feedback chain, an offbeat sub, relay ticks and a shaker, the spring tank, a riser, the cold choir wash in the breakdown. Drums: Kit Manager 98 (Long Boom Kit).
+midi     = hsinchu-night-shift.mid
+script   = hsinchu-night-shift.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.5
+tone     = 2400
+level    = -3
+lowcut   = 250
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 4500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Long Boom Kit"              lufs=-16.5 verb=0.04
+morse       ch1     "Granite Line"                           lufs=-21 pan=-10 echo=0.4 verb=0.15
+stab        ch2     "Washed Fanfare"                         lufs=-22 pan=8 echo=0.45 verb=0.25
+chain       ch3     "Feedback Chain Stab"                    lufs=-25 pan=-16 echo=0.5 verb=0.3
+sub         ch4     "Quiet Sub"                              lufs=-19
+wash        ch5     "Cold Wash"                              lufs=-25 verb=0.45 width=1.3
+tick        ch6     "Rural Tick"                             lufs=-28 pan=30 echo=0.25
+click       ch7     "Coral Click"                            lufs=-28 pan=-28
+spring      ch8     "Spring Tank Hit"                        lufs=-24 verb=0.4
+riser       ch9     "Crystal Riser"                          lufs=-26 verb=0.4
+texture     ch11    "Marble Current"                         lufs=-30 verb=0.3
+shaker      ch12    "Vinyl Shaker"                           lufs=-30 pan=20
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Long Boom Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.900,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"techno-server:Cold Wash" = choir_aah@t6000]@t300[#6U2~10/hwfail#3T9L65/defaultR#3T30L39O263Q1/soft_wind@t4000]@t1000[#4L22;A376D836S81R1151V93K69G-1
+"techno-server:Coral Click" = ding@t120]#8F/em_metal_click_a>#8FL32;D85S0R42V86G11
+"techno-server:Crystal Riser" = shutdown<#11U2~7Q20/chimesE#5T-16L31O75Q-49;A13S100R822V78K27
+"techno-server:Feedback Chain Stab" = xpding@20]E#4H0,3,7,10/xpding@20]EE#4H0,3,7,10L45O375Q-50/xpding@20]EE<>#4H0,3,7,10L28O750Q50/xpding@20]EEE<>#4H0,3,7,10L16O1125Q-30;A0D400S10R1200V70G4m32L0,90m33L0,56m34L0,32m3=50K59
+"techno-server:Granite Line" = ems_morse_cw<H0,12;A2D285S73R257V92K65G-10
+"techno-server:Marble Current" = startupEF;A360S100R622V85G4
+"techno-server:Quiet Sub" = tuba_sus_f1@t2000];A1D200S76R77V95K29G-2
+"techno-server:Rural Tick" = ems_relay_pull#8F/ding#8;A0R50V100K67G-2
+"techno-server:Spring Tank Hit" = ems_ks_spring_g3EE#8;A0R1500K55G4
+"techno-server:Vinyl Shaker" = start#8F/batlow#8L28;D98S0R83V80G12
+"techno-server:Washed Fanfare" = chord@15]<#11H0,3,7,10Q18/default@15]<<#5T6H0,7L60;A0D350S6R180V84K69G3

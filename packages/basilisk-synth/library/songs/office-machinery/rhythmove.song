@@ -1,0 +1,48 @@
+# Rhythmove: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Rhythmove
+pack     = office-machinery
+kind     = chiptune
+composer = northivanastan
+source   = Rhythmove, a Standard MIDI File (rhythmove.mid) from OpenGameArt (https://opengameart.org/sites/default/files/rhythmove.mid). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/rhythmove
+arranger = Algorithmic Industries house band
+source_sha256= c37e73690ce553261a794f70a1ec1aed3d6bac82e91c32e9826486e9c1683c55
+note     = A CC0 MIDI file on office machinery: its strings on the PC speaker, its synth brass on the civil-defence bugle, its square lead on the low bugle, its bass on twelve drives, its General MIDI drums on the spacebar kit, its guitars on a hard-disk inductor.
+midi     = rhythmove.mid
+script   = rhythmove.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+beep        ch1     "Cedar Hat"                              lufs=-24 pan=16 echo=0.15 tune=78
+bugle       ch2     "Signal Uplink"                          lufs=-20 pan=-4 verb=0.3
+lowbugle    ch3     "White Dive"                             lufs=-22 pan=-18 verb=0.3
+drives      ch4     "Ocean Crowd"                            lufs=-20
+kit         ch10    "Rubber Canopy"                          lufs=-17 verb=0.06
+inductor    ch5     "Steady Texture"                         lufs=-25 pan=24
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"office-machinery:Cedar Hat" = pc_pc_speaker_error_beepEF;D327S0R61V95G-4
+"office-machinery:Ocean Crowd" = pc_computer_12_drives<#11U2~19/pc_hdd_maxtor_10kE#5T-4L23O111Q-24;A52S100R1557V76K29G1
+"office-machinery:Rubber Canopy" = key_spacebar@t30000Iem_selectric_key_a@t30000Ikey_mechanical_hard@t30000Iem_typewriter_key_a@t30000Iem_selectric_key_b@t30000Ikey_press_down@t30000Ikey_press_single_a@t30000Iem_typewriter_return_a@t30000Ikey_press_single_b@t30000Iem_stamp_b@t30000Iem_typewriter_bell_a#16;R300V80G-2k36j1k37j2k38j3k39j4k40j5k42j6k44j7k45j8k46j9k47j10k49j11
+"office-machinery:Signal Uplink" = bugle_attentionE#11U2~8/bugle_drill_call#5T-15L62;A384S100R2059V93K74G-5
+"office-machinery:Steady Texture" = pc_hdd_inductor_mic@t7268]#8/pc_fan_coil_whine#8L23;A31S100R1786V81K45G6
+"office-machinery:White Dive" = bugle_attention<<#5/pc_crt_degauss#5FL12Ja0,100.98,30.890,0/pc_cd_seek_mouse#6L26Ja0,100.175,30.802,0;A71S100R1901V91K50G-2

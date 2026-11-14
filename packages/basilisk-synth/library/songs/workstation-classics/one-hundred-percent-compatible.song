@@ -1,0 +1,54 @@
+# 100% Compatible: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = 100% Compatible
+pack     = workstation-classics
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = Eurodance in D minor, 132 bpm: offbeat mono bass, arena plucks, choir pad, poly-brass stabs, a degaussed monitor and the chorus lead. Drums: Kit Manager 98 (Punch Kick Kit).
+midi     = one-hundred-percent-compatible.mid
+script   = one-hundred-percent-compatible.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.32
+tone     = 3500
+level    = -4
+
+[reverb]
+size     = 2.0
+predelay = 15
+tone     = 6000
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Punch Kick Kit"             lufs=-16.5 verb=0.06
+bass        ch2     "Ladder Mono Bass"                       lufs=-19
+pluck       ch3     "Arena Pluck"                            lufs=-23 pan=-20 echo=0.2 verb=0.15
+brass       ch4     "Poly Brass Circuit"                     lufs=-22 pan=16 verb=0.2
+lead        ch5     "Chrome Pilot"                           lufs=-19 pan=0 echo=0.25 verb=0.25 tune=-24
+verse       ch6     "Lobby Song"                             lufs=-20 pan=-6 echo=0.2 verb=0.25
+choir       ch7     "Night Mist"                             lufs=-25 verb=0.4 width=1.3
+strings     ch8     "Pale Cloud"                             lufs=-24 pan=10 verb=0.35 width=1.3
+lift        ch9     "Brass Lift"                             lufs=-26 verb=0.4
+degauss     ch11    "Dusk Sweep"                             lufs=-23 verb=0.3
+stab        ch12    "Saffron Stab"                           lufs=-26 pan=-14 echo=0.3 verb=0.2
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Punch Kick Kit" = ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"workstation-classics:Arena Pluck" = tadaxp@6]#12U3~18/tadaxp@6]<E>#4L75O326;A0D250S0R250K60G14
+"workstation-classics:Brass Lift" = tadaxpRE#10U3~20/air_duster@t2000]@t500[#3L28/crystal_glass_tap>#3T-28L23O93Q25;A1S100R1650V70K48G4
+"workstation-classics:Chrome Pilot" = xpringout@t349]@t99[@0CP@0CP@0CP<#11H0,12/xylophone_c5#5T-3L26Q12;A3D447S78R231V71K57G6
+"workstation-classics:Dusk Sweep" = crt_degaussR#5/recycle#5FL20/ringout#6L55;A1S100R565V79G6
+"workstation-classics:Ladder Mono Bass" = ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<+#4/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+#4L50Q-58/ringout@20[@40]@0CP@0CP@0CP<<<#8T2U2~8L60;A0D500S60R100K35G-6
+"workstation-classics:Lobby Song" = tadaxp@40[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#10;A5R200K59G15
+"workstation-classics:Night Mist" = choir_aah@t6000]@t300[<;A847D341S80R1206V95K57G1
+"workstation-classics:Pale Cloud" = violin_section_sus_c4@t7500]@t300[EU3~13;A366D273S84R1069V80K60G-9
+"workstation-classics:Poly Brass Circuit" = tadaxp@40[@20]@0CP@0CP@0CP@0CP#12U2~12Ja0,0.80,100.400,75;A0R250K60G8
+"workstation-classics:Saffron Stab" = tadaxp@40[@20]@0CP@0CP@0CP@0CP#12H0,4,7,11U2~25Ja0,100.125,100.135,8.250,8.251,100Wr4t;A0S100R300B2K60G7

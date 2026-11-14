@@ -1,0 +1,54 @@
+# Buffer Underrun Waltz: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Buffer Underrun Waltz
+pack     = diagnostics
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = A glitch waltz in D minor, 3/4 at 108 bpm: a music-box waltz that drops whole bars where the buffer runs dry and stutters fill them, a molten glock on the off-beats, Noble Bell doubling, the helium choir stack and Bakelite Ahh on the second strain, thuds, ticks, a clap and floppy seeks.
+midi     = buffer-underrun-waltz.mid
+script   = buffer-underrun-waltz.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 1/4
+feedback = 0.35
+tone     = 3000
+level    = -4
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5000
+level    = -4
+
+[tracks]
+# name      source  preset                                  mix
+musicbox    ch1     "Broken Music Box"                       lufs=-19 pan=-8 echo=0.25 verb=0.35
+bells       ch2     "Noble Bell"                             lufs=-24 pan=20 echo=0.3 verb=0.4
+glock       ch3     "Amber Bells"                            lufs=-25 pan=26 verb=0.3
+choir       ch4     "Helium Choir Stack"                     lufs=-25 verb=0.45
+pad         ch5     "Copper Veil"                            lufs=-26 verb=0.4 width=1.3
+thud        ch6     "Glass Click"                            lufs=-21
+tick        ch7     "Violet Click"                           lufs=-28 pan=-24
+seek        ch8     "Floppy Seek Perc"                       lufs=-25 pan=-26 echo=0.2
+stutter     ch9     "Tinted Ascent"                          lufs=-25 pan=16 echo=0.3
+clap        ch11    "Coral Clap"                             lufs=-26 pan=8 verb=0.2
+ahh         ch12    "Bakelite Ahh"                           lufs=-21 pan=4 verb=0.4
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"diagnostics:Amber Bells" = marimba_c6E#11H0,12/ems_typebar#5FL38;A5D813S17R1306V95K84G-3
+"diagnostics:Bakelite Ahh" = crowd_sing_aah_f>#8H0,12Ja0,100.62,100.72,8.125,8.126,100Wr4t/choir_aah>#6T-4L60;A0S100R300K65G-1
+"diagnostics:Broken Music Box" = music_box_note><E#10;A0D3000S0R1500K78G-4
+"diagnostics:Copper Veil" = cello_section_sus_c3@t7500]@t300[>U2~18Q20;A755D624S85R1066V73K60G-11
+"diagnostics:Coral Clap" = relay_loud_click+#8F/batlow#8L27;D262S0R71V88G1
+"diagnostics:Floppy Seek Perc" = floppy_seek_clunk#8Q30/mouse_click@40]#8;A0D2R80K46G2
+"diagnostics:Glass Click" = critstop@t400]@t40[#8/recycle#8FL11;D86S0R56V94K36G5
+"diagnostics:Helium Choir Stack" = crowd_sing_aah_f>#13H0,12U2~3/choir_aah>#3T-4L60;A10R300K65G-8
+"diagnostics:Noble Bell" = ems_fm_register_bell_c6H0,12;A0D1038S10R1301V71K84G-9
+"diagnostics:Tinted Ascent" = tadaxp@30[@4]@0CP@0CP@0CP@0CP@0CP#10Ws.28~.39l.32Yd12l30q25;A0R60K60G18
+"diagnostics:Violet Click" = relay_loud_click+F;D285S0R61V84G2

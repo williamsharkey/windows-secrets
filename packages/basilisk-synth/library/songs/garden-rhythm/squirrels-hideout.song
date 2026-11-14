@@ -1,0 +1,58 @@
+# Squirrel's Hideout: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Squirrel's Hideout
+pack     = garden-rhythm
+kind     = chiptune
+composer = Spring Spring
+source   = Squirrel's Hideout, an Impulse Tracker module (hideoutCLEAN.it) from OpenGameArt (https://opengameart.org/sites/default/files/OST.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/haydenwoffle-it-soundtrack
+arranger = Algorithmic Industries house band
+source_sha256= 229116f843b375c5321efd1c823b0c5e8667e8887500642566a32b58ac32ec97
+note     = Played twice through: the module's timpani on the pack's timpani, its lines on rave piano, rave brass, steelpan, marimba and marimba-third, its pad and choirs on the aurora pad and the talking machines, its hat on the studio kit.
+midi     = squirrels-hideout.mid
+script   = squirrels-hideout.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+timpani     ch1     "Night Tower"                            lufs=-20 verb=0.3
+ravepiano   ch2     "Lucid Punch"                            lufs=-21 pan=-10 verb=0.2 tune=-10
+brass       ch3     "Molten Brass"                           lufs=-23 pan=14 verb=0.2
+steelpan    ch4     "Digital Tower"                          lufs=-21 pan=12 echo=0.25 verb=0.3
+mallets     ch5     "Lagoon Mallets"                         lufs=-23 pan=-24 echo=0.2 verb=0.3
+pad         ch6     "Blue Aurora"                            lufs=-26 verb=0.4 width=1.3
+tower       ch7     "Granite Tower"                          lufs=-25 pan=26 verb=0.3
+stab        ch8     "Electric Stab"                          lufs=-25 pan=-20 verb=0.2
+voice       ch9     "Brushed Chorus"                         lufs=-25 verb=0.35 tune=-17
+chorus      ch11    "Metro Choir"                            lufs=-26 verb=0.4
+kit         ch10    "White Pad"                              lufs=-21 verb=0.05
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"garden-rhythm:Blue Aurora" = gd_aurora_veil_c4CRPH0,12U3~15;A891D462S78R2335V80K60G-10
+"garden-rhythm:Brushed Chorus" = gd_voice_lpc_lala@t799]@t228[@0CP@0CPEJa0,0.469,100.2364,83;A73D475S81R879V81K60G-7
+"garden-rhythm:Digital Tower" = gd_steelpan_octave<#8H0,12/gd_steelpan_octave#4T7L29O21Q15/gd_steelpan_octave#4T-12L38Q9;A1D885S3R513V82K60G-3
+"garden-rhythm:Electric Stab" = gd_rave_reese_c6<<U2~7;A1D416S63R341V96K60G-9
+"garden-rhythm:Granite Tower" = gd_marimba_third#11H0,19/gd_steelpan_tenor#5T16L39Q13;A3D830S23R755V91K64G-5
+"garden-rhythm:Lagoon Mallets" = gd_marimba_octave@t1254]#11U2~9/gd_marimba_third#5T20L38Q7;A1D625S28R1331V76K72G-5
+"garden-rhythm:Lucid Punch" = gd_rave_piano_c4+H0,-12U2~8Q-29;A22D201S7R750V70K60G-15
+"garden-rhythm:Metro Choir" = gd_voice_klatt_gooseEH0,12U2~6;A301D14S96R1827V85K60G-13
+"garden-rhythm:Molten Brass" = gd_rave_organ_c2@t3199]>>#12U3~9/gd_rave_reese_c6#4T-12L54Q3;A3D711S12R148V79K60G-10
+"garden-rhythm:Night Tower" = gd_timpani_g3@t482]E#8H0,12/gd_marimba_sixth#4T-2L32Q22/gd_marimba_fifthhiR#4L19O370Q53;A0D1085S19R1949V89K55
+"garden-rhythm:White Pad" = gd_kit_studio_lowkick@t30000Igd_kit_studio_kick@t30000Igd_kit_studio_rim@t30000Igd_kit_studio_snare@t30000Igd_kit_studio_clap@t30000Igd_kit_studio_loclap@t30000Igd_kit_studio_lorim@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_loconga@t30000Igd_kit_studio_tighthat@t30000Igd_kit_studio_lotom@t30000Igd_kit_studio_openhat@t30000Igd_kit_studio_midtom@t30000Igd_kit_studio_conga@t30000Igd_kit_studio_crash@t30000Igd_kit_studio_hitom@t30000Igd_kit_studio_ride@t30000Igd_kit_studio_cabasa@t30000Igd_kit_studio_tamb@t30000Igd_kit_studio_bell#16;R300V80G-17k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k54j19k56j20

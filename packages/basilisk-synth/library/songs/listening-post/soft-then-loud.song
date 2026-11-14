@@ -1,0 +1,44 @@
+# Soft Then Loud: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Soft Then Loud
+pack     = listening-post
+kind     = chiptune
+composer = Phillip Miller (redactionary)
+source   = soft then loud (11), a FamiTracker module (nes_11-soft_then_loud.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/free-nes-music-pack
+arranger = Algorithmic Industries house band
+source_sha256= 1086c5b6d9edfcb98954bd8bf576e0e5e22a5af12752b12cf6c00ea0513045a1
+note     = The NES module at half speed in the deep ocean: the triangle on fin-whale drones, pulse 1 on blue-whale drones, pulse 2 on the humpback, the noise on the bloop.
+midi     = soft-then-loud.mid
+script   = soft-then-loud.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+fin         ch1     "Dial Depth"                             lufs=-22 pan=-12 verb=0.45
+blue        ch2     "Lattice Dormant"                        lufs=-24 pan=14 verb=0.45
+humpback    ch3     "Ocean Shoreline"                        lufs=-20 pan=4 echo=0.2 verb=0.5
+bloop       ch4     "Cedar Murmur"                           lufs=-26 verb=0.4
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"listening-post:Cedar Murmur" = pmel_bloop<#11U2~19/pmel_blue_whale_netsE#5T9L23O111Q-24;A52S100R1557V76K19G-4
+"listening-post:Dial Depth" = pmel_atlantic_fin@t10500]@t3000[@0CP@0CP>>#14H0,7U3~15/pmel_earthquake_pioneer#2T14L55;A1089S100R2735V83K55G-5
+"listening-post:Lattice Dormant" = pmel_blue_south_pacificE>#12H0,12U3~9/pmel_atlantic_blueR#2T19L25O327Q0/pmel_challenger_deep_modem#2T-7L69;A921S100R2733V92K60G-8
+"listening-post:Ocean Shoreline" = pmel_humpback_ship_sbnms#8U2~16/pmel_harmonic_tremor#4L54/pmel_sound_source#4L52;A105S100R1094V91G-10

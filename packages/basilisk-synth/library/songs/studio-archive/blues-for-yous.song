@@ -1,0 +1,44 @@
+# Blues for Yous: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Blues for Yous
+pack     = studio-archive
+kind     = chiptune
+composer = Phillip Miller (redactionary)
+source   = Blues For Yous (3), a FamiTracker module (nes_03-blues.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/free-nes-music-pack
+arranger = Algorithmic Industries house band
+source_sha256= bb3b14858de49ac130b274d22e34cb90e86c37a8afa17e3805fa47eb8138441c
+note     = Played twice through: the NES module's pulse 2 on the upright piano, pulse 1 on the horns, the triangle on the marimba bass, the noise on a mouse-click snap.
+midi     = blues-for-yous.mid
+script   = blues-for-yous.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+piano       ch1     "Mild Ivories"                           lufs=-20 pan=-14 verb=0.3
+horns       ch2     "Twilight Horns"                         lufs=-21 pan=14 verb=0.35
+bass        ch3     "Signal Bass"                            lufs=-21
+snap        ch4     "Honey Click"                            lufs=-27 pan=20
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"studio-archive:Honey Click" = chord@t200]>#8F/mouse_click@t150]#8FL15;D123S0R77V94G5
+"studio-archive:Mild Ivories" = piano_upright_cs4#11U2~3/ringout#5T-20L55Q18;A2D2460S15R251V83K61G-9
+"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K36G-4
+"studio-archive:Twilight Horns" = trombone_sus_c3@t3000]+>H0,7;A43D860S6R405V72K60G-14

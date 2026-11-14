@@ -1,0 +1,56 @@
+# Mailing List Riot: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Mailing List Riot
+pack     = breakbeat-resource
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = Big beat in E minor, 124 bpm: a fat break with the pack's snare and clap on top, a growling bass riff, the stadium riff stab, orchestra hits, the block-party siren, a robot voice, a rising synth, a keys breakdown. Drums: Kit Manager 98 (Breaker Box Kit).
+midi     = mailing-list-riot.mid
+script   = mailing-list-riot.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.35
+tone     = 3000
+level    = -5
+
+[reverb]
+size     = 1.8
+predelay = 15
+tone     = 5000
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Breaker Box Kit"            lufs=-16 verb=0.08
+bass        ch1     "Night End"                              lufs=-19
+riff        ch2     "Stadium Riff Stab"                      lufs=-20 pan=-8 verb=0.2
+hit         ch3     "Breaker Orchestra Hit"                  lufs=-21 verb=0.3
+siren       ch4     "Block Party Siren"                      lufs=-23 echo=0.35 verb=0.3
+robot       ch5     "Robot Workgroup Voice"                  lufs=-21 pan=10 echo=0.2 verb=0.3
+keys        ch6     "Night Upright"                          lufs=-22 pan=-16 verb=0.3
+lead        ch7     "Steady Ray"                             lufs=-22 pan=14 echo=0.25 verb=0.3 tune=-61
+snare       ch8     "Office Snare"                           lufs=-26 pan=6
+clap        ch9     "Inland Clap"                            lufs=-27 pan=-6 verb=0.2
+fx          ch11    "Mint Uplink"                            lufs=-26 verb=0.4
+pad         ch12    "Cathode Bloom"                          lufs=-26 verb=0.4 width=1.3 tune=-89
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"breakbeat-resource:Block Party Siren" = ringin<@0CP@0CPE#8;A10S100R500B7K80
+"breakbeat-resource:Breaker Orchestra Hit" = tada@15]+#8H0,12/chord@8]E#4T5L60/organ_hammond_m100_flute_c@t3000]@t300[#4T-12L29Q-21;A0D665S0R200V100K60G1
+"breakbeat-resource:Cathode Bloom" = xpringout@t349]@t99[@0CP@0CP@0CPEE<U2~7;A741D692S83R1420V99K57G7
+"breakbeat-resource:Inland Clap" = ringin@t150]<F;D205S0R32V86G3
+"breakbeat-resource:Mint Uplink" = recycleR#12U3~19/xprecycle#4L15;A9S100R1313V86G19
+"breakbeat-resource:Night End" = critstop@t40[+#8/batlow#8T-12L52;A3D402S66R93V92K36G-2
+"breakbeat-resource:Night Upright" = dingxp<<;A5D1532S30R326V95K55G7
+"breakbeat-resource:Office Snare" = startU2~10;D104S0R134V70G6
+"breakbeat-resource:Robot Workgroup Voice" = ems_704_vowel_a3@0CP#8/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#6T-2L35;A10R200K57G-8
+"breakbeat-resource:Stadium Riff Stab" = tadaxp@15]+++#10H0,12/recycle>@15]#4FL50;A0D300S0R150K60G10
+"breakbeat-resource:Steady Ray" = xpringout@t349]@t99[@0CP@0CP@0CPE<#8/xpding#8T-14L45;A3D227S75R178V79K57G11
+"kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

@@ -1,0 +1,44 @@
+# Blue Intermission: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Blue Intermission
+pack     = workgroup-house
+kind     = chiptune
+composer = congusbongus
+source   = Blue Intermission, a FastTracker 2 module (blue_intermission.xm) from OpenGameArt (https://opengameart.org/sites/default/files/blue_intermission.xm_.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/blue-intermission
+arranger = Algorithmic Industries house band
+source_sha256= f28c417be6b073f49281e4c3ce1800dc6ef38d3f138cbb5cf1f99567975a009e
+note     = Downtempo house at 87 bpm: the module's house bass on the slap disco bass, its Rhodes on the tine EP, its drums on Kit Manager 98 (Jack Box Kit), its shaker on the pack's Bright Shaker.
+midi     = blue-intermission.mid
+script   = blue-intermission.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+bass        ch2     "Slap Disco Bass"                        lufs=-19 tune=-16
+rhodes      ch3     "Afterhours Tine"                        lufs=-21 pan=-12 echo=0.18 verb=0.25
+kit         ch10    "kit-manager:Jack Box Kit"               lufs=-17 verb=0.05
+shaker      ch11    "Bright Shaker"                          lufs=-28 pan=-30
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Jack Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.60,70.350,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"workgroup-house:Afterhours Tine" = xpding@25]#5/print@5[@60]<E#11T1U2~6L50Q-20Ja0,100.302,42.1572,31;A0D1800S30R500V85G13m11L20,90m1=40K59
+"workgroup-house:Bright Shaker" = em_stamp_a#8F/infobar#8FL34;D372S0R52V97G3
+"workgroup-house:Slap Disco Bass" = xpding@30]<<++#8/balloon<@30]#4FL60;A0D300S50R80V95K35G5

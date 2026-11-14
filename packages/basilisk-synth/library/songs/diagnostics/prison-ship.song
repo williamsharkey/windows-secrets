@@ -1,0 +1,54 @@
+# Prison Ship: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Prison Ship
+pack     = diagnostics
+kind     = chiptune
+composer = Spring Spring
+source   = Prison Ship, an Impulse Tracker module (prisonCLEAN.it) from OpenGameArt (https://opengameart.org/sites/default/files/OST.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/haydenwoffle-it-soundtrack
+arranger = Algorithmic Industries house band
+source_sha256= d16d566da8a057901569644bf5e0007e82b8feaefe6b10830cd3166d2de58e46
+note     = Played twice through: the module's lead on the broken music box, its second line on the erhu, its pads on cello and error pads, its bells on Noble Bell, its choir, its drums on critical-stop thuds, stamps and ticks.
+midi     = prison-ship.mid
+script   = prison-ship.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+musicbox    ch1     "Broken Music Box"                       lufs=-20 pan=-8 echo=0.25 verb=0.3
+thud        ch7     "Echo Click"                             lufs=-20
+erhu        ch2     "Hollow Song"                            lufs=-21 pan=12 echo=0.15 verb=0.3
+snare       ch8     "Electric Snare"                         lufs=-23 verb=0.2
+cello       ch3     "Copper Veil"                            lufs=-24 pan=-14 verb=0.3
+errorpad    ch4     "Digital Veil"                           lufs=-26 verb=0.4 width=1.3
+tick        ch9     "Lunar Tick"                             lufs=-28 pan=26
+bells       ch5     "Noble Bell"                             lufs=-24 pan=22 echo=0.3 verb=0.4
+choir       ch6     "Inland Cantor"                          lufs=-25 verb=0.5
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"diagnostics:Broken Music Box" = music_box_note><E#10;A0D3000S0R1500K78G-4
+"diagnostics:Copper Veil" = cello_section_sus_c3@t7500]@t300[>U2~18Q20;A755D624S85R1066V73K60G-11
+"diagnostics:Digital Veil" = error<<EU2~10Ja0,0.365,100.1446,61Yd10l20q24;A500S90R2000K63G1
+"diagnostics:Echo Click" = critstop@t400]@t40[<#8/xprecycle#8L21Ja0,100.46,30.526,0;D108S0R48V95K24G5
+"diagnostics:Electric Snare" = em_stamp_a>#8/key_press_down>#8FL27;D261S0R74V79G3
+"diagnostics:Hollow Song" = erhu_d3@t4000]>U2~8Q-51;A1D245S89R282V75K62G-7
+"diagnostics:Inland Cantor" = choir_aah@t6000]@t300[E<#8U2~8Q-46/organ_pedal_25@t3000]@t300[#4T-3L54/batlow#4T9L46;A189D40S83R536V75K57G-5
+"diagnostics:Lunar Tick" = em_stamp_a+F;D123S0R93V94G6
+"diagnostics:Noble Bell" = ems_fm_register_bell_c6H0,12;A0D1038S10R1301V71K84G-9

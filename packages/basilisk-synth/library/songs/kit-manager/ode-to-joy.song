@@ -1,0 +1,53 @@
+# Ode to Joy: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Ode to Joy
+pack     = kit-manager
+kind     = world
+composer = Ludwig van Beethoven (1770-1827)
+source   = The "Ode to Joy" theme from the finale of Symphony No. 9, Op. 125 (1824), as a four-part hymn. Score: The Mutopia Project.
+licence  = The work: public domain. The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=528
+arranger = Algorithmic Industries house band
+note     = Four verses in D, each over another kit (Punch Kick, Twelve-Bit Crate, Breaker Box, Assembly Line), between the Rain Clock kit; the tune on Calculator Bureau and Typing Pool's tuned keys, the alto on Signal Bells, the bass on Relay Room. Every sound is a Kit Manager 98 kit.
+midi     = ode-to-joy.mid
+script   = ode-to-joy.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -5
+
+[reverb]
+size     = 1.8
+predelay = 15
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+calculator  ch1     "Calculator Bureau"                      lufs=-19 pan=6 echo=0.2 verb=0.3
+typingpool  ch2     "Typing Pool"                            lufs=-21 pan=24 echo=0.15 verb=0.25
+signalbells ch3     "Signal Bells"                           lufs=-24 pan=-22 echo=0.2 verb=0.35
+relayroom   ch4     "Relay Room"                             lufs=-22 pan=-4 verb=0.15
+punchkick   ch5     "Punch Kick Kit"                         lufs=-18 verb=0.06
+swingpad    ch6     "Twelve-Bit Crate Kit"                   lufs=-18 verb=0.06
+bigbreak    ch7     "Breaker Box Kit"                        lufs=-18 verb=0.06
+assembly    ch8     "Assembly Line Kit"                      lufs=-18 verb=0.06
+rainclock   ch9     "Rain Clock Kit"                         lufs=-20 verb=0.2
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Assembly Line Kit" = ringout@20[@40]@0CP<<<+Ja0,100.50,60.300,0#3F/recycle>>@50]E#4F/xprecycle>>>@40]#5F/em_relay_click_a#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"kit-manager:Calculator Bureau" = ems_adding_machine_pull@t30000Iem_adding_crank@t30000Iem_adder_ratchet_a@t30000Iem_adder_ratchet_b@t30000Iem_adder_drawer_a@t30000Iem_calc_mech_a@t30000Iems_cash_register@t30000Iems_punch_clock@t30000Iem_cash_register_a@t30000Iems_escapement#11/ems_calculator_division#2/em_calc_mech_loop#1/ems_fm_register_bell_c6#2;R200V90k36j2k37j1k38j3k39j4k40j5k41j6k42j10k43j9k44j7c2k45j8k46l2gc1k47l3gc1k72,84l4r84p100w5
+"kit-manager:Punch Kick Kit" = ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"kit-manager:Rain Clock Kit" = drop_single_a<<#3F/glass_tap#4F/xprecycle>>>@30]#5F/ems_relay_tiny#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"kit-manager:Relay Room" = ems_relay_pull@t30000Iems_relay_release@t30000Iems_relay_pair@t30000Iems_relay_bouncy@t30000Iems_relay_tiny@t30000Iems_contactor_pull@t30000Iems_contactor_release@t30000Iem_relay_click_a@t30000Iem_relay_click_b@t30000Iem_relay_hs_a@t30000Iem_relay_large_a@t30000Iem_contactor_a#10/ems_relay_rack_chatter#2/ems_relay_buzz_ac#2/ems_relay_mallet_c5#2;R200V90k36j6k37j7k38j1y1,100k38j4i120y101,127k39j2k40j3k41j5k42j8h70k43j9h130k44j10k45j11k46j12k47l2gc1k48l3gc1k60,72l4r72p100w12
+"kit-manager:Signal Bells" = ems_tty_bell@t30000Iem_typewriter_bell_a@t30000Iem_typewriter_bell_c@t30000Iems_typewriter_bell@t30000Iem_electric_bell_a@t30000Iem_signal_bell@t30000Iems_punch_clock@t30000Iem_fetap_ring#8/em_gpo_alarm_bell#2/ems_phone_ring_trill#2/ems_ttybell_g5#2/ems_exchange_bell_c4#2;R200V90k36j6k37j5k38j1k39j2k40j3k41j4k42j7k43j8gc1k44l3gc1k45l2gc1k60,67l5p100w4k72,84l4r79p100w5
+"kit-manager:Twelve-Bit Crate Kit" = ding<<<@35]><#3F/chord>>@15]+E><#4F/ringin>>@12]><#5F/ding>>@4]><#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"kit-manager:Typing Pool" = em_typewriter_key_a@t30000Iem_selectric_key_a@t30000Iem_selectric_key_b@t30000Iem_selectric_key_c@t30000Iems_typebar@t30000Iems_selectric_char@t30000Iem_typewriter_return_a@t30000Iem_typewriter_bell_a@t30000Iem_typewriter_bell_c@t30000Iem_daisywheel_a@t30000Iems_tty_cr@t30000Iem_typewriter_bell_return#12/em_selectric_typing_loop#1/em_etypewriter_loop#1/em_typewriter_bell_b#2;R200V90k36j11k37j7k38j1k39j5k40j2zk40j3zk40j4zk41j6k42j10k43j8k44j9k45j12k46l2gc1k47l3gc1k72,84l4r73p100w5

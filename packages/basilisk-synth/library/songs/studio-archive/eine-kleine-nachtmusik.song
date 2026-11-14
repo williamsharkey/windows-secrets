@@ -1,0 +1,55 @@
+# Eine kleine Nachtmusik: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Eine kleine Nachtmusik
+pack     = studio-archive
+kind     = world
+composer = Wolfgang Amadeus Mozart (1756-1791)
+source   = Serenade No. 13 in G, K. 525, "Eine kleine Nachtmusik", first movement (1787): the exposition and the last ten bars. Score: The Mutopia Project.
+licence  = The work: public domain (18th century). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=900
+arranger = Algorithmic Industries house band
+note     = The exposition on the studio's first and second violins, violas, cellos and a bass; the piano and the horns join for the second theme, glockenspiel and trumpet top the opening; then the last bars for everyone, with a tap for timpani.
+midi     = eine-kleine-nachtmusik.mid
+script   = eine-kleine-nachtmusik.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+
+[echo]
+time     = 1/4
+feedback = 0.2
+tone     = 3000
+level    = -12
+
+[reverb]
+size     = 2.4
+predelay = 22
+tone     = 5500
+level    = -4
+
+[tracks]
+# name      source  preset                                  mix
+violins1    ch1     "Humid Swell"                            lufs=-20 pan=-28 verb=0.35
+violins2    ch2     "Daylight Bows"                          lufs=-23 pan=-10 verb=0.35
+violas      ch3     "Static Swell"                           lufs=-24 pan=10 verb=0.35
+cellos      ch4     "Crystal Legato"                         lufs=-22 pan=26 verb=0.3
+bass        ch5     "Signal Bass"                            lufs=-25 pan=20 verb=0.2
+horns       ch6     "Opal Fanfare"                           lufs=-24 pan=14 verb=0.4
+piano       ch7     "Mild Ivories"                           lufs=-24 pan=-18 verb=0.3
+glock       ch8     "Basement Chimes"                        lufs=-25 pan=30 verb=0.4
+trumpet     ch9     "White Stab"                             lufs=-24 pan=-4 verb=0.4
+timp        ch11    "Clear Snap"                             lufs=-28 verb=0.4
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"studio-archive:Basement Chimes" = glockenspiel_g4<#8/print>#8T-27L37O269Q2;A3D824S26R501V83K55G2
+"studio-archive:Clear Snap" = bubble_pop_a#8/organ_pedal_25@t3000]@t300[#8L52;D90S0R91V82G8
+"studio-archive:Crystal Legato" = cello_section_sus_c3@t7500]@t200[>U3~12;A192S87R1473V84K60G-12
+"studio-archive:Daylight Bows" = violin_section_sus_c4@t7500]@t200[H0,12U2~11;A435S85R766V95K60G-10
+"studio-archive:Humid Swell" = violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K60G-9
+"studio-archive:Mild Ivories" = piano_upright_cs4#11U2~3/ringout#5T-20L55Q18;A2D2460S15R251V83K61G-9
+"studio-archive:Opal Fanfare" = horn_sus_c3@t3000]E>;A4D271S55R212V72K60G-7
+"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K36G-4
+"studio-archive:Static Swell" = piano_upright_cs4E#11U2~11/hwfail#5T1L43;A147S86R812V83K61G-6
+"studio-archive:White Stab" = trumpet_sus_c4@t3000]#5/kalimba_c4@t1500]#5T12L57Q14/em_metal_click_a>#6FL41;A1D383S87R144V85K62G-9

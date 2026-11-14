@@ -1,0 +1,47 @@
+# My Street: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = My Street
+pack     = game-port
+kind     = chiptune
+composer = congusbongus
+source   = My Street, a FastTracker 2 module (my street.xm), from OpenGameArt. Its notes are played here; its samples are not used.
+licence  = The module: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/my-street
+arranger = Algorithmic Industries house band
+note     = The module's six instruments on Game Port presets: square lead, wave and sine arpeggios, a long pad, triangle bass; the noise channel on the Kit Manager 98 Noise Channel kit (snare and hat by pitch).
+midi     = my-street.mid
+script   = my-street.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.25
+tone     = 4000
+level    = -7
+
+[reverb]
+size     = 1.2
+predelay = 10
+tone     = 6000
+level    = -9
+
+[tracks]
+# name      source  preset                                  mix
+square      ch1     "Midnight Signal"                        lufs=-20 pan=-8 echo=0.12 verb=0.1
+wave        ch2     "Lucid Line"                             lufs=-24 pan=22 echo=0.1
+sine        ch3     "Second Ray"                             lufs=-23 pan=-20
+bass        ch4     "Waxed Line"                             lufs=-19 tune=-58
+long        ch5     "Cold Voice"                             lufs=-25 pan=12 verb=0.25 tune=-49
+noise       ch10    "kit-manager:Noise Channel Kit"          lufs=-19 verb=0.05
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"game-port:Cold Voice" = ringout@t328]@t93[@0CP@0CP@0CP+#12U3~17/default@t300]#4T30L39O15Q-6;A2D560S95R272V95K69G-9
+"game-port:Lucid Line" = popup@t116]@t33[@0CP@0CP@0CPE#13H0,12U2~6/hwfail#3L38;A2D235S93R312V86G20
+"game-port:Midnight Signal" = ems_csirac_pulse_e4EU3~16;A1D528S93R309V72K64G-8
+"game-port:Second Ray" = ding#8/dingxp#8T19L37Q-33;A3D349S71R84V71K79G3
+"game-port:Waxed Line" = ringout@20[@40]@0CP@0CP@0CP<<#8Yd4l22t10;A0R20V0K45G1
+"kit-manager:Noise Channel Kit" = ding<<<@35]#3F/ringin<@20]+#4F/ringin>>@12]#5F/ding>>@5]#4;R100V100k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

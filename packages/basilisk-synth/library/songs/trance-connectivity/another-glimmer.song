@@ -1,0 +1,56 @@
+# Another Glimmer: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Another Glimmer
+pack     = trance-connectivity
+kind     = chiptune
+composer = Spring Spring
+source   = ANOTHER GLIMMER, an Impulse Tracker module (glimmerCLEAN.it) from OpenGameArt (https://opengameart.org/sites/default/files/OST.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/haydenwoffle-it-soundtrack
+arranger = Algorithmic Industries house band
+source_sha256= be2f7c15efd2b36d2274e9fb029d091e806c361f699380a4a54b72ba39c497fb
+note     = Trance re-voicing of the module "Another Glimmer": bells, a violin lead, a choir pad, three basses on the rolling bass, glimmer and santur plucks, blips; its kick, hats, snare and toms on Kit Manager 98 (Punch Kick Kit).
+midi     = another-glimmer.mid
+script   = another-glimmer.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+bell        ch1     "Quiet Plink"                            lufs=-22 pan=20 echo=0.3 verb=0.3
+violin      ch2     "Blue Signal"                            lufs=-20 pan=-6 echo=0.2 verb=0.3
+choir       ch3     "Coral Tide"                             lufs=-25 verb=0.45 width=1.3
+bass        ch4     "Waxed Weight"                           lufs=-19
+pluck       ch5     "Tinted Pluck"                           lufs=-24 pan=-22 echo=0.3
+santur      ch6     "Echo Pluck 138"                         lufs=-23 pan=26 echo=0.3 verb=0.2
+blip        ch7     "Frosted Lead"                           lufs=-24 pan=-14 echo=0.2
+plink       ch8     "Signal Plink"                           lufs=-26 pan=30 echo=0.3 tune=-10
+kit         ch10    "kit-manager:Punch Kick Kit"             lufs=-17 verb=0.05
+fx          ch9     "Felt Wake"                              lufs=-26 verb=0.4
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Punch Kick Kit" = ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"trance-connectivity:Blue Signal" = violin_section_sus_c4@t6000]@t200[U2~10;A5D423S93R224V86K60G-3
+"trance-connectivity:Coral Tide" = choir_aah@t6000]@t300[<#11U2~6/wind_chime_single@t2000]>#5T-2L35O50Q20;A754D11S98R1770V91K57G-4
+"trance-connectivity:Echo Pluck 138" = default@12]#6U2~8/default@12]<E>#5L40O326Q-40/default@12]<E>#5L22O652Q40;A0D300S0R250V80K75G2
+"trance-connectivity:Felt Wake" = minimize<#13H0,-12U2~9Q31/xpding>#3T-32L19O248Q-33;A28S100R2235V91K16G17
+"trance-connectivity:Frosted Lead" = print@t693]@t198[@0CP@0CP#12U3~13/dingxp#4T-4L31O23Q-28;A2D456S91R135V88K63G9
+"trance-connectivity:Quiet Plink" = chimesxp@t610]@t190[+<#8/print#8T-3L19Q-7;A0D291S4R173V97K55G10
+"trance-connectivity:Signal Plink" = balloon+#5/vibraphone_c_low#5L22/marimba_c4#6L55;A0D415S1R67V70
+"trance-connectivity:Tinted Pluck" = ui_glass_ping<<<#8/print#8T-15L18Q-15;A0D389S0R220V94K55
+"trance-connectivity:Waxed Weight" = batlow+#8/spirit_breath#8FL24;A5D463S65R91V75K36G-5

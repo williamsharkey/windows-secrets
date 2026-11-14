@@ -1,0 +1,50 @@
+# Market Square Estampie: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Market Square Estampie
+pack     = courtyard-chapel
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = A medieval-style estampie in D Mixolydian, 6/8: three puncta each played with open and closed endings, on dan tranh and psaltery over a didgeridoo bourdon, strumstick, balafon tabor, mbira, kalimba, hand chimes and a gong.
+midi     = market-square-estampie.mid
+script   = market-square-estampie.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+
+[echo]
+time     = 3/8
+feedback = 0.3
+tone     = 3000
+level    = -5
+
+[reverb]
+size     = 2.6
+predelay = 24
+tone     = 5000
+level    = -3
+
+[tracks]
+# name      source  preset                                  mix
+dantranh    ch1     "Arctic Steps"                           lufs=-19 pan=-14 verb=0.3
+psaltery    ch2     "Slate Pick"                             lufs=-20 pan=14 echo=0.05 verb=0.32
+strumstick  ch3     "Kinetic Harp"                           lufs=-23 pan=-6 verb=0.15
+drone       ch4     "White Dormant"                          lufs=-28 verb=0.35
+tabor       ch5     "Brushed Carillon"                       lufs=-24 pan=-30 verb=0.25
+mbira       ch6     "Daylight Steps"                         lufs=-24 pan=26 echo=0.1 verb=0.3
+kalimba     ch7     "Late Ladder"                            lufs=-26 pan=32 echo=0.2 verb=0.35
+bells       ch8     "Marble Tower"                           lufs=-25 pan=20 echo=0.15 verb=0.45 tune=16
+gong        ch9     "Cathode Bells"                          lufs=-26 verb=0.5 tune=-39
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"courtyard-chapel:Arctic Steps" = dan_tranh_b2#16;A2D201S4R139V84K59
+"courtyard-chapel:Brushed Carillon" = balafon_cs3#16;A1D1290S3R2437V72K61G1
+"courtyard-chapel:Cathode Bells" = gong_mf@t12000]EE>#8U2~3/nepalese_bell_b>#8T-34U2~6L34O196Q54;A0D1045S24R713V90K61G-8
+"courtyard-chapel:Daylight Steps" = mbira_mavembe_c3#16;A1D333S0R102V98K60
+"courtyard-chapel:Kinetic Harp" = strumstick_g2#16;A2D155S8R154V96K55
+"courtyard-chapel:Late Ladder" = kalimba_kenya_cs4E#16;A1D112S2R172V87K61G-1
+"courtyard-chapel:Marble Tower" = hand_chime_c3E#8L80/tubular_bell_c4#8L55;A2D1021S21R795V89K60G-1
+"courtyard-chapel:Slate Pick" = psaltery_pluck_c4#15/defaultRE#2T9L10O53Q26;A2D201S2R136V78K72G-1
+"courtyard-chapel:White Dormant" = didgeridoo_sus_a>>#13U4~18/didgeridoo_phrase#3T-3L41;A769D0S100R836V93K61G-6

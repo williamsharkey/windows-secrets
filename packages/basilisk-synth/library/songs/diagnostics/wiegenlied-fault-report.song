@@ -1,0 +1,60 @@
+# Wiegenlied (Fault Report): a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Wiegenlied (Fault Report)
+pack     = diagnostics
+kind     = world
+composer = Johannes Brahms (1833-1897)
+source   = Wiegenlied, Op. 49 No. 4 (1868). Score: The Mutopia Project, "Cancion de Cuna" for recorder and guitar.
+licence  = The work: public domain (published 1868; the composer died 1897). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=481
+arranger = Algorithmic Industries house band
+note     = The lullaby three times on a broken music box: over an error pad; over a beat of critical-stop thuds, stamps and floppy seeks with an erhu counter-line; with the choir and stutters. Then it winds down.
+tail     = 5
+midi     = wiegenlied-fault-report.mid
+script   = wiegenlied-fault-report.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+
+[echo]
+time     = 1/4
+feedback = 0.35
+tone     = 3000
+level    = -4
+
+[reverb]
+size     = 2.6
+predelay = 20
+tone     = 5000
+level    = -4
+
+[tracks]
+# name      source  preset                                  mix
+musicbox    ch1     "Broken Music Box"                       lufs=-19 pan=-8 echo=0.25 verb=0.35
+errorpad    ch2     "Digital Veil"                           lufs=-26 verb=0.4 width=1.4
+cello       ch3     "Copper Veil"                            lufs=-24 pan=10 verb=0.3
+erhu        ch4     "Hollow Song"                            lufs=-22 pan=14 echo=0.15 verb=0.35
+choir       ch5     "Inland Cantor"                          lufs=-24 verb=0.5
+bells       ch6     "Noble Bell"                             lufs=-24 pan=20 verb=0.5
+thud        ch7     "Echo Click"                             lufs=-21
+snare       ch8     "Electric Snare"                         lufs=-24 verb=0.2
+tick        ch9     "Lunar Tick"                             lufs=-29 pan=26
+seek        ch11    "Floppy Seek Perc"                       lufs=-25 pan=-26 echo=0.2
+stutter     ch12    "Stutter Copy Paste"                     lufs=-27 pan=-20 echo=0.3
+glass       ch13    "Shatter Transition"                     lufs=-25 verb=0.5
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"diagnostics:Broken Music Box" = music_box_note><E#10;A0D3000S0R1500K78G-4
+"diagnostics:Copper Veil" = cello_section_sus_c3@t7500]@t300[>U2~18Q20;A755D624S85R1066V73K60G-11
+"diagnostics:Digital Veil" = error<<EU2~10Ja0,0.365,100.1446,61Yd10l20q24;A500S90R2000K63G1
+"diagnostics:Echo Click" = critstop@t400]@t40[<#8/xprecycle#8L21Ja0,100.46,30.526,0;D108S0R48V95K24G5
+"diagnostics:Electric Snare" = em_stamp_a>#8/key_press_down>#8FL27;D261S0R74V79G3
+"diagnostics:Floppy Seek Perc" = floppy_seek_clunk#8Q30/mouse_click@40]#8;A0D2R80K46G2
+"diagnostics:Hollow Song" = erhu_d3@t4000]>U2~8Q-51;A1D245S89R282V75K62G-7
+"diagnostics:Inland Cantor" = choir_aah@t6000]@t300[E<#8U2~8Q-46/organ_pedal_25@t3000]@t300[#4T-3L54/batlow#4T9L46;A189D40S83R536V75K57G-5
+"diagnostics:Lunar Tick" = em_stamp_a+F;D123S0R93V94G6
+"diagnostics:Noble Bell" = ems_fm_register_bell_c6H0,12;A0D1038S10R1301V71K84G-9
+"diagnostics:Shatter Transition" = wine_glass_hit_hard@10]@0CP@0CP@0CP@0CP>#8;A0R200K89G1
+"diagnostics:Stutter Copy Paste" = tadaxp@30[@4]@0CP@0CP@0CP@0CP@0CP#10;A0R60K60G15

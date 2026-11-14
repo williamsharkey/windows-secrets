@@ -1,0 +1,52 @@
+# Grid Runner 1985: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Grid Runner 1985
+pack     = retro-display
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = Outrun in A minor, 118 bpm: a driving sixteenth bass, four-on-the-floor gated drums, the laser grid sweep, the sun-glare lead, digital hammers, kalimba arpeggios, night-window strings and the rooftop sax on the last chorus. Drums: Kit Manager 98 (Echo Chamber Kit) with the pack's Yellow Snare.
+midi     = grid-runner-1985.mid
+script   = grid-runner-1985.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.38
+tone     = 3200
+level    = -3
+
+[reverb]
+size     = 2.6
+predelay = 18
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Echo Chamber Kit"           lufs=-17 verb=0.12
+bass        ch1     "Remote Basement"                        lufs=-19
+lead        ch2     "Sun Glare Lead"                         lufs=-20 pan=4 echo=0.25 verb=0.3
+hammers     ch3     "Digital Hammers"                        lufs=-24 pan=-18 verb=0.25
+strings     ch4     "Night Window Strings"                   lufs=-24 pan=14 verb=0.35 width=1.3
+sax         ch5     "Rooftop Sax Lead"                       lufs=-20 pan=-6 echo=0.2 verb=0.35
+sweep       ch6     "Laser Grid Sweep"                       lufs=-26 verb=0.4
+pad         ch7     "Laser Glow"                             lufs=-27 verb=0.4 width=1.4
+snare2      ch8     "Yellow Snare"                           lufs=-26 verb=0.4
+arp         ch9     "Violet Chords"                          lufs=-26 pan=24 echo=0.3 verb=0.2 tune=-20
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Echo Chamber Kit" = ringout@20[@40]@0CP@0CP@0CP<<<Ja0,100.80,40.300,0#3F/xpstart>EE#4F/xprecycle>>>@40]#5F/balloon<E#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"retro-display:Digital Hammers" = print@30]<E#8/default@20]<<#6T-5L40;A20D2000S40R900K46G14
+"retro-display:Laser Glow" = xpringout@t349]@t99[@0CP@0CP@0CPEE<#10U3~12/dingxp>#3T-22L33O228Q12/xpding#3T-14L39Q26;A579D17S72R2592V96K57G8
+"retro-display:Laser Grid Sweep" = restore<RE#6/minimize<#6;A200R900G22
+"retro-display:Night Window Strings" = violin_section_sus_c4#10U2~8/logon<#6T4L30;A250S90R1200K60G-4
+"retro-display:Remote Basement" = ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+<#8Ja0,100.80,40.110,0;A0D400S0R40V80K35G6
+"retro-display:Rooftop Sax Lead" = trumpet_sus_c4+#10;A30R250K62G-6
+"retro-display:Sun Glare Lead" = print@10[@60]@0CP@0CP#10U2~14;A40R500K82G13
+"retro-display:Violet Chords" = kalimba_c4U2~5;A2D641S43R688V77K60G-5
+"retro-display:Yellow Snare" = emh_cardpunch_thumpF;D133S0R53V78G2

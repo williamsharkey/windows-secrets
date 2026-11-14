@@ -1,0 +1,52 @@
+# Subscription (Trip-Hop Edition): a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Subscription (Trip-Hop Edition)
+pack     = beat-management
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = Trip-hop in D minor, 82 bpm: a slow heavy break, the long-boom glide bass, noir strings, a tremolo erhu, felt-ding piano, the flute line, a choir, scratches, a floor murmur and a bell coda. Drums: Kit Manager 98 (Twelve-Bit Crate Kit).
+midi     = subscription-trip-hop.mid
+script   = subscription-trip-hop.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.35
+tone     = 2500
+level    = -5
+
+[reverb]
+size     = 2.2
+predelay = 20
+tone     = 4500
+level    = -4
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Twelve-Bit Crate Kit"       lufs=-17 verb=0.08
+bass        ch1     "Long Boom Glide"                        lufs=-19 tune=-56
+strings     ch2     "Noir Strings"                           lufs=-24 pan=-16 verb=0.4 width=1.3
+erhu        ch3     "Dusk Tremolo"                           lufs=-22 pan=16 echo=0.15 verb=0.35
+piano       ch4     "Felt Ding Piano"                        lufs=-22 pan=-10 verb=0.3 tune=-17
+flute       ch5     "Flute Loop Lead"                        lufs=-20 pan=6 echo=0.2 verb=0.35
+murmur      ch6     "Steady Murmur"                          lufs=-31 width=1.4
+bell        ch7     "Dusty Vibes"                            lufs=-23 pan=24 echo=0.25 verb=0.4
+choir       ch8     "Night Choir Pad"                        lufs=-26 verb=0.45 width=1.3
+scratch     ch9     "Desk Scratch"                           lufs=-25 pan=-8
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"beat-management:Desk Scratch" = recycle>R#6F/restore>#6;A0R80B12G19
+"beat-management:Dusk Tremolo" = erhu_d3@t4500]@t100[>U3~10;A210S89R1106V76K62G-14
+"beat-management:Dusty Vibes" = vibraphone_c_lowE>>>#5/crystal_bell_bb5@t2000]#5T-5L21Q-24/printR>#6T-5L29O368Q40;A1D802S24R904V98K65G3
+"beat-management:Felt Ding Piano" = xpding@30]<E#10U2~6;A5D2200S25R800V70K47G-1
+"beat-management:Flute Loop Lead" = flute_vib_c5#12/recycle>>@8]#4FL25;A30R250K72G2
+"beat-management:Long Boom Glide" = balloon<<<+#8/ringout@20[@40]@0CP@0CP@0CP<<<#6L60;A0D3000S40R300K45G6
+"beat-management:Night Choir Pad" = choir_aah<E#10U2~8;A600S90R1800K45G-3
+"beat-management:Noir Strings" = cello_section_sus_c3<E#8/violin_section_sus_c4<#6L60;A400S90R1500K36G-4
+"beat-management:Steady Murmur" = floppy_read_write@t8000]C@50X#8U2~13F/chimes#4L43/recycle#4FL11;A113S100R627V89G1
+"kit-manager:Twelve-Bit Crate Kit" = ding<<<@35]><#3F/chord>>@15]+E><#4F/ringin>>@12]><#5F/ding>>@4]><#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

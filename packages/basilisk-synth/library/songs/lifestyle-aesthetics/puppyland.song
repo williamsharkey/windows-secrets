@@ -1,0 +1,46 @@
+# Puppyland: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Puppyland
+pack     = lifestyle-aesthetics
+kind     = chiptune
+composer = Spring Spring
+source   = Puppyland, an Impulse Tracker module (puppylandCLEAN.it) from OpenGameArt (https://opengameart.org/sites/default/files/OST.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/haydenwoffle-it-soundtrack
+arranger = Algorithmic Industries house band
+source_sha256= 3167f1933bc1ff94e7c27ab10640cbbc3dd21083256ab93073137c5acb76a3cb
+note     = Played twice through: the module's keys on the atrium keys, its high line on the kalimba, its bell on the marimba, its bass on the slow-jam bass, its 303-style drums on Kit Manager 98 (Echo Chamber Kit).
+midi     = puppyland.mid
+script   = puppyland.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+keys        ch1     "Atrium Keys"                            lufs=-20 pan=-10 echo=0.15 verb=0.3 tune=-12
+kalimba     ch2     "Hydro Kalimba"                          lufs=-22 pan=22 echo=0.25 verb=0.3
+bass        ch3     "Slow Jam Bass"                          lufs=-20
+mallets     ch4     "Droplet Marimba"                        lufs=-23 pan=-26 echo=0.2 verb=0.3
+kit         ch10    "kit-manager:Echo Chamber Kit"           lufs=-18 verb=0.1
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Echo Chamber Kit" = ringout@20[@40]@0CP@0CP@0CP<<<Ja0,100.80,40.300,0#3F/xpstart>EE#4F/xprecycle>>>@40]#5F/balloon<E#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"lifestyle-aesthetics:Atrium Keys" = xpding@25]<E#8U2~9Q-20/default@30]<<E#6T-4U2~6L45O20Q25;A8D1800S30R1400V70K47G2
+"lifestyle-aesthetics:Droplet Marimba" = xpdingMdrop_plink#12;A0D800S0R400K59G2
+"lifestyle-aesthetics:Hydro Kalimba" = kalimba_c4#10/droplet_soft#4FL45O5;A0D900S0R500G2
+"lifestyle-aesthetics:Slow Jam Bass" = error<<@30]+#4;A2D500S60R180V80K63G-3

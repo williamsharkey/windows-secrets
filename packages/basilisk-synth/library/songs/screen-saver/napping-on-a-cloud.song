@@ -1,0 +1,48 @@
+# Napping on a Cloud: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Napping on a Cloud
+pack     = screen-saver
+kind     = chiptune
+composer = congusbongus
+source   = Napping on a cloud, a FastTracker 2 module (napping_on_a_cloud.xm) from OpenGameArt (https://opengameart.org/sites/default/files/napping_on_a_cloud.xm_.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/napping-on-a-cloud
+arranger = Algorithmic Industries house band
+source_sha256= 5d0ff2a44bc0ff7c0eaad9a91da605f37f1d323e7af241b1521cc279dd3d1f9a
+note     = Ambient at 81 bpm: the module's melody on the breathy flute, its dub chords on the glass harp, its bass on the horn pad, its buzz line on the marimba, its percussion on a gong and its hat on a wind chime.
+midi     = napping-on-a-cloud.mid
+script   = napping-on-a-cloud.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+flute       ch1     "Breath Flute"                           lufs=-20 pan=4 echo=0.2 verb=0.45
+glass       ch2     "Ivory Canopy"                           lufs=-24 pan=-14 verb=0.4
+bass        ch3     "Cathode Halo"                           lufs=-23 verb=0.2
+marimba     ch4     "Water Marimba"                          lufs=-24 pan=24 echo=0.25 verb=0.35
+gong        ch5     "Yellow Gong"                            lufs=-27 verb=0.4
+chime       ch6     "Frosted Peal"                           lufs=-30 pan=30 verb=0.4 tune=45
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"screen-saver:Breath Flute" = flute_vib_c5#12/recycle>>@8]#4FL30;A40R400K72G2
+"screen-saver:Cathode Halo" = horn_sus_c3@t7500]@t300[#8U3~11/dingxpR#3T-19L33O181Q-13/spirit_breathE#3FL26Ja0,100.124,30.672,0/wind_chime_single@t2000]R#2T1L39O365Q-44;A618D617S73R1993V98K48G-10
+"screen-saver:Frosted Peal" = wind_chime_single@t3000]E#13H0,12U2~3/xpstart#3FL40;A0D744S26R606V89K71G-6
+"screen-saver:Ivory Canopy" = glass_harp@t8000]@t500[E<EU2~10;A306D321S96R1238V98K64G-5
+"screen-saver:Water Marimba" = marimba_c4#10/drop_single_a#6FL40;A0R900K60G1
+"screen-saver:Yellow Gong" = dingE<<#5/print#5T-8L13Q-25/mouse_click@t150]#6FL37;A1D1591S12R565V73K55G3

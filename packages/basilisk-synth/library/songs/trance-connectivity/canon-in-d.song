@@ -1,0 +1,57 @@
+# Canon in D: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Canon in D
+pack     = trance-connectivity
+kind     = world
+composer = Johann Pachelbel (1653-1706)
+source   = Canon in D for three violins and basso continuo (c. 1680): the ground and the first violin's opening variations, with one eighth-note division on the ground written by the arranger in the same manner.
+licence  = The work: public domain (17th century). This arrangement: CC0-1.0.
+proof    = https://imslp.org/wiki/Canon_and_Gigue_in_D_major,_P.37_(Pachelbel,_Johann)
+arranger = Algorithmic Industries house band
+note     = Uplifting trance at 136 bpm: the ground as a rolling offbeat bass and plinks, the variations climbing from strings and a piano breakdown to the lead an octave up, sixteenth plucks, brass chords. Drums: Kit Manager 98 (Punch Kick Kit).
+midi     = canon-in-d.mid
+script   = canon-in-d.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.4
+tone     = 3500
+level    = -3
+
+[reverb]
+size     = 2.8
+predelay = 22
+tone     = 6000
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Punch Kick Kit"             lufs=-16 verb=0.05
+bass        ch2     "Waxed Weight"                           lufs=-19
+pluck       ch3     "Echo Pluck 138"                         lufs=-23 pan=-18 echo=0.3 verb=0.2
+lead        ch4     "Neon Solo"                              lufs=-19 pan=4 echo=0.25 verb=0.3
+pad         ch5     "Grey Mist"                              lufs=-25 verb=0.4 width=1.4
+brass       ch6     "Paper Brass"                            lufs=-23 pan=14 verb=0.25
+piano       ch7     "Breakdown Grand"                        lufs=-20 pan=-4 echo=0.15 verb=0.45
+riser       ch8     "Midnight Riser"                         lufs=-25 verb=0.4
+burst       ch9     "Dusk Burst"                             lufs=-24 verb=0.5
+plink       ch11    "Signal Plink"                           lufs=-25 pan=30 echo=0.35 tune=-10
+strings     ch12    "Blue Signal"                            lufs=-22 pan=-14 echo=0.15 verb=0.35
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Punch Kick Kit" = ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"trance-connectivity:Blue Signal" = violin_section_sus_c4@t6000]@t200[U2~10;A5D423S93R224V86K60G-3
+"trance-connectivity:Breakdown Grand" = harp_c5#10/xpding@30]#6T1L30;A0D2500S20R800K72
+"trance-connectivity:Dusk Burst" = whoosh_awayE#8/print#8L25;A479S100R2148V96G14
+"trance-connectivity:Echo Pluck 138" = default@12]#6U2~8/default@12]<E>#5L40O326Q-40/default@12]<E>#5L22O652Q40;A0D300S0R250V80K75G2
+"trance-connectivity:Grey Mist" = violin_section_sus_c4@t7500]@t300[R#11U2~9/chimesE#5T17L17O331Q-25;A1217D755S77R1666V76K60G-10
+"trance-connectivity:Midnight Riser" = startupE#12U3~16/air_duster@t2000]@t500[#4FL22;A42S100R825V78K44G-2
+"trance-connectivity:Neon Solo" = ems_motor_whine_a4@t3500]@t300[<H0,12;A4D261S71R344V79K57G-10
+"trance-connectivity:Paper Brass" = horn_sus_c3@t3000]>H0,-12;A2D382S30R290V77K60G-10
+"trance-connectivity:Signal Plink" = balloon+#5/vibraphone_c_low#5L22/marimba_c4#6L55;A0D415S1R67V70
+"trance-connectivity:Waxed Weight" = batlow+#8/spirit_breath#8FL24;A5D463S65R91V75K36G-5

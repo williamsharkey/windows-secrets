@@ -1,0 +1,54 @@
+# Lakeport Summer Rave: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Lakeport Summer Rave
+pack     = trance-connectivity
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = Progressive trance in E minor, 132 bpm: a gated pluck pattern, a rolling bass, plinks, a long breakdown on the breakdown grand and choir with a riser, then the motor-whine lead with brass chords. Drums: Kit Manager 98 (Punch Kick Kit).
+midi     = lakeport-summer-rave.mid
+script   = lakeport-summer-rave.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.4
+tone     = 3500
+level    = -3
+
+[reverb]
+size     = 2.8
+predelay = 22
+tone     = 6000
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Punch Kick Kit"             lufs=-16 verb=0.05
+bass        ch2     "Northern Pulse"                         lufs=-19
+pluck       ch3     "Broadcast Harp"                         lufs=-23 pan=-16 echo=0.3 verb=0.2
+lead        ch4     "Opal Ray"                               lufs=-19 pan=4 echo=0.25 verb=0.3
+pad         ch5     "Misty Veil"                             lufs=-25 verb=0.4 width=1.4
+brass       ch6     "Civic Brass"                            lufs=-23 pan=14 verb=0.25
+piano       ch7     "Hollow Salon"                           lufs=-20 pan=-4 echo=0.15 verb=0.45
+riser       ch8     "Plaza Riser"                            lufs=-25 verb=0.4
+choir       ch9     "Coral Tide"                             lufs=-25 verb=0.45 width=1.3
+plink       ch11    "Echo Plink"                             lufs=-26 pan=30 echo=0.35
+fx          ch12    "Washed Lift"                            lufs=-26 verb=0.4
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Punch Kick Kit" = ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"trance-connectivity:Broadcast Harp" = xpding+#8/crystal_bell_bb5@t2000]#8T-11L25Q-25;A2D135S6R86V77K59G5
+"trance-connectivity:Civic Brass" = defaultH0,-12U3~9;A13D463S32R323V78K63G-2
+"trance-connectivity:Coral Tide" = choir_aah@t6000]@t300[<#11U2~6/wind_chime_single@t2000]>#5T-2L35O50Q20;A754D11S98R1770V91K57G-4
+"trance-connectivity:Echo Plink" = xpding#5/relay_click#5FL20/dingxp#6T-1L35Q-13;A1D150S7R119V89K59G9
+"trance-connectivity:Hollow Salon" = print#10/xpding@30]#6T-1L30;A0D2500S20R800K70G12
+"trance-connectivity:Misty Veil" = ems_ferranti_hoot_c4U2~8;A890D438S93R1510V80K60G-18
+"trance-connectivity:Northern Pulse" = tada@t600]@t190[<<U2~5Q-65;A0D228S64R52V95K40G1
+"trance-connectivity:Opal Ray" = ems_motor_whine_a4@t3500]@t300[E<#14H0,12U3~16/contrabass_sus_d1@t3000]@t200[#2T19L60;A1D443S95R196V72K57G-20
+"trance-connectivity:Plaza Riser" = logonR#5/xprecycle#5FL26Ja0,100.45,30.490,0/printE#6T-14L18O49Q11;A3S100R593V86K44G10
+"trance-connectivity:Washed Lift" = minimizeE#11H0,12/chimesR#5T-28L38O152Q57;A41S100R1140V90K28G15

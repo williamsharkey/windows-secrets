@@ -1,0 +1,58 @@
+# A Basin Away: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = A Basin Away
+pack     = listening-post
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement); the hydrophone recordings are NOAA PMEL's (public domain)
+note     = Deep-ocean ambient in D minor, 60 bpm: the bloop and an iceberg calving, fin-whale and blue-whale drones in slow chords with a singing bowl, a humpback singing a line, the upsweep, a ship overhead and a tremor.
+tail     = 8
+midi     = a-basin-away.mid
+script   = a-basin-away.py
+
+[master]
+loudness = -18
+ceiling  = -1.0
+fadeout  = 4
+
+[echo]
+time     = 1/2
+feedback = 0.45
+tone     = 2000
+level    = -5
+
+[reverb]
+size     = 6.0
+predelay = 40
+tone     = 3500
+level    = -2
+
+[tracks]
+# name      source  preset                                  mix
+fin         ch1     "Dial Depth"                             lufs=-23 pan=-14 verb=0.4
+blue        ch2     "Lattice Dormant"                        lufs=-24 pan=14 verb=0.4
+bowl        ch3     "Saffron Dormant"                        lufs=-28 verb=0.5 tune=22
+humpback    ch4     "Ocean Shoreline"                        lufs=-21 pan=4 echo=0.25 verb=0.5
+bloop       ch5     "Cedar Murmur"                           lufs=-23 verb=0.4
+iceberg     ch6     "Swift Room"                             lufs=-24 pan=-24 verb=0.5
+upsweep     ch7     "Lattice Dive"                           lufs=-25 pan=22 echo=0.4 verb=0.5
+ship        ch8     "Second Launch"                          lufs=-23 width=1.4 verb=0.3
+tremor      ch9     "Still Lift"                             lufs=-24 verb=0.3
+nets        ch11    "White Shoreline"                        lufs=-26 pan=30 verb=0.5
+murmur      ch12    "Broadcast Murmur"                       lufs=-31 width=1.4
+dive        ch13    "Tropic Sweep"                           lufs=-26 pan=-30 echo=0.4 verb=0.5
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"listening-post:Broadcast Murmur" = pmel_ship_overhead@t2073]C@50XFQ-31;A471S100R563V77G-3
+"listening-post:Cedar Murmur" = pmel_bloop<#11U2~19/pmel_blue_whale_netsE#5T9L23O111Q-24;A52S100R1557V76K19G-4
+"listening-post:Dial Depth" = pmel_atlantic_fin@t10500]@t3000[@0CP@0CP>>#14H0,7U3~15/pmel_earthquake_pioneer#2T14L55;A1089S100R2735V83K55G-5
+"listening-post:Lattice Dive" = pmel_upsweepCRPU3~16;A137S100R846V74G-6
+"listening-post:Lattice Dormant" = pmel_blue_south_pacificE>#12H0,12U3~9/pmel_atlantic_blueR#2T19L25O327Q0/pmel_challenger_deep_modem#2T-7L69;A921S100R2733V92K60G-8
+"listening-post:Ocean Shoreline" = pmel_humpback_ship_sbnms#8U2~16/pmel_harmonic_tremor#4L54/pmel_sound_source#4L52;A105S100R1094V91G-10
+"listening-post:Saffron Dormant" = singing_bowl_long@t12000]@t200[CRP#13U4~23/pmel_upsweep#3FL11;A847S100R2911V96K73G-14
+"listening-post:Second Launch" = pmel_ship_overheadEEE#8/pmel_upsweep#8FL33;A109S100R1227V85K33G-4
+"listening-post:Still Lift" = pmel_tremorRE#5/pmel_damselfish#5FL31Ja0,100.196,30.453,0/pmel_ron_brown_arrivalE#6T21L33O76Q44;A9S100R574V88K41G-3
+"listening-post:Swift Room" = pmel_iceberg_calving@t12000]<;A63S100R641V84K17
+"listening-post:Tropic Sweep" = pmel_upsweep@t6000]<U2~10;A24S100R526V75G-4
+"listening-post:White Shoreline" = pmel_blue_whale_nets#8/pmel_atlantic_finEE#8T5L33O95Q-25;A43S100R1704V74K30G-5

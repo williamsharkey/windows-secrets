@@ -1,0 +1,50 @@
+# Nag Screen Blues: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Nag Screen Blues
+pack     = w3x-heritage
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = A 12-bar shuffle blues in G, 96 bpm, four choruses: ding piano boogie and walking ding bass, ding chords on the off-beats, the ringout whistle and the tada horn trading choruses, chimes on the turnarounds. Only the six Windows 3.1 sounds.
+midi     = nag-screen-blues.mid
+script   = nag-screen-blues.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+
+[echo]
+time     = 1/8
+feedback = 0.2
+tone     = 3000
+level    = -9
+
+[reverb]
+size     = 1.6
+predelay = 15
+tone     = 5000
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+piano       ch1     "Still Upright"                          lufs=-20 pan=6 verb=0.25
+bass        ch2     "Field Bass"                             lufs=-20 pan=-8 verb=0.15
+comp        ch3     "Western Chords"                         lufs=-25 pan=-18 verb=0.2
+whistle     ch4     "Gentle Whistle"                         lufs=-20 pan=14 echo=0.15 verb=0.3 tune=-31
+horn        ch5     "Indigo Wire"                            lufs=-20 pan=-12 verb=0.3
+bells       ch6     "Urban Ring"                             lufs=-25 pan=28 verb=0.4
+snare       ch7     "Basement Snare"                         lufs=-28 pan=10
+shaker      ch8     "Hollow Shaker"                          lufs=-31 pan=-24
+lead        ch9     "Slate Pilot"                            lufs=-21 pan=4 echo=0.15 verb=0.3 tune=-56
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"w3x-heritage:Basement Snare" = ding@t120]F;D64S0R67V95G11
+"w3x-heritage:Field Bass" = ding<<<+#8/ringout@20[@40]@0CP@0CP@0CP<<<#6L60;A0D3000S40R300K43
+"w3x-heritage:Gentle Whistle" = ringout@t328]@t93[@0CP@0CP@0CP<#8/ding#8T-10L32Q3;A10D146S73R303V82K57
+"w3x-heritage:Hollow Shaker" = ding@t120]#8FQ63/chord#8T3L52;D196S0R81V83G6
+"w3x-heritage:Indigo Wire" = tada@40[@20]@0CP@0CP@0CP@0CP#6U3~20/tada@40[@20]@0CP@0CP@0CP@0CP>#4L40/tada@40[@20]@0CP@0CP@0CP@0CP#4T7L30;A10R300K60G-1
+"w3x-heritage:Slate Pilot" = ringout@t328]@t93[@0CP@0CP@0CP<H0,-12U2~8;A5D598S91R178V83K57G-8
+"w3x-heritage:Still Upright" = ding@10]#6U2~6Q-20/ding@5[@60]#6T12U2~6L60Q20;A0D2500S25R600V85K79G-1
+"w3x-heritage:Urban Ring" = chimes@t300[EE<;A2D690S5R730V88K55G9
+"w3x-heritage:Western Chords" = dingE<<#8/ding#8L35O17Q15;A0D750S26R222V93K55G3

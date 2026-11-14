@@ -1,0 +1,53 @@
+# Greensleeves to a Ground: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Greensleeves to a Ground
+pack     = courtyard-chapel
+kind     = world
+composer = Anonymous (English, 16th century tune)
+source   = Greensleeves to a Ground, with divisions: The Division Violin, second part (John Playford, 4th edition, 1705), No. 27. Score: The Mutopia Project, from the 1705 facsimile.
+licence  = The work: public domain (published 1705). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1730
+arranger = Algorithmic Industries house band
+note     = The tune and five divisions on psaltery, folk harp and dan tranh, the vibes doubling the last; a harpsichord continuo and strumstick bass on a ground read from the tune; a didgeridoo bourdon, balafon tabor, hand chimes at the cadences; a Picardy G major at the end.
+midi     = greensleeves-to-a-ground.mid
+script   = greensleeves-to-a-ground.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+
+[echo]
+time     = 3/8
+feedback = 0.3
+tone     = 3000
+level    = -5
+
+[reverb]
+size     = 2.6
+predelay = 24
+tone     = 5000
+level    = -3
+
+[tracks]
+# name      source  preset                                  mix
+psaltery    ch1     "Slate Pick"                             lufs=-19 pan=6 echo=0.05 verb=0.32
+harp        ch2     "Faded Pluck"                            lufs=-20 pan=26 echo=0.1 verb=0.3
+dantranh    ch3     "Arctic Steps"                           lufs=-20 pan=-20 verb=0.3
+harpsichord ch4     "Soft Etude"                             lufs=-23 pan=-30 verb=0.22
+strumstick  ch5     "Kinetic Harp"                           lufs=-23 pan=-8 verb=0.15
+drone       ch6     "White Dormant"                          lufs=-29 verb=0.35
+bells       ch7     "Marble Tower"                           lufs=-25 pan=22 echo=0.15 verb=0.45 tune=16
+tabor       ch8     "Brushed Carillon"                       lufs=-26 pan=-36 verb=0.25
+vibes       ch9     "Delta Tower"                            lufs=-27 pan=30 verb=0.35
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"courtyard-chapel:Arctic Steps" = dan_tranh_b2#16;A2D201S4R139V84K59
+"courtyard-chapel:Brushed Carillon" = balafon_cs3#16;A1D1290S3R2437V72K61G1
+"courtyard-chapel:Delta Tower" = vibes_soft_c3#16;A0D2273S21R953V96K60G-4
+"courtyard-chapel:Faded Pluck" = folk_harp_c3#16;A2D416S4R83V75K60G-2
+"courtyard-chapel:Kinetic Harp" = strumstick_g2#16;A2D155S8R154V96K55
+"courtyard-chapel:Marble Tower" = hand_chime_c3E#8L80/tubular_bell_c4#8L55;A2D1021S21R795V89K60G-1
+"courtyard-chapel:Slate Pick" = psaltery_pluck_c4#15/defaultRE#2T9L10O53Q26;A2D201S2R136V78K72G-1
+"courtyard-chapel:Soft Etude" = harpsichord_flemish_c3#16;A4D2188S37R474V71K60G-8
+"courtyard-chapel:White Dormant" = didgeridoo_sus_a>>#13U4~18/didgeridoo_phrase#3T-3L41;A769D0S100R836V93K61G-6

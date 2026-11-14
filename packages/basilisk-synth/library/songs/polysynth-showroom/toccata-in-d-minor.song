@@ -1,0 +1,54 @@
+# Toccata in D Minor: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Toccata in D Minor
+pack     = polysynth-showroom
+kind     = world
+composer = Johann Sebastian Bach (1685-1750), attributed
+source   = Toccata and Fugue in D minor, BWV 565: the toccata and the fugue's first fourteen bars. Score: The Mutopia Project, from the Bach-Gesellschaft Ausgabe (1867).
+licence  = The work: public domain (18th century). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1780
+arranger = Algorithmic Industries house band
+note     = The toccata on poly brass and FM piano over a mono pedal bass with brass hits, string swells; the fugue's opening with a PWM lead, drums and the vocoder choir; the last D minor chord. Drums: Kit Manager 98 (Breaker Box Kit).
+tail     = 5
+midi     = toccata-in-d-minor.mid
+script   = toccata-in-d-minor.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 3.2
+predelay = 25
+tone     = 5500
+level    = -3
+
+[tracks]
+# name      source  preset                                  mix
+brass       ch1     "Lattice Fanfare"                        lufs=-19 pan=-8 verb=0.35 width=1.2
+fmpiano     ch2     "Violet Keys"                            lufs=-24 pan=18 echo=0.1 verb=0.3
+lefthand    ch3     "Metro Chord"                            lufs=-22 pan=-18 verb=0.3
+pedal       ch4     "Dial Bass"                              lufs=-20 verb=0.15
+vchoir      ch5     "Wide Breath"                            lufs=-25 verb=0.5 width=1.3 tune=-12
+vstrings    ch6     "Arctic Chamber"                         lufs=-25 pan=10 verb=0.45 width=1.3 tune=16
+lead        ch7     "Grey Beam"                              lufs=-20 pan=4 echo=0.2 verb=0.3
+kit         ch10    "kit-manager:Breaker Box Kit"            lufs=-18 verb=0.15
+hit         ch11    "Noble Hit"                              lufs=-24 verb=0.4
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"polysynth-showroom:Arctic Chamber" = poly83_on_off_strings_fs4#16;A390S93R885V94K66G-5
+"polysynth-showroom:Dial Bass" = mono77_cream_b0#11U2~6/mono77_fm_rings_ds1#5T-16L45;A5D236S61R173V92K23G-5
+"polysynth-showroom:Grey Beam" = poly78_pwm_lady_c4E#12U3~14/poly78_res_organ_d4#4T10L32O6Q-21;A36D120S82R103V99K60G-9
+"polysynth-showroom:Lattice Fanfare" = poly85_synthetic_c3@t4792]#12U3~10/poly83_big_c2#4T12L63Q17;A1D355S18R321V90K48G-2
+"polysynth-showroom:Metro Chord" = poly85_thin_brassy_c2+>>;A3D548S74R194V88K60
+"polysynth-showroom:Noble Hit" = poly85_thin_brassy_c2E>>#11H0,12U2~7/poly85_thin_brassy_c2#3T24L59Q-11/poly85_synthetic_c3#2T24L58Q-26;A4D381S28R455V85K60G-1
+"polysynth-showroom:Violet Keys" = fm87_piano_c4E#16;A1D2333S10R445V80K60G-8
+"polysynth-showroom:Wide Breath" = vocoder_choir_male_c4#16;A609D271S83R1252V75K60G-7

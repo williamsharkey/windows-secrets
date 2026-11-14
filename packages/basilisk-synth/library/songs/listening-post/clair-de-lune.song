@@ -1,0 +1,55 @@
+# Clair de lune: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Clair de lune
+pack     = listening-post
+kind     = world
+composer = Claude Debussy (1862-1918)
+source   = Clair de lune, from Suite bergamasque, L. 75 (published 1905): bars 1-18 and 65 to the end. Score: The Mutopia Project, from E. Fromont (1905).
+licence  = The work: public domain (published 1905; the composer died 1918). The edition used: public domain (Mutopia). This arrangement: CC0-1.0. The hydrophone recordings: NOAA PMEL, public domain.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1778
+arranger = Algorithmic Industries house band
+note     = The opening and closing pages at 60 bpm: a humpback on the top line, a singing bowl on the inner voices, fin-whale and blue-whale drones on the left hand; ice calving, the bloop and the upsweep between.
+tail     = 8
+midi     = clair-de-lune.mid
+script   = clair-de-lune.py
+
+[master]
+loudness = -18
+ceiling  = -1.0
+fadeout  = 4
+
+[echo]
+time     = 3/8
+feedback = 0.4
+tone     = 2200
+level    = -6
+
+[reverb]
+size     = 5.5
+predelay = 40
+tone     = 3500
+level    = -2
+
+[tracks]
+# name      source  preset                                  mix
+humpback    ch1     "Ocean Shoreline"                        lufs=-20 pan=4 echo=0.2 verb=0.5
+bowl        ch2     "Saffron Dormant"                        lufs=-25 pan=-14 verb=0.5 tune=22
+fin         ch3     "Dial Depth"                             lufs=-23 pan=-10 verb=0.45
+blue        ch4     "Lattice Dormant"                        lufs=-25 pan=14 verb=0.45
+upsweep     ch5     "Lattice Dive"                           lufs=-26 pan=24 echo=0.4 verb=0.5
+bloop       ch6     "Cedar Murmur"                           lufs=-24 verb=0.4
+iceberg     ch7     "Swift Room"                             lufs=-25 pan=-24 verb=0.5
+murmur      ch8     "Broadcast Murmur"                       lufs=-31 width=1.4
+dive        ch9     "Tropic Sweep"                           lufs=-27 pan=-30 echo=0.4 verb=0.5
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"listening-post:Broadcast Murmur" = pmel_ship_overhead@t2073]C@50XFQ-31;A471S100R563V77G-3
+"listening-post:Cedar Murmur" = pmel_bloop<#11U2~19/pmel_blue_whale_netsE#5T9L23O111Q-24;A52S100R1557V76K19G-4
+"listening-post:Dial Depth" = pmel_atlantic_fin@t10500]@t3000[@0CP@0CP>>#14H0,7U3~15/pmel_earthquake_pioneer#2T14L55;A1089S100R2735V83K55G-5
+"listening-post:Lattice Dive" = pmel_upsweepCRPU3~16;A137S100R846V74G-6
+"listening-post:Lattice Dormant" = pmel_blue_south_pacificE>#12H0,12U3~9/pmel_atlantic_blueR#2T19L25O327Q0/pmel_challenger_deep_modem#2T-7L69;A921S100R2733V92K60G-8
+"listening-post:Ocean Shoreline" = pmel_humpback_ship_sbnms#8U2~16/pmel_harmonic_tremor#4L54/pmel_sound_source#4L52;A105S100R1094V91G-10
+"listening-post:Saffron Dormant" = singing_bowl_long@t12000]@t200[CRP#13U4~23/pmel_upsweep#3FL11;A847S100R2911V96K73G-14
+"listening-post:Swift Room" = pmel_iceberg_calving@t12000]<;A63S100R641V84K17
+"listening-post:Tropic Sweep" = pmel_upsweep@t6000]<U2~10;A24S100R526V75G-4

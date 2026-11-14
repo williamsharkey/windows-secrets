@@ -1,0 +1,46 @@
+# Midnight Drive: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Midnight Drive
+pack     = retro-display
+kind     = chiptune
+composer = congusbongus
+source   = Midnight Drive, a FastTracker 2 module (midnight_drive.xm) from OpenGameArt (https://opengameart.org/sites/default/files/midnight_drive_0.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/midnight-drive
+arranger = Algorithmic Industries house band
+source_sha256= 10c01f72019b649f0a1fc5af04e357dfaf59ee3083d9b57534d5e8d3da8aad13
+note     = Synthwave at 80 bpm: the module's lead synth on the chrome lead, its arpeggio on kalimba chords, its TB-303 line on the rumble bass, its second synth on a brass lead, its drums on Kit Manager 98 (Echo Chamber Kit).
+midi     = midnight-drive.mid
+script   = midnight-drive.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Chrome Brass Lead"                      lufs=-20 pan=4 echo=0.25 verb=0.3
+arp         ch2     "Violet Chords"                          lufs=-24 pan=22 echo=0.3 verb=0.2 tune=-20
+bass        ch3     "Saffron Rumble"                         lufs=-19
+brass       ch4     "Brass Signal"                           lufs=-22 pan=-14 verb=0.3
+kit         ch10    "kit-manager:Echo Chamber Kit"           lufs=-17 verb=0.12
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Echo Chamber Kit" = ringout@20[@40]@0CP@0CP@0CP<<<Ja0,100.80,40.300,0#3F/xpstart>EE#4F/xprecycle>>>@40]#5F/balloon<E#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"retro-display:Brass Signal" = ems_motor_whine_a4@t3500]@t300[<H0,12;A33D485S93R214V80K57G-10
+"retro-display:Chrome Brass Lead" = tadaxp@40[@20]@0CP@0CP@0CP@0CP#10U3~18;A60R350B2K60G7
+"retro-display:Saffron Rumble" = ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+#8Ja0,100.125,100.135,8.250,8.251,100Wr4t;A0S100R40V80K47G1
+"retro-display:Violet Chords" = kalimba_c4U2~5;A2D641S43R688V77K60G-5

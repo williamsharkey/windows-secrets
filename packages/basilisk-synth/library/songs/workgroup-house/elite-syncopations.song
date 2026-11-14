@@ -1,0 +1,57 @@
+# Elite Syncopations: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Elite Syncopations
+pack     = workgroup-house
+kind     = world
+composer = Scott Joplin (1868-1917)
+source   = Elite Syncopations, a rag (1902): four-bar loops cut from its first, second and trio strains. Score: The Mutopia Project, from John Stark & Son (1902).
+licence  = The work: public domain (published 1902; the composer died 1917). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1540
+arranger = Algorithmic Industries house band
+note     = Filtered house at 124 bpm: the rag's strains looped four bars at a time on the warehouse piano, the left hand on the slap disco bass, organ stabs, strings, a choir breakdown, dial-tone hats and a shaker. Drums: Kit Manager 98 (Jack Box Kit).
+midi     = elite-syncopations.mid
+script   = elite-syncopations.py
+
+[master]
+loudness = -14
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.35
+tone     = 3200
+level    = -4
+
+[reverb]
+size     = 1.8
+predelay = 16
+tone     = 6000
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+kit         ch10    "kit-manager:Jack Box Kit"               lufs=-17 verb=0.05
+piano       ch1     "Warehouse Piano Stack"                  lufs=-19 pan=-6 echo=0.12 verb=0.2
+inner       ch2     "Cable Upright"                          lufs=-24 pan=18 verb=0.2
+bass        ch3     "Slap Disco Bass"                        lufs=-19 tune=-16
+organ       ch4     "Jack Organ"                             lufs=-25 pan=20 verb=0.15
+choir       ch5     "Plaza Cantor"                           lufs=-23 pan=-6 verb=0.45
+strings     ch6     "Sampled Strings Swell"                  lufs=-25 pan=22 verb=0.35
+fx          ch7     "Low-Pass Sweep Wash"                    lufs=-25 echo=0.3 verb=0.3
+dialhat     ch8     "Dial Hat"                               lufs=-28 pan=30
+shaker      ch9     "Bright Shaker"                          lufs=-30 pan=-34
+pad         ch11    "Midnight Haze"                          lufs=-26 verb=0.35 width=1.3 tune=-11
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Jack Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.60,70.350,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"workgroup-house:Bright Shaker" = em_stamp_a#8F/infobar#8FL34;D372S0R52V97G3
+"workgroup-house:Cable Upright" = piano_upright_cs4Q45;A2D536S18R317V99K61G2
+"workgroup-house:Dial Hat" = chord@t200]EF;D298S0R145V82G4
+"workgroup-house:Jack Organ" = ringout@20[@40]@0CP@0CP@0CP+#12H0,12,19/ding>>@5]#4FL40;A0D250S45R90V70K69G-5
+"workgroup-house:Low-Pass Sweep Wash" = restore<<E#8/xprecycle<<<E#8FL70;A1200S100R2500G23
+"workgroup-house:Midnight Haze" = crowd_sing_aah_f@t7500]@t500[CRP>EH0,12U2~10;A646D872S78R1010V82K65G-13
+"workgroup-house:Plaza Cantor" = choir_aah@t6000]@t300[U2~10;A236D346S80R722V82K69G-3
+"workgroup-house:Sampled Strings Swell" = violin_section_sus_c4@10[E#10U2~10Ja0,20.300,100.484,30.540,100;A0R600K60G-6
+"workgroup-house:Slap Disco Bass" = xpding@30]<<++#8/balloon<@30]#4FL60;A0D300S50R80V95K35G5
+"workgroup-house:Warehouse Piano Stack" = chord@5[@40]#10H0,12/ding@15]#6L35;A0D1100S20R250V70K57G-3

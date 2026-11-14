@@ -1,0 +1,12 @@
+"""Prison Ship (Spring Spring, CC0), re-voiced for the diagnostics pack: the notes of an Impulse Tracker module from OpenGameArt played on
+the pack's own presets (sources/cc0/prisonCLEAN.notes.mid, converted by tools/songrender/trackers.py)."""
+import os, sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
+from _lib import *
+
+PLAN = {2: ('musicbox', 1, 0, 60, 91, 0.9), 1: ('thud', 7, 'pad', 36, 1.0), 3: ('erhu', 2, 12, 60, 81, 0.9), 7: ('snare', 8, 'pad', 60, 1.0), 5: ('cello', 3, 0, 48, 64, 0.85), 6: ('errorpad', 4, 0, 50, 72, 0.85), 8: ('tick', 9, 'pad', 60, 0.8), 4: ('bells', 5, 12, 60, 88, 0.85), 9: ('choir', 6, 0, 55, 76, 0.85)}
+HEADER = {'title': 'Prison Ship', 'pack': 'diagnostics', 'kind': 'chiptune', 'composer': 'Spring Spring', 'source': 'Prison Ship, an Impulse Tracker module (prisonCLEAN.it) from OpenGameArt (https://opengameart.org/sites/default/files/OST.zip). Its notes are played here; its samples or chip voices are not used.', 'licence': 'The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.', 'proof': 'https://opengameart.org/content/haydenwoffle-it-soundtrack', 'arranger': 'Algorithmic Industries house band', 'source_sha256': 'd16d566da8a057901569644bf5e0007e82b8feaefe6b10830cd3166d2de58e46', 'note': "Played twice through: the module's lead on the broken music box, its second line on the erhu, its pads on cello and error pads, its bells on Noble Bell, its choir, its drums on critical-stop thuds, stamps and ticks."}
+TRACKS = [('musicbox', 'ch1', 'Broken Music Box', {'lufs': -20, 'pan': -8, 'echo': 0.25, 'verb': 0.3}), ('thud', 'ch7', 'Echo Click', {'lufs': -20}), ('erhu', 'ch2', 'Hollow Song', {'lufs': -21, 'pan': 12, 'echo': 0.15, 'verb': 0.3}), ('snare', 'ch8', 'Electric Snare', {'lufs': -23, 'verb': 0.2}), ('cello', 'ch3', 'Copper Veil', {'lufs': -24, 'pan': -14, 'verb': 0.3}), ('errorpad', 'ch4', 'Digital Veil', {'lufs': -26, 'verb': 0.4, 'width': 1.3}), ('tick', 'ch9', 'Lunar Tick', {'lufs': -28, 'pan': 26}), ('bells', 'ch5', 'Noble Bell', {'lufs': -24, 'pan': 22, 'echo': 0.3, 'verb': 0.4}), ('choir', 'ch6', 'Inland Cantor', {'lufs': -25, 'verb': 0.5})]
+module_song(__file__, 'prisonCLEAN.notes.mid', 150, PLAN, HEADER, TRACKS, master={'loudness': -15, 'ceiling': -1.0},
+            echo={'time': '3/16', 'feedback': 0.3, 'tone': 3500, 'level': -6},
+            reverb={'size': 2.0, 'predelay': 16, 'tone': 5500, 'level': -6}, loops=2, cut=432)

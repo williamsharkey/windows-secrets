@@ -1,0 +1,46 @@
+# Cheery: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Cheery
+pack     = w3x-heritage
+kind     = chiptune
+composer = Phillip Miller (redactionary)
+source   = cheery, a FamiTracker module (nes_03-cheery.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/Free_NES_Music_Pack.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/free-nes-music-pack
+arranger = Algorithmic Industries house band
+source_sha256= 067e24b44b43fb785afcfc1a1f55a0a5980506ee8658add9eb27c1e9333c1f53
+note     = Played twice through on the six Windows 3.1 sounds: the VRC6 pulse on the ding piano, pulse 2 on ding chords, pulse 1 on the ding bass, the triangle on chimes bells, the noise on a ding shaker.
+midi     = cheery.mid
+script   = cheery.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Still Upright"                          lufs=-19 pan=6 verb=0.25
+chords      ch2     "Western Chords"                         lufs=-23 pan=-16 verb=0.2
+bass        ch3     "Field Bass"                             lufs=-20 verb=0.15
+bells       ch4     "Urban Ring"                             lufs=-25 pan=28 verb=0.4
+shaker      ch5     "Hollow Shaker"                          lufs=-28 pan=-24
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"w3x-heritage:Field Bass" = ding<<<+#8/ringout@20[@40]@0CP@0CP@0CP<<<#6L60;A0D3000S40R300K43
+"w3x-heritage:Hollow Shaker" = ding@t120]#8FQ63/chord#8T3L52;D196S0R81V83G6
+"w3x-heritage:Still Upright" = ding@10]#6U2~6Q-20/ding@5[@60]#6T12U2~6L60Q20;A0D2500S25R600V85K79G-1
+"w3x-heritage:Urban Ring" = chimes@t300[EE<;A2D690S5R730V88K55G9
+"w3x-heritage:Western Chords" = dingE<<#8/ding#8L35O17Q15;A0D750S26R222V93K55G3
