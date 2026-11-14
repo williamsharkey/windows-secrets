@@ -22,6 +22,8 @@ Round 2 of source collection for BASILISK 16 / BASILISK SYNTH. The owner asked f
 
 Sustained notes are cut to at most 12 s (`dur`), and the build caps tonal sounds at 15 s. Each `labelled_note` comes from the source's file name. The builder's YIN estimate (`est_root_note` in the manifest) is the one to trust. VCSL's TX81Z labels read about two octaves below the estimate, and modularsamples' titles about one octave above it. These are naming conventions, not errors.
 
+**Octave convention and ID renames (after review by the library lane).** The VSCO-derived and VCSL-derived note names in `tape`, `instruments` (and round 1's `tonal`) use the **C3 = middle C** convention. They read one octave low in scientific pitch (C4 = 261.6 Hz); for example, `tape_flute_vib_c4` sounds at 523 Hz. Sound IDs in `synth80s` and `fm` have been renamed to **brand-neutral family names with the measured scientific-pitch root**: `poly78` (Jupiter-4), `poly82` (Juno-6), `poly83` (JX-3P), `poly84` (AX80), `poly85` (JX-8P), `mono77` (CS-30L), `mono79` (SH-2), `vocoder_*` (VP-330) and `fm87_*` (TX81Z). The model stays in `description` and `source_url`. The old-to-new map is in `research/round2-id-renames.json`. Each root in an ID is the builder's YIN estimate and can still be an octave off for bass-heavy patches, so measure the audio before key-mapping. Future catalogs should state the convention, or put scientific pitch in the ID.
+
 
 ### Licence breakdown (all themes)
 

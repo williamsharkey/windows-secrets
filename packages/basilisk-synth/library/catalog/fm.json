@@ -1,6 +1,6 @@
 [
  {
-  "id": "tx81z_clavisynth_c1",
+  "id": "fm87_clav_c3",
   "raw": "fm/vcsl_Clavisynth_C1_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"Clavisynth\", C1, loud (Versilian Community Sample Library, CC0)",
@@ -15,10 +15,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C1",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "tx81z_clavisynth_c2",
+  "id": "fm87_clav_c4",
   "raw": "fm/vcsl_Clavisynth_C2_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"Clavisynth\", C2, loud (Versilian Community Sample Library, CC0)",
@@ -33,10 +34,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C2",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C4"
  },
  {
-  "id": "tx81z_clavisynth_c3",
+  "id": "fm87_clav_c5",
   "raw": "fm/vcsl_Clavisynth_C3_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"Clavisynth\", C3, loud (Versilian Community Sample Library, CC0)",
@@ -51,10 +53,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C3",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C5"
  },
  {
-  "id": "tx81z_clavisynth_c4",
+  "id": "fm87_clav_c6",
   "raw": "fm/vcsl_Clavisynth_C4_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"Clavisynth\", C4, loud (Versilian Community Sample Library, CC0)",
@@ -69,10 +72,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C4",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C6"
  },
  {
-  "id": "tx81z_clavisynth_c5",
+  "id": "fm87_clav_c6_b",
   "raw": "fm/vcsl_Clavisynth_C5_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"Clavisynth\", C5, loud (Versilian Community Sample Library, CC0)",
@@ -87,10 +91,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C5",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C6"
  },
  {
-  "id": "tx81z_clavisynth_c6",
+  "id": "fm87_clav_f6",
   "raw": "fm/vcsl_Clavisynth_C6_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"Clavisynth\", C6, loud (Versilian Community Sample Library, CC0)",
@@ -105,10 +110,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C6",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "F6"
  },
  {
-  "id": "tx81z_clavisynth_c2_soft",
+  "id": "fm87_clav_c4_soft",
   "raw": "fm/vcsl_Clavisynth_C2_vl1.wav",
   "category": "fm",
   "description": "Yamaha TX81Z patch \"Clavisynth\", C2, soft (Versilian Community Sample Library, CC0)",
@@ -123,10 +129,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C2",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C4"
  },
  {
-  "id": "tx81z_clavisynth_c4_soft",
+  "id": "fm87_clav_c6_soft",
   "raw": "fm/vcsl_Clavisynth_C4_vl1.wav",
   "category": "fm",
   "description": "Yamaha TX81Z patch \"Clavisynth\", C4, soft (Versilian Community Sample Library, CC0)",
@@ -141,10 +148,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C4",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C6"
  },
  {
-  "id": "tx81z_fm_piano_c1",
+  "id": "fm87_epiano_c1",
   "raw": "fm/vcsl_FMPiano_C1_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"FM Piano\", C1, loud (Versilian Community Sample Library, CC0)",
@@ -159,10 +167,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C1",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C1"
  },
  {
-  "id": "tx81z_fm_piano_c2",
+  "id": "fm87_epiano_c2",
   "raw": "fm/vcsl_FMPiano_C2_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"FM Piano\", C2, loud (Versilian Community Sample Library, CC0)",
@@ -177,10 +186,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C2",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "tx81z_fm_piano_c3",
+  "id": "fm87_epiano_c3",
   "raw": "fm/vcsl_FMPiano_C3_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"FM Piano\", C3, loud (Versilian Community Sample Library, CC0)",
@@ -195,10 +205,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C3",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "tx81z_fm_piano_c4",
+  "id": "fm87_epiano_c4",
   "raw": "fm/vcsl_FMPiano_C4_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"FM Piano\", C4, loud (Versilian Community Sample Library, CC0)",
@@ -213,10 +224,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C4",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C4"
  },
  {
-  "id": "tx81z_fm_piano_c5",
+  "id": "fm87_epiano_c5",
   "raw": "fm/vcsl_FMPiano_C5_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"FM Piano\", C5, loud (Versilian Community Sample Library, CC0)",
@@ -231,10 +243,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C5",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C5"
  },
  {
-  "id": "tx81z_fm_piano_c6",
+  "id": "fm87_epiano_c6",
   "raw": "fm/vcsl_FMPiano_C6_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"FM Piano\", C6, loud (Versilian Community Sample Library, CC0)",
@@ -249,10 +262,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C6",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C6"
  },
  {
-  "id": "tx81z_fm_piano_c2_soft",
+  "id": "fm87_epiano_c2_soft",
   "raw": "fm/vcsl_FMPiano_C2_vl1.wav",
   "category": "fm",
   "description": "Yamaha TX81Z patch \"FM Piano\", C2, soft (Versilian Community Sample Library, CC0)",
@@ -267,10 +281,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C2",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "tx81z_fm_piano_c4_soft",
+  "id": "fm87_epiano_c4_soft",
   "raw": "fm/vcsl_FMPiano_C4_vl1.wav",
   "category": "fm",
   "description": "Yamaha TX81Z patch \"FM Piano\", C4, soft (Versilian Community Sample Library, CC0)",
@@ -285,10 +300,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C4",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C4"
  },
  {
-  "id": "tx81z_piano1_c1",
+  "id": "fm87_piano_c2",
   "raw": "fm/vcsl_Piano_1_C1_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"Piano 1\", C1, loud (Versilian Community Sample Library, CC0)",
@@ -303,10 +319,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C1",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "tx81z_piano1_c2",
+  "id": "fm87_piano_c3",
   "raw": "fm/vcsl_Piano_1_C2_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"Piano 1\", C2, loud (Versilian Community Sample Library, CC0)",
@@ -321,10 +338,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C2",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "tx81z_piano1_c3",
+  "id": "fm87_piano_c4",
   "raw": "fm/vcsl_Piano_1_C3_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"Piano 1\", C3, loud (Versilian Community Sample Library, CC0)",
@@ -339,10 +357,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C3",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C4"
  },
  {
-  "id": "tx81z_piano1_c4",
+  "id": "fm87_piano_c5",
   "raw": "fm/vcsl_Piano_1_C4_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"Piano 1\", C4, loud (Versilian Community Sample Library, CC0)",
@@ -357,10 +376,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C4",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C5"
  },
  {
-  "id": "tx81z_piano1_c5",
+  "id": "fm87_piano_c6",
   "raw": "fm/vcsl_Piano_1_C5_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"Piano 1\", C5, loud (Versilian Community Sample Library, CC0)",
@@ -375,10 +395,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C5",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C6"
  },
  {
-  "id": "tx81z_piano1_c6",
+  "id": "fm87_piano_c7",
   "raw": "fm/vcsl_Piano_1_C6_vl3.wav",
   "category": "fm",
   "description": "Yamaha TX81Z (1987 FM synth) patch \"Piano 1\", C6, loud (Versilian Community Sample Library, CC0)",
@@ -393,10 +414,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C6",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C7"
  },
  {
-  "id": "tx81z_piano1_c2_soft",
+  "id": "fm87_piano_c3_soft",
   "raw": "fm/vcsl_Piano_1_C2_vl1.wav",
   "category": "fm",
   "description": "Yamaha TX81Z patch \"Piano 1\", C2, soft (Versilian Community Sample Library, CC0)",
@@ -411,10 +433,11 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C2",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "tx81z_piano1_c4_soft",
+  "id": "fm87_piano_c5_soft",
   "raw": "fm/vcsl_Piano_1_C4_vl1.wav",
   "category": "fm",
   "description": "Yamaha TX81Z patch \"Piano 1\", C4, soft (Versilian Community Sample Library, CC0)",
@@ -429,6 +452,7 @@
   "license": "CC0-1.0",
   "license_proof_url": "https://github.com/sgossner/VCSL/blob/master/LICENSE",
   "labelled_note": "C4",
-  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0)"
+  "note": "VCSL repository is released under CC0 1.0 (LICENSE file in repo root; GitHub license API reports CC0-1.0); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "measured_note_at_rename": "C5"
  }
 ]

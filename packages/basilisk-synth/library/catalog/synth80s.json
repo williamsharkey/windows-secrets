@@ -1,6 +1,6 @@
 [
  {
-  "id": "jx3p_on_off_strings_c5",
+  "id": "poly83_on_off_strings_c4",
   "raw": "synth80s/fs_306961.mp3",
   "category": "synth80s",
   "description": "Roland JX-3P (vintage analog synth), patch 'On Off Strings', C5",
@@ -14,11 +14,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/306961/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C5"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C5",
+  "measured_note_at_rename": "C4"
  },
  {
-  "id": "jx3p_on_off_strings_f5",
+  "id": "poly83_on_off_strings_fs4",
   "raw": "synth80s/fs_306973.mp3",
   "category": "synth80s",
   "description": "Roland JX-3P (vintage analog synth), patch 'On Off Strings', F5",
@@ -32,11 +33,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/306973/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "F5"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "F5",
+  "measured_note_at_rename": "F#4"
  },
  {
-  "id": "jx3p_brassy_c3",
+  "id": "poly83_brassy_f1",
   "raw": "synth80s/fs_306087.mp3",
   "category": "synth80s",
   "description": "Roland JX-3P (vintage analog synth), patch 'Brassy', C3",
@@ -50,11 +52,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/306087/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "F1"
  },
  {
-  "id": "jx3p_cease_a4",
+  "id": "poly83_cease_ds5",
   "raw": "synth80s/fs_306170.mp3",
   "category": "synth80s",
   "description": "Roland JX-3P (vintage analog synth), patch 'Cease', A4",
@@ -68,11 +71,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/306170/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "A4"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "A4",
+  "measured_note_at_rename": "D#5"
  },
  {
-  "id": "jx3p_bigjx_c3",
+  "id": "poly83_big_c2",
   "raw": "synth80s/fs_306026.mp3",
   "category": "synth80s",
   "description": "Roland JX-3P (vintage analog synth), patch 'BigJX', C3",
@@ -86,11 +90,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/306026/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "jx3p_gasflowers_c3",
+  "id": "poly83_gasflowers_c1",
   "raw": "synth80s/fs_306353.mp3",
   "category": "synth80s",
   "description": "Roland JX-3P (vintage analog synth), patch 'GasFlowers', C3",
@@ -104,11 +109,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/306353/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C1"
  },
  {
-  "id": "jx3p_jx_joanna_c3",
+  "id": "poly83_joanna_c2",
   "raw": "synth80s/fs_306658.mp3",
   "category": "synth80s",
   "description": "Roland JX-3P (vintage analog synth), patch 'JX Joanna', C3",
@@ -122,11 +128,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/306658/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "jx3p_snapbass_c2",
+  "id": "poly83_snapbass_c2",
   "raw": "synth80s/fs_307413.mp3",
   "category": "synth80s",
   "description": "Roland JX-3P (vintage analog synth), patch 'SnapBass', C2",
@@ -140,11 +147,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/307413/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C2"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C2",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "jx3p_wobble_brass_c3",
+  "id": "poly83_wobble_brass_c2",
   "raw": "synth80s/fs_307752.mp3",
   "category": "synth80s",
   "description": "Roland JX-3P (vintage analog synth), patch 'Wobble Brass', C3",
@@ -158,11 +166,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/307752/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "jx3p_slowone_c3",
+  "id": "poly83_slowone_c2",
   "raw": "synth80s/fs_307364.mp3",
   "category": "synth80s",
   "description": "Roland JX-3P (vintage analog synth), patch 'SlowOne', C3",
@@ -176,11 +185,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/307364/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "jx8p_dark_pad_chorus_c3",
+  "id": "poly85_dark_pad_chorus_c2",
   "raw": "synth80s/fs_307930.mp3",
   "category": "synth80s",
   "description": "Roland JX-8P (vintage analog synth), patch 'Dark Pad Chorus', C3",
@@ -194,11 +204,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/307930/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "jx8p_dark_pad_chorus_c4",
+  "id": "poly85_dark_pad_chorus_c3",
   "raw": "synth80s/fs_307942.mp3",
   "category": "synth80s",
   "description": "Roland JX-8P (vintage analog synth), patch 'Dark Pad Chorus', C4",
@@ -212,11 +223,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/307942/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C4"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C4",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "jx8p_mod_pad_c3",
+  "id": "poly85_mod_pad_c2",
   "raw": "synth80s/fs_308249.mp3",
   "category": "synth80s",
   "description": "Roland JX-8P (vintage analog synth), patch 'Mod Pad', C3",
@@ -230,11 +242,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/308249/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "jx8p_thin_brassy_c3",
+  "id": "poly85_thin_brassy_c2",
   "raw": "synth80s/fs_309803.mp3",
   "category": "synth80s",
   "description": "Roland JX-8P (vintage analog synth), patch 'Thin Brassy', C3",
@@ -248,11 +261,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/309803/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "jx8p_synthetic_c3",
+  "id": "poly85_synthetic_c3",
   "raw": "synth80s/fs_309742.mp3",
   "category": "synth80s",
   "description": "Roland JX-8P (vintage analog synth), patch 'Synthetic', C3",
@@ -266,11 +280,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/309742/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "jx8p_buzzy_lead_c4",
+  "id": "poly85_buzzy_lead_c3",
   "raw": "synth80s/fs_307881.mp3",
   "category": "synth80s",
   "description": "Roland JX-8P (vintage analog synth), patch 'Buzzy Lead', C4",
@@ -284,11 +299,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/307881/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C4"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C4",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "jx8p_slow_bass_c2",
+  "id": "poly85_slow_bass_d3",
   "raw": "synth80s/fs_309669.mp3",
   "category": "synth80s",
   "description": "Roland JX-8P (vintage analog synth), patch 'Slow Bass', C2",
@@ -302,11 +318,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/309669/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C2"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C2",
+  "measured_note_at_rename": "D3"
  },
  {
-  "id": "jx8p_sensitive_square_c5",
+  "id": "poly85_sensitive_square_c3",
   "raw": "synth80s/fs_308896.mp3",
   "category": "synth80s",
   "description": "Roland JX-8P (vintage analog synth), patch 'Sensitive Square', C5",
@@ -320,11 +337,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/308896/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C5"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C5",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "jupiter4_vikings_pad_2_osc_c3",
+  "id": "poly78_vikings_pad_2_osc_c2",
   "raw": "synth80s/fs_305805.mp3",
   "category": "synth80s",
   "description": "Roland Jupiter 4 (vintage analog synth), patch 'Vikings Pad 2 Osc', C3",
@@ -338,11 +356,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/305805/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "jupiter4_vikings_pad_2_osc_c4",
+  "id": "poly78_vikings_pad_2_osc_c3",
   "raw": "synth80s/fs_305817.mp3",
   "category": "synth80s",
   "description": "Roland Jupiter 4 (vintage analog synth), patch 'Vikings Pad 2 Osc', C4",
@@ -356,11 +375,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/305817/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C4"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C4",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "jupiter4_saxons_pad_c3",
+  "id": "poly78_saxons_pad_c2",
   "raw": "synth80s/fs_305070.mp3",
   "category": "synth80s",
   "description": "Roland Jupiter 4 (vintage analog synth), patch 'Saxons Pad', C3",
@@ -374,11 +394,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/305070/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "jupiter4_shimmer_c4",
+  "id": "poly78_shimmer_c3",
   "raw": "synth80s/fs_305229.mp3",
   "category": "synth80s",
   "description": "Roland Jupiter 4 (vintage analog synth), patch 'Shimmer', C4",
@@ -392,11 +413,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/305229/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C4"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C4",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "jupiter4_res_organ_c3",
+  "id": "poly78_res_organ_d4",
   "raw": "synth80s/fs_304923.mp3",
   "category": "synth80s",
   "description": "Roland Jupiter 4 (vintage analog synth), patch 'Res Organ', C3",
@@ -410,11 +432,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/304923/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "D4"
  },
  {
-  "id": "jupiter4_sad_wow_c3",
+  "id": "poly78_sad_wow_c3",
   "raw": "synth80s/fs_305021.mp3",
   "category": "synth80s",
   "description": "Roland Jupiter 4 (vintage analog synth), patch 'Sad Wow', C3",
@@ -428,11 +451,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/305021/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "jupiter4_roger_piano_c3",
+  "id": "poly78_roger_piano_c3",
   "raw": "synth80s/fs_304984.mp3",
   "category": "synth80s",
   "description": "Roland Jupiter 4 (vintage analog synth), patch 'Roger Piano', C3",
@@ -446,11 +470,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/304984/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "jupiter4_pwm_lady_c3",
+  "id": "poly78_pwm_lady_c4",
   "raw": "synth80s/fs_304728.mp3",
   "category": "synth80s",
   "description": "Roland Jupiter 4 (vintage analog synth), patch 'PWM Lady', C3",
@@ -464,11 +489,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/304728/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C4"
  },
  {
-  "id": "jupiter4_thick_swishy_c3",
+  "id": "poly78_thick_swishy_c2",
   "raw": "synth80s/fs_305719.mp3",
   "category": "synth80s",
   "description": "Roland Jupiter 4 (vintage analog synth), patch 'Thick Swishy', C3",
@@ -482,11 +508,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/305719/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "juno6_open_pad_c3",
+  "id": "poly82_open_pad_c2",
   "raw": "synth80s/fs_302564.mp3",
   "category": "synth80s",
   "description": "Roland Juno 6 (vintage analog synth), patch 'Open Pad', C3",
@@ -500,11 +527,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/302564/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C3",
+  "measured_note_at_rename": "C2"
  },
  {
-  "id": "juno6_open_pad_c4",
+  "id": "poly82_open_pad_c3",
   "raw": "synth80s/fs_302576.mp3",
   "category": "synth80s",
   "description": "Roland Juno 6 (vintage analog synth), patch 'Open Pad', C4",
@@ -518,11 +546,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/302576/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C4"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C4",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "juno6_rich_pluck_c4",
+  "id": "poly82_rich_pluck_c4",
   "raw": "synth80s/fs_302819.mp3",
   "category": "synth80s",
   "description": "Roland Juno 6 (vintage analog synth), patch 'Rich pluck', C4",
@@ -536,11 +565,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/302819/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C4"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C4",
+  "measured_note_at_rename": "C4"
  },
  {
-  "id": "cs30l_cream_b2",
+  "id": "mono77_cream_b0",
   "raw": "synth80s/fs_312422.mp3",
   "category": "synth80s",
   "description": "Yamaha CS-30L (vintage analog synth), patch 'Cream', B2",
@@ -554,11 +584,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/312422/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "B2"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "B2",
+  "measured_note_at_rename": "B0"
  },
  {
-  "id": "cs30l_bargain_piano_b2",
+  "id": "mono77_bargain_piano_b2",
   "raw": "synth80s/fs_311888.mp3",
   "category": "synth80s",
   "description": "Yamaha CS-30L (vintage analog synth), patch 'Bargain Piano', B2",
@@ -572,11 +603,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/311888/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "B2"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "B2",
+  "measured_note_at_rename": "B2"
  },
  {
-  "id": "cs30l_curious_lead_c4",
+  "id": "mono77_curious_lead_c3",
   "raw": "synth80s/fs_312592.mp3",
   "category": "synth80s",
   "description": "Yamaha CS-30L (vintage analog synth), patch 'Curious Lead', C4",
@@ -590,11 +622,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/312592/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C4"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C4",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "cs30l_pulse_2_ds2",
+  "id": "mono77_pulse_2_g2",
   "raw": "synth80s/fs_313938.mp3",
   "category": "synth80s",
   "description": "Yamaha CS-30L (vintage analog synth), patch 'Pulse 2', D#2",
@@ -608,11 +641,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/313938/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "D#2"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "D#2",
+  "measured_note_at_rename": "G2"
  },
  {
-  "id": "cs30l_fm_rings_fs3",
+  "id": "mono77_fm_rings_ds1",
   "raw": "synth80s/fs_313145.mp3",
   "category": "synth80s",
   "description": "Yamaha CS-30L (vintage analog synth), patch 'FM Rings', F#3",
@@ -626,11 +660,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/313145/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "F#3"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "F#3",
+  "measured_note_at_rename": "D#1"
  },
  {
-  "id": "cs30l_iee_yah_c4",
+  "id": "mono77_iee_yah_f1",
   "raw": "synth80s/fs_313390.mp3",
   "category": "synth80s",
   "description": "Yamaha CS-30L (vintage analog synth), patch 'Iee Yah', C4",
@@ -644,11 +679,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/313390/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C4"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C4",
+  "measured_note_at_rename": "F1"
  },
  {
-  "id": "vp330_strings_step12",
+  "id": "vocoder_strings_c4",
   "raw": "synth80s/fs_170003.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (string ensemble), note 13 of the source's chromatic run '01 VP-330 Strings c0-c4'",
@@ -662,12 +698,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170003/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 188.58,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "C4"
  },
  {
-  "id": "vp330_strings_step24",
+  "id": "vocoder_strings_c5",
   "raw": "synth80s/fs_170003.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (string ensemble), note 25 of the source's chromatic run '01 VP-330 Strings c0-c4'",
@@ -681,12 +718,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170003/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 368.62,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "C5"
  },
  {
-  "id": "vp330_strings_step36",
+  "id": "vocoder_strings_c6",
   "raw": "synth80s/fs_170003.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (string ensemble), note 37 of the source's chromatic run '01 VP-330 Strings c0-c4'",
@@ -700,12 +738,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170003/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 548.51,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "C6"
  },
  {
-  "id": "vp330_voice_male_step12",
+  "id": "vocoder_choir_male_c3",
   "raw": "synth80s/fs_170319.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (Human Voice choir), note 13 of the source's chromatic run '02 VP-330 Human Voice Male'",
@@ -719,12 +758,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170319/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 186.02,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "vp330_voice_male_step24",
+  "id": "vocoder_choir_male_c4",
   "raw": "synth80s/fs_170319.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (Human Voice choir), note 25 of the source's chromatic run '02 VP-330 Human Voice Male'",
@@ -738,12 +778,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170319/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 370.33,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "C4"
  },
  {
-  "id": "vp330_voice_male_step36",
+  "id": "vocoder_choir_male_c5",
   "raw": "synth80s/fs_170319.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (Human Voice choir), note 37 of the source's chromatic run '02 VP-330 Human Voice Male'",
@@ -757,12 +798,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170319/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 550.09,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "C5"
  },
  {
-  "id": "vp330_voice_female_step05",
+  "id": "vocoder_choir_female_f4",
   "raw": "synth80s/fs_170492.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (Human Voice choir), note 6 of the source's chromatic run '05 VP-330 Human Voice Female'",
@@ -776,12 +818,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170492/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 92.01,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "F4"
  },
  {
-  "id": "vp330_voice_female_step12",
+  "id": "vocoder_choir_female_c5",
   "raw": "synth80s/fs_170492.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (Human Voice choir), note 13 of the source's chromatic run '05 VP-330 Human Voice Female'",
@@ -795,12 +838,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170492/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 197.11,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "C5"
  },
  {
-  "id": "vp330_voice_female_step19",
+  "id": "vocoder_choir_female_g5",
   "raw": "synth80s/fs_170492.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (Human Voice choir), note 20 of the source's chromatic run '05 VP-330 Human Voice Female'",
@@ -814,12 +858,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170492/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 301.62,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "G5"
  },
  {
-  "id": "vp330_voice_female_ens_step05",
+  "id": "vocoder_choir_female_ens_f5",
   "raw": "synth80s/fs_170493.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (Human Voice choir), note 6 of the source's chromatic run '06 VP-330 Human Voice Female ens'",
@@ -833,12 +878,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170493/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 89.55,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "F5"
  },
  {
-  "id": "vp330_voice_female_ens_step12",
+  "id": "vocoder_choir_female_ens_c6",
   "raw": "synth80s/fs_170493.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (Human Voice choir), note 13 of the source's chromatic run '06 VP-330 Human Voice Female ens'",
@@ -852,12 +898,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170493/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 195.35,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "C6"
  },
  {
-  "id": "vp330_voice_female_ens_step19",
+  "id": "vocoder_choir_female_ens_g6",
   "raw": "synth80s/fs_170493.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (Human Voice choir), note 20 of the source's chromatic run '06 VP-330 Human Voice Female ens'",
@@ -871,12 +918,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170493/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 300.29,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "G6"
  },
  {
-  "id": "vp330_voice_male_ens_step12",
+  "id": "vocoder_choir_male_ens_c3",
   "raw": "synth80s/fs_170581.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (Human Voice choir), note 13 of the source's chromatic run '07 VP-330 Human Voice Male ens'",
@@ -890,12 +938,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170581/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 190.96,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "vp330_voice_male_ens_step24",
+  "id": "vocoder_choir_male_ens_c4",
   "raw": "synth80s/fs_170581.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (Human Voice choir), note 25 of the source's chromatic run '07 VP-330 Human Voice Male ens'",
@@ -909,12 +958,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170581/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 371.5,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "C4"
  },
  {
-  "id": "vp330_voice_male_ens_step36",
+  "id": "vocoder_choir_male_ens_c5",
   "raw": "synth80s/fs_170581.mp3",
   "category": "synth80s",
   "description": "Roland VP-330 Vocoder Plus (Human Voice choir), note 37 of the source's chromatic run '07 VP-330 Human Voice Male ens'",
@@ -928,12 +978,13 @@
   "author": "Elektrik_Musik",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/Elektrik_Musik/sounds/170581/",
-  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate",
+  "note": "Freesound HQ preview (original download requires login); one note excerpted from a chromatic run (onsets found with ffmpeg silencedetect); the root comes from the builder pitch estimate; ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
   "excerpt_start": 551.47,
-  "excerpt_dur": 12
+  "excerpt_dur": 12,
+  "measured_note_at_rename": "C5"
  },
  {
-  "id": "ax80_simpleton_c4",
+  "id": "poly84_simpleton_c3",
   "raw": "synth80s/fs_279930.mp3",
   "category": "synth80s",
   "description": "Akai AX80 (vintage analog synth), patch 'Simpleton', C4",
@@ -947,11 +998,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/279930/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C4"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C4",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "sh2_filter_vel_bass_c4",
+  "id": "mono79_filter_vel_bass_c3",
   "raw": "synth80s/fs_310330.mp3",
   "category": "synth80s",
   "description": "Roland SH-2 (vintage analog synth), patch 'Filter Vel Bass', C4",
@@ -965,11 +1017,12 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/310330/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C4"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C4",
+  "measured_note_at_rename": "C3"
  },
  {
-  "id": "sh2_noisy_sqr_filter_vel_c4",
+  "id": "mono79_noisy_sqr_filter_vel_c3",
   "raw": "synth80s/fs_310729.mp3",
   "category": "synth80s",
   "description": "Roland SH-2 (vintage analog synth), patch 'Noisy Sqr Filter Vel', C4",
@@ -983,7 +1036,8 @@
   "author": "modularsamples",
   "license": "CC0-1.0",
   "license_proof_url": "https://freesound.org/people/modularsamples/sounds/310729/",
-  "note": "Freesound HQ preview (original download requires login)",
-  "labelled_note": "C4"
+  "note": "Freesound HQ preview (original download requires login); ID renamed to a brand-neutral name with the measured scientific-pitch root (C4 = 261.6 Hz); the model stays in description/source",
+  "labelled_note": "C4",
+  "measured_note_at_rename": "C3"
  }
 ]
