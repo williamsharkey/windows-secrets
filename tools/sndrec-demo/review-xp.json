@@ -1,66 +1,15 @@
 {
- "_": "Listening notes on the BASILISK SYNTH 1.2.1 demos (best of several takes each; XP renders are not bit-identical run to run). 'drop' removes an automatic flag that listening showed to be a false alarm or only informative; 'note' is shown on the page.",
- "click-harp": {
-  "drop": [
-   "very quiet"
-  ],
-  "note": "A quiet preset; one of its 32 arpeggio notes is not clearly heard. This is the 1.2.0 take (the DNA is unchanged): the best of six 1.2.1 takes lost 5 notes."
- },
- "recycle-perc": {
-  "drop": [
-   "very quiet"
-  ],
-  "note": "A quiet preset; 2 of its 26 hits are not clearly heard in the best of six takes."
- },
- "macro-echoes": {
-  "note": "Macro 1 steps the echo count (N), so Windows rebuilds the recorders; chords that land during a rebuild are dropped (2 of 8 in the best of seven takes)."
- },
- "logoff-strings": {
-  "drop": [
-   "very quiet"
-  ],
-  "note": "A quiet preset: about -46 LUFS before the demo's levelling."
- },
- "hardware-sub": {
-  "drop": [
-   "very quiet"
-  ],
-  "note": "A quiet preset: about -45 LUFS before the demo's levelling."
- },
- "print-spooler": {
-  "drop": [
-   "very quiet"
-  ],
-  "note": "A quiet preset: about -40 LUFS before the demo's levelling."
- },
- "shutdown-drone": {
-  "drop": [
-   "note onsets silent",
-   "very quiet"
-  ]
- },
- "singing-bowl": {
-  "drop": [
-   "note onsets silent",
-   "very quiet"
-  ]
- },
- "thunder-thrush": {
-  "drop": [
-   "note onsets silent",
-   "very quiet"
-  ]
- },
- "chord-thump": {
-  "drop": [
-   "very quiet"
-  ],
-  "note": "A quiet preset (about -42 LUFS before the demo's levelling). Silent in 1.2.0; in 1.2.1 every note plays."
- },
- "3-1-chord-pad": {
-  "drop": [
-   "very quiet"
-  ],
-  "note": "A quiet preset: about -39 LUFS before the demo's levelling."
- }
+ "_": "Listening notes on the BASILISK SYNTH 1.2.2 demos (best of up to four takes each; XP renders are not bit-identical run to run). 'drop' removes an automatic flag that listening showed to be a false alarm or only informative; 'note' is shown on the page.",
+ "glass-steps": {"drop": ["very quiet"], "note": "Its quietest notes (velocity 84 on a soft, short-envelope XP Ding) barely sound: 3 of 10 onsets were not clearly heard in the best of four 1.2.2 takes (1.2.1's take had all 10)."},
+ "click-harp": {"drop": ["very quiet"], "note": "A quiet preset; one of its 32 arpeggio notes is not clearly heard (the same in every take)."},
+ "recycle-perc": {"drop": ["very quiet"], "note": "A quiet preset; 2 of its 26 hits are not clearly heard (the same in every take)."},
+ "macro-echoes": {"note": "Macro 1 steps the echo count (N), so Windows rebuilds the recorders; chords that land during a rebuild are dropped (3 of 8, in every one of four takes)."},
+ "logoff-strings": {"drop": ["very quiet"], "note": "A quiet preset: about -45 LUFS before the demo's levelling."},
+ "hardware-sub": {"drop": ["very quiet"], "note": "A quiet preset: about -45 LUFS before the demo's levelling."},
+ "chord-thump": {"drop": ["very quiet"], "note": "A quiet preset (about -42 LUFS before the demo's levelling). Silent in 1.2.0; from 1.2.1 every note plays."},
+ "print-spooler": {"drop": ["very quiet"], "note": "A quiet preset: about -40 LUFS before the demo's levelling."},
+ "3-1-chord-pad": {"drop": ["very quiet"], "note": "A quiet preset: about -39 LUFS before the demo's levelling."},
+ "shutdown-drone": {"drop": ["note onsets silent", "very quiet"]},
+ "singing-bowl": {"drop": ["note onsets silent", "very quiet"]},
+ "thunder-thrush": {"drop": ["note onsets silent", "very quiet"]}
 }

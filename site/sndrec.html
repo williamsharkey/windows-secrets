@@ -94,6 +94,8 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
 .src .nmx { padding: 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .src.fb { border: 1px dashed #806000; background: #fff8d8; }
 .src.more { padding: 0 6px; font-weight: 700; }
+.chip.xpplay { padding: 0 6px; margin-left: 6px; font-size: 11px; vertical-align: 1px; }
+.chip.xpplay svg { width: 9px; height: 9px; vertical-align: -1px; }
 .srcs.compact .src:not(.more) .nmx { display: none; }
 .src[hidden] { display: none; }
 .src:hover, .src:focus-visible, .src[aria-expanded="true"] { border-color: var(--ink); outline: none; box-shadow: 0 0 0 1px var(--ink); }
@@ -424,16 +426,16 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
      caption: '<b>Changing preset while playing.</b> Kalimba Glass becomes Choir Pad. Sound Recorder rebuilds the recorders one at a time; the row being built lights yellow, and the old sound keeps playing until the new one is ready.'},
     {base: 'sndrec/pxv/b16-macro', seconds: 9.8, title: 'The mod wheel moving Macro 1 on Macro Swell',
      caption: '<b>The mod wheel.</b> On Macro Swell, the wheel (the Mod scroll bar, bottom left) adds to Macro 1, which stretches chord\'s envelope and swings ding\'s echo across the stereo field.'},
-    // BASILISK SYNTH 1.2.1: bsynth-host --editor --shots (grabs on their own thread, each within a frame of its audio
+    // BASILISK SYNTH 1.2.2 (loading, playing, Macro 1) and 1.2.1 (preset change): bsynth-host --editor --shots (grabs on their own thread, each within a frame of its audio
     // time; tools/sndrec-demo/xp_check.py), the editor window's own pixels every 1/30 s on the audio clock
     {base: 'sndrec/pxv/xp-assembly', seconds: 20.1, title: 'BASILISK SYNTH loading: Windows XP wakes and its sixteen Sound Recorders assemble, then Chord Organ plays',
-     caption: '<b>BASILISK SYNTH loading</b> (1.2.1). Windows XP wakes inside the plugin, its sixteen Sound Recorders line up beside the DNA box, the library browser, Task Manager\'s graphs and the macros, and Chord Organ plays. <i>The audio gaps come from the 1.2.1 plugin\'s output and are being fixed.</i>'},
+     caption: '<b>BASILISK SYNTH loading</b> (1.2.2). Windows XP wakes inside the plugin, its sixteen Sound Recorders line up beside the DNA box, the library browser, Task Manager\'s graphs and the macros, and Chord Organ plays.'},
     {base: 'sndrec/pxv/xp-play', seconds: 10.5, title: 'Wide Chimes playing on BASILISK SYNTH',
-     caption: '<b>BASILISK SYNTH playing</b> (1.2.1). Wide Chimes: three layers of chimes.wav and ding.wav, panned left and right. Each note plays one recorder\'s own saved sound, and its key goes down. <i>The audio gaps come from the 1.2.1 plugin\'s output and are being fixed.</i>'},
+     caption: '<b>BASILISK SYNTH playing</b> (1.2.2). Wide Chimes: three layers of chimes.wav and ding.wav, panned left and right. Each note plays one recorder\'s own saved sound, and its key goes down.'},
     {base: 'sndrec/pxv/xp-change', seconds: 18.7, title: 'A preset change on BASILISK SYNTH: Windows XP rebuilds the recorders',
-     caption: '<b>BASILISK SYNTH changing preset</b> (1.2.1). Kalimba Glass becomes Choir Pad mid-phrase. XP rebuilds the recorders with Sound Recorder\'s own commands, Open dialog and all; the notes played while it builds are silent until the new sound is ready. <i>The audio gaps come from the 1.2.1 plugin\'s output and are being fixed.</i>'},
+     caption: '<b>BASILISK SYNTH changing preset</b> (1.2.1; no 1.2.2 take passed the audio check yet). Kalimba Glass becomes Choir Pad mid-phrase. XP rebuilds the recorders with Sound Recorder\'s own commands, Open dialog and all; the notes played while it builds are silent until the new sound is ready. <i>The audio gaps come from the 1.2.1 plugin\'s output and are being fixed.</i>'},
     {base: 'sndrec/pxv/xp-macro', seconds: 10.9, title: 'Macro 1 moving on Macro Swell in BASILISK SYNTH',
-     caption: '<b>BASILISK SYNTH, Macro 1</b> (1.2.1). Automation steps Macro 1 to 35, 70, 100 and 20 % on Macro Swell: XP\'s DNA box and Macros panel follow each step, and ding\'s echo swings from left to right. <i>The audio gaps come from the 1.2.1 plugin\'s output and are being fixed.</i>'},
+     caption: '<b>BASILISK SYNTH, Macro 1</b> (1.2.2). Automation steps Macro 1 to 35, 70, 100 and 20 % on Macro Swell: XP\'s DNA box and Macros panel follow each step, and ding\'s echo swings from left to right.'},
     // the owner's picks from the 1.3.0 library (tools/sndrec-demo/videos/lib-*.txt): demo311 on the 1.2.1 machine; these DNAs are v2
     {base: 'sndrec/pxv/lib-house', seconds: 39.6, title: 'The owner\'s picks from Workgroup House Edition: Shaded End, Granite Cloud and Shaded Tremolo on BASILISK 16',
      caption: '<b>Workgroup House Edition</b> (coming in 1.3.0). The owner\'s three top-rated presets on BASILISK 16: Shaded End (a bass of XP\'s Ding slowed down, with Battery Low), then Granite Cloud (a flute, trimmed, echoed and slowed, with XP\'s Ringout) and Shaded Tremolo (XP\'s Startup and 3.11\'s Chimes). Between them Windows builds each new sound in view. Played on the 1.2.1 machine.'},
@@ -628,7 +630,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     if (!current) return;
     player.pause();
     current.row.classList.remove('playing');
-    current.btn.innerHTML = PLAY; current.btn.setAttribute('aria-pressed', 'false');
+    current.btn.innerHTML = current.btn._idle || PLAY; current.btn.setAttribute('aria-pressed', 'false');
     current.btn.setAttribute('aria-label', 'Play ' + current.p.name);
     current.done.style.clipPath = 'inset(0 100% 0 0)';
     current = null;
@@ -642,7 +644,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     var pr = player.play();
     if (pr && pr.catch) pr.catch(function (e) { if (current === me && e && e.name !== 'AbortError') stop(); });
     row.classList.add('playing');
-    btn.innerHTML = STOP; btn.setAttribute('aria-pressed', 'true'); btn.setAttribute('aria-label', 'Stop ' + p.name);
+    btn.innerHTML = btn._busy || STOP; btn.setAttribute('aria-pressed', 'true'); btn.setAttribute('aria-label', 'Stop ' + p.name);
     tick();
   }
   function tick() {
@@ -693,7 +695,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     document.getElementById('ednote').innerHTML = ed === 'lib'
       ? '<b>Coming in BASILISK 16 1.3.0.</b> The owner\'s favourites from the new library (1,039 presets in 17 sound packs), rated 6.5 to 8.5 of 10 on the review page. They are not in a released plugin yet. Each demo is the file the owner rated: rendered by <code>render311</code> through the real Windows 3.11 machine (main 4bda617), checked that every note sounds. Their level is the preset\'s own, so some are a little quieter than the other demos.'
       : ed === 'xp'
-      ? 'BASILISK SYNTH 1.2.1 (Windows XP), 43 programs. XP\'s timing is not sample-accurate, so its renders differ a little run to run; each demo is the best of up to four takes. Demos marked as 1.2.0 takes are of programs 1.2.1 only renamed (XP\'s own <code>ding.wav</code> became <code>ding-xp</code>): the same files.'
+      ? 'BASILISK SYNTH 1.2.2 (Windows XP), 43 programs, all rendered with 1.2.2 (no more dropouts). XP\'s timing is not sample-accurate, so its renders differ a little run to run; each demo is the best of up to four takes.'
       : 'BASILISK 16 1.2.1 (Windows 3.11), 76 programs, rendered with <code>render311</code>, which gives the same result on every run.';
     // DNA.md 2.4: a preset is XP when it uses any XP file, else W3.11 (library sounds do not count)
     all.forEach(function (p) { p.edl = p.ed === 'xp' ? 'XP' : 'W3.11'; });
@@ -712,8 +714,15 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
       var li = el('li', 'row');
       var btn = el('button', 'btn play', PLAY); btn.type = 'button';
       var meta = el('div', 'meta', '<div class="nm"><span class="t">' + esc(p.name) + '</span></div><div class="sub">' + esc(p.cat) + ' &middot; ' + esc(p.phrase) +
-        (p.rating ? ' &middot; ' + esc(p.pack) + ' &middot; rated ' + p.rating + '/10' : ' &middot; program ' + (p.n + 1)) + (p.macro ? '<span class="badge">Macro 1 moves</span>' : '') + (p.flags.length ? '<span class="badge">issue</span>' : '') + '</div>');
+        (p.rating ? ' &middot; ' + esc(p.pack) + ' &middot; rated ' + p.rating + '/10' : ' &middot; program ' + (p.n + 1)) + (p.xp ? ' <button type="button" class="chip xpplay">' + PLAY + ' XP</button>' : '') + (p.macro ? '<span class="badge">Macro 1 moves</span>' : '') + (p.flags.length ? '<span class="badge">issue</span>' : '') + '</div>');
       meta.firstChild.appendChild(srcBadges(p, E.sounds || {}));
+      var xb = meta.querySelector('.xpplay');
+      if (xb) {   // the owner's pick played by BASILISK SYNTH 1.2.2 (the XP render)
+        var px = {name: p.name + ' on XP', file: p.xp.file, sec: p.xp.sec};
+        xb._idle = PLAY + ' XP'; xb._busy = STOP + ' XP';
+        xb.setAttribute('aria-label', 'Play ' + p.name + ' as BASILISK SYNTH 1.2.2 renders it'); xb.setAttribute('aria-pressed', 'false');
+        xb.addEventListener('click', function () { play(px, li, xb, done); });
+      }
       var wave = el('div', 'wave');
       var done = el('div', 'done');
       wave.innerHTML = waveSvg(p.wave, '#3a7a3a');
