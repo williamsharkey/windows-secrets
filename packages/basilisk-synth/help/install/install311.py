@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Install BASILISK 16 Help on a Windows for Workgroups 3.11 C: drive (a folder), before the machine is packed.
+"""Install SNDWAVE2000 Help on a Windows for Workgroups 3.11 C: drive (a folder), before the machine is packed.
 
-    install311.py DRIVE [HLP]        HLP defaults to ../out/BASIL16.HLP
+    install311.py DRIVE [HLP]        HLP defaults to ../out/SNDWAVE.HLP
 
 It does what Setup programs of 1993 did, but from the host, so it needs no run inside Windows:
-  - copies the help file to DRIVE\\BS\\BASIL16.HLP (beside SYNTH.EXE);
-  - writes a Program Manager group, DRIVE\\WINDOWS\\BASIL16.GRP, "BASILISK 16", with one item,
-    "BASILISK 16 Help" = WINHELP.EXE C:\\BS\\BASIL16.HLP, with WINHELP.EXE's own icon;
+  - copies the help file to DRIVE\\BS\\SNDWAVE.HLP (beside SYNTH.EXE);
+  - writes a Program Manager group, DRIVE\\WINDOWS\\SNDWAVE.GRP, "SNDWAVE2000", with one item,
+    "SNDWAVE2000 Help" = WINHELP.EXE C:\\BS\\SNDWAVE.HLP, with WINHELP.EXE's own icon;
   - adds it to PROGMAN.INI ([Groups] GroupN=, [Settings] Order=), so Program Manager shows it.
 Running it again replaces the files and does not add a second group.
 
@@ -21,11 +21,11 @@ import shutil
 import struct
 import sys
 
-GROUP_NAME = 'BASILISK 16'
-ITEM_NAME = 'BASILISK 16 Help'
-ITEM_CMD = r'WINHELP.EXE C:\BS\BASIL16.HLP'
+GROUP_NAME = 'SNDWAVE2000'
+ITEM_NAME = 'SNDWAVE2000 Help'
+ITEM_CMD = r'WINHELP.EXE C:\BS\SNDWAVE.HLP'
 ICON_PATH = r'C:\WINDOWS\WINHELP.EXE'
-GRP = 'BASIL16.GRP'
+GRP = 'SNDWAVE.GRP'
 
 
 def find(d, name):
@@ -113,16 +113,16 @@ def main():
         sys.exit(__doc__)
     drive = sys.argv[1]
     hlp = sys.argv[2] if len(sys.argv) > 2 else os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'out',
-                                                                'BASIL16.HLP')
+                                                                'SNDWAVE.HLP')
     win = find(drive, 'WINDOWS')
     if not os.path.isfile(find(win, 'WINHELP.EXE')):
         sys.exit('install311: %s has no WINDOWS\\WINHELP.EXE' % drive)
     bs = find(drive, 'BS')
     os.makedirs(bs, exist_ok=True)
-    shutil.copyfile(hlp, os.path.join(bs, 'BASIL16.HLP'))
+    shutil.copyfile(hlp, os.path.join(bs, 'SNDWAVE.HLP'))
     open(os.path.join(win, GRP), 'wb').write(group_file())
     edit_progman(find(win, 'PROGMAN.INI'))
-    print('install311: BASIL16.HLP in %s, group %s' % (bs, GRP))
+    print('install311: SNDWAVE.HLP in %s, group %s' % (bs, GRP))
 
 
 if __name__ == '__main__':

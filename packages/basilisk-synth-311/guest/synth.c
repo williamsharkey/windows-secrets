@@ -3564,7 +3564,7 @@ static void paint(HWND h)
     SetBkMode(dc, TRANSPARENT);
     of = SelectObject(dc, big);
     SetTextColor(dc, RGB(0, 0, 128));
-    if (titleShown) TextOut(dc, 12, 10, "BASILISK 16", 11);
+    if (titleShown) TextOut(dc, 12, 10, "SNDWAVE2000", 11);
     SelectObject(dc, sm);
     if (assembled) TextOut(dc, ENVX + (133 - (int)LOWORD(GetTextExtent(dc, "Envelope", 8))) / 2, 41, "Envelope", 8);   /* under its view */
     SelectObject(dc, big);
@@ -3677,7 +3677,7 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
 {
     WNDCLASS wc; HINSTANCE hk; int r; HWND pm;
     hInst = hi;
-    if (!bs_present()) { MessageBox(NULL, "The BASILISK 16 card is not here.", "BASILISK 16", MB_OK); return 1; }
+    if (!bs_present()) { MessageBox(NULL, "The SNDWAVE2000 card is not here.", "SNDWAVE2000", MB_OK); return 1; }
     hk = LoadLibrary("C:\\BS\\SYNHOOK.DLL");
     if ((UINT)hk < 32) { logf_("no SYNHOOK.DLL"); return 1; }
     HookActive = (void (FAR PASCAL *)(BOOL))GetProcAddress(hk, "HOOKACTIVE");
@@ -3692,7 +3692,7 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
     wc.hIcon = ExtractIcon(hi, "C:\\WINDOWS\\SOUNDREC.EXE", 0);   /* minimized, BASILISK 16 is Sound Recorder's icon */
     if ((UINT)wc.hIcon <= 1) wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     RegisterClass(&wc);
-    hMain = CreateWindow("Basilisk16", "BASILISK 16 - Sound Recorder Synthesizer", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN,
+    hMain = CreateWindow("Basilisk16", "SNDWAVE2000 - Executive Audiophile Edition", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN,
                          0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, hi, NULL);
 
     /* the desktop as the visitor first sees it: Program Manager out of the way, a clock, sixteen recorders */
@@ -3740,7 +3740,7 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
         MSG m;
         if (PeekMessage(&m, 0, 0, 0, PM_REMOVE)) {
             if (m.message == WM_QUIT) break;
-            if (m.message == WM_KEYDOWN && m.wParam == VK_F1) { WinHelp(hMain, "C:\\BS\\BASIL16.HLP", HELP_CONTENTS, 0L); continue; }
+            if (m.message == WM_KEYDOWN && m.wParam == VK_F1) { WinHelp(hMain, "C:\\BS\\SNDWAVE.HLP", HELP_CONTENTS, 0L); continue; }
             TranslateMessage(&m); DispatchMessage(&m);
         } else {
             if (!poll_host()) {

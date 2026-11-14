@@ -196,14 +196,14 @@ public:
     Basilisk16Shared *shared() { return &sh_; }
 
 protected:
-    const char *getLabel() const override { return "Basilisk16"; }
+    const char *getLabel() const override { return "SNDWAVE2000"; }
     const char *getDescription() const override
     {
         return "Sixteen Windows 3.11 Sound Recorders assembled into one instrument. The sound is Sound Recorder's own, "
                "played by Windows for Workgroups 3.11 in an emulated PC; a DNA string of Sound Recorder commands shapes it.";
     }
-    const char *getMaker() const override { return "William Sharkey"; }
-    const char *getHomePage() const override { return "https://williamsharkey.com/basilisk-download.html"; }
+    const char *getMaker() const override { return "Algorithmic Industries"; }
+    const char *getHomePage() const override { return "https://williamsharkey.com/sndwave2000"; }
     const char *getLicense() const override { return "GPL-2.0-or-later"; }
     uint32_t getVersion() const override { return d_version(1, 2, 1); }
 
@@ -332,7 +332,7 @@ protected:
                     const bool ok = !recDir_.empty() && b16rec::recall(myRec_, recDir_, v, name, sha, line, pinned);
                     if (name.empty()) continue;
                     userKept_[name] = v;
-                    if (!ok) { std::fprintf(stderr, "BASILISK 16: missing recording %s (%s)\n", name.c_str(), sha.c_str()); continue; }
+                    if (!ok) { std::fprintf(stderr, "SNDWAVE2000: missing recording %s (%s)\n", name.c_str(), sha.c_str()); continue; }
                     if (pinned) { userPin_[name] = sha; userLines_.push_back(line); pendingUser_.push_back(line); noteHostFiles(); }
                     if (std::find(userNames_.begin(), userNames_.end(), name) == userNames_.end()) userNames_.push_back(name);
                 }
@@ -779,7 +779,7 @@ private:
     {
         const char *bundle = getBundlePath();
         const char *res = bundle ? getResourcePath(bundle) : nullptr;
-        if (!res) { status("BASILISK 16: the machine files were not found next to the plugin."); sh_.S->state = BS_FAILED; return; }
+        if (!res) { status("SNDWAVE2000: the machine files were not found next to the plugin."); sh_.S->state = BS_FAILED; return; }
         std::string machine = std::string(res) + "/machine/";
 #ifdef _WIN32
         const char *coreName = "dosbox_pure_libretro.dll";
@@ -811,10 +811,10 @@ private:
 #ifdef _WIN32
         for (auto &ch : recDir_) if (ch == '/') ch = '\\';
 #endif
-        if (!copyFile(machine + coreName, coreCopy_)) { status("BASILISK 16: cannot copy the emulator core."); sh_.S->state = BS_FAILED; return; }
+        if (!copyFile(machine + coreName, coreCopy_)) { status("SNDWAVE2000: cannot copy the emulator core."); sh_.S->state = BS_FAILED; return; }
         {
             FILE *f = std::fopen((machine + "w31.conf").c_str(), "rb");
-            if (!f) { status("BASILISK 16: cannot read the machine settings."); sh_.S->state = BS_FAILED; return; }
+            if (!f) { status("SNDWAVE2000: cannot read the machine settings."); sh_.S->state = BS_FAILED; return; }
             std::string out;
             char line[1024];
             std::string mdir = machine.substr(0, machine.size() - 1);
@@ -832,7 +832,7 @@ private:
                 out += s;
             }
             std::fclose(f);
-            if (!writeText(conf_, out)) { status("BASILISK 16: cannot write the machine settings."); sh_.S->state = BS_FAILED; return; }
+            if (!writeText(conf_, out)) { status("SNDWAVE2000: cannot write the machine settings."); sh_.S->state = BS_FAILED; return; }
         }
         const char *logEnv = std::getenv("BASILISK16_LOG");
         status("Starting Windows for Workgroups 3.11...");

@@ -434,15 +434,15 @@ A sound plays at its own speed on the [root note](!term_root), middle C (60), un
 :xp - On the File menu, choose Minimize.
 :xp The taskbar comes back, with a BASILISK SYNTH button on it. The desktop has the BASILISK SYNTH Help icon.
 :311 - Click the Minimize button at the right end of the synth's title bar.
-:311 The synth becomes the BASILISK 16 icon at the bottom of the screen.
+:311 The synth becomes the {NAME} icon at the bottom of the screen.
 ## To restore the synth
 :xp - Click the BASILISK SYNTH button on the taskbar.
-:311 - Double-click the BASILISK 16 icon.
+:311 - Double-click the {NAME} icon.
 ## To open this Help
 :xp - In the synth, press F1, or choose Help Contents from the Help menu.
 :xp - On the desktop, double-click **BASILISK SYNTH Help**.
 :311 - In the synth, press F1.
-:311 - In Program Manager, open the BASILISK 16 group and double-click **BASILISK 16 Help**.
+:311 - In Program Manager, open the {NAME} group and double-click **{NAME} Help**.
 > **Note:** The system sounds of this Windows are turned off, so they never play into your music. When you remove the plugin, this Windows stops, and changes to its files are not kept.
 
 %topic menus

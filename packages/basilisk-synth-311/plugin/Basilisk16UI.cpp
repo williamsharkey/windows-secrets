@@ -75,8 +75,8 @@ protected:
             std::string def;
             if (req >= 3) { std::lock_guard<std::mutex> l(sh_->fileMtx); def = sh_->fileName; }
             o.saving = req == 1 || req == 3;
-            o.title = req == 1 ? "Save BASILISK 16 state" : req == 2 ? "Load BASILISK 16 state" : req == 3 ? "Export recording" : req == 5 ? "Import a Scala tuning (.scl, .kbm)" : "Import WAV";
-            o.defaultName = req >= 3 ? def.c_str() : "BASILISK 16.b16";
+            o.title = req == 1 ? "Save SNDWAVE2000 state" : req == 2 ? "Load SNDWAVE2000 state" : req == 3 ? "Export recording" : req == 5 ? "Import a Scala tuning (.scl, .kbm)" : "Import WAV";
+            o.defaultName = req >= 3 ? def.c_str() : "SNDWAVE2000.b16";
             fileReqNow_ = req;
             fileSaving_ = o.saving;
             openFileBrowser(o);

@@ -1,5 +1,5 @@
-// BASILISK 16: My Recordings on the host (design/RECORDING.md sections 2.4, 3.1, 3.2), for the plugin and render311.
-//   - the shared folder Documents/BASILISK/My Recordings: <name>.wav, index.tsv, .versions/<sha1>.wav; the plugin
+// SNDWAVE2000 (BASILISK 16 in the code): My Recordings on the host (design/RECORDING.md sections 2.4, 3.1, 3.2), for the plugin and render311.
+//   - the shared folder Documents/SNDWAVE2000/My Recordings: <name>.wav, index.tsv, .versions/<sha1>.wav; the plugin
 //     process is its only writer (a lock file, a temporary file renamed into place)
 //   - the instance's R: drive (a folder DOSBox mounts): the recordings copied in as U0001.WAV ..., and Windows' own
 //     Save As writes there; `rec saved R:\NAME.WAV` makes the host check the file and publish it
@@ -56,15 +56,15 @@ inline void makeDir(const std::string &p)
     mkdir(p.c_str(), 0755);
 #endif
 }
-inline std::string myRecordingsDir()   // Documents/BASILISK/My Recordings (made if missing); BASILISK16_MYREC overrides
+inline std::string myRecordingsDir()   // Documents/SNDWAVE2000/My Recordings (made if missing); BASILISK16_MYREC overrides
 {
     if (const char *e = std::getenv("BASILISK16_MYREC")) if (*e) { makeDir(e); return e; }
 #ifdef _WIN32
     const char *home = std::getenv("USERPROFILE"); std::string d = std::string(home ? home : "C:") + "\\Documents";
-    makeDir(d); d += "\\BASILISK"; makeDir(d); d += "\\My Recordings"; makeDir(d); makeDir(d + "\\.versions");
+    makeDir(d); d += "\\SNDWAVE2000"; makeDir(d); d += "\\My Recordings"; makeDir(d); makeDir(d + "\\.versions");
 #else
     const char *home = std::getenv("HOME"); std::string d = std::string(home ? home : "/tmp") + "/Documents";
-    makeDir(d); d += "/BASILISK"; makeDir(d); d += "/My Recordings"; makeDir(d); makeDir(d + "/.versions");
+    makeDir(d); d += "/SNDWAVE2000"; makeDir(d); d += "/My Recordings"; makeDir(d); makeDir(d + "/.versions");
 #endif
     return d;
 }

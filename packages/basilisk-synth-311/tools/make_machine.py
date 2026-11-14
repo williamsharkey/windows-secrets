@@ -2,7 +2,7 @@
 """Build the machine the plugin resumes: drive.zip (the Windows for Workgroups 3.11 C: drive with BASILISK 16 installed, and the
 snapshot of it (sixteen Sound Recorders open, waiting for `go`).
 
-  make_machine.py WFW_DRIVE GUEST_BUILD_DIR CORE_SO OUT_DIR [--library LIBRARY.zip] [--xpsounds DIR] [--help BASIL16.HLP] [--folder]
+  make_machine.py WFW_DRIVE GUEST_BUILD_DIR CORE_SO OUT_DIR [--library LIBRARY.zip] [--xpsounds DIR] [--help SNDWAVE.HLP] [--folder]
 
 --library: the library disc (tools/make_library311.py), mounted as L:; the snapshot is made with it mounted, so the
 bundle must ship this same library.zip (and library.names.txt, the plugin's catalogue). Without it, an empty disc.
@@ -16,7 +16,7 @@ from bsdrv import Engine
 src, gout, core, out = sys.argv[1:5]
 library = sys.argv[sys.argv.index('--library') + 1] if '--library' in sys.argv else None   # the L: drive (make_library311.py)
 xpsounds = sys.argv[sys.argv.index('--xpsounds') + 1] if '--xpsounds' in sys.argv else None   # C:\XPSOUNDS (xpsounds311.py)
-helpfile = sys.argv[sys.argv.index('--help') + 1] if '--help' in sys.argv else None   # BASIL16.HLP (packages/basilisk-synth/help)
+helpfile = sys.argv[sys.argv.index('--help') + 1] if '--help' in sys.argv else None   # SNDWAVE.HLP (packages/basilisk-synth/help)
 folder = '--folder' in sys.argv   # C: as a plain folder instead of drive.zip (for experiments)
 drive = os.path.join(out, 'drive')
 if os.path.exists(out): shutil.rmtree(out)
@@ -29,7 +29,7 @@ if xpsounds:
     os.makedirs(os.path.join(drive, 'XPSOUNDS'), exist_ok=True)
     for f in sorted(os.listdir(xpsounds)):
         if f.upper().endswith('.WAV'): shutil.copy(os.path.join(xpsounds, f), os.path.join(drive, 'XPSOUNDS', f.upper()))
-# the help (packages/basilisk-synth/help): C:\BS\BASIL16.HLP and a "BASILISK 16" group in Program Manager (F1 opens it)
+# the help (packages/basilisk-synth/help): C:\BS\SNDWAVE.HLP and a "SNDWAVE2000" group in Program Manager (F1 opens it)
 if helpfile:
     inst = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'basilisk-synth', 'help', 'install', 'install311.py')
     subprocess.run([sys.executable, inst, drive, helpfile], check=True)
@@ -71,9 +71,9 @@ if helpfile and not folder:
         en.wait_packet(2, 120)
     finally:
         en.close()
-    grp = open(os.path.join(drive, 'WINDOWS', 'BASIL16.GRP'), 'rb').read()
+    grp = open(os.path.join(drive, 'WINDOWS', 'SNDWAVE.GRP'), 'rb').read()
     shutil.rmtree(drive); shutil.move(pristine, drive)
-    open(os.path.join(drive, 'WINDOWS', 'BASIL16.GRP'), 'wb').write(grp)
+    open(os.path.join(drive, 'WINDOWS', 'SNDWAVE.GRP'), 'wb').write(grp)
     os.remove(nconf)
     print('help group normalized by Program Manager: %d bytes' % len(grp))
 
