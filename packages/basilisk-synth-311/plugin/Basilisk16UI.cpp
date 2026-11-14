@@ -79,6 +79,10 @@ protected:
             o.defaultName = req >= 3 ? def.c_str() : "SNDWAVE2000.b16";
             fileReqNow_ = req;
             fileSaving_ = o.saving;
+            if (const char *tf = std::getenv(req == 1 ? "BASILISK16_TEST_SAVE_AS" : req == 2 ? "BASILISK16_TEST_OPEN" : "-")) if (*tf) {
+                uiFileBrowserSelected(tf);   // test: the file the dialog would have given (the host's dialog is not scriptable)
+                return;
+            }
             openFileBrowser(o);
         }
     }
