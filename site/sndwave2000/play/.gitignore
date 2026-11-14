@@ -1,0 +1,4 @@
+# build outputs of tools/basilisk16-web/build.sh (large; Windows, its sounds and the library disc): not in git
+*.wasm
+*.state
+*.zip

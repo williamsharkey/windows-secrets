@@ -17,6 +17,7 @@
 #include "V3Alloc.h"
 #include "V3Voice.h"
 #include "V3Host.h"
+#include "V3Seq.h"
 
 #include <emscripten.h>
 #include <cmath>
@@ -81,7 +82,9 @@ bool recSelf = false;              // the card's ADC records the synth's own out
 std::map<std::string, std::string> stateExtra;   // the state's other lines, kept (STATE.md)
 std::vector<std::string> stateUsers;             // its `user` lines (My Recordings, RECORDING.md 4.2), kept
 uint64_t inNext = 0;               // the microphone: the next DAC sample to write into the input ring
-int pendingStateIO = 0;
+int pendingStateIO = 0;           // Windows' Save state... / Load state... / Scala... (1 / 2 / 3), for the page
+b16v3::Sequencer seq;              // the mine-grid sequencer (V3Seq.h), as the plugin
+std::string gridLine; bool gridDirty = false; int rootAudio = 60; uint64_t seqPos = 0;
 std::vector<uint32_t> pendSegs[kMaxLayers]; bool segsDirty = false;   // the guest's seg lines, after the DNA they belong to (as the plugin's housekeeping)            // Windows' Save state... / Load state... (1 / 2), for the page
 
 std::string sigOf(const Dna &d)
@@ -143,7 +146,7 @@ void setKeyParams(const b16v3::KeyParams &k) { keyParams = k; keyVer++; applyKey
 // the plugin's housekeeping: the audio side adopts a DNA (its voices, v3 allocator, layers, gain)
 void adopt(const Dna &d, const bsynth3::Dna3 &d3, uint32_t salt)
 {
-    d3Audio = d3;
+    d3Audio = d3; rootAudio = d.g.root;
     noteHost.adopt(d, d3, salt);
     for (int i = 0; i < kMaxLayers; i++)
         if (layerCache[i].known) noteHost.layerInfo(i, layerCache[i].first, layerCache[i].count, layerCache[i].rate, layerCache[i].frames);
@@ -207,6 +210,7 @@ void playMidi(uint8_t st0, uint8_t d1, uint8_t d2, bool fromWindows, uint64_t at
     }
     // the notes: V3Host.h, the same code as the plugin and render311
     noteHost.bpm = bpm; noteHost.capWin = capWin; noteHost.capRate = capRate; noteHost.capTape = capTape; noteHost.recBusy = recBusy;
+    if (seq.input(st0, d1, d2, d3Audio.g.x)) return;   // a sequencer DNA: played notes choose its root
     noteHost.midi(st0, d1, d2, at, [](const char *line, uint64_t when) {
         sendLine(line, ++nextId, when);
         if (!std::strncmp(line, "on ", 3)) notesSent++;
@@ -245,11 +249,14 @@ void onLine(const std::string &line)
     if (guestLog.size() < 4000) guestLog.push_back(line);
     if (line.rfind("keyset ", 0) == 0 || line.rfind("keyopt ", 0) == 0 || line.rfind("keymask ", 0) == 0) {   // the visitor changed the key
         b16v3::KeyParams kp = keyParams;
+        if ((line.rfind("keyset ", 0) == 0 || line.rfind("keymask ", 0) == 0) && !kp.tuning.empty()) { kp.tuning.clear(); sendLine("scala off"); }   // a library scale or the notes: Scala goes
         if (line.rfind("keyset ", 0) == 0) kp.mask = 0;
         if (kp.readLine(line.rfind("keyset ", 0) == 0 ? "key " + line.substr(7) : line)) setKeyParams(kp);
         return;
     }
     if (line == "state save" || line == "state load") { pendingStateIO = line == "state save" ? 1 : 2; return; }   // the page does the file
+    if (line == "scala import") { pendingStateIO = 3; return; }   // the page's file picker: a Scala .scl or .kbm (b16_scala)
+    if (line.rfind("grid ", 0) == 0) { gridLine = line; gridDirty = true; return; }   // the mine-grid board
     if (line.rfind("seg ", 0) == 0) {   // seg <layer> <f0> <f1> ...: where a layer's segments start (kit pads)
         std::istringstream in(line.substr(4)); int L = -1; in >> L;
         std::vector<uint32_t> v; uint32_t f; while (in >> f) v.push_back(f);
@@ -366,6 +373,21 @@ EMSCRIPTEN_KEEPALIVE void b16_tick()
         dnaToGuest = true;
     }
     if (hello && keyVerGuest != keyVer) sendKey();
+    if (hello) {   // the plugin's per-block work: the sequencer's steps (no transport here: its free run, xf) and grains
+        const uint64_t now = nowStamp(), end = now + 960;   // this tick's block: 20 ms ahead of the latest note stamp
+        if (seqPos < now) seqPos = now;
+        auto sink = [](const char *line, uint64_t when) { sendLine(line, ++nextId, when); if (!std::strncmp(line, "on ", 3)) notesSent++; };
+        noteHost.bpm = bpm; noteHost.capWin = capWin; noteHost.capRate = capRate; noteHost.capTape = capTape; noteHost.recBusy = recBusy;
+        if (gridDirty) { seq.setGrid(gridLine); gridDirty = false; }
+        if (end > seqPos && d3Audio.g.x.on && seq.haveGrid()) {
+            const int kpScale = keyParams.scale <= 12 ? keyParams.scale : 0, before = seq.stepCol();
+            seq.block(noteHost, d3Audio, rootAudio, seqPos, end - seqPos, false, 0.0, bpm, sink,
+                      d3Audio.g.scale >= 0 ? d3Audio.g.scale : kpScale, d3Audio.g.rootPc);
+            if (seq.stepCol() != before) { char b[24]; std::snprintf(b, sizeof b, "step %d", seq.stepCol()); sendLine(b); }   // the playhead
+        }
+        if (end > seqPos) seqPos = end;
+        noteHost.tick(end, sink);   // grains due by then
+    }
     if (hello && dnaToGuest && !inFlight) {
         dnaToGuest = false;
         const Dna d = parse(dnaText);
@@ -414,12 +436,13 @@ EMSCRIPTEN_KEEPALIVE const char *b16_get_state()
 {
     static std::string out;
     bsynth::State s; s.dna = dnaText; s.extra = stateExtra; s.users = stateUsers;
-    s.extra.erase("key"); s.extra.erase("keyopt"); s.extra.erase("keymask");
+    s.extra.erase("key"); s.extra.erase("keyopt"); s.extra.erase("keymask"); s.extra.erase("tuning");
     if (keyParams != b16v3::KeyParams()) {
         s.extra["key"] = std::to_string(keyParams.root) + " " + std::to_string(keyParams.scale);
         s.extra["keyopt"] = std::to_string(keyParams.usePreset) + " " + std::to_string(keyParams.snap) + " " + std::to_string(keyParams.remap) + " " +
                             std::to_string(keyParams.labels) + " " + std::to_string(keyParams.anchor);
         if (keyParams.mask) s.extra["keymask"] = std::to_string(keyParams.mask);
+        if (!keyParams.tuning.empty()) s.extra["tuning"] = keyParams.tuning;
     }
     out = s.write();
     return out.c_str();
@@ -432,12 +455,31 @@ EMSCRIPTEN_KEEPALIVE int b16_set_state(const char *text)
     if (s.extra.count("key")) kp.readLine("key " + s.extra["key"]);
     if (s.extra.count("keyopt")) kp.readLine("keyopt " + s.extra["keyopt"]);
     if (s.extra.count("keymask")) kp.readLine("keymask " + s.extra["keymask"]);
+    if (s.extra.count("tuning")) kp.readLine("tuning " + s.extra["tuning"]);
     stateExtra = s.extra; stateUsers = s.users;
     setKeyParams(kp);
     setDna(s.dna, true);
     return 1;
 }
 // Windows' "Save state..." / "Load state..." (1 / 2), once: the page opens its download or its file picker
+// a Scala file the page read (Windows' Scala... button): the tuning of new notes, as the plugin's scalaNow
+EMSCRIPTEN_KEEPALIVE void b16_scala(const char *name0, const uint8_t *bytes, int n)
+{
+    const std::string name = name0 ? name0 : "", text(bytes ? (const char *)bytes : "", bytes ? (size_t)n : 0);
+    b16v3::KeyParams kp = keyParams;
+    bsynth3::Tuning t;
+    if (!kp.tuning.empty()) bsynth3::tuningFromText(kp.tuning, t);
+    std::string lower = name; for (auto &c : lower) c = (char)std::tolower((unsigned char)c);
+    const bool kbm = lower.size() > 4 && lower.compare(lower.size() - 4, 4, ".kbm") == 0;
+    std::string err;
+    const bool ok = kbm ? (!kp.tuning.empty() && bsynth3::parseKbm(text, t, &err)) : bsynth3::parseScl(text, t, &err);
+    if (!ok) { sendLine(("scala error " + (kbm && kp.tuning.empty() ? std::string("open a .scl first") : err)).substr(0, 200)); return; }
+    if (t.name.empty() || !kbm) { std::string st = name; const size_t d = st.rfind('.'); if (d != std::string::npos) st.resize(d); if (t.name.empty()) t.name = st; }
+    kp.tuning = bsynth3::tuningText(t);
+    setKeyParams(kp);
+    std::string nm = t.name; for (auto &c : nm) if (c == ' ') c = '_';
+    sendLine(("scala ok " + std::to_string(t.size()) + " " + nm).substr(0, 200));
+}
 EMSCRIPTEN_KEEPALIVE int b16_state_io() { const int r = pendingStateIO; pendingStateIO = 0; return r; }
 
 // the pointer and keys, exactly as the plugin's editor hands them to the engine

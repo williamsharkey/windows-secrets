@@ -8,6 +8,15 @@ The plugin's own engine, compiled to WebAssembly with Emscripten:
 
 Every sound comes from the sixteen Sound Recorders through the emulated card, as in the plugin.
 
+## Where it is served
+
+- **/sndwave2000/play/** (SNDWAVE2000, the current edition): its own page, `index.html` from `play.html` (the site
+  lane's frame: `/sndwave2000/site.css`, mast, foot) around the block in `section.html` (`make_play.py`), with
+  every file next to it and its own `.htaccess` (COOP/COEP on the page, CORP on the files). In git:
+  `site/sndwave2000/play/` (the large files are not).
+- **sndrec.html + sndrec/try/** (BASILISK 16, the earlier build): kept as it was until sndrec.html redirects;
+  `insert_section.py` puts the block into a page.
+
 ## How it runs
 
 | Part | Where |
@@ -34,7 +43,7 @@ Every sound comes from the sixteen Sound Recorders through the emulated card, as
   also goes to the emulated mouse as relative motion (`web_engine.c`, `host.cpp`). WIN.INI gets `MouseSpeed=0`, so
   that motion is 1:1.
 - **DNA v3.** The notes are the plugin's own code: `plugin/V3Host.h` (`b16v3::NoteHost`, shared with the plugin and
-  render311: core's voices, `V3Alloc.h`, `V3Voice.h`); `host.cpp` follows `Basilisk16Plugin.cpp` for the rest. Kit pads with their segment windows and choke groups, mono and legato glide, Wo/Wb/Wt
+  render311: core's voices, `V3Alloc.h`, `V3Voice.h`); `host.cpp` follows `Basilisk16Plugin.cpp` for the rest. Grains (`NoteHost::tick`), tape (`mod` lines), the mine-grid sequencer (`V3Seq.h`: free run, `xf`, as the page has no transport) and Scala import (Windows' Scala... opens the page's file picker; `b16_scala`) run once per worker tick as the plugin does per block. Kit pads with their segment windows and choke groups, mono and legato glide, Wo/Wb/Wt
   delays at the page's tempo, the key and scale (`key`, `klabels`, the scale list in the hello), Windows' Save/Load
   state. The core is compiled from the plugin's own `SharedCore*.cpp` units. Checked against `render311` (same DNA,
   score and key; the web engine under node, granted exactly as render311 runs its engine): kit with chokes, degree

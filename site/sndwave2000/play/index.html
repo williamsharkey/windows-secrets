@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Play SNDWAVE2000</title>
+<meta name="description" content="SNDWAVE2000 by Algorithmic Industries, in your browser: Windows for Workgroups 3.11 and sixteen real Sound Recorders, played as one instrument.">
+<meta property="og:title" content="Play SNDWAVE2000">
+<meta property="og:description" content="Windows for Workgroups 3.11 and sixteen real Sound Recorders, played as one instrument, in your browser.">
+<meta property="og:image" content="https://williamsharkey.com/sndwave2000/art/title-640.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/sndwave2000/art/gridsun-32.png">
+<link rel="preload" href="/sndwave2000/fonts/DejaVuSerif-Bold.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/sndwave2000/fonts/DejaVuSans-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/sndwave2000/site.css">
+<script src="/sndrec/pxfit.js"></script>
+<style>
+/* the "Try it online" block on the site's paper (site.css: the Windows tokens, .btn, .note, .pxbox) */
+#b16try { margin-top: 6px; border-top: 0; padding-top: 0; }
+#b16try .b16card { color: #000; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <a class="co" href="/sndwave2000/"><img src="/sndwave2000/art/gridsun-32.png" width="32" height="32" alt="">Algorithmic Industries</a>
+  <nav aria-label="SNDWAVE2000"><a href="/sndwave2000/">Home</a><a href="/sndwave2000/packs/">Sound packs</a><a href="/sndwave2000/play/" class="playlink" aria-current="page">Play</a><a href="/sndwave2000/#download">Download</a></nav>
+</header>
+
+<main>
+<section class="intro">
+  <p class="kicker">SNDWAVE2000 &middot; Executive Audiophile Edition</p>
+  <h1>Play it here</h1>
+</section>
+<!-- b16-try: begin. "Try it online": SNDWAVE2000 in the browser (tools/basilisk16-web; files in ). Keep this block together. -->
+<style>
+#b16try { margin: 20px 0 14px; padding-top: 14px; border-top: 1px solid var(--face); }
+/* the screen is a pxfit picture (sndrec/pxfit.js): every Windows pixel exactly k x k device pixels, or an exact 1/n
+   reduction (with a note) where even k = 1 does not fit; sized inline, before the first paint */
+#b16try .b16stage { position: relative; }
+#b16screen { outline: none; cursor: default; touch-action: none; }
+#b16try .b16over { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 32, .45); }
+#b16try .b16card { max-height: calc(100% - 8px); overflow: hidden; background: var(--face); color: var(--ink); border: 1px solid var(--ink); box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo), 3px 3px 0 rgba(0,0,0,.5);
+  padding: 14px 18px 12px; width: min(440px, calc(100% - 24px)); text-align: center; }
+#b16try .b16go { font-weight: 700; font-size: 16px; padding: 8px 18px; margin: 0 0 6px; }
+#b16try .b16build { display: block; margin: 0 auto 4px; font-size: 13px; padding: 3px 12px; }
+#b16try .b16card p { margin: 4px 0 0; font-size: 13.5px; }
+#b16try .b16msg { min-height: 2.6em; line-height: 1.3; }   /* (two lines kept: the card never changes height) */
+@media (max-width: 600px) { #b16try .b16card { padding: 8px 10px; } #b16try .b16card p { font-size: 12.5px; } #b16try .b16go { font-size: 14px; padding: 5px 12px; } }
+#b16try .b16prog { height: 18px; border: 2px solid; border-color: var(--lo) var(--hi) var(--hi) var(--lo); background: #fff; margin: 4px 0 2px; }
+#b16try .b16prog i { display: block; height: 100%; width: 0; background: var(--sel); transition: width .15s linear; }
+#b16try .b16tools { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; max-width: 1028px; margin: 8px auto 0; min-height: 36px; }
+#b16try .b16tools .btn { margin: 0; }
+#b16try .b16info { padding: 6px 9px; font-style: italic; font-family: "Times New Roman", serif; }
+#b16try .b16infotext { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 24em; }
+#b16try .b16tools label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; }
+#b16try .b16preset { font: inherit; font-size: 13.5px; max-width: min(320px, 70vw); padding: 2px; }
+#b16try .b16stat { max-width: 1028px; margin: 4px auto 0; height: 1.55em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+#b16try button:disabled, #b16try select:disabled { opacity: .55; cursor: default; }
+#b16try [hidden] { display: none !important; }
+/* the controls drawn with Windows 3.11's own pixels (b16-ui.js): canvases at k x k device pixels per pixel */
+#b16try .b16b, #b16try .b16icon { padding: 0; margin: 0; border: 0; background: none; line-height: 0; cursor: pointer; flex: none; }
+#b16try .b16b:focus, #b16try .b16icon:focus { outline: none; }
+#b16try .b16b:disabled { cursor: default; }
+#b16try canvas.b16label, #b16try .b16b canvas, #b16try .b16icon canvas, #b16try .b16meter, #b16try .b16dlg canvas, #b16try .b16drop canvas { display: block; image-rendering: crisp-edges; image-rendering: pixelated; }
+#b16try .b16slots { max-width: 1028px; margin: 6px auto 0; overflow: hidden; }   /* its height is set before the first paint */
+#b16try .b16icons { display: flex; gap: 0; overflow-x: auto; overflow-y: hidden; background: #fff; border: 1px solid var(--ink); }
+#b16try .b16row { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; margin-top: 4px; }
+#b16try .b16row .b16label { margin-left: 6px; flex: none; }
+#b16try .b16dlg { position: absolute; z-index: 5; }
+#b16try .b16dlginput { position: absolute; opacity: 0; border: 0; padding: 0; margin: 0; font-size: 16px; }
+#b16try .b16dlgbtns { position: absolute; display: flex; }
+#b16try .b16drop { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(0, 0, 32, .35); z-index: 4; pointer-events: none; }
+</style>
+<div id="b16try" data-state="idle">
+    <p>SNDWAVE2000 runs in this page: the plugin's own engine, compiled for the browser, with the same Windows for Workgroups 3.11 and the same sixteen Sound Recorders. It resumes from the moment the synth finished assembling, so it is ready as soon as it has loaded. Nothing is downloaded until you press the button.</p>
+  <div class="b16stage">
+    <div class="pxbox pximg b16box"><img id="b16screen" src="poster.png" width="1024" height="768" data-px="1024x768" data-px-note="b16-pxnote"
+      alt="SNDWAVE2000 in Windows for Workgroups 3.11: sixteen Sound Recorders in rows, the DNA line, the panel, Clock and a five-octave keyboard"></div>
+    <script>window.pxfit && pxfit.fit(document.getElementById('b16screen'))</script>
+    <div class="b16drop" hidden><canvas></canvas></div>
+    <div class="b16over">
+      <div class="b16card">
+        <button class="btn b16go" type="button">Try SNDWAVE2000 online</button>
+        <button class="btn b16build" type="button">Watch it build</button>
+        <p>Windows 3.11 in your browser, <span class="b16size">about 5 MB</span>. Sound on.</p>
+        <div class="b16prog" style="visibility: hidden"><i></i></div>
+        <p class="b16msg" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+  <p class="note pxnote" id="b16-pxnote"></p>
+  <div class="b16slots" aria-label="Saved synth states">
+    <div class="b16icons" role="listbox" aria-label="Saved states: double-click or Enter loads one"></div>
+    <div class="b16row"></div>
+  </div>
+  <script>
+  /* the row of saved states keeps its height from the first paint (its icons and buttons are drawn in device pixels,
+     k = max(1, round(devicePixelRatio)) per Windows pixel, so their size in CSS pixels depends on the screen) */
+  (function () { var k = Math.max(1, Math.round(window.devicePixelRatio || 1)), u = k / (window.devicePixelRatio || 1);
+    var s = document.querySelector('#b16try .b16slots'), i = s.querySelector('.b16icons');
+    i.style.height = (52 * u + 2) + 'px'; s.style.height = (52 * u + 2 + 4 + 23 * u + 18) + 'px'; })();
+  </script>
+  <div class="b16tools">
+    <button class="btn b16stop" type="button" disabled>Stop</button>
+    <button class="btn b16midi" type="button" disabled aria-pressed="false">Enable Web MIDI</button>
+    <label>Preset <select class="b16preset" disabled><option value="">Preset…</option></select></label>
+    <button class="btn b16info" type="button" aria-pressed="false" title="Audio health" aria-label="Audio health">i</button>
+    <span class="note b16infotext" aria-live="off" hidden></span>
+  </div>
+  <p class="note b16stat" aria-live="polite"></p>
+  <p class="note">Click the screen, then use Windows: the on-screen keys, <b>Keys</b> to play from the computer keyboard (<code>a w s e d f t g y h u j k</code>, <code>z</code>/<code>x</code> change octave), the Preset and Sound lists, the DNA line and every Sound Recorder button. Web MIDI is optional: it plays notes and follows the mod wheel and pitch bend. It pauses while the page is hidden, and stops itself if the browser cannot keep up.</p>
+  <p class="note b16mobile" hidden>Best on a desktop or laptop computer: it needs a mouse, a keyboard and a fast processor.</p>
+</div>
+<script src="b16-ui.js?v=e57fdac49b" defer></script>
+<script src="b16-try.js?v=e57fdac49b" defer></script>
+<!-- b16-try: end -->
+</main>
+
+<footer class="foot">
+  <nav aria-label="SNDWAVE2000"><a href="/sndwave2000/">Home</a><a href="/sndwave2000/packs/">Sound packs</a><a href="/sndwave2000/play/" class="playlink" aria-current="page">Play</a><a href="/sndwave2000/#download">Download</a></nav>
+  <p>SNDWAVE2000 &middot; Executive Audiophile Edition &middot; Copyright &copy; 1993-1995 Algorithmic Industries. All rights reserved.</p>
+  <p class="legal">SNDWAVE2000 and the Grid Sun device are trademarks of Algorithmic Industries. All other product names are the property of their respective owners. Algorithmic Industries is fictional. Windows for Workgroups 3.11, its sounds and Sound Recorder are Microsoft's, included as part of this art project.</p>
+  <p class="archived">Also: <a href="/sndrec-xp.html">the earlier Windows XP edition (archived)</a></p>
+</footer>
+</div>
+</body>
+</html>

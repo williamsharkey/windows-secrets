@@ -86,7 +86,7 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
     if (!running) return;
     M._b16_tick();
     const io = M._b16_state_io();   // Windows' Save state... / Load state...: the page's download or file picker
-    if (io) post({ t: 'stateio', op: io === 1 ? 'save' : 'load', state: M.UTF8ToString(M._b16_get_state()) });
+    if (io) post({ t: 'stateio', op: io === 1 ? 'save' : io === 3 ? 'scala' : 'load', state: M.UTF8ToString(M._b16_get_state()) });
     const now = performance.now();
     if (S && lay) {
       const u = new Uint32Array(M.wasmMemory.buffer), d = u[(S + lay.dac_w) >> 2];
@@ -173,6 +173,7 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
       } break;
       case 'mic': if (M && m.d) { const n = m.d.length >> 1, p = M._malloc(m.d.length * 4); new Float32Array(M.wasmMemory.buffer, p, m.d.length).set(m.d); M._b16_mic(p, n); M._free(p); } break;
       case 'micon': if (M) M._b16_mic_on(m.on ? 1 : 0); break;
+      case 'scala': if (M) { const b = new Uint8Array(m.bytes), p = M._malloc(b.length + 1), nm = M.stringToNewUTF8(m.name || ''); new Uint8Array(M.wasmMemory.buffer).set(b, p); M._b16_scala(nm, p, b.length); M._free(p); M._free(nm); } break;
       case 'state': if (M) { const p = M.stringToNewUTF8(m.text); M._b16_set_state(p); M._free(p); } break;
       case 'pause': if (M) M._b16_pause(m.p ? 1 : 0); paused = !!m.p; lastDacT = performance.now(); break;
       case 'info': { const r = M ? info(true) : null; if (r) r.lazy = Array.from(new Uint32Array(M.wasmMemory.buffer, M._b16_lazy_vars(), 8)); post({ t: 'info', id: m.id, info: r }); break; }

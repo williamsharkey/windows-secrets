@@ -7,27 +7,38 @@
 <meta name="description" content="SNDWAVE2000 by Algorithmic Industries, in your browser: Windows for Workgroups 3.11 and sixteen real Sound Recorders, played as one instrument.">
 <meta property="og:title" content="Play SNDWAVE2000">
 <meta property="og:description" content="Windows for Workgroups 3.11 and sixteen real Sound Recorders, played as one instrument, in your browser.">
-<meta property="og:image" content="https://williamsharkey.com/sndwave2000/play/poster.png">
+<meta property="og:image" content="https://williamsharkey.com/sndwave2000/art/title-640.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/sndwave2000/art/gridsun-32.png">
+<link rel="preload" href="/sndwave2000/fonts/DejaVuSerif-Bold.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/sndwave2000/fonts/DejaVuSans-Bold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/sndwave2000/site.css">
 <script src="/sndrec/pxfit.js"></script>
 <style>
-/* what the block needs if site.css does not define it (zero specificity: site.css wins) */
-:where(#b16try) { --face: #c0c0c0; --hi: #fff; --lo: #808080; --ink: #000; --sel: #000080; --muted: #303030; }
-:where(#b16try .btn) { display: inline-block; color: var(--ink); background: var(--face); border: 1px solid var(--ink); border-radius: 3px; padding: 5px 12px; font: inherit; cursor: pointer; }
-:where(#b16try .note) { font-size: 13.5px; color: var(--muted); }
-:where(#b16try .pxbox) { position: relative; display: flex; justify-content: flex-start; align-items: flex-start; padding: 0; line-height: 0; }
+/* the "Try it online" block on the site's paper (site.css: the Windows tokens, .btn, .note, .pxbox) */
+#b16try { margin-top: 6px; border-top: 0; padding-top: 0; }
+#b16try .b16card { color: #000; }
 </style>
 </head>
 <body>
 <div class="wrap">
-<header class="mast"><a href="/sndwave2000/">SNDWAVE2000</a> <span>Executive Audiophile Edition</span></header>
+
+<header class="mast">
+  <a class="co" href="/sndwave2000/"><img src="/sndwave2000/art/gridsun-32.png" width="32" height="32" alt="">Algorithmic Industries</a>
+  <nav aria-label="SNDWAVE2000"><a href="/sndwave2000/">Home</a><a href="/sndwave2000/packs/">Sound packs</a><a href="/sndwave2000/play/" class="playlink" aria-current="page">Play</a><a href="/sndwave2000/#download">Download</a></nav>
+</header>
+
 <main>
-<h1>Play SNDWAVE2000</h1>
+<section class="intro">
+  <p class="kicker">SNDWAVE2000 &middot; Executive Audiophile Edition</p>
+  <h1>Play it here</h1>
+</section>
 @SECTION@
 </main>
+
 <footer class="foot">
-  <nav aria-label="SNDWAVE2000"><a href="/sndwave2000/">Home</a> <a href="/sndwave2000/packs/">Sound packs</a> <a href="/sndwave2000/play/" aria-current="page">Play</a> <a href="/sndwave2000/#download">Download</a></nav>
-  <p class="note">SNDWAVE2000 and Algorithmic Industries are fictional. Windows for Workgroups 3.11 and its sounds are Microsoft's, included as part of an art project.</p>
+  <nav aria-label="SNDWAVE2000"><a href="/sndwave2000/">Home</a><a href="/sndwave2000/packs/">Sound packs</a><a href="/sndwave2000/play/" class="playlink" aria-current="page">Play</a><a href="/sndwave2000/#download">Download</a></nav>
+  <p>SNDWAVE2000 &middot; Executive Audiophile Edition &middot; Copyright &copy; 1993-1995 Algorithmic Industries. All rights reserved.</p>
+  <p class="legal">SNDWAVE2000 and the Grid Sun device are trademarks of Algorithmic Industries. All other product names are the property of their respective owners. Algorithmic Industries is fictional. Windows for Workgroups 3.11, its sounds and Sound Recorder are Microsoft's, included as part of this art project.</p>
+  <p class="archived">Also: <a href="/sndrec-xp.html">the earlier Windows XP edition (archived)</a></p>
 </footer>
 </div>
 </body>

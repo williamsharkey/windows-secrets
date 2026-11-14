@@ -586,6 +586,14 @@
   }
   function onStateIO(m) {   // Windows' own Save state... and Load state... (STATE.md 3): a download, or the file picker
     if (m.op === 'save') { curState = m.state || curState; encodeB16(stateText()).then(function (b) { download(b, FILE + EXT, 'application/x-basilisk16-state'); }); }
+    else if (m.op === 'scala') {   // Windows' Scala... button: a .scl (a tuning) or .kbm (its keyboard mapping)
+      var pk = document.createElement('input'); pk.type = 'file'; pk.accept = '.scl,.kbm'; pk.hidden = true; root.appendChild(pk);
+      pk.addEventListener('change', function () {
+        var f = pk.files && pk.files[0]; pk.remove();
+        if (f && worker) f.arrayBuffer().then(function (ab) { worker.postMessage({ t: 'scala', name: f.name, bytes: ab }, [ab]); });
+      });
+      pk.click();
+    }
     else if (B.open) B.open.click();
   }
   function onStopped() { stopMic(); showButtons(); }
