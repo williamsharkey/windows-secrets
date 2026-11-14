@@ -406,10 +406,57 @@ static void seek_pct(int r, int pct)
     SendMessage(rw[r], WM_HSCROLL, SB_ENDSCROLL, MAKELPARAM(pos, sb));
 }
 
+/* Sound Recorder's position bar takes no mouse while it is part of BASILISK 16 (measured: its scroll bar ignores
+   presses, real or posted, while Sound Recorder still obeys the WM_HSCROLL a scroll bar sends; it lives in a child
+   window, which is never the active one). So the bar's mouse is done here, as a scroll bar does it, and Sound Recorder
+   gets the scroll bar's own messages: arrows SB_LINEUP / SB_LINEDOWN, the track either side of the thumb
+   SB_PAGEUP / SB_PAGEDOWN, the thumb SB_THUMBTRACK while it is dragged and SB_THUMBPOSITION, SB_ENDSCROLL when it is
+   let go. */
+static FARPROC oldSeekProc, seekProcInst;
+static int seekDrag = -1, seekGrab;
+static void seek_send(HWND sb, int code, int pos) { SendMessage(GetParent(sb), WM_HSCROLL, code, MAKELPARAM(pos, sb)); }
+long FAR PASCAL __export SeekProc(HWND h, UINT m, WPARAM w, LPARAM l)
+{
+    if (m == WM_LBUTTONDOWN || m == WM_LBUTTONDBLCLK || m == WM_MOUSEMOVE || m == WM_LBUTTONUP) {
+        /* (static, not on the stack: this runs on Sound Recorder's stack with our data segment, so a near pointer to
+           a local would point into the wrong segment) */
+        static RECT rc; static int lo, hi; int x = (short)LOWORD(l), pos, arrow = GetSystemMetrics(SM_CXHSCROLL), thumb = arrow, track, tx;
+        GetClientRect(h, &rc); GetScrollRange(h, SB_CTL, &lo, &hi); pos = GetScrollPos(h, SB_CTL);
+        track = rc.right - 2 * arrow - thumb; if (track < 1) track = 1; if (hi <= lo) hi = lo + 1;
+        tx = arrow + (int)((long)(pos - lo) * track / (hi - lo));
+        if (m == WM_LBUTTONDOWN || m == WM_LBUTTONDBLCLK) {
+            if (x < arrow) seek_send(h, SB_LINEUP, 0);
+            else if (x >= rc.right - arrow) seek_send(h, SB_LINEDOWN, 0);
+            else if (x < tx) seek_send(h, SB_PAGEUP, 0);
+            else if (x >= tx + thumb) seek_send(h, SB_PAGEDOWN, 0);
+            else { seekDrag = 1; seekGrab = x - tx; SetCapture(h); return 0; }
+            seek_send(h, SB_ENDSCROLL, 0);
+            return 0;
+        }
+        if (seekDrag > 0 && GetCapture() == h) {
+            long p = lo + (long)(x - seekGrab - arrow) * (hi - lo) / track;
+            if (p < lo) p = lo; if (p > hi) p = hi;
+            if (m == WM_MOUSEMOVE) { SetScrollPos(h, SB_CTL, (int)p, TRUE); seek_send(h, SB_THUMBTRACK, (int)p); return 0; }
+            ReleaseCapture(); seekDrag = -1;
+            seek_send(h, SB_THUMBPOSITION, (int)p); seek_send(h, SB_ENDSCROLL, (int)p);
+            return 0;
+        }
+        if (m == WM_MOUSEMOVE) return 0;
+    }
+    return CallWindowProc(oldSeekProc, h, m, w, l);
+}
+static void seek_hook(int r)
+{
+    HWND sb = GetDlgItem(rw[r], SR_SCROLL);
+    if (!sb) return;
+    if (!seekProcInst) { seekProcInst = MakeProcInstance((FARPROC)SeekProc, hInst); oldSeekProc = (FARPROC)GetWindowLong(sb, GWL_WNDPROC); }
+    if ((FARPROC)GetWindowLong(sb, GWL_WNDPROC) != seekProcInst) SetWindowLong(sb, GWL_WNDPROC, (LONG)seekProcInst);
+}
 static void layout_strip(int r)   /* Sound Recorder re-lays its controls when it loads a file: line them up again */
 {
     int i;
     if (!assembled) return;
+    seek_hook(r);
     for (i = 0; i < 5; i++) ShowWindow(GetDlgItem(rw[r], hidden[i]), SW_HIDE);
     for (i = 0; i < NPART; i++)
         SetWindowPos(GetDlgItem(rw[r], strip[i].id), NULL, strip[i].x, strip[i].y, strip[i].w, strip[i].h, SWP_NOZORDER | SWP_NOACTIVATE);
@@ -2755,6 +2802,16 @@ static void host_line(char *s)
             say("btn %d %d %d %d %s", r.left, r.top, r.right, r.bottom, t);
         }
         say("btns end");
+    }
+    else if (!strcmp(s, "seektest")) {   /* test aid: seektest <row> <how>: 0 HSCROLL PAGEDOWN to the recorder, 1 a posted click on its bar */
+        int r = atoi(rest), how = strchr(rest, ' ') ? atoi(strchr(rest, ' ') + 1) : 0;
+        HWND sb = GetDlgItem(rw[AR(r)], SR_SCROLL); char t[24]; RECT rc; int lo, hi;
+        GetScrollRange(sb, SB_CTL, &lo, &hi);
+        if (how == 0) SendMessage(rw[AR(r)], WM_HSCROLL, SB_PAGEDOWN, MAKELPARAM(0, sb));
+        else { GetClientRect(sb, &rc); PostMessage(sb, WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(rc.right * 3 / 4, rc.bottom / 2)); PostMessage(sb, WM_LBUTTONUP, 0, MAKELPARAM(rc.right * 3 / 4, rc.bottom / 2)); }
+        { DWORD t0 = timeGetTime(); while (timeGetTime() - t0 < 300) pump(); }
+        GetDlgItemText(rw[AR(r)], SR_POS, t, sizeof t);
+        say("seektest %d %d pos %d range %d..%d enabled %d text %s", r, how, GetScrollPos(sb, SB_CTL), lo, hi, IsWindowEnabled(sb), (LPSTR)t);
     }
     else if (!strcmp(s, "panic")) { int r; for (r = 0; r < NALL; r++) stop_rec(r, 0, 5); }
     else if (!strcmp(s, "scale")) {   /* scale <id> <category> <label...>: the host's scale library, once */

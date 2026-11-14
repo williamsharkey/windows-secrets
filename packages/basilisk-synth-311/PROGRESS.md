@@ -24,7 +24,7 @@
 | R1 Recording: ADC | DONE locally (TR4: File > New records 22050 Hz 8-bit mono; a fed 1 kHz tone plays back at 1000.0 Hz, clicks every 24000 samples exactly): card `BSC_IN*` (40-47) with the Hermite converter, source = the host's input or the card's own output; BSYNTH.DRV `widMessage` (one input, WIM_DATA from the timer); bshm v2 input ring; the plugin's stereo sidechain input, stamped on the DAC clock like the notes; `rsrc side/self` |
 | R2 Recording core | core/userstore (names, sha1, zlib, .b16, index, user lines: 74 checks, Python zlib both ways); Save... / Load... of the state as .b16 through the host's file dialog (built; the dialog not yet tested). The R: drive, harvest and `user` lines to the guest: to do |
 | R3-R5 Recording | queued (RECORDING.md section 6): the header Recorder and the Rec page next |
-| Pointer drags | DONE (a9bd56b): a held scroll-bar thumb follows a drag (BSYNTH.DRV feeds the host pointer through USER's mouse_event at interrupt time); checked in the plugin through BasiliskHost (Macro 1 to 69, Macro 3 past the end to 100). SOUNDREC's Seek bar ignores clicks and drags: open |
+| Pointer drags | DONE (a9bd56b): a held scroll-bar thumb follows a drag (BSYNTH.DRV feeds the host pointer through USER's mouse_event at interrupt time); checked in the plugin through BasiliskHost (Macro 1 to 69, Macro 3 past the end to 100). SOUNDREC's Seek bar ignored presses (real or posted) while part of BASILISK 16; it obeys WM_HSCROLL, so its mouse is now done in BASILISK 16 (subclass) and Sound Recorder gets the scroll bar's own messages: drags, arrows and page clicks work (tested). |
 
 ## v1.2.1: fixes from the demo renders (tools/sndrec-demo)
 
