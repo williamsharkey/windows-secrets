@@ -71,6 +71,83 @@ index 919faa7..9db087b 100644
          case kAudioUnitProperty_PresentPreset:
              DISTRHO_SAFE_ASSERT_UINT_RETURN(inScope == kAudioUnitScope_Global, inScope, kAudioUnitErr_InvalidScope);
              DISTRHO_SAFE_ASSERT_UINT_RETURN(inElement == 0, inElement, kAudioUnitErr_InvalidElement);
+diff --git a/distrho/src/DistrhoPluginCLAP.cpp b/distrho/src/DistrhoPluginCLAP.cpp
+index 5939092..a88136f 100644
+--- a/distrho/src/DistrhoPluginCLAP.cpp
++++ b/distrho/src/DistrhoPluginCLAP.cpp
+@@ -826,14 +826,18 @@ public:
+         fPlugin.setSampleRate(sampleRate, true);
+         fPlugin.setBufferSize(maxFramesCount, true);
+         fPlugin.activate();
++       #if DISTRHO_PLUGIN_WANT_LATENCY
++        // BASILISK SYNTH: a latency set in activate() is reported here, inside clap_plugin::activate, as CLAP requires
++        checkForLatencyChanges(false, true);
++        reportLatencyChangeIfNeeded();
++       #endif
+     }
+ 
+     void deactivate()
+     {
+         fPlugin.deactivate();
+        #if DISTRHO_PLUGIN_WANT_LATENCY
+-        checkForLatencyChanges(false, true);
+-        reportLatencyChangeIfNeeded();
++        checkForLatencyChanges(false, true);   // (reported at the next activate)
+        #endif
+     }
+ 
+@@ -1129,9 +1133,7 @@ public:
+ 
+     void onMainThread()
+     {
+-       #if DISTRHO_PLUGIN_WANT_LATENCY
+-        reportLatencyChangeIfNeeded();
+-       #endif
++        // SNDWAVE2000: a latency change is reported only inside clap_plugin::activate (the restart it requested)
+     }
+ 
+     // ----------------------------------------------------------------------------------------------------------------
+@@ -1424,18 +1426,10 @@ public:
+         }
+         else
+         {
+-            // if this is main-thread we can report latency change directly
+-            if (fromMainThread || (fHostExtensions.threadCheck != nullptr && fHostExtensions.threadCheck->is_main_thread(fHost)))
+-            {
+-                fLatencyChanged = false;
+-                fHostExtensions.latency->changed(fHost);
+-            }
+-            // otherwise we need to request a main-thread callback
+-            else
+-            {
+-                fLatencyChanged = true;
+-                fHost->request_callback(fHost);
+-            }
++            // SNDWAVE2000: CLAP allows clap_host_latency::changed only inside clap_plugin::activate; while inactive the
++            // change waits for the next activate (which reports it)
++            (void)fromMainThread;
++            fLatencyChanged = true;
+         }
+     }
+ 
+@@ -1612,7 +1606,7 @@ public:
+                 buffer[read] = orig;
+ 
+                 // if buffer offset points to null, we found the end of a string, lets check
+-                if (buffer[i] == '\0')
++                if (i < read && buffer[i] == '\0')   // (SNDWAVE2000: a string cut by the read's end is not ended)
+                 {
+                     // special keys
+                     if (key == "__dpf_state_begin__")
+@@ -1746,7 +1740,7 @@ public:
+ 
+        #if DISTRHO_PLUGIN_WANT_LATENCY
+         checkForLatencyChanges(fPlugin.isActive(), true);
+-        reportLatencyChangeIfNeeded();
++        // (SNDWAVE2000: reported at the next activate)
+        #endif
+ 
+        #if DISTRHO_PLUGIN_HAS_UI
 diff --git a/distrho/src/DistrhoPluginInternal.hpp b/distrho/src/DistrhoPluginInternal.hpp
 index d0bef80..3ec33f8 100644
 --- a/distrho/src/DistrhoPluginInternal.hpp
@@ -111,7 +188,7 @@ index d0bef80..3ec33f8 100644
      {
          return fIsActive;
 diff --git a/distrho/src/DistrhoPluginVST3.cpp b/distrho/src/DistrhoPluginVST3.cpp
-index 7295c89..7ad5cbe 100644
+index 7295c89..dd652f1 100644
 --- a/distrho/src/DistrhoPluginVST3.cpp
 +++ b/distrho/src/DistrhoPluginVST3.cpp
 @@ -53,6 +53,7 @@
@@ -134,6 +211,15 @@ index 7295c89..7ad5cbe 100644
      PluginVst3(v3_host_application** const host, const bool isComponent)
          : fPlugin(this, writeMidiCallback, requestParameterValueChangeCallback, nullptr),
            fComponentHandler(nullptr),
+@@ -1002,7 +1008,7 @@ public:
+                 buffer[read] = orig;
+ 
+                 // if buffer offset points to null, we found the end of a string, lets check
+-                if (buffer[i] == '\0')
++                if (i < read && buffer[i] == '\0')   // (SNDWAVE2000: a string cut by the read's end is not ended)
+                 {
+                     // special keys
+                     if (key == "__dpf_state_begin__")
 @@ -1349,7 +1355,7 @@ public:
          const bool active = fPlugin.isActive();
          fPlugin.deactivateIfNeeded();

@@ -17,7 +17,7 @@ else
 LINK_FLAGS += -ldl -lpthread
 endif
 
-TARGETS = vst3
+TARGETS = vst3 clap
 ifeq ($(MACOS),true)
 TARGETS += au
 endif

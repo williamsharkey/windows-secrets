@@ -156,6 +156,31 @@ static void sweepTemp(const std::string &tmp)
 }
 #endif
 
+// Where the machine is: the bundle's Resources (VST3, AU, a macOS CLAP bundle); a Windows .clap is one file, so it
+// uses the machine of the SNDWAVE2000.vst3 installed beside it or in the standard place
+static bool hasMachine(const std::string &res)
+{
+    if (res.empty()) return false;
+    FILE *f = std::fopen((res + "/machine/w31.conf").c_str(), "rb");
+    if (f) std::fclose(f);
+    return f != nullptr;
+}
+static std::string machineResources(const char *bundle)
+{
+    const char *res = bundle ? getResourcePath(bundle) : nullptr;
+    if (res && hasMachine(res)) return res;
+    std::vector<std::string> c;
+    if (bundle) { std::string d = bundle; const size_t s = d.find_last_of("/\\"); if (s != std::string::npos) { d.resize(s); c.push_back(d + "/SNDWAVE2000.vst3/Contents/Resources"); c.push_back(d + "/../VST3/SNDWAVE2000.vst3/Contents/Resources"); } }
+#ifdef _WIN32
+    if (const char *pf = std::getenv("CommonProgramFiles")) c.push_back(std::string(pf) + "\\VST3\\SNDWAVE2000.vst3\\Contents\\Resources");
+#else
+    if (const char *h = std::getenv("HOME")) c.push_back(std::string(h) + "/Library/Audio/Plug-Ins/VST3/SNDWAVE2000.vst3/Contents/Resources");
+    c.push_back("/Library/Audio/Plug-Ins/VST3/SNDWAVE2000.vst3/Contents/Resources");
+#endif
+    for (const auto &d : c) if (hasMachine(d)) return d;
+    return res ? std::string(res) : std::string();
+}
+
 class Basilisk16 : public Plugin
 {
 public:
@@ -211,11 +236,11 @@ protected:
     {
         p.hints = kParameterIsAutomatable;
         switch (i) {
-        case pAttack: p.name = "Attack"; p.symbol = "attack"; p.unit = "ms"; p.ranges = ParameterRanges(0, 0, 5000); break;
-        case pDecay: p.name = "Decay"; p.symbol = "decay"; p.unit = "ms"; p.ranges = ParameterRanges(0, 0, 5000); break;
-        case pSustain: p.name = "Sustain"; p.symbol = "sustain"; p.unit = "%"; p.ranges = ParameterRanges(100, 0, 100); break;
-        case pRelease: p.name = "Release"; p.symbol = "release"; p.unit = "ms"; p.ranges = ParameterRanges(120, 0, 5000); break;
-        case pVelocity: p.name = "Velocity"; p.symbol = "velocity"; p.unit = "%"; p.ranges = ParameterRanges(100, 0, 100); break;
+        case pAttack: p.name = "Attack"; p.symbol = "attack"; p.unit = "ms"; p.ranges = ParameterRanges(0, 0, 5000); p.hints |= kParameterIsInteger; break;
+        case pDecay: p.name = "Decay"; p.symbol = "decay"; p.unit = "ms"; p.ranges = ParameterRanges(0, 0, 5000); p.hints |= kParameterIsInteger; break;
+        case pSustain: p.name = "Sustain"; p.symbol = "sustain"; p.unit = "%"; p.ranges = ParameterRanges(100, 0, 100); p.hints |= kParameterIsInteger; break;
+        case pRelease: p.name = "Release"; p.symbol = "release"; p.unit = "ms"; p.ranges = ParameterRanges(120, 0, 5000); p.hints |= kParameterIsInteger; break;
+        case pVelocity: p.name = "Velocity"; p.symbol = "velocity"; p.unit = "%"; p.ranges = ParameterRanges(100, 0, 100); p.hints |= kParameterIsInteger; break;
         case pBend: p.name = "Bend Range"; p.symbol = "bend"; p.unit = "st"; p.ranges = ParameterRanges(2, 0, 24); p.hints |= kParameterIsInteger; break;
         case pGain: p.name = "Output Gain"; p.symbol = "gain"; p.unit = "dB"; p.ranges = ParameterRanges(0, -24, 12); p.hints |= kParameterIsInteger; break;
         case pTranspose: p.name = "Transpose"; p.symbol = "transpose"; p.unit = "st"; p.ranges = ParameterRanges(0, -24, 24); p.hints |= kParameterIsInteger; break;
@@ -258,6 +283,18 @@ protected:
         }
     }
 
+    // the DNA with the parameters' values in it (the globals, transpose, the macros)
+    std::string withParams(std::string d) const
+    {
+        for (int i = 0; i < 7; i++) d = setGlobal(d, kGlobalLetter[i], (int)std::lround(param_[i].load()));
+        d = setLayerGene(d, 0, 'T', (int)std::lround(param_[pTranspose].load()));
+        const Dna cur = parse(d);
+        for (int k = 0; k < kMacros; k++) {
+            const int v = (int)std::lround(param_[pMacro1 + k].load());
+            if (v != cur.g.macro[k]) d = setMacro(d, k + 1, v);
+        }
+        return d;
+    }
     float getParameterValue(uint32_t i) const override { return i < pCount ? param_[i].load() : 0.f; }
 
     void setParameterValue(uint32_t i, float v) override
@@ -285,7 +322,7 @@ protected:
     {
         if (std::strcmp(key, "state")) return String();
         std::lock_guard<std::mutex> l(mtx_);
-        bsynth::State s; s.dna = dnaText_;
+        bsynth::State s; s.dna = paramSeq_.load() != paramDone_.load() ? withParams(dnaText_) : dnaText_;   // (a parameter change the worker has not taken yet)
         const b16v3::KeyParams kp = keyParams();
         if (kp != b16v3::KeyParams()) {   // (absent: the defaults, so an old state stays byte-identical)
             s.extra["key"] = std::to_string(kp.root) + " " + std::to_string(kp.scale);
@@ -779,8 +816,8 @@ private:
     // ------------------------------------------------------------------ start, stop
     void start()
     {
-        const char *bundle = getBundlePath();
-        const char *res = bundle ? getResourcePath(bundle) : nullptr;
+        const std::string resDir = machineResources(getBundlePath());
+        const char *res = resDir.empty() ? nullptr : resDir.c_str();
         if (!res) { status("SNDWAVE2000: the machine files were not found next to the plugin."); sh_.S->state = BS_FAILED; return; }
         std::string machine = std::string(res) + "/machine/";
 #ifdef _WIN32
@@ -962,8 +999,8 @@ private:
     {
         static std::once_flag once;
         std::call_once(once, [this] {
-            const char *bundle = getBundlePath();
-            const char *res = bundle ? getResourcePath(bundle) : nullptr;
+            const std::string resDir = machineResources(getBundlePath());
+            const char *res = resDir.empty() ? nullptr : resDir.c_str();
             if (!res) return;
             FILE *f = std::fopen((std::string(res) + "/machine/library.names.txt").c_str(), "rb");
             if (!f) return;
@@ -1060,15 +1097,7 @@ private:
             if (paramsDirty_.exchange(false)) {
                 std::string d;
                 { std::lock_guard<std::mutex> l(mtx_); d = dnaText_; }
-                for (int i = 0; i < 7; i++) d = setGlobal(d, kGlobalLetter[i], (int)std::lround(param_[i].load()));
-                d = setLayerGene(d, 0, 'T', (int)std::lround(param_[pTranspose].load()));
-                {
-                    const Dna cur = parse(d);
-                    for (int k = 0; k < kMacros; k++) {
-                        const int v = (int)std::lround(param_[pMacro1 + k].load());
-                        if (v != cur.g.macro[k]) d = setMacro(d, k + 1, v);
-                    }
-                }
+                d = withParams(d);
                 lastParamEdit_ = nowSec();
                 bool changed;
                 { std::lock_guard<std::mutex> l(mtx_); changed = d != dnaText_; }

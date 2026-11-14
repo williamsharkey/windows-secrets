@@ -20,7 +20,7 @@ rm -rf basilisk-synth/help/install; cp -R helpinstall basilisk-synth/help/instal
 cd basilisk-synth-311/plugin
 make DPF_PATH="$W/DPF" DPF_TARGET_DIR="$W/out" DPF_BUILD_DIR="$W/obj" \
   CFLAGS="-arch x86_64 -arch arm64 -mmacosx-version-min=10.15 -ffp-contract=off" CXXFLAGS="-arch x86_64 -arch arm64 -mmacosx-version-min=10.15 -ffp-contract=off" \
-  LDFLAGS="-arch x86_64 -arch arm64 -mmacosx-version-min=10.15" -j"$(sysctl -n hw.ncpu)" vst3 au >"$W/plugin.log" 2>&1
+  LDFLAGS="-arch x86_64 -arch arm64 -mmacosx-version-min=10.15" -j"$(sysctl -n hw.ncpu)" vst3 au clap >"$W/plugin.log" 2>&1
 # the snapshots: made here, one per CPU, by the engine built for that CPU (tools/make_machine.py)
 cd "$W"
 for a in arm64 x86_64; do
@@ -47,4 +47,5 @@ for b in SNDWAVE2000.vst3 SNDWAVE2000.component; do
   cp -R "$W/machine-arm64/packs" "$M/"
   codesign --force --deep -s - "$b"
 done
+codesign --force --deep -s - SNDWAVE2000.clap   # (the CLAP uses the machine of the SNDWAVE2000.vst3 installed beside it)
 ls -la "$W/out"
