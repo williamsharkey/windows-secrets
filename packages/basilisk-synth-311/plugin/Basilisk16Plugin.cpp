@@ -369,7 +369,10 @@ protected:
         offlineNow_ = offline;
         bool waited = false;
         if (engine_ && offline && S->state < BS_RUNNING) {
-            for (int k = 0; k < 20000 && S->state < BS_RUNNING && S->state != BS_FAILED && !quit_; k++) std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            for (int k = 0; k < 20000 && S->state < BS_RUNNING && S->state != BS_FAILED && !quit_; k++) {
+                S->grant_until = S->dac_w + 48000; S->host_beat++;   // (offline the engine runs only as far as granted)
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
             waited = true;
         }
         if (S->state < BS_RUNNING || S->state == BS_FAILED) {
@@ -467,10 +470,10 @@ protected:
         // wait for the machine if it is behind (offline rendering runs faster than real time)
         const double need = dacPos_ + frames * ratio + 3;
         for (int k = 0; offline && k < 400 && (double)S->dac_w < need && S->state != BS_FAILED && !S->quit && !quit_; k++) {
-            S->grant_until = (uint64_t)need > kLead ? (uint64_t)need - kLead : 0; S->host_beat++;   // waiting: the engine runs to `need`
+            S->grant_until = (uint64_t)std::ceil(need); S->host_beat++;   // waiting: offline, the engine runs exactly to `need` (engine.c)
             std::this_thread::sleep_for(std::chrono::microseconds(500));
         }
-        S->grant_until = 0;
+        if (!offline) S->grant_until = 0;
         if ((double)S->dac_w < need) S->underruns++;
         const float g = gain_;
         for (uint32_t i = 0; i < frames; i++) {

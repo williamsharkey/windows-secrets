@@ -49,6 +49,7 @@ struct bs_engine {
   void (*h_stats)(uint32_t *, uint32_t *, uint32_t *);
   void (*h_input)(uint64_t, const float *, int);
   void (*h_insrc)(int);
+  void (*h_gate)(int);
   int (*h_instate)(uint64_t *, uint32_t *, uint32_t *);
 };
 
@@ -194,6 +195,7 @@ int bs_engine_run(bs_engine *e)
   GET(c_set_env, "retro_set_environment"); GET(c_set_video, "retro_set_video_refresh"); GET(c_set_audio1, "retro_set_audio_sample");
   GET(c_set_audio, "retro_set_audio_sample_batch"); GET(c_set_poll, "retro_set_input_poll"); GET(c_set_state, "retro_set_input_state");
   GET(h_event, "bsyn_host_event"); GET(h_reports, "bsyn_host_reports"); GET(h_dac, "bsyn_host_dac"); GET(h_read, "bsyn_host_read"); GET(h_stats, "bsyn_host_stats");
+  GET(h_gate, "bsyn_host_gate");   /* optional (older cores): offline, the host's traffic passes at frame boundaries */
   GET(h_input, "bsyn_host_input"); GET(h_insrc, "bsyn_host_insrc"); GET(h_instate, "bsyn_host_instate");
   if (!e->c_run || !e->h_event) { fail(e, "the core lacks the BSYN card"); return 4; }
   e->c_set_env(env); e->c_set_video(video); e->c_set_audio1(audio1); e->c_set_audio(audiob); e->c_set_poll(poll_); e->c_set_state(istate);
@@ -225,6 +227,7 @@ int bs_engine_run(bs_engine *e)
     uint64_t dac, target;
     int k;
     S->engine_beat++;
+    if (e->h_gate) e->h_gate(S->offline ? 1 : 0);   /* offline: the card passes what we give and take at frame boundaries */
     while (S->ev_r != S->ev_w) {           /* events in */
       bshm_ev *ev = &S->ev[S->ev_r % BSHM_EV];
       barrier();
@@ -285,7 +288,12 @@ int bs_engine_run(bs_engine *e)
        running (no audio device, the DAW stopped processing), run at real time by our own clock */
     if (S->host_r != last_hr) { last_hr = S->host_r; t_hr = t; }
     if (S->host_beat != pace_beat) { pace_beat = S->host_beat; t_beat_seen = t; }
-    if (S->offline || (S->realtime && t - t_beat_seen < 0.2)) {
+    if (S->offline)   /* offline: exactly as far as the host granted, never further. The host writes a block's events
+                         only while the machine stands still at the last grant, so they reach Windows at the same emulated
+                         time on every run: renders are bit-identical (a lead here let the machine run on while the
+                         events were written, and when they arrived depended on the wall clock) */
+      target = S->grant_until;
+    else if (S->realtime && t - t_beat_seen < 0.2) {
       /* the host is processing (it beats every block, and while it waits for us): its pace exactly, plus what it
          grants while it waits for Windows */
       uint64_t base = S->host_r > S->grant_until ? S->host_r : S->grant_until;

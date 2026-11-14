@@ -198,9 +198,17 @@ struct Machine {
         words.erase(words.begin(), words.begin() + i);
     }
     // let the engine run (no host to pace it): up to `upto` DAC samples
+    // run exactly n DAC samples on and wait until the machine stands still there: what Windows says next is read at
+    // the same emulated time on every run (a free-running engine made the anchor depend on the wall clock)
+    void step(uint64_t n)
+    {
+        const uint64_t to = S->dac_w + n;
+        runTo(to);
+        while (S->dac_w < to && S->state != BS_FAILED && !S->quit) nap();
+    }
     void runTo(uint64_t upto)
     {
-        S->grant_until = upto > S->lead ? upto - S->lead : 0;
+        S->grant_until = upto;   // offline: the engine runs exactly this far (engine.c)
         S->host_beat++;
     }
 };
@@ -271,7 +279,7 @@ int main(int argc, char **argv)
     S->magic = BSHM_MAGIC; S->version = BSHM_VERSION; S->rate = 48000; S->ring_len = BSHM_RING;
     S->lead = 1024; S->offline = 1; S->vid_want = 0;
     M.e = bs_engine_start(S, a["--core"].c_str(), conf.c_str(), state.c_str(), nullptr, a.count("--log") ? a["--log"].c_str() : nullptr);
-    while (S->state < BS_RUNNING && S->state != BS_FAILED) { M.runTo(S->dac_w + 48000); nap(); }
+    while (S->state < BS_RUNNING && S->state != BS_FAILED) { M.step(48000); }
     if (S->state == BS_FAILED) { std::fprintf(stderr, "render311: %s\n", S->error); return 3; }
 
     // the DNA, built by Sound Recorder (no assembly animation: nobody is watching)
@@ -293,7 +301,7 @@ int main(int argc, char **argv)
     bool rateCap = false;
     M.send("hi 3");   // DNA v3: the guest answers with its caps
     for (bool hi = false; !hi && S->state != BS_FAILED;) {   // Windows answers before it gets the sound (as the plugin does)
-        M.runTo(S->dac_w + 4800); nap();
+        M.step(4800);
         std::vector<std::string> ls; M.lines(ls);
         for (auto &l : ls) { if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str()); if (l.rfind("hi ", 0) == 0) { hi = true; win = bsynth3::hasCap(bsynth3::parseHi3(l), "win"); loopCap = bsynth3::hasCap(bsynth3::parseHi3(l), "loop"); rateCap = bsynth3::hasCap(bsynth3::parseHi3(l), "rate"); } }
     }
@@ -301,7 +309,7 @@ int main(int argc, char **argv)
     M.send("dna " + written.canonical);     // as written: Windows does N itself
     char b[160]; proto::env(b, sizeof b, dna.g); b[std::strlen(b) - 1] = 0; M.send(b);
     for (bool built = false; !built;) {
-        M.runTo(S->dac_w + 48000); nap();
+        M.step(48000);
         std::vector<std::string> ls; M.lines(ls);
         for (auto &l : ls) {
             if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str());   // Windows' replies, for debugging

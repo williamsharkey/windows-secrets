@@ -1,5 +1,5 @@
 diff --git a/dosbox_pure_libretro.cpp b/dosbox_pure_libretro.cpp
-index ea24d45..2bf6da5 100644
+index ea24d45..c76be72 100644
 --- a/dosbox_pure_libretro.cpp
 +++ b/dosbox_pure_libretro.cpp
 @@ -989,7 +989,13 @@ static DOS_Drive* DBP_Mount(unsigned image_index = 0, bool unmount_existing = tr
@@ -17,6 +17,26 @@ index ea24d45..2bf6da5 100644
  		if ((boot && letter == 'C') || no_register_just_get_drive) return drive;
  	}
  	else if (!strcasecmp(ext, "IMG") || !strcasecmp(ext, "IMA") || !strcasecmp(ext, "VHD") || !strcasecmp(ext, "JRC"))
+@@ -3619,6 +3625,7 @@ void retro_run(void)
+ 
+ 	bool skip_emulate = (fpsboost > 1 && (((fpsboost_count++)%fpsboost)!=0)) || DBP_NeedFrameSkip(false);
+ 	DBP_ThreadControl(skip_emulate ? TCM_PAUSE_FRAME : TCM_FINISH_FRAME);
++	{ extern void BSYN_FrameBoundary(void); if (!skip_emulate) BSYN_FrameBoundary(); } // BASILISK 16: the host's events and reports pass here (offline: renders independent of the wall clock)
+ 
+ 	Bit32u tpfActual = 0, tpfTarget = 0, tpfDraws = 0;
+ 	#ifdef DBP_ENABLE_WAITSTATS
+@@ -3663,6 +3670,11 @@ void retro_run(void)
+ 	if (dbp_opengl_draw && voodoo_ogl_mainthread()) { view_width *= voodoo_ogl_scale; view_height *= voodoo_ogl_scale; }
+ 
+ 	DBP_ThreadControl(skip_emulate ? TCM_RESUME_FRAME : TCM_NEXT_FRAME);
++	{ // BASILISK 16, offline (the card's gate on): the frame is emulated now, not on its own thread after we return, so
++	  // the host writes only while the machine stands still and its events pass at the next frame's start
++		extern bool BSYN_Gated(void); extern void BSYN_FrameBoundary(void);
++		if (!skip_emulate && BSYN_Gated()) { DBP_ThreadControl(TCM_FINISH_FRAME); BSYN_FrameBoundary(); }
++	}
+ 
+ 	#ifndef DBP_STANDALONE
+ 	// submit audio
 diff --git a/src/dbp_serialize.cpp b/src/dbp_serialize.cpp
 index 8c3c343..e56a254 100644
 --- a/src/dbp_serialize.cpp

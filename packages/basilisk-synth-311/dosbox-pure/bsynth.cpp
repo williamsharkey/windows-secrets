@@ -121,7 +121,23 @@ static struct {
 	/* DAC output ring for the host */
 	float *ring; Bit32u ring_len; Bit64u ring_w;
 	MixerChannel *chan; MixerObject *mo;
+	/* offline renders (the host's gate on): DOSBox Pure emulates the next frame on its own thread while the host
+	   writes, so what the host gives and takes passes only at frame boundaries (BSYN_FrameBoundary, called by
+	   retro_run while the emulation stands still): events wait in `pend`, reports in `rnew`, and the host sees the
+	   DAC only as far as the last boundary. Then a render does not depend on the wall clock. */
+	bool gate; std::deque<Bit16u> pend, rnew; Bit64u pub_dac;
 } bs;
+bool BSYN_Gated(void) { std::lock_guard<std::mutex> l(bs.mtx); return bs.gate; }
+void BSYN_FrameBoundary(void)
+{
+	std::lock_guard<std::mutex> l(bs.mtx);
+	if (!bs.gate) return;
+	for (Bit16u w : bs.pend) bs.events.push_back(w);
+	bs.pend.clear();
+	for (Bit16u w : bs.rnew) bs.reports.push_back(w);
+	bs.rnew.clear();
+	bs.pub_dac = bs.ring_w;
+}
 
 #ifdef _WIN32
 #define BSYN_API __declspec(dllexport)
@@ -135,7 +151,18 @@ BSYN_API void bsyn_host_event(const Bit16u *w, int n, Bit32u id, Bit64u at)
 	std::lock_guard<std::mutex> l(bs.mtx);
 	if (id) { bs.tgt_id[id & 4095] = id; bs.tgt_at[id & 4095] = at; }
 	if (bs.ptr_polled && n >= 3 && (w[0] >> 8) == 6) { bs.ptr_x = w[1]; bs.ptr_y = w[2]; bs.ptr_seq++; return; }
-	for (int i = 0; i < n; i++) bs.events.push_back(w[i]);
+	for (int i = 0; i < n; i++) (bs.gate ? bs.pend : bs.events).push_back(w[i]);
+}
+BSYN_API void bsyn_host_gate(int on)
+{
+	std::lock_guard<std::mutex> l(bs.mtx);
+	if (bs.gate == (on != 0)) return;
+	bs.gate = on != 0;
+	if (!bs.gate) {   /* what waited goes now */
+		for (Bit16u w : bs.pend) bs.events.push_back(w);
+		for (Bit16u w : bs.rnew) bs.reports.push_back(w);
+		bs.pend.clear(); bs.rnew.clear();
+	} else bs.pub_dac = bs.ring_w;
 }
 BSYN_API int bsyn_host_reports(Bit16u *w, int max)
 {
@@ -144,7 +171,7 @@ BSYN_API int bsyn_host_reports(Bit16u *w, int max)
 	while (n < max && !bs.reports.empty()) { w[n++] = bs.reports.front(); bs.reports.pop_front(); }
 	return n;
 }
-BSYN_API Bit64u bsyn_host_dac(void) { return bs.ring_w; }
+BSYN_API Bit64u bsyn_host_dac(void) { std::lock_guard<std::mutex> l(bs.mtx); return bs.gate ? bs.pub_dac : bs.ring_w; }
 /* copy DAC samples [from, from+n) (stereo float) if still in the ring; returns how many were available */
 BSYN_API int bsyn_host_read(Bit64u from, float *out, int n)
 {
@@ -585,7 +612,7 @@ static void command(Bit16u c)
 		bs.ptr_polled = true;
 		bs.results.push_back(bs.ptr_seq); bs.results.push_back(bs.ptr_x); bs.results.push_back(bs.ptr_y); break;
 	case 22: /* REPORT words... */
-		for (Bit16u w : bs.args) bs.reports.push_back(w);
+		for (Bit16u w : bs.args) (bs.gate ? bs.rnew : bs.reports).push_back(w);
 		break;
 	case 29: { /* LENV layer kind(0 amp, 1 pan) n  t_ms l  t_ms l ... [loop]  (l: amp 0..100, pan 0..200 = -100..100;
 	              loop (v3): the last `loop` points repeat while the voice is held) */
