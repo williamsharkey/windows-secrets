@@ -35,7 +35,7 @@ seed     = 3114
 # name      source  preset                                  mix
 lobby       ch13    "City Hush"                              lufs=-37
 chime       ch7     "Single Chime"                           lufs=-24 pan=20 verb=0.5 echo=0.2
-gtr         ch1     "courtyard-chapel:Faded Pluck"           lufs=-20 pan=-24 verb=0.2
+gtr         ch1     "courtyard-chapel:Faded Pluck"           lufs=-20 pan=-24 verb=0.2 vel=0.72
 bass        ch2     "Fretless Harbour"                       lufs=-21
 flute       ch3     "Night Flute"                            lufs=-19 pan=10 verb=0.35 echo=0.14
 ep          ch4     "Glass Tine"                             lufs=-22 pan=28 verb=0.3 echo=0.1

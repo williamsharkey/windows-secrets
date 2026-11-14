@@ -15,11 +15,11 @@ Lead	Harmon Glow	rl_harmon_gs4#6Z0,127,68Nlg35Vw4,6s15,60;A18S100R220V75
 Lead	Straight Mute	rl_straightmute_g4#6Z0,127,67Nlg35Vw4,6s15,60;A20S100R220V75
 Lead	Clarinet After Hours	rl_clarinet_f4#6Nlg40Vw3,5;A35S100R260V70K65
 Bell	Crystal Bb	rl_crystal_b3#12Z0,127,58;A0R1800V80
-Bell	Glass Ceiling	rl_glassbell_fs5#12Z0,127,78;A0R900V85
-Bell	Single Chime	rl_chime_as4#12Z0,127,70;A0R1400V80
+Bell	Glass Ceiling	rl_glassbell_fs5#12Z0,127,73;A0R900V85
+Bell	Single Chime	rl_chime_as4#12Z0,127,70;A0R1401V80
 Bell	Harmonic Glass	rl_harmonic2_b3#8Z0,71,59/rl_harmonic_b5#8Z72,127,83;A0R1500V80
 Pluck	Pizzicato Night	rl_pizz_cb#4Z0,47,30/rl_pizz_vln#12Z48,127,67;A0D600S10R200V85
-Vocal	Mist Choir	choir_aah@t6000]@t300[#8U2~8Vw4,3/vocoder_choir_female_f4#8T-8L55Vw3,4;A700S90R1600V45K57
+Vocal	Mist Choir	choir_aah@t6000]@t300[#8U2~8Vw4,3L60/vocoder_choir_female_f4#8T-8L35Vw3,4;A700S90R1600V45K57
 Pad	Haze Strings	violin_section_sus_c4@t7500]@t200[#8U2~9Vw3,4/cello_section_sus_c3@t7500]@t200[#8T12L60;A500S95R1400V55K60
 Kit	Loft Brushes	gd_kit_tape_kick@t30000Irl_brush_rim@t30000Irl_brush_a@t30000Irl_clap_b@t30000Irl_brush_sw2@t30000Igd_kit_tape_lotom@t30000Igd_kit_tape_tighthat@t30000Igd_kit_tape_hat@t30000Igd_kit_tape_midtom@t30000Igd_kit_tape_openhat@t30000Igd_kit_tape_hitom@t30000Igd_kit_tape_crash@t30000Igd_kit_studio_ride@t30000Irl_brush_sw1#16;R160V100G-6k36j1i90k37j2h92k38j3k39j4i70h96k40j5i80k41j6i70h70k43j6i70t300h80k42j7c1i55h130k44j8c1i50h130k45j9i70h100k47j9i70t200h100k46j10c1i50h130k48j11i70h125k50j11i70t200h125k49j12i60h120k51j13i55h72k35j14
 Kit	Loft Sticks	gd_kit_studio_kick@t30000Irl_rim_a@t30000Igd_kit_studio_snare@t30000Irl_clap_a@t30000Igd_kit_studio_lotom@t30000Igd_kit_studio_tighthat@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_midtom@t30000Igd_kit_studio_openhat@t30000Igd_kit_studio_hitom@t30000Igd_kit_studio_crash@t30000Igd_kit_studio_ride@t30000Irl_brush_a#16;R140V100G-6k36j1k37j2i80h92k38j3k40j3i55k39j4i80h96k41j5i75h70k43j5i75t300h80k42j6c1i60h130k44j7c1i55h130k45j8i75h100k47j8i75t200h100k46j9c1i55h130k48j10i75h125k50j10i75t200h125k49j11i60h120k51j12i60h72k35j13
@@ -43,11 +43,11 @@ FX	Steam Wand	rl_espresso_wave#4F;A200R1500V70
 FX	Cup and Spoon	rl_cup_stir#4F;A5R800V80
 FX	Teacup	rl_teacup#4F;A5R800V80
 FX	Lighter	rl_lighter#4F;A0R300V80
-FX	Needle Drop	rl_needle#4F;A0R1200V80
+Perc	Needle Drop	rl_needle@t30000Irl_vinyl_b#4F;A0R1500V80
 FX	Cassette Deck	rl_cassette#4F;A0R500V80
 FX	Distant Train	rl_train_far#4F;A1500R3000V70
 FX	Passing Train	rl_train_pass#4F;A800R2500V70
 FX	Harbour Horn	rl_foghorn#4F;A400R3000V70
 FX	Far Horn	rl_foghorn_far#4F;A200R2000V70
-FX	Bicycle Bell	rl_bicycle_bell#4F;A0R800V80
+FX	Bicycle Bell	rl_bicycle_bell#4F;A0R801V80
 FX	Drip	rl_drip#8Yd30;A0R600V85K72

@@ -184,6 +184,8 @@ def main():
             continue
         x = dsp.gate_start(R(fid), -40)
         y, m, f = tonal(x[:int(8 * dsp.SR)], lo=lo_, hi=hi_, start=0.15)
+        if nm == 'chime':   # heard a quarter-tone sharp of what the autocorrelation says (library lane's 3.11 check)
+            y = dsp.retune(y, 440.0, 69 - 0.47)
         emit(f'rl_{nm}_{dsp.note_name(m)}', 'bell', dsp.hp(y, 60), fid, f'{cat[fid]["description"][:50]} ({f:.1f} Hz)')
     for fid, nm in (('fs_340293', 'mutegtr_a'), ('fs_340292', 'mutegtr_b'), ('fs_374531', 'pizz_vln'), ('fs_373056', 'pizz_cb')):
         if not have(fid):
@@ -228,7 +230,7 @@ def main():
         y = dsp.lp(dsp.hp(y, hpf), lpf)
         emit(f'rl_{nm}', 'texture', dsp.loopify(y, 1.5), fid, 'steady excerpt, seamless loop', rms=rms, seconds=29.5)
     EVENTS = [('fs_96906', 'espresso', 0, 26), ('fs_402845', 'espresso_auto', 0, 26), ('fs_333948', 'espresso_wave', 0, 24),
-              ('fs_556722', 'needle', 0, 8), ('fs_826353', 'cassette', 0, 4), ('fs_452869', 'lighter', 0, 3),
+              ('fs_556722', 'needle', 0, 14), ('fs_826353', 'cassette', 0, 4), ('fs_452869', 'lighter', 0, 3),
               ('fs_459462', 'cup_stir', 0, 12), ('fs_545874', 'teacup', 0, 20), ('fs_475501', 'train_far', None, 26),
               ('fs_593082', 'train_pass', 0, 25), ('fs_364806', 'bicycle_bell', 0, 6), ('fs_683102', 'drip', 0, 1.7),
               ('fs_795709', 'foghorn', 0, 26), ('fs_507471', 'foghorn_far', 0, 26)]
@@ -242,9 +244,12 @@ def main():
             c = int(np.argmax(env)) * w
             a0 = max(0, c - int(secs * 0.55 * dsp.SR)); y = x[a0:a0 + int(secs * dsp.SR)]
         else:
-            y = dsp.gate_start(x[int(st * dsp.SR):int((st + secs) * dsp.SR)], -45)
+            y = dsp.gate_start(x[int(st * dsp.SR):int((st + secs) * dsp.SR)], -30 if nm == 'bicycle_bell' else -45)
         y = dsp.hp(y, 40)
-        emit(f'rl_{nm}', 'texture', dsp.fades(y, 30, 600), fid, cat[fid]['description'][:60], seconds=29.5)
+        if nm == 'bicycle_bell':   # start on the bell itself, not the hand reaching for it
+            k = int(np.argmax(np.abs(y) > 0.5 * np.max(np.abs(y))))
+            y = y[max(0, k - int(0.01 * dsp.SR)):]
+        emit(f'rl_{nm}', 'texture', dsp.fades(y, 3 if nm == 'bicycle_bell' else 30, 600), fid, cat[fid]['description'][:60], seconds=29.5)
 
     with open(os.path.join(out, 'LIBRARY.TSV'), 'w', encoding='cp1252', newline='') as f:
         f.write('# name\tcategory\tpath\tseconds\tsource/licence\r\n')

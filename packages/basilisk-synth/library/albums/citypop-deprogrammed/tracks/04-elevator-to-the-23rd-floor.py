@@ -144,7 +144,7 @@ finish(__file__, S, {
 }, [
     ('lobby', 'ch13', 'City Hush', dict(lufs=-37)),
     ('chime', 'ch7', 'Single Chime', dict(lufs=-24, pan=20, verb=0.5, echo=0.2)),
-    ('gtr', 'ch1', 'courtyard-chapel:Faded Pluck', dict(lufs=-20, pan=-24, verb=0.2)),
+    ('gtr', 'ch1', 'courtyard-chapel:Faded Pluck', dict(lufs=-20, pan=-24, verb=0.2, vel=0.72)),
     ('bass', 'ch2', 'Fretless Harbour', dict(lufs=-21)),
     ('flute', 'ch3', 'Night Flute', dict(lufs=-19, pan=10, verb=0.35, echo=0.14)),
     ('ep', 'ch4', 'Glass Tine', dict(lufs=-22, pan=28, verb=0.3, echo=0.1)),

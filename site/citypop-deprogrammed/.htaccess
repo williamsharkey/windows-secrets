@@ -1,0 +1,8 @@
+# CITYPOP DEPROGRAMMED: the audio's types, and long caching for files whose URLs carry a version (?v=)
+AddType audio/ogg .opus
+AddType audio/mpeg .mp3
+<IfModule mod_headers.c>
+  <FilesMatch "\.(opus|mp3|png)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+</IfModule>

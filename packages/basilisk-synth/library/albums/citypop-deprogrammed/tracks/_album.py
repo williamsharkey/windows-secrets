@@ -439,7 +439,7 @@ def retro(notes):
     return sorted((end - b - d, p, d) for b, p, d in notes)
 
 
-def play(part, notes, at=0.0, vel=88, gate=0.94, shape=True, accent_long=True, tr=0, legato=False):
+def play(part, notes, at=0.0, vel=88, gate=0.94, shape=True, accent_long=True, tr=0, legato=False, chain=6.0):
     """place a melody: phrase-shaped velocity (rises to the highest note of each bar group), long notes a little
     louder; legato makes each note touch the next (a glide on legato presets)"""
     if not notes:
@@ -454,10 +454,15 @@ def play(part, notes, at=0.0, vel=88, gate=0.94, shape=True, accent_long=True, t
         if accent_long and d >= 1.5:
             v += 4
         g = gate
-        if legato and i + 1 < len(ns) and ns[i + 1][0] - (b + d) < 0.05:
+        # legato notes glide without a new attack, so a long chain would run off the end of the recording: a chain
+        # is broken (one detached note, a new attack) once it is longer than `chain` beats
+        if i == 0 or not legato:
+            run0 = b
+        if legato and i + 1 < len(ns) and ns[i + 1][0] - (b + d) < 0.05 and ns[i + 1][0] - run0 < chain:
             dd = ns[i + 1][0] - b + 0.06
         else:
             dd = d * g
+            run0 = ns[i + 1][0] if i + 1 < len(ns) else b
         part.note(at + b, p + tr, dd, v)
     return at + max(b + d for b, p, d in notes)
 
@@ -476,7 +481,7 @@ def grace(notes, every=3, below=1, length=0.06, rng=None):
 # ------------------------------------------------------------------------------------------------ texture
 def texture(part, at, beats, note=60, vel=80, every=None, bpm=84.0, seconds=24.0, overlap=1.0):
     """a long ambience as back-to-back notes of a sample's length (the release crossfades the joins)"""
-    every = every or seconds * bpm / 60.0
+    every = every or (seconds - 2.5) * bpm / 60.0   # the next one fades in while the last is still sounding
     t, end = float(at), float(at) + beats
     while t < end - 1e-3:
         d = min(every, end - t)

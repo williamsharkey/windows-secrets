@@ -141,7 +141,7 @@ finish(__file__, S, {
     ('glass', 'ch1', 'Glass Tine', dict(lufs=-19, pan=-14, verb=0.3, echo=0.08)),
     ('harp', 'ch2', 'courtyard-chapel:Faded Pluck', dict(lufs=-24, pan=34, verb=0.3)),
     ('bass', 'ch3', 'Night Pizz Bass', dict(lufs=-21)),
-    ('strings', 'ch4', 'studio-archive:Crystal Legato', dict(lufs=-24, pan=-36, verb=0.45)),
+    ('strings', 'ch4', 'dna:violin_section_sus_c4@t7500]@t200[#8Vw3,4/cello_section_sus_c3@t7500]@t200[#8T12L70Vw3,4;A240S95R900V70K60', dict(lufs=-24, pan=-36, verb=0.45)),
     ('flute', 'ch5', 'Night Flute', dict(lufs=-19, pan=12, verb=0.35, echo=0.12)),
     ('harmonica', 'ch6', 'tape-parlour:Hollow Revival', dict(lufs=-20, pan=4, verb=0.3, echo=0.1)),
     ('box', 'ch7', 'courtyard-chapel:Late Ladder', dict(lufs=-26, pan=42, verb=0.45, echo=0.2)),
