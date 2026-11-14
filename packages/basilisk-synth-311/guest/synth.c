@@ -10,6 +10,7 @@
 #include <windows.h>
 #include <mmsystem.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -79,6 +80,14 @@ int envA, envD, envS = 100, envR = 120;
 int selLayer;
 #define NDIG 16
 static HWND hDig[NDIG];   /* the strips' Calculator keys 0-F */
+/* the tabs and pages (PRESET-ENGINE-2 section 8) */
+#define NTAB 3
+#define ID_TAB 1390
+#define ID_PG 1400
+static const char *tabNames[NTAB] = {"Main", "Voices", "Playback"};
+static const char *tabIds[NTAB] = {"main", "voices", "play"};
+static HWND hTab[NTAB], pgWin[64], pgSb[24], pgVal[24], pgBtn[24];
+static int curTab, npg, npgSb, npgBtn;
 static const COLORREF layerColor[NL] = {RGB(0, 128, 0), RGB(0, 0, 160), RGB(160, 0, 0), RGB(128, 0, 128),
                                         RGB(0, 128, 128), RGB(160, 96, 0), RGB(64, 64, 64), RGB(96, 0, 48)};
 char line[1200];
@@ -543,6 +552,7 @@ static void dig_watch(void);
 static void dig_refresh_all(void);
 static void kb_repaint(void);
 static void btn_text(HWND b, const char *t);
+static void page_values_layer(void);
 static void layer_replies(void)
 {
     int i;
@@ -1236,6 +1246,7 @@ static void panel_refresh(void)
 {
     int i; char t[48];
     dig_refresh_all();   /* the selected layer's keys show the focus rectangle */
+    if (curTab > 0) page_values_layer();   /* an open page follows the selected layer and the DNA */
     if (!hSb[0]) return;
     harmony_from_dna();
     if (hHarm) btn_text(hHarm, harmNames[harmIdx]);
@@ -1578,7 +1589,14 @@ static void panel_create(int group)
     switch (group) {
     case 0:
         mk("STATIC", "DNA", WS_VISIBLE, 8, PANEL + 6, 30, 16, -1);
-        hDna = mk("EDIT", dnaText, WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 40, PANEL + 2, 830 - 236, 22, 1099);
+        {   /* the tabs: push buttons left of the Key and Scale boxes (the DNA edit field shrinks for them) */
+            int k, tw = 0, x3;
+            for (k = 0; k < NTAB; k++) tw += btn_w(tabNames[k]) + 1;
+            x3 = 40 + 830 - 236 - tw;
+            hDna = mk("EDIT", dnaText, WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 40, PANEL + 2, x3 - 44, 22, 1099);
+            for (k = 0; k < NTAB; k++) { int w2; hTab[k] = mkbtn(tabNames[k], x3, PANEL + 1, 24, ID_TAB + k, &w2); x3 += w2 + 1; }
+            SendMessage(hTab[0], BM_SETSTATE, TRUE, 0L);
+        }
         {   /* Key [C v] Scale [Major v]: the key and scale new notes use (PRESET-ENGINE-2 18.2) */
             int w, x2 = 40 + 830 - 236 + 6;
             mklbl("Key", x2, PANEL + 6, 16, &w); x2 += w + 3;
@@ -1686,6 +1704,247 @@ static void panel_create(int group)
     UpdateWindow(hMain);
 }
 
+
+/* ================================================================ tabs and pages (PRESET-ENGINE-2 section 8, 3.11)
+   Windows 3.11 has no tab control: a row of push buttons in the DNA row acts as the tabs, the open page's stays
+   down (BM_SETSTATE). Main is the panel of before; another page replaces the panel rows under the DNA row
+   (y 580-682) and is made when it opens, destroyed when it closes (GDI is tight). Pages edit the selected layer's
+   DNA v3 tokens (W N S Y V) in the DNA text itself; those never make Sound Recorder rebuild. */
+
+/* --- a v3 token of the selected layer: its subkeys as (key, value) pairs; the rest is kept as written */
+typedef struct { char key; char val[24]; } SUBK;
+static int v3_read(int li, char X, SUBK *k, int max, int *tb, int *te)
+{
+    int b, e, p, n = 0;
+    *tb = *te = -1;
+    span(li, &b, &e);
+    if (b < 0) return 0;
+    for (p = b; p < e; p++) if (dnaText[p] == X) break;
+    if (p >= e) return 0;
+    *tb = p; p++;
+    while (p < e && n < max) {
+        char c = dnaText[p]; int m = 0;
+        if (!(c >= 'a' && c <= 'z')) break;
+        k[n].key = c; p++;
+        if (c == 'k' && X == 'N' && p < e && strchr("nhl", dnaText[p])) k[n].val[m++] = dnaText[p++];
+        else while (p < e && m < 23 && (isdigit((unsigned char)dnaText[p]) || strchr(".,~-", dnaText[p]))) k[n].val[m++] = dnaText[p++];
+        k[n].val[m] = 0; n++;
+    }
+    *te = p;
+    return n;
+}
+static const char *v3_get(char X, char key)
+{
+    static SUBK k[16]; static char none[1]; int n, i, tb, te;
+    n = v3_read(selLayer, X, k, 16, &tb, &te);
+    for (i = 0; i < n; i++) if (k[i].key == key) return k[i].val;
+    return NULL;
+}
+static void v3_put(char X, char key, const char *val)   /* val NULL: remove the subkey; "": a flag */
+{
+    SUBK k[16]; char t[200]; int n, i, tb, te, found = 0, b, e;
+    n = v3_read(selLayer, X, k, 16, &tb, &te);
+    for (i = 0; i < n; i++) if (k[i].key == key) {
+        if (val) { lstrcpyn(k[i].val, val, 24); found = 1; }
+        else { memmove(&k[i], &k[i + 1], (n - i - 1) * sizeof(SUBK)); n--; i--; }
+    }
+    if (val && !found && n < 16) { k[n].key = key; lstrcpyn(k[n].val, val, 24); n++; }
+    t[0] = 0;
+    if (n) { int m = 1; t[0] = X; t[1] = 0; for (i = 0; i < n && m < 180; i++) { t[m++] = k[i].key; t[m] = 0; lstrcat(t, k[i].val); m = lstrlen(t); } }
+    if (tb >= 0) splice(tb, te, t);
+    else if (t[0]) { span(selLayer, &b, &e); if (b >= 0) splice(e, e, t); }
+}
+/* a fraction subkey (W: 0..1 as ".25", "1"; a range "a~b"): part 0 the value (or range low), 1 the range high */
+static int frac_pct(const char *v, int part, int dflt)
+{
+    const char *p = v; char *t;
+    if (!v) return dflt;
+    if (part) { t = strchr(v, '~'); if (!t) return -1; p = t + 1; }
+    return (int)(atof(p) * 100.0 + 0.5);
+}
+static void pct_text(int pct, char *o) { if (pct >= 100) strcpy(o, "1"); else if (pct % 10 == 0) sprintf(o, ".%d", pct / 10); else sprintf(o, ".%02d", pct); }
+
+/* --- the page controls: label, token letter, subkey, range, kind, unit */
+enum { K_INT, K_PCT, K_PCTHI, K_PAIR0, K_PAIR1, K_FLAG, K_MODE, K_PRIO };
+typedef struct { const char *label; char X, key; int lo, hi, kind; const char *unit; int row; } PC;
+static const PC pageVoices[] = {
+    {"Poly", 'N', 'p', 0, 0, K_MODE, "", 0}, {"Mono", 'N', 'm', 0, 0, K_MODE, "", 0}, {"Legato", 'N', 'l', 0, 0, K_MODE, "", 0},
+    {"Continue", 'N', 'c', 0, 0, K_MODE, "", 0}, {"Notes", 'N', 'p', 0, 16, K_INT, "", 0}, {"Glide", 'N', 'g', 0, 2000, K_INT, "ms", 0},
+    {"Newest first", 'N', 'k', 0, 0, K_PRIO, "", 0},
+    {"Round-robin", 'S', 'r', 0, 0, K_FLAG, "", 1}, {"Random note", 'S', 'x', 0, 0, K_FLAG, "", 1}, {"Random recorder", 'S', 'p', 0, 0, K_FLAG, "", 1},
+    {"Group", 'S', 'g', 0, 8, K_INT, "", 1}, {"Strum", 'S', 's', 0, 500, K_INT, "ms", 1}, {"Width", 'S', 'w', 0, 100, K_PCT, "%", 1},
+    {"Detune", 'Y', 'd', 0, 100, K_INT, "c", 2}, {"Level", 'Y', 'l', 0, 100, K_INT, "%", 2}, {"Late", 'Y', 't', 0, 200, K_INT, "ms", 2},
+    {"Pan", 'Y', 'q', 0, 100, K_INT, "", 2}, {"Per key", 'Y', 'k', 0, 0, K_FLAG, "", 2}, {NULL}};
+static const PC pagePlay[] = {
+    {"Start", 'W', 's', 0, 100, K_PCT, "%", 0}, {"to", 'W', 's', 0, 100, K_PCTHI, "%", 0}, {"End", 'W', 'e', 0, 100, K_PCT, "%", 0},
+    {"Length", 'W', 'l', 0, 100, K_PCT, "%", 0}, {"Vel>start", 'W', 'v', 0, 100, K_PCT, "%", 0}, {"Tape", 'W', 'm', 0, 30000, K_INT, "ms", 0},
+    {"Wow", 'V', 'w', 0, 100, K_PAIR0, "c", 1}, {"at", 'V', 'w', 1, 100, K_PAIR1, "/10Hz", 1}, {"Flutter", 'V', 'f', 0, 50, K_PAIR0, "c", 1},
+    {"at", 'V', 'f', 1, 30, K_PAIR1, "Hz", 1}, {"Scoop", 'V', 's', 0, 200, K_PAIR0, "c", 1}, {"over", 'V', 's', 0, 2000, K_PAIR1, "ms", 1},
+    {"Delay", 'W', 'o', 0, 30000, K_INT, "ms", 2}, {"Beat delay", 'W', 'b', 0, 64, K_INT, "/16", 2}, {"Gate", 'W', 'g', 0, 64, K_INT, "/16", 2},
+    {"Tempo sync", 'W', 't', 0, 0, K_FLAG, "", 2}, {"Loop amp", 'W', 'r', 0, 8, K_INT, "", 2}, {"Loop pan", 'W', 'p', 0, 8, K_INT, "", 2}, {NULL}};
+static const PC *pgDef[NTAB] = {NULL, pageVoices, pagePlay};
+static int pgSbCtl[24], pgBtnCtl[24];
+
+static int pc_value(const PC *c)
+{
+    const char *v = v3_get(c->X, c->key); char *k;
+    switch (c->kind) {
+    case K_INT: return v && *v ? atoi(v) : (c->X == 'W' && c->key == 'e' ? 100 : 0);
+    case K_PCT: return c->key == 'e' ? frac_pct(v, 0, 100) : frac_pct(v, 0, 0);
+    case K_PCTHI: { int h = frac_pct(v, 1, -1); return h < 0 ? frac_pct(v, 0, 0) : h; }
+    case K_PAIR0: return v ? atoi(v) : 0;
+    case K_PAIR1: if (!v || !(k = strchr(v, ','))) return c->lo; return atoi(k + 1);
+    case K_FLAG: return v != NULL;
+    case K_MODE: { int m; for (m = 'm'; ; m = m == 'm' ? 'l' : m == 'l' ? 'c' : 0) { if (!m) break; if (v3_get('N', (char)m)) return c->key == m; } return c->key == 'p'; }
+    case K_PRIO: return v ? (*v == 'h' ? 1 : *v == 'l' ? 2 : 0) : 0;
+    }
+    return 0;
+}
+static void pc_set(const PC *c, int v)
+{
+    char t[32]; const char *old = v3_get(c->X, c->key);
+    switch (c->kind) {
+    case K_INT: if (v <= 0 && !(c->key == 'e')) v3_put(c->X, c->key, NULL); else { sprintf(t, "%d", v); v3_put(c->X, c->key, t); } break;
+    case K_PCT: case K_PCTHI: {
+        int lo = c->kind == K_PCT ? v : frac_pct(old, 0, 0), hi = c->kind == K_PCTHI ? v : frac_pct(old, 1, -1);
+        char a[8], b2[8];
+        if (c->key == 'e' && lo >= 100 && hi < 0) { v3_put('W', 'e', NULL); break; }
+        if (c->kind == K_PCT && lo <= 0 && hi < 0 && c->key != 'e') { v3_put(c->X, c->key, NULL); break; }
+        pct_text(lo, a);
+        if (hi > lo) { pct_text(hi, b2); sprintf(t, "%s~%s", a, b2); } else strcpy(t, a);
+        v3_put(c->X, c->key, t); break; }
+    case K_PAIR0: case K_PAIR1: {
+        int a = old ? atoi(old) : 0, b2 = old && strchr(old, ',') ? atoi(strchr(old, ',') + 1) : (c + 1)->lo;
+        if (c->kind == K_PAIR0) a = v; else b2 = v;
+        if (a <= 0) v3_put(c->X, c->key, NULL); else { sprintf(t, "%d,%d", a, b2); v3_put(c->X, c->key, t); }
+        break; }
+    case K_FLAG: v3_put(c->X, c->key, v ? "" : NULL); break;
+    case K_MODE: v3_put('N', 'm', NULL); v3_put('N', 'l', NULL); v3_put('N', 'c', NULL); if (c->key != 'p') v3_put('N', c->key, ""); break;
+    case K_PRIO: v3_put('N', 'k', v == 1 ? "h" : v == 2 ? "l" : NULL); break;
+    }
+}
+static void page_values(void)   /* the controls show the selected layer's tokens */
+{
+    const PC *d = pgDef[curTab]; int i;
+    if (!d) return;
+    for (i = 0; i < npgSb; i++) {
+        const PC *c = &d[pgSbCtl[i]]; char t[24]; int v = pc_value(c);
+        SetScrollPos(pgSb[i], SB_CTL, v, TRUE);
+        sprintf(t, "%d%s", v, c->unit); SetWindowText(pgVal[i], t);
+    }
+    for (i = 0; i < npgBtn; i++) {
+        const PC *c = &d[pgBtnCtl[i]];
+        if (c->kind == K_PRIO) { static const char *p[3] = {"Newest first", "Highest first", "Lowest first"}; btn_text(pgBtn[i], p[pc_value(c)]); }
+        else SendMessage(pgBtn[i], BM_SETSTATE, pc_value(c), 0L);
+    }
+}
+static void page_close(void)
+{
+    int i;
+    for (i = 0; i < npg; i++) DestroyWindow(pgWin[i]);
+    npg = npgSb = npgBtn = 0;
+}
+static void page_add(HWND w) { if (npg < 64) pgWin[npg++] = w; }
+static void page_open(int t)
+{
+    int g, i, row, x, w, y0 = PANEL + 32;
+    static const int mainGroups[4] = {1, 2, 3, 5};
+    DWORD t0 = timeGetTime();
+    if (t < 0 || t >= NTAB) return;
+    SendMessage(hMain, WM_SETREDRAW, FALSE, 0L);   /* one repaint at the end, not one per window */
+    page_close();
+    curTab = t;
+    for (i = 0; i < NTAB; i++) if (hTab[i]) SendMessage(hTab[i], BM_SETSTATE, i == t, 0L);
+    {   /* Main's panel rows (everything of ours between the DNA row and the keyboard strip, not the clock) */
+        static HWND mainWin[128]; static int nMain;
+        if (!nMain) {
+            HWND c; RECT r; POINT o;
+            for (c = GetWindow(hMain, GW_CHILD); c && nMain < 128; c = GetWindow(c, GW_HWNDNEXT)) {
+                if (c == hClock || !(GetWindowLong(c, GWL_STYLE) & WS_VISIBLE)) continue;   /* (its own style: WM_SETREDRAW hides the parent) */
+                GetWindowRect(c, &r); o.x = r.left; o.y = r.top; ScreenToClient(hMain, &o);
+                if (o.y >= PANEL + 28 && o.y < KBY - 1) mainWin[nMain++] = c;
+            }
+        }
+        for (i = 0; i < nMain; i++) ShowWindow(mainWin[i], t == 0 ? SW_SHOWNA : SW_HIDE);
+        (void)g; (void)mainGroups;
+    }
+
+    if (t > 0) {
+        const PC *d = pgDef[t];
+        {   /* the layer the page edits */
+            char tl[24]; sprintf(tl, "Layer %d of %d", selLayer + 1, nlay);
+            page_add(mk("STATIC", tl, WS_VISIBLE, 8, y0 + 4, 80, 16, -1));
+        }
+        for (row = 0; row < 3; row++) {
+            x = 92;
+            for (i = 0; d[i].label; i++) {
+                const PC *c = &d[i];
+                if (c->row != row) continue;
+                if (c->kind == K_FLAG || c->kind == K_MODE || c->kind == K_PRIO) {
+                    int bw;
+                    HWND b = mkbtn(c->kind == K_PRIO ? "Highest first" : c->label, x, y0 + row * 30, 24, ID_PG + 32 + npgBtn, &bw);
+                    page_add(b); pgBtnCtl[npgBtn] = i; pgBtn[npgBtn++] = b; x += bw + 2;
+                    if (c->kind == K_PRIO || (c + 1)->kind != c->kind) x += 8;
+                } else {
+                    HWND sb;
+                    page_add(mklbl(c->label, x, y0 + row * 30 + 4, 16, &w)); x += w + 2;
+                    sb = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, x, y0 + row * 30 + 4, 44, 14, ID_PG + npgSb);
+                    SetScrollRange(sb, SB_CTL, c->lo, c->hi, FALSE);
+                    page_add(sb); pgSbCtl[npgSb] = i; pgSb[npgSb] = sb; x += 46;
+                    pgVal[npgSb] = mk("STATIC", "", WS_VISIBLE, x, y0 + row * 30 + 4, text_w("30000ms") + 2, 16, -1);
+                    page_add(pgVal[npgSb]); npgSb++; x += text_w("30000ms") + 4;
+                }
+            }
+        }
+        page_values();
+    }
+    SendMessage(hMain, WM_SETREDRAW, TRUE, 0L);
+    {   /* the band, children included, at once */
+        RECT rb; SetRect(&rb, 0, PANEL + 28, 880, KBY - 1);
+        RedrawWindow(hMain, &rb, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+    }
+    say("tab %s", (LPSTR)tabIds[t]);
+    logf_("page %s in %ld ms", (LPSTR)tabIds[t], (long)(timeGetTime() - t0));
+}
+static void page_values_layer(void) { if (npg && pgWin[0]) { char tl[24]; sprintf(tl, "Layer %d of %d", selLayer + 1, nlay); SetWindowText(pgWin[0], tl); } page_values(); }
+static BOOL page_scroll(HWND sb, int code, int pos)
+{
+    int i, lo, hi, v;
+    for (i = 0; i < npgSb; i++) if (pgSb[i] == sb) break;
+    if (i >= npgSb) return FALSE;
+    GetScrollRange(sb, SB_CTL, &lo, &hi);
+    v = GetScrollPos(sb, SB_CTL);
+    switch (code) {
+    case SB_LINEUP: v--; break; case SB_LINEDOWN: v++; break;
+    case SB_PAGEUP: v -= (hi - lo) / 10 + 1; break; case SB_PAGEDOWN: v += (hi - lo) / 10 + 1; break;
+    case SB_THUMBTRACK: case SB_THUMBPOSITION: v = pos; break;
+    default: return TRUE;
+    }
+    if (v < lo) v = lo; if (v > hi) v = hi;
+    SetScrollPos(sb, SB_CTL, v, TRUE);
+    if (code == SB_THUMBTRACK) { char t[24]; sprintf(t, "%d%s", v, pgDef[curTab][pgSbCtl[i]].unit); SetWindowText(pgVal[i], t); return TRUE; }
+    pc_set(&pgDef[curTab][pgSbCtl[i]], v);
+    if (hDna) SetWindowText(hDna, dnaText);
+    edited(FALSE);
+    page_values();
+    return TRUE;
+}
+static void page_command(int id)
+{
+    static int lastId; static DWORD lastT;   /* a push button kept down by BM_SETSTATE reports its click twice */
+    if (id == lastId && timeGetTime() - lastT < 300) return;
+    lastId = id; lastT = timeGetTime();
+    if (id >= ID_TAB && id < ID_TAB + NTAB && id - ID_TAB == curTab && npg) return;   /* already open */
+    if (id >= ID_TAB && id < ID_TAB + NTAB) { page_open(id - ID_TAB); return; }
+    if (id >= ID_PG + 32 && id < ID_PG + 32 + npgBtn) {
+        const PC *c = &pgDef[curTab][pgBtnCtl[id - ID_PG - 32]];
+        int v = pc_value(c);
+        pc_set(c, c->kind == K_PRIO ? (v + 1) % 3 : c->kind == K_MODE ? 1 : !v);
+        if (hDna) SetWindowText(hDna, dnaText);
+        edited(FALSE);
+        page_values();
+    }
+}
 
 /* ================================================================ assembly */
 typedef struct { RECT win; RECT part[NPART]; int stage; } FLY;
@@ -2244,6 +2503,7 @@ static void host_line(char *s)
             }
         }
     }
+    else if (!strcmp(s, "tab")) { int t; for (t = 0; t < NTAB; t++) if (!strcmp(rest, tabIds[t])) { if (assembled) page_open(t); break; } }
     else if (!strcmp(s, "klabels")) {   /* klabels <first> <l|l|...>: the keyboard strip's labels ('~' out of the scale) */
         int n = atoi(rest); char *p = strchr(rest, ' ');
         if (p) {
@@ -2383,7 +2643,7 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
     case WM_MOUSEMOVE: if (GetCapture() == h) { kb_mouse(h, l, 0); return 0; } break;
     case WM_LBUTTONUP: if (GetCapture() == h) { ReleaseCapture(); kb_mouse(h, l, 1); return 0; } break;
     case WM_DRAWITEM: if (w >= ID_DIG && w < ID_DIG + NDIG) { dig_drawitem((const DRAWITEMSTRUCT FAR *)l); return TRUE; } break;
-    case WM_HSCROLL: panel_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
+    case WM_HSCROLL: if (!page_scroll((HWND)HIWORD(l), w, LOWORD(l))) panel_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
     case WM_VSCROLL: kb_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
     case WM_KEYDOWN: case WM_KEYUP: if (computer_key(w, l, m == WM_KEYDOWN)) return 0; break;
     case WM_CTLCOLOR:                  /* the panel's labels sit on the window's grey */
@@ -2397,6 +2657,7 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
     case WM_COMMAND: {
         int r;
         if (w >= 1100 && w < 1200) { panel_command(w, HIWORD(l)); return 0; }
+        if (w >= ID_TAB && w < ID_PG + 64) { if (HIWORD(l) == BN_CLICKED) page_command(w); return 0; }
         /* a reparented recorder's buttons report to us: hand the click to its recorder */
         for (r = 0; r < NALL; r++) if (rw[r] && (HWND)LOWORD(l) && GetParent((HWND)LOWORD(l)) == rw[r]) {
             PostMessage(rw[r], WM_COMMAND, w, l);
