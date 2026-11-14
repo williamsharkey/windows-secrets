@@ -27,7 +27,7 @@
 WINBASEAPI int WINAPI MultiByteToWideChar(UINT, DWORD, LPCSTR, int, LPWSTR, int);
 #endif
 
-#define VERSION "1.2.1"
+#define VERSION "1.2.2"
 #define ROW_H 34
 #define STRIP_X 30
 #define STRIP_Y 6
@@ -1762,6 +1762,15 @@ static LRESULT CALLBACK wnd_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
         return 0;
     }
     case WM_TIMER:
+        if (wp == 78) {
+            /* the recorders' stream underruns (srhook): each one is a gap of silence in XP's output */
+            static LONG last;
+            LONG t = 0;
+            int r;
+            for (r = 0; r < SY_NREC; r++) t += shm->s[r].under;
+            if (t != last) { send_line("log underruns %ld", t); last = t; }
+            return 0;
+        }
         if (wp == 77) {
             lib_find();
             if (lib_root[0] || ++lib_tries > 30) { KillTimer(h, 77); if (lib_root[0]) lib_ready(); else logf_("no library disc"); }
@@ -1879,6 +1888,7 @@ static void make_window(void)
     port_cpu = CreateWindowExA(0, "BasiliskPort", "", WS_CHILD | WS_CLIPCHILDREN, SIDE_X + (SIDE_W - sz_cpu.cx) / 2, fr_cpu.top + 14, sz_cpu.cx, sz_cpu.cy, win, NULL, inst, NULL);
     env_make();
     kb_make();
+    SetTimer(win, 78, 2000, NULL);
     mac_make();
     port_clk = CreateWindowExA(0, "BasiliskPort", "", WS_CHILD | WS_CLIPCHILDREN, fr_clk.left + (fr_clk.right - fr_clk.left - sz_clk.cx) / 2, fr_clk.top + 16, sz_clk.cx, sz_clk.cy, win, NULL, inst, NULL);
 }

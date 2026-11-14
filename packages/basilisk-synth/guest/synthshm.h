@@ -71,6 +71,7 @@ typedef struct {
     volatile LONG t_post;     /* GetTickCount() when synth.exe asked for the last note */
     volatile LONG cut;        /* 1: end the note now (a 5 ms ramp) */
     volatile LONG pan;        /* v2: -100..100, as left/right volume */
+    volatile LONG under;      /* the fast path's stream ran dry this many times (a gap in XP's output) */
     volatile LONG layer;      /* v2: which layer's envelope applies (-1: none) */
     volatile LONG menu_x, menu_y;   /* SYO_CMDV: where the menu pops up (screen) */
     WCHAR pcmfile[260];       /* SYO_LOADPCM: the Sound Recorder's own file */

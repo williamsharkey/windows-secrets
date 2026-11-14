@@ -115,7 +115,7 @@ its timing numbers are the worse of the two.
 | plugin load -> XP running and linked         | 1.9 s (first load ever: +3.5 s to unpack QEMU) | 0.3 s              | same                    |
 | plugin load -> a new sound built, playable   | 4.3 s                              | 0.8 s                         |                         |
 | editor: assembly finished                    | 4.1 s                              | (4.4-4.5 s in 1.1)            | 5.6-6.1 / 4.4-4.5 s     |
-| reported latency                             | 100 ms                             | 100 ms                        | 100 / 100 ms            |
+| reported latency                             | 150 ms (1.2.2; 100 ms before)     | 100 ms                        | 100 / 100 ms            |
 | note timing after compensation               | median 3-12 ms, std 37-46 ms       | median -13 ms, std 10-12 ms   | std ~20 / ~5 ms         |
 | harness: notes heard of 50 (offline / live)  | 50 / 50                            |                               | 34 / 22 (Windows)       |
 | pitch, 10 notes over 3 octaves               | max 14 cents (harness: mean 11-12) | max 2-5 cents                 | 7 / 5.5 cents           |

@@ -252,6 +252,29 @@ no QEMU build of our own is needed.
 - Next release (batched): Time group-box fix, Calculator hex voice buttons (audition at root rate, thin layer bar),
   RECORDING.md X0-X4, PE2 v3 features.
 
+## 1.2.2 (2026-11-13): dropout hotfix
+- 1.2.1 lost ~450 slices of 10 ms a minute in XP's own stream on a busy PC (kmixer starved). srhook now refills each
+  recorder's stream from a THREAD_PRIORITY_TIME_CRITICAL thread woken by the card (CALLBACK_EVENT) and queues 6 x 20 ms
+  (was 4). Counters: shm `under` per recorder -> synth `log underruns N`; plugin log `short blocks` (playout ran short
+  inside a block) and `gaps in XP's stream` (exact-silence runs >= 5 ms that cut a sound).
+- **Windows: XP's card ran ~2% slow.** QEMU's wav backend moves at most one mix buffer (~10.7 ms at 96 kHz) per audio
+  timer tick; with the default 10 ms tick, Windows' late ticks capped the stream at ~94.1k frames/s (95.6k under CPU
+  load: busier timers). Notes played ~19 cents flat (the harness's 9.7-cent mean in 1.2.1) and the playout's drift
+  trim (2% full scale, proportional) sat at its limit with ~3 ms in hand: ~90 short blocks a minute. `timer-period=5000`
+  on Windows: 96.05-96.1k frames/s, 0 short blocks, pitch = Mac within ~1.5 cents (harness mean 1-2 cents).
+  `BSYNTH_AUDIODEV` overrides the extra audiodev options (diagnosis).
+- Playout: a short block holds the last sample with a 0.995/sample fade instead of cutting to zero. Windows jitter
+  buffer 70 ms, reported latency 150 ms (with the buffer really full, 120 left harness onsets +30-39 ms late); Mac 55 /
+  100 ms.
+- Gate (organ_pipe_open_31#16, 40 notes, live + offline, x3 each): Mac 0 gaps; Windows 6/6 takes with 0 output gaps, 0
+  short blocks, 0 XP-stream gaps, 0 guest underruns.
+- Limit: heavy load inside WSL2/Hyper-V (a -j8 LTO build, or 6 busy loops) still starves the TCG thread: 20-80 guest
+  underruns a minute. QEMU at HIGH priority changes nothing (Hyper-V schedules those vCPUs). Windows-side load
+  (76-99 %) did not.
+- Factory sweep (2 VMs): 4 slow-attack presets flagged by the onset detector (Logoff Strings, Shutdown Drone, Swell
+  Choir, Breathing Logon: every event audible but under 0.004); 1.2.1's sweep flagged 5. Logoff Strings renders at
+  peak ~0.03 alone in both 1.2.1 and 1.2.2 but at 0.3 in some sweep takes: pre-existing build-state variance, open.
+
 ## Round 2 status (2026-11-13, before -> after)
 - Assembly, plugin load -> ready: Windows 11.5 s -> 5.6-6.1 s; macOS 11.3 s -> 4.4-4.5 s (1 vCPU, idle patch,
   single-threaded TCG tb-size 1024, sequential reshape+glide, "go" sent with the first COM1 lines, VNC <= 30 fps).

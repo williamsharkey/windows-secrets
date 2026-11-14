@@ -71,7 +71,7 @@ static DWORD fh_rate;
 /* The fast path streams: XP's waveOutSetVolume on this machine is one volume for the whole card, not per handle
    (measured: one recorder's pan or envelope moved every other voice). So the level, pan and envelope are applied
    to the samples here, 20 ms at a time, four chunks queued (4 x 10 ms starves under the emulator). */
-#define NCH 4
+#define NCH 6
 #define CH_MS 20
 #define CH_MAXF 4096                    /* frames per chunk at up to 204 kHz */
 static WAVEHDR chdr[NCH];
@@ -260,10 +260,14 @@ static void stream_stop(void)
     wbytes = 0;
 }
 
+static HANDLE chunk_ev;    /* set by the card when a chunk has played (CALLBACK_EVENT) */
 static DWORD WINAPI env_thread(LPVOID p)
 {
+    /* the stream's refill: woken by the card the moment a chunk is done (or every 5 ms), above everything else in
+       this process - a late refill is a gap of silence in XP's output */
+    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
     for (;;) {
-        Sleep(5);
+        WaitForSingleObject(chunk_ev, 5);
         EnterCriticalSection(&cs);
         if (cur && !stopping) {
             DWORD now = env_now();
@@ -276,6 +280,7 @@ static DWORD WINAPI env_thread(LPVOID p)
             if (cur == fh && fh) {
                 /* the fast path: keep four chunks queued; the note ends when the last one has played */
                 int k, guard;
+                if (!ended && !chunks_busy()) S->under++;    /* everything queued had played: XP heard silence */
                 for (guard = 0; guard < NCH; guard++) {
                     k = ch_next;
                     if ((chdr[k].dwFlags & 2) && !(chdr[k].dwFlags & WHDR_DONE_)) break;   /* still playing */
@@ -566,7 +571,7 @@ static void open_fh(void)
     g.wFormatTag = 1; g.nChannels = 2; g.wBitsPerSample = 16; g.nBlockAlign = 4; g.cbSize = 0;
     g.nSamplesPerSec = OUT_RATE;
     g.nAvgBytesPerSec = OUT_RATE * 4;
-    if (real_open(&fh, WAVE_MAPPER, &g, 0, 0, 0)) fh = 0;
+    if (real_open(&fh, WAVE_MAPPER, &g, (DWORD_PTR)chunk_ev, 0, 0x50000 /* CALLBACK_EVENT */)) fh = 0;
     fh_rate = OUT_RATE;
 }
 
@@ -853,6 +858,7 @@ static void attach(void)
     patch("comdlg32.dll", "GetSaveFileNameW", (void *)my_sfn, (void **)&real_sfn);
     patch("user32.dll", "MessageBoxW", (void *)my_mb, (void **)&real_mb);
     is_rec = 1;
+    chunk_ev = CreateEventA(NULL, FALSE, FALSE, NULL);
     CreateThread(NULL, 0, env_thread, NULL, 0, NULL);
     if (note_ev) CreateThread(NULL, 0, note_thread, NULL, 0, NULL);
 }

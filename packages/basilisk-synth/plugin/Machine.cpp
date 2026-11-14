@@ -43,6 +43,16 @@ extern char **environ;
 namespace bsynth {
 
 // ------------------------------------------------------------------ small helpers
+// QEMU's wav backend moves at most one mix buffer (~10.7 ms at 96 kHz) per audio-timer tick. Windows' timer ticks land
+// later than the default 10 ms, so XP's card ran ~2% slow (94.1k frames/s measured): its sound played ~19 cents flat
+// and the playout ran short. A 5 ms tick gives 96.0-96.1k frames/s and the pitch of the Mac build. The Mac's timers are
+// on time and keep the default.
+#ifdef _WIN32
+static const char *kAudiodevExtra = ",timer-period=5000";
+#else
+static const char *kAudiodevExtra = "";
+#endif
+
 double Machine::now()
 {
     using namespace std::chrono;
@@ -546,7 +556,7 @@ bool Machine::launch()
         "-usb", "-device", "usb-tablet", "-rtc", "base=localtime", "-display", "none", "-boot", "menu=off",
         "-L", mdir + SEP + "fw", "-L", share,
         "-accel", getenv("BSYNTH_ACCEL") ? getenv("BSYNTH_ACCEL") : "tcg,thread=single,tb-size=1024",   // one vCPU: single-threaded TCG is ~10% faster
-        "-audiodev", "wav,id=snd0,path=" + esc(pipePath_) + ",out.frequency=96000,out.channels=2,out.format=s16",
+        "-audiodev", "wav,id=snd0,path=" + esc(pipePath_) + ",out.frequency=96000,out.channels=2,out.format=s16" + std::string(getenv("BSYNTH_AUDIODEV") ? getenv("BSYNTH_AUDIODEV") : kAudiodevExtra),
         "-device", "AC97,audiodev=snd0",
         "-chardev", "socket,id=ser0,host=127.0.0.1,port=" + std::to_string(portCom_) + ",server=on,wait=off",
         "-serial", "chardev:ser0",
@@ -805,6 +815,13 @@ void Machine::audioLoop()
             m--;
             if (have == 4) {   // s16 stereo at 96 kHz: QEMU's 4 KB write buffer fills every 11 ms, not every 23 (QEMU stops at 96 kHz)
                 int16_t L = (int16_t)(carry[0] | carry[1] << 8), R = (int16_t)(carry[2] | carry[3] << 8);
+                // gaps in XP's own output: runs of exact silence of 5 ms or more that cut a sound off
+                if (L == 0 && R == 0) zeroRun_++;
+                else {
+                    if (zeroRun_ >= 480 && lastLevel_ > 0.01f) gapsIn_++;
+                    zeroRun_ = 0;
+                    lastLevel_ = 0.999f * lastLevel_ + 0.001f * (float)(L < 0 ? -L : L) / 32768.f * 8;
+                }
                 f[2 * frames] = L / 32768.f;
                 f[2 * frames + 1] = R / 32768.f;
                 frames++;

@@ -80,7 +80,7 @@ protected:
     const char *getMaker() const override { return "williamsharkey.com"; }
     const char *getHomePage() const override { return "https://williamsharkey.com/basilisk-download.html"; }
     const char *getLicense() const override { return "GPL-2.0-or-later"; }
-    uint32_t getVersion() const override { return d_version(1, 2, 1); }
+    uint32_t getVersion() const override { return d_version(1, 2, 2); }
 
     void initAudioPort(bool input, uint32_t index, AudioPort &port) override
     {
@@ -241,7 +241,16 @@ protected:
         }
         double step = 96000.0 / sr_ * (primed_ ? ratioTrim_ : 1.0);
         for (uint32_t i = 0; i < frames; i++) {
-            if (!primed_ || pos_ + 3 >= (double)w) { L[i] = R[i] = 0; continue; }
+            if (!primed_) { L[i] = R[i] = 0; continue; }
+            if (pos_ + 3 >= (double)w) {
+                // the stream ran short inside this block (it arrives in 10 ms pieces): hold the last sample and let it
+                // fade instead of cutting to silence; the drift trim catches up from the next block
+                holdL_ *= 0.995f; holdR_ *= 0.995f;
+                L[i] = holdL_; R[i] = holdR_;
+                if (i == 0 || !shortNow_) { shortNow_ = true; starved_++; }
+                continue;
+            }
+            shortNow_ = false;
             uint64_t k = (uint64_t)pos_;
             float x = (float)(pos_ - (double)k);
             // 4-point Hermite
@@ -252,6 +261,7 @@ protected:
             const AudioRing &A = machine_.audio;
             L[i] = (float)(gain * h(A.L(k - 1), A.L(k), A.L(k + 1), A.L(k + 2)));
             R[i] = (float)(gain * h(A.R(k - 1), A.R(k), A.R(k + 1), A.R(k + 2)));
+            holdL_ = L[i]; holdR_ = R[i];
             pos_ += step;
         }
 
@@ -305,9 +315,9 @@ private:
     enum { kGain, kAttack, kDecay, kSustain, kRelease, kVelocity, kBend, kTranspose, kMacro1, kMacro2, kMacro3, kMacro4, kParamCount };
     // measured: MIDI in -> first sample of that note in XP's stream, plus the jitter buffer (README: Timing)
 #ifdef _WIN32
-    static constexpr int kLatencyMs = 100, kJitterMs = 50;
+    static constexpr int kLatencyMs = 150, kJitterMs = 70;   // 50 ran short under load (the pipe comes in 10 ms pieces); 150: harness onsets centred (120 left them +30-39 ms late)
 #else
-    static constexpr int kLatencyMs = 100, kJitterMs = 40;
+    static constexpr int kLatencyMs = 100, kJitterMs = 55;   // 40 underran on a busy Mac
 #endif
 
     struct LayerMsg { int layer, first, count, rate, frames; };
@@ -449,8 +459,8 @@ private:
             }
             if (Machine::now() - lastLog > 2 && machine_.phase == Machine::Running) {
                 lastLog = Machine::now();
-                Machine::log("audio: %llu frames in, primed %d, notes sent %d, buffer %.1f..%.1f ms, restarts %d", (unsigned long long)machine_.audio.written(), (int)primed_, sentNotes_.load(),
-                             minAvail_ / 96.0, maxAvail_ / 96.0, unprimes_.load());
+                Machine::log("audio: %llu frames in, primed %d, notes sent %d, buffer %.1f..%.1f ms, restarts %d, short blocks %d, gaps in XP's stream %llu", (unsigned long long)machine_.audio.written(), (int)primed_, sentNotes_.load(),
+                             minAvail_ / 96.0, maxAvail_ / 96.0, unprimes_.load(), starved_.load(), (unsigned long long)machine_.gapsIn_.load());
                 minAvail_ = 1e9; maxAvail_ = 0;
             }
             // "go" leaves with the first lines on COM1, without waiting for the guest's hello
@@ -556,7 +566,9 @@ private:
     std::string dna_, pendingEdit_;
     Dna parsed_;
     double sr_ = 48000, pos_ = 0, ratioTrim_ = 1, wallStart_ = 0, lastRun_ = 0;
-    bool primed_ = false, offlineSynced_ = false;
+    bool primed_ = false, offlineSynced_ = false, shortNow_ = false;
+    float holdL_ = 0, holdR_ = 0;
+    std::atomic<int> starved_{0};
     double offlineWaited_ = 0;
     int offlineRestarts_ = 0;
     uint64_t sampleClock_ = 0, processed_ = 0, unprimedAt_ = 0;

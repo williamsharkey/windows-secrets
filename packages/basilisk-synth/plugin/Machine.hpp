@@ -94,6 +94,8 @@ public:
     void key(uint32_t keysym, bool down);
 
     AudioRing audio;
+    std::atomic<uint64_t> gapsIn_{0};   // exact-silence runs >= 5 ms in XP's stream that cut a sound off
+    size_t zeroRun_ = 0; float lastLevel_ = 0;
     std::atomic<int> phase{Off};
     std::atomic<float> progress{0};       // Fetching/Unpacking: 0..1
     std::atomic<double> resumedAt{0};     // seconds (monotonic) when XP started running
