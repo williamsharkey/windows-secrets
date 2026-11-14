@@ -315,6 +315,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
 #b16try .b16card { max-height: calc(100% - 8px); overflow: hidden; background: var(--face); color: var(--ink); border: 1px solid var(--ink); box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo), 3px 3px 0 rgba(0,0,0,.5);
   padding: 14px 18px 12px; width: min(440px, calc(100% - 24px)); text-align: center; }
 #b16try .b16go { font-weight: 700; font-size: 16px; padding: 8px 18px; margin: 0 0 6px; }
+#b16try .b16build { display: block; margin: 0 auto 4px; font-size: 13px; padding: 3px 12px; }
 #b16try .b16card p { margin: 4px 0 0; font-size: 13.5px; }
 #b16try .b16msg { min-height: 2.6em; line-height: 1.3; }   /* (two lines kept: the card never changes height) */
 @media (max-width: 600px) { #b16try .b16card { padding: 8px 10px; } #b16try .b16card p { font-size: 12.5px; } #b16try .b16go { font-size: 14px; padding: 5px 12px; } }
@@ -354,6 +355,7 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     <div class="b16over">
       <div class="b16card">
         <button class="btn b16go" type="button">Try BASILISK 16 online</button>
+        <button class="btn b16build" type="button">Watch it build</button>
         <p>Windows 3.11 in your browser, <span class="b16size">about 5 MB</span>. Sound on.</p>
         <div class="b16prog" style="visibility: hidden"><i></i></div>
         <p class="b16msg" aria-live="polite"></p>
@@ -384,8 +386,8 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
   <p class="note b16mobile" hidden>Best on a desktop or laptop computer: it needs a mouse, a keyboard and a fast processor.</p>
   <p class="note">BASILISK SYNTH (XP edition): download only. Its Windows XP machine is about 1 GB and needs a fast virtual PC, which a browser cannot run in real time.</p>
 </div>
-<script src="sndrec/try/b16-ui.js?v=085c77bd98" defer></script>
-<script src="sndrec/try/b16-try.js?v=085c77bd98" defer></script>
+<script src="sndrec/try/b16-ui.js?v=174e1736f6" defer></script>
+<script src="sndrec/try/b16-try.js?v=174e1736f6" defer></script>
 <!-- b16-try: end -->
     <p><a class="btn" href="sndrec-download.html">All downloads and install steps</a><a class="btn" href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">Source</a></p>
     <p class="note">Windows XP, Windows for Workgroups 3.11, their sounds and Sound Recorder are Microsoft's, included as part of this art project. The Windows images came from Windows for Workgroups 3.11 and Windows XP Professional SP3 as preserved by the <a href="https://archive.org/details/wfw311-disk">Internet Archive</a>. The library disc's sounds are public domain and CC0; each one's source is listed on the disc. The emulators are <a href="https://www.qemu.org/">QEMU</a> and DOSBox Pure (GPLv2), and the plugins are built with <a href="https://github.com/DISTRHO/DPF">DPF</a>.</p>

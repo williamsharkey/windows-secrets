@@ -11,6 +11,7 @@ cp = lambda a, b: shutil.copyfile(a, os.path.join(OUT, b))
 cp(os.path.join(W, 'out', 'b16-worker.js'), 'b16-worker.js')
 cp(os.path.join(W, 'out', 'b16-worker.wasm'), 'b16.wasm')
 cp(os.path.join(W, 'out', 'w31web.state'), 'w31web.state')
+if os.path.exists(os.path.join(W, 'out', 'w31build.state')): cp(os.path.join(W, 'out', 'w31build.state'), 'w31build.state')
 cp(os.path.join(W, 'machine', 'drive.zip'), 'drive.zip')
 cp(os.path.join(HERE, 'audio-worklet.js'), 'b16-audio.js')
 cp(os.path.join(HERE, 'htaccess'), '.htaccess')
@@ -58,6 +59,9 @@ for n in sorted(os.listdir(OUT)):
     if n != 'library.zip' and n != 'b16-try.js' and os.path.isfile(os.path.join(OUT, n)): hsh.update(open(os.path.join(OUT, n), 'rb').read())
 hsh.update(open(os.path.join(HERE, 'b16-try.js'), 'rb').read()); hsh.update(open(os.path.join(HERE, 'section.html'), 'rb').read())   # (the page script itself, before its config goes in)
 cfg = {'v': hsh.hexdigest()[:10], 'files': files, 'lead': 2048}
+if os.path.exists(os.path.join(OUT, 'w31build.state')):   # "Watch it build": the machine at the desktop
+    d = open(os.path.join(OUT, 'w31build.state'), 'rb').read()
+    cfg['buildFile'] = {'name': 'w31build.state', 'size': len(d), 'gz': len(gzip.compress(d, 6))}
 js = open(os.path.join(HERE, 'b16-try.js')).read()
 js = re.sub(r'/\*CONFIG\*/.*?/\*END\*/', '/*CONFIG*/' + json.dumps(cfg, separators=(',', ':')) + '/*END*/', js, flags=re.S)
 open(os.path.join(OUT, 'b16-try.js'), 'w').write(js)

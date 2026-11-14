@@ -35,4 +35,6 @@ bash "$HERE/link.sh" "$W/src" "$OBJ" "$W/out" 2>&1 | grep -v "pthread + ALLOW_ME
 
 # --- the snapshot: boot, assemble, build the default DNA, freeze (and the screen at that moment: the poster)
 "$NODE" "$HERE/make_snapshot.cjs" "$W/out" "$W/machine" "$LIB/library.zip" "$LIB/library.names.txt" | tail -2
+# and the machine at the desktop, before BASILISK 16 is built, for "Watch it build"
+"$NODE" "$HERE/make_snapshot.cjs" "$W/out" "$W/machine" "$LIB/library.zip" "$LIB/library.names.txt" --desktop 0.5 | tail -1
 python3 "$HERE/stage.py" "$W" "$LIB" "$W/site"

@@ -119,7 +119,8 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
     const tModule = performance.now();
     M.FS.mkdir('/machine');
     M.FS.writeFile('/machine/drive.zip', by['drive.zip']);
-    M.FS.writeFile('/machine/w31web.state', by['w31web.state']);
+    // the machine to resume: assembled and ready (w31web.state), or at the desktop before the build (w31build.state)
+    M.FS.writeFile('/machine/w31web.state', by[m.stateName || 'w31web.state']);
     M.FS.writeFile('/machine/w31.conf', m.conf);
     if (!M._b16_fetchfile(M.stringToNewUTF8('/machine/library.zip'), M.stringToNewUTF8(m.libraryUrl), m.librarySize, m.libraryChunk || 262144))
       throw new Error('cannot set up the library disc');
@@ -144,14 +145,13 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
     await new Promise((res, rej) => {
       const w = () => {
         const i = info(false);
-        if (i.state >= 2 && !tRunning) tRunning = performance.now();
+        if (i.state >= 2 && !tRunning) { tRunning = performance.now(); draw(); post({ t: 'resumed' }); }   // the screen from the first frame (a build is watched)
         if (i.state === 9) return rej(new Error(i.error || 'the machine snapshot did not load'));
         if (i.ready) return res();
         setTimeout(w, 5);
       };
       w();
     });
-    draw();
     const tReady = performance.now();
     if (lib) setTimeout(() => { libWant(m.libTsv || [], false); }, 2000);
     post({ t: 'ready', ms: { fetch: Math.round(tFetched - t0), module: Math.round(tModule - tFetched), resume: Math.round(tRunning - tModule),

@@ -3,7 +3,7 @@
 // pressed. The machine runs in a worker; the page only forwards the pointer, the keys and MIDI, and watches it.
 (function () {
   'use strict';
-  var CFG = /*CONFIG*/{"v":"085c77bd98","files":[{"name":"b16.wasm","size":2524744,"gz":1034547},{"name":"w31web.state","size":5970216,"gz":1408448},{"name":"drive.zip","size":3392083,"gz":3392083}],"lead":2048}/*END*/;
+  var CFG = /*CONFIG*/{"v":"174e1736f6","files":[{"name":"b16.wasm","size":2524744,"gz":1034547},{"name":"w31web.state","size":5970216,"gz":1408448},{"name":"drive.zip","size":3392083,"gz":3392083}],"lead":2048,"buildFile":{"name":"w31build.state","size":4875514,"gz":989927}}/*END*/;
   var DATA = null;   // b16-data.json, fetched on the click: the machine's settings, the library's names, the presets
   var root = document.getElementById('b16try');
   if (!root) return;
@@ -67,11 +67,17 @@
   });
 
   // ---------------------------------------------------------------- start
-  go.addEventListener('click', start);
-  function start() {
+  go.addEventListener('click', function () { start(); });
+  var buildB = $('.b16build'), building = false;
+  if (buildB) {
+    if (!supported) buildB.disabled = true;
+    buildB.addEventListener('click', function () { start('build'); });
+  }
+  function start(mode) {
     if (running || !supported) return;
     tClick = performance.now();
-    setState('loading'); go.style.visibility = 'hidden'; $('.b16prog').style.visibility = ''; bar.style.width = '0%'; say('Loading Windows for Workgroups 3.11…');
+    building = mode === 'build';
+    setState('loading'); go.style.visibility = 'hidden'; if (buildB) buildB.style.visibility = 'hidden'; $('.b16prog').style.visibility = ''; bar.style.width = '0%'; say('Loading Windows for Workgroups 3.11…');
     try {
       var AC = window.AudioContext || window.webkitAudioContext;
       try { actx = new AC({ sampleRate: 48000, latencyHint: 'interactive' }); } catch (e) { actx = new AC({ latencyHint: 'interactive' }); }
@@ -93,7 +99,9 @@
       worker.onerror = function (e) { fail('The emulator stopped: ' + (e.message || 'error')); };
       worker.postMessage({ t: 'init', conf: DATA.conf, lead: CFG.lead, layers: DATA.layers, libraryNames: DATA.libraryNames,
         relDrag: DATA.relDrag, libMap: DATA.libMap, libTsv: DATA.libTsv, libraryUrl: new URL(base + 'library.zip', location.href).href, librarySize: DATA.librarySize, libraryChunk: 262144,
-        files: CFG.files.map(function (f) { return { name: f.name, size: f.size, url: base + f.name + '?v=' + CFG.v }; }) });
+        // a build to watch resumes the machine at the desktop instead (its snapshot is fetched only for this)
+        stateName: building && CFG.buildFile ? CFG.buildFile.name : 'w31web.state',
+        files: CFG.files.map(function (f) { if (building && CFG.buildFile && f.name === 'w31web.state') f = CFG.buildFile; return { name: f.name, size: f.size, url: base + f.name + '?v=' + CFG.v }; }) });
       clearInterval(wd); wd = setInterval(watchdog, 500);
     }).catch(function (e) { fail('It could not start: ' + e.message); });
   }
@@ -102,6 +110,7 @@
     var m = e.data;
     if (m.t === 'progress') { bar.style.width = Math.min(100, 100 * m.loaded / Math.max(1, m.total)).toFixed(1) + '%'; if (m.loaded >= m.total) say('Resuming the machine…'); }
     else if (m.t === 'mem') memMsg = m;
+    else if (m.t === 'resumed') { if (building) { over.hidden = true; say(''); stat.textContent = 'Watching Windows build BASILISK 16 from its own parts…'; api.resumedAt = Math.round(performance.now() - tClick); } }
     else if (m.t === 'ready') {
       // the sound starts now (not while the machine resumes, which would only be a stretch of silence)
       if (node && memMsg) node.port.postMessage({ t: 'mem', buffer: memMsg.buffer, base: memMsg.base, lay: memMsg.lay, lead: CFG.lead, leadMax: 3584 });
@@ -149,7 +158,7 @@
     if (actx) { try { actx.close(); } catch (e) {} actx = null; }
     if (posterSrc) show(posterSrc);
     over.hidden = false; $('.b16prog').style.visibility = 'hidden';
-    go.style.visibility = ''; go.textContent = 'Restart';
+    go.style.visibility = ''; go.textContent = 'Restart'; if (buildB) buildB.style.visibility = '';
     stopB.disabled = true; midiB.disabled = true; presetS.disabled = true; stat.textContent = '';
     say(text || 'Stopped.');
     setState('stopped');

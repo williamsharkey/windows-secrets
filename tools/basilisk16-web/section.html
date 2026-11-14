@@ -9,6 +9,7 @@
 #b16try .b16card { max-height: calc(100% - 8px); overflow: hidden; background: var(--face); color: var(--ink); border: 1px solid var(--ink); box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo), 3px 3px 0 rgba(0,0,0,.5);
   padding: 14px 18px 12px; width: min(440px, calc(100% - 24px)); text-align: center; }
 #b16try .b16go { font-weight: 700; font-size: 16px; padding: 8px 18px; margin: 0 0 6px; }
+#b16try .b16build { display: block; margin: 0 auto 4px; font-size: 13px; padding: 3px 12px; }
 #b16try .b16card p { margin: 4px 0 0; font-size: 13.5px; }
 #b16try .b16msg { min-height: 2.6em; line-height: 1.3; }   /* (two lines kept: the card never changes height) */
 @media (max-width: 600px) { #b16try .b16card { padding: 8px 10px; } #b16try .b16card p { font-size: 12.5px; } #b16try .b16go { font-size: 14px; padding: 5px 12px; } }
@@ -48,6 +49,7 @@
     <div class="b16over">
       <div class="b16card">
         <button class="btn b16go" type="button">Try BASILISK 16 online</button>
+        <button class="btn b16build" type="button">Watch it build</button>
         <p>Windows 3.11 in your browser, <span class="b16size">about 5 MB</span>. Sound on.</p>
         <div class="b16prog" style="visibility: hidden"><i></i></div>
         <p class="b16msg" aria-live="polite"></p>
