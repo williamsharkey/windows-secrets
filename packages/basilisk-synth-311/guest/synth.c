@@ -775,6 +775,8 @@ static HWND hKey[128], hBend, hMod, hHold, hKeysChk, hOctLbl;
 static BYTE hostDown[128], kbdDown[128], latched[128];
 static int mouseNote = -1, holdOn, keysOn, octBase = 60, modVal, bendVal;
 static WNDPROC oldBtnProc, oldStaticProc;
+static char kLabel[128][5]; static BYTE kOut[128];   /* the key's label from the host's scale; out of the scale */
+static HFONT kSmall;
 static int is_black(int n) { int k = n % 12; return k == 1 || k == 3 || k == 6 || k == 8 || k == 10; }
 static int white_index(int n) { static const int w[12] = {0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6}; return (n / 12 - KLO / 12) * 7 + w[n % 12]; }
 static void key_rect(int n, RECT *r)
@@ -790,9 +792,17 @@ static void key_visual(int n)
     if (is_black(n)) {
         LONG st = GetWindowLong(hKey[n], GWL_STYLE), want = (st & ~0x1FL) | (down ? SS_GRAYRECT : SS_BLACKRECT);
         if (st != want) { SetWindowLong(hKey[n], GWL_STYLE, want); InvalidateRect(hKey[n], NULL, TRUE); }
-    } else {   /* pushed in, with a dot on it */
+    } else {   /* pushed in, with a dot on it; up, its scale label (a dimmed dash when out of the scale) */
+        static HFONT dot;
+        if (!dot) dot = (HFONT)SendMessage(hKey[n], WM_GETFONT, 0, 0L);
         SendMessage(hKey[n], BM_SETSTATE, down ? TRUE : FALSE, 0L);
-        SetWindowText(hKey[n], down ? "\x95" : "");
+        if (down) { if (kLabel[n][0] || kOut[n]) SendMessage(hKey[n], WM_SETFONT, (WPARAM)dot, 0L); SetWindowText(hKey[n], "\x95"); }
+        else if (kOut[n] || kLabel[n][0]) {
+            if (!kSmall) kSmall = CreateFont(12, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Arial");
+            SendMessage(hKey[n], WM_SETFONT, (WPARAM)kSmall, 0L);
+            SetWindowText(hKey[n], kOut[n] ? "-" : kLabel[n]);
+        } else SetWindowText(hKey[n], "");
+        EnableWindow(hKey[n], !kOut[n] || down);   /* greyed out of the scale (a click still plays: the parent takes it) */
     }
 }
 static void note_on(int n, int vel) { if (n < 0 || n > 127) return; latched[n] = 0; say("key %d %d", n, vel); }
@@ -988,6 +998,8 @@ static void keyboard_show(void)     /* part of the assembly: wheels and switches
 #define ID_ENVADD 1149
 #define ID_ENVDEL 1150
 #define ID_FILTER 1157     /* + 0 All, 1 W3.11, 2 XP: which presets the browser lists */
+#define ID_KEYROOT 1153    /* the key and scale (PRESET-ENGINE-2 18.2): Key [C v] Scale [Major v] in the DNA row */
+#define ID_KEYSCALE 1154
 #define ID_PRESETPREV 1155
 #define ID_PRESETNEXT 1156
 static const char *panelSounds[4] = {"chimes", "ding", "ringin", "ringout"};
@@ -1007,7 +1019,37 @@ static SLIDER sliders[] = {
 #define SL_ELEVEL 11
 #define SL_MACRO 12
 #define NSL (sizeof sliders / sizeof sliders[0])
-static HWND hSb[NSL], hVal[NSL], hLayerLbl, hHarm, hPreset, hLibrary, hEnvLbl, hFilter[3];
+static HWND hSb[NSL], hVal[NSL], hLayerLbl, hHarm, hPreset, hLibrary, hEnvLbl, hFilter[3], hKeyRoot, hKeyScale;
+/* the host's scale library (`scale <id> <category> <label>` lines, sent once) and its key (`key ...`) */
+#define NSCALE 64
+static int nScale, scaleId[NSCALE]; static char scaleLbl[NSCALE][28], scaleCat[NSCALE][24];
+static int keyRoot, keyScale, keyRemap, keyAnchor = 60, keyLabels, keyMask = 0xAB5, keySteps = 7, keyUse, keySnap = 1;
+static BOOL keyQuiet;   /* setting the boxes from the host: no echo */
+static void key_boxes(void)
+{
+    int i, n;
+    if (!hKeyRoot || !hKeyScale) return;
+    keyQuiet = TRUE;
+    if (SendMessage(hKeyRoot, CB_GETCOUNT, 0, 0L) == 0) {
+        static const char *nm[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+        for (i = 0; i < 12; i++) SendMessage(hKeyRoot, CB_ADDSTRING, 0, (LPARAM)(LPSTR)nm[i]);
+    }
+    if (SendMessage(hKeyScale, CB_GETCOUNT, 0, 0L) == 0 && nScale) {   /* grouped by category, a separator row each */
+        char last[24] = "";
+        for (i = 0; i < nScale; i++) {
+            if (lstrcmp(last, scaleCat[i])) {
+                char t[32]; wsprintf(t, "-- %s --", (LPSTR)scaleCat[i]);
+                n = (int)SendMessage(hKeyScale, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t); SendMessage(hKeyScale, CB_SETITEMDATA, n, -1L);
+                lstrcpy(last, scaleCat[i]);
+            }
+            n = (int)SendMessage(hKeyScale, CB_ADDSTRING, 0, (LPARAM)(LPSTR)scaleLbl[i]); SendMessage(hKeyScale, CB_SETITEMDATA, n, (LPARAM)scaleId[i]);
+        }
+    }
+    SendMessage(hKeyRoot, CB_SETCURSEL, keyRoot, 0L);
+    n = (int)SendMessage(hKeyScale, CB_GETCOUNT, 0, 0L);
+    for (i = 0; i < n; i++) if ((int)SendMessage(hKeyScale, CB_GETITEMDATA, i, 0L) == keyScale) { SendMessage(hKeyScale, CB_SETCURSEL, i, 0L); break; }
+    keyQuiet = FALSE;
+}
 static int presetFilter;   /* 0 All, 1 W3.11 (no XP file), 2 XP (uses one) */
 static int harmIdx, envPt;
 
@@ -1354,6 +1396,20 @@ static void panel_command(int id, int code)
         else { keysOn = on; if (on) SetFocus(hMain); }
         return;
     }
+    if ((id == ID_KEYROOT || id == ID_KEYSCALE) && !keyQuiet && (code == CBN_CLOSEUP || (code == CBN_SELCHANGE &&
+        !SendMessage(id == ID_KEYROOT ? hKeyRoot : hKeyScale, CB_GETDROPPEDSTATE, 0, 0L)))) {   /* a pick: as the list closes */
+        HWND cb = id == ID_KEYROOT ? hKeyRoot : hKeyScale;
+        int i = (int)SendMessage(cb, CB_GETCURSEL, 0, 0L);
+        if (i < 0) return;
+        if (id == ID_KEYROOT) keyRoot = i;
+        else {
+            int sid = (int)SendMessage(cb, CB_GETITEMDATA, i, 0L);
+            if (sid < 0) { key_boxes(); return; }   /* a category row: back to the scale */
+            keyScale = sid;
+        }
+        say("keyset %d %d", keyRoot, keyScale);
+        return;
+    }
     if (id == ID_PRESET || id == ID_LIBRARY) {   /* a pick: when the list closes, or with the keys while it is shut */
         HWND cb = id == ID_PRESET ? hPreset : hLibrary;
         if (code == CBN_CLOSEUP || (code == CBN_SELCHANGE && !SendMessage(cb, CB_GETDROPPEDSTATE, 0, 0L))) {
@@ -1522,7 +1578,15 @@ static void panel_create(int group)
     switch (group) {
     case 0:
         mk("STATIC", "DNA", WS_VISIBLE, 8, PANEL + 6, 30, 16, -1);
-        hDna = mk("EDIT", dnaText, WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 40, PANEL + 2, 830, 22, 1099);
+        hDna = mk("EDIT", dnaText, WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL, 40, PANEL + 2, 830 - 236, 22, 1099);
+        {   /* Key [C v] Scale [Major v]: the key and scale new notes use (PRESET-ENGINE-2 18.2) */
+            int w, x2 = 40 + 830 - 236 + 6;
+            mklbl("Key", x2, PANEL + 6, 16, &w); x2 += w + 3;
+            hKeyRoot = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, x2, PANEL + 2, 48, 190, ID_KEYROOT); x2 += 48 + 6;
+            mklbl("Scale", x2, PANEL + 6, 16, &w); x2 += w + 3;
+            hKeyScale = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, x2, PANEL + 2, 870 - x2, 190, ID_KEYSCALE)   /* (the list ends above the screen's bottom) */;
+            key_boxes();
+        }
         SendMessage(hDna, EM_LIMITTEXT, 1024, 0L);
         oldDnaProc = (WNDPROC)GetWindowLong(hDna, GWL_WNDPROC);
         SetWindowLong(hDna, GWL_WNDPROC, (LONG)MakeProcInstance((FARPROC)DnaEditProc, hInst));
@@ -2167,6 +2231,42 @@ static void host_line(char *s)
         say("btns end");
     }
     else if (!strcmp(s, "panic")) { int r; for (r = 0; r < NALL; r++) stop_rec(r, 0, 5); }
+    else if (!strcmp(s, "scale")) {   /* scale <id> <category> <label...>: the host's scale library, once */
+        int id = atoi(rest); char *p = strchr(rest, ' '), *q;
+        if (p && nScale < NSCALE) {
+            q = strchr(p + 1, ' ');
+            if (q) {
+                char *c;
+                *q = 0; scaleId[nScale] = id;
+                lstrcpyn(scaleCat[nScale], p + 1, sizeof scaleCat[0]); lstrcpyn(scaleLbl[nScale], q + 1, sizeof scaleLbl[0]);
+                for (c = scaleCat[nScale]; *c; c++) if (*c == '_') *c = ' ';
+                nScale++;
+            }
+        }
+    }
+    else if (!strcmp(s, "klabels")) {   /* klabels <first> <l|l|...>: the keyboard strip's labels ('~' out of the scale) */
+        int n = atoi(rest); char *p = strchr(rest, ' ');
+        if (p) {
+            p++;
+            for (; n >= KLO && n <= KHI; n++) {
+                char *e = strchr(p, '|'); int L = e ? (int)(e - p) : lstrlen(p);
+                kOut[n] = (L == 1 && p[0] == '~');
+                if (kOut[n] || L > 4) L = kOut[n] ? 0 : 4;
+                memcpy(kLabel[n], p, L); kLabel[n][L] = 0;
+                { char *c; for (c = kLabel[n]; *c; c++) if (*c == '_') *c = ' '; }
+                if (!is_black(n)) key_visual(n);
+                if (!e) break;
+                p = e + 1;
+            }
+        }
+    }
+    else if (!strcmp(s, "key")) {   /* key <root> <id> <n> <period> <steps> <remap> <anchor> <labels> <mask> <use> <snap> */
+        char st[200]; int n = 0, per = 0;
+        if (sscanf(rest, "%d %d %d %d %199s %d %d %d %d %d %d", &keyRoot, &keyScale, &n, &per, st, &keyRemap, &keyAnchor, &keyLabels, &keyMask, &keyUse, &keySnap) >= 9) {
+            keySteps = n;
+            key_boxes();
+        }
+    }
     else if (!strcmp(s, "env")) {
         sscanf(rest, "%d %d %d %d", &envA, &envD, &envS, &envR);
         bs_env((WORD)envA, (WORD)envD, (WORD)envS);
@@ -2276,6 +2376,12 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
     switch (m) {
     case WM_PAINT: paint(h); return 0;
+    case WM_LBUTTONDOWN: case WM_LBUTTONDBLCLK: {   /* a dimmed (out-of-scale) key is disabled: its clicks come here */
+        int vel; POINT p; p.x = (short)LOWORD(l); p.y = (short)HIWORD(l);
+        if (note_at(p.x, p.y, &vel) >= 0) { SetCapture(h); kb_mouse(h, l, 0); return 0; }
+        break; }
+    case WM_MOUSEMOVE: if (GetCapture() == h) { kb_mouse(h, l, 0); return 0; } break;
+    case WM_LBUTTONUP: if (GetCapture() == h) { ReleaseCapture(); kb_mouse(h, l, 1); return 0; } break;
     case WM_DRAWITEM: if (w >= ID_DIG && w < ID_DIG + NDIG) { dig_drawitem((const DRAWITEMSTRUCT FAR *)l); return TRUE; } break;
     case WM_HSCROLL: panel_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
     case WM_VSCROLL: kb_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;

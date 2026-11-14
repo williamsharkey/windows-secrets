@@ -40,7 +40,8 @@ START_NAMESPACE_DISTRHO
 using namespace bsynth;
 
 // (new parameters go at the end: hosts store automation by index)
-enum { pAttack, pDecay, pSustain, pRelease, pVelocity, pBend, pGain, pTranspose, pMacro1, pMacro2, pMacro3, pMacro4, pCount };
+enum { pAttack, pDecay, pSustain, pRelease, pVelocity, pBend, pGain, pTranspose, pMacro1, pMacro2, pMacro3, pMacro4,
+       pKey, pScale, pUsePreset, pSnap, pRemap, pAnchor, pLabels, pCount };   // key and scale: PRESET-ENGINE-2 18.2
 static const char *const kGlobalLetter = "ADSRVBG";
 
 #include "presets_gen.h"   // kPresets[]: "Category: Name" + DNA (tools/make_presets311.py; the same list as \\PRESETS.TSV in Windows)
@@ -152,6 +153,7 @@ public:
     {
         created_ = nowSec();
         vo_.reserve(256);   // the audio thread never allocates for an ordinary chord
+        setKeyParams(b16v3::KeyParams());
         testLive_ = std::getenv("BASILISK16_TEST_LIVE") != nullptr;   // test: take the live path in an offline host
         if (const char *d = std::getenv("BASILISK16_TEST_DUMP_DAC")) if (*d && !isDummyInstance()) dump_ = std::fopen(d, "wb");
         if (const char *d = std::getenv("BASILISK16_TRACE")) if (*d && !isDummyInstance()) {
@@ -207,6 +209,37 @@ protected:
         case pBend: p.name = "Bend Range"; p.symbol = "bend"; p.unit = "st"; p.ranges = ParameterRanges(2, 0, 24); p.hints |= kParameterIsInteger; break;
         case pGain: p.name = "Output Gain"; p.symbol = "gain"; p.unit = "dB"; p.ranges = ParameterRanges(0, -24, 12); p.hints |= kParameterIsInteger; break;
         case pTranspose: p.name = "Transpose"; p.symbol = "transpose"; p.unit = "st"; p.ranges = ParameterRanges(0, -24, 24); p.hints |= kParameterIsInteger; break;
+        case pKey: {   // the key and scale (PRESET-ENGINE-2 18.2): host-side pitches only, never the DNA
+            static const char *nm[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+            static ParameterEnumerationValue ev[12];
+            for (int k = 0; k < 12; k++) { ev[k].value = (float)k; ev[k].label = nm[k]; }
+            p.name = "Key"; p.symbol = "key"; p.ranges = ParameterRanges(0, 0, 11); p.hints |= kParameterIsInteger;
+            p.enumValues.count = 12; p.enumValues.restrictedMode = true; p.enumValues.values = ev; p.enumValues.deleteLater = false;
+            break; }
+        case pScale: {
+            const auto &lib = bsynth3::scaleLibrary();
+            static std::vector<ParameterEnumerationValue> ev;
+            if (ev.empty()) for (const auto &x : lib) { ParameterEnumerationValue v; v.value = (float)x.id; v.label = x.label; ev.push_back(v); }
+            p.name = "Scale"; p.symbol = "scale"; p.ranges = ParameterRanges(0, 0, lib.empty() ? 0 : (float)lib.back().id); p.hints |= kParameterIsInteger;
+            p.enumValues.count = (uint32_t)ev.size(); p.enumValues.restrictedMode = true; p.enumValues.values = ev.data(); p.enumValues.deleteLater = false;
+            break; }
+        case pUsePreset: p.name = "Use Preset Scale"; p.symbol = "usepresetscale"; p.ranges = ParameterRanges(0, 0, 1); p.hints |= kParameterIsBoolean | kParameterIsInteger; break;
+        case pSnap: {
+            static ParameterEnumerationValue ev[4];
+            static const char *nm[4] = {"Nearest", "Down", "Up", "Off"};
+            for (int k = 0; k < 4; k++) { ev[k].value = (float)(k + 1); ev[k].label = nm[k]; }
+            p.name = "Snap"; p.symbol = "snap"; p.ranges = ParameterRanges(1, 1, 4); p.hints |= kParameterIsInteger;
+            p.enumValues.count = 4; p.enumValues.restrictedMode = true; p.enumValues.values = ev; p.enumValues.deleteLater = false;
+            break; }
+        case pRemap: p.name = "Remap Keys"; p.symbol = "remap"; p.ranges = ParameterRanges(0, 0, 1); p.hints |= kParameterIsBoolean | kParameterIsInteger; break;
+        case pAnchor: p.name = "Remap Anchor"; p.symbol = "anchor"; p.ranges = ParameterRanges(60, 0, 127); p.hints |= kParameterIsInteger; break;
+        case pLabels: {
+            static ParameterEnumerationValue ev[5];
+            static const char *nm[5] = {"None", "Degrees", "Sargam", "Names", "Cents"};
+            for (int k = 0; k < 5; k++) { ev[k].value = (float)k; ev[k].label = nm[k]; }
+            p.name = "Key Labels"; p.symbol = "keylabels"; p.ranges = ParameterRanges(0, 0, 4); p.hints |= kParameterIsInteger;
+            p.enumValues.count = 5; p.enumValues.restrictedMode = true; p.enumValues.values = ev; p.enumValues.deleteLater = false;
+            break; }
         case pMacro1: case pMacro2: case pMacro3: case pMacro4: {   // DNA v2 macros (DNA.md 5.3): what each moves is in the DNA
             const int k = (int)(i - pMacro1) + 1;
             p.name = String("Macro ") + String(k); p.symbol = String("macro") + String(k); p.unit = "%";
@@ -222,6 +255,7 @@ protected:
         if (i >= pCount) return;
         if (param_[i].load() == v) return;
         param_[i] = v;
+        if (i >= pKey) { keyVer_++; return; }   // the key: pitches of new notes only (no DNA change)
         paramsDirty_ = true;
         paramSeq_++;
     }
@@ -242,6 +276,12 @@ protected:
         if (std::strcmp(key, "state")) return String();
         std::lock_guard<std::mutex> l(mtx_);
         bsynth::State s; s.dna = dnaText_;
+        const b16v3::KeyParams kp = keyParams();
+        if (kp != b16v3::KeyParams()) {   // (absent: the defaults, so an old state stays byte-identical)
+            s.extra["key"] = std::to_string(kp.root) + " " + std::to_string(kp.scale);
+            s.extra["keyopt"] = std::to_string(kp.usePreset) + " " + std::to_string(kp.snap) + " " + std::to_string(kp.remap) + " " +
+                                std::to_string(kp.labels) + " " + std::to_string(kp.anchor);
+        }
         return String(s.write().c_str());
     }
 
@@ -249,7 +289,13 @@ protected:
     {
         if (std::strcmp(key, "state")) return;
         bsynth::State s;
-        if (s.read(value ? value : "")) setDna(s.dna, true);
+        if (s.read(value ? value : "")) {
+            b16v3::KeyParams kp;
+            if (s.extra.count("key")) kp.readLine("key " + s.extra["key"]);
+            if (s.extra.count("keyopt")) kp.readLine("keyopt " + s.extra["keyopt"]);
+            setKeyParams(kp);
+            setDna(s.dna, true);
+        }
     }
 
     void sampleRateChanged(double) override { updateLatency(); }
@@ -472,6 +518,33 @@ private:
     std::atomic<double> bpm_{120};   // the host's tempo (v3 Wt, Wb, Wg)
     std::atomic<bool> tempoDirty_{false};
     std::atomic<bool> recSelf_{false};
+    std::atomic<uint32_t> keyVer_{1};    // the key parameters changed (audio: the key; engine: the guest's display)
+    uint32_t keyVerAudio_ = 0, keyVerGuest_ = 0;
+    b16v3::KeyParams keyAudio_;
+    bool keyDnaChanged_ = true;
+    b16v3::KeyParams keyParams() const
+    {
+        b16v3::KeyParams k;
+        k.root = (int)std::lround(param_[pKey].load()); k.scale = (int)std::lround(param_[pScale].load());
+        k.usePreset = param_[pUsePreset].load() >= 0.5f; k.snap = (int)std::lround(param_[pSnap].load());
+        k.remap = param_[pRemap].load() >= 0.5f; k.anchor = (int)std::lround(param_[pAnchor].load()); k.labels = (int)std::lround(param_[pLabels].load());
+        return k;
+    }
+    void setKeyParams(const b16v3::KeyParams &k)
+    {
+        param_[pKey] = (float)k.root; param_[pScale] = (float)k.scale; param_[pUsePreset] = (float)k.usePreset; param_[pSnap] = (float)k.snap;
+        param_[pRemap] = (float)k.remap; param_[pAnchor] = (float)k.anchor; param_[pLabels] = (float)k.labels;
+        keyVer_++;
+    }
+    // audio thread: the effective key for new notes (the parameters, or the DNA's suggestion), and which layers core
+    // or V3Alloc plays
+    void applyKey()
+    {
+        keyAudio_ = keyParams();
+        v3_.setKey(b16v3::effectiveKey(keyAudio_, d3Audio_));
+        for (int i = 0; i < kMaxLayers; i++)
+            if (layerCache_[i].known) voices_.setLayerInfo(i, layerCache_[i].first, v3_.owns(i) ? 0 : layerCache_[i].count, layerCache_[i].rate, layerCache_[i].frames);
+    }
     std::atomic<uint32_t> recBusy_{0};   // recorders that record now: notes leave them alone (a Stop would end the take)
     b16v3::V3Alloc v3_;                  // DNA v3 voice modes, stacking, degree chords, live bend (audio thread)
     std::vector<b16v3::Out> vo_;
@@ -612,6 +685,7 @@ private:
             voices_.setDna(dnaForAudio_, c);
             d3Audio_ = d3ForAudio_; d3Salt_ = d3SaltPending_;
             v3_.setDna(dnaForAudio_, d3Audio_);
+            keyDnaChanged_ = true;   // (the DNA's q may be the key)
             for (int i = 0; i < kMaxLayers; i++) audioFixed_[i] = i < (int)dnaForAudio_.layers.size() && dnaForAudio_.layers[i].fixed;
             for (int i = 0; i < kMaxLayers; i++)
                 if (layerCache_[i].known) {
@@ -629,6 +703,7 @@ private:
         }
         pendLayers_.clear(); pendLayerIdx_.clear();
         for (int r : pendEnds_) { voices_.end(r); v3_.end(r); }
+        if (keyVerAudio_ != keyVer_.load() || keyDnaChanged_) { keyVerAudio_ = keyVer_.load(); keyDnaChanged_ = false; applyKey(); }
         pendEnds_.clear();
         mtx_.unlock();
     }
@@ -792,6 +867,12 @@ private:
                 trimSend(std::strcpy(b, "hi 3"));   // DNA v3: the guest answers with its caps (v2 guests answer hi 2)
                 proto::time(b, sizeof b, lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday, lt.tm_hour, lt.tm_min, lt.tm_sec); trimSend(b);
                 proto::go(b, sizeof b); trimSend(b);
+                for (const auto &x : bsynth3::scaleLibrary()) {   // the scale library, for Windows' Scale box (category: _ for spaces)
+                    std::string cat = x.category; for (auto &ch : cat) if (ch == ' ') ch = '_';
+                    const std::string line = "scale " + std::to_string(x.id) + " " + cat + " " + x.label;
+                    sendLine(line.c_str(), 0, 0);
+                }
+                keyVerGuest_ = 0;   // and the key
                 std::lock_guard<std::mutex> l(mtx_);
                 dnaToGuest_ = true;
             }
@@ -814,6 +895,34 @@ private:
                 if (changed) setDna(d, true);
             }
             paramDone_ = seq;
+            if (hello && keyVerGuest_ != keyVer_.load()) {   // the key, for Windows' Key and Scale boxes and its strip
+                keyVerGuest_ = keyVer_.load();
+                bsynth3::Dna3 d3k; { std::lock_guard<std::mutex> l(mtx_); d3k = d3ForAudio_; }
+                const b16v3::KeyParams kp = keyParams();
+                const bsynth3::Key k = b16v3::effectiveKey(kp, d3k);
+                std::string line = "key " + std::to_string(k.root) + " " + std::to_string(kp.scale) + " " + std::to_string(k.tuning.size()) + " " +
+                                   std::to_string((int)std::lround(k.tuning.period)) + " ";
+                for (size_t j = 0; j < k.tuning.steps.size(); j++) line += (j ? "," : "") + std::to_string((int)std::lround(k.tuning.steps[j]));
+                line += " " + std::to_string(kp.remap) + " " + std::to_string(kp.anchor) + " " + std::to_string(kp.labels) + " " +
+                        std::to_string(bsynth3::tuningMask(k.tuning)) + " " + std::to_string(kp.usePreset) + " " + std::to_string(kp.snap);
+                if (line.size() < 240) sendLine(line.c_str(), 0, 0);
+                // the keyboard strip (PRESET-ENGINE-2 18.5): per key 36..96 its label ('' none), '~' = out of the scale
+                // (a 12-note scale without remap: dimmed); two lines
+                const bool showOut = !kp.remap && k.tuning.twelve() && k.tuning.size() < 12;
+                for (int half = 0; half < 2; half++) {
+                    const int n0 = half ? 67 : 36, n1 = half ? 96 : 66;
+                    std::string kl = "klabels " + std::to_string(n0) + " ";
+                    for (int n = n0; n <= n1; n++) {
+                        const bsynth3::Played pl = bsynth3::playKey(k, n, bsynth3::SnapOff);
+                        std::string lb;
+                        if (!pl.inScale && showOut) lb = "~";
+                        else if (pl.inScale || kp.remap || !k.tuning.twelve()) lb = bsynth3::stepLabel(k, pl.step, kp.labels);
+                        for (auto &ch : lb) if (ch == '|' || ch == ' ') ch = '_';
+                        kl += (n > n0 ? "|" : "") + lb;
+                    }
+                    if (kl.size() < 245) sendLine(kl.c_str(), 0, 0);
+                }
+            }
             if (cc1_.load() != cc1Applied_) {   // the mod wheel moved: the sound follows (no DNA to Windows)
                 std::string cur;
                 { std::lock_guard<std::mutex> l(mtx_); cur = dnaText_; }
@@ -896,6 +1005,11 @@ private:
 
     void onLine(const std::string &line)
     {
+        if (line.rfind("keyset ", 0) == 0 || line.rfind("keyopt ", 0) == 0) {   // the visitor changed the key in Windows
+            b16v3::KeyParams kp = keyParams();                                       // (`key <note> <vel>` is the strip's)
+            if (kp.readLine(line.rfind("keyset ", 0) == 0 ? "key " + line.substr(7) : line)) setKeyParams(kp);
+            return;
+        }
         if (line.rfind("rsrc ", 0) == 0) { recSelf_ = line.compare(5, 4, "self") == 0; return; }   // the visitor chose the input (RECORDING.md 4.3)
         if (line.rfind("rec start ", 0) == 0) { const int r = std::atoi(line.c_str() + 10); if (r >= 0 && r < 16) recBusy_ |= 1u << r; return; }
         if (line.rfind("rec stop ", 0) == 0) { const int r = std::atoi(line.c_str() + 9); if (r >= 0 && r < 16) recBusy_ &= ~(1u << r); return; }

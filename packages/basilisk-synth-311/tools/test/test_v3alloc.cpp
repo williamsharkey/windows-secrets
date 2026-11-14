@@ -93,6 +93,42 @@ int main()
         a.follow(c, true);
         a.bend(0.0, 3000, o); CHECK(rates(o) == 1 && o[0].rec != 9); o.clear();
     }
+    {   // the key: a plain layer stays chromatic in a 12-note scale, walks the scale with remap, snaps a 16-TET tuning
+        V3Alloc a = make("ding#4");
+        std::vector<Out> o;
+        b16v3::KeyParams kp; kp.scale = 8;   // major pentatonic, no remap: core plays it (chromatic, as before)
+        a.setKey(b16v3::effectiveKey(kp, bsynth3::parse3("ding#4")));
+        CHECK(!a.owns(0));
+        kp.remap = 1; kp.anchor = 60;        // remap: 60 61 62 63 64 65 = C D E G A C'
+        a.setKey(b16v3::effectiveKey(kp, bsynth3::parse3("ding#4")));
+        CHECK(a.owns(0));
+        const int want[6] = {0, 2, 4, 7, 9, 12};
+        for (int k = 0; k < 6; k++) {
+            o.clear(); a.noteOn(60 + k, 100, 1000 + k * 100000, o);
+            CHECK(count(o, bsynth::Cmd::On) == 1 && o.back().c.rateHz == bsynth::Voices::rateFor(22050, want[k], 0));
+            a.allOff();
+        }
+        b16v3::KeyParams k16; k16.scale = 30;   // 16-TET, no remap: each key snaps to the nearest step (75 cents)
+        a.setKey(b16v3::effectiveKey(k16, bsynth3::parse3("ding#4")));
+        CHECK(a.owns(0));
+        o.clear(); a.noteOn(61, 100, 1000, o);   // 100 cents -> 75
+        CHECK(count(o, bsynth::Cmd::On) == 1 && o.back().c.rateHz == bsynth::Voices::rateFor(22050, 0.75, 0));
+        std::printf("16-TET C#: %s\n", show(o).c_str());
+    }
+    {   // the preset's suggestion: D dorian (q2r2) with use-preset; degree chord on E = E G B (dorian 2nd degree: minor)
+        bsynth::Dna d = bsynth::parse("ding#8Dh1,3,5;q2r2"); bsynth3::Dna3 d3 = bsynth3::parse3("ding#8Dh1,3,5;q2r2");
+        V3Alloc a; a.setDna(d, d3); a.setLayerInfo(0, 0, 8, 22050, 44100);
+        b16v3::KeyParams kp; kp.usePreset = 1;
+        a.setKey(b16v3::effectiveKey(kp, d3));
+        std::vector<Out> o; a.noteOn(64, 100, 1000, o);
+        CHECK(o.size() == 3 && o[0].c.rateHz == bsynth::Voices::rateFor(22050, 4, 0) && o[1].c.rateHz == bsynth::Voices::rateFor(22050, 7, 0) && o[2].c.rateHz == bsynth::Voices::rateFor(22050, 11, 0));
+        o.clear(); a.allOff(); a.noteOn(62, 100, 2000, o);   // D: D F A (the tonic, minor)
+        CHECK(o.size() == 3 && o[1].c.rateHz == bsynth::Voices::rateFor(22050, 5, 0) && o[2].c.rateHz == bsynth::Voices::rateFor(22050, 9, 0));
+        b16v3::KeyParams s; s.root = 3; s.scale = 7;
+        CHECK(b16v3::KeyParams().lines() == "key 0 0\nkeyopt 0 1 0 0 60\n");
+        b16v3::KeyParams r; CHECK(r.readLine("key 3 7") && r.root == 3 && r.scale == 7 && r.readLine("keyopt 1 3 1 2 48") && r.usePreset == 1 && r.snap == 3 && r.remap == 1 && r.labels == 2 && r.anchor == 48);
+        (void)s;
+    }
     std::printf("%d checks: %s\n", checks, fails ? "FAILED" : "ok");
     return fails ? 1 : 0;
 }

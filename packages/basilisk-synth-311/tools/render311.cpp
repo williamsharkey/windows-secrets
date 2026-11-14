@@ -2,6 +2,8 @@
 //
 //   render311 --machine DIR --core FILE --dna "DNA" (--midi in.mid | --score "t:note:vel:dur,...") --out out.wav
 //             [--tail SECONDS] [--log FILE] [--bits 24|32] [--bpm BPM]   (BPM: the tempo for v3 Wt, Wb, Wg; 120)
+//             [--key 0-11] [--scale ID] [--use-preset-scale 0|1] [--snap 1-4] [--remap 0|1] [--anchor NOTE]   (the plugin's
+//             Key, Scale, Use Preset Scale, Snap, Remap Keys and Remap Anchor parameters: PRESET-ENGINE-2 18.2)
 //
 // --score: notes as t:note:velocity:duration in seconds (the format of packages/basilisk-synth/tools/batch_render.py).
 // DNA v2 (DNA.md 5): library NAMEs come from DIR/library.names.txt; macros are applied as the plugin applies them.
@@ -267,6 +269,13 @@ int main(int argc, char **argv)
     Voices voices(48000); Cmd c[kMaxCmds];
     voices.setDna(dna, c);
     b16v3::V3Alloc v3; v3.setDna(dna, d3); v3.setBpm(bpm);   // the layers with N, S or D, and live bend (as the plugin)
+    {   // the key and scale parameters (PRESET-ENGINE-2 18.2), as the plugin's
+        b16v3::KeyParams kp;
+        auto num = [&](const char *k, int &v) { if (a.count(k)) v = std::atoi(a[k].c_str()); };
+        num("--key", kp.root); num("--scale", kp.scale); num("--use-preset-scale", kp.usePreset); num("--snap", kp.snap);
+        num("--remap", kp.remap); num("--anchor", kp.anchor);
+        v3.setKey(b16v3::effectiveKey(kp, d3));
+    }
     std::vector<b16v3::Out> vo;
     bool rateCap = false;
     M.send("hi 3");   // DNA v3: the guest answers with its caps

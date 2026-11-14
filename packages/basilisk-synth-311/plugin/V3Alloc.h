@@ -11,6 +11,8 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
+#include <string>
 #include <vector>
 #include "../../basilisk-synth/core/dna.h"
 #include "../../basilisk-synth/core/dna3.h"
@@ -62,9 +64,12 @@ public:
         bsynth::LayerInfo in; in.first = first; in.count = count; in.rate = rate; in.frames = frames; in.known = true;
         infoKeep_[i] = in; lay_[i].info = in;
     }
-    bool owns(int i) const { return i >= 0 && i < nlay_ && lay_[i].own && lay_[i].valid; }
+    // A layer is ours when it has N, S or D, or when the key maps every note (remap, or a tuning that is not 12-TET:
+    // section 18.4); core plays the rest chromatically, as always.
+    bool owns(int i) const { return i >= 0 && i < nlay_ && lay_[i].valid && (lay_[i].own || (keyMap_ && !lay_[i].fixed)); }
     void setBpm(double bpm) { bpm_ = bpm > 1 ? bpm : 120; }
-    void setKey(const bsynth3::Key &k) { key_ = k; }
+    void setKey(const bsynth3::Key &k) { key_ = k; keyMap_ = k.remap || !k.tuning.twelve(); }
+    bool keyMaps() const { return keyMap_; }
 
     // ---- notes
     void noteOn(int note, int vel, uint64_t t, std::vector<Out> &out)
@@ -167,6 +172,7 @@ private:
     Rec rec_[bsynth::kRecorders];
     Live live_[bsynth::kRecorders];
     bsynth3::Key key_;
+    bool keyMap_ = false;
     int nlay_ = 0, root_ = 60, velocity_ = 100, bendRange_ = 2;
     double bend_ = 0, bpm_ = 120;
     bool sustain_ = false;
@@ -224,6 +230,12 @@ private:
         }
         bsynth3::Rng rng(0xC0FFEEu ^ (counter_ * 2246822519u));
         std::vector<int> h = bsynth3::noteIntervals(L.s, L.H, counter_, rng);
+        if (keyMap_ && !L.fixed) {   // the key maps the played note (remap, or a non-12 tuning): its pitch, then H
+            const bsynth3::Degrees one;
+            const std::vector<double> c = bsynth3::voiceOffsets(key_, one, note, key_.snap);
+            const double off = c.empty() ? 0.0 : c[0] / 100.0;
+            std::vector<double> o; for (int x : h) o.push_back(off + x); return o;
+        }
         return std::vector<double>(h.begin(), h.end());
     }
     // one voice: a recorder (free with the oldest finish, else steal the oldest; Sp: a random free one)
@@ -355,4 +367,49 @@ private:
     }
 };
 
+}  // namespace b16v3
+
+namespace b16v3 {
+// The key and scale parameters (PRESET-ENGINE-2 section 18.2), as the plugin, render311 and the state hold them.
+struct KeyParams {
+    int root = 0;        // 0..11 (C..B)
+    int scale = 0;       // a library id (scales.h)
+    int usePreset = 0;   // 1: the DNA's q (its suggestion) wins
+    int snap = 1;        // 1 nearest, 2 down, 3 up, 4 off
+    int remap = 0;       // 1: consecutive keys walk consecutive scale steps
+    int anchor = 60;     // remap: this key plays the root
+    int labels = 0;      // the keyboard strip's labels: 0 none, 1 degrees, 2 sargam, 3 names, 4 cents
+    bool operator==(const KeyParams &o) const { return root == o.root && scale == o.scale && usePreset == o.usePreset && snap == o.snap && remap == o.remap && anchor == o.anchor && labels == o.labels; }
+    bool operator!=(const KeyParams &o) const { return !(*this == o); }
+    // state lines (STATE.md): key <root> <scale> / keyopt <usePreset> <snap> <remap> <labels> <anchor>
+    std::string lines() const
+    {
+        return "key " + std::to_string(root) + " " + std::to_string(scale) + "\nkeyopt " + std::to_string(usePreset) + " " +
+               std::to_string(snap) + " " + std::to_string(remap) + " " + std::to_string(labels) + " " + std::to_string(anchor) + "\n";
+    }
+    bool readLine(const std::string &l)
+    {
+        int a = 0, b = 0, c = 0, d = 0, e = 60;
+        if (std::sscanf(l.c_str(), "key %d %d", &a, &b) == 2) { root = (a % 12 + 12) % 12; scale = b < 0 ? 0 : b; return true; }
+        int n = std::sscanf(l.c_str(), "keyopt %d %d %d %d %d", &a, &b, &c, &d, &e);
+        if (n >= 4) { usePreset = a ? 1 : 0; snap = b >= 1 && b <= 4 ? b : 1; remap = c ? 1 : 0; labels = d >= 0 && d <= 4 ? d : 0; if (n == 5 && e >= 0 && e <= 127) anchor = e; return true; }
+        return false;
+    }
+};
+// The effective key: the DNA's suggestion (q) when "use the preset's scale" is on and it has one, else the parameters.
+inline bsynth3::Key effectiveKey(const KeyParams &p, const bsynth3::Dna3 &d3)
+{
+    bsynth3::Key k;
+    int root = p.root, id = p.scale; unsigned mask = 0; int edo = 0;
+    if (p.usePreset && d3.g.hasQ) {
+        if (d3.g.scale >= 0) id = d3.g.scale;
+        if (d3.g.rootPc >= 0) root = d3.g.rootPc;
+        mask = (unsigned)d3.g.mask; edo = d3.g.edo;
+    }
+    if (mask) k.tuning = bsynth3::maskTuning(mask);
+    else if (edo > 0) k.tuning = bsynth3::edo(edo);
+    else if (!bsynth3::libraryTuning(id, k.tuning)) bsynth3::libraryTuning(0, k.tuning);
+    k.root = root; k.remap = p.remap != 0; k.anchor = p.anchor; k.snap = p.snap;
+    return k;
+}
 }  // namespace b16v3
