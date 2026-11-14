@@ -1,0 +1,128 @@
+/* SNDWAVE2000 by Algorithmic Industries: the site frame (williamsharkey.com/sndwave2000/).
+   The look is the box's: Technical Book, Stripe. Warm paper, black type, a deep red band down the left edge with a thin
+   red rule beside it (the title screen's stripe, 42 : 8 : 3), serif bold italic for the wordmark and headings, and the
+   product's own Windows 3.11 windows set into the page like plates in a manual.
+   Shared by /sndwave2000/, /sndwave2000/packs/ and /sndwave2000/play/ (the play page is served with COEP
+   require-corp, so nothing here loads from another origin). Page frame: <div class="wrap"> <header class="mast">
+   <main> <footer class="foot">. The Windows tokens (--face --hi --lo --ink --sel --title) are the Windows 3.1 colours
+   the in-page windows, buttons and the Try it online block use; the book's own colours are --bk-*.
+   Brand: design/brand/sndwave2000 (COPY.md, palette.css: ink #141414, paper #f6f3ea, stripe red #8a1c1c, rose #d9b8b0);
+   fonts/ is DejaVu Serif and Sans (free licence, LICENSE-DejaVu.txt), subset to Latin-1, italic synthesized as on the box. */
+@font-face { font-family: "SW Serif"; src: url("/sndwave2000/fonts/DejaVuSerif.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "SW Serif"; src: url("/sndwave2000/fonts/DejaVuSerif-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "SW Sans"; src: url("/sndwave2000/fonts/DejaVuSans.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "SW Sans"; src: url("/sndwave2000/fonts/DejaVuSans-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+:root {
+  --bk-paper: #f6f3ea; --bk-card: #fffdf6; --bk-text: #141414; --bk-muted: #5b554b; --bk-rule: #cfc7b5; --bk-accent: #8a1c1c;
+  --bk-stripe: #8a1c1c; --bk-link: #8a1c1c; --bk-shade: rgba(20, 20, 20, .22);
+  --face: #c0c0c0; --hi: #ffffff; --lo: #808080; --ink: #000000; --title: #000080; --title-ink: #ffffff;
+  --sel: #000080; --sel-ink: #ffffff; --scr: #000000; --muted: #404040;
+  --sw: 42px; --sg: 8px; --sl: 3px;   /* stripe: band, gap, rule */
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bk-paper: #17140f; --bk-card: #201c16; --bk-text: #ece6d8; --bk-muted: #aaa190; --bk-rule: #3d372e;
+    --bk-accent: #d0645a; --bk-stripe: #7a1a1a; --bk-link: #e0867c; --bk-shade: rgba(0, 0, 0, .5); color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bk-paper: #17140f; --bk-card: #201c16; --bk-text: #ece6d8; --bk-muted: #aaa190; --bk-rule: #3d372e;
+  --bk-accent: #d0645a; --bk-stripe: #7a1a1a; --bk-link: #e0867c; --bk-shade: rgba(0, 0, 0, .5); color-scheme: dark; }
+@media (max-width: 700px) { :root { --sw: 12px; --sg: 3px; --sl: 2px; } }
+
+* { box-sizing: border-box; }
+html { background: var(--bk-paper); }
+body { margin: 0; min-height: 100vh; color: var(--bk-text); overflow-x: hidden;
+  background: var(--bk-paper) linear-gradient(90deg, var(--bk-stripe) 0 var(--sw), transparent var(--sw) calc(var(--sw) + var(--sg)),
+    var(--bk-stripe) calc(var(--sw) + var(--sg)) calc(var(--sw) + var(--sg) + var(--sl)), transparent 0);
+  font: 16px/1.6 "SW Serif", "DejaVu Serif", Georgia, "Times New Roman", serif; }
+a { color: var(--bk-link); text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px 48px calc(var(--sw) + var(--sg) + var(--sl) + 28px); }
+@media (max-width: 700px) { .wrap { padding: 0 16px 40px calc(var(--sw) + var(--sg) + var(--sl) + 12px); } }
+p { margin: 0 0 12px; }
+code, kbd, pre { font: 13.5px/1.5 "DejaVu Sans Mono", "Lucida Console", ui-monospace, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
+pre { background: #000; color: #c0c0c0; padding: 10px 12px; overflow-x: auto; white-space: pre; margin: 6px 0 12px; overflow-wrap: normal; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+
+/* masthead: the company line with the Grid sun, the four links */
+.mast { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; padding: 18px 0 14px; border-bottom: 2px solid var(--bk-text); }
+.mast .co { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--bk-text);
+  font: 700 12px/1 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; letter-spacing: .28em; text-transform: uppercase; }
+.mast .co img { width: 32px; height: 32px; flex: none; image-rendering: pixelated; image-rendering: crisp-edges; }
+.pix { image-rendering: pixelated; image-rendering: crisp-edges; }
+.mast nav, .foot nav { display: flex; flex-wrap: wrap; gap: 4px 20px; font: 700 13px/1.4 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; letter-spacing: .06em; }
+.mast nav a, .foot nav a { color: var(--bk-text); text-decoration: none; border-bottom: 2px solid transparent; padding: 2px 0; }
+.mast nav a:hover, .foot nav a:hover { border-bottom-color: var(--bk-accent); }
+.mast nav a[aria-current="page"] { border-bottom-color: var(--bk-text); }
+
+/* type */
+.kicker { font: 700 11.5px/1.3 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; letter-spacing: .24em; text-transform: uppercase; color: var(--bk-muted); margin: 0 0 6px; }
+.word { font: italic 700 clamp(40px, 7.4vw, 76px)/1 "SW Serif", "DejaVu Serif", Georgia, "Times New Roman", serif; letter-spacing: -.02em; margin: 0 0 4px;
+  padding-bottom: 6px; border-bottom: 3px solid var(--bk-text); display: inline-block; }
+.edition { font: italic 700 20px/1.3 "SW Serif", "DejaVu Serif", Georgia, serif; margin: 10px 0 2px; }
+.tagline { font: italic 17px/1.4 "SW Serif", "DejaVu Serif", Georgia, serif; color: var(--bk-muted); margin: 0 0 16px; }
+h1 { font: italic 700 clamp(28px, 4.4vw, 40px)/1.1 "SW Serif", "DejaVu Serif", Georgia, serif; margin: 0 0 10px; letter-spacing: -.01em; }
+h2 { font: italic 700 clamp(22px, 3.2vw, 30px)/1.15 "SW Serif", "DejaVu Serif", Georgia, serif; margin: 0 0 12px; }
+h3 { font: 700 15px/1.35 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; margin: 0 0 4px; }
+.lede { font-size: 18px; max-width: 64ch; }
+.note { font: 13.5px/1.5 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; color: var(--bk-muted); }
+
+/* chapters: a numbered heading on a heavy rule, like a manual's */
+.ch { margin: 44px 0 0; }
+.ch > .chh { display: flex; align-items: baseline; gap: 14px; border-top: 2px solid var(--bk-text); padding-top: 10px; margin-bottom: 14px; }
+.ch > .chh .no { font: 700 13px/1 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; letter-spacing: .14em; color: var(--bk-accent); flex: none; min-width: 2.2em; }
+.ch > .chh h2 { margin: 0; }
+.cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 18px 28px; }
+.cols > div { border-top: 1px solid var(--bk-rule); padding-top: 10px; }
+.cols p { font-size: 15px; }
+
+/* buttons: Windows 3.1 push buttons, on the book's paper */
+.btn { display: inline-block; text-decoration: none; color: #000; background: var(--face); border: 1px solid #000; border-radius: 3px;
+  box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo); padding: 6px 13px; margin: 2px 6px 6px 0;
+  font: 14px/1.4 "MS Sans Serif", "Microsoft Sans Serif", "DejaVu Sans", Arial, sans-serif; cursor: pointer; }
+.btn:active, .btn[aria-pressed="true"] { box-shadow: inset 2px 2px 0 var(--lo); }
+.btn.def { outline: 1px solid #000; outline-offset: 0; font-weight: 700; }
+.btn:focus-visible, button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px dotted currentColor; outline-offset: 2px; }
+
+/* a Windows 3.1 window set into the page */
+.win { background: var(--paper, #fff); color: #000; border: 1px solid #000; box-shadow: 0 0 0 3px var(--face), 0 0 0 4px #000, 6px 8px 0 4px var(--bk-shade); margin: 8px 4px 24px;
+  font: 15px/1.55 "MS Sans Serif", "Microsoft Sans Serif", "DejaVu Sans", Arial, sans-serif; }
+.win a { color: #000080; }
+.win .note { color: #404040; }
+.win h2 { font: 700 17px/1.3 "MS Sans Serif", "Microsoft Sans Serif", "DejaVu Sans", Arial, sans-serif; margin: 0 0 8px; }
+.win h3 { font-size: 15px; }
+.cap { display: flex; align-items: center; height: 22px; background: var(--title); color: var(--title-ink); border-bottom: 1px solid #000; font-weight: 700; }
+.cap .box { width: 22px; height: 21px; background: var(--face); border-right: 1px solid #000; display: grid; place-items: center; flex: none; }
+.cap .box::before { content: ""; width: 12px; height: 3px; background: #fff; border: 1px solid #000; }
+.cap .t { flex: 1; text-align: center; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; padding: 0 6px; }
+.win > .body { padding: 14px 18px 16px; }
+/* phones: a window spans the screen edge to edge (over the stripe), so a 1024-pixel capture fits at 1:1 on a 3x screen;
+   pictures stay in their column (sndrec.css's 100vw bleed assumes a centred column, and this one is not) */
+@media (max-width: 600px) {
+  .win > .body { padding: 10px 10px 12px; }
+  .win { margin: 8px -16px 24px calc(-1 * (var(--sw) + var(--sg) + var(--sl) + 12px)); border-left: 0; border-right: 0; box-shadow: 0 3px 0 var(--face), 0 4px 0 #000, 0 -3px 0 var(--face), 0 -4px 0 #000; }
+  .pxbox { width: auto; margin-left: 0; }
+}
+
+/* pictures shown pixel for pixel (/sndrec/pxfit.js) */
+.pxbox { position: relative; display: flex; justify-content: flex-start; align-items: flex-start; line-height: 0; }
+.pxbox canvas, .pxbox img { display: block; flex: none; image-rendering: pixelated; image-rendering: crisp-edges; max-width: 100%; height: auto; }
+
+/* the hero: the title screen beside the opening text */
+.hero { display: grid; grid-template-columns: minmax(0, 640px) minmax(0, 1fr); gap: 20px 40px; align-items: center; padding: 34px 0 6px; }
+.hero h1 { font-size: clamp(28px, 3.6vw, 38px); }
+.hero .lede { font-size: 16.5px; }
+.hero .shot canvas, .hero .shot img { box-shadow: 0 12px 30px var(--bk-shade); }
+.hero .pxbox { background: var(--bk-paper); }
+@media (max-width: 1100px) { .hero { grid-template-columns: minmax(0, 1fr); } }
+
+/* the footer: links, the legal line, the archived XP edition */
+.foot { margin-top: 56px; border-top: 2px solid var(--bk-text); padding-top: 14px; font: 13px/1.6 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; color: var(--bk-muted); }
+.foot nav { margin-bottom: 10px; }
+.foot p { margin: 0 0 6px; }
+.foot .legal { font-style: italic; }
+.foot .archived { margin-top: 14px; text-align: left; font-size: 13px; color: var(--bk-muted); }
+.foot .archived a { color: var(--bk-muted); }
+.sib { display: flex; flex-wrap: wrap; gap: 2px 0; margin-top: 18px; font: 11px/1.6 "DejaVu Sans Mono", "Lucida Console", monospace; letter-spacing: .1em; text-transform: uppercase; }
+.sib a { color: var(--bk-muted); text-decoration: none; padding-right: 14px; }
+.sib a:hover { color: var(--bk-text); }

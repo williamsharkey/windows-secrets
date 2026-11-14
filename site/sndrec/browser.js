@@ -1,7 +1,9 @@
 /* sndrec.html and sndrec-xp.html: the preset browser (players, waveforms, source badges, recipes, filters).
    The page sets: the tabs (.tab[data-ed], the selected one first shown), #panel[data-src] (the presets JSON, default
    sndrec/presets.json) and, for BASILISK 16, #panel[data-soundfilter] (filter by Windows sounds used: 3.x only, or
-   with XP's sounds, which BASILISK 16 carries in C:\XPSOUNDS). An optional #libgo button opens the picks tab. */
+   with XP's sounds, which BASILISK 16 carries in C:\XPSOUNDS). An optional #libgo button opens the picks tab.
+   #panel[data-product] names the product in the sound facts (default BASILISK 16); an edition's "note" in the JSON
+   replaces the built-in note under the tabs. */
 (function () {
   'use strict';
   var panelEl = document.getElementById('panel'), selTab = document.querySelector('.tab[aria-selected="true"]');
@@ -19,6 +21,8 @@
     return '<svg viewBox="0 0 ' + (n * 2) + ' 24" preserveAspectRatio="none" aria-hidden="true" fill="' + color + '">' + r + '</svg>';
   }
   // ---- source sounds: a badge per sound, its origin mark, full facts in a popover (hover, focus or tap)
+  // the product named in the sound facts (data-product on #panel; sndwave2000/ says SNDWAVE2000)
+  var PRODUCT = (document.getElementById('panel') && document.getElementById('panel').getAttribute('data-product')) || 'BASILISK 16';
   var MARK = {'311': ['m311', '3.11', 'Windows for Workgroups 3.11 original'], '31': ['m31', '3.1', 'Windows 3.1 original'],
     'xp': ['mxp', 'XP', 'Windows XP original'], 'both': ['mboth', '3.11=XP', 'The same file in Windows 3.11 and XP'], 'fb': ['mfb', '\u2192DING', 'XP name: DING.WAV plays on 3.11'],
     'cc0': ['mcc0', 'CC0', 'Library recording, CC0'], 'pd': ['mpd', 'PD', 'Library recording, public domain'],
@@ -26,7 +30,7 @@
   function mk(o) { var m = MARK[o] || MARK.unk; return '<span class="mk ' + m[0] + '" aria-hidden="true">' + m[1] + '</span>'; }
   function facts(n, S) {
     var x = S[n] || {o: 'unk'}, m = MARK[x.o] || MARK.unk, r = '<div class="item"><h4>' + mk(x.o) + '<span>' + esc(x.d || n) + '</span></h4>';
-    if (x.o === 'fb') r += '<div class="warn">Not an original 3.11 sound: <b>' + esc(x.xp) + '</b> is a Windows XP file, so BASILISK 16 plays DING.WAV for it.</div>';
+    if (x.o === 'fb') r += '<div class="warn">Not an original 3.11 sound: <b>' + esc(x.xp) + '</b> is a Windows XP file, so ' + esc(PRODUCT) + ' plays DING.WAV for it.</div>';
     r += '<dl><dt>Origin</dt><dd>' + esc(x.from || m[2]) + '</dd>';
     if (x.path) r += '<dt>File</dt><dd><code>' + esc(x.path) + '</code></dd>';
     if (x.dur != null) r += '<dt>Length</dt><dd>' + x.dur + ' s</dd>';
@@ -247,7 +251,7 @@
       lib: '<b>Coming in BASILISK 16 1.3.0.</b> The owner\'s favourites from the new library (1,039 presets in 17 sound packs), rated 6.5 to 8.5 of 10 on the review page. Each demo is the file the owner rated: rendered by <code>render311</code> through the real Windows 3.11 machine (main 4bda617), checked that every note sounds. Their level is the preset\'s own, so some are a little quieter than the other demos.',
       xp: 'BASILISK SYNTH 1.2.2, 43 programs. XP\'s timing is not sample-accurate, so its renders differ a little run to run; each demo is the best of up to four takes.',
       libxp: 'The owner\'s picks from the BASILISK 16 1.3.0 library that also play on XP, rendered by BASILISK SYNTH 1.2.2.'};
-    document.getElementById('ednote').innerHTML = notes[ed] || '';
+    document.getElementById('ednote').innerHTML = E.note != null ? E.note : (notes[ed] || '');   // the JSON's own note wins
     // DNA.md 2.4: a DNA uses XP's sounds when it names any XP file (in BASILISK 16 they are in C:\XPSOUNDS); library
     // sounds do not count. Shown as a filter only where the page asks for it (BASILISK 16).
     all.forEach(function (p) { p.edl = p.ed === 'xp' ? 'With XP sounds' : '3.x sounds only'; });

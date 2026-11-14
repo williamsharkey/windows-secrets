@@ -1,0 +1,70 @@
+/* /sndwave2000/packs/: the Sound Pack Explorer (the frame is ../site.css) */
+.intro { padding: 30px 0 6px; }
+.intro .lede { margin-bottom: 8px; }
+.star { color: var(--bk-accent); }
+.find { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 10px 0 8px; font: 14px/1.4 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; }
+.find input[type=search] { font: 15px/1.3 "SW Sans", "DejaVu Sans", Arial, sans-serif; padding: 4px 7px; border: 2px solid; border-color: var(--lo) var(--hi) var(--hi) var(--lo); background: #fff; color: #000; width: 18em; max-width: 100%; }
+.find label { display: inline-flex; align-items: center; gap: 6px; }
+.count { font-size: 13px; color: var(--muted); }
+#results { margin: 4px 0 10px; }
+#results .rows { border-top: 2px solid var(--bk-text); }
+
+/* the shelf */
+.shelfh { border-top: 2px solid var(--bk-text); padding-top: 10px; margin-top: 34px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 30px 26px; }
+.card { display: flex; flex-direction: column; justify-content: flex-end; text-decoration: none; color: var(--bk-text); }
+.card .pxbox { justify-content: center; margin-bottom: 8px; }
+.card b { font: italic 700 18px/1.25 "SW Serif", "DejaVu Serif", Georgia, serif; border-top: 2px solid var(--bk-text); padding-top: 6px; }
+.card .mk, .card .ct { font: 12.5px/1.45 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; color: var(--bk-muted); }
+.card .ct { margin-top: 4px; color: var(--bk-text); }
+.card .ct i { color: var(--bk-muted); }
+.card:hover b { color: var(--bk-accent); }
+
+/* one pack */
+.pack { margin-top: 26px; border-top: 6px solid var(--pk, var(--bk-accent)); padding-top: 14px; scroll-margin-top: 8px; }
+.pack .back { font: 700 13px/1.4 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; text-decoration: none; }
+.pack .phead .kicker { margin-top: 12px; }
+.ptitle { display: flex; align-items: center; gap: 12px; font-size: clamp(28px, 4.4vw, 40px); margin: 0 0 4px; }
+.ptitle img { width: 64px; height: 64px; flex: none; }
+.pack .tagline { margin-bottom: 14px; }
+.pbody { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px 36px; align-items: start; }
+@media (max-width: 900px) { .pbody { grid-template-columns: minmax(0, 1fr); } }
+.part .pxbox { justify-content: center; }
+.part .disc { margin-top: 14px; }
+.ptext p { font-size: 15.5px; }
+.ptext .blurb { font: italic 17px/1.5 "SW Serif", "DejaVu Serif", Georgia, serif; }
+.files { margin: 14px 0; }
+.mnote { margin: 16px 0; padding: 4px 0 4px 16px; border-left: 4px solid var(--pk, var(--bk-accent)); }
+.mnote p { font-style: italic; }
+.maker { background: var(--bk-card); border: 1px solid var(--bk-rule); padding: 12px 16px; margin: 0 0 6px; }
+.maker address { font: 14px/1.5 "DejaVu Sans Mono", "Lucida Console", ui-monospace, monospace; font-style: normal; margin: 0 0 8px; }
+.maker .people { margin: 6px 0; padding-left: 18px; font-size: 14.5px; }
+
+/* the presets window */
+.plist { margin-top: 28px; }
+.plist .chips { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 0 0 8px; }
+.chip { font: 13px/1.4 "MS Sans Serif", "Microsoft Sans Serif", "SW Sans", Arial, sans-serif; padding: 2px 9px; background: var(--face); border: 1px solid #000; border-radius: 2px; cursor: pointer; color: #000;
+  box-shadow: inset 1px 1px 0 var(--hi), inset -1px -1px 0 var(--lo); }
+.chip span { opacity: .7; }
+.chip[aria-pressed="true"] { background: var(--sel); color: var(--sel-ink); box-shadow: none; }
+.plist .find { font-family: "MS Sans Serif", "Microsoft Sans Serif", "SW Sans", Arial, sans-serif; color: #000; }
+.plist .count { color: #404040; }
+.rows { list-style: none; margin: 0; padding: 0; }
+.rows .cath { font: 700 12px/1 "SW Sans", "DejaVu Sans", Verdana, sans-serif; letter-spacing: .16em; text-transform: uppercase; padding: 16px 0 6px; border-bottom: 2px solid currentColor; }
+.rows .loading { padding: 12px 4px; color: var(--muted); }
+.prow { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 12px; align-items: start; padding: 9px 4px; border-top: 1px solid var(--face); }
+.prow.on { background: #ffffe0; color: #000; }
+.prow .play { width: 36px; height: 30px; padding: 0; margin: 0; display: grid; place-items: center; }
+.prow .play svg { width: 14px; height: 14px; }
+.prow .play:disabled { opacity: .45; cursor: default; }
+.pn { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
+.pn b { font-size: 15.5px; }
+.pn .rt { font: 700 11px/16px "SW Sans", Verdana, sans-serif; background: var(--bk-accent); color: #fff; padding: 0 5px; }
+.pn .pc { font-size: 13px; color: inherit; opacity: .75; width: 100%; }
+.pn .flag { background: #ffcc00; color: #000; padding: 0 3px; }
+.rone, .rlines { display: block; margin: 4px 0 2px; font: 12.5px/1.45 "DejaVu Sans Mono", "Lucida Console", ui-monospace, Menlo, Consolas, monospace; }
+.rlines { background: transparent; color: inherit; padding: 0; white-space: pre; overflow-x: auto; }
+.cp .small { font-size: 12.5px; padding: 2px 9px; margin: 4px 6px 0 0; }
+#results .prow { border-top-color: var(--bk-rule); }
+#results .prow .pc a { color: inherit; }
+main.wait { min-height: 180vh; }   /* until packs.json is in: the footer stays below the fold, so filling the shelf shifts nothing in view */

@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SNDWAVE2000</title>
+<meta name="description" content="SNDWAVE2000 by Algorithmic Industries, Executive Audiophile Edition: sixteen real Windows 3.11 Sound Recorders played as one instrument in your DAW and in your browser. Hear every preset, explore the sound packs.">
+<meta property="og:title" content="SNDWAVE2000 by Algorithmic Industries">
+<meta property="og:description" content="Total sound solutions for globalized audio. Sixteen real Windows 3.11 Sound Recorders played as one instrument.">
+<meta property="og:image" content="https://williamsharkey.com/sndrec/pxv/b16-play-poster.png">
+<link rel="icon" type="image/png" sizes="32x32" href="art/gridsun-32.png"><link rel="icon" type="image/png" sizes="16x16" href="art/gridsun-16.png">
+<link rel="preload" href="/sndwave2000/fonts/DejaVuSerif-Bold.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/sndwave2000/fonts/DejaVuSerif.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/sndwave2000/fonts/DejaVuSans-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/sndrec/sndrec.css">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="home.css">
+<script src="/sndrec/pxfit.js"></script>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <a class="co" href="/sndwave2000/"><img src="/sndwave2000/art/gridsun-32.png" width="32" height="32" alt="">Algorithmic Industries</a>
+  <nav aria-label="SNDWAVE2000"><a href="/sndwave2000/" aria-current="page">Home</a><a href="/sndwave2000/packs/">Sound packs</a><a href="/sndwave2000/play/" class="playlink">Play</a><a href="/sndwave2000/#download">Download</a></nav>
+</header>
+
+<main>
+<section class="hero" aria-labelledby="top">
+  <figure class="splash">
+    <div class="pxbox pximg shot"><img src="art/title-640.png" width="640" height="390" data-px="640x390" alt="The SNDWAVE2000 title screen: Algorithmic Industries, the SNDWAVE2000 wordmark over a dithered Grid sun, Executive Audiophile Edition, Total sound solutions for globalized audio, Version 1.00 (Build 0311), on cream paper with the red stripe down the left edge"></div>
+    <script>pxfit.fit(document.querySelector('.splash [data-px]'))</script>
+  </figure>
+  <div>
+    <p class="kicker">SNDWAVE2000 &middot; Executive Audiophile Edition</p>
+    <h1 id="top">Sixteen Sound Recorders, one instrument</h1>
+    <p class="tagline">Total sound solutions for globalized audio.</p>
+    <p class="lede">An instrument for your DAW made of sixteen real Windows 3.11 Sound Recorders. It runs Windows for Workgroups 3.11 inside the plugin, opens sixteen copies of Sound Recorder, and plays your notes on them. Every sound is built with Sound Recorder's own menu commands; the plugin never makes a sound of its own.</p>
+    <p><a class="btn def" href="#presets">Hear the presets</a><a class="btn" href="packs/">Sound packs</a><a class="btn playlink" href="/sndwave2000/play/">Try it online</a><a class="btn" href="#download">Download</a></p>
+  </div>
+</section>
+
+<section class="ch" id="demo" aria-labelledby="h-demo">
+  <div class="chh"><span class="no">§ 1</span><h2 id="h-demo">Demonstration</h2></div>
+  <p>Everything on this page was recorded from the plugin. These are screen captures, every Windows pixel shown as whole device pixels, with the sound the plugin made.</p>
+  <div class="win">
+    <div class="cap"><span class="box"></span><span class="t">SNDWAVE2000 - Demonstration</span></div>
+    <div class="body">
+      <div class="pxp" id="hero">
+        <div class="pxclips" role="group" aria-label="Clip">
+          <span class="lbl">The instrument</span><button type="button" class="chip pxclip" aria-pressed="true">Loading</button><button type="button" class="chip pxclip" aria-pressed="false">Playing</button><button type="button" class="chip pxclip" aria-pressed="false">Preset change</button><button type="button" class="chip pxclip" aria-pressed="false">Mod wheel</button>
+        </div>
+        <div class="pxclips" role="group" aria-label="Library clip">
+          <span class="lbl">Sound packs (1.3.0)</span><button type="button" class="chip pxclip" aria-pressed="false">Workgroup House</button><button type="button" class="chip pxclip" aria-pressed="false">More picks</button>
+        </div>
+        <div class="pxbox"><canvas width="1024" height="768" data-px="1024x768" data-px-note="hero-note" tabindex="0" aria-label="SNDWAVE2000"></canvas><button type="button" class="pxbig" aria-label="Play">&#9654;</button><p class="pxstatus" hidden></p></div><script>pxfit.fit(document.querySelector('#hero [data-px]'))</script>
+        <div class="pxctl"><button type="button" class="btn pxplay" aria-pressed="false">Play</button><span class="pxtime">0:00</span><input class="pxseek" type="range" min="0" max="15" step="0.001" value="0" aria-label="Position"><label class="pxloop"><input type="checkbox"> Loop</label></div>
+        <p class="pxcap note"><b>Loading.</b> Windows for Workgroups 3.11 resumes, its sixteen Sound Recorders lose their title bars and line up, and the first preset plays.</p>
+        <p class="note pxnote" id="hero-note"></p>
+      </div>
+      <p class="note" style="margin:0">The captures were made with 1.2.1, released as BASILISK 16; the instrument is the same, under its new name.</p>
+    </div>
+  </div>
+</section>
+
+<section class="ch" id="features" aria-labelledby="h-feat">
+  <div class="chh"><span class="no">§ 2</span><h2 id="h-feat">Features</h2></div>
+  <p>A sound is a <i>DNA</i>, one line of text: layers of Sound Recorder commands, then settings. <code>chimesE+;R900</code> is CHIMES.WAV with Add Echo and Increase Volume, and a 900 ms release. Type one into the editor, pick a preset, or click the Effects buttons.</p>
+  <div class="cols">
+    <div><h3>Layers</h3><p>Up to 8 layers per sound, each on its own recorders, with its own start offset, pan, level, transpose, harmony and unison. One note can sound up to 16 recorders.</p></div>
+    <div><h3>Four macros</h3><p>Automatable from the DAW. The DNA says what each one moves: a layer's level, pan, offset, transpose, unison spread, envelope speed or echo count. The mod wheel adds to Macro 1.</p></div>
+    <div><h3>Envelopes on a real Windows graph</h3><p>Each layer can have drawn volume and pan envelopes of up to 8 points. A seventeenth Sound Recorder draws the selected envelope in its green wave view.</p></div>
+    <div><h3>Keyboard, Mod and Bend</h3><p>Five octaves of Windows push-button keys, Bend and Mod scroll bars, and Hold. Turn on Keys to play from the computer keyboard. Incoming MIDI holds the keys down and moves the wheels.</p></div>
+    <div><h3>Sound you can watch being built</h3><p>A new sound is built in front of you with Sound Recorder's own menus: Increase Speed, Add Echo, Reverse, Insert File, Mix with File, Copy and Paste. The recorder's row lights up and its status line names each command as it runs.</p></div>
+    <div><h3>The library disc</h3><p>510 public-domain and CC0 sounds (pianos, bells, choirs, bowls, birds, weather, machines) on a drive of their own, used by name: <code>marimba_c4E#16</code>. Collages mix and insert them at any time in a sound: <code>ding@t200Mthunder_rumble</code>.</p></div>
+    <div><h3>Presets everywhere</h3><p>76 programs, in your DAW's preset list and in a Preset drop-down inside Windows. Saving a preset saves its DNA, so a sound copied from this site pastes straight into the editor.</p></div>
+    <div><h3>Batch rendering</h3><p><code>render311</code> renders a DNA plus a MIDI file to a WAV through the real machine, faster than real time and bit-identical on Windows, macOS and Linux. The preset demos were made with it, except the six macro presets, which were rendered by the VST3 in a test host with Macro 1 automated.</p></div>
+  </div>
+
+  <h3 class="subh">Windows Help, the old way</h3>
+  <p>A help file for Windows 3.11's own help viewer, WINHELP.EXE: a contents page, Search, glossary popups, the strips and panels explained, and a full DNA reference. It is compiled from plain text by a small WinHelp compiler written for this project, without Microsoft's tools. These are screenshots of it in the real Windows 3.11 viewer, taken while the instrument was still called BASILISK 16. It is written and tested, and ships in a coming release.</p>
+  <div class="win">
+    <div class="cap"><span class="box"></span><span class="t">Help</span></div>
+    <div class="body">
+      <div class="pxg" id="helpg">
+        <div class="pxclips" role="group" aria-label="Help topic">
+          <button type="button" class="chip" aria-pressed="true" data-src="/sndrec/help/contents.png" data-size="682x500" data-alt="The Help contents in Windows 3.11's WINHELP.EXE: Getting Started, Making Sounds, Using Windows and Reference topics">Contents</button><button type="button" class="chip" aria-pressed="false" data-src="/sndrec/help/strips.png" data-size="682x400" data-alt="The Strips topic: what each column of a Sound Recorder strip shows">The Strips</button><button type="button" class="chip" aria-pressed="false" data-src="/sndrec/help/search.png" data-size="682x420" data-alt="WinHelp's Search dialog listing keywords such as minimize, Mix with File and offsets">Search</button><button type="button" class="chip" aria-pressed="false" data-src="/sndrec/help/minimize.png" data-size="682x400" data-alt="The topic on minimizing the synth to use Windows">Using Windows</button>
+        </div>
+        <div class="pxbox pximg" id="helpbox"><img src="/sndrec/help/contents.png" width="682" height="500" data-px="682x500" data-px-note="help-note" loading="lazy" alt="The Help contents in Windows 3.11's WINHELP.EXE: Getting Started, Making Sounds, Using Windows and Reference topics"></div>
+        <p class="note pxnote" id="help-note"></p><script>pxfit.fit(document.querySelector('#helpbox [data-px]'))</script>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ch" id="packs" aria-labelledby="h-packs">
+  <div class="chh"><span class="no">§ 3</span><h2 id="h-packs">Sound packs</h2></div>
+  <p>Version 1.3.0 brings a library of 1,039 presets on 17 sound-pack discs, each from a small company that never existed: a Reston multimedia house, a Bielefeld studio-equipment maker, a Hsinchu electronics firm, a London garage label turned limited company. Every disc has its box, its manual and its Windows help file. The <a href="packs/">Sound Pack Explorer</a> has them all, with a preview of every preset and its recipe.</p>
+  <div class="shelf">
+    <a href="packs/#workgrp"><span class="pxbox pximg"><img src="packs/workgrp/thumb.png" width="186" height="233" data-px="186x233" alt=""></span><b>Workgroup House Edition</b><span>Velvetline Multimedia, Inc.</span></a>
+    <a href="packs/#emheritg"><span class="pxbox pximg"><img src="packs/emheritg/thumb.png" width="240" height="200" data-px="240x200" alt=""></span><b>ELEKTROMECHANIK</b><span>Kessler &amp; Lohrmann Studiotechnik GmbH</span></a>
+    <a href="packs/#techsrv"><span class="pxbox pximg"><img src="packs/techsrv/thumb.png" width="240" height="200" data-px="240x200" alt=""></span><b>Techno Server 4.0</b><span>Jadewave Electronics Co., Ltd.</span></a>
+    <a href="packs/#trance2k"><span class="pxbox pximg"><img src="packs/trance2k/thumb.png" width="155" height="159" data-px="155x159" alt=""></span><b>Trance Connectivity Kit 2000</b><span>StarLite Productions</span></a>
+    <a href="packs/#romref"><span class="pxbox pximg"><img src="packs/romref/thumb.png" width="240" height="200" data-px="240x200" alt=""></span><b>ROM Reference Library</b><span>Halvorsen Audio Archives</span></a>
+    <a href="packs/#lifestyl"><span class="pxbox pximg"><img src="packs/lifestyl/thumb.png" width="186" height="233" data-px="186x233" alt=""></span><b>Lifestyle Aesthetics Pack</b><span>Meridian Interactive K.K.</span></a>
+  </div>
+  <script>[].forEach.call(document.querySelectorAll('.shelf [data-px]'), pxfit.fit)</script>
+  <p><a class="btn def" href="packs/">Open the Sound Pack Explorer</a></p>
+</section>
+
+<section class="ch" id="presets" aria-labelledby="h-presets">
+  <div class="chh"><span class="no">§ 4</span><h2 id="h-presets">Hear every preset</h2></div>
+  <p>Each preset plays a short phrase of the kind it is made for: pads play slow chords, basses a bassline, plucks an arpeggio, bells a melody. The phrases are MIDI, rendered through the real plugin, then only levelled to the same loudness. Presets that sound wrong are marked, not hidden. Under each name is its recipe: the DNA in Sound Recorder's words, on one line when it fits, else a line per layer. <b>Copy DNA</b> copies the exact string.</p>
+  <div class="win">
+    <div class="cap"><span class="box"></span><span class="t">SNDWAVE2000 - Presets</span></div>
+    <div class="body">
+      <table class="packs"><tbody>
+        <tr><td>3.11 originals</td><td>The instrument's own: Windows 3.11's CHIMES, DING, RINGIN and RINGOUT, sped up, slowed, reversed, echoed, stacked and spliced.</td></tr>
+        <tr><td>Library disc</td><td>Layered instruments built from the library disc's sounds: Glass Piano, Bowl Swell, Cello Breath, Kalimba Train and more.</td></tr>
+        <tr><td>Factory</td><td>The factory presets. Many use Windows XP's sounds, which the instrument carries in C:\XPSOUNDS.</td></tr>
+      </tbody></table>
+      <div class="tabs" role="tablist" aria-label="Presets">
+        <button class="tab" role="tab" id="tab-b16" aria-controls="panel" aria-selected="true" data-ed="b16">Factory (1.2.1)</button>
+        <button class="tab" role="tab" id="tab-lib" aria-controls="panel" aria-selected="false" data-ed="lib" tabindex="-1">Owner's picks (1.3.0)</button>
+      </div>
+      <div class="panel" id="panel" role="tabpanel" aria-labelledby="tab-b16" data-src="presets.json" data-soundfilter data-product="SNDWAVE2000">
+        <div id="filters">
+          <div class="chips" id="edchips" role="group" aria-label="Windows sounds used: all presets, those using only the Windows 3.x sounds, or those using Windows XP's sounds (C:\XPSOUNDS)"></div>
+          <div class="chips" id="packchips" role="group" aria-label="Sound pack"></div>
+          <div class="chips" id="catchips" role="group" aria-label="Category"></div>
+          <div class="legend" aria-label="Where each sound comes from">
+            <span><span class="mk m311">3.11</span>Windows for Workgroups 3.11 file</span>
+            <span><span class="mk m31">3.1</span>Windows 3.1 file</span>
+            <span><span class="mk mxp">XP</span>Windows XP file (C:\XPSOUNDS)</span>
+            <span><span class="mk mboth">3.11=XP</span>the same file in 3.11 and XP</span>
+            <span><span class="mk mcc0">CC0</span><span class="mk mpd">PD</span>library recording</span>
+            <span><span class="mk msyn">SYN</span>synthesized</span>
+          </div>
+          <div class="find"><label for="q">Find</label><input id="q" type="search" placeholder="name, sound or recipe" autocomplete="off"><span class="count" id="count" aria-live="polite"></span></div>
+        </div>
+        <p class="note" id="ednote"></p>
+        <ul class="list" id="list"></ul>
+        <p class="soon" id="soon" hidden>No demos here yet.</p>
+        <noscript><p>The preset players need JavaScript. The recordings are MP3 files in <a href="/sndrec/audio/b16/">sndrec/audio/b16/</a>.</p></noscript>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ch" id="original" aria-labelledby="h-orig">
+  <div class="chh"><span class="no">§ 5</span><h2 id="h-orig">How it works: what is original, what is ours</h2></div>
+  <p>The sound of a preset is made by Windows' own programs from Windows' own files. What we added plays those sounds as notes and shapes them.</p>
+  <div class="orig">
+    <div><h3><span class="mk m311">3.11</span>Original: the program and its commands</h3>
+      <p>Every DNA step is one of Sound Recorder's own menu commands, run by the real Sound Recorder (SOUNDREC.EXE) in its own process, on its own buffer:</p>
+      <ul><li>Increase / Decrease Volume, Increase / Decrease Speed</li><li>Add Echo (Sound Recorder's real echo) and Reverse</li><li>Delete Before / After Current Position</li><li>Copy, Paste Insert, Paste Mix</li><li>Insert File and Mix with File</li></ul>
+      <p>Our program in Windows only picks the menu items and moves the position slider; it never edits the samples.</p></div>
+    <div><h3><span class="mk m311">3.11</span><span class="mk m31">3.1</span><span class="mk mxp">XP</span>Original: the sounds</h3>
+      <p>The Windows sounds are files from the Windows installs themselves:</p>
+      <ul><li>CHIMES, DING, RINGIN and RINGOUT from Windows for Workgroups 3.11, plus CHORD and TADA from Windows 3.1 (3.11's disks had dropped them).</li>
+      <li>Windows XP's 35 sounds, converted to PCM that Sound Recorder 3.1 opens, in C:\XPSOUNDS. One name means one file: <code>ding</code> is the 3.x recording, <code>ding-xp</code> XP's.</li></ul>
+      <p><span class="mk mcc0">CC0</span> <span class="mk mpd">PD</span> The library disc is added material: CC0 and public-domain recordings, each credited on the disc (hover a badge in the preset list). They are converted to 22050 Hz 16-bit mono so Sound Recorder 3.1 can open them.</p></div>
+    <div><h3>Ours: playing notes</h3>
+      <ul><li>The voice allocator: which recorder plays which note</li><li>Note pitch, transpose, harmony and unison voices, velocity, pitch bend</li><li>Layer levels, pan and start offsets, the ADSR and drawn envelopes</li><li>The four macros and the mod wheel</li><li>The assembled screen: our program in Windows strips the real recorders of their menus and title bars, lines them up, and adds panels and a keyboard built from Windows' own controls</li></ul></div>
+  </div>
+  <h3 class="subh">How a note is played</h3>
+  <p>Our program presses the recorder's own Rewind and Play. Sound Recorder plays its own buffer through the normal Windows sound calls. We added a 32-voice sound card to the emulator, and a Windows 3.11 driver for it; the card sets each voice's rate (the pitch, with 4-point Hermite interpolation), volume, pan and envelope.</p>
+  <div class="chain" role="img" aria-label="The note path: MIDI, the plugin's voice allocator, our SYNTH.EXE presses Rewind and Play, SOUNDREC.EXE plays its own buffer, our BSYNTH.DRV driver, our BSYN card in DOSBox Pure, the plugin's output"><i>ours </i> MIDI -&gt; plugin: voice allocator, pitch, pan, envelope
+<i>ours </i> SYNTH.EXE (in Windows): presses Rewind, Play on recorder n
+<b>3.11 </b> SOUNDREC.EXE: waveOutOpen / waveOutWrite of its own buffer
+<i>ours </i> BSYNTH.DRV -&gt; BSYN card (in DOSBox Pure): rate, volume, pan, envelope -&gt; 48 kHz
+<i>ours </i> plugin: fixed latency, resampled to your session's rate, Output Gain -&gt; DAW</div>
+  <p><b>The emulator</b> is DOSBox Pure, with our sound card added. The plugin never makes a sound of its own. It delays the emulated machine's output by a fixed, reported latency, resamples it to your session's rate, and applies Output Gain.</p>
+</section>
+
+<section class="ch" id="try" aria-labelledby="h-try">
+  <div class="chh"><span class="no">§ 6</span><h2 id="h-try">Try it online</h2></div>
+  <div class="tryrow">
+    <a class="trypic playlink" href="/sndwave2000/play/"><img src="/sndrec/try/poster.png" width="1024" height="768" loading="lazy" alt="The instrument in Windows for Workgroups 3.11: sixteen Sound Recorders in rows, the DNA line, the panel, Clock and a five-octave keyboard"></a>
+    <div>
+      <p>The instrument runs in your browser: the plugin's own engine, compiled for the web, with the same Windows for Workgroups 3.11 and the same sixteen Sound Recorders. It resumes from the moment the synth finished assembling, so it is ready as soon as it has loaded, about 5 MB. Play it with the on-screen keys, the computer keyboard or Web MIDI.</p>
+      <p><a class="btn def playlink" href="/sndwave2000/play/">Try SNDWAVE2000 online</a></p>
+      <p class="note">Best on a desktop or laptop computer: it needs a mouse, a keyboard and a fast processor.</p>
+    </div>
+  </div>
+</section>
+
+<section class="ch" id="download" aria-labelledby="h-dl">
+  <div class="chh"><span class="no">§ 7</span><h2 id="h-dl">Download</h2></div>
+  <p>SNDWAVE2000 is a sixteen-voice synthesizer built from real Sound Recorders. The download is complete: the plugin, Windows 3.11 and its Sound Recorders, the library disc and the batch renderer, with nothing else to install or find. The current release is <b>1.2.1, released as BASILISK 16</b>: it installs as <code>Basilisk16.vst3</code> and appears in your DAW as BASILISK 16. The first release under the SNDWAVE2000 name will be 1.3.0, with the sound packs.</p>
+  <div class="dlbox"><div class="pxbox pximg"><img class="pix" src="art/box-3d-render.png" width="420" height="357" data-px="420x357" loading="lazy" alt="The SNDWAVE2000 box: Algorithmic Industries, the wordmark and Grid sun on the striped cream front, CD-ROM, 16-bit and 32-bit desktops"></div><script>pxfit.fit(document.querySelector('.dlbox [data-px]'))</script>
+  <div>
+  <div class="dlrow">
+    <a class="dlk" href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-311-v1.2.1/BASILISK-16-windows-x64.zip"><b>Windows 10 / 11</b><span>VST3 &middot; x64 &middot; .zip &middot; 125 MB</span></a>
+    <a class="dlk" href="https://github.com/williamsharkey/windows-secrets/releases/download/basilisk-synth-311-v1.2.1/BASILISK-16-macos-universal.zip"><b>macOS</b><span>VST3 + AU &middot; Apple silicon and Intel &middot; .zip &middot; 250 MB</span></a>
+  </div>
+  <p class="note">1.2.1, released as BASILISK 16. Checksums, the patched DOSBox Pure source and the batch renderer are on the <a href="https://github.com/williamsharkey/windows-secrets/releases/tag/basilisk-synth-311-v1.2.1">release page</a>. Source: <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth-311">packages/basilisk-synth-311</a>.</p>
+  </div></div>
+  <h3 class="subh">Install</h3>
+  <dl class="spec">
+    <dt>Windows</dt><dd>Unzip and copy the <b>Basilisk16.vst3</b> folder to <code>C:\Program Files\Common Files\VST3</code>, then rescan plugins in your DAW. It is not code-signed (there is no signing identity); DAWs load it like any other unsigned plugin.</dd>
+    <dt>macOS</dt><dd>Unzip. Copy <b>Basilisk16.vst3</b> to <code>~/Library/Audio/Plug-Ins/VST3</code> and <b>Basilisk16.component</b> to <code>~/Library/Audio/Plug-Ins/Components</code>. It is ad-hoc signed but not notarized (no Apple developer identity), so run this once in Terminal, then restart the DAW:
+      <pre>xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/Basilisk16.vst3 ~/Library/Audio/Plug-Ins/Components/Basilisk16.component</pre></dd>
+  </dl>
+  <h3 class="subh">Good to know</h3>
+  <p>No account and no API key. The 76 programs are in your DAW's preset list and in Windows' Preset drop-down, and you can also type a DNA straight into Windows. A new sound is built while the old one keeps playing: Windows rebuilds one recorder at a time and plays your notes in between, so a preset change never interrupts you. Offline renders wait for the build and come out bit-identical every time, including after reloading the project; live playback never waits (it is silent for the few seconds Windows takes to assemble). It reports a fixed latency of 60 ms, which DAWs compensate for on playback; you hear it when you play live. Each instance is an emulated PC that rests when it has nothing to do: about 13% of one core idle and 35% while playing, on the PC it was built on. Sixteen voices per instance; a seventeenth note steals the oldest.</p>
+</section>
+
+<section class="ch" id="credits" aria-labelledby="h-cred">
+  <div class="chh"><span class="no">§ 8</span><h2 id="h-cred">Credits and licences</h2></div>
+  <div class="credrow">
+    <div>
+      <p>Windows for Workgroups 3.11, Windows 3.1 and Windows XP, their sounds, and Sound Recorder are Microsoft's (&copy; 1985&ndash;2001 Microsoft), included as part of this art project. The Windows images came from Windows for Workgroups 3.11 and Windows XP Professional SP3 as preserved by the <a href="https://archive.org/details/wfw311-disk">Internet Archive</a>.</p>
+      <p>The library disc's sounds are public domain and CC0; each one's source and licence is listed on the disc (<code>\LIBRARY.TSV</code>) and in <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth/library">packages/basilisk-synth/library</a>.</p>
+      <p>The emulator is <a href="https://codeberg.org/schelling/dosbox-pure">DOSBox Pure</a> (GPLv2 or later), with one addition: BSYN, an emulated 32-voice sound card, because Windows 3.11's Sound Blaster driver can only play one sound at a time. The plugin is built with <a href="https://github.com/DISTRHO/DPF">DPF</a>.</p>
+      <p>Algorithmic Industries and the sound-pack companies are fictional. SNDWAVE2000 is an art project by William Sharkey. The site and the box are set in DejaVu Serif and DejaVu Sans (<a href="fonts/LICENSE-DejaVu.txt">free licence</a>).</p>
+      <div class="media"><img class="pix" src="art/diskette-label-3.5in.png" width="264" height="204" loading="lazy" alt="Diskette label: Algorithmic Industries, SNDWAVE2000, Executive Audiophile Edition, Disk 1 of 7, Program Disk, Setup, Version 1.00 (Build 0311), 3.5-inch 1.44 MB High Density"></div>
+    </div>
+    <figure class="kit">
+      <div class="pxbox pximg"><img class="pix" src="art/about-box.png" width="360" height="284" data-px="360x284" loading="lazy" alt="About SNDWAVE2000: Executive Audiophile Edition, Version 1.00 (Build 0311), Copyright 1993-1995 Algorithmic Industries. This product is licensed to: Valued Customer. Voices: 16 recorders, sample rate 22,050 Hz, Free Memory 14,212 KB, System Resources 78% Free. OK"></div>
+      <script>pxfit.fit(document.querySelector('.kit [data-px]'))</script>
+    </figure>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <nav aria-label="SNDWAVE2000"><a href="/sndwave2000/">Home</a><a href="/sndwave2000/packs/">Sound packs</a><a href="/sndwave2000/play/" class="playlink">Play</a><a href="/sndwave2000/#download">Download</a></nav>
+  <p>SNDWAVE2000 &middot; Executive Audiophile Edition &middot; Copyright &copy; 1993-1995 Algorithmic Industries. All rights reserved.</p>
+  <p class="legal">SNDWAVE2000 and the Grid Sun device are trademarks of Algorithmic Industries. All other product names are the property of their respective owners.</p>
+  <p class="archived">Also: <a href="/sndrec-xp.html">the earlier Windows XP edition (archived)</a></p>
+  <nav class="sib" aria-label="Related pages"><a href="/windows-secrets.html">Windows Secrets</a><a href="/inside-windows.html">Inside Windows</a><a href="/basilisk.html">BASILISK</a><a href="/basilisk-term.html">BASILISK III</a><a href="/basilisk-31.html">BASILISK 3.11</a><a href="/basilisk-download.html">BASILISK downloads</a></nav>
+</footer>
+</div>
+<audio id="player" preload="none"></audio>
+<div id="pop" role="tooltip"></div>
+<script src="/sndrec/pxplayer.js"></script>
+<script>
+(function () {
+  'use strict';
+  // the screen captures (tools/sndrec-demo/pxv.py from demo311's lossless frames): exact pixels, audio-clock sync
+  var clips = [
+    {base: '/sndrec/pxv/b16-assembly', seconds: 15.1, title: 'SNDWAVE2000 loading: sixteen Windows 3.11 Sound Recorders assemble into one synthesizer, then play',
+     caption: '<b>Loading.</b> Windows for Workgroups 3.11 resumes, its sixteen Sound Recorders lose their title bars and line up, and the first preset plays.'},
+    {base: '/sndrec/pxv/b16-play', seconds: 9.9, title: 'Glass Piano playing chords and a melody; the keys go down as notes sound',
+     caption: '<b>Playing.</b> Glass Piano: an upright piano and a glass ping on two layers. Each MIDI note presses Play on a recorder, and its key goes down in Windows.'},
+    {base: '/sndrec/pxv/b16-change', seconds: 22.5, title: 'A preset change while playing: Windows rebuilds the recorders one at a time',
+     caption: '<b>Changing preset while playing.</b> Kalimba Glass becomes Choir Pad. Sound Recorder rebuilds the recorders one at a time; the row being built lights yellow, and the old sound keeps playing until the new one is ready.'},
+    {base: '/sndrec/pxv/b16-macro', seconds: 9.8, title: 'The mod wheel moving Macro 1 on Macro Swell',
+     caption: '<b>The mod wheel.</b> On Macro Swell, the wheel (the Mod scroll bar, bottom left) adds to Macro 1, which stretches chord\'s envelope and swings ding\'s echo across the stereo field.'},
+    {base: '/sndrec/pxv/lib-house', seconds: 39.6, title: 'The owner\'s picks from Workgroup House Edition: Shaded End, Granite Cloud and Shaded Tremolo',
+     caption: '<b>Workgroup House Edition</b> (coming in 1.3.0). The owner\'s three top-rated presets from the pack: Shaded End (a bass of XP\'s Ding slowed down, with Battery Low), then Granite Cloud (a flute, trimmed, echoed and slowed, with XP\'s Ringout) and Shaded Tremolo (XP\'s Startup and 3.11\'s Chimes). Between them Windows builds each new sound in view. Played on the 1.2.1 machine.'},
+    {base: '/sndrec/pxv/lib-picks', seconds: 21.8, title: 'Misty Warp and Afterhours Tine',
+     caption: '<b>More picks</b> (coming in 1.3.0). Misty Warp (bubbles in water with XP\'s Chimes and Ding) holds two notes, then Afterhours Tine plays chords and a melody. Played on the 1.2.1 machine.'}];
+  window.heroPlayer = new PxPlayer(document.getElementById('hero'), clips);
+  var g = document.getElementById('helpg'), shot = function () { return g.querySelector('[data-px]'); };
+  [].forEach.call(g.querySelectorAll('.chip'), function (b) {
+    b.addEventListener('click', function () {
+      [].forEach.call(g.querySelectorAll('.chip'), function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+      pxfit.setImage(shot(), b.getAttribute('data-src'), b.getAttribute('data-size'), b.getAttribute('data-alt'));
+    });
+  });
+  // until the play page is live, "Try it online" opens the block on the old page
+  if (document.documentElement.getAttribute('data-play') !== 'live')
+    [].forEach.call(document.querySelectorAll('a.playlink'), function (a) { a.href = '/sndrec.html#b16try'; });
+})();
+</script>
+<script src="/sndrec/browser.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+/* /sndwave2000/: the product page's own parts (the frame is site.css; the preset browser and player are /sndrec/sndrec.css) */
+figure { margin: 0; }
+.hero .splash { min-width: 0; }
+.subh { margin: 26px 0 8px; font: 700 15px/1.35 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--bk-muted); }
+.ch > p { max-width: 78ch; }
+.win .pxclips .lbl { color: #404040; }
+
+/* the sound-pack shelf: each box at half size, shown pixel for pixel */
+.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 26px 26px; margin: 18px 0 16px; }
+.shelf a { display: flex; flex-direction: column; justify-content: flex-end; text-decoration: none; color: var(--bk-text); }
+.shelf img { display: block; image-rendering: pixelated; image-rendering: crisp-edges; height: auto; margin: 0 auto 8px; max-width: 100%; }
+.shelf b { font: italic 700 17px/1.25 "SW Serif", "DejaVu Serif", Georgia, serif; border-top: 2px solid var(--bk-text); padding-top: 6px; }
+.shelf span { font: 12.5px/1.4 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; color: var(--bk-muted); }
+.shelf a:hover b { color: var(--bk-accent); }
+
+/* how it works: the columns and the note path, on paper */
+.orig div { border: 0; border-top: 1px solid var(--bk-rule); padding: 10px 0 0; }
+.orig p, .orig li { font-size: 15px; }
+.chain { border: 1px solid #000; box-shadow: 4px 5px 0 var(--bk-shade); }
+
+/* try it online */
+.tryrow { display: grid; grid-template-columns: minmax(0, 512px) minmax(0, 1fr); gap: 18px 32px; align-items: center; }
+.trypic { display: block; border: 1px solid #000; box-shadow: 0 0 0 3px var(--face), 0 0 0 4px #000, 6px 8px 0 4px var(--bk-shade); margin: 4px; line-height: 0; }
+.trypic img { width: 100%; height: auto; display: block; }
+@media (max-width: 800px) { .tryrow { grid-template-columns: minmax(0, 1fr); } }
+
+/* download */
+.dlbox { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px 36px; align-items: center; margin: 8px 0 4px; }
+@media (max-width: 860px) { .dlbox { grid-template-columns: minmax(0, 1fr); } }
+.dlrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px; margin: 0 0 10px; }
+.dlk { display: block; text-decoration: none; color: #000; background: var(--face); border: 1px solid #000; border-radius: 3px;
+  box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo); padding: 10px 14px; font-family: "MS Sans Serif", "Microsoft Sans Serif", "SW Sans", Arial, sans-serif; }
+.dlk:active { box-shadow: inset 2px 2px 0 var(--lo); }
+.dlk b { display: block; font-size: 16px; }
+.dlk span { font-size: 13px; color: #303030; }
+.spec { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 18px; margin: 0; max-width: 900px; }
+.spec dt { font: 700 12px/1.9 "SW Sans", "DejaVu Sans", Verdana, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--bk-muted); }
+.spec dd { margin: 0; min-width: 0; font-size: 15px; }
+.spec pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 560px) { .spec { grid-template-columns: minmax(0, 1fr); gap: 2px 0; } .spec dd { margin-bottom: 8px; } }
+
+/* credits: the text, the About box, the diskette */
+.credrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px 36px; align-items: start; }
+.credrow p { font-size: 15px; }
+.media { margin-top: 14px; line-height: 0; }
+.media img { box-shadow: 4px 5px 0 var(--bk-shade); }
+@media (max-width: 860px) { .credrow { grid-template-columns: minmax(0, 1fr); } }
+.shelf .pxbox { justify-content: center; margin-bottom: 8px; }
+.shelf .pxbox canvas, .shelf .pxbox img { margin: 0; }
