@@ -288,5 +288,42 @@
       "No warranty."
     ],
     "copyright": "(c) 1997 Fathom Line Scientific Media. Recordings: public domain / CC0 (see CREDITS.TXT)."
+  },
+  "booklet": {
+    "mode": "art",
+    "signature": "R. Okafor, data curation",
+    "subjects": {
+      "Texture": [
+        "ice",
+        "glacier",
+        "underwater",
+        "coral"
+      ],
+      "Drone": [
+        "deep",
+        "ocean",
+        "earth",
+        "aurora"
+      ],
+      "FX": [
+        "whale",
+        "dolphin",
+        "storm",
+        "lightning"
+      ]
+    },
+    "quotes": {
+      "Texture": "Ice, cracking, a basin away.",
+      "Drone": "Recorded at depth. Played back slow.",
+      "FX": "Events, logged and time-stamped."
+    },
+    "theme": [
+      "ocean",
+      "underwater",
+      "ice",
+      "whale",
+      "deep"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

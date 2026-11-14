@@ -290,5 +290,17 @@
     ],
     "license": [],
     "files": {}
+  },
+  "booklet": {
+    "mode": "list",
+    "signature": "Gerald T. Pemberton",
+    "script_font": "segoepr.ttf",
+    "theme": [
+      "engraving",
+      "instrument",
+      "victorian",
+      "bird",
+      "woodcut"
+    ]
   }
 }

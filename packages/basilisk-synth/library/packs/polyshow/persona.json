@@ -307,5 +307,17 @@
       "No warranty."
     ],
     "copyright": "(c) 1992 Neon Keys Music Superstores, Inc."
+  },
+  "booklet": {
+    "mode": "mixed",
+    "signature": "Neon Keys Keyboard Dept.",
+    "theme": [
+      "mall",
+      "atrium",
+      "neon",
+      "cgi",
+      "expo"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

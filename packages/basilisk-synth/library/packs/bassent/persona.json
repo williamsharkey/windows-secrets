@@ -352,5 +352,18 @@
         "White labels from the shop on Rye Lane while they last."
       ]
     }
+  },
+  "booklet": {
+    "mode": "list",
+    "signature": "Lowfold Sound System",
+    "theme": [
+      "architecture",
+      "concrete",
+      "atrium",
+      "night",
+      "city",
+      "airport"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

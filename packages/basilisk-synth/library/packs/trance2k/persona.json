@@ -403,5 +403,18 @@
         "|DJ StarLite: thx everyone!!! v2 is out NOW on CD"
       ]
     }
+  },
+  "booklet": {
+    "mode": "art",
+    "signature": "DJ StarLite",
+    "theme": [
+      "aurora",
+      "star",
+      "space",
+      "rainbow",
+      "cosmos",
+      "lightning"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

@@ -306,5 +306,18 @@
       "No warranty."
     ],
     "copyright": "(c) 1995 Cantiga Early Music Press, Utrecht."
+  },
+  "booklet": {
+    "mode": "mixed",
+    "signature": "A. van Leeuwen",
+    "theme": [
+      "instrument",
+      "classical",
+      "art-nouveau",
+      "ornament",
+      "architecture",
+      "music"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

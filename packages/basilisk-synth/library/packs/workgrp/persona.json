@@ -496,5 +496,17 @@
         "On the World Wide Web: http://www.velvetline-mm.com/house/ (best viewed with a 4.0 browser at 800x600)."
       ]
     }
+  },
+  "booklet": {
+    "mode": "mixed",
+    "signature": "Velvetline Multimedia",
+    "theme": [
+      "computer",
+      "atrium",
+      "mall",
+      "office",
+      "expo"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

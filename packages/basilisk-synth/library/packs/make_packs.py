@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """make_packs.py - builds every preset pack's disc, docs and renders from <pack>/persona.json + the pack data.
 
-    make_packs.py [PACK_ID ...] [--no-render] [--render-only] [--no-iso] [--web] [--gallery PAGE]
+    make_packs.py [PACK_ID ...] [--no-render] [--render-only] [--no-iso] [--web] [--booklet] [--gallery PAGE]
 
 Content: when the library lane's disc folder exists (library/builder/out/discs311/<LABEL>/, make_discs.py), its files
 are copied as built (PRESETS.TSV, PACK.INF, LIBRARY.TSV, category folders, FAVORITE) and this lane adds the identity.
@@ -356,6 +356,7 @@ def main():
     opt = {'no_render': '--no-render' in a, 'no_iso': '--no-iso' in a, 'render_only': '--render-only' in a}
     gal = None
     web = '--web' in a
+    book = '--booklet' in a
     if '--gallery' in a:
         gal = a[a.index('--gallery') + 1]
         a.remove(gal)
@@ -366,6 +367,12 @@ def main():
     if not opt.get('no_iso') and not opt.get('render_only'):
         out = os.path.join(HERE, 'out', 'discs')
         write_index(out)
+    if book:   # booklet pages for the site's player (packlib/booklet.py), one per category, from the content as built
+        from packlib import booklet
+        for p in personas([]):
+            d = pdata.load(p)
+            if d['presets'] and not d['placeholder']:
+                booklet.build(with_counts(p, d), d, os.path.join(HERE, 'out', 'web', p['id'], 'booklet'))
     if web:
         from packlib import webexport
         webexport.export(HERE, [p for p in personas([])])

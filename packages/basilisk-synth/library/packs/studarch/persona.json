@@ -477,5 +477,17 @@
         "Purchase orders from schools and libraries are welcome."
       ]
     }
+  },
+  "booklet": {
+    "mode": "mixed",
+    "signature": "Bramblewood Learning Media",
+    "theme": [
+      "engraving",
+      "instrument",
+      "natural history",
+      "encyclopedia",
+      "classical"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

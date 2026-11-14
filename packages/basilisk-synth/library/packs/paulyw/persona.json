@@ -311,5 +311,43 @@
       "No warranty. Sing responsibly."
     ],
     "copyright": "(c) 1996 Breakroom Media Group, Inc. Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)."
+  },
+  "booklet": {
+    "mode": "varied",
+    "signature": "Paul Chauncy",
+    "quotes": {
+      "Vocal": "Doo. Hmm. Boop. Everyone sings along.",
+      "Keys": "The office piano, by the coffee machine.",
+      "Pad": "Friday, 4:55, the lights low."
+    },
+    "subjects": {
+      "Vocal": [
+        "phonograph",
+        "music",
+        "poster",
+        "choir",
+        "sing"
+      ],
+      "Pad": [
+        "sun",
+        "beach",
+        "resort",
+        "travel"
+      ],
+      "Kit": [
+        "phonograph",
+        "instrument",
+        "machine"
+      ]
+    },
+    "theme": [
+      "music",
+      "instrument",
+      "phonograph",
+      "interior",
+      "resort",
+      "sun"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

@@ -327,5 +327,19 @@
   },
   "pdf": {
     "line1": "User's Guide  /"
+  },
+  "booklet": {
+    "mode": "art",
+    "signature": "Sound Design Group 2",
+    "theme": [
+      "aqua",
+      "water",
+      "glass",
+      "bubbles",
+      "frutiger-aero",
+      "droplet",
+      "sky"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

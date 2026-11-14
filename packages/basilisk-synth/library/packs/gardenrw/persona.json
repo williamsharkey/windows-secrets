@@ -316,5 +316,19 @@
         "Cheques and postal orders payable to Potting Shed Software. Allow 28 days for delivery."
       ]
     }
+  },
+  "booklet": {
+    "mode": "art",
+    "signature": "Colin Ashdown",
+    "theme": [
+      "fern",
+      "leaf",
+      "meadow",
+      "botany",
+      "butterfly",
+      "garden",
+      "moss"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

@@ -336,5 +336,18 @@
   "pdf": {
     "band": "#000060",
     "band2": "#ffcc00"
+  },
+  "booklet": {
+    "mode": "art",
+    "signature": "Corvane Media Group",
+    "theme": [
+      "aurora",
+      "earth",
+      "space",
+      "night sky",
+      "cosmos",
+      "earth-from-orbit"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

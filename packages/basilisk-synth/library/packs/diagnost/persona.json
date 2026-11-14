@@ -290,5 +290,22 @@
   },
   "pdf": {
     "foot": "Distribution unlimited for teaching and research."
+  },
+  "booklet": {
+    "mode": "list",
+    "signature": "M. Okonkwo-Reyes",
+    "theme": [
+      "oscilloscope",
+      "diagram",
+      "waveform",
+      "chladni",
+      "acoustics",
+      "lissajous"
+    ],
+    "procedural": {
+      "Pad": "chladni",
+      "Bell": "rings"
+    },
+    "script_font": "segoesc.ttf"
   }
 }

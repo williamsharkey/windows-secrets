@@ -351,5 +351,17 @@
       "Introduction": "hi.",
       "Getting Started": "how to"
     }
+  },
+  "booklet": {
+    "mode": "mixed",
+    "signature": "pastelghost",
+    "theme": [
+      "wireframe",
+      "cgi",
+      "space",
+      "star",
+      "grid"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

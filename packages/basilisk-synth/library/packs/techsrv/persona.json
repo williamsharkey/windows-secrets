@@ -405,5 +405,17 @@
         "|Model: JW-3216     Serial No.: ____________     Date of purchase: ____________"
       ]
     }
+  },
+  "booklet": {
+    "mode": "mixed",
+    "signature": "Jadewave Electronics",
+    "theme": [
+      "chip",
+      "computer",
+      "lab",
+      "machine",
+      "cgi"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

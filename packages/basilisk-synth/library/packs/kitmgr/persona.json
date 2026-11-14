@@ -427,5 +427,16 @@
         "|Keep it in a safe place. Fennwick Support cannot replace a lost CD key."
       ]
     }
+  },
+  "booklet": {
+    "mode": "list",
+    "signature": "Fennwick Systems Corp.",
+    "theme": [
+      "computer",
+      "machine",
+      "lab",
+      "diagram"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

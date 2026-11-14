@@ -420,5 +420,19 @@
         "Volume should sit just below conversation. If guests raise their voices, the music is too loud."
       ]
     }
+  },
+  "booklet": {
+    "mode": "art",
+    "signature": "Makai Lounge Music Services",
+    "theme": [
+      "tropical",
+      "palm",
+      "sunset",
+      "beach",
+      "resort",
+      "ocean",
+      "shell"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

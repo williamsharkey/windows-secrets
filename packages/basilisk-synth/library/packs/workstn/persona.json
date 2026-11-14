@@ -358,5 +358,16 @@
         "Look for the yellow and red packs at a store near you. Any 3 for $10 where marked."
       ]
     }
+  },
+  "booklet": {
+    "mode": "list",
+    "signature": "Thriftline Software",
+    "theme": [
+      "computer",
+      "cgi",
+      "expo",
+      "sphere"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

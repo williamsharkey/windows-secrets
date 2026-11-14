@@ -461,5 +461,17 @@
         "Next month on Cover CD 15: the Retro Display demo, 40 minutes of tutorial audio, and the readers' tracks."
       ]
     }
+  },
+  "booklet": {
+    "mode": "mixed",
+    "signature": "the Computer Rhythm team",
+    "theme": [
+      "computer",
+      "lab",
+      "machine",
+      "phonograph",
+      "record"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

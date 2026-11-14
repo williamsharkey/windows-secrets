@@ -325,5 +325,18 @@
       "Hartwell & Daughters Ltd accept no liability for tape that has run out."
     ],
     "copyright": "(c) 1994 Hartwell & Daughters Ltd, Leeds."
+  },
+  "booklet": {
+    "mode": "list",
+    "signature": "Edith Hartwell",
+    "theme": [
+      "instrument",
+      "engraving",
+      "art-nouveau",
+      "ornament",
+      "classical",
+      "music"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

@@ -442,5 +442,20 @@
         "|Catalogue no. ... HAA-CD 0094 (replaces HAA-CD 0091, 0092, 0093)"
       ]
     }
+  },
+  "booklet": {
+    "mode": "list",
+    "signature": "Halvorsen Audio Archives",
+    "theme": [
+      "oscilloscope",
+      "waveform",
+      "diagram",
+      "lab",
+      "acoustics"
+    ],
+    "procedural": {
+      "Drone": "waves"
+    },
+    "script_font": "segoesc.ttf"
   }
 }

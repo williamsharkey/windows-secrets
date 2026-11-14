@@ -394,5 +394,20 @@
         "|Session Close: Sun Feb 22 02:10:44 1998"
       ]
     }
+  },
+  "booklet": {
+    "mode": "list",
+    "signature": "vox_mira",
+    "theme": [
+      "wireframe",
+      "cgi",
+      "computer",
+      "grid",
+      "early-cgi"
+    ],
+    "procedural": {
+      "FX": "waves"
+    },
+    "script_font": "segoesc.ttf"
   }
 }

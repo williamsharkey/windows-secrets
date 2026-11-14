@@ -412,5 +412,18 @@
         "The sounds are a different story: there is no sound chip to port, so every preset was rebuilt from the system sounds with Sound Recorder. Ray did all of them in one long weekend."
       ]
     }
+  },
+  "booklet": {
+    "mode": "art",
+    "signature": "Northshore Pixelworks",
+    "theme": [
+      "cgi",
+      "grid",
+      "wireframe",
+      "space",
+      "sunset",
+      "early-cgi"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }

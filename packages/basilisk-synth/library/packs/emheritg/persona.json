@@ -367,5 +367,21 @@
   "pdf": {
     "line1": "Handbuch / Manual  -  Studio Serie 2  -  Version 2.0",
     "foot": "KESSLER & LOHRMANN STUDIOTECHNIK GMBH  -  BIELEFELD"
+  },
+  "booklet": {
+    "mode": "list",
+    "signature": "U. Brachvogel",
+    "theme": [
+      "patent",
+      "apparatus",
+      "telegraph",
+      "engraving",
+      "machine",
+      "acoustics"
+    ],
+    "procedural": {
+      "Drone": "chladni"
+    },
+    "script_font": "segoesc.ttf"
   }
 }

@@ -305,5 +305,16 @@
       "AS IS. NO RETURNS. NO WARRANTY. Surplus City is not responsible for sounds of failing hard disks."
     ],
     "copyright": "(c) 1998 Surplus City Computer Liquidators."
+  },
+  "booklet": {
+    "mode": "list",
+    "signature": "Big D, Surplus City",
+    "theme": [
+      "computer",
+      "machine",
+      "lab",
+      "patent"
+    ],
+    "script_font": "segoesc.ttf"
   }
 }
