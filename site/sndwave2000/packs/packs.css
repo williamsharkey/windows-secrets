@@ -24,13 +24,18 @@
 .pack { margin-top: 26px; border-top: 6px solid var(--pk, var(--bk-accent)); padding-top: 14px; scroll-margin-top: 8px; }
 .pack .back { font: 700 13px/1.4 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; text-decoration: none; }
 .pack .phead .kicker { margin-top: 12px; }
-.ptitle { display: flex; align-items: center; gap: 12px; font-size: clamp(28px, 4.4vw, 40px); margin: 0 0 4px; }
+.ptitle { display: flex; align-items: center; gap: 12px; font-size: clamp(24px, 6.4vw, 40px); margin: 0 0 4px; overflow-wrap: anywhere; min-width: 0; }
 .ptitle img { width: 64px; height: 64px; flex: none; }
 .pack .tagline { margin-bottom: 14px; }
-.pbody { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 20px 36px; align-items: start; }
+.pbody { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 20px 36px; align-items: start; margin-top: 18px; }
+.viewer { margin: 4px 0 0; }
+.vtabs { display: flex; flex-wrap: wrap; gap: 4px 6px; margin: 0 0 8px; }
+.vframe { overflow: auto; max-width: 100%; background: var(--bk-card); border: 1px solid var(--bk-rule); line-height: 0; }
+.vframe img { display: block; max-width: none; image-rendering: pixelated; image-rendering: crisp-edges; }
+.vcap { margin: 4px 0 0; }
+.facts { font: 700 13px/1.5 "SW Sans", "DejaVu Sans", Verdana, sans-serif; letter-spacing: .06em; color: var(--bk-muted); }
+.credits { margin: 12px 0; } .credits ul { margin: 4px 0; padding-left: 18px; font-size: 14.5px; }
 @media (max-width: 900px) { .pbody { grid-template-columns: minmax(0, 1fr); } }
-.part .pxbox { justify-content: center; }
-.part .disc { margin-top: 14px; }
 .ptext p { font-size: 15.5px; }
 .ptext .blurb { font: italic 17px/1.5 "SW Serif", "DejaVu Serif", Georgia, serif; }
 .files { margin: 14px 0; }
@@ -68,3 +73,4 @@
 #results .prow { border-top-color: var(--bk-rule); }
 #results .prow .pc a { color: inherit; }
 main.wait { min-height: 180vh; }   /* until packs.json is in: the footer stays below the fold, so filling the shelf shifts nothing in view */
+.card b, .pside, .ptext { overflow-wrap: anywhere; }

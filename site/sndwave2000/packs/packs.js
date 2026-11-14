@@ -16,13 +16,6 @@
     return DATA[id];
   }
   function px(img) { if (window.pxfit) pxfit.fit(img); }
-  // the largest of the box's sizes that fits the column at a whole scale (k >= 1), else the smallest
-  function boxSrc(p, availCss) {
-    var dpr = window.devicePixelRatio || 1, dev = availCss * dpr, a = p.art;
-    var c = [['box.png', a.box], ['half.png', a.half], ['thumb.png', a.thumb]];
-    for (var i = 0; i < c.length; i++) if (c[i][1][0] <= dev) return c[i];
-    return c[2];
-  }
   function img(src, wh, alt) { var i = new Image(wh[0], wh[1]); i.src = src; i.alt = alt || ''; i.setAttribute('data-px', wh[0] + 'x' + wh[1]); return i; }
 
   // ---- the shelf of packs
@@ -59,28 +52,50 @@
       '<h2 class="ptitle">' + (p.art.icon32 ? '<img class="pix" src="' + p.id + '/icon32.png" width="32" height="32" alt="">' : '') + esc(p.title) + '</h2>' +
       (p.subtitle ? '<p class="tagline">' + esc(p.subtitle) + '</p>' : '');
     packEl.appendChild(head);
-    var body = el('div', 'pbody'), art = el('div', 'part'), txt = el('div', 'ptext');
-    body.appendChild(art); body.appendChild(txt); packEl.appendChild(body);
-    var bb = el('div', 'pxbox pximg'); art.appendChild(bb);
-    var avail = art.clientWidth || 360, b = boxSrc(p, avail);
-    bb.appendChild(img(p.id + '/' + b[0], b[1], 'The ' + p.title + ' box'));
-    px(bb.firstChild);
-    if (p.art.disc) {
-      var db = el('div', 'pxbox pximg disc'); art.appendChild(db);
-      db.appendChild(img(p.id + '/disc.png', p.art.disc, 'The ' + p.title + ' disc'));
-      px(db.firstChild);
+    // the art: one view at a time, every image at its own pixel size on whole device pixels (1 image pixel = 1 device
+    // pixel; a view wider than its frame scrolls instead of being scaled)
+    var VIEWS = [['box', 'Box'], ['front', 'Front'], ['back', 'Back'], ['spine', 'Spine'], ['disc3d', 'Disc and inlay'], ['disc', 'Disc label']]
+      .filter(function (v) { return p.art[v[0]]; });
+    var viewer = el('div', 'viewer');
+    var vt = el('div', 'chips vtabs'); vt.setAttribute('role', 'group'); vt.setAttribute('aria-label', 'Show');
+    var frame = el('div', 'vframe'), pic = new Image(), cap = el('p', 'note vcap');
+    frame.appendChild(pic); viewer.appendChild(vt); viewer.appendChild(frame); viewer.appendChild(cap);
+    function show(k) {
+      var wh = p.art[k], dpr = window.devicePixelRatio || 1;
+      pic.alt = 'The ' + p.title + ' ' + (k === 'disc3d' ? 'disc on its inlay' : k === 'disc' ? 'disc label' : k);
+      pic.src = p.id + '/' + k + '.png';
+      pic.style.width = (wh[0] / dpr) + 'px'; pic.style.height = (wh[1] / dpr) + 'px';
+      frame.style.height = Math.min(wh[1] / dpr, Math.max(320, window.innerHeight * 0.8)) + 'px';
+      cap.textContent = wh[0] + ' x ' + wh[1] + ' pixels, shown pixel for pixel' + (wh[0] / dpr > frame.clientWidth + 1 ? '; scroll to see all of it' : '') + '.';
+      [].forEach.call(vt.children, function (c) { c.setAttribute('aria-pressed', String(c.getAttribute('data-k') === k)); });
+      align();
     }
+    function align() {   // the picture's left and top edges on whole device pixels
+      var dpr = window.devicePixelRatio || 1; pic.style.margin = '0';
+      var r = pic.getBoundingClientRect(), fx = (r.left * dpr) % 1, fy = ((r.top + window.scrollY) * dpr) % 1;
+      pic.style.margin = (fy > 1e-3 ? (1 - fy) / dpr : 0) + 'px 0 0 ' + (fx > 1e-3 ? (1 - fx) / dpr : 0) + 'px';
+    }
+    window.addEventListener('resize', align);
+    VIEWS.forEach(function (v) { var b = el('button', 'chip', v[1]); b.type = 'button'; b.setAttribute('data-k', v[0]); b.addEventListener('click', function () { show(v[0]); }); vt.appendChild(b); });
+    packEl.appendChild(viewer);
+    show(VIEWS[0][0]);
+    var body = el('div', 'pbody'), txt = el('div', 'ptext'), side = el('div', 'pside');
+    body.appendChild(txt); body.appendChild(side); packEl.appendChild(body);
     var t = '';
     if (p.blurb) t += '<p class="blurb">' + esc(p.blurb) + '</p>';
     (p.intro || []).forEach(function (s) { t += '<p>' + esc(s) + '</p>'; });
+    var facts = [p.edition, p.package && {bigbox: 'big box', jewel: 'jewel case', dvd: 'DVD case', mailer: 'mailer'}[p.package], p.price, p.starburst].filter(Boolean);
+    if (facts.length) t += '<p class="facts">' + facts.map(esc).join(' &middot; ') + '</p>';
     t += '<p class="files">' + fileLinks(p) + '</p>';
+    if (p.credits && p.credits.length) t += '<div class="credits"><p class="kicker">Sound credits</p><ul>' + p.credits.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul></div>';
     if (p.note && p.note.length) t += '<blockquote class="mnote"><p class="kicker">From the maker</p>' + p.note.map(function (s) { return '<p>' + esc(s) + '</p>'; }).join('') + '</blockquote>';
+    txt.innerHTML = t; t = '';
     var m = p.maker;
     t += '<div class="maker"><p class="kicker">The company</p><address>' + (m.contact || [m.name, m.place]).map(esc).join('<br>') + '</address>' +
       (m.kind ? '<p class="note">' + esc(m.kind) + '. ' + esc(m.place) + '.</p>' : '') +
       (m.people && m.people.length ? '<ul class="people">' + m.people.map(function (x) { return '<li><b>' + esc(x[0]) + '</b>, ' + esc(x[1]) + '</li>'; }).join('') + '</ul>' : '') +
-      (p.copyright ? '<p class="note">' + esc(p.copyright) + '</p>' : '') + '</div>';
-    txt.innerHTML = t;
+      (p.copyright ? '<p class="note">' + esc(p.copyright) + '</p>' : '') + '<p class="note">The company and its people are fictional.</p></div>';
+    side.innerHTML = t;
     // the presets, in a window of their own
     var w = el('div', 'win plist');
     w.innerHTML = '<div class="cap"><span class="box"></span><span class="t">' + esc(p.label) + ' - Presets</span></div><div class="body">' +
