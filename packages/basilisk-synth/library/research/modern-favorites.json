@@ -1,0 +1,2321 @@
+{
+ "schema": "favorite synth/library -> what is loved -> targets (same target fields as genres.json)",
+ "checks": "Every dna and v3_dna was parsed by core/dna.cpp parse() on main (library catalogue loaded) and by design/v3 canonical3() on preset-engine-2: no unknown NAME, no empty layer, at most 1024 bytes; stored in canonical form. Every recipe is design/v3 toRecipe(OneLine) and parses back (fromRecipe) to the same canonical DNA. K is computed from the measured root of the first key-tracked layer (windows-sounds.json, library note names), other tonal layers get T to the nearest octave. Nobody has listened to them yet.",
+ "count_favorites": 15,
+ "count_targets": 41,
+ "favorites": [
+  {
+   "id": "serum",
+   "name": "Serum (Xfer Records)",
+   "kind": "wavetable synth, 2014; Serum 2 in 2025",
+   "loved_for": "Visual wavetable editing and warp modes, clean (alias-free) oscillators, the drag-and-drop workflow, and the third-party preset economy around it. It defined the sound of 2010s EDM and future bass.",
+   "iconic": [
+    "future-bass supersaw chords with pitch-bend wobble and sidechain pump",
+    "growl/neuro basses from warped wavetables",
+    "clean sub plus mid-bass layers",
+    "bright plucks for house and progressive",
+    "formant \"vowel\" basses",
+    "Third-party packs dominate; Splice lists its most popular Serum presets; Syntorial reports Serum as the second most-shared synth on Presetshare."
+   ],
+   "sources": [
+    {
+     "key": "XFER-serum",
+     "title": "Xfer Records: Serum preset packs",
+     "url": "https://xferrecords.com/preset_packs/serum"
+    },
+    {
+     "key": "SPLICE-serum",
+     "title": "Splice blog: 22 of the most popular Serum presets",
+     "url": "https://splice.com/blog/?p=24081"
+    },
+    {
+     "key": "SYNTORIAL-serum",
+     "title": "Syntorial: best Serum presets (Serum second on Presetshare)",
+     "url": "https://www.syntorial.com/highlights/best-serum-presets/"
+    }
+   ],
+   "note": "Factory preset names were not verified one by one; targets are by category.",
+   "targets": [
+    "fav-serum-bent-future-chord",
+    "fav-serum-warp-growl",
+    "fav-serum-glass-pluck-plus",
+    "fav-serum-vowel-mid-bass"
+   ]
+  },
+  {
+   "id": "vital",
+   "name": "Vital (Matt Tytel)",
+   "kind": "spectral-warping wavetable synth, free tier, 2020",
+   "loved_for": "Free, with the full engine; spectral warp modes; text-to-wavetable; a factory bank of 75 presets in the free tier; ultra-visual modulation.",
+   "iconic": [
+    "spectral-warp leads that morph",
+    "text-to-wavetable \"speech\" oscillators",
+    "clean modern basses and pads in the factory set"
+   ],
+   "sources": [
+    {
+     "key": "MT-vital",
+     "title": "MusicTech: Vital, a free wavetable synth with spectral warping",
+     "url": "https://www.musictech.net/news/matt-tytel-vital-free-synth/"
+    },
+    {
+     "key": "MR-vital",
+     "title": "MusicRadar: Fantastic free plugins, Vital",
+     "url": "https://www.musicradar.com/music-tech/plugins/fantastic-free-plugins-and-how-to-use-them-vital"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-vital-spoken-wavetable",
+    "fav-vital-spectral-morph-pad"
+   ]
+  },
+  {
+   "id": "pigments",
+   "name": "Pigments (Arturia)",
+   "kind": "multi-engine synth (VA, wavetable, sample/granular, harmonic, modal)",
+   "loved_for": "Colour-coded modulation, granular sample engine (from v2), additive harmonic engine (v3), sequencer-driven presets; reviewers call it a true power synth.",
+   "iconic": [
+    "granular cinematic pads from samples",
+    "sequenced arps with macro sweeps",
+    "additive bells"
+   ],
+   "sources": [
+    {
+     "key": "MR-pigments",
+     "title": "MusicRadar: Arturia Pigments review",
+     "url": "https://www.musicradar.com/reviews/arturia-pigments"
+    },
+    {
+     "key": "SOS-pigments4",
+     "title": "Sound on Sound: Arturia Pigments 4 review",
+     "url": "https://www.soundonsound.com/reviews/arturia-pigments-4"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-pigments-lobby-grain-field",
+    "fav-pigments-colour-sequence-arp"
+   ]
+  },
+  {
+   "id": "diva",
+   "name": "Diva (u-he)",
+   "kind": "virtual analog with circuit-modelled filters and oscillators",
+   "loved_for": "The filters and oscillators of classic polysynths and monosynths modelled at component level; \"Divine\" accuracy mode; reviewers single out the filters and the presets.",
+   "iconic": [
+    "fat monosynth basses",
+    "poly brass",
+    "warm poly pads",
+    "self-oscillating filter sweeps"
+   ],
+   "sources": [
+    {
+     "key": "SOS-diva",
+     "title": "Sound on Sound: u-he Diva review",
+     "url": "https://www.soundonsound.com/reviews/uhe-diva"
+    },
+    {
+     "key": "MR-diva",
+     "title": "MusicRadar: u-he Diva review (filters, \"terrific presets\")",
+     "url": "https://www.musicradar.com/reviews/tech/u-he-diva-542059"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-diva-ladder-mono-bass",
+    "fav-diva-poly-brass-circuit"
+   ]
+  },
+  {
+   "id": "massive",
+   "name": "Massive and Massive X (Native Instruments)",
+   "kind": "wavetable synth, 2007 / 2019",
+   "loved_for": "Defined DnB and the dubstep explosion; wavetables like Carbon, Multiplex and Square-Saw were early-dubstep favourites; routing Osc 3 around the filter as the sub; performer LFO wobbles.",
+   "iconic": [
+    "wobble basses with tempo-synced LFO",
+    "reese and growl",
+    "big-room leads"
+   ],
+   "sources": [
+    {
+     "key": "NI-massive-past",
+     "title": "Native Instruments blog: Massive, past presets and future (dubstep wavetables)",
+     "url": "https://blog.native-instruments.com/massive-past-presets-future/"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-massive-performer-wobble",
+    "fav-massive-square-saw-sub-route"
+   ]
+  },
+  {
+   "id": "sylenth1",
+   "name": "Sylenth1 (LennarDigital)",
+   "kind": "virtual analog, 2007",
+   "loved_for": "Fat, CPU-light trance and EDM sound; its factory bank has been used everywhere; the go-to for trance leads, plucks and supersaw stacks.",
+   "iconic": [
+    "trance plucks with delay",
+    "supersaw stacks",
+    "trance basses"
+   ],
+   "sources": [
+    {
+     "key": "LM-sylenth",
+     "title": "Loopmasters: the best Sylenth1 presets (factory bank \"used and abused\")",
+     "url": "https://www.loopmasters.com/articles/4316-The-Best-Sylenth1-Presets-in-the-World-including-free-ones"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-sylenth1-arena-pluck",
+    "fav-sylenth1-four-osc-saw-stack"
+   ]
+  },
+  {
+   "id": "spire",
+   "name": "Spire (Reveal Sound)",
+   "kind": "hybrid VA/wavetable, 2013",
+   "loved_for": "Big-room and trance leads, supersaws with many voices, efficient; a staple of EDM, trance and synthwave.",
+   "iconic": [
+    "big-room leads",
+    "hyper-saw pads",
+    "EDM plucks"
+   ],
+   "sources": [
+    {
+     "key": "BPB-spire",
+     "title": "Bedroom Producers Blog: Reveal Sound Spire review",
+     "url": "https://bedroomproducersblog.com/2015/10/20/reveal-sound-spire-review/"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-spire-festival-main-lead"
+   ]
+  },
+  {
+   "id": "omnisphere",
+   "name": "Omnisphere (Spectrasonics)",
+   "kind": "hybrid sample/synth workstation",
+   "loved_for": "Huge psychoacoustic sample library (burned pianos, bowed and struck objects), deep layering, \"Hardware Library\" patches; used on hit records, games and film.",
+   "iconic": [
+    "evolving textures from unusual sources",
+    "cinematic pads",
+    "plucked-object arps",
+    "the ILIO Fame Series recreates famous sounds in it"
+   ],
+   "sources": [
+    {
+     "key": "SPEC-omni",
+     "title": "Spectrasonics: Omnisphere",
+     "url": "https://www.spectrasonics.net/products/omnisphere/"
+    },
+    {
+     "key": "ILIO-fame",
+     "title": "ILIO: The Fame Series, Classic Sounds for Omnisphere",
+     "url": "https://www.ilio.com/the-fame-series-classic-sounds"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-omnisphere-burnt-chord-texture",
+    "fav-omnisphere-object-pluck-arp"
+   ]
+  },
+  {
+   "id": "keyscape",
+   "name": "Keyscape (Spectrasonics)",
+   "kind": "keyboard collection: 36 instruments, 465 patches",
+   "loved_for": "Deeply sampled pianos and electromechanical keys, including rare ones (Clavinet-Pianet duo, Pianet T/N/M, CP-70, Wurlitzer 140B/200A, Rhodes Mark I, toy pianos).",
+   "iconic": [
+    "tine e-pianos",
+    "reed e-pianos",
+    "electric grand",
+    "toy piano and celesta"
+   ],
+   "sources": [
+    {
+     "key": "SPEC-keyscape",
+     "title": "Spectrasonics: Keyscape library (36 instruments, 465 patches)",
+     "url": "https://www.spectrasonics.net/products/keyscape/keyscape-library.php"
+    },
+    {
+     "key": "MR-keyscape",
+     "title": "MusicRadar: Spectrasonics Keyscape review",
+     "url": "https://www.musicradar.com/reviews/tech/spectrasonics-keyscape-643857"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-keyscape-reed-classroom-piano",
+    "fav-keyscape-stage-tine-suitcase",
+    "fav-keyscape-toy-recital"
+   ]
+  },
+  {
+   "id": "kontakt",
+   "name": "Kontakt factory and famous libraries (Native Instruments and others)",
+   "kind": "sampler platform",
+   "loved_for": "The platform for orchestral, cinematic and keyboard libraries: factory vintage organs, retro machines, orchestral; famous third-party: felt and upright pianos, scored strings, cinematic percussion, vocal-texture engines.",
+   "iconic": [
+    "felt piano",
+    "cinematic hits and impacts",
+    "ostinato strings",
+    "vintage organs",
+    "retro machines (string machines, tape keyboards)"
+   ],
+   "sources": [
+    {
+     "key": "W-ni",
+     "title": "Wikipedia: Native Instruments (Kontakt, Massive, Battery)",
+     "url": "https://en.wikipedia.org/wiki/Native_Instruments"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-kontakt-trailer-impact",
+    "fav-kontakt-ostinato-section"
+   ]
+  },
+  {
+   "id": "arturia-v",
+   "name": "Arturia V Collection: Jupiter-8 V, Prophet V, Mini V, CS-80 V",
+   "kind": "modelled classic synths",
+   "loved_for": "Faithful models of the classic polysynths and the Minimoog: Jupiter pads and arps, Prophet brass and sync, Minimoog bass and lead glide, CS-80 brass with expressive swells.",
+   "iconic": [
+    "Jupiter-8 lush pads and sequenced arps",
+    "Prophet-5 brass and sync leads",
+    "Minimoog bass and glide lead",
+    "CS-80 brass swells (Blade Runner-era)"
+   ],
+   "sources": [
+    {
+     "key": "ARTURIA-v",
+     "title": "Arturia: V Collection",
+     "url": "https://www.arturia.com/products/software-instruments/v-collection/overview"
+    },
+    {
+     "key": "W-jupiter8",
+     "title": "Wikipedia: Roland Jupiter-8",
+     "url": "https://en.wikipedia.org/wiki/Roland_Jupiter-8"
+    },
+    {
+     "key": "W-prophet5",
+     "title": "Wikipedia: Sequential Circuits Prophet-5",
+     "url": "https://en.wikipedia.org/wiki/Sequential_Circuits_Prophet-5"
+    },
+    {
+     "key": "W-minimoog",
+     "title": "Wikipedia: Minimoog",
+     "url": "https://en.wikipedia.org/wiki/Minimoog"
+    },
+    {
+     "key": "W-cs80",
+     "title": "Wikipedia: Yamaha CS-80",
+     "url": "https://en.wikipedia.org/wiki/Yamaha_CS-80"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-arturia-v-eight-voice-silk-pad",
+    "fav-arturia-v-five-voice-brass",
+    "fav-arturia-v-mono-glide-lead",
+    "fav-arturia-v-ribbon-brass-swell"
+   ]
+  },
+  {
+   "id": "nexus",
+   "name": "Nexus (reFX)",
+   "kind": "ROM-style preset player",
+   "loved_for": "Instant, mix-ready trance and EDM: trancegate pads (52 gate presets ship with it), supersaws, pianos and strings; expansions per genre.",
+   "iconic": [
+    "trancegate pads",
+    "big supersaw leads",
+    "dance pianos"
+   ],
+   "sources": [
+    {
+     "key": "REFX-trance",
+     "title": "reFX: Nexus expansion Trance Elements",
+     "url": "https://refx.com/nexus/expansion/trance-elements/"
+    },
+    {
+     "key": "MR-nexus2",
+     "title": "MusicRadar: reFX Nexus2 review",
+     "url": "https://www.musicradar.com/reviews/tech/refx-nexus2-173279"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-nexus-club-gate-stack"
+   ]
+  },
+  {
+   "id": "drum-machines",
+   "name": "Battery and the drum machines (808, 909, 707, LinnDrum, SP-1200, MPC)",
+   "kind": "drum samplers and classic machines",
+   "loved_for": "808: the long boom kick, snappy snare, cowbell and claps; 909: punchy kick and sampled hats/cymbals; 707: bright, simple digital kit; LinnDrum: the 80s pop snare and claps; SP-1200: 12-bit 26.04 kHz grit; MPC: swing and pads. Battery has kits built around these machines.",
+   "iconic": [
+    "808 boom kick",
+    "909 kick and open hat",
+    "707 bright kit",
+    "LinnDrum snare",
+    "SP-1200 grit",
+    "MPC swing"
+   ],
+   "sources": [
+    {
+     "key": "W-808",
+     "title": "Wikipedia: Roland TR-808",
+     "url": "https://en.wikipedia.org/wiki/Roland_TR-808"
+    },
+    {
+     "key": "W-909",
+     "title": "Wikipedia: Roland TR-909",
+     "url": "https://en.wikipedia.org/wiki/Roland_TR-909"
+    },
+    {
+     "key": "W-707",
+     "title": "Wikipedia: Roland TR-707",
+     "url": "https://en.wikipedia.org/wiki/Roland_TR-707"
+    },
+    {
+     "key": "W-linndrum",
+     "title": "Wikipedia: LinnDrum",
+     "url": "https://en.wikipedia.org/wiki/LinnDrum"
+    },
+    {
+     "key": "W-sp1200",
+     "title": "Wikipedia: E-mu SP-1200 (12-bit, 26.04 kHz)",
+     "url": "https://en.wikipedia.org/wiki/E-mu_SP-1200"
+    },
+    {
+     "key": "W-mpc",
+     "title": "Wikipedia: Akai MPC",
+     "url": "https://en.wikipedia.org/wiki/Akai_MPC"
+    },
+    {
+     "key": "KVR-battery",
+     "title": "KVR forum: favorite 80s kits from Battery (606/707/808/909/DMX/LinnDrum kits)",
+     "url": "https://www.kvraudio.com/forum/viewtopic.php?p=7574006"
+    },
+    {
+     "key": "MR-battery4",
+     "title": "MusicRadar: Native Instruments Battery 4 review",
+     "url": "https://musicradar.com/reviews/tech/native-instruments-battery-4-575148"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-drum-machines-long-boom-kit",
+    "fav-drum-machines-punch-kick-kit",
+    "fav-drum-machines-bright-digital-kit",
+    "fav-drum-machines-pop-studio-kit",
+    "fav-drum-machines-twelve-bit-crate-kit",
+    "fav-drum-machines-swing-pad-kit"
+   ]
+  },
+  {
+   "id": "labs",
+   "name": "LABS (Spitfire Audio)",
+   "kind": "free sample instruments, 2018-",
+   "loved_for": "Free, simple, beautiful: Soft Piano (called the world's most popular piano plug-in by Spitfire), Strings, Frozen Strings (dry, textured; the spark for a paid library), Glass Piano, Trumpet Fields, Electric Piano, Drums.",
+   "iconic": [
+    "soft felt piano",
+    "frozen (airy, textured) strings",
+    "glass piano",
+    "trumpet fields"
+   ],
+   "sources": [
+    {
+     "key": "RT-labs",
+     "title": "Rekkerd: Spitfire Audio launches LABS (Soft Piano, Strings)",
+     "url": "https://rekkerd.org/spitfire-audio-launches-labs-with-soft-piano-strings-free-instruments/"
+    },
+    {
+     "key": "AT-frozen",
+     "title": "AudioTechnology: LABS Frozen Strings",
+     "url": "https://audiotechnology.com/?p=78223"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-labs-hush-felt-keys",
+    "fav-labs-frost-section",
+    "fav-labs-field-trumpets",
+    "fav-labs-glass-practice-piano"
+   ]
+  },
+  {
+   "id": "ableton",
+   "name": "Ableton Live factory instruments",
+   "kind": "Operator, Wavetable, Drift, Simpler/Sampler, Collision, Tension, Electric, Drum Rack",
+   "loved_for": "Operator FM (bells, basses; 20 years of presets curated by its designer), Wavetable, Drift (in every edition), Simpler slicing, physical models of mallets (Collision), strings (Tension) and e-piano (Electric); drum-machine core kits in Drum Racks.",
+   "iconic": [
+    "Operator FM bells and basses",
+    "Simpler-sliced loops",
+    "Collision mallets",
+    "Drift analog basses and pads"
+   ],
+   "sources": [
+    {
+     "key": "ABL-operator",
+     "title": "Ableton blog: 20 years of Operator",
+     "url": "https://www.ableton.com/en/blog/20-years-of-operator/"
+    },
+    {
+     "key": "SOS-drift",
+     "title": "Sound on Sound: Ableton Live Drift synthesizer",
+     "url": "https://www.soundonsound.com/techniques/ableton-live-drift-synthesizer"
+    },
+    {
+     "key": "MR-drift",
+     "title": "MusicRadar: Ableton Drift guide",
+     "url": "https://www.musicradar.com/news/ableton-drift-guide"
+    }
+   ],
+   "note": null,
+   "targets": [
+    "fav-ableton-four-operator-bell",
+    "fav-ableton-struck-bar-mallet",
+    "fav-ableton-drift-bass",
+    "fav-ableton-key-slice-loop"
+   ]
+  }
+ ],
+ "targets": [
+  {
+   "id": "fav-serum-bent-future-chord",
+   "favorite": "serum",
+   "role": "chord",
+   "name": "Bent Future Chord",
+   "inspired_by": "future-bass supersaw chords (Serum era, 2014-2018)",
+   "character": "Supersaw-like major-7 chord with a pitch-bend dip and a pumping envelope.",
+   "dna": "tadaxp@40[@20]@0CP@0CP@0CP@0CP#12H0,4,7,11U2~25Ja0,10.60,100.214,70.428,10.440,100;A0R300B2K60",
+   "recipe": "tada-xp cut before 40% cut after 20% double x4 12rec notes +0 +4 +7 +11 unison 2 +-25c amp 0:10,60:100,214:70,428:10,440:100 | atk 0ms rel 300ms bend +-2 root C4",
+   "root_K": 60,
+   "v3_dna": "tadaxp@40[@20]@0CP@0CP@0CP@0CP#12H0,4,7,11U2~25Ja0,10.60,100.214,70.428,10.440,100Sd4Vs40,120;A0R300B2K60q0",
+   "v3_recipe": "tada-xp cut before 40% cut after 20% double x4 12rec notes +0 +4 +7 +11 unison 2 +-25c amp 0:10,60:100,214:70,428:10,440:100 chord 4 scoop 40c 120ms | atk 0ms rel 300ms bend +-2 root C4 scale major",
+   "v3_features": [
+    "scale (q)",
+    "stack (round-robin, strum, diatonic chords, groups)",
+    "tape wow/flutter/scoop"
+   ],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "tadaxp"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "chord",
+     "chordxp",
+     "xpding"
+    ],
+    "library": [
+     "epiano_yamaha_vibe",
+     "harp_c5"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "The \"wobble\" is a v3 scoop (40 cents up from below over 120 ms); v2 uses the bend wheel.",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1); v3 glide/wow: smooth on 3.11 (card rate), a planned staircase on XP after phase 0",
+   "priority": 1,
+   "pack": "workstation-classics",
+   "layers": 1,
+   "notes_before_stealing": 1
+  },
+  {
+   "id": "fav-serum-warp-growl",
+   "favorite": "serum",
+   "role": "bass",
+   "name": "Warp Growl",
+   "inspired_by": "warped wavetable growl bass",
+   "character": "A bell slice looped, clipped and self-flanged, three octaves down.",
+   "dna": "default@t40[@t20]@25]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP+++C@3X<<#16U2~15;A0R120K31",
+   "recipe": "default cut before 40ms cut after 20ms cut after 25% double x9 louder x3 copy at 3% mix paste slower x2 16rec unison 2 +-15c | atk 0ms rel 120ms root G1",
+   "root_K": 31,
+   "v3_dna": "default@t40[@t20]@25]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP+++C@3X<<#16U2~15Nmg20;A0R120K31",
+   "v3_recipe": "default cut before 40ms cut after 20ms cut after 25% double x9 louder x3 copy at 3% mix paste slower x2 16rec unison 2 +-15c mono glide 20ms | atk 0ms rel 120ms root G1",
+   "v3_features": [
+    "voice mode (mono/legato/glide)"
+   ],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "default"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "ringout",
+     "xpringout",
+     "batlow",
+     "critstop",
+     "balloon",
+     "xpding"
+    ],
+    "library": [
+     "contrabass_pizz_e1",
+     "tuba_sus_f1",
+     "ems_motor_drone_c3",
+     "em_hum_mains_loop",
+     "ems_ks_wire_c3"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1); v3 glide/wow: smooth on 3.11 (card rate), a planned staircase on XP after phase 0",
+   "priority": 1,
+   "pack": "workstation-classics",
+   "layers": 1,
+   "notes_before_stealing": 8
+  },
+  {
+   "id": "fav-serum-glass-pluck-plus",
+   "favorite": "serum",
+   "role": "pluck",
+   "name": "Glass Pluck Plus",
+   "inspired_by": "clean Serum pluck (progressive house)",
+   "character": "XP default bell trimmed, octave stack, long echo.",
+   "dna": "default@15]#8H0,12/default@15]<E>#6L35O250;A0D350S0R250K75",
+   "recipe": "default cut after 15% 8rec notes +0 +12 / default cut after 15% slower echo faster 6rec level 35% offset 250ms | atk 0ms dec 350ms sus 0% rel 250ms root D#5",
+   "root_K": 75,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "default"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "xpding",
+     "ding",
+     "dingxp",
+     "chimes",
+     "balloon"
+    ],
+    "library": [
+     "kalimba_c4",
+     "guzheng_a3",
+     "harp_c5",
+     "drip_short"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 2,
+   "pack": "workstation-classics",
+   "layers": 2,
+   "notes_before_stealing": 4
+  },
+  {
+   "id": "fav-serum-vowel-mid-bass",
+   "favorite": "serum",
+   "role": "bass",
+   "name": "Vowel Mid Bass",
+   "inspired_by": "formant/vowel mid basses",
+   "character": "The 1961 vowel looped and clipped with sub under it.",
+   "dna": "ems_704_vowel_a3@30[@20]@0CP@0CP@0CP@0CP++<#10/ringout@20[@40]@0CP@0CP@0CP<<#6L60;A0R100K45",
+   "recipe": "ems_704_vowel_a3 cut before 30% cut after 20% double x4 louder x2 slower 10rec / ringout cut before 20% cut after 40% double x3 slower x2 6rec level 60% | atk 0ms rel 100ms root A2",
+   "root_K": 45,
+   "v3_dna": "ems_704_vowel_a3@30[@20]@0CP@0CP@0CP@0CP++<#10Nm/ringout@20[@40]@0CP@0CP@0CP<<#6L60Nm;A0R100K45",
+   "v3_recipe": "ems_704_vowel_a3 cut before 30% cut after 20% double x4 louder x2 slower 10rec mono / ringout cut before 20% cut after 40% double x3 slower x2 6rec level 60% mono | atk 0ms rel 100ms root A2",
+   "v3_features": [
+    "voice mode (mono/legato/glide)"
+   ],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "ringout"
+   ],
+   "library_sounds": [
+    "ems_704_vowel_a3"
+   ],
+   "alternates": {
+    "windows": [
+     "xpringout",
+     "batlow",
+     "critstop",
+     "balloon",
+     "xpding",
+     "default"
+    ],
+    "library": [
+     "contrabass_pizz_e1",
+     "tuba_sus_f1",
+     "ems_motor_drone_c3",
+     "em_hum_mains_loop",
+     "ems_ks_wire_c3"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands; v3 glide/wow: smooth on 3.11 (card rate), a planned staircase on XP after phase 0",
+   "priority": 2,
+   "pack": "workstation-classics",
+   "layers": 2,
+   "notes_before_stealing": 6
+  },
+  {
+   "id": "fav-vital-spoken-wavetable",
+   "favorite": "vital",
+   "role": "lead",
+   "name": "Spoken Wavetable",
+   "inspired_by": "Vital text-to-wavetable",
+   "character": "A word from a Prelinger narration looped as an oscillator.",
+   "dna": "prelinger_information_machine_a@40[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#10;A5R200K59",
+   "recipe": "prelinger_information_machine_a cut before 40% cut after 20ms cut after 20% double x9 10rec | atk 5ms rel 200ms root B3",
+   "root_K": 59,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [],
+   "library_sounds": [
+    "prelinger_information_machine_a"
+   ],
+   "alternates": {
+    "windows": [
+     "tadaxp",
+     "tada",
+     "ringout",
+     "print",
+     "xpringin",
+     "notify"
+    ],
+    "library": [
+     "flute_vib_c5",
+     "trumpet_sus_c4",
+     "ems_ferranti_hoot_c4",
+     "ems_fm_bell103_lead",
+     "erhu_d3"
+    ],
+    "in_image_candidates": "Agent merlin #22 (2 s clean tone)"
+   },
+   "sndrec_feel": "Speech becomes a wavetable the way Vital's text-to-wavetable does: one 4 ms slice of a voice, looped.",
+   "edition_badge": "w31",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands",
+   "priority": 1,
+   "pack": "workstation-classics",
+   "layers": 1,
+   "notes_before_stealing": 10
+  },
+  {
+   "id": "fav-vital-spectral-morph-pad",
+   "favorite": "vital",
+   "role": "pad",
+   "name": "Spectral Morph Pad",
+   "inspired_by": "spectral warp pads",
+   "character": "Two slices of startup crossfaded by macro 1.",
+   "dna": "startup@20[@30]<#8U2~10/startup@70[@30]<#8U2~10L0;A600S90R1500m11L100,0m12L0,100m1=0K56",
+   "recipe": "startup cut before 20% cut after 30% slower 8rec unison 2 +-10c / startup cut before 70% cut after 30% slower 8rec unison 2 +-10c level 0% | atk 600ms sus 90% rel 1.5s m1 L1 level 100-0 m1 L2 level 0-100 m1 0% root G#3",
+   "root_K": 56,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "startup"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "logon",
+     "logoff",
+     "shutdown",
+     "notify",
+     "chord",
+     "tada"
+    ],
+    "library": [
+     "choir_aah",
+     "singing_bowl_long",
+     "violin_section_sus_c4",
+     "glass_harp_singing",
+     "emh_switchroom_drone"
+    ],
+    "in_image_candidates": "NetMeeting TestSnd.wav (swelling chime phrase), Pinball SOUND50 (bonus swell), OOBE qmark #06 (3.2 s clean swell)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 2,
+   "pack": "workstation-classics",
+   "layers": 2,
+   "notes_before_stealing": 4
+  },
+  {
+   "id": "fav-pigments-lobby-grain-field",
+   "favorite": "pigments",
+   "role": "pad",
+   "name": "Lobby Grain Field",
+   "inspired_by": "Pigments granular sample pads",
+   "character": "Hotel lobby ambience as a grain cloud.",
+   "dna": "hotel_lobby_open_plan<#12;A1000S90R3000",
+   "recipe": "hotel_lobby_open_plan slower 12rec | atk 1s sus 90% rel 3s",
+   "root_K": null,
+   "v3_dna": "hotel_lobby_open_plan<#12Gp.3j.3z60~200n30c20s.1v6w.8;A1000S90R3000",
+   "v3_recipe": "hotel_lobby_open_plan slower 12rec grains pos 30% spray 30% size 60-200ms density 30/s pitch +-20c scan 0.1x streams 6 width 80% | atk 1s sus 90% rel 3s",
+   "v3_features": [
+    "grains"
+   ],
+   "min_dna_version": 2,
+   "windows_sounds": [],
+   "library_sounds": [
+    "hotel_lobby_open_plan"
+   ],
+   "alternates": {
+    "windows": [
+     "startup",
+     "logon",
+     "logoff",
+     "shutdown",
+     "notify",
+     "chord"
+    ],
+    "library": [
+     "choir_aah",
+     "singing_bowl_long",
+     "violin_section_sus_c4",
+     "glass_harp_singing",
+     "emh_switchroom_drone"
+    ],
+    "in_image_candidates": "NetMeeting TestSnd.wav (swelling chime phrase), Pinball SOUND50 (bonus swell), OOBE qmark #06 (3.2 s clean swell)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands; v3 grains: ~100/s sample-exact on 3.11; XP after phase 6",
+   "priority": 1,
+   "pack": "workstation-classics",
+   "layers": 1,
+   "notes_before_stealing": 12
+  },
+  {
+   "id": "fav-pigments-colour-sequence-arp",
+   "favorite": "pigments",
+   "role": "arp",
+   "name": "Colour Sequence Arp",
+   "inspired_by": "Pigments sequencer presets",
+   "character": "Bell pluck arped from the mine grid.",
+   "dna": "default@12]#8/xpding@15]<#6L40T4;A0D300S0R200K75",
+   "recipe": "default cut after 12% 8rec / xpding cut after 15% slower 6rec level 40% transpose +4 | atk 0ms dec 300ms sus 0% rel 200ms root D#5",
+   "root_K": 75,
+   "v3_dna": "default@12]#8/xpding@15]<#6L40T4;A0D300S0R200K75q4xg45n2",
+   "v3_recipe": "default cut after 12% 8rec / xpding cut after 15% slower 6rec level 40% transpose +4 | atk 0ms dec 300ms sus 0% rel 200ms root D#5 scale lydian seq gate 45% arp",
+   "v3_features": [
+    "mine-grid sequencer/arp (x)",
+    "scale (q)"
+   ],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "default",
+    "xpding"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "ding",
+     "chimes"
+    ],
+    "library": [
+     "kalimba_g5",
+     "glockenspiel_g4"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 2,
+   "pack": "workstation-classics",
+   "layers": 2,
+   "notes_before_stealing": 6
+  },
+  {
+   "id": "fav-diva-ladder-mono-bass",
+   "favorite": "diva",
+   "role": "bass",
+   "name": "Ladder Mono Bass",
+   "inspired_by": "Diva-style monosynth bass",
+   "character": "Three detuned buzzes clipped two octaves down; mono glide.",
+   "dna": "ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<+#5/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+#5L50/ringout@20[@40]@0CP@0CP@0CP<<<#4U2~8L60T2;A0D500S60R100K35",
+   "recipe": "ringout cut before 150ms cut after 20ms cut after 20% double x9 slower x2 louder 5rec / ringout cut before 150ms cut after 20ms cut after 20% double x9 slower louder 5rec level 50% / ringout cut before 20% cut after 40% double x3 slower x3 4rec unison 2 +-8c level 60% transpose +2 | atk 0ms dec 500ms sus 60% rel 100ms root B1",
+   "root_K": 35,
+   "v3_dna": "ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<+#5Nmg40/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+#5L50Nmg40/ringout@20[@40]@0CP@0CP@0CP<<<#4U2~8L60T2Nmg40;A0D500S60R100K35",
+   "v3_recipe": "ringout cut before 150ms cut after 20ms cut after 20% double x9 slower x2 louder 5rec mono glide 40ms / ringout cut before 150ms cut after 20ms cut after 20% double x9 slower louder 5rec level 50% mono glide 40ms / ringout cut before 20% cut after 40% double x3 slower x3 4rec unison 2 +-8c level 60% transpose +2 mono glide 40ms | atk 0ms dec 500ms sus 60% rel 100ms root B1",
+   "v3_features": [
+    "voice mode (mono/legato/glide)"
+   ],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "ringout"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "xpringout",
+     "batlow",
+     "critstop",
+     "balloon",
+     "xpding",
+     "default"
+    ],
+    "library": [
+     "contrabass_pizz_e1",
+     "tuba_sus_f1",
+     "ems_motor_drone_c3",
+     "em_hum_mains_loop",
+     "ems_ks_wire_c3"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "both editions (every built-in name plays on both since 1.2.1); v3 glide/wow: smooth on 3.11 (card rate), a planned staircase on XP after phase 0",
+   "priority": 1,
+   "pack": "workstation-classics",
+   "layers": 3,
+   "notes_before_stealing": 2
+  },
+  {
+   "id": "fav-diva-poly-brass-circuit",
+   "favorite": "diva",
+   "role": "brass",
+   "name": "Poly Brass Circuit",
+   "inspired_by": "analog poly brass",
+   "character": "Fanfare loop with a slow brass attack and swell.",
+   "dna": "tadaxp@40[@20]@0CP@0CP@0CP@0CP#12U2~12Ja0,0.80,100.400,75;A0R250K60",
+   "recipe": "tada-xp cut before 40% cut after 20% double x4 12rec unison 2 +-12c amp 0:0,80:100,400:75 | atk 0ms rel 250ms root C4",
+   "root_K": 60,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "tadaxp"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "tada",
+     "critstop"
+    ],
+    "library": [
+     "trumpet_sus_c4",
+     "trombone_sus_c3",
+     "horn_sus_c3",
+     "tuba_sus_f1"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 2,
+   "pack": "workstation-classics",
+   "layers": 1,
+   "notes_before_stealing": 6
+  },
+  {
+   "id": "fav-massive-performer-wobble",
+   "favorite": "massive",
+   "role": "bass",
+   "name": "Performer Wobble",
+   "inspired_by": "Massive performer-LFO wobble",
+   "character": "A stepped, drawn wobble pattern over a clipped sine stack.",
+   "dna": "xpringout@20[@40]@0CP@0CP@0CP+++<<<#16U2~12Ja0,100.107,10.160,100.214,10.321,100.375,30.428,100;A0R100m21Z100,33m2=0K33",
+   "recipe": "xpringout cut before 20% cut after 40% double x3 louder x3 slower x3 16rec unison 2 +-12c amp 0:100,107:10,160:100,214:10,321:100,375:30,428:100 | atk 0ms rel 100ms m2 L1 envtime 100-33 m2 0% root A1",
+   "root_K": 33,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "xpringout"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "ringout",
+     "batlow",
+     "critstop",
+     "balloon",
+     "xpding",
+     "default"
+    ],
+    "library": [
+     "contrabass_pizz_e1",
+     "tuba_sus_f1",
+     "ems_motor_drone_c3",
+     "em_hum_mains_loop",
+     "ems_ks_wire_c3"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 1,
+   "pack": "workstation-classics",
+   "layers": 1,
+   "notes_before_stealing": 8
+  },
+  {
+   "id": "fav-massive-square-saw-sub-route",
+   "favorite": "massive",
+   "role": "bass",
+   "name": "Square Saw Sub Route",
+   "inspired_by": "Massive square-saw plus routed sub",
+   "character": "Buzz mid and sine sub, both mono.",
+   "dna": "ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<+#8/ringout@20[@40]@0CP@0CP@0CP<<<#8L80T2;A0R100K35",
+   "recipe": "ringout cut before 150ms cut after 20ms cut after 20% double x9 slower x2 louder 8rec / ringout cut before 20% cut after 40% double x3 slower x3 8rec level 80% transpose +2 | atk 0ms rel 100ms root B1",
+   "root_K": 35,
+   "v3_dna": "ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<+#8Nm/ringout@20[@40]@0CP@0CP@0CP<<<#8L80T2Nm;A0R100K35",
+   "v3_recipe": "ringout cut before 150ms cut after 20ms cut after 20% double x9 slower x2 louder 8rec mono / ringout cut before 20% cut after 40% double x3 slower x3 8rec level 80% transpose +2 mono | atk 0ms rel 100ms root B1",
+   "v3_features": [
+    "voice mode (mono/legato/glide)"
+   ],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "ringout"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "xpringout",
+     "batlow",
+     "critstop",
+     "balloon",
+     "xpding",
+     "default"
+    ],
+    "library": [
+     "contrabass_pizz_e1",
+     "tuba_sus_f1",
+     "ems_motor_drone_c3",
+     "em_hum_mains_loop",
+     "ems_ks_wire_c3"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "both editions (every built-in name plays on both since 1.2.1); v3 glide/wow: smooth on 3.11 (card rate), a planned staircase on XP after phase 0",
+   "priority": 2,
+   "pack": "workstation-classics",
+   "layers": 2,
+   "notes_before_stealing": 8
+  },
+  {
+   "id": "fav-sylenth1-arena-pluck",
+   "favorite": "sylenth1",
+   "role": "pluck",
+   "name": "Arena Pluck",
+   "inspired_by": "Sylenth trance pluck",
+   "character": "Fanfare blast trimmed to a pluck, unison and long echo.",
+   "dna": "tadaxp@6]#8U3~18/tadaxp@6]<E>#6L35O326;A0D250S0R250K60",
+   "recipe": "tada-xp cut after 6% 8rec unison 3 +-18c / tada-xp cut after 6% slower echo faster 6rec level 35% offset 326ms | atk 0ms dec 250ms sus 0% rel 250ms root C4",
+   "root_K": 60,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "tadaxp"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "default",
+     "xpding",
+     "ding",
+     "dingxp",
+     "chimes",
+     "balloon"
+    ],
+    "library": [
+     "kalimba_c4",
+     "guzheng_a3",
+     "harp_c5",
+     "drip_short"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 1,
+   "pack": "workstation-classics",
+   "layers": 2,
+   "notes_before_stealing": 2
+  },
+  {
+   "id": "fav-sylenth1-four-osc-saw-stack",
+   "favorite": "sylenth1",
+   "role": "lead",
+   "name": "Four Osc Saw Stack",
+   "inspired_by": "Sylenth four-oscillator lead",
+   "character": "Four fanfare loops: unison, octave, fifth.",
+   "dna": "tadaxp@40[@20]@0CP@0CP@0CP@0CP#6U3~20/tadaxp@40[@20]@0CP@0CP@0CP@0CP>#4L40/tadaxp@40[@20]@0CP@0CP@0CP@0CP#4T7L30;A10R300K60",
+   "recipe": "tada-xp cut before 40% cut after 20% double x4 6rec unison 3 +-20c / tada-xp cut before 40% cut after 20% double x4 faster 4rec level 40% / tada-xp cut before 40% cut after 20% double x4 4rec transpose +7 level 30% | atk 10ms rel 300ms root C4",
+   "root_K": 60,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "tadaxp"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "tada",
+     "ringout",
+     "print",
+     "xpringin",
+     "notify"
+    ],
+    "library": [
+     "flute_vib_c5",
+     "trumpet_sus_c4",
+     "ems_ferranti_hoot_c4",
+     "ems_fm_bell103_lead",
+     "erhu_d3"
+    ],
+    "in_image_candidates": "Agent merlin #22 (2 s clean tone)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 2,
+   "pack": "workstation-classics",
+   "layers": 3,
+   "notes_before_stealing": 2
+  },
+  {
+   "id": "fav-spire-festival-main-lead",
+   "favorite": "spire",
+   "role": "lead",
+   "name": "Festival Main Lead",
+   "inspired_by": "Spire big-room lead",
+   "character": "Fanfare loop, octave up, clipped, nine voices.",
+   "dna": "tadaxp@40[@20]@0CP@0CP@0CP@0CP>++#12U4~28/tadaxp@40[@20]@0CP@0CP@0CP@0CP#4L50;A0R250K72",
+   "recipe": "tada-xp cut before 40% cut after 20% double x4 faster louder x2 12rec unison 4 +-28c / tada-xp cut before 40% cut after 20% double x4 4rec level 50% | atk 0ms rel 250ms root C5",
+   "root_K": 72,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "tadaxp"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "tada",
+     "ringout",
+     "print",
+     "xpringin",
+     "notify"
+    ],
+    "library": [
+     "flute_vib_c5",
+     "trumpet_sus_c4",
+     "ems_ferranti_hoot_c4",
+     "ems_fm_bell103_lead",
+     "erhu_d3"
+    ],
+    "in_image_candidates": "Agent merlin #22 (2 s clean tone)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 1,
+   "pack": "workstation-classics",
+   "layers": 2,
+   "notes_before_stealing": 3
+  },
+  {
+   "id": "fav-omnisphere-burnt-chord-texture",
+   "favorite": "omnisphere",
+   "role": "pad",
+   "name": "Burnt Chord Texture",
+   "inspired_by": "Omnisphere psychoacoustic textures (sampled destroyed instruments)",
+   "character": "The 3.1 chord reversed, slowed and echoed, with crumple noise as the burning.",
+   "dna": "chord<RE<E#10U2~10/recycle<<E#4FL30;A1200S90R3000K31",
+   "recipe": "chord slower reverse echo slower echo 10rec unison 2 +-10c / recycle slower x2 echo 4rec fixed level 30% | atk 1.2s sus 90% rel 3s root G1",
+   "root_K": 31,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "chord",
+    "recycle"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "startup",
+     "logon",
+     "logoff",
+     "shutdown",
+     "notify",
+     "tada"
+    ],
+    "library": [
+     "choir_aah",
+     "singing_bowl_long",
+     "violin_section_sus_c4",
+     "glass_harp_singing",
+     "emh_switchroom_drone"
+    ],
+    "in_image_candidates": "NetMeeting TestSnd.wav (swelling chime phrase), Pinball SOUND50 (bonus swell), OOBE qmark #06 (3.2 s clean swell)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 1,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 4
+  },
+  {
+   "id": "fav-omnisphere-object-pluck-arp",
+   "favorite": "omnisphere",
+   "role": "pluck",
+   "name": "Object Pluck Arp",
+   "inspired_by": "plucked objects (Omnisphere arp patches)",
+   "character": "Glass and drip plucks round-robin.",
+   "dna": "glass_tap#8/drip_short#8;A0R400",
+   "recipe": "glass_tap 8rec / drip_short 8rec | atk 0ms rel 400ms",
+   "root_K": null,
+   "v3_dna": "glass_tap#8Sg1/drip_short#8Sg1;A0R400q8xg50n2",
+   "v3_recipe": "glass_tap 8rec group 1 / drip_short 8rec group 1 | atk 0ms rel 400ms scale major-pent seq gate 50% arp",
+   "v3_features": [
+    "mine-grid sequencer/arp (x)",
+    "scale (q)",
+    "stack (round-robin, strum, diatonic chords, groups)"
+   ],
+   "min_dna_version": 2,
+   "windows_sounds": [],
+   "library_sounds": [
+    "glass_tap",
+    "drip_short"
+   ],
+   "alternates": {
+    "windows": [
+     "default",
+     "xpding",
+     "ding",
+     "dingxp",
+     "chimes",
+     "balloon"
+    ],
+    "library": [
+     "kalimba_c4",
+     "guzheng_a3",
+     "harp_c5"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands",
+   "priority": 2,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 8
+  },
+  {
+   "id": "fav-keyscape-reed-classroom-piano",
+   "favorite": "keyscape",
+   "role": "keys",
+   "name": "Reed Classroom Piano",
+   "inspired_by": "reed e-piano (Wurlitzer-style)",
+   "character": "Ringout loop clipped a little: reedy.",
+   "dna": "ringout@20[@40]@0CP@0CP+#10/xpding@20]#6L40T-2;A0D1500S35R300K69",
+   "recipe": "ringout cut before 20% cut after 40% double x2 louder 10rec / xpding cut after 20% 6rec level 40% transpose -2 | atk 0ms dec 1.5s sus 35% rel 300ms root A4",
+   "root_K": 69,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "ringout",
+    "xpding"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "print",
+     "default",
+     "ding",
+     "chord"
+    ],
+    "library": [
+     "epiano_yamaha_vibe",
+     "epiano_bell_c3",
+     "harp_c5",
+     "organ_hammond_m100_flute_c",
+     "music_box_note"
+    ],
+    "in_image_candidates": "Messenger newemail.wav (mallet arpeggio), online.wav"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 1,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 6
+  },
+  {
+   "id": "fav-keyscape-stage-tine-suitcase",
+   "favorite": "keyscape",
+   "role": "keys",
+   "name": "Stage Tine Suitcase",
+   "inspired_by": "tine e-piano (Rhodes-style)",
+   "character": "Epiano bell sample with sine body.",
+   "dna": "epiano_bell_c3#8/print@10[@50]<#6L35T2;A0D2500S30R600K48",
+   "recipe": "epiano_bell_c3 8rec / print cut before 10% cut after 50% slower 6rec level 35% transpose +2 | atk 0ms dec 2.5s sus 30% rel 600ms root C3",
+   "root_K": 48,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "print"
+   ],
+   "library_sounds": [
+    "epiano_bell_c3"
+   ],
+   "alternates": {
+    "windows": [
+     "xpding",
+     "default",
+     "ding",
+     "chord",
+     "ringout"
+    ],
+    "library": [
+     "epiano_yamaha_vibe",
+     "harp_c5",
+     "organ_hammond_m100_flute_c",
+     "music_box_note"
+    ],
+    "in_image_candidates": "Messenger newemail.wav (mallet arpeggio), online.wav"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands",
+   "priority": 2,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 6
+  },
+  {
+   "id": "fav-keyscape-toy-recital",
+   "favorite": "keyscape",
+   "role": "keys",
+   "name": "Toy Recital",
+   "inspired_by": "toy piano",
+   "character": "Music box and glockenspiel, short.",
+   "dna": "music_box_note#8/glockenspiel_c6#6L40;A0R800K84",
+   "recipe": "music_box_note 8rec / glockenspiel_c6 6rec level 40% | atk 0ms rel 800ms root C6",
+   "root_K": 84,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [],
+   "library_sounds": [
+    "music_box_note",
+    "glockenspiel_c6"
+   ],
+   "alternates": {
+    "windows": [
+     "xpding",
+     "print",
+     "default",
+     "ding",
+     "chord",
+     "ringout"
+    ],
+    "library": [
+     "epiano_yamaha_vibe",
+     "epiano_bell_c3",
+     "harp_c5",
+     "organ_hammond_m100_flute_c"
+    ],
+    "in_image_candidates": "Messenger newemail.wav (mallet arpeggio), online.wav"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands",
+   "priority": 2,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 6
+  },
+  {
+   "id": "fav-kontakt-trailer-impact",
+   "favorite": "kontakt",
+   "role": "perc",
+   "name": "Trailer Impact",
+   "inspired_by": "cinematic impact libraries",
+   "character": "Critical stop, thunder and balloon boom slowed.",
+   "dna": "critstop<<E#6/thunder_rumble@5[@15]#4FL60/balloon<<<#4FL70;A0R3000K24",
+   "recipe": "critstop slower x2 echo 6rec / thunder_rumble cut before 5% cut after 15% 4rec fixed level 60% / balloon slower x3 4rec fixed level 70% | atk 0ms rel 3s root C1",
+   "root_K": 24,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "critstop",
+    "balloon"
+   ],
+   "library_sounds": [
+    "thunder_rumble"
+   ],
+   "alternates": {
+    "windows": [
+     "menu",
+     "xpstart",
+     "infobar",
+     "popup",
+     "default"
+    ],
+    "library": [
+     "em_relay_click_a",
+     "ems_relay_tiny",
+     "key_mechanical_hard",
+     "mouse_click",
+     "bubble_pop_a",
+     "glass_tap"
+    ],
+    "in_image_candidates": "Minesweeper tick, Pinball bumper (SOUND12), NetMeeting Blip.wav"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands",
+   "priority": 1,
+   "pack": "instruments-archive",
+   "layers": 3,
+   "notes_before_stealing": 4
+  },
+  {
+   "id": "fav-kontakt-ostinato-section",
+   "favorite": "kontakt",
+   "role": "strings",
+   "name": "Ostinato Section",
+   "inspired_by": "scored-strings ostinato",
+   "character": "Violin section cut short (spiccato), round-robin pair.",
+   "dna": "violin_section_sus_c4@5]#8/violin_section_sus_c4@6]><#8;A0D200S0R120K60",
+   "recipe": "violin_section_sus_c4 cut after 5% 8rec / violin_section_sus_c4 cut after 6% faster slower 8rec | atk 0ms dec 200ms sus 0% rel 120ms root C4",
+   "root_K": 60,
+   "v3_dna": "violin_section_sus_c4@5]#8Sg1/violin_section_sus_c4@6]><#8Sg1;A0D200S0R120K60",
+   "v3_recipe": "violin_section_sus_c4 cut after 5% 8rec group 1 / violin_section_sus_c4 cut after 6% faster slower 8rec group 1 | atk 0ms dec 200ms sus 0% rel 120ms root C4",
+   "v3_features": [
+    "stack (round-robin, strum, diatonic chords, groups)"
+   ],
+   "min_dna_version": 2,
+   "windows_sounds": [],
+   "library_sounds": [
+    "violin_section_sus_c4"
+   ],
+   "alternates": {
+    "windows": [
+     "startup",
+     "logon",
+     "logoff"
+    ],
+    "library": [
+     "cello_section_sus_c3",
+     "erhu_d3"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands",
+   "priority": 2,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 8
+  },
+  {
+   "id": "fav-arturia-v-eight-voice-silk-pad",
+   "favorite": "arturia-v",
+   "role": "pad",
+   "name": "Eight Voice Silk Pad",
+   "inspired_by": "Jupiter-8 pad",
+   "character": "Logon and startup slices with wide unison.",
+   "dna": "logon<@15[#8U3~12/startup@20[@40]<#8U2~10L50;A700S90R1600K44",
+   "recipe": "logon slower cut before 15% 8rec unison 3 +-12c / startup cut before 20% cut after 40% slower 8rec unison 2 +-10c level 50% | atk 700ms sus 90% rel 1.6s root G#2",
+   "root_K": 44,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "logon",
+    "startup"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "logoff",
+     "shutdown",
+     "notify",
+     "chord",
+     "tada"
+    ],
+    "library": [
+     "choir_aah",
+     "singing_bowl_long",
+     "violin_section_sus_c4",
+     "glass_harp_singing",
+     "emh_switchroom_drone"
+    ],
+    "in_image_candidates": "NetMeeting TestSnd.wav (swelling chime phrase), Pinball SOUND50 (bonus swell), OOBE qmark #06 (3.2 s clean swell)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 1,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 2
+  },
+  {
+   "id": "fav-arturia-v-five-voice-brass",
+   "favorite": "arturia-v",
+   "role": "brass",
+   "name": "Five Voice Brass",
+   "inspired_by": "Prophet-5 brass",
+   "character": "Fanfare loop with brass swell envelope.",
+   "dna": "tadaxp@40[@20]@0CP@0CP@0CP@0CP+#12U2~10Ja0,0.60,100.300,70;A0R200K60",
+   "recipe": "tada-xp cut before 40% cut after 20% double x4 louder 12rec unison 2 +-10c amp 0:0,60:100,300:70 | atk 0ms rel 200ms root C4",
+   "root_K": 60,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "tadaxp"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "tada",
+     "critstop"
+    ],
+    "library": [
+     "trumpet_sus_c4",
+     "trombone_sus_c3",
+     "horn_sus_c3",
+     "tuba_sus_f1"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 2,
+   "pack": "instruments-archive",
+   "layers": 1,
+   "notes_before_stealing": 6
+  },
+  {
+   "id": "fav-arturia-v-mono-glide-lead",
+   "favorite": "arturia-v",
+   "role": "lead",
+   "name": "Mono Glide Lead",
+   "inspired_by": "Minimoog lead with glide",
+   "character": "Three buzzes, mono with glide.",
+   "dna": "ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP+#6/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#5T12L50/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#5T7L30;A5R150K59",
+   "recipe": "ringout cut before 150ms cut after 20ms cut after 20% double x9 louder 6rec / ringout cut before 150ms cut after 20ms cut after 20% double x9 5rec transpose +12 level 50% / ringout cut before 150ms cut after 20ms cut after 20% double x9 5rec transpose +7 level 30% | atk 5ms rel 150ms root B3",
+   "root_K": 59,
+   "v3_dna": "ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP+#6Nlg90/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#5T12L50Nlg90/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#5T7L30Nlg90;A5R150K59",
+   "v3_recipe": "ringout cut before 150ms cut after 20ms cut after 20% double x9 louder 6rec legato glide 90ms / ringout cut before 150ms cut after 20ms cut after 20% double x9 5rec transpose +12 level 50% legato glide 90ms / ringout cut before 150ms cut after 20ms cut after 20% double x9 5rec transpose +7 level 30% legato glide 90ms | atk 5ms rel 150ms root B3",
+   "v3_features": [
+    "voice mode (mono/legato/glide)"
+   ],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "ringout"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "tadaxp",
+     "tada",
+     "print",
+     "xpringin",
+     "notify"
+    ],
+    "library": [
+     "flute_vib_c5",
+     "trumpet_sus_c4",
+     "ems_ferranti_hoot_c4",
+     "ems_fm_bell103_lead",
+     "erhu_d3"
+    ],
+    "in_image_candidates": "Agent merlin #22 (2 s clean tone)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "both editions (every built-in name plays on both since 1.2.1); v3 glide/wow: smooth on 3.11 (card rate), a planned staircase on XP after phase 0",
+   "priority": 1,
+   "pack": "instruments-archive",
+   "layers": 3,
+   "notes_before_stealing": 5
+  },
+  {
+   "id": "fav-arturia-v-ribbon-brass-swell",
+   "favorite": "arturia-v",
+   "role": "brass",
+   "name": "Ribbon Brass Swell",
+   "inspired_by": "CS-80 brass with swell",
+   "character": "Trumpet and fanfare swelling with wide unison.",
+   "dna": "trumpet_sus_c4<#8U2~15/tadaxp@40[@20]@0CP@0CP@0CP<#6L50;A400R900B12K48",
+   "recipe": "trumpet_sus_c4 slower 8rec unison 2 +-15c / tada-xp cut before 40% cut after 20% double x3 slower 6rec level 50% | atk 400ms rel 900ms bend +-12 root C3",
+   "root_K": 48,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "tadaxp"
+   ],
+   "library_sounds": [
+    "trumpet_sus_c4"
+   ],
+   "alternates": {
+    "windows": [
+     "tada",
+     "critstop"
+    ],
+    "library": [
+     "trombone_sus_c3",
+     "horn_sus_c3",
+     "tuba_sus_f1"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands",
+   "priority": 2,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 4
+  },
+  {
+   "id": "fav-nexus-club-gate-stack",
+   "favorite": "nexus",
+   "role": "pad",
+   "name": "Club Gate Stack",
+   "inspired_by": "Nexus trancegate pad",
+   "character": "Logoff sustained, 1/16 gate at 140 drawn.",
+   "dna": "logoff@20[@50]<#12U2~10Ja0,100.53,100.54,0.107,0.108,100.160,100.161,0.214,0;A0R200K51",
+   "recipe": "logoff cut before 20% cut after 50% slower 12rec unison 2 +-10c amp 0:100,53:100,54:0,107:0,108:100,160:100,161:0,214:0 | atk 0ms rel 200ms root D#3",
+   "root_K": 51,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "logoff"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "startup",
+     "logon",
+     "shutdown",
+     "notify",
+     "chord",
+     "tada"
+    ],
+    "library": [
+     "choir_aah",
+     "singing_bowl_long",
+     "violin_section_sus_c4",
+     "glass_harp_singing",
+     "emh_switchroom_drone"
+    ],
+    "in_image_candidates": "NetMeeting TestSnd.wav (swelling chime phrase), Pinball SOUND50 (bonus swell), OOBE qmark #06 (3.2 s clean swell)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 1,
+   "pack": "workstation-classics",
+   "layers": 1,
+   "notes_before_stealing": 6
+  },
+  {
+   "id": "fav-drum-machines-long-boom-kit",
+   "favorite": "drum-machines",
+   "role": "drums",
+   "name": "Long Boom Kit",
+   "inspired_by": "TR-808 kit",
+   "character": "Long sine boom, snappy crumple, cowbell from the default bell.",
+   "dna": "ringout@20[@40]@0CP<<<Ja0,100.100,60.900,0#16F;A0R150V90",
+   "recipe": "ringout cut before 20% cut after 40% double slower x3 amp 0:100,100:60,900:0 16rec fixed | atk 0ms rel 150ms vel 90%",
+   "root_K": null,
+   "v3_dna": "ringout@20[@40]@0CP<<<Ja0,100.100,60.900,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7",
+   "v3_recipe": "ringout cut before 20% cut after 40% double slower x3 amp 0:100,100:60,900:0 3rec fixed / recycle faster cut after 30% louder 4rec fixed / xprecycle faster x3 cut after 40% 5rec fixed / default faster cut after 8% 4rec | rel 200ms vel 90% pad 36 pad 35 level 80% pad 38 layer 2 pad 39 layer 2 start 30% level 90% pad 40 layer 2 tune +40c pad 42 layer 3 end 12% cut 1 pad 44 layer 3 end 5% level 70% cut 1 pad 46 layer 3 cut 1 pad 37 layer 4 pad 41-50 layer 4 root 45 pitch 100% range +-7",
+   "v3_features": [
+    "kit pads (k)"
+   ],
+   "min_dna_version": 3,
+   "v2_note": "v2 DNA is the kick on its own (a tunable kick preset); the kit needs v3 kit mode.",
+   "windows_sounds": [
+    "ringout",
+    "recycle",
+    "xprecycle",
+    "default"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "balloon",
+     "menu",
+     "xpstart",
+     "start",
+     "infobar",
+     "critstop"
+    ],
+    "library": [
+     "em_relay_click_a",
+     "ems_relay_tiny",
+     "key_mechanical_hard",
+     "floppy_seek_clunk",
+     "drop_single_a",
+     "glass_tap"
+    ],
+    "in_image_candidates": "Minesweeper tick (woodblock) and explosion (boom), Pinball flipper (SOUND104, tight thump) and bumper (SOUND12, metallic hit)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1); v3 kit: exact on 3.11; XP choke fades need phase-0 streamed gain",
+   "priority": 1,
+   "pack": "kit-manager",
+   "layers": 1,
+   "notes_before_stealing": 16
+  },
+  {
+   "id": "fav-drum-machines-punch-kick-kit",
+   "favorite": "drum-machines",
+   "role": "drums",
+   "name": "Punch Kick Kit",
+   "inspired_by": "TR-909 kit",
+   "character": "Punchy clipped kick, echo clap, long crumple open hat.",
+   "dna": "ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#16F;A0R150V90",
+   "recipe": "ringout cut before 20% cut after 40% double slower x3 louder amp 0:100,40:70,300:0 16rec fixed | atk 0ms rel 150ms vel 90%",
+   "root_K": null,
+   "v3_dna": "ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7",
+   "v3_recipe": "ringout cut before 20% cut after 40% double slower x3 louder amp 0:100,40:70,300:0 3rec fixed / recycle faster x2 cut after 50% echo 4rec fixed / xprecycle faster x2 cut after 60% 5rec fixed / xpstart faster 4rec | rel 200ms vel 90% pad 36 pad 35 level 80% pad 38 layer 2 pad 39 layer 2 start 30% level 90% pad 40 layer 2 tune +40c pad 42 layer 3 end 12% cut 1 pad 44 layer 3 end 5% level 70% cut 1 pad 46 layer 3 cut 1 pad 37 layer 4 pad 41-50 layer 4 root 45 pitch 100% range +-7",
+   "v3_features": [
+    "kit pads (k)"
+   ],
+   "min_dna_version": 3,
+   "v2_note": "v2 DNA is the kick on its own (a tunable kick preset); the kit needs v3 kit mode.",
+   "windows_sounds": [
+    "ringout",
+    "recycle",
+    "xprecycle",
+    "xpstart"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "balloon",
+     "menu",
+     "start",
+     "infobar",
+     "critstop",
+     "ding"
+    ],
+    "library": [
+     "em_relay_click_a",
+     "ems_relay_tiny",
+     "key_mechanical_hard",
+     "floppy_seek_clunk",
+     "drop_single_a",
+     "glass_tap"
+    ],
+    "in_image_candidates": "Minesweeper tick (woodblock) and explosion (boom), Pinball flipper (SOUND104, tight thump) and bumper (SOUND12, metallic hit)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1); v3 kit: exact on 3.11; XP choke fades need phase-0 streamed gain",
+   "priority": 1,
+   "pack": "kit-manager",
+   "layers": 1,
+   "notes_before_stealing": 16
+  },
+  {
+   "id": "fav-drum-machines-bright-digital-kit",
+   "favorite": "drum-machines",
+   "role": "drums",
+   "name": "Bright Digital Kit",
+   "inspired_by": "TR-707 kit",
+   "character": "Brighter, shorter, cleaner.",
+   "dna": "balloon<<@40]#16F;A0R150V90",
+   "recipe": "balloon slower x2 cut after 40% 16rec fixed | atk 0ms rel 150ms vel 90%",
+   "root_K": null,
+   "v3_dna": "balloon<<@40]#3F/recycle>>@30]#4F/xprecycle>>>@30]#5F/infobar#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7",
+   "v3_recipe": "balloon slower x2 cut after 40% 3rec fixed / recycle faster x2 cut after 30% 4rec fixed / xprecycle faster x3 cut after 30% 5rec fixed / infobar 4rec | rel 200ms vel 90% pad 36 pad 35 level 80% pad 38 layer 2 pad 39 layer 2 start 30% level 90% pad 40 layer 2 tune +40c pad 42 layer 3 end 12% cut 1 pad 44 layer 3 end 5% level 70% cut 1 pad 46 layer 3 cut 1 pad 37 layer 4 pad 41-50 layer 4 root 45 pitch 100% range +-7",
+   "v3_features": [
+    "kit pads (k)"
+   ],
+   "min_dna_version": 3,
+   "v2_note": "v2 DNA is the kick on its own (a tunable kick preset); the kit needs v3 kit mode.",
+   "windows_sounds": [
+    "balloon",
+    "recycle",
+    "xprecycle",
+    "infobar"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "menu",
+     "xpstart",
+     "start",
+     "critstop",
+     "ding",
+     "ringin"
+    ],
+    "library": [
+     "em_relay_click_a",
+     "ems_relay_tiny",
+     "key_mechanical_hard",
+     "floppy_seek_clunk",
+     "drop_single_a",
+     "glass_tap"
+    ],
+    "in_image_candidates": "Minesweeper tick (woodblock) and explosion (boom), Pinball flipper (SOUND104, tight thump) and bumper (SOUND12, metallic hit)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1); v3 kit: exact on 3.11; XP choke fades need phase-0 streamed gain",
+   "priority": 1,
+   "pack": "kit-manager",
+   "layers": 1,
+   "notes_before_stealing": 16
+  },
+  {
+   "id": "fav-drum-machines-pop-studio-kit",
+   "favorite": "drum-machines",
+   "role": "drums",
+   "name": "Pop Studio Kit",
+   "inspired_by": "LinnDrum kit",
+   "character": "Fat snare with echo, mallet toms.",
+   "dna": "balloon<<<@40]#16F;A0R150V90",
+   "recipe": "balloon slower x3 cut after 40% 16rec fixed | atk 0ms rel 150ms vel 90%",
+   "root_K": null,
+   "v3_dna": "balloon<<<@40]#3F/recycle>@40]+E#4F/xprecycle>>>@40]#5F/hwfail<@30]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7",
+   "v3_recipe": "balloon slower x3 cut after 40% 3rec fixed / recycle faster cut after 40% louder echo 4rec fixed / xprecycle faster x3 cut after 40% 5rec fixed / hwfail slower cut after 30% 4rec | rel 200ms vel 90% pad 36 pad 35 level 80% pad 38 layer 2 pad 39 layer 2 start 30% level 90% pad 40 layer 2 tune +40c pad 42 layer 3 end 12% cut 1 pad 44 layer 3 end 5% level 70% cut 1 pad 46 layer 3 cut 1 pad 37 layer 4 pad 41-50 layer 4 root 45 pitch 100% range +-7",
+   "v3_features": [
+    "kit pads (k)"
+   ],
+   "min_dna_version": 3,
+   "v2_note": "v2 DNA is the kick on its own (a tunable kick preset); the kit needs v3 kit mode.",
+   "windows_sounds": [
+    "balloon",
+    "recycle",
+    "xprecycle",
+    "hwfail"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "menu",
+     "xpstart",
+     "start",
+     "infobar",
+     "critstop",
+     "ding"
+    ],
+    "library": [
+     "em_relay_click_a",
+     "ems_relay_tiny",
+     "key_mechanical_hard",
+     "floppy_seek_clunk",
+     "drop_single_a",
+     "glass_tap"
+    ],
+    "in_image_candidates": "Minesweeper tick (woodblock) and explosion (boom), Pinball flipper (SOUND104, tight thump) and bumper (SOUND12, metallic hit)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1); v3 kit: exact on 3.11; XP choke fades need phase-0 streamed gain",
+   "priority": 1,
+   "pack": "kit-manager",
+   "layers": 1,
+   "notes_before_stealing": 16
+  },
+  {
+   "id": "fav-drum-machines-twelve-bit-crate-kit",
+   "favorite": "drum-machines",
+   "role": "drums",
+   "name": "Twelve-Bit Crate Kit",
+   "inspired_by": "SP-1200 kit",
+   "character": "Only Windows 3.x sounds (ding kick, struck-chord snare, ringin hats), every one round-tripped through speed steps: aliasing as character.",
+   "dna": "ding<<<@35]><#16F;A0R150V90",
+   "recipe": "ding slower x3 cut after 35% faster slower 16rec fixed | atk 0ms rel 150ms vel 90%",
+   "root_K": null,
+   "v3_dna": "ding<<<@35]><#3F/chord>>@15]+E><#4F/ringin>>@12]><#5F/ding>>@4]><#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7",
+   "v3_recipe": "ding slower x3 cut after 35% faster slower 3rec fixed / chord faster x2 cut after 15% louder echo faster slower 4rec fixed / ringin faster x2 cut after 12% faster slower 5rec fixed / ding faster x2 cut after 4% faster slower 4rec | rel 200ms vel 90% pad 36 pad 35 level 80% pad 38 layer 2 pad 39 layer 2 start 30% level 90% pad 40 layer 2 tune +40c pad 42 layer 3 end 12% cut 1 pad 44 layer 3 end 5% level 70% cut 1 pad 46 layer 3 cut 1 pad 37 layer 4 pad 41-50 layer 4 root 45 pitch 100% range +-7",
+   "v3_features": [
+    "kit pads (k)"
+   ],
+   "min_dna_version": 3,
+   "v2_note": "v2 DNA is the kick on its own (a tunable kick preset); the kit needs v3 kit mode.",
+   "windows_sounds": [
+    "ding",
+    "chord",
+    "ringin"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "balloon",
+     "recycle",
+     "xprecycle",
+     "menu",
+     "xpstart",
+     "start"
+    ],
+    "library": [
+     "em_relay_click_a",
+     "ems_relay_tiny",
+     "key_mechanical_hard",
+     "floppy_seek_clunk",
+     "drop_single_a",
+     "glass_tap"
+    ],
+    "in_image_candidates": "Minesweeper tick (woodblock) and explosion (boom), Pinball flipper (SOUND104, tight thump) and bumper (SOUND12, metallic hit)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "both editions (every built-in name plays on both since 1.2.1); v3 kit: exact on 3.11; XP choke fades need phase-0 streamed gain",
+   "priority": 1,
+   "pack": "kit-manager",
+   "layers": 1,
+   "notes_before_stealing": 16
+  },
+  {
+   "id": "fav-drum-machines-swing-pad-kit",
+   "favorite": "drum-machines",
+   "role": "drums",
+   "name": "Swing Pad Kit",
+   "inspired_by": "MPC60 kit with swing",
+   "character": "Soft kit with 60 % swing on the grid.",
+   "dna": "balloon<<<@45]#16F;A0R150V90",
+   "recipe": "balloon slower x3 cut after 45% 16rec fixed | atk 0ms rel 150ms vel 90%",
+   "root_K": null,
+   "v3_dna": "balloon<<<@45]#3F/recycle>@30]+E#4F/xprecycle>>>@40]#5F/xpstart>#4;R200V90xs60k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7",
+   "v3_recipe": "balloon slower x3 cut after 45% 3rec fixed / recycle faster cut after 30% louder echo 4rec fixed / xprecycle faster x3 cut after 40% 5rec fixed / xpstart faster 4rec | rel 200ms vel 90% seq swing 60% pad 36 pad 35 level 80% pad 38 layer 2 pad 39 layer 2 start 30% level 90% pad 40 layer 2 tune +40c pad 42 layer 3 end 12% cut 1 pad 44 layer 3 end 5% level 70% cut 1 pad 46 layer 3 cut 1 pad 37 layer 4 pad 41-50 layer 4 root 45 pitch 100% range +-7",
+   "v3_features": [
+    "kit pads (k)",
+    "mine-grid sequencer/arp (x)"
+   ],
+   "min_dna_version": 3,
+   "v2_note": "v2 DNA is the kick on its own (a tunable kick preset); the kit needs v3 kit mode.",
+   "windows_sounds": [
+    "balloon",
+    "recycle",
+    "xprecycle",
+    "xpstart"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "menu",
+     "start",
+     "infobar",
+     "critstop",
+     "ding",
+     "ringin"
+    ],
+    "library": [
+     "em_relay_click_a",
+     "ems_relay_tiny",
+     "key_mechanical_hard",
+     "floppy_seek_clunk",
+     "drop_single_a",
+     "glass_tap"
+    ],
+    "in_image_candidates": "Minesweeper tick (woodblock) and explosion (boom), Pinball flipper (SOUND104, tight thump) and bumper (SOUND12, metallic hit)"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1); v3 kit: exact on 3.11; XP choke fades need phase-0 streamed gain",
+   "priority": 1,
+   "pack": "kit-manager",
+   "layers": 1,
+   "notes_before_stealing": 16
+  },
+  {
+   "id": "fav-labs-hush-felt-keys",
+   "favorite": "labs",
+   "role": "keys",
+   "name": "Hush Felt Keys",
+   "inspired_by": "LABS Soft Piano (felt piano)",
+   "character": "XP ding slowed and softened with a sine body.",
+   "dna": "xpding@30]<#8/print@10[@50]<<#6L30T1;A15D3000S20R1200V60K47",
+   "recipe": "xpding cut after 30% slower 8rec / print cut before 10% cut after 50% slower x2 6rec level 30% transpose +1 | atk 15ms dec 3s sus 20% rel 1.2s vel 60% root B2",
+   "root_K": 47,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "xpding",
+    "print"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "default",
+     "ding",
+     "chord",
+     "ringout"
+    ],
+    "library": [
+     "epiano_yamaha_vibe",
+     "epiano_bell_c3",
+     "harp_c5",
+     "organ_hammond_m100_flute_c",
+     "music_box_note"
+    ],
+    "in_image_candidates": "Messenger newemail.wav (mallet arpeggio), online.wav"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 1,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 6
+  },
+  {
+   "id": "fav-labs-frost-section",
+   "favorite": "labs",
+   "role": "strings",
+   "name": "Frost Section",
+   "inspired_by": "LABS Frozen Strings",
+   "character": "Violin section with paper-noise air, dry.",
+   "dna": "violin_section_sus_c4#10/xprecycle<<#4FL20;A200S90R800K60",
+   "recipe": "violin_section_sus_c4 10rec / xprecycle slower x2 4rec fixed level 20% | atk 200ms sus 90% rel 800ms root C4",
+   "root_K": 60,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "xprecycle"
+   ],
+   "library_sounds": [
+    "violin_section_sus_c4"
+   ],
+   "alternates": {
+    "windows": [
+     "startup",
+     "logon",
+     "logoff"
+    ],
+    "library": [
+     "cello_section_sus_c3",
+     "erhu_d3"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands",
+   "priority": 1,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 4
+  },
+  {
+   "id": "fav-labs-field-trumpets",
+   "favorite": "labs",
+   "role": "brass",
+   "name": "Field Trumpets",
+   "inspired_by": "LABS Trumpet Fields",
+   "character": "Trumpet slowed with echo, wide.",
+   "dna": "trumpet_sus_c4<E#10U3~14;A500S90R2000K48",
+   "recipe": "trumpet_sus_c4 slower echo 10rec unison 3 +-14c | atk 500ms sus 90% rel 2s root C3",
+   "root_K": 48,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [],
+   "library_sounds": [
+    "trumpet_sus_c4"
+   ],
+   "alternates": {
+    "windows": [
+     "tadaxp",
+     "tada",
+     "critstop"
+    ],
+    "library": [
+     "trombone_sus_c3",
+     "horn_sus_c3",
+     "tuba_sus_f1"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands",
+   "priority": 2,
+   "pack": "instruments-archive",
+   "layers": 1,
+   "notes_before_stealing": 3
+  },
+  {
+   "id": "fav-labs-glass-practice-piano",
+   "favorite": "labs",
+   "role": "keys",
+   "name": "Glass Practice Piano",
+   "inspired_by": "LABS Glass Piano",
+   "character": "Wine glass ping with a ding body.",
+   "dna": "wine_glass_small_ping#8/ding@20]#6L40;A0D2500S0R1200K79",
+   "recipe": "wine_glass_small_ping 8rec / ding cut after 20% 6rec level 40% | atk 0ms dec 2.5s sus 0% rel 1.2s root G5",
+   "root_K": 79,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "ding"
+   ],
+   "library_sounds": [
+    "wine_glass_small_ping"
+   ],
+   "alternates": {
+    "windows": [
+     "xpding",
+     "print",
+     "default",
+     "chord",
+     "ringout"
+    ],
+    "library": [
+     "epiano_yamaha_vibe",
+     "epiano_bell_c3",
+     "harp_c5",
+     "organ_hammond_m100_flute_c",
+     "music_box_note"
+    ],
+    "in_image_candidates": "Messenger newemail.wav (mallet arpeggio), online.wav"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands",
+   "priority": 2,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 6
+  },
+  {
+   "id": "fav-ableton-four-operator-bell",
+   "favorite": "ableton",
+   "role": "bell",
+   "name": "Four Operator Bell",
+   "inspired_by": "Operator FM bell",
+   "character": "Print bell with a slowed chimes partial.",
+   "dna": "print#8/chimes<#6L30T3;A0D3000S0R1500K82",
+   "recipe": "print 8rec / chimes slower 6rec level 30% transpose +3 | atk 0ms dec 3s sus 0% rel 1.5s root A#5",
+   "root_K": 82,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "print",
+    "chimes"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "ding",
+     "default",
+     "error",
+     "exclaim",
+     "xpnotify"
+    ],
+    "library": [
+     "wine_glass_medium_ping",
+     "crystal_bell_bb5",
+     "glockenspiel_c6",
+     "ems_fm_register_bell_c6",
+     "music_box_note"
+    ],
+    "in_image_candidates": "NetMeeting Blip.wav, Messenger online.wav"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "both editions (every built-in name plays on both since 1.2.1)",
+   "priority": 1,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 6
+  },
+  {
+   "id": "fav-ableton-struck-bar-mallet",
+   "favorite": "ableton",
+   "role": "mallet",
+   "name": "Struck Bar Mallet",
+   "inspired_by": "Collision modelled mallet",
+   "character": "Relay marimba with a click.",
+   "dna": "ems_relay_marimba_c4#12/menu#4FL30;A0R700K60",
+   "recipe": "ems_relay_marimba_c4 12rec / menu 4rec fixed level 30% | atk 0ms rel 700ms root C4",
+   "root_K": 60,
+   "v3_dna": null,
+   "v3_recipe": null,
+   "v3_features": [],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "menu"
+   ],
+   "library_sounds": [
+    "ems_relay_marimba_c4"
+   ],
+   "alternates": {
+    "windows": [
+     "xpding",
+     "hwfail",
+     "default"
+    ],
+    "library": [
+     "marimba_c4",
+     "xylophone_c5",
+     "vibraphone_c_low"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "xp",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands",
+   "priority": 2,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 4
+  },
+  {
+   "id": "fav-ableton-drift-bass",
+   "favorite": "ableton",
+   "role": "bass",
+   "name": "Drift Bass",
+   "inspired_by": "Drift analog bass",
+   "character": "Short buzz with sine sub, mono.",
+   "dna": "ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<#8/ringout@20[@40]@0CP@0CP@0CP<<<#6L60T2;A0D400S50R80K35",
+   "recipe": "ringout cut before 150ms cut after 20ms cut after 20% double x9 slower x2 8rec / ringout cut before 20% cut after 40% double x3 slower x3 6rec level 60% transpose +2 | atk 0ms dec 400ms sus 50% rel 80ms root B1",
+   "root_K": 35,
+   "v3_dna": "ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<#8Nm/ringout@20[@40]@0CP@0CP@0CP<<<#6L60T2Nm;A0D400S50R80K35",
+   "v3_recipe": "ringout cut before 150ms cut after 20ms cut after 20% double x9 slower x2 8rec mono / ringout cut before 20% cut after 40% double x3 slower x3 6rec level 60% transpose +2 mono | atk 0ms dec 400ms sus 50% rel 80ms root B1",
+   "v3_features": [
+    "voice mode (mono/legato/glide)"
+   ],
+   "min_dna_version": 2,
+   "windows_sounds": [
+    "ringout"
+   ],
+   "library_sounds": [],
+   "alternates": {
+    "windows": [
+     "xpringout",
+     "batlow",
+     "critstop",
+     "balloon",
+     "xpding",
+     "default"
+    ],
+    "library": [
+     "contrabass_pizz_e1",
+     "tuba_sus_f1",
+     "ems_motor_drone_c3",
+     "em_hum_mains_loop",
+     "ems_ks_wire_c3"
+    ],
+    "in_image_candidates": null
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "both editions (every built-in name plays on both since 1.2.1); v3 glide/wow: smooth on 3.11 (card rate), a planned staircase on XP after phase 0",
+   "priority": 2,
+   "pack": "instruments-archive",
+   "layers": 2,
+   "notes_before_stealing": 6
+  },
+  {
+   "id": "fav-ableton-key-slice-loop",
+   "favorite": "ableton",
+   "role": "perc",
+   "name": "Key Slice Loop",
+   "inspired_by": "Simpler slicing",
+   "character": "Hold-music loop sliced by key (v3 window).",
+   "dna": "holdmusic_fs_hold_music#12;A0R100",
+   "recipe": "holdmusic_fs_hold_music 12rec | atk 0ms rel 100ms",
+   "root_K": null,
+   "v3_dna": "holdmusic_fs_hold_music#12Ws0~.95l.02Yk;A0R100",
+   "v3_recipe": "holdmusic_fs_hold_music 12rec start 0-95% length 2% seed key | atk 0ms rel 100ms",
+   "v3_features": [
+    "per-voice randomness",
+    "window (start/end, random, tape length)"
+   ],
+   "min_dna_version": 2,
+   "windows_sounds": [],
+   "library_sounds": [
+    "holdmusic_fs_hold_music"
+   ],
+   "alternates": {
+    "windows": [
+     "menu",
+     "xpstart",
+     "infobar",
+     "balloon",
+     "popup",
+     "default"
+    ],
+    "library": [
+     "em_relay_click_a",
+     "ems_relay_tiny",
+     "key_mechanical_hard",
+     "mouse_click",
+     "bubble_pop_a",
+     "glass_tap"
+    ],
+    "in_image_candidates": "Minesweeper tick, Pinball bumper (SOUND12), NetMeeting Blip.wav"
+   },
+   "sndrec_feel": "",
+   "edition_badge": "w31",
+   "ships": "library disc: XP now; BASILISK 16 when its library drive lands",
+   "priority": 1,
+   "pack": "instruments-archive",
+   "layers": 1,
+   "notes_before_stealing": 12
+  }
+ ]
+}

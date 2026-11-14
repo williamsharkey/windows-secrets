@@ -1,0 +1,3 @@
+sources-raw/
+sources/*
+!sources/manifest.json

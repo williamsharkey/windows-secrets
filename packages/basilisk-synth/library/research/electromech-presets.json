@@ -1,0 +1,2829 @@
+{
+ "version": 1,
+ "category": "electromech",
+ "notes": [
+  "DNA v2 strings for instruments (DNA.md 5); kit maps are DNA v3 kit DNAs (PRESET-ENGINE-2.md 15.2): one k token per pad, kit strips built from Insert File segments (j = 1 the source, 2.. each insert).",
+  "Every NAME is a library sound on the disc: em_* recordings, ems_* synthesized, emh_* hybrids (catalog/electromech.json). Instruments set K to the first layer's root; other pitched layers get T = K - their root; unpitched layers are F (fixed).",
+  "Pitched sounds whose root is above C6 (or below C1) are folded by octaves into the playable range: the key plays the right pitch class, in the sound's own octave. Pitched kit pads get their root folded to the octave nearest the pad's key range.",
+  "Validated with design/v3/dna3.cpp (parse3, canonical3) against main's core/dna.cpp (-DCORE_KEEPS=1), with the full library name list: every source and insert resolves, every pad's layer and segment exist, length <= 1024.",
+  "The 3.11 edition has no library sounds of its own beyond its library drive; these presets need the library disc (both editions read it, DNA.md 5.5)."
+ ],
+ "instruments": [
+  {
+   "category": "Mallets",
+   "name": "Relay Mallet",
+   "dna": "ems_relay_mallet_c5#12/ems_relay_pull#4L55Q-25F;K72A0R450V90",
+   "sources": [
+    "ems_relay_mallet_c5",
+    "ems_relay_pull"
+   ],
+   "root_note": 72,
+   "description": "A relay armature striking a tuned steel bar; the modelled pull-in click rides on every note.",
+   "inspired_by": "relay computers (Z3, Bell Model V)",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Mallets",
+   "name": "Relay Marimba",
+   "dna": "ems_relay_marimba_c4#12U2~4/ems_relay_release#4L40Q25F;R350V95",
+   "sources": [
+    "ems_relay_marimba_c4",
+    "ems_relay_release"
+   ],
+   "root_note": 60,
+   "description": "Undercut-bar ratios struck by a relay; the release tick follows as a second, softer click.",
+   "inspired_by": "Harvard Mark I counter wheels",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Mallets",
+   "name": "Relay Ping",
+   "dna": "emh_relay_ping_e5#14U2~6;K76R500V90",
+   "sources": [
+    "emh_relay_ping_e5"
+   ],
+   "root_note": 76,
+   "description": "Hybrid: a recorded relay click plus a tuned resonator ping.",
+   "inspired_by": "telephone relay + resonator",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 14,
+   "works_on_311": false
+  },
+  {
+   "category": "Mallets",
+   "name": "Strowger Glock",
+   "dna": "ems_relay_mallet_c5#10H0,12L80/ems_stepper_step#6L45F;K72R600",
+   "sources": [
+    "ems_relay_mallet_c5",
+    "ems_stepper_step"
+   ],
+   "root_note": 72,
+   "description": "Octave-doubled steel bar with a stepping-switch 'chunk' as the mallet.",
+   "inspired_by": "Strowger selectors",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Mallets",
+   "name": "Crossbar Gong",
+   "dna": "emh_crossbar_gong_c3#12/ems_crossbar_select#4L50O0F;K48R1500V80",
+   "sources": [
+    "emh_crossbar_gong_c3",
+    "ems_crossbar_select"
+   ],
+   "root_note": 48,
+   "description": "Hybrid: a crossbar operation with a struck gong body tuned to the key.",
+   "inspired_by": "No. 5 crossbar",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Bells",
+   "name": "Teletype Bell Keyboard",
+   "dna": "ems_ttybell_g5#12/ems_selector_magnet#4L45F;K79R900V85",
+   "sources": [
+    "ems_ttybell_g5",
+    "ems_selector_magnet"
+   ],
+   "root_note": 79,
+   "description": "The BEL bell as a keyboard; each note is preceded by the selector magnet's code clicks.",
+   "inspired_by": "Teletype Model 33 BEL",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Bells",
+   "name": "Exchange Ringer",
+   "dna": "ems_exchange_bell_c4#12H0,12L85/ems_relay_pull#4L35F;R1800V80",
+   "sources": [
+    "ems_exchange_bell_c4",
+    "ems_relay_pull"
+   ],
+   "root_note": 60,
+   "description": "Subscriber-set gong partials, octave-doubled, with the ringer relay's pull.",
+   "inspired_by": "Western Electric ringers",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Bells",
+   "name": "Register Drawer Bell",
+   "dna": "ems_fm_register_bell_c6#10/em_adder_drawer_a#6L50Q30F;K84R700V90",
+   "sources": [
+    "ems_fm_register_bell_c6",
+    "em_adder_drawer_a"
+   ],
+   "root_note": 84,
+   "description": "FM drawer bell with a recorded drawer/mechanism hit.",
+   "inspired_by": "NCR cash registers",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Bells",
+   "name": "Typewriter Bell Keys",
+   "dna": "em_typewriter_bell_b#12;K73R600V90",
+   "sources": [
+    "em_typewriter_bell_b"
+   ],
+   "root_note": 73,
+   "description": "A recorded typewriter margin bell, key-tracked.",
+   "inspired_by": "manual typewriters",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 12,
+   "works_on_311": false
+  },
+  {
+   "category": "Bells",
+   "name": "Margin Bell Lo-Fi",
+   "dna": "ems_crushed_tty_bell#10U2~8/ems_typebar#6L40F;K78R700",
+   "sources": [
+    "ems_crushed_tty_bell",
+    "ems_typebar"
+   ],
+   "root_note": 78,
+   "description": "Bitcrushed teletype bell over a typebar strike.",
+   "inspired_by": "bitcrushed BEL",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Bells",
+   "name": "GPO Alarm Bell",
+   "dna": "em_gpo_alarm_bell#8Ja0,100.4000,80;R600V70",
+   "sources": [
+    "em_gpo_alarm_bell"
+   ],
+   "root_note": 60,
+   "description": "The exchange alarm bell from the 1933 GPO film, playable as a sustained pitched bell.",
+   "inspired_by": "GPO director exchange",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 8,
+   "works_on_311": false
+  },
+  {
+   "category": "Bells",
+   "name": "Signal Bell",
+   "dna": "em_signal_bell#12/ems_clutch_trip#4L30F;K82R1200",
+   "sources": [
+    "em_signal_bell",
+    "ems_clutch_trip"
+   ],
+   "root_note": 82,
+   "description": "A recorded signal bell with a clutch-trip click.",
+   "inspired_by": "ship and signal bells",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Bells",
+   "name": "Phone Ring Keys",
+   "dna": "em_ring_we500#12Ja0,100.1500,70;K80R500V80",
+   "sources": [
+    "em_ring_we500"
+   ],
+   "root_note": 80,
+   "description": "Western Electric 500 ringer as a pitched trill.",
+   "inspired_by": "Bell System 500 set",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 12,
+   "works_on_311": false
+  },
+  {
+   "category": "Leads",
+   "name": "Line Printer Lead",
+   "dna": "ems_lineprinter_tone_a3#12/ems_print_hammer#4L45F;K57A5R180V80",
+   "sources": [
+    "ems_lineprinter_tone_a3",
+    "ems_print_hammer"
+   ],
+   "root_note": 57,
+   "description": "Hammer volleys repeating at the note's rate (1403 'music'); a single hammer adds the attack.",
+   "inspired_by": "IBM 1403 music",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Leads",
+   "name": "1403 Chorus",
+   "dna": "ems_lineprinter_tone_a3#16H0,12U2~12;K57A20R300V70",
+   "sources": [
+    "ems_lineprinter_tone_a3"
+   ],
+   "root_note": 57,
+   "description": "Octave-stacked, detuned printer-hammer buzz.",
+   "inspired_by": "IBM 1403 music",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Leads",
+   "name": "Ferranti Hoot",
+   "dna": "ems_ferranti_hoot_c4#16;A3R60V60",
+   "sources": [
+    "ems_ferranti_hoot_c4"
+   ],
+   "root_note": 60,
+   "description": "Square pulses quantized to a 240 us beat, the Mark 1's out-of-tune hoot.",
+   "inspired_by": "Ferranti Mark 1 (1951)",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Leads",
+   "name": "CSIRAC Pulse",
+   "dna": "ems_csirac_pulse_e4#16;K64A2R80V60",
+   "sources": [
+    "ems_csirac_pulse_e4"
+   ],
+   "root_note": 64,
+   "description": "One-sample speaker pulses from a timing loop, crushed to 4 bits.",
+   "inspired_by": "CSIRAC (1951)",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Leads",
+   "name": "Modem Lead",
+   "dna": "ems_fm_bell103_lead#12U2~10;K56A10R200",
+   "sources": [
+    "ems_fm_bell103_lead"
+   ],
+   "root_note": 56,
+   "description": "FM built from the Bell 103 mark/space pair, through a telephone band.",
+   "inspired_by": "Bell 103 modem",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 12,
+   "works_on_311": false
+  },
+  {
+   "category": "Leads",
+   "name": "RTTY Carrier Lead",
+   "dna": "ems_rtty_idle#12;K84A20R150V70",
+   "sources": [
+    "ems_rtty_idle"
+   ],
+   "root_note": 84,
+   "description": "The steady RTTY mark carrier as a pure, drifting lead.",
+   "inspired_by": "radioteletype",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 12,
+   "works_on_311": false
+  },
+  {
+   "category": "Leads",
+   "name": "Morse Buzzer Lead",
+   "dna": "em_morse_buzzer_a#14;A5R100V60",
+   "sources": [
+    "em_morse_buzzer_a"
+   ],
+   "root_note": 60,
+   "description": "A recorded Morse practice buzzer, key-tracked.",
+   "inspired_by": "Signal Electric R-68",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 14,
+   "works_on_311": false
+  },
+  {
+   "category": "Leads",
+   "name": "Modem Beep Lead",
+   "dna": "em_modem_beep#16;K76R80V70",
+   "sources": [
+    "em_modem_beep"
+   ],
+   "root_note": 76,
+   "description": "A recorded modem beep.",
+   "inspired_by": "modems",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Voices",
+   "name": "1961 Vowel",
+   "dna": "ems_704_vowel_a3#12U3~8;K57A40R400V70",
+   "sources": [
+    "ems_704_vowel_a3"
+   ],
+   "root_note": 57,
+   "description": "Buzz source through 'ah' formants, a nod to the IBM 7094's 'Daisy Bell'.",
+   "inspired_by": "Bell Labs 1961",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 12,
+   "works_on_311": false
+  },
+  {
+   "category": "Plucks",
+   "name": "Contact Spring",
+   "dna": "ems_ks_spring_g3#12U2~5/ems_relay_release#4L35F;K55R350V90",
+   "sources": [
+    "ems_ks_spring_g3",
+    "ems_relay_release"
+   ],
+   "root_note": 55,
+   "description": "Karplus-Strong relay contact spring with a release tick.",
+   "inspired_by": "relay contact springs",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Plucks",
+   "name": "Governor Spring Bass",
+   "dna": "ems_ks_wire_c3#12/ems_rotary_dial@10]#4L25F;K48R300V90",
+   "sources": [
+    "ems_ks_wire_c3",
+    "ems_rotary_dial"
+   ],
+   "root_note": 48,
+   "description": "A long, dark Karplus-Strong spring; a slice of the dial's wind-up for the attack.",
+   "inspired_by": "rotary dial governor",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Plucks",
+   "name": "Typewriter Pluck",
+   "dna": "emh_typewriter_ks#14;K62R400V95",
+   "sources": [
+    "emh_typewriter_ks"
+   ],
+   "root_note": 62,
+   "description": "Hybrid: a recorded typewriter key with a plucked spring tail.",
+   "inspired_by": "manual typewriters",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 14,
+   "works_on_311": false
+  },
+  {
+   "category": "Keys",
+   "name": "Sounder Keys",
+   "dna": "ems_fm_sounder_c4#12/ems_telegraph_sounder#4L50F;R300V90",
+   "sources": [
+    "ems_fm_sounder_c4",
+    "ems_telegraph_sounder"
+   ],
+   "root_note": 60,
+   "description": "A hollow FM tone with the sounder's click/clack on every key.",
+   "inspired_by": "Morse sounders",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Keys",
+   "name": "Tabulator Arp",
+   "dna": "ems_relay_mallet_c5#4/ems_relay_mallet_c5#4O133Q-40T7/ems_relay_mallet_c5#4O267Q40T12/ems_tabulator_cycle#4L55F;K72R250V90",
+   "sources": [
+    "ems_relay_mallet_c5",
+    "ems_relay_mallet_c5",
+    "ems_relay_mallet_c5",
+    "ems_tabulator_cycle"
+   ],
+   "root_note": 72,
+   "description": "One key plays a three-step arpeggio (root, fifth, octave) at the 407's 150-per-minute cycle (133 ms steps), over the tabulator's own cycle. The transposes of layers 2 and 3 are set below.",
+   "inspired_by": "IBM 407 accounting machine",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Drones",
+   "name": "Drum Memory Drone",
+   "dna": "ems_drum_memory#10Ja0,0.300,100;K56R900V50",
+   "sources": [
+    "ems_drum_memory"
+   ],
+   "root_note": 56,
+   "description": "Drum whine, bearing hiss and head-select relays (IBM 650 drum at 12,500 rpm).",
+   "inspired_by": "IBM 650 drum",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 10,
+   "works_on_311": false
+  },
+  {
+   "category": "Drones",
+   "name": "Motor Room",
+   "dna": "ems_motor_drone_c3#10U2~10Ja0,0.600,100/ems_tty_motor#6L35Ja0,0.800,100F;K48R1200V40",
+   "sources": [
+    "ems_motor_drone_c3",
+    "ems_tty_motor"
+   ],
+   "root_note": 48,
+   "description": "Additive motor drone tuned to the key, over a teletype motor bed.",
+   "inspired_by": "unit-record machine rooms",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Drones",
+   "name": "Gear Whine Pad",
+   "dna": "ems_motor_whine_a4#16U4~18Ja0,0.800,100;K69R1500V40",
+   "sources": [
+    "ems_motor_whine_a4"
+   ],
+   "root_note": 69,
+   "description": "Gear and capstan whine with speed hunting, four-voice unison.",
+   "inspired_by": "tape and drum drives",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Drones",
+   "name": "Hum Bass",
+   "dna": "ems_mains_hum#8Ja0,0.30,100/ems_line_crackle#4L25F;K35R200V60",
+   "sources": [
+    "ems_mains_hum",
+    "ems_line_crackle"
+   ],
+   "root_note": 35,
+   "description": "60 Hz line hum and its odd harmonics as a bass; crackle underneath.",
+   "inspired_by": "power-line induction",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 12,
+   "works_on_311": false
+  },
+  {
+   "category": "Drones",
+   "name": "Transformer Bass",
+   "dna": "ems_hum_buzz_50#12Ja0,0.40,100;K31R250V60",
+   "sources": [
+    "ems_hum_buzz_50"
+   ],
+   "root_note": 31,
+   "description": "50 Hz magnetostriction buzz as a growling bass.",
+   "inspired_by": "exchange power rooms",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 12,
+   "works_on_311": false
+  },
+  {
+   "category": "Drones",
+   "name": "Tube Hum Pad",
+   "dna": "em_hum_tube_loop#12U2~12Ja0,0.500,100;K35R900V40",
+   "sources": [
+    "em_hum_tube_loop"
+   ],
+   "root_note": 35,
+   "description": "A recorded tube-radio hum, key-tracked.",
+   "inspired_by": "valve equipment",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 12,
+   "works_on_311": false
+  },
+  {
+   "category": "Drones",
+   "name": "Electric Bell Drone",
+   "dna": "em_electric_bell_loop#10Ja0,0.200,100;K84R500V50",
+   "sources": [
+    "em_electric_bell_loop"
+   ],
+   "root_note": 84,
+   "description": "A recorded trembler bell as a pitched, buzzing drone.",
+   "inspired_by": "electric bells",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 10,
+   "works_on_311": false
+  },
+  {
+   "category": "Pads",
+   "name": "Dial Tone Organ",
+   "dna": "ems_dial_tone#10Ja0,0.60,100/ems_ringmod_dial_tone#6L50Q40;K69R400V40",
+   "sources": [
+    "ems_dial_tone",
+    "ems_ringmod_dial_tone"
+   ],
+   "root_note": 69,
+   "description": "350 + 440 Hz dial tone as an organ, with a ring-modulated copy.",
+   "inspired_by": "Bell System precise tones",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "Pads",
+   "name": "Switchroom Pad",
+   "dna": "emh_switchroom_drone#8Ja0,0.900,100F/ems_motor_drone_c3#8L60Ja0,0.1200,100;K48R1500V30",
+   "sources": [
+    "emh_switchroom_drone",
+    "ems_motor_drone_c3"
+   ],
+   "root_note": 48,
+   "description": "Hybrid switchboard relays over a 50 Hz drone, with a pitched motor pad.",
+   "inspired_by": "Strowger switch rooms",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "FX",
+   "name": "Newsroom",
+   "dna": "ems_tty_burst#8Ja0,0.200,100Q-40F/em_tty_machine_loop#8L70Q40F;R800V60",
+   "sources": [
+    "ems_tty_burst",
+    "em_tty_machine_loop"
+   ],
+   "root_note": 60,
+   "description": "Two teletypes printing, one synthetic and one recorded, panned apart.",
+   "inspired_by": "wire-service newsrooms",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "FX",
+   "name": "Relay Rain",
+   "dna": "ems_relay_rack_chatter#8U2~30Q-50F/em_relays_fast_loop#8Q50L80F;R600V70m1=0m11Q-100,100m12Q100,-100",
+   "sources": [
+    "ems_relay_rack_chatter",
+    "em_relays_fast_loop"
+   ],
+   "root_note": 60,
+   "description": "A rack of relays operating, wide. Mod wheel (macro 1) swings the pan.",
+   "inspired_by": "relay computers",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "FX",
+   "name": "Digital Trunk",
+   "dna": "emh_modem_crush#8Q-30F/ems_crushed_line_noise#8L60Q30F;R400V60",
+   "sources": [
+    "emh_modem_crush",
+    "ems_crushed_line_noise"
+   ],
+   "root_note": 60,
+   "description": "Hybrid: a recorded dial-up handshake bitcrushed to 4 bits, over crushed line noise.",
+   "inspired_by": "early digital carrier",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  },
+  {
+   "category": "FX",
+   "name": "Party Line",
+   "dna": "ems_crosstalk#6F/ems_line_crackle#5L80F/ems_mains_hum#5L40;K35R500V50m1=30m11L20,200m12L20,200",
+   "sources": [
+    "ems_crosstalk",
+    "ems_line_crackle",
+    "ems_mains_hum"
+   ],
+   "root_note": 35,
+   "description": "Crosstalk murmur, crackle and hum: a noisy party line. The hum layer follows the key.",
+   "inspired_by": "rural party lines",
+   "min_dna_version": 2,
+   "validated": true,
+   "recorders": 16,
+   "works_on_311": false
+  }
+ ],
+ "kits": [
+  {
+   "name": "Relay Room",
+   "category": "Kits: Pioneer",
+   "description": "Zuse/Bell Labs relay racks: pull and release pairs as velocity layers, chatter loops in a cut group, a pitched relay mallet on the upper keys.",
+   "dna": "ems_relay_pull@t30000Iems_relay_release@t30000Iems_relay_pair@t30000Iems_relay_bouncy@t30000Iems_relay_tiny@t30000Iems_contactor_pull@t30000Iems_contactor_release@t30000Iem_relay_click_a@t30000Iem_relay_click_b@t30000Iem_relay_hs_a@t30000Iem_relay_large_a@t30000Iem_contactor_a#10/ems_relay_rack_chatter#2/ems_relay_buzz_ac#2/ems_relay_mallet_c5#2;R200V90k36j6k37j7k38j1y1,100k38j4i120y101,127k39j2k40j3k41j5k42j8h70k43j9h130k44j10k45j11k46j12k47l2gc1k48l3gc1k60,72l4r72p100w12",
+   "pads": [
+    {
+     "notes": "36",
+     "sound": "ems_contactor_pull",
+     "layer": 1,
+     "segment": 6,
+     "subkeys": "",
+     "label": "Contactor pull",
+     "pitched": false,
+     "token": "k36j6"
+    },
+    {
+     "notes": "37",
+     "sound": "ems_contactor_release",
+     "layer": 1,
+     "segment": 7,
+     "subkeys": "",
+     "label": "Contactor release",
+     "pitched": false,
+     "token": "k37j7"
+    },
+    {
+     "notes": "38",
+     "sound": "ems_relay_pull",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "y1,100",
+     "label": "Relay pull (soft)",
+     "pitched": false,
+     "token": "k38j1y1,100"
+    },
+    {
+     "notes": "38",
+     "sound": "ems_relay_bouncy",
+     "layer": 1,
+     "segment": 4,
+     "subkeys": "i120y101,127",
+     "label": "Relay pull (hard, bouncy)",
+     "pitched": false,
+     "token": "k38j4i120y101,127"
+    },
+    {
+     "notes": "39",
+     "sound": "ems_relay_release",
+     "layer": 1,
+     "segment": 2,
+     "subkeys": "",
+     "label": "Relay release",
+     "pitched": false,
+     "token": "k39j2"
+    },
+    {
+     "notes": "40",
+     "sound": "ems_relay_pair",
+     "layer": 1,
+     "segment": 3,
+     "subkeys": "",
+     "label": "Relay operate+release",
+     "pitched": false,
+     "token": "k40j3"
+    },
+    {
+     "notes": "41",
+     "sound": "ems_relay_tiny",
+     "layer": 1,
+     "segment": 5,
+     "subkeys": "",
+     "label": "Miniature relay",
+     "pitched": false,
+     "token": "k41j5"
+    },
+    {
+     "notes": "42",
+     "sound": "em_relay_click_a",
+     "layer": 1,
+     "segment": 8,
+     "subkeys": "h70",
+     "label": "Relay click A",
+     "pitched": false,
+     "token": "k42j8h70"
+    },
+    {
+     "notes": "43",
+     "sound": "em_relay_click_b",
+     "layer": 1,
+     "segment": 9,
+     "subkeys": "h130",
+     "label": "Relay click B",
+     "pitched": false,
+     "token": "k43j9h130"
+    },
+    {
+     "notes": "44",
+     "sound": "em_relay_hs_a",
+     "layer": 1,
+     "segment": 10,
+     "subkeys": "",
+     "label": "High-speed relay",
+     "pitched": false,
+     "token": "k44j10"
+    },
+    {
+     "notes": "45",
+     "sound": "em_relay_large_a",
+     "layer": 1,
+     "segment": 11,
+     "subkeys": "",
+     "label": "Large relay",
+     "pitched": false,
+     "token": "k45j11"
+    },
+    {
+     "notes": "46",
+     "sound": "em_contactor_a",
+     "layer": 1,
+     "segment": 12,
+     "subkeys": "",
+     "label": "Contactor (rec)",
+     "pitched": false,
+     "token": "k46j12"
+    },
+    {
+     "notes": "47",
+     "sound": "ems_relay_rack_chatter",
+     "layer": 2,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Rack chatter (held)",
+     "pitched": false,
+     "token": "k47l2gc1"
+    },
+    {
+     "notes": "48",
+     "sound": "ems_relay_buzz_ac",
+     "layer": 3,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "AC relay buzz (held)",
+     "pitched": false,
+     "token": "k48l3gc1"
+    },
+    {
+     "notes": "60,72",
+     "sound": "ems_relay_mallet_c5",
+     "layer": 4,
+     "segment": 0,
+     "subkeys": "r72p100w12",
+     "label": "Relay mallet (pitched, +-12)",
+     "pitched": true,
+     "token": "k60,72l4r72p100w12"
+    }
+   ],
+   "sources": [
+    "em_contactor_a",
+    "em_relay_click_a",
+    "em_relay_click_b",
+    "em_relay_hs_a",
+    "em_relay_large_a",
+    "ems_contactor_pull",
+    "ems_contactor_release",
+    "ems_relay_bouncy",
+    "ems_relay_buzz_ac",
+    "ems_relay_mallet_c5",
+    "ems_relay_pair",
+    "ems_relay_pull",
+    "ems_relay_rack_chatter",
+    "ems_relay_release",
+    "ems_relay_tiny"
+   ],
+   "min_dna_version": 3,
+   "format": "PRESET-ENGINE-2.md 15.2 (k pad tokens)",
+   "validated": true,
+   "recorders": 16
+  },
+  {
+   "name": "Card Room",
+   "category": "Kits: Pioneer",
+   "description": "Hollerith to IBM 407: keypunch, card feed and stacker, tabulator cycle, sorter run, Hollerith bell. Loops are gated in one cut group.",
+   "dna": "ems_card_punch_col@t30000Iems_card_feed@t30000Iems_card_stack@t30000Iems_punch_magnet@t30000Iems_tabulator_cycle@t30000Iem_papertape_a@t30000Iems_adding_machine_pull@t30000Iem_adder_ratchet_a@t30000Iems_clutch_trip@t30000Iems_typewriter_bell#10/ems_card_punch_dup#2/ems_sorter_run#2/ems_tabulator_run#2;R200V90k36j5k37j3k38j1k39j4k40j2k41j9k42j8k43j7k44j6k46l2gc1k47l3gc1k48l4gc1k72,79j10r79p100w4",
+   "pads": [
+    {
+     "notes": "36",
+     "sound": "ems_tabulator_cycle",
+     "layer": 1,
+     "segment": 5,
+     "subkeys": "",
+     "label": "Tabulator cycle",
+     "pitched": false,
+     "token": "k36j5"
+    },
+    {
+     "notes": "37",
+     "sound": "ems_card_stack",
+     "layer": 1,
+     "segment": 3,
+     "subkeys": "",
+     "label": "Stacker thump",
+     "pitched": false,
+     "token": "k37j3"
+    },
+    {
+     "notes": "38",
+     "sound": "ems_card_punch_col",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "",
+     "label": "Keypunch column",
+     "pitched": false,
+     "token": "k38j1"
+    },
+    {
+     "notes": "39",
+     "sound": "ems_punch_magnet",
+     "layer": 1,
+     "segment": 4,
+     "subkeys": "",
+     "label": "Punch magnet",
+     "pitched": false,
+     "token": "k39j4"
+    },
+    {
+     "notes": "40",
+     "sound": "ems_card_feed",
+     "layer": 1,
+     "segment": 2,
+     "subkeys": "",
+     "label": "Card feed",
+     "pitched": false,
+     "token": "k40j2"
+    },
+    {
+     "notes": "41",
+     "sound": "ems_clutch_trip",
+     "layer": 1,
+     "segment": 9,
+     "subkeys": "",
+     "label": "Clutch trip",
+     "pitched": false,
+     "token": "k41j9"
+    },
+    {
+     "notes": "42",
+     "sound": "em_adder_ratchet_a",
+     "layer": 1,
+     "segment": 8,
+     "subkeys": "",
+     "label": "Ratchet",
+     "pitched": false,
+     "token": "k42j8"
+    },
+    {
+     "notes": "43",
+     "sound": "ems_adding_machine_pull",
+     "layer": 1,
+     "segment": 7,
+     "subkeys": "",
+     "label": "Adding machine pull",
+     "pitched": false,
+     "token": "k43j7"
+    },
+    {
+     "notes": "44",
+     "sound": "em_papertape_a",
+     "layer": 1,
+     "segment": 6,
+     "subkeys": "",
+     "label": "Paper",
+     "pitched": false,
+     "token": "k44j6"
+    },
+    {
+     "notes": "46",
+     "sound": "ems_card_punch_dup",
+     "layer": 2,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Duplicating (held)",
+     "pitched": false,
+     "token": "k46l2gc1"
+    },
+    {
+     "notes": "47",
+     "sound": "ems_sorter_run",
+     "layer": 3,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Sorter 1000/min (held)",
+     "pitched": false,
+     "token": "k47l3gc1"
+    },
+    {
+     "notes": "48",
+     "sound": "ems_tabulator_run",
+     "layer": 4,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "407 report run (held)",
+     "pitched": false,
+     "token": "k48l4gc1"
+    },
+    {
+     "notes": "72,79",
+     "sound": "ems_typewriter_bell",
+     "layer": 1,
+     "segment": 10,
+     "subkeys": "r79p100w4",
+     "label": "Hollerith counter bell (pitched, +-4)",
+     "pitched": true,
+     "token": "k72,79j10r79p100w4"
+    }
+   ],
+   "sources": [
+    "em_adder_ratchet_a",
+    "em_papertape_a",
+    "ems_adding_machine_pull",
+    "ems_card_feed",
+    "ems_card_punch_col",
+    "ems_card_punch_dup",
+    "ems_card_stack",
+    "ems_clutch_trip",
+    "ems_punch_magnet",
+    "ems_sorter_run",
+    "ems_tabulator_cycle",
+    "ems_tabulator_run",
+    "ems_typewriter_bell"
+   ],
+   "min_dna_version": 3,
+   "format": "PRESET-ENGINE-2.md 15.2 (k pad tokens)",
+   "validated": true,
+   "recorders": 16
+  },
+  {
+   "name": "Teletype 33",
+   "category": "Kits: Pioneer",
+   "description": "A Model 33 ASR as a kit: characters, CR, LF, bell, motor start and stop (one cut group), print bursts and the tape punch.",
+   "dna": "ems_tty_char@t30000Iems_tty_cr@t30000Iems_tty_lf@t30000Iems_selector_magnet@t30000Iems_tty_bell@t30000Iems_typebar@t30000Iem_tty_machine_hit_a@t30000Iem_tty_machine_hit_b#9/ems_tty_motor_start#2/ems_tty_motor_stop#1/ems_tty_burst#2/ems_tape_punch_burst#2;R200V90k36j2k37j3k38j1k39j7k40j8k41j4k42j6k44l2c2k45l3c2k46l4gc1k47l5gc1k72,84j5r78p100w7",
+   "pads": [
+    {
+     "notes": "36",
+     "sound": "ems_tty_cr",
+     "layer": 1,
+     "segment": 2,
+     "subkeys": "",
+     "label": "Carriage return",
+     "pitched": false,
+     "token": "k36j2"
+    },
+    {
+     "notes": "37",
+     "sound": "ems_tty_lf",
+     "layer": 1,
+     "segment": 3,
+     "subkeys": "",
+     "label": "Line feed",
+     "pitched": false,
+     "token": "k37j3"
+    },
+    {
+     "notes": "38",
+     "sound": "ems_tty_char",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "",
+     "label": "Character",
+     "pitched": false,
+     "token": "k38j1"
+    },
+    {
+     "notes": "39",
+     "sound": "em_tty_machine_hit_a",
+     "layer": 1,
+     "segment": 7,
+     "subkeys": "",
+     "label": "Print hit (rec)",
+     "pitched": false,
+     "token": "k39j7"
+    },
+    {
+     "notes": "40",
+     "sound": "em_tty_machine_hit_b",
+     "layer": 1,
+     "segment": 8,
+     "subkeys": "",
+     "label": "Print hit B (rec)",
+     "pitched": false,
+     "token": "k40j8"
+    },
+    {
+     "notes": "41",
+     "sound": "ems_selector_magnet",
+     "layer": 1,
+     "segment": 4,
+     "subkeys": "",
+     "label": "Selector magnet",
+     "pitched": false,
+     "token": "k41j4"
+    },
+    {
+     "notes": "42",
+     "sound": "ems_typebar",
+     "layer": 1,
+     "segment": 6,
+     "subkeys": "",
+     "label": "Typebar",
+     "pitched": false,
+     "token": "k42j6"
+    },
+    {
+     "notes": "44",
+     "sound": "ems_tty_motor_start",
+     "layer": 2,
+     "segment": 0,
+     "subkeys": "c2",
+     "label": "Motor start",
+     "pitched": false,
+     "token": "k44l2c2"
+    },
+    {
+     "notes": "45",
+     "sound": "ems_tty_motor_stop",
+     "layer": 3,
+     "segment": 0,
+     "subkeys": "c2",
+     "label": "Motor stop",
+     "pitched": false,
+     "token": "k45l3c2"
+    },
+    {
+     "notes": "46",
+     "sound": "ems_tty_burst",
+     "layer": 4,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Print burst (held)",
+     "pitched": false,
+     "token": "k46l4gc1"
+    },
+    {
+     "notes": "47",
+     "sound": "ems_tape_punch_burst",
+     "layer": 5,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Tape punch (held)",
+     "pitched": false,
+     "token": "k47l5gc1"
+    },
+    {
+     "notes": "72,84",
+     "sound": "ems_tty_bell",
+     "layer": 1,
+     "segment": 5,
+     "subkeys": "r78p100w7",
+     "label": "BEL (pitched, +-7)",
+     "pitched": true,
+     "token": "k72,84j5r78p100w7"
+    }
+   ],
+   "sources": [
+    "em_tty_machine_hit_a",
+    "em_tty_machine_hit_b",
+    "ems_selector_magnet",
+    "ems_tape_punch_burst",
+    "ems_tty_bell",
+    "ems_tty_burst",
+    "ems_tty_char",
+    "ems_tty_cr",
+    "ems_tty_lf",
+    "ems_tty_motor_start",
+    "ems_tty_motor_stop",
+    "ems_typebar"
+   ],
+   "min_dna_version": 3,
+   "format": "PRESET-ENGINE-2.md 15.2 (k pad tokens)",
+   "validated": true,
+   "recorders": 16
+  },
+  {
+   "name": "Message Center",
+   "category": "Kits: Pioneer",
+   "description": "Arrive, store, display: each row of keys is one event phrase broken into its parts. C2 row arrive (bell, motor, print, CR, LF), C3 row store (punch, card, drum, tape), C4 row display (line printer, split-flap, flip-disc, Selectric), C5 whole phrases.",
+   "dna": "ems_tty_bell@t30000Iems_tty_char@t30000Iems_tty_cr@t30000Iems_tty_lf@t30000Iems_card_punch_col@t30000Iems_card_feed@t30000Iems_card_stack@t30000Iems_drum_write@t30000Iems_lineprinter_line@t30000Iems_splitflap@t30000Iems_flipdot@t30000Iems_selectric_char@t30000Iems_tty_motor_start@t30000Iem_splitflap_a#9/ems_tty_burst#1/ems_tape_punch_burst#1/ems_tty_message_received#1/ems_splitflap_board#1/ems_flipdot_wipe#1/ems_modem_handshake#1/ems_lineprinter_page#1;R150V85k36j1k37j13k38j2k39l2gc1k40j3u1k41j4k48l3gc2k49j6k50j5k51j7u2k52j8k60j9k61j10k62j11k63j12k64l8gc3k65j14k72l4c4k73l7c4k74l5c4k75l6c4k84,96j1r90p100w6",
+   "pads": [
+    {
+     "notes": "36",
+     "sound": "ems_tty_bell",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "",
+     "label": "Arrive: bell",
+     "pitched": false,
+     "token": "k36j1"
+    },
+    {
+     "notes": "37",
+     "sound": "ems_tty_motor_start",
+     "layer": 1,
+     "segment": 13,
+     "subkeys": "",
+     "label": "Arrive: motor start",
+     "pitched": false,
+     "token": "k37j13"
+    },
+    {
+     "notes": "38",
+     "sound": "ems_tty_char",
+     "layer": 1,
+     "segment": 2,
+     "subkeys": "",
+     "label": "Arrive: character",
+     "pitched": false,
+     "token": "k38j2"
+    },
+    {
+     "notes": "39",
+     "sound": "ems_tty_burst",
+     "layer": 2,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Arrive: print burst (held)",
+     "pitched": false,
+     "token": "k39l2gc1"
+    },
+    {
+     "notes": "40",
+     "sound": "ems_tty_cr",
+     "layer": 1,
+     "segment": 3,
+     "subkeys": "u1",
+     "label": "Arrive: CR (stops the burst)",
+     "pitched": false,
+     "token": "k40j3u1"
+    },
+    {
+     "notes": "41",
+     "sound": "ems_tty_lf",
+     "layer": 1,
+     "segment": 4,
+     "subkeys": "",
+     "label": "Arrive: LF",
+     "pitched": false,
+     "token": "k41j4"
+    },
+    {
+     "notes": "48",
+     "sound": "ems_tape_punch_burst",
+     "layer": 3,
+     "segment": 0,
+     "subkeys": "gc2",
+     "label": "Store: tape punch (held)",
+     "pitched": false,
+     "token": "k48l3gc2"
+    },
+    {
+     "notes": "49",
+     "sound": "ems_card_feed",
+     "layer": 1,
+     "segment": 6,
+     "subkeys": "",
+     "label": "Store: card feed",
+     "pitched": false,
+     "token": "k49j6"
+    },
+    {
+     "notes": "50",
+     "sound": "ems_card_punch_col",
+     "layer": 1,
+     "segment": 5,
+     "subkeys": "",
+     "label": "Store: punch column",
+     "pitched": false,
+     "token": "k50j5"
+    },
+    {
+     "notes": "51",
+     "sound": "ems_card_stack",
+     "layer": 1,
+     "segment": 7,
+     "subkeys": "u2",
+     "label": "Store: card out",
+     "pitched": false,
+     "token": "k51j7u2"
+    },
+    {
+     "notes": "52",
+     "sound": "ems_drum_write",
+     "layer": 1,
+     "segment": 8,
+     "subkeys": "",
+     "label": "Store: drum write",
+     "pitched": false,
+     "token": "k52j8"
+    },
+    {
+     "notes": "60",
+     "sound": "ems_lineprinter_line",
+     "layer": 1,
+     "segment": 9,
+     "subkeys": "",
+     "label": "Display: printer line",
+     "pitched": false,
+     "token": "k60j9"
+    },
+    {
+     "notes": "61",
+     "sound": "ems_splitflap",
+     "layer": 1,
+     "segment": 10,
+     "subkeys": "",
+     "label": "Display: split-flap",
+     "pitched": false,
+     "token": "k61j10"
+    },
+    {
+     "notes": "62",
+     "sound": "ems_flipdot",
+     "layer": 1,
+     "segment": 11,
+     "subkeys": "",
+     "label": "Display: flip-disc",
+     "pitched": false,
+     "token": "k62j11"
+    },
+    {
+     "notes": "63",
+     "sound": "ems_selectric_char",
+     "layer": 1,
+     "segment": 12,
+     "subkeys": "",
+     "label": "Display: Selectric",
+     "pitched": false,
+     "token": "k63j12"
+    },
+    {
+     "notes": "64",
+     "sound": "ems_lineprinter_page",
+     "layer": 8,
+     "segment": 0,
+     "subkeys": "gc3",
+     "label": "Display: printer page (held)",
+     "pitched": false,
+     "token": "k64l8gc3"
+    },
+    {
+     "notes": "65",
+     "sound": "em_splitflap_a",
+     "layer": 1,
+     "segment": 14,
+     "subkeys": "",
+     "label": "Display: split-flap (rec)",
+     "pitched": false,
+     "token": "k65j14"
+    },
+    {
+     "notes": "72",
+     "sound": "ems_tty_message_received",
+     "layer": 4,
+     "segment": 0,
+     "subkeys": "c4",
+     "label": "Phrase: message received",
+     "pitched": false,
+     "token": "k72l4c4"
+    },
+    {
+     "notes": "73",
+     "sound": "ems_modem_handshake",
+     "layer": 7,
+     "segment": 0,
+     "subkeys": "c4",
+     "label": "Phrase: modem connect",
+     "pitched": false,
+     "token": "k73l7c4"
+    },
+    {
+     "notes": "74",
+     "sound": "ems_splitflap_board",
+     "layer": 5,
+     "segment": 0,
+     "subkeys": "c4",
+     "label": "Phrase: board update",
+     "pitched": false,
+     "token": "k74l5c4"
+    },
+    {
+     "notes": "75",
+     "sound": "ems_flipdot_wipe",
+     "layer": 6,
+     "segment": 0,
+     "subkeys": "c4",
+     "label": "Phrase: sign rewrite",
+     "pitched": false,
+     "token": "k75l6c4"
+    },
+    {
+     "notes": "84,96",
+     "sound": "ems_tty_bell",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "r90p100w6",
+     "label": "Arrive: bell (pitched, +-6)",
+     "pitched": true,
+     "token": "k84,96j1r90p100w6"
+    }
+   ],
+   "sources": [
+    "em_splitflap_a",
+    "ems_card_feed",
+    "ems_card_punch_col",
+    "ems_card_stack",
+    "ems_drum_write",
+    "ems_flipdot",
+    "ems_flipdot_wipe",
+    "ems_lineprinter_line",
+    "ems_lineprinter_page",
+    "ems_modem_handshake",
+    "ems_selectric_char",
+    "ems_splitflap",
+    "ems_splitflap_board",
+    "ems_tape_punch_burst",
+    "ems_tty_bell",
+    "ems_tty_burst",
+    "ems_tty_char",
+    "ems_tty_cr",
+    "ems_tty_lf",
+    "ems_tty_message_received",
+    "ems_tty_motor_start"
+   ],
+   "min_dna_version": 3,
+   "format": "PRESET-ENGINE-2.md 15.2 (k pad tokens)",
+   "validated": true,
+   "recorders": 16
+  },
+  {
+   "name": "Line",
+   "category": "Kits: Pioneer",
+   "description": "The telephone line: call-progress tones (one cut group, so a new tone replaces the last), pulse dialling, ringers, modem and RTTY tones, and the noises (hum, hiss, crackle, dropouts, crosstalk, hits).",
+   "dna": "ems_pulse_dial_digit@t30000Iems_line_hit@t30000Iems_sit_tones@t30000Iem_fetap_hangup@t30000Iems_relay_pull@t30000Iem_switchboard_click_a@t30000Iem_modem_beep#6/ems_dial_tone@t30000Iems_ringback@t30000Iems_busy@t30000Iems_reorder#2/ems_line_hiss@t30000Iems_line_crackle@t30000Iems_line_dropout@t30000Iems_crosstalk@t30000Iems_mains_hum#3/ems_fsk_bell103_orig@t30000Iems_fsk_bell103_ans@t30000Iems_modem_answer_tone@t30000Iems_rtty_baudot#2/ems_rotary_dial#1/ems_phone_ring_trill#1/em_modem_dialup#1;R80V70k36j5k37j4k38j1k39l5k40j2k41j6k42l2j1gc1k43l2j2gc1k44l2j3gc1k45l2j4gc1k46j3c1k47l6c2k48l3j1gc3k49l3j2gc3k50l3j3gc3k51l3j4gc3k52l3j5gc3k53l4j1gc4k54l4j2gc4k55l4j3gc4k56l4j4gc4k57j7k58l7c4k60,72l3j5r71p100w12gc3",
+   "pads": [
+    {
+     "notes": "36",
+     "sound": "ems_relay_pull",
+     "layer": 1,
+     "segment": 5,
+     "subkeys": "",
+     "label": "Off-hook relay",
+     "pitched": false,
+     "token": "k36j5"
+    },
+    {
+     "notes": "37",
+     "sound": "em_fetap_hangup",
+     "layer": 1,
+     "segment": 4,
+     "subkeys": "",
+     "label": "Hang-up",
+     "pitched": false,
+     "token": "k37j4"
+    },
+    {
+     "notes": "38",
+     "sound": "ems_pulse_dial_digit",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "",
+     "label": "Pulse digit 7",
+     "pitched": false,
+     "token": "k38j1"
+    },
+    {
+     "notes": "39",
+     "sound": "ems_rotary_dial",
+     "layer": 5,
+     "segment": 0,
+     "subkeys": "",
+     "label": "Rotary dial",
+     "pitched": false,
+     "token": "k39l5"
+    },
+    {
+     "notes": "40",
+     "sound": "ems_line_hit",
+     "layer": 1,
+     "segment": 2,
+     "subkeys": "",
+     "label": "Line hit",
+     "pitched": false,
+     "token": "k40j2"
+    },
+    {
+     "notes": "41",
+     "sound": "em_switchboard_click_a",
+     "layer": 1,
+     "segment": 6,
+     "subkeys": "",
+     "label": "Switch click",
+     "pitched": false,
+     "token": "k41j6"
+    },
+    {
+     "notes": "42",
+     "sound": "ems_dial_tone",
+     "layer": 2,
+     "segment": 1,
+     "subkeys": "gc1",
+     "label": "Dial tone (held)",
+     "pitched": false,
+     "token": "k42l2j1gc1"
+    },
+    {
+     "notes": "43",
+     "sound": "ems_ringback",
+     "layer": 2,
+     "segment": 2,
+     "subkeys": "gc1",
+     "label": "Ring-back (held)",
+     "pitched": false,
+     "token": "k43l2j2gc1"
+    },
+    {
+     "notes": "44",
+     "sound": "ems_busy",
+     "layer": 2,
+     "segment": 3,
+     "subkeys": "gc1",
+     "label": "Busy (held)",
+     "pitched": false,
+     "token": "k44l2j3gc1"
+    },
+    {
+     "notes": "45",
+     "sound": "ems_reorder",
+     "layer": 2,
+     "segment": 4,
+     "subkeys": "gc1",
+     "label": "Reorder (held)",
+     "pitched": false,
+     "token": "k45l2j4gc1"
+    },
+    {
+     "notes": "46",
+     "sound": "ems_sit_tones",
+     "layer": 1,
+     "segment": 3,
+     "subkeys": "c1",
+     "label": "SIT tones",
+     "pitched": false,
+     "token": "k46j3c1"
+    },
+    {
+     "notes": "47",
+     "sound": "ems_phone_ring_trill",
+     "layer": 6,
+     "segment": 0,
+     "subkeys": "c2",
+     "label": "Ringer",
+     "pitched": false,
+     "token": "k47l6c2"
+    },
+    {
+     "notes": "48",
+     "sound": "ems_line_hiss",
+     "layer": 3,
+     "segment": 1,
+     "subkeys": "gc3",
+     "label": "Hiss (held)",
+     "pitched": false,
+     "token": "k48l3j1gc3"
+    },
+    {
+     "notes": "49",
+     "sound": "ems_line_crackle",
+     "layer": 3,
+     "segment": 2,
+     "subkeys": "gc3",
+     "label": "Crackle (held)",
+     "pitched": false,
+     "token": "k49l3j2gc3"
+    },
+    {
+     "notes": "50",
+     "sound": "ems_line_dropout",
+     "layer": 3,
+     "segment": 3,
+     "subkeys": "gc3",
+     "label": "Dropouts (held)",
+     "pitched": false,
+     "token": "k50l3j3gc3"
+    },
+    {
+     "notes": "51",
+     "sound": "ems_crosstalk",
+     "layer": 3,
+     "segment": 4,
+     "subkeys": "gc3",
+     "label": "Crosstalk (held)",
+     "pitched": false,
+     "token": "k51l3j4gc3"
+    },
+    {
+     "notes": "52",
+     "sound": "ems_mains_hum",
+     "layer": 3,
+     "segment": 5,
+     "subkeys": "gc3",
+     "label": "Hum (held)",
+     "pitched": false,
+     "token": "k52l3j5gc3"
+    },
+    {
+     "notes": "53",
+     "sound": "ems_fsk_bell103_orig",
+     "layer": 4,
+     "segment": 1,
+     "subkeys": "gc4",
+     "label": "Bell 103 originate (held)",
+     "pitched": false,
+     "token": "k53l4j1gc4"
+    },
+    {
+     "notes": "54",
+     "sound": "ems_fsk_bell103_ans",
+     "layer": 4,
+     "segment": 2,
+     "subkeys": "gc4",
+     "label": "Bell 103 answer (held)",
+     "pitched": false,
+     "token": "k54l4j2gc4"
+    },
+    {
+     "notes": "55",
+     "sound": "ems_modem_answer_tone",
+     "layer": 4,
+     "segment": 3,
+     "subkeys": "gc4",
+     "label": "Answer tone 2100 (held)",
+     "pitched": false,
+     "token": "k55l4j3gc4"
+    },
+    {
+     "notes": "56",
+     "sound": "ems_rtty_baudot",
+     "layer": 4,
+     "segment": 4,
+     "subkeys": "gc4",
+     "label": "RTTY (held)",
+     "pitched": false,
+     "token": "k56l4j4gc4"
+    },
+    {
+     "notes": "57",
+     "sound": "em_modem_beep",
+     "layer": 1,
+     "segment": 7,
+     "subkeys": "",
+     "label": "Modem beep",
+     "pitched": false,
+     "token": "k57j7"
+    },
+    {
+     "notes": "58",
+     "sound": "em_modem_dialup",
+     "layer": 7,
+     "segment": 0,
+     "subkeys": "c4",
+     "label": "Dial-up (rec)",
+     "pitched": false,
+     "token": "k58l7c4"
+    },
+    {
+     "notes": "60,72",
+     "sound": "ems_mains_hum",
+     "layer": 3,
+     "segment": 5,
+     "subkeys": "r71p100w12gc3",
+     "label": "Hum (pitched, held)",
+     "pitched": true,
+     "token": "k60,72l3j5r71p100w12gc3"
+    }
+   ],
+   "sources": [
+    "em_fetap_hangup",
+    "em_modem_beep",
+    "em_modem_dialup",
+    "em_switchboard_click_a",
+    "ems_busy",
+    "ems_crosstalk",
+    "ems_dial_tone",
+    "ems_fsk_bell103_ans",
+    "ems_fsk_bell103_orig",
+    "ems_line_crackle",
+    "ems_line_dropout",
+    "ems_line_hiss",
+    "ems_line_hit",
+    "ems_mains_hum",
+    "ems_modem_answer_tone",
+    "ems_phone_ring_trill",
+    "ems_pulse_dial_digit",
+    "ems_relay_pull",
+    "ems_reorder",
+    "ems_ringback",
+    "ems_rotary_dial",
+    "ems_rtty_baudot",
+    "ems_sit_tones"
+   ],
+   "min_dna_version": 3,
+   "format": "PRESET-ENGINE-2.md 15.2 (k pad tokens)",
+   "validated": true,
+   "recorders": 16
+  },
+  {
+   "name": "Strowger Exchange",
+   "category": "Kits: Pioneer",
+   "description": "A step-by-step office: selector steps, vertical pulses, rotary hunt, release, crossbar and the recorded 500-point selector and switchboard; ringer gong pitched on the top keys.",
+   "dna": "ems_stepper_step@t30000Iems_stepper_vertical@t30000Iems_stepper_rotary_hunt@t30000Iems_stepper_release@t30000Iems_crossbar_select@t30000Iems_crossbar_release@t30000Iem_crossbar_kissoff@t30000Iem_selector500_a@t30000Iem_selector500_b@t30000Iem_switchboard_click_b@t30000Iem_stepper_steps@t30000Iem_crossbar_timing_a#11/em_switchboard_relays#2/ems_exchange_bell_c4#3;R200V90k36j4k37j1k38j2k39j3k40j5k41j6k42j7k43j8k44j9k45j10k46j11k47j12k48l2gk60,72l3p100w6",
+   "pads": [
+    {
+     "notes": "36",
+     "sound": "ems_stepper_release",
+     "layer": 1,
+     "segment": 4,
+     "subkeys": "",
+     "label": "Switch release",
+     "pitched": false,
+     "token": "k36j4"
+    },
+    {
+     "notes": "37",
+     "sound": "ems_stepper_step",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "",
+     "label": "One step",
+     "pitched": false,
+     "token": "k37j1"
+    },
+    {
+     "notes": "38",
+     "sound": "ems_stepper_vertical",
+     "layer": 1,
+     "segment": 2,
+     "subkeys": "",
+     "label": "Vertical steps (7)",
+     "pitched": false,
+     "token": "k38j2"
+    },
+    {
+     "notes": "39",
+     "sound": "ems_stepper_rotary_hunt",
+     "layer": 1,
+     "segment": 3,
+     "subkeys": "",
+     "label": "Rotary hunt",
+     "pitched": false,
+     "token": "k39j3"
+    },
+    {
+     "notes": "40",
+     "sound": "ems_crossbar_select",
+     "layer": 1,
+     "segment": 5,
+     "subkeys": "",
+     "label": "Crossbar select+hold",
+     "pitched": false,
+     "token": "k40j5"
+    },
+    {
+     "notes": "41",
+     "sound": "ems_crossbar_release",
+     "layer": 1,
+     "segment": 6,
+     "subkeys": "",
+     "label": "Crossbar release",
+     "pitched": false,
+     "token": "k41j6"
+    },
+    {
+     "notes": "42",
+     "sound": "em_crossbar_kissoff",
+     "layer": 1,
+     "segment": 7,
+     "subkeys": "",
+     "label": "Kiss-off (rec)",
+     "pitched": false,
+     "token": "k42j7"
+    },
+    {
+     "notes": "43",
+     "sound": "em_selector500_a",
+     "layer": 1,
+     "segment": 8,
+     "subkeys": "",
+     "label": "500-selector run (rec)",
+     "pitched": false,
+     "token": "k43j8"
+    },
+    {
+     "notes": "44",
+     "sound": "em_selector500_b",
+     "layer": 1,
+     "segment": 9,
+     "subkeys": "",
+     "label": "500-selector hit (rec)",
+     "pitched": false,
+     "token": "k44j9"
+    },
+    {
+     "notes": "45",
+     "sound": "em_switchboard_click_b",
+     "layer": 1,
+     "segment": 10,
+     "subkeys": "",
+     "label": "Switchboard click",
+     "pitched": false,
+     "token": "k45j10"
+    },
+    {
+     "notes": "46",
+     "sound": "em_stepper_steps",
+     "layer": 1,
+     "segment": 11,
+     "subkeys": "",
+     "label": "Stepping run (rec)",
+     "pitched": false,
+     "token": "k46j11"
+    },
+    {
+     "notes": "47",
+     "sound": "em_crossbar_timing_a",
+     "layer": 1,
+     "segment": 12,
+     "subkeys": "",
+     "label": "Timing relays (rec)",
+     "pitched": false,
+     "token": "k47j12"
+    },
+    {
+     "notes": "48",
+     "sound": "em_switchboard_relays",
+     "layer": 2,
+     "segment": 0,
+     "subkeys": "g",
+     "label": "Switch room (held)",
+     "pitched": false,
+     "token": "k48l2g"
+    },
+    {
+     "notes": "60,72",
+     "sound": "ems_exchange_bell_c4",
+     "layer": 3,
+     "segment": 0,
+     "subkeys": "p100w6",
+     "label": "Ringer gong (pitched, +-6)",
+     "pitched": true,
+     "token": "k60,72l3p100w6"
+    }
+   ],
+   "sources": [
+    "em_crossbar_kissoff",
+    "em_crossbar_timing_a",
+    "em_selector500_a",
+    "em_selector500_b",
+    "em_stepper_steps",
+    "em_switchboard_click_b",
+    "em_switchboard_relays",
+    "ems_crossbar_release",
+    "ems_crossbar_select",
+    "ems_exchange_bell_c4",
+    "ems_stepper_release",
+    "ems_stepper_rotary_hunt",
+    "ems_stepper_step",
+    "ems_stepper_vertical"
+   ],
+   "min_dna_version": 3,
+   "format": "PRESET-ENGINE-2.md 15.2 (k pad tokens)",
+   "validated": true,
+   "recorders": 16
+  },
+  {
+   "name": "Telegraph Office",
+   "category": "Kits: Pioneer",
+   "description": "Sounder click/clack, keyed phrases, CW tones, Morse buzzer, ticker, the news keyer and the radio-teletype modes.",
+   "dna": "ems_telegraph_sounder@t30000Iem_cw_click_a@t30000Iem_ticker_a@t30000Iem_ticker_b@t30000Iems_typebar#6/ems_telegraph_message#2/ems_morse_cw#1/em_news_keyer#1/ems_ticker#2/em_hellschreiber_loop#1/em_rtty_wiki#1/em_morse_buzzer_a#2;R200V90k36j1k37j2k38j3k39j4k40j5k41l2c1k42l3c1k43l4c2k44l5gc3k45l6gc3k46l7gc3k60,72l8p100w12g",
+   "pads": [
+    {
+     "notes": "36",
+     "sound": "ems_telegraph_sounder",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "",
+     "label": "Sounder click/clack",
+     "pitched": false,
+     "token": "k36j1"
+    },
+    {
+     "notes": "37",
+     "sound": "em_cw_click_a",
+     "layer": 1,
+     "segment": 2,
+     "subkeys": "",
+     "label": "Key click (rec)",
+     "pitched": false,
+     "token": "k37j2"
+    },
+    {
+     "notes": "38",
+     "sound": "em_ticker_a",
+     "layer": 1,
+     "segment": 3,
+     "subkeys": "",
+     "label": "Ticker tick",
+     "pitched": false,
+     "token": "k38j3"
+    },
+    {
+     "notes": "39",
+     "sound": "em_ticker_b",
+     "layer": 1,
+     "segment": 4,
+     "subkeys": "",
+     "label": "Ticker print",
+     "pitched": false,
+     "token": "k39j4"
+    },
+    {
+     "notes": "40",
+     "sound": "ems_typebar",
+     "layer": 1,
+     "segment": 5,
+     "subkeys": "",
+     "label": "Print",
+     "pitched": false,
+     "token": "k40j5"
+    },
+    {
+     "notes": "41",
+     "sound": "ems_telegraph_message",
+     "layer": 2,
+     "segment": 0,
+     "subkeys": "c1",
+     "label": "Sounder 'CQ'",
+     "pitched": false,
+     "token": "k41l2c1"
+    },
+    {
+     "notes": "42",
+     "sound": "ems_morse_cw",
+     "layer": 3,
+     "segment": 0,
+     "subkeys": "c1",
+     "label": "CW 'BSYN'",
+     "pitched": false,
+     "token": "k42l3c1"
+    },
+    {
+     "notes": "43",
+     "sound": "em_news_keyer",
+     "layer": 4,
+     "segment": 0,
+     "subkeys": "c2",
+     "label": "News keyer",
+     "pitched": false,
+     "token": "k43l4c2"
+    },
+    {
+     "notes": "44",
+     "sound": "ems_ticker",
+     "layer": 5,
+     "segment": 0,
+     "subkeys": "gc3",
+     "label": "Ticker run (held)",
+     "pitched": false,
+     "token": "k44l5gc3"
+    },
+    {
+     "notes": "45",
+     "sound": "em_hellschreiber_loop",
+     "layer": 6,
+     "segment": 0,
+     "subkeys": "gc3",
+     "label": "Hellschreiber (held)",
+     "pitched": false,
+     "token": "k45l6gc3"
+    },
+    {
+     "notes": "46",
+     "sound": "em_rtty_wiki",
+     "layer": 7,
+     "segment": 0,
+     "subkeys": "gc3",
+     "label": "RTTY (held)",
+     "pitched": false,
+     "token": "k46l7gc3"
+    },
+    {
+     "notes": "60,72",
+     "sound": "em_morse_buzzer_a",
+     "layer": 8,
+     "segment": 0,
+     "subkeys": "p100w12g",
+     "label": "Morse buzzer (pitched, held)",
+     "pitched": true,
+     "token": "k60,72l8p100w12g"
+    }
+   ],
+   "sources": [
+    "em_cw_click_a",
+    "em_hellschreiber_loop",
+    "em_morse_buzzer_a",
+    "em_news_keyer",
+    "em_rtty_wiki",
+    "em_ticker_a",
+    "em_ticker_b",
+    "ems_morse_cw",
+    "ems_telegraph_message",
+    "ems_telegraph_sounder",
+    "ems_ticker",
+    "ems_typebar"
+   ],
+   "min_dna_version": 3,
+   "format": "PRESET-ENGINE-2.md 15.2 (k pad tokens)",
+   "validated": true,
+   "recorders": 16
+  },
+  {
+   "name": "Calculator Bureau",
+   "category": "Kits: Pioneer",
+   "description": "Comptometers, Fridens and registers: crank pulls, ratchets, division runs, cash register and its bell (pitched), time clock.",
+   "dna": "ems_adding_machine_pull@t30000Iem_adding_crank@t30000Iem_adder_ratchet_a@t30000Iem_adder_ratchet_b@t30000Iem_adder_drawer_a@t30000Iem_calc_mech_a@t30000Iems_cash_register@t30000Iems_punch_clock@t30000Iem_cash_register_a@t30000Iems_escapement#11/ems_calculator_division#2/em_calc_mech_loop#1/ems_fm_register_bell_c6#2;R200V90k36j2k37j1k38j3k39j4k40j5k41j6k42j10k43j9k44j7c2k45j8k46l2gc1k47l3gc1k72,84l4r84p100w5",
+   "pads": [
+    {
+     "notes": "36",
+     "sound": "em_adding_crank",
+     "layer": 1,
+     "segment": 2,
+     "subkeys": "",
+     "label": "Hand crank (rec)",
+     "pitched": false,
+     "token": "k36j2"
+    },
+    {
+     "notes": "37",
+     "sound": "ems_adding_machine_pull",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "",
+     "label": "Handle pull",
+     "pitched": false,
+     "token": "k37j1"
+    },
+    {
+     "notes": "38",
+     "sound": "em_adder_ratchet_a",
+     "layer": 1,
+     "segment": 3,
+     "subkeys": "",
+     "label": "Ratchet A",
+     "pitched": false,
+     "token": "k38j3"
+    },
+    {
+     "notes": "39",
+     "sound": "em_adder_ratchet_b",
+     "layer": 1,
+     "segment": 4,
+     "subkeys": "",
+     "label": "Ratchet B",
+     "pitched": false,
+     "token": "k39j4"
+    },
+    {
+     "notes": "40",
+     "sound": "em_adder_drawer_a",
+     "layer": 1,
+     "segment": 5,
+     "subkeys": "",
+     "label": "Mechanism",
+     "pitched": false,
+     "token": "k40j5"
+    },
+    {
+     "notes": "41",
+     "sound": "em_calc_mech_a",
+     "layer": 1,
+     "segment": 6,
+     "subkeys": "",
+     "label": "Calculator hit",
+     "pitched": false,
+     "token": "k41j6"
+    },
+    {
+     "notes": "42",
+     "sound": "ems_escapement",
+     "layer": 1,
+     "segment": 10,
+     "subkeys": "",
+     "label": "Escapement",
+     "pitched": false,
+     "token": "k42j10"
+    },
+    {
+     "notes": "43",
+     "sound": "em_cash_register_a",
+     "layer": 1,
+     "segment": 9,
+     "subkeys": "",
+     "label": "Register (rec)",
+     "pitched": false,
+     "token": "k43j9"
+    },
+    {
+     "notes": "44",
+     "sound": "ems_cash_register",
+     "layer": 1,
+     "segment": 7,
+     "subkeys": "c2",
+     "label": "Register sale",
+     "pitched": false,
+     "token": "k44j7c2"
+    },
+    {
+     "notes": "45",
+     "sound": "ems_punch_clock",
+     "layer": 1,
+     "segment": 8,
+     "subkeys": "",
+     "label": "Time clock",
+     "pitched": false,
+     "token": "k45j8"
+    },
+    {
+     "notes": "46",
+     "sound": "ems_calculator_division",
+     "layer": 2,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Friden division (held)",
+     "pitched": false,
+     "token": "k46l2gc1"
+    },
+    {
+     "notes": "47",
+     "sound": "em_calc_mech_loop",
+     "layer": 3,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Calculator run (held)",
+     "pitched": false,
+     "token": "k47l3gc1"
+    },
+    {
+     "notes": "72,84",
+     "sound": "ems_fm_register_bell_c6",
+     "layer": 4,
+     "segment": 0,
+     "subkeys": "r84p100w5",
+     "label": "Drawer bell (pitched, +-5)",
+     "pitched": true,
+     "token": "k72,84l4r84p100w5"
+    }
+   ],
+   "sources": [
+    "em_adder_drawer_a",
+    "em_adder_ratchet_a",
+    "em_adder_ratchet_b",
+    "em_adding_crank",
+    "em_calc_mech_a",
+    "em_calc_mech_loop",
+    "em_cash_register_a",
+    "ems_adding_machine_pull",
+    "ems_calculator_division",
+    "ems_cash_register",
+    "ems_escapement",
+    "ems_fm_register_bell_c6",
+    "ems_punch_clock"
+   ],
+   "min_dna_version": 3,
+   "format": "PRESET-ENGINE-2.md 15.2 (k pad tokens)",
+   "validated": true,
+   "recorders": 16
+  },
+  {
+   "name": "Typing Pool",
+   "category": "Kits: Pioneer",
+   "description": "Typebars, Selectric, electric and daisy-wheel machines, margin bells, carriage returns.",
+   "dna": "em_typewriter_key_a@t30000Iem_selectric_key_a@t30000Iem_selectric_key_b@t30000Iem_selectric_key_c@t30000Iems_typebar@t30000Iems_selectric_char@t30000Iem_typewriter_return_a@t30000Iem_typewriter_bell_a@t30000Iem_typewriter_bell_c@t30000Iem_daisywheel_a@t30000Iems_tty_cr@t30000Iem_typewriter_bell_return#12/em_selectric_typing_loop#1/em_etypewriter_loop#1/em_typewriter_bell_b#2;R200V90k36j11k37j7k38j1k39j5k40j2zk40j3zk40j4zk41j6k42j10k43j8k44j9k45j12k46l2gc1k47l3gc1k72,84l4r73p100w5",
+   "pads": [
+    {
+     "notes": "36",
+     "sound": "ems_tty_cr",
+     "layer": 1,
+     "segment": 11,
+     "subkeys": "",
+     "label": "Carriage slam",
+     "pitched": false,
+     "token": "k36j11"
+    },
+    {
+     "notes": "37",
+     "sound": "em_typewriter_return_a",
+     "layer": 1,
+     "segment": 7,
+     "subkeys": "",
+     "label": "Margin release",
+     "pitched": false,
+     "token": "k37j7"
+    },
+    {
+     "notes": "38",
+     "sound": "em_typewriter_key_a",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "",
+     "label": "Typebar key (rec)",
+     "pitched": false,
+     "token": "k38j1"
+    },
+    {
+     "notes": "39",
+     "sound": "ems_typebar",
+     "layer": 1,
+     "segment": 5,
+     "subkeys": "",
+     "label": "Typebar (model)",
+     "pitched": false,
+     "token": "k39j5"
+    },
+    {
+     "notes": "40",
+     "sound": "em_selectric_key_a",
+     "layer": 1,
+     "segment": 2,
+     "subkeys": "z",
+     "label": "Selectric (random)",
+     "pitched": false,
+     "token": "k40j2z"
+    },
+    {
+     "notes": "40",
+     "sound": "em_selectric_key_b",
+     "layer": 1,
+     "segment": 3,
+     "subkeys": "z",
+     "label": "Selectric (random)",
+     "pitched": false,
+     "token": "k40j3z"
+    },
+    {
+     "notes": "40",
+     "sound": "em_selectric_key_c",
+     "layer": 1,
+     "segment": 4,
+     "subkeys": "z",
+     "label": "Selectric (random)",
+     "pitched": false,
+     "token": "k40j4z"
+    },
+    {
+     "notes": "41",
+     "sound": "ems_selectric_char",
+     "layer": 1,
+     "segment": 6,
+     "subkeys": "",
+     "label": "Selectric (model)",
+     "pitched": false,
+     "token": "k41j6"
+    },
+    {
+     "notes": "42",
+     "sound": "em_daisywheel_a",
+     "layer": 1,
+     "segment": 10,
+     "subkeys": "",
+     "label": "Daisy wheel",
+     "pitched": false,
+     "token": "k42j10"
+    },
+    {
+     "notes": "43",
+     "sound": "em_typewriter_bell_a",
+     "layer": 1,
+     "segment": 8,
+     "subkeys": "",
+     "label": "Margin bell A",
+     "pitched": false,
+     "token": "k43j8"
+    },
+    {
+     "notes": "44",
+     "sound": "em_typewriter_bell_c",
+     "layer": 1,
+     "segment": 9,
+     "subkeys": "",
+     "label": "Margin bell C",
+     "pitched": false,
+     "token": "k44j9"
+    },
+    {
+     "notes": "45",
+     "sound": "em_typewriter_bell_return",
+     "layer": 1,
+     "segment": 12,
+     "subkeys": "",
+     "label": "Bell + return",
+     "pitched": false,
+     "token": "k45j12"
+    },
+    {
+     "notes": "46",
+     "sound": "em_selectric_typing_loop",
+     "layer": 2,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Selectric typing (held)",
+     "pitched": false,
+     "token": "k46l2gc1"
+    },
+    {
+     "notes": "47",
+     "sound": "em_etypewriter_loop",
+     "layer": 3,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Electric typing (held)",
+     "pitched": false,
+     "token": "k47l3gc1"
+    },
+    {
+     "notes": "72,84",
+     "sound": "em_typewriter_bell_b",
+     "layer": 4,
+     "segment": 0,
+     "subkeys": "r73p100w5",
+     "label": "Margin bell (pitched)",
+     "pitched": true,
+     "token": "k72,84l4r73p100w5"
+    }
+   ],
+   "sources": [
+    "em_daisywheel_a",
+    "em_etypewriter_loop",
+    "em_selectric_key_a",
+    "em_selectric_key_b",
+    "em_selectric_key_c",
+    "em_selectric_typing_loop",
+    "em_typewriter_bell_a",
+    "em_typewriter_bell_b",
+    "em_typewriter_bell_c",
+    "em_typewriter_bell_return",
+    "em_typewriter_key_a",
+    "em_typewriter_return_a",
+    "ems_selectric_char",
+    "ems_tty_cr",
+    "ems_typebar"
+   ],
+   "min_dna_version": 3,
+   "format": "PRESET-ENGINE-2.md 15.2 (k pad tokens)",
+   "validated": true,
+   "recorders": 16
+  },
+  {
+   "name": "Mainframe Hall",
+   "category": "Kits: Pioneer",
+   "description": "1950s-60s machine room: line printer, vacuum-column tape, drum memory, card reader, and the first computer-music voices (Ferranti hoot, CSIRAC pulse) pitched on the top keys.",
+   "dna": "ems_lineprinter_line@t30000Iems_print_hammer@t30000Iems_drum_write@t30000Iems_card_feed@t30000Iems_relay_pull@t30000Iem_dotmatrix_hit_a@t30000Iems_tape_reader#8/ems_lineprinter_page#1/ems_tape_drive_shuttle#1/ems_drum_memory#1/em_dotmatrix_burst_a#1/ems_ferranti_hoot_c4#2/ems_csirac_pulse_e4#2;R200V90k36j1k37j2k38j3k39j4k40j5k41j6k42j7gc1k43l2gc1k44l3gc2k45l4gc2k46l5gc1k60,71l6p100w12gk72,84l7r76p100w12g",
+   "pads": [
+    {
+     "notes": "36",
+     "sound": "ems_lineprinter_line",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "",
+     "label": "Printer line",
+     "pitched": false,
+     "token": "k36j1"
+    },
+    {
+     "notes": "37",
+     "sound": "ems_print_hammer",
+     "layer": 1,
+     "segment": 2,
+     "subkeys": "",
+     "label": "Hammer",
+     "pitched": false,
+     "token": "k37j2"
+    },
+    {
+     "notes": "38",
+     "sound": "ems_drum_write",
+     "layer": 1,
+     "segment": 3,
+     "subkeys": "",
+     "label": "Drum write",
+     "pitched": false,
+     "token": "k38j3"
+    },
+    {
+     "notes": "39",
+     "sound": "ems_card_feed",
+     "layer": 1,
+     "segment": 4,
+     "subkeys": "",
+     "label": "Card feed",
+     "pitched": false,
+     "token": "k39j4"
+    },
+    {
+     "notes": "40",
+     "sound": "ems_relay_pull",
+     "layer": 1,
+     "segment": 5,
+     "subkeys": "",
+     "label": "Relay",
+     "pitched": false,
+     "token": "k40j5"
+    },
+    {
+     "notes": "41",
+     "sound": "em_dotmatrix_hit_a",
+     "layer": 1,
+     "segment": 6,
+     "subkeys": "",
+     "label": "Dot-matrix hit",
+     "pitched": false,
+     "token": "k41j6"
+    },
+    {
+     "notes": "42",
+     "sound": "ems_tape_reader",
+     "layer": 1,
+     "segment": 7,
+     "subkeys": "gc1",
+     "label": "Tape reader (held)",
+     "pitched": false,
+     "token": "k42j7gc1"
+    },
+    {
+     "notes": "43",
+     "sound": "ems_lineprinter_page",
+     "layer": 2,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Printer page (held)",
+     "pitched": false,
+     "token": "k43l2gc1"
+    },
+    {
+     "notes": "44",
+     "sound": "ems_tape_drive_shuttle",
+     "layer": 3,
+     "segment": 0,
+     "subkeys": "gc2",
+     "label": "Tape drive (held)",
+     "pitched": false,
+     "token": "k44l3gc2"
+    },
+    {
+     "notes": "45",
+     "sound": "ems_drum_memory",
+     "layer": 4,
+     "segment": 0,
+     "subkeys": "gc2",
+     "label": "Drum (held)",
+     "pitched": false,
+     "token": "k45l4gc2"
+    },
+    {
+     "notes": "46",
+     "sound": "em_dotmatrix_burst_a",
+     "layer": 5,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Dot-matrix burst (held)",
+     "pitched": false,
+     "token": "k46l5gc1"
+    },
+    {
+     "notes": "60,71",
+     "sound": "ems_ferranti_hoot_c4",
+     "layer": 6,
+     "segment": 0,
+     "subkeys": "p100w12g",
+     "label": "Ferranti hoot (pitched, held)",
+     "pitched": true,
+     "token": "k60,71l6p100w12g"
+    },
+    {
+     "notes": "72,84",
+     "sound": "ems_csirac_pulse_e4",
+     "layer": 7,
+     "segment": 0,
+     "subkeys": "r76p100w12g",
+     "label": "CSIRAC pulse (pitched, held)",
+     "pitched": true,
+     "token": "k72,84l7r76p100w12g"
+    }
+   ],
+   "sources": [
+    "em_dotmatrix_burst_a",
+    "em_dotmatrix_hit_a",
+    "ems_card_feed",
+    "ems_csirac_pulse_e4",
+    "ems_drum_memory",
+    "ems_drum_write",
+    "ems_ferranti_hoot_c4",
+    "ems_lineprinter_line",
+    "ems_lineprinter_page",
+    "ems_print_hammer",
+    "ems_relay_pull",
+    "ems_tape_drive_shuttle",
+    "ems_tape_reader"
+   ],
+   "min_dna_version": 3,
+   "format": "PRESET-ENGINE-2.md 15.2 (k pad tokens)",
+   "validated": true,
+   "recorders": 16
+  },
+  {
+   "name": "Signal Bells",
+   "category": "Kits: Pioneer",
+   "description": "Bells of the machine age: BEL, margin bells, trembler and alarm bells, the GPO exchange alarm, ringers, the desk-calculator bell. Most pads fixed; three pitched in a narrow range.",
+   "dna": "ems_tty_bell@t30000Iem_typewriter_bell_a@t30000Iem_typewriter_bell_c@t30000Iems_typewriter_bell@t30000Iem_electric_bell_a@t30000Iem_signal_bell@t30000Iems_punch_clock@t30000Iem_fetap_ring#8/em_gpo_alarm_bell#2/ems_phone_ring_trill#2/ems_ttybell_g5#2/ems_exchange_bell_c4#2;R200V90k36j6k37j5k38j1k39j2k40j3k41j4k42j7k43j8gc1k44l3gc1k45l2gc1k60,67l5p100w4k72,84l4r79p100w5",
+   "pads": [
+    {
+     "notes": "36",
+     "sound": "em_signal_bell",
+     "layer": 1,
+     "segment": 6,
+     "subkeys": "",
+     "label": "Signal bell",
+     "pitched": false,
+     "token": "k36j6"
+    },
+    {
+     "notes": "37",
+     "sound": "em_electric_bell_a",
+     "layer": 1,
+     "segment": 5,
+     "subkeys": "",
+     "label": "Trembler bell",
+     "pitched": false,
+     "token": "k37j5"
+    },
+    {
+     "notes": "38",
+     "sound": "ems_tty_bell",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "",
+     "label": "Teletype BEL",
+     "pitched": false,
+     "token": "k38j1"
+    },
+    {
+     "notes": "39",
+     "sound": "em_typewriter_bell_a",
+     "layer": 1,
+     "segment": 2,
+     "subkeys": "",
+     "label": "Margin bell A",
+     "pitched": false,
+     "token": "k39j2"
+    },
+    {
+     "notes": "40",
+     "sound": "em_typewriter_bell_c",
+     "layer": 1,
+     "segment": 3,
+     "subkeys": "",
+     "label": "Margin bell C",
+     "pitched": false,
+     "token": "k40j3"
+    },
+    {
+     "notes": "41",
+     "sound": "ems_typewriter_bell",
+     "layer": 1,
+     "segment": 4,
+     "subkeys": "",
+     "label": "Margin bell (model)",
+     "pitched": false,
+     "token": "k41j4"
+    },
+    {
+     "notes": "42",
+     "sound": "ems_punch_clock",
+     "layer": 1,
+     "segment": 7,
+     "subkeys": "",
+     "label": "Time clock bell",
+     "pitched": false,
+     "token": "k42j7"
+    },
+    {
+     "notes": "43",
+     "sound": "em_fetap_ring",
+     "layer": 1,
+     "segment": 8,
+     "subkeys": "gc1",
+     "label": "FeTAp ring (held)",
+     "pitched": false,
+     "token": "k43j8gc1"
+    },
+    {
+     "notes": "44",
+     "sound": "ems_phone_ring_trill",
+     "layer": 3,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "Twin-gong ringer (held)",
+     "pitched": false,
+     "token": "k44l3gc1"
+    },
+    {
+     "notes": "45",
+     "sound": "em_gpo_alarm_bell",
+     "layer": 2,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "GPO alarm (held)",
+     "pitched": false,
+     "token": "k45l2gc1"
+    },
+    {
+     "notes": "60,67",
+     "sound": "ems_exchange_bell_c4",
+     "layer": 5,
+     "segment": 0,
+     "subkeys": "p100w4",
+     "label": "Ringer gong (pitched, +-4)",
+     "pitched": true,
+     "token": "k60,67l5p100w4"
+    },
+    {
+     "notes": "72,84",
+     "sound": "ems_ttybell_g5",
+     "layer": 4,
+     "segment": 0,
+     "subkeys": "r79p100w5",
+     "label": "BEL keyboard (pitched, +-5)",
+     "pitched": true,
+     "token": "k72,84l4r79p100w5"
+    }
+   ],
+   "sources": [
+    "em_electric_bell_a",
+    "em_fetap_ring",
+    "em_gpo_alarm_bell",
+    "em_signal_bell",
+    "em_typewriter_bell_a",
+    "em_typewriter_bell_c",
+    "ems_exchange_bell_c4",
+    "ems_phone_ring_trill",
+    "ems_punch_clock",
+    "ems_tty_bell",
+    "ems_ttybell_g5",
+    "ems_typewriter_bell"
+   ],
+   "min_dna_version": 3,
+   "format": "PRESET-ENGINE-2.md 15.2 (k pad tokens)",
+   "validated": true,
+   "recorders": 16
+  },
+  {
+   "name": "Solenoid Lab",
+   "category": "Kits: Pioneer",
+   "description": "Actuator physics: the modelled plunger in its variants (pull, release, bounce, tiny, large) beside recorded solenoids, contactors and relays. Pull pads mute the held buzz; release pads answer note-off where gated.",
+   "dna": "ems_relay_pull@t30000Iems_relay_release@t30000Iems_relay_bouncy@t30000Iems_contactor_pull@t30000Iems_contactor_release@t30000Iems_print_hammer@t30000Iems_punch_magnet@t30000Iems_flipdot@t30000Iems_stepper_step@t30000Iem_solenoid12v_a@t30000Iem_solenoid_sw_a@t30000Iem_kontaktor_a@t30000Iem_relay_large_b@t30000Iem_metal_click_a@t30000Iem_switch_a@t30000Iems_clutch_trip#12/ems_relay_buzz_ac#2/ems_splitflap#2;R200V90k36j4u1k37j5k38j1y1,95k38j3y96,127k39j2k40j6k41j7k42j8k43j9k44j10k45j11k46j12k47j13k48j14k49j15k50j16k51l2gc1k52l3k60,64j1r63p100w2",
+   "pads": [
+    {
+     "notes": "36",
+     "sound": "ems_contactor_pull",
+     "layer": 1,
+     "segment": 4,
+     "subkeys": "u1",
+     "label": "Contactor pull (mutes buzz)",
+     "pitched": false,
+     "token": "k36j4u1"
+    },
+    {
+     "notes": "37",
+     "sound": "ems_contactor_release",
+     "layer": 1,
+     "segment": 5,
+     "subkeys": "",
+     "label": "Contactor release",
+     "pitched": false,
+     "token": "k37j5"
+    },
+    {
+     "notes": "38",
+     "sound": "ems_relay_pull",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "y1,95",
+     "label": "Relay pull",
+     "pitched": false,
+     "token": "k38j1y1,95"
+    },
+    {
+     "notes": "38",
+     "sound": "ems_relay_bouncy",
+     "layer": 1,
+     "segment": 3,
+     "subkeys": "y96,127",
+     "label": "Relay pull, bouncy (hard)",
+     "pitched": false,
+     "token": "k38j3y96,127"
+    },
+    {
+     "notes": "39",
+     "sound": "ems_relay_release",
+     "layer": 1,
+     "segment": 2,
+     "subkeys": "",
+     "label": "Relay release",
+     "pitched": false,
+     "token": "k39j2"
+    },
+    {
+     "notes": "40",
+     "sound": "ems_print_hammer",
+     "layer": 1,
+     "segment": 6,
+     "subkeys": "",
+     "label": "Print hammer",
+     "pitched": false,
+     "token": "k40j6"
+    },
+    {
+     "notes": "41",
+     "sound": "ems_punch_magnet",
+     "layer": 1,
+     "segment": 7,
+     "subkeys": "",
+     "label": "Punch magnet",
+     "pitched": false,
+     "token": "k41j7"
+    },
+    {
+     "notes": "42",
+     "sound": "ems_flipdot",
+     "layer": 1,
+     "segment": 8,
+     "subkeys": "",
+     "label": "Flip-disc",
+     "pitched": false,
+     "token": "k42j8"
+    },
+    {
+     "notes": "43",
+     "sound": "ems_stepper_step",
+     "layer": 1,
+     "segment": 9,
+     "subkeys": "",
+     "label": "Stepper",
+     "pitched": false,
+     "token": "k43j9"
+    },
+    {
+     "notes": "44",
+     "sound": "em_solenoid12v_a",
+     "layer": 1,
+     "segment": 10,
+     "subkeys": "",
+     "label": "12 V solenoid (rec)",
+     "pitched": false,
+     "token": "k44j10"
+    },
+    {
+     "notes": "45",
+     "sound": "em_solenoid_sw_a",
+     "layer": 1,
+     "segment": 11,
+     "subkeys": "",
+     "label": "Solenoid switch (rec)",
+     "pitched": false,
+     "token": "k45j11"
+    },
+    {
+     "notes": "46",
+     "sound": "em_kontaktor_a",
+     "layer": 1,
+     "segment": 12,
+     "subkeys": "",
+     "label": "Contactor (rec)",
+     "pitched": false,
+     "token": "k46j12"
+    },
+    {
+     "notes": "47",
+     "sound": "em_relay_large_b",
+     "layer": 1,
+     "segment": 13,
+     "subkeys": "",
+     "label": "Large relay (rec)",
+     "pitched": false,
+     "token": "k47j13"
+    },
+    {
+     "notes": "48",
+     "sound": "em_metal_click_a",
+     "layer": 1,
+     "segment": 14,
+     "subkeys": "",
+     "label": "Metal click",
+     "pitched": false,
+     "token": "k48j14"
+    },
+    {
+     "notes": "49",
+     "sound": "em_switch_a",
+     "layer": 1,
+     "segment": 15,
+     "subkeys": "",
+     "label": "Switch",
+     "pitched": false,
+     "token": "k49j15"
+    },
+    {
+     "notes": "50",
+     "sound": "ems_clutch_trip",
+     "layer": 1,
+     "segment": 16,
+     "subkeys": "",
+     "label": "Clutch trip",
+     "pitched": false,
+     "token": "k50j16"
+    },
+    {
+     "notes": "51",
+     "sound": "ems_relay_buzz_ac",
+     "layer": 2,
+     "segment": 0,
+     "subkeys": "gc1",
+     "label": "AC buzz (held)",
+     "pitched": false,
+     "token": "k51l2gc1"
+    },
+    {
+     "notes": "52",
+     "sound": "ems_splitflap",
+     "layer": 3,
+     "segment": 0,
+     "subkeys": "",
+     "label": "Split-flap unit",
+     "pitched": false,
+     "token": "k52l3"
+    },
+    {
+     "notes": "60,64",
+     "sound": "ems_relay_pull",
+     "layer": 1,
+     "segment": 1,
+     "subkeys": "r63p100w2",
+     "label": "Relay pull (pitched, +-2)",
+     "pitched": true,
+     "token": "k60,64j1r63p100w2"
+    }
+   ],
+   "sources": [
+    "em_kontaktor_a",
+    "em_metal_click_a",
+    "em_relay_large_b",
+    "em_solenoid12v_a",
+    "em_solenoid_sw_a",
+    "em_switch_a",
+    "ems_clutch_trip",
+    "ems_contactor_pull",
+    "ems_contactor_release",
+    "ems_flipdot",
+    "ems_print_hammer",
+    "ems_punch_magnet",
+    "ems_relay_bouncy",
+    "ems_relay_buzz_ac",
+    "ems_relay_pull",
+    "ems_relay_release",
+    "ems_splitflap",
+    "ems_stepper_step"
+   ],
+   "min_dna_version": 3,
+   "format": "PRESET-ENGINE-2.md 15.2 (k pad tokens)",
+   "validated": true,
+   "recorders": 16
+  }
+ ]
+}

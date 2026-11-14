@@ -1,0 +1,4057 @@
+[
+ {
+  "id": "rompler-emu-shakuhachi-hammer",
+  "category": "rompler-emu",
+  "name": "Shakuhachi Hammer",
+  "inspired_by": "E-mu Emulator II 'Shakuhachi' (Peter Gabriel 'Sledgehammer' intro; also Fairlight SHAKUHACHI)",
+  "character": "Breathy chiff burst then a hollow, almost-sine flute tone that bends up into pitch; the whole charm is the noisy overblown attack and a short, slightly falling tail. Mono, dry, 8-bit-era grit.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@30[@40]#3U1~0/recycle>>@8]#2F;A15D400S70R250V80",
+   "Layer 1: a steady chunk of ringout (sine-ish ringback tone) is the hollow body; trim to its stable middle with @30[@40].",
+   "Layer 2: the first 8% of recycle (paper crumple) at x4 speed is the breath chiff; F keeps it unpitched.",
+   "[planned env graph] pitch is not available, so fake the 'scoop' with a volume graph: 0 to 100% in 15 ms, a 60 ms dip to 80%, then hold. That reads as an overblown attack.",
+   "[planned offsets] start the chiff recorder 0 ms and the body 25 ms later, so the breath is heard first.",
+   "[planned macro] M1 = chiff level (layer-2 vol 0 to 150%)."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "xpringout",
+   "recycle",
+   "minimize"
+  ],
+  "priority": 1,
+  "rank": 9,
+  "dna": "ringout@30[@40]#3U1~0/recycle>>@8]#2F;A15D400S70R250V80",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-emu-emulator-choir-arr",
+  "category": "rompler-emu",
+  "name": "Emulator Choir Arr",
+  "inspired_by": "E-mu Emulator I/II choir and the Fairlight ARR1 'Aah' (the 80s sampled choir)",
+  "character": "Dark, lo-fi 'aah' with a slow swell, little top end and a grainy 8-bit sheen; vibrato comes from the ensemble, not an LFO.",
+  "recipe_steps": [
+   "Start DNA (spec v1): notify<-#8U3~14/logon<<@20[#8U2~9L60;A350S90R1100V50",
+   "notify slowed an octave and turned down sits in the vocal formant range; three-voice unison at +/-14 cents makes it a section.",
+   "logon two octaves down, with its attack cut off, adds a breathy wash.",
+   "Keep the 8-bit grit: on the 3.11 edition, build it from chimes<< with ><, the decimation round trip.",
+   "[planned env graph] a 350 ms S-curve attack and a 1.1 s release with a small hump, like breath."
+  ],
+  "suggested_sources": [
+   "notify",
+   "logon",
+   "chimes",
+   "xpnotify"
+  ],
+  "priority": 2,
+  "dna": "notify<-#8U3~14/logon<<@20[#8U2~9L60;A350S90R1100V50",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-emu-emulator-marcato-strings",
+  "category": "rompler-emu",
+  "name": "Emulator Marcato Strings",
+  "inspired_by": "E-mu Emulator II 'Marcato Strings' / Emulator III Strings",
+  "character": "Short bowed attack with rosin noise, fast 200 ms decay into a sustained but dark body; slightly stepped, low-sample-rate texture.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logoff@30[#10U3~10/recycle>>>@5]#2FL40;A20D250S60R400",
+   "Middle of logoff (string shimmer) as the sustained body, unison x3 for section width.",
+   "A tiny x8 crumple transient gives the bow noise.",
+   "[planned env graph] fast 20 ms rise, 250 ms drop to 60%, hold. That is the 'marcato' accent.",
+   "[planned pan] spread unison voices L40/C/R40."
+  ],
+  "suggested_sources": [
+   "logoff",
+   "shutdown",
+   "recycle"
+  ],
+  "priority": 2,
+  "dna": "logoff@30[#10U3~10/recycle>>>@5]#2FL40;A20D250S60R400",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-emu-proteus-pizzicato",
+  "category": "rompler-emu",
+  "name": "Proteus Pizzicato",
+  "inspired_by": "E-mu Proteus/1 and Proteus/2 'Pizzicato' (90s TV and game score staple)",
+  "character": "A very short plucked attack, 150 to 250 ms decay, no sustain; woody, mid-heavy, with a small room tail.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpringin@10]E#8U2~6;A0D200S0R120",
+   "Keep only the first 10% of xpringin (marimba-like ring phrase) as one plucked note.",
+   "One echo adds the 'section in a room' smear.",
+   "[planned offsets] 2 recorders 0 / 9 ms apart for a section flam.",
+   "Also try default@15] (XP Default's mallet bong)."
+  ],
+  "suggested_sources": [
+   "xpringin",
+   "default",
+   "exclaim"
+  ],
+  "priority": 2,
+  "dna": "xpringin@10]E#8U2~6;A0D200S0R120",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-emu-proteus-2-orchestral-tutti",
+  "category": "rompler-emu",
+  "name": "Proteus/2 Orchestral Tutti",
+  "inspired_by": "E-mu Proteus/2 Orchestral 'Tutti' / 'Strings+Brass' and the stacked-orchestra presets",
+  "character": "Strings, brass and timpani in one big octave-stacked chord. Slow-ish attack, broad stereo, and a long hall release.",
+  "recipe_steps": [
+   "Start DNA (spec v1): tada@10[#6H0,12U2~8/logoff@30[#6H0,-12U2~10/critstop<@5]#2FL60;A80S90R1400",
+   "tada with its first transient cut off acts as the brass section; harmony gives octaves.",
+   "Mid-logoff an octave below is the string bed.",
+   "The critstop low hit, slowed, is the timpani/bass drum on the downbeat.",
+   "[planned macro] M1 = brass vs strings crossfade."
+  ],
+  "suggested_sources": [
+   "tada",
+   "logoff",
+   "critstop",
+   "startup"
+  ],
+  "priority": 2,
+  "dna": "tada@10[#6H0,12U2~8/logoff@30[#6H0,-12U2~10/critstop<@5]#2FL60;A80S90R1400",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-emu-proteus-world-kalimba",
+  "category": "rompler-emu",
+  "name": "Proteus World Kalimba",
+  "inspired_by": "E-mu Proteus World / Planet Earth 'Kalimba' (also Alchemy and Omnisphere kalimbas)",
+  "character": "A thumb-pluck click, then a clean, slightly inharmonic tine tone. 400 to 700 ms decay with a soft woody body; very 'Aero'.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@25]#10/start>#4FL50;A0D600S0R250",
+   "The front of xpding gives a bright tine.",
+   "The start.wav click at x2 speed is the thumb.",
+   "Mix them in one buffer instead: xpding@25]Mstart, if you want a single-recorder voice.",
+   "[planned offsets] click at 0 ms, tine at 3 ms.",
+   "Play an octave higher with T12 for music-box shimmer."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "xpnotify",
+   "balloon",
+   "start"
+  ],
+  "priority": 1,
+  "rank": 23,
+  "dna": "xpding@25]#10/start>#4FL50;A0D600S0R250",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-emu-planet-phatt-hip-hop-kit",
+  "category": "rompler-emu",
+  "name": "Planet Phatt Hip-Hop Kit",
+  "inspired_by": "E-mu Planet Phatt / Mo'Phatt drum kits (90s hip-hop and R&B ROM)",
+  "character": "Punchy, slightly crunchy drums: a boomy kick, a short snare crack and tight hats. The drums are mono and up front, with some 12-bit sampler bite.",
+  "recipe_steps": [
+   "Start DNA (spec v1): critstop<<@6]++#4F/recycle>>@4]#6F/start>>#6F;A0R80",
+   "Layer 1: the attack of critstop at -2 octaves, clipped with ++, gives the kick boom.",
+   "Layer 2: a crumple grain at x4 is the snare and hat noise.",
+   "Layer 3: start.wav at x4 is the rim/hat tick.",
+   "Velocity at full (V100); every layer F, so each sound stays at one pitch. Map them to keys via the future per-key split, or play each layer alone.",
+   "Use >< (the decimation round trip) for SP-1200 grit."
+  ],
+  "suggested_sources": [
+   "critstop",
+   "error",
+   "recycle",
+   "start",
+   "menu"
+  ],
+  "priority": 3,
+  "dna": "critstop<<@6]++#4F/recycle>>@4]#6F/start>>#6F;A0R80",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-emu-mo-phatt-fat-bass",
+  "category": "rompler-emu",
+  "name": "Mo'Phatt Fat Bass",
+  "inspired_by": "E-mu Mo'Phatt / Orbit 'Phat bass' presets",
+  "character": "A round, sub-heavy, slightly distorted synth bass with a quick 'thump' decay into a sustained tone. Mono.",
+  "recipe_steps": [
+   "Start DNA (spec v1): error<<@40]+++#8/error<<<@40]#4L70;A2D180S75R90V90",
+   "The front of XP Error two octaves down is the low two-note, cut to the first tone.",
+   "+++ hard-clips it into a fat square-ish wave.",
+   "A third octave down mixed under it is the sub.",
+   "[planned env graph] 180 ms decay to 75% gives the 'thump'."
+  ],
+  "suggested_sources": [
+   "error",
+   "critstop",
+   "batlow"
+  ],
+  "priority": 2,
+  "dna": "error<<@40]+++#8/error<<<@40]#4L70;A2D180S75R90V90",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-emu-orbit-dance-stab",
+  "category": "rompler-emu",
+  "name": "Orbit Dance Stab",
+  "inspired_by": "E-mu Orbit 9090 dance stabs and hits (late-90s rave and big beat)",
+  "character": "A short, loud, chordal hit with a bright transient and some noisy rave grit. It decays in 250 ms.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@35]++E#12H0,7;A0D250S0R150",
+   "The first third of chord.wav, clipped with ++ and echoed once, gives the stab.",
+   "H0,7 adds a fifth for the rave power-chord.",
+   "[planned macro] M1 = clip amount (0 to 3 '+')."
+  ],
+  "suggested_sources": [
+   "chord",
+   "tada",
+   "exclaim"
+  ],
+  "priority": 2,
+  "dna": "chord@35]++E#12H0,7;A0D250S0R150",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-emu-vintage-keys-rhodes",
+  "category": "rompler-emu",
+  "name": "Vintage Keys Rhodes",
+  "inspired_by": "E-mu Vintage Keys 'Suitcase' / 'Stage 73' Rhodes",
+  "character": "Bell-like tine on top of a warm, sine-ish body. It barks a little when you play hard, sustains long, and has a gentle stereo tremolo.",
+  "recipe_steps": [
+   "Start DNA (spec v1): default@50]#8/ringout@30[@30]<#6L60;A2D1800S30R400V90",
+   "XP Default's soft mallet is the tine strike.",
+   "A steady ringout chunk an octave down is the sine body.",
+   "[planned pan] stereo tremolo: alternate recorders L60 and R60 at the same volume and use the planned volume automation on M1 for the tremolo.",
+   "[planned macro] M2 = bark (adds a ++ clipped copy layer at high velocity)."
+  ],
+  "suggested_sources": [
+   "default",
+   "ringout",
+   "xpnotify"
+  ],
+  "priority": 1,
+  "rank": 19,
+  "dna": "default@50]#8/ringout@30[@30]<#6L60;A2D1800S30R400V90",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-emu-vintage-keys-mellotron-flute",
+  "category": "rompler-emu",
+  "name": "Vintage Keys Mellotron Flute",
+  "inspired_by": "E-mu Vintage Keys 'Mellotron Flute' ('Strawberry Fields Forever')",
+  "character": "Warbly tape flute with a soft breathy attack, slight pitch wow and a hard 8-second tape cutoff. Lo-fi, mid-range.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@50]#8U2~12/recycle>>@5]#4FL25;A60S95R300",
+   "The sine-like ringout middle is the flute.",
+   "Unison +/-12 cents acts as tape wow.",
+   "Crumple breath sits underneath.",
+   "No tape cutoff is needed: Sound Recorder's buffer end is the 8-second stop."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "xpringout",
+   "recycle"
+  ],
+  "priority": 2,
+  "dna": "ringout@20[@50]#8U2~12/recycle>>@5]#4FL25;A60S95R300",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-emu-emulator-iii-grand",
+  "category": "rompler-emu",
+  "name": "Emulator III Grand",
+  "inspired_by": "E-mu Emulator III / Proteus 'Grand Piano' (90s 'pop piano')",
+  "character": "A clean, bright, compressed piano with a hammer knock and a long decay. Not much body, but it cuts through a mix.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@8[@60]#8/default@10]#4FL40;A0D2500S20R500",
+   "chord.wav has a piano-ish attack: trim the very first click and keep the bloom.",
+   "XP Default's front is the hammer knock.",
+   "For the Korg house piano, see 'M1 Piano 16''."
+  ],
+  "suggested_sources": [
+   "chord",
+   "default",
+   "exclaim"
+  ],
+  "priority": 3,
+  "dna": "chord@8[@60]#8/default@10]#4FL40;A0D2500S20R500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-emu-proteus-3-ethnic-gamelan",
+  "category": "rompler-emu",
+  "name": "Proteus 3 Ethnic Gamelan",
+  "inspired_by": "E-mu Proteus/3 World 'Gamelan' and 'Bonang'",
+  "character": "Metallic, slightly detuned pairs of struck bronze tones that beat against each other, with a long shimmering decay.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes@20]#8U2~22/chimes@20]>#6U2~18L60;A0D2000S0R900",
+   "The first strike of chimes gives the gong-chime partials.",
+   "Gamelan's paired-tuning shimmer is a wide unison: +/-22 cents.",
+   "An octave-up copy adds the bonang ring.",
+   "[planned pan] voice pairs hard L/R so the beating rotates."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "ding",
+   "xpding"
+  ],
+  "priority": 2,
+  "dna": "chimes@20]#8U2~22/chimes@20]>#6U2~18L60;A0D2000S0R900",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "rompler-emu-emulator-orchestra-hit",
+  "category": "rompler-emu",
+  "name": "Emulator Orchestra Hit",
+  "inspired_by": "Fairlight CMI ORCH5 (Stravinsky Firebird) via the E-mu Emulator and every ROM after it",
+  "character": "THE stab: a full-orchestra chord in one 300 ms hit. Huge transient, brassy mid, quick decay and lo-fi bite. Usually played in octaves.",
+  "recipe_steps": [
+   "Start DNA (spec v1): tada@25]++E#10H0,12/critstop@10]<#6L80;A0D300S0R200V70",
+   "The first fanfare hit of tada.wav is already an orchestral stab: keep the first 25%.",
+   "++ for bite, E for the hall.",
+   "Play H0,12 (octaves), like 'Owner of a Lonely Heart' and Art of Noise.",
+   "critstop slowed an octave adds the low brass/timpani weight.",
+   "On 3.11, tada falls back to ding. There, use chimes<@15]++ as a thinner hit."
+  ],
+  "suggested_sources": [
+   "tada",
+   "critstop",
+   "exclaim",
+   "chord"
+  ],
+  "priority": 1,
+  "rank": 3,
+  "dna": "tada@25]++E#10H0,12/critstop@10]<#6L80;A0D300S0R200V70",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-fantasia",
+  "category": "rompler-roland",
+  "name": "Fantasia",
+  "inspired_by": "Roland D-50 preset 'Fantasia' (the most famous D-50 sound; Jean-Michel Jarre, 'Wonderful Life' era)",
+  "character": "A bright, bell-like attack transient (a PCM 'chiff' plus a synth bell) layered on a soft, warm, chorused pad that swells in behind. Wide chorus, plenty of reverb. Sparkle on top, warmth below.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@30]#6H0,12/startup@25[@40]<#8U3~10L70;A0D900S55R1500",
+   "Layer 1: the front of xpding, with an octave above, is the bell strike.",
+   "Layer 2: the middle of the XP Startup pad an octave down, U3 at +/-10 cents, is the warm chorused bed.",
+   "[planned env graph] layer 1 starts at 100% and decays in 900 ms; layer 2 rises over 600 ms and holds. That crossfade is the D-50 'LA' trick.",
+   "[planned pan] layer 2's unison voices at L50/C/R50 imitate the D-50 chorus.",
+   "[planned macro] M1 = bell vs pad balance."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "startup",
+   "logon",
+   "xpnotify"
+  ],
+  "priority": 1,
+  "rank": 4,
+  "dna": "xpding@30]#6H0,12/startup@25[@40]<#8U3~10L70;A0D900S55R1500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-digital-native-dance",
+  "category": "rompler-roland",
+  "name": "Digital Native Dance",
+  "inspired_by": "Roland D-50 'Digital Native Dance' (looped PCM percussion pad)",
+  "character": "A rhythmic, looping PCM transient pattern (a kind of 'tick-tock' tribal motion) running under a sustained pad. The motion comes from the loop itself, with no LFO.",
+  "recipe_steps": [
+   "Start DNA (spec v1): start>@0CP@0CP@0CP@0CPE#6F/logon<@30[#8U2~8L70;A20S90R900",
+   "Layer 1: build a rhythmic loop by doubling start.wav four times with @0CP (16 repeats), plus echo for syncopation. F keeps it at fixed tempo.",
+   "Layer 2: the logon pad, slowed, for the harmonic bed.",
+   "Variation: mix a crumple grain into the loop: start>@0CP@0CPMrecycle@0CP@0CP.",
+   "[planned offsets] start a second loop recorder 1/3 of the click period late for polyrhythm."
+  ],
+  "suggested_sources": [
+   "start",
+   "menu",
+   "xpstart",
+   "popup",
+   "logon"
+  ],
+  "priority": 1,
+  "rank": 17,
+  "dna": "start>@0CP@0CP@0CP@0CPE#6F/logon<@30[#8U2~8L70;A20S90R900",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-staccato-heaven",
+  "category": "rompler-roland",
+  "name": "Staccato Heaven",
+  "inspired_by": "Roland D-50 'Staccato Heaven' (bright staccato chime-pad)",
+  "character": "Short glassy staccato chime attacks on every note, over a shimmering airy sustain. Strongly 'synth-pop heaven': bright, chorused, reverberant.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes>@20]E#8H0,12/logon@40[#8U2~9L55;A0D400S40R1200",
+   "chimes at x2, front 20%, echoed: a glass staccato.",
+   "The airy tail of logon as the heavenly sustain.",
+   "[planned env graph] fast decay on layer 1, slow rise on layer 2."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "logon",
+   "print",
+   "xpnotify"
+  ],
+  "priority": 2,
+  "dna": "chimes>@20]E#8H0,12/logon@40[#8U2~9L55;A0D400S40R1200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-d-50-pizzagogo",
+  "category": "rompler-roland",
+  "name": "D-50 Pizzagogo",
+  "inspired_by": "Roland D-50 'Pizzagogo' (pizzicato-plus-bell)",
+  "character": "Plucky pizzicato with a bell overtone. Very short, bouncy, made for ostinatos.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpringin@8]#8/xpding@15]>#4L50;A0D180S0R120",
+   "The front of xpringin is the pluck; the octave-up xpding front is the bell overtone."
+  ],
+  "suggested_sources": [
+   "xpringin",
+   "xpding",
+   "default"
+  ],
+  "priority": 3,
+  "dna": "xpringin@8]#8/xpding@15]>#4L50;A0D180S0R120",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-d-50-breathy-chiffer",
+  "category": "rompler-roland",
+  "name": "D-50 Breathy Chiffer",
+  "inspired_by": "Roland D-50 'Breathy Chiffer' (pan-flute-ish)",
+  "character": "A breathy noise chiff into a pure tone with gentle vibrato; ethereal, 'new age'.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@25[@40]#8U2~7/minimize>@15]#3FL35;A40S90R600",
+   "The ringout middle is the tone; the start of the minimize whoosh is the chiff."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "minimize",
+   "recycle"
+  ],
+  "priority": 2,
+  "dna": "ringout@25[@40]#8U2~7/minimize>@15]#3FL35;A40S90R600",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-u-20-piano-strings",
+  "category": "rompler-roland",
+  "name": "U-20 Piano/Strings",
+  "inspired_by": "Roland U-20 / U-220 'Piano & Strings' split-layer combis (early-90s rompler)",
+  "character": "A bright 'RS-PCM' piano attack layered with a lush slow string pad. Thin, clean and very early-90s ballad.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@5[@50]#8/logoff@30[#8U3~10L60;A0D1500S40R1200",
+   "chord.wav bloom for the piano; mid-logoff for the strings with a slow attack (planned env on layer 2 only)."
+  ],
+  "suggested_sources": [
+   "chord",
+   "logoff",
+   "startup"
+  ],
+  "priority": 3,
+  "dna": "chord@5[@50]#8/logoff@30[#8U3~10L60;A0D1500S40R1200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-jv-1080-velo-strings",
+  "category": "rompler-roland",
+  "name": "JV-1080 Velo Strings",
+  "inspired_by": "Roland JV-1080/2080 strings ('Velo Strings', 'Symphonic Str') plus SR-JV80-02 Orchestral",
+  "character": "Big, smooth, high-res string section: a slow attack, a wide stereo hall and an ensemble shimmer. Bright when played hard.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logoff@25[#10U3~12/shutdown@30[<#6U2~8L50;A250S95R1500V60",
+   "logoff and shutdown both have soft string-like shimmer; their attack transients are deleted.",
+   "[planned env graph] attack time follows velocity, and M1 ('expression') scales volume."
+  ],
+  "suggested_sources": [
+   "logoff",
+   "shutdown",
+   "startup"
+  ],
+  "priority": 2,
+  "dna": "logoff@25[#10U3~12/shutdown@30[<#6U2~8L50;A250S95R1500V60",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-jv-pulse-arp",
+  "category": "rompler-roland",
+  "name": "JV Pulse Arp",
+  "inspired_by": "Roland JV-1080 'Pulse Pad'/'Ambient' sequenced presets and the XP-50 'Arp' patches",
+  "character": "A tight, gated, ticking pad, a pulsing 16th-note motion baked into one held note.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logon@20[@40]@0CP@0CP#8U2~6/start>>#4FL30;A5S80R300",
+   "Cut a short chunk of logon and paste-insert copies of it: the seam at each copy boundary gives a rhythmic 'gate' pulse.",
+   "A click layer marks the beats.",
+   "[planned env graph] draw a gate shape (steps)."
+  ],
+  "suggested_sources": [
+   "logon",
+   "startup",
+   "start"
+  ],
+  "priority": 3,
+  "dna": "logon@20[@40]@0CP@0CP#8U2~6/start>>#4FL30;A5S80R300",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-sound-canvas-fantasia-halo",
+  "category": "rompler-roland",
+  "name": "Sound Canvas Fantasia/Halo",
+  "inspired_by": "Roland SC-55 GM 'Fantasia' (program 89 'Pad 1 New Age') and 'Halo Pad'",
+  "character": "The GM-sized Fantasia: thinner and grainier than the D-50 original. Instantly recognizable 'MIDI file' nostalgia.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@30]#6H0,12/notify<@20[#8U2~8L60;A0D700S50R900",
+   "Same idea as Fantasia, with a smaller unison and a shorter release: GM ROM economy is part of the charm."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "notify",
+   "chimes"
+  ],
+  "priority": 2,
+  "dna": "xpding@30]#6H0,12/notify<@20[#8U2~8L60;A0D700S50R900",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-sc-55-choir-aahs",
+  "category": "rompler-roland",
+  "name": "SC-55 Choir Aahs",
+  "inspired_by": "Roland Sound Canvas GM 53 'Choir Aahs' (and every GM module since)",
+  "character": "A soft, slightly nasal 'aah' section with a 200 to 400 ms swell, a little vibrato and a gentle loop. Low top end.",
+  "recipe_steps": [
+   "Start DNA (spec v1): notify<#8U3~12/xpnotify<<@20[#6U2~10L60;A300S90R900V40",
+   "Slowed notify and xpnotify give vowel-like mid-range tones; unison makes the choir.",
+   "[planned env graph] a slight dip at 400 ms gives the GM loop-point feel."
+  ],
+  "suggested_sources": [
+   "notify",
+   "xpnotify",
+   "logon"
+  ],
+  "priority": 1,
+  "rank": 8,
+  "dna": "notify<#8U3~12/xpnotify<<@20[#6U2~10L60;A300S90R900V40",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-sc-55-voice-oohs",
+  "category": "rompler-roland",
+  "name": "SC-55 Voice Oohs",
+  "inspired_by": "Roland Sound Canvas GM 54 'Voice Oohs'",
+  "character": "A rounder, darker, almost-sine 'ooh' with a slower onset than Aahs. Breathy and intimate.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@50]<#8U3~9/recycle>@5]#2FL15;A400S90R1100V40",
+   "ringout gives a sine-ish 'oo'; a whisper of crumple adds breath."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "xpringout",
+   "notify"
+  ],
+  "priority": 2,
+  "dna": "ringout@20[@50]<#8U3~9/recycle>@5]#2FL15;A400S90R1100V40",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-sc-55-square-lead-gm-ocarina",
+  "category": "rompler-roland",
+  "name": "SC-55 Square Lead / GM Ocarina",
+  "inspired_by": "Roland Sound Canvas GM 81 'Square Lead' and GM 80 'Ocarina'",
+  "character": "Pure hollow square/sine lead with instant attack: 'video game MIDI' melody voice.",
+  "recipe_steps": [
+   "Start DNA (spec v1): batlow@5[@20]@0CP@0CP@0CP+++#8;A5S100R150",
+   "Grab a tiny steady chunk of XP Battery Low, multiply it with @0CP into a sustained tone, then +++ clip it square."
+  ],
+  "suggested_sources": [
+   "batlow",
+   "batcrit",
+   "ringout"
+  ],
+  "priority": 2,
+  "dna": "batlow@5[@20]@0CP@0CP@0CP+++#8;A5S100R150",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-mt-32-fantasy-bell",
+  "category": "rompler-roland",
+  "name": "MT-32 Fantasy Bell",
+  "inspired_by": "Roland MT-32 / CM-32L 'Fantasy' & game-music bells (Sierra, LucasArts soundtracks)",
+  "character": "Crunchy LA-synthesis bell with a PCM attack. 15-bit grit, a short reverb tail and a slightly aliased top.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes@30]><#8H0,12/ding><#4L50;A0D1200S0R600",
+   "The >< round trip decimates (drops every other sample, then doubles), for MT-32-ish aliasing at the same pitch. Verify in reference mode.",
+   "Layer chimes and ding for the PCM 'ting'."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "ding",
+   "xpding"
+  ],
+  "priority": 2,
+  "dna": "chimes@30]><#8H0,12/ding><#4L50;A0D1200S0R600",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "rompler-roland-mt-32-slap-bass",
+  "category": "rompler-roland",
+  "name": "MT-32 Slap Bass",
+  "inspired_by": "Roland MT-32 'SlapBass 1' (Monkey Island, King's Quest)",
+  "character": "A thumb-slap transient into a short, buzzy, nasal bass. Unmistakably DOS-game.",
+  "recipe_steps": [
+   "Start DNA (spec v1): error<@15]++#8/start<#4FL60;A0D300S30R80",
+   "The XP Error tone, slowed and clipped, gives the buzzy bass; start.wav slowed down is the slap click."
+  ],
+  "suggested_sources": [
+   "error",
+   "start",
+   "critstop"
+  ],
+  "priority": 2,
+  "dna": "error<@15]++#8/start<#4FL60;A0D300S30R80",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-xv-supersaw-pad",
+  "category": "rompler-roland",
+  "name": "XV Supersaw Pad",
+  "inspired_by": "Roland XV-5080 / JP-8000 'Supersaw' trance pad and lead (late-90s trance)",
+  "character": "Seven detuned saws: a bright buzzy spectrum, a wide stereo and a constantly beating chorus motion.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@20[@30]@0CP@0CP@0CP++#16U8~35;A20S95R700",
+   "Make a looped steady tone from chord.wav (@0CP doubling), clip it with ++ toward a saw-like buzz.",
+   "U8~35 gives eight unison voices over +/-35 cents. That beating IS the supersaw.",
+   "[planned pan] alternate unison voices L/R across the field."
+  ],
+  "suggested_sources": [
+   "chord",
+   "error",
+   "tada"
+  ],
+  "priority": 1,
+  "rank": 20,
+  "dna": "chord@20[@30]@0CP@0CP@0CP++#16U8~35;A20S95R700",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-jd-800-glass-voices",
+  "category": "rompler-roland",
+  "name": "JD-800 Glass Voices",
+  "inspired_by": "Roland JD-800/JD-990 'Glass Voices' and 'Digital Native' style PCM-choir pads",
+  "character": "A high, glassy choir with a crystalline top and slow evolving shimmer. 90s 'digital heaven'.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes>R#6U2~10/notify<#8U3~10L70;A500S90R1500",
+   "Reversed chimes at x2 for a crystalline glass swell, over the notify choir."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "notify",
+   "logon"
+  ],
+  "priority": 2,
+  "dna": "chimes>R#6U2~10/notify<#8U3~10L70;A500S90R1500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-roland-alpha-juno-hoover",
+  "category": "rompler-roland",
+  "name": "Alpha Juno 'Hoover'",
+  "inspired_by": "Roland Alpha Juno 2 'What The' / the Hoover (Joey Beltram 'Mentasm', 1991)",
+  "character": "A huge, detuned, pulse-width-modulated, chorused buzz with a downward pitch swoop. Aggressive and seasick.",
+  "recipe_steps": [
+   "Start DNA (spec v1): error@10[@40]@0CP@0CP@0CP+++#16U8~60;A10S100R400B12",
+   "A looped error tone, hard-clipped for the buzz.",
+   "U8~60 gives the extreme detune.",
+   "B12 so the pitch bend gives the swoop. Without automation, pre-bake the swoop by adding a reversed 'restore' whoosh layer."
+  ],
+  "suggested_sources": [
+   "error",
+   "critstop",
+   "restore"
+  ],
+  "priority": 2,
+  "dna": "error@10[@40]@0CP@0CP@0CP+++#16U8~60;A10S100R400B12",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-korg-m1-piano-16",
+  "category": "rompler-korg",
+  "name": "M1 Piano 16'",
+  "inspired_by": "Korg M1 'Piano 16'' (house piano: Robin S, Crystal Waters, Black Box, 90s house)",
+  "character": "A bright, clangy, mid-forward piano, layered with an octave so the chord stabs ring. The decay is fast. It is compressed, almost metallic, and made to stab offbeats.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@5[@45]#10H0,12/xpding@20]#6L40;A0D1200S15R250V60",
+   "chord.wav (it already sounds like a struck chord) with the click trimmed; H0,12 adds the 16' octave doubling.",
+   "A bit of xpding for metallic clang.",
+   "Play chords: each note gives 2 voices, so the 16-recorder pool allows ~5-note chords per layer split. Recommend #10/#6.",
+   "[planned macro] M1 = brightness (an xpding level)."
+  ],
+  "suggested_sources": [
+   "chord",
+   "xpding",
+   "exclaim",
+   "default"
+  ],
+  "priority": 1,
+  "rank": 1,
+  "dna": "chord@5[@45]#10H0,12/xpding@20]#6L40;A0D1200S15R250V60",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-korg-m1-organ-2",
+  "category": "rompler-korg",
+  "name": "M1 Organ 2",
+  "inspired_by": "Korg M1 'Organ 2' (Robin S 'Show Me Love', 1993: the most famous rompler organ)",
+  "character": "A percussive organ 'bark': a sharp, pitched click attack, then a short, round, hollow tone that decays to a low sustain. Played as a syncopated bass riff.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@30]@0CP@0CP@0CP#8H0,12,19/start>#4FL70;A0D220S35R90",
+   "Make a sustained sine-ish organ tone from a steady ringout chunk doubled with @0CP.",
+   "H0,12,19 = 8', 4' and 2 2/3' drawbars.",
+   "The x2 start.wav click is the key-click percussion.",
+   "[planned env graph] 220 ms drop to 35%: that decay IS the M1 Organ 2 bark."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "xpringout",
+   "start",
+   "menu"
+  ],
+  "priority": 1,
+  "rank": 6,
+  "dna": "ringout@20[@30]@0CP@0CP@0CP#8H0,12,19/start>#4FL70;A0D220S35R90",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-korg-m1-universe",
+  "category": "rompler-korg",
+  "name": "M1 Universe",
+  "inspired_by": "Korg M1 'Universe' (space pad: glassy bells over a wide airy pad)",
+  "character": "A huge, slowly evolving space pad: a soft digital bell attack, a glassy upper partial band and a long, wide stereo tail.",
+  "recipe_steps": [
+   "Start DNA (spec v1): startup@20[<#8U3~12/chimes>R#6U2~8L60;A700S90R2500",
+   "Slowed XP Startup without its intro is the evolving universe wash.",
+   "Reversed, sped-up chimes shimmer in on every note.",
+   "[planned pan] wide; [planned macro] M1 = shimmer level."
+  ],
+  "suggested_sources": [
+   "startup",
+   "logon",
+   "chimes",
+   "shutdown"
+  ],
+  "priority": 1,
+  "rank": 15,
+  "dna": "startup@20[<#8U3~12/chimes>R#6U2~8L60;A700S90R2500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-korg-m1-fretless",
+  "category": "rompler-korg",
+  "name": "M1 Fretless",
+  "inspired_by": "Korg M1 'Fretless' bass (90s pop/R&B)",
+  "character": "A smooth, singing fretless bass: round, sine-heavy, with a gentle 'mwah' attack. Sustained.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@40]<<#8/default<<@10]#4L40;A15D500S70R150",
+   "Two-octave-down ringout chunk = sine bass, XP Default front for the finger 'mwah'."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "default",
+   "batlow"
+  ],
+  "priority": 2,
+  "dna": "ringout@20[@40]<<#8/default<<@10]#4L40;A15D500S70R150",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-korg-m1-lore-choir",
+  "category": "rompler-korg",
+  "name": "M1 Lore / Choir",
+  "inspired_by": "Korg M1 'Lore' and 'Choir' (PCM choir, ambient 90s)",
+  "character": "A breathy digital choir with a long reverb and a slightly hollow loop. Ethereal.",
+  "recipe_steps": [
+   "Start DNA (spec v1): notify<R#8U3~10/notify<#6U2~8L70;A600S90R1800",
+   "A reversed slowed notify gives the 'breath-in' swell, with a forward notify for body."
+  ],
+  "suggested_sources": [
+   "notify",
+   "logon",
+   "xpnotify"
+  ],
+  "priority": 2,
+  "dna": "notify<R#8U3~10/notify<#6U2~8L70;A600S90R1800",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-korg-wavestation-glass-pad",
+  "category": "rompler-korg",
+  "name": "Wavestation Glass Pad",
+  "inspired_by": "Korg Wavestation 'Glass Mountain'/'Spectrum' vector pads (Wave Sequencing)",
+  "character": "A pad that never sits still: short PCM fragments crossfade in sequence, making a rhythmic, shimmering, glassy motion inside one held note.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes@40]IxpdingIchimes>Iprint@0CP#8U2~6/logon<#8L50;A80S90R1600",
+   "Wave sequencing = Insert File chain: chimes, then xpding, then chimes x2, then print, all spliced in one buffer.",
+   "Copy-paste doubles the sequence.",
+   "The logon pad underneath is the vector-blend bed.",
+   "[planned macro] M1/M2 = vector X/Y: crossfade 4 recorder layers (A/B/C/D) with the planned non-baked volume."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "xpding",
+   "print",
+   "logon",
+   "xpnotify"
+  ],
+  "priority": 1,
+  "rank": 18,
+  "dna": "chimes@40]IxpdingIchimes>Iprint@0CP#8U2~6/logon<#8L50;A80S90R1600",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-korg-wavestation-ocean-bed",
+  "category": "rompler-korg",
+  "name": "Wavestation 'Ocean Bed'",
+  "inspired_by": "Korg Wavestation noise/ambient vector pads",
+  "character": "A slow-moving, filtered-noise wash that sounds like breaking surf, with tonal glints.",
+  "recipe_steps": [
+   "Start DNA (spec v1): recycle<<<EE#6F/minimize<<R#4F/xpnotify<@20[#6L40;A1200S90R2500",
+   "Crumple at -3 octaves sounds like surf; minimize/restore whooshes slowed and reversed are swells; a soft tone gives pitch."
+  ],
+  "suggested_sources": [
+   "recycle",
+   "xprecycle",
+   "minimize",
+   "restore",
+   "xpnotify"
+  ],
+  "priority": 3,
+  "dna": "recycle<<<EE#6F/minimize<<R#4F/xpnotify<@20[#6L40;A1200S90R2500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-korg-triton-pop-piano-strings",
+  "category": "rompler-korg",
+  "name": "Triton Pop Piano / Strings",
+  "inspired_by": "Korg Triton 'Dance Piano' and 'Str Ensemble' (Y2K pop and R&B)",
+  "character": "A crisp, glossy, stereo piano with a modern bright sheen, often layered with a soft string pad. Very Y2K TRL.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@5[@50]#8H0,12U2~4/logoff@30[#8U2~10L50;A0D1800S30R900",
+   "Like M1 Piano 16', but with a slight unison and a string pad underneath."
+  ],
+  "suggested_sources": [
+   "chord",
+   "logoff",
+   "exclaim"
+  ],
+  "priority": 3,
+  "dna": "chord@5[@50]#8H0,12U2~4/logoff@30[#8U2~10L50;A0D1800S30R900",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-korg-triton-hip-hop-pluck",
+  "category": "rompler-korg",
+  "name": "Triton Hip-Hop Pluck",
+  "inspired_by": "Korg Triton 'Pluck'/'Koto' & pizzicato presets (2000s hip-hop: Timbaland, Swizz Beatz)",
+  "character": "A dry, short, exotic-sounding pluck (koto- or harp-like) with a clean digital attack, cutting through a sparse beat.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpringin@6]#12;A0D160S0R80V80",
+   "The front of the XP Ringin marimba phrase is the dry pluck.",
+   "[planned offsets] for a harp gliss feel, chain recorders 15 ms apart."
+  ],
+  "suggested_sources": [
+   "xpringin",
+   "default",
+   "exclaim"
+  ],
+  "priority": 2,
+  "dna": "xpringin@6]#12;A0D160S0R80V80",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-korg-korg-m1-bell-pole",
+  "category": "rompler-korg",
+  "name": "Korg M1 Bell / 'Pole'",
+  "inspired_by": "Korg M1 'Bell'/'Tines' family and Triton 'Pole Bells'",
+  "character": "A pure, bright bell attack with a long, singing decay. Classic 90s ballad sparkle.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding>#8H0,12/chimes@20]#4L50;A0D2500S0R1200",
+   "xpding up an octave rings like a pole bell; the chimes front adds the clang."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "chimes",
+   "print"
+  ],
+  "priority": 3,
+  "dna": "xpding>#8H0,12/chimes@20]#4L50;A0D2500S0R1200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-yamaha-dx7-e-piano-1",
+  "category": "rompler-yamaha",
+  "name": "DX7 E.PIANO 1",
+  "inspired_by": "Yamaha DX7 ROM1A 'E.PIANO 1' (the most used preset of the 80s: Whitney, Lionel Richie, every ballad)",
+  "character": "A glassy FM 'tine' attack transient, with a sharp metallic bell harmonic, over a pure sine-like body. Hard playing brings out more bell. Long, clean decay, mild chorus, no real hammer noise.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@20]#6H0,24/ringout@25[@35]#8L80;A0D1600S25R350V90",
+   "Layer 1: the xpding front with two octaves up (H0,24) is the metallic tine bell.",
+   "Layer 2: a sine-ish ringout chunk is the body.",
+   "Velocity matters: [planned macro] M1 tied to velocity adds layer-1 level (bell on hard hits).",
+   "[planned pan] 2 recorders per note with +/-6 cents and L30/R30 for the classic chorus."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "ringout",
+   "xpnotify",
+   "default"
+  ],
+  "priority": 1,
+  "rank": 2,
+  "dna": "xpding@20]#6H0,24/ringout@25[@35]#8L80;A0D1600S25R350V90",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-yamaha-dx7-bass-1-solid-bass",
+  "category": "rompler-yamaha",
+  "name": "DX7 BASS 1 / Solid Bass",
+  "inspired_by": "Yamaha DX7 'BASS 1' / 'SOLID BASS' (80s FM bass: a-ha, Kenny Loggins)",
+  "character": "A snappy FM pluck with a percussive 'thwack' of upper harmonics. They decay in 100 ms, leaving a round, solid low tone.",
+  "recipe_steps": [
+   "Start DNA (spec v1): error<<@30]+#8/xpding<<@8]#4L60;A0D350S50R80",
+   "The XP Error low tone two octaves down is the body; a very short xpding front, slowed, is the FM 'thwack'."
+  ],
+  "suggested_sources": [
+   "error",
+   "xpding",
+   "critstop"
+  ],
+  "priority": 2,
+  "dna": "error<<@30]+#8/xpding<<@8]#4L60;A0D350S50R80",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-yamaha-dx7-tub-bells",
+  "category": "rompler-yamaha",
+  "name": "DX7 TUB BELLS",
+  "inspired_by": "Yamaha DX7 'TUB BELLS' and 'E.BELL'/'GLOCKEN' (inharmonic FM bells)",
+  "character": "Inharmonic metallic partials, a strong strike and a very long, slowly beating decay. Cold and crystalline.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes@25]#8U2~15/ding>#6L60;A0D4000S0R2000",
+   "chimes and ding have real inharmonic bell spectra; a wide unison gives the FM beating.",
+   "Try EE> after the chimes trim for an extra metallic comb ring."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "ding",
+   "xpding"
+  ],
+  "priority": 2,
+  "dna": "chimes@25]#8U2~15/ding>#6L60;A0D4000S0R2000",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "rompler-yamaha-dx7-koto",
+  "category": "rompler-yamaha",
+  "name": "DX7 Koto",
+  "inspired_by": "Yamaha DX7 ROM 'KOTO' (80s 'exotic' pluck, also Emulator 'Koto')",
+  "character": "A twangy, bright pluck with a fast pitch-drop 'ping', then a short nasal decay with metallic string buzz.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpringin@5]EE>#10/start>>#4FL30;A0D500S0R250",
+   "Echo then speed-up makes a short comb: the koto's buzzing 'sawari' resonance.",
+   "Play pentatonic (In scale) for the trope."
+  ],
+  "suggested_sources": [
+   "xpringin",
+   "xpding",
+   "start"
+  ],
+  "priority": 2,
+  "dna": "xpringin@5]EE>#10/start>>#4FL30;A0D500S0R250",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-yamaha-tx81z-lately-bass",
+  "category": "rompler-yamaha",
+  "name": "TX81Z Lately Bass",
+  "inspired_by": "Yamaha TX81Z preset 'LatelyBass' (Stevie Wonder 'Lately'; 90s house and R&B, everywhere)",
+  "character": "A punchy FM bass. A bright, squelchy, rubbery attack drops fast into a hollow, nasal, slightly woody tone. The attack has a 'pluck', like a filter blip.",
+  "recipe_steps": [
+   "Start DNA (spec v1): error<@25]++#8/hwin<@20]#4L60;A0D250S40R70V90",
+   "Clipped XP Error an octave down is the hollow tone.",
+   "The front of Hardware Insert (a rising 'bloop'), slowed, gives the rubbery squelch on the attack.",
+   "[planned env graph] 250 ms decay to 40%, a quick 70 ms release."
+  ],
+  "suggested_sources": [
+   "error",
+   "hwin",
+   "critstop",
+   "balloon"
+  ],
+  "priority": 1,
+  "rank": 5,
+  "dna": "error<@25]++#8/hwin<@20]#4L60;A0D250S40R70V90",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-yamaha-tx81z-fb-01-wood-piano",
+  "category": "rompler-yamaha",
+  "name": "TX81Z / FB-01 'Wood Piano'",
+  "inspired_by": "Yamaha TX81Z/FB-01 'WoodPiano' & 4-op keys (DOS game and 90s budget-studio sound)",
+  "character": "A dull, woody, bell-tinged 4-op keyboard: thin, but warm and nostalgic.",
+  "recipe_steps": [
+   "Start DNA (spec v1): default@40]#10/xpnotify@20]#4L40;A0D900S20R200",
+   "XP Default's mallet; a touch of xpnotify."
+  ],
+  "suggested_sources": [
+   "default",
+   "xpnotify"
+  ],
+  "priority": 3,
+  "dna": "default@40]#10/xpnotify@20]#4L40;A0D900S20R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-yamaha-sy77-sy99-pacific-rim",
+  "category": "rompler-yamaha",
+  "name": "SY77 / SY99 'Pacific Rim'",
+  "inspired_by": "Yamaha SY77/SY99 AFM+AWM pads and 'Pacific Rim'-style breathy pads",
+  "character": "A digital FM shimmer layered over sampled breath: wide, modern-1990, almost choral.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logon@20[#8U3~10/chimes>R#4L50/recycle<<#4FL20;A500S90R1800",
+   "Logon pad, reversed glass, and slowed crumple air."
+  ],
+  "suggested_sources": [
+   "logon",
+   "chimes",
+   "recycle"
+  ],
+  "priority": 3,
+  "dna": "logon@20[#8U3~10/chimes>R#4L50/recycle<<#4FL20;A500S90R1800",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-yamaha-dx7-harmonica-flute-1",
+  "category": "rompler-yamaha",
+  "name": "DX7 Harmonica / Flute 1",
+  "inspired_by": "Yamaha DX7 'HARMONICA' and 'FLUTE 1' (FM wind with vibrato)",
+  "character": "A reedy, slightly buzzy FM tone with a breathy onset and natural vibrato motion.",
+  "recipe_steps": [
+   "Start DNA (spec v1): batcrit@10[@20]@0CP@0CP@0CP+#8U2~10;A50S95R180",
+   "A steady chunk of XP Battery Critical (a sine-ish alert), looped and lightly clipped, gives the reed."
+  ],
+  "suggested_sources": [
+   "batcrit",
+   "batlow",
+   "ringout"
+  ],
+  "priority": 3,
+  "dna": "batcrit@10[@20]@0CP@0CP@0CP+#8U2~10;A50S95R180",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-yamaha-motif-montage-full-grand-sparkle",
+  "category": "rompler-yamaha",
+  "name": "Motif/Montage 'Full Grand' sparkle",
+  "inspired_by": "Yamaha Motif 'Full Concert Grand' (2000s workstation piano)",
+  "character": "A wide, glossy, modern stereo piano: clear attack, long bloom.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@5[#8H0,12U2~3/exclaim@15]#4L35;A0D3000S20R700",
+   "Same base as M1 Piano, but a slower decay and less clang."
+  ],
+  "suggested_sources": [
+   "chord",
+   "exclaim"
+  ],
+  "priority": 3,
+  "dna": "chord@5[#8H0,12U2~3/exclaim@15]#4L35;A0D3000S20R700",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-yamaha-dx7-rhodes-strings-ballad",
+  "category": "rompler-yamaha",
+  "name": "DX7 'Rhodes + Strings' ballad",
+  "inspired_by": "Yamaha DX7 E.PIANO layered with strings (the 80s power ballad combination)",
+  "character": "An FM EP strike with a soft string wash fading in behind it.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@20]#6H0,24/ringout@25[@35]#5L70/logoff@30[#5U2~10L50;A0D1500S40R1200",
+   "E.PIANO 1 plus a mid-logoff string bed. [planned env graph] the string layer rises slowly."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "ringout",
+   "logoff"
+  ],
+  "priority": 3,
+  "dna": "xpding@20]#6H0,24/ringout@25[@35]#5L70/logoff@30[#5U2~10L50;A0D1500S40R1200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-kurzweil-ensoniq-mirage-grit-piano",
+  "category": "rompler-kurzweil-ensoniq",
+  "name": "Mirage Grit Piano",
+  "inspired_by": "Ensoniq Mirage (8-bit sampler, 1984) factory piano and strings",
+  "character": "Low-res, aliased, noisy-but-musical samples, with a resonant analog filter and short loops. Charming crunch.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord><><#8/chord><><>#4L40;A0D1200S30R300",
+   "Repeated >< decimation round trips (hypothesis: naive sample-dropping) for 8-bit/low-rate grit.",
+   "The 3.11 edition's native 8-bit 11 kHz WAVs (chimes/ding) are already Mirage-grade."
+  ],
+  "suggested_sources": [
+   "chord",
+   "chimes",
+   "ding"
+  ],
+  "priority": 2,
+  "dna": "chord><><#8/chord><><>#4L40;A0D1200S30R300",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-kurzweil-ensoniq-esq-1-digital-pad",
+  "category": "rompler-kurzweil-ensoniq",
+  "name": "ESQ-1 Digital Pad",
+  "inspired_by": "Ensoniq ESQ-1 / SQ-80 'Digital waves' pads (hybrid digital waves through analog filter)",
+  "character": "Thin-edged digital waves, warmed by detune. The movement comes from wave crossfades. Metallic but cozy.",
+  "recipe_steps": [
+   "Start DNA (spec v1): notify@20[@30]@0CP@0CP@0CP#8U3~14/chimes@30]<#4L40;A300S85R900",
+   "A looped notify chunk is the 'digital wave'; detune warms it; a chimes ping on each attack."
+  ],
+  "suggested_sources": [
+   "notify",
+   "chimes",
+   "ringout"
+  ],
+  "priority": 3,
+  "dna": "notify@20[@30]@0CP@0CP@0CP#8U3~14/chimes@30]<#4L40;A300S85R900",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-kurzweil-ensoniq-vfx-digital-piano-ice",
+  "category": "rompler-kurzweil-ensoniq",
+  "name": "VFX 'Digital Piano'/'Ice'",
+  "inspired_by": "Ensoniq VFX/SD-1 'Transwaves' presets ('Ice' and glassy evolving waves)",
+  "character": "Transwave scanning: the timbre sweeps across a set of waveforms during the note, a glassy morph from dull to bright.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@30[@20]IxpdingIchimes>Iprint>#8U2~8;A80S90R1200",
+   "A transwave approximated as a time-ordered splice from dull (ringout) to bright (x2 print) with Insert File.",
+   "Because it plays through, the timbre 'scans' over the note."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "xpding",
+   "chimes",
+   "print"
+  ],
+  "priority": 2,
+  "dna": "ringout@30[@20]IxpdingIchimes>Iprint>#8U2~8;A80S90R1200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-kurzweil-ensoniq-kurzweil-k2000-hollow-pad-pad-glass",
+  "category": "rompler-kurzweil-ensoniq",
+  "name": "Kurzweil K2000 'Hollow Pad'/'Pad Glass'",
+  "inspired_by": "Kurzweil K2000/K2500 VAST pads (and the K250's famous 'Stereo Grand')",
+  "character": "Deep, hollow, resonant pads with phasey, comb-like motion. Very 90s film and ambient.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logon@20[C@3X#8U2~8/shutdown<@20[#6L60;A600S90R2000",
+   "Mixing a copy of itself at a 3% offset (C@03X) gives a static comb: the VAST 'hollow' resonance."
+  ],
+  "suggested_sources": [
+   "logon",
+   "shutdown",
+   "startup"
+  ],
+  "priority": 3,
+  "dna": "logon@20[C@3X#8U2~8/shutdown<@20[#6L60;A600S90R2000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-kurzweil-ensoniq-kurzweil-k250-stereo-grand",
+  "category": "rompler-kurzweil-ensoniq",
+  "name": "Kurzweil K250 Stereo Grand",
+  "inspired_by": "Kurzweil K250 (1984) 'Grand Piano', the first convincing sampled piano",
+  "character": "A bright, punchy, fairly short-looped grand with a strong hammer.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@4[#8/default@8]#4L50;A0D2200S15R400",
+   "chord bloom plus a mallet knock."
+  ],
+  "suggested_sources": [
+   "chord",
+   "default"
+  ],
+  "priority": 3,
+  "dna": "chord@4[#8/default@8]#4L50;A0D2200S15R400",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-kurzweil-ensoniq-mirage-choir",
+  "category": "rompler-kurzweil-ensoniq",
+  "name": "Mirage 'Choir'",
+  "inspired_by": "Ensoniq Mirage / EPS choir disks (Depeche Mode era)",
+  "character": "A gritty, short-looped choir with an audible loop pulse. Melancholic 80s.",
+  "recipe_steps": [
+   "Start DNA (spec v1): notify<><@20[@40]@0CP@0CP#8U2~12;A250S90R800",
+   "Decimated slowed notify, chunk-looped so the loop pulse is audible: authentically Mirage."
+  ],
+  "suggested_sources": [
+   "notify",
+   "logon"
+  ],
+  "priority": 3,
+  "dna": "notify<><@20[@40]@0CP@0CP#8U2~12;A250S90R800",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "rompler-kurzweil-ensoniq-eps-orchestra-stab",
+  "category": "rompler-kurzweil-ensoniq",
+  "name": "EPS 'Orchestra Stab'",
+  "inspired_by": "Ensoniq EPS / ASR-10 hip-hop stabs (90s boom bap)",
+  "character": "A chopped, gritty orchestral stab with crate-digging dust.",
+  "recipe_steps": [
+   "Start DNA (spec v1): tada@20]><++#12H0,12;A0D350S0R150",
+   "Orch hit with decimation and clip."
+  ],
+  "suggested_sources": [
+   "tada",
+   "critstop"
+  ],
+  "priority": 3,
+  "dna": "tada@20]><++#12H0,12;A0D350S0R150",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-absynth-evolving-atmosphere",
+  "category": "softsynth-pad-texture",
+  "name": "Absynth Evolving Atmosphere",
+  "inspired_by": "NI Absynth factory atmospheres ('Aetherizer'-style granular, multi-segment envelope pads)",
+  "character": "A pad that keeps changing for 10+ seconds: multi-segment envelopes, granular flicker, drifting pitch shimmer. Cinematic and alien.",
+  "recipe_steps": [
+   "Start DNA (spec v1): startup<<#4U2~20/logon<R#4/chimes>>R#4/recycle<<<#4FL20;A1500S80R4000",
+   "Four layers, each a different timescale: startup at -2 octaves (very slow wash), reversed logon (swells), reversed x4 chimes (glints), and slowed crumple (grain flicker).",
+   "[planned env graph] multi-segment, one per layer, at staggered peaks (2 s, 4 s, 7 s): the core of the Absynth feel.",
+   "[planned offsets] staggered recorder start times so the layers enter one after another.",
+   "[planned macro] M1 = 'evolution' (scales the env graph time)."
+  ],
+  "suggested_sources": [
+   "startup",
+   "logon",
+   "chimes",
+   "recycle",
+   "shutdown"
+  ],
+  "priority": 1,
+  "rank": 29,
+  "dna": "startup<<#4U2~20/logon<R#4/chimes>>R#4/recycle<<<#4FL20;A1500S80R4000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-omnisphere-evolving-pad",
+  "category": "softsynth-pad-texture",
+  "name": "Omnisphere Evolving Pad",
+  "inspired_by": "Spectrasonics Omnisphere ('Analog Pad Dreams', 'Hardware Library', and the 'Coldplay pad' type)",
+  "character": "A warm analog-ish pad core, a granular/texture layer moving over it, a slow filter breathing, a huge stereo and long tails.",
+  "recipe_steps": [
+   "Start DNA (spec v1): startup@15[<#8U3~14/logoff<R#4L60/minimize<<#4FL25;A900S90R3000",
+   "A warm core, a reversed swell and a slowed whoosh as the 'texture layer'.",
+   "[planned macro] M1 = texture amount, M2 = motion (detune spread)."
+  ],
+  "suggested_sources": [
+   "startup",
+   "logoff",
+   "minimize",
+   "restore"
+  ],
+  "priority": 1,
+  "rank": 30,
+  "dna": "startup@15[<#8U3~14/logoff<R#4L60/minimize<<#4FL25;A900S90R3000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-omnisphere-glass-harp",
+  "category": "softsynth-pad-texture",
+  "name": "Omnisphere 'Glass Harp'",
+  "inspired_by": "Omnisphere glass/psaltery family and 'Crystal Pad' types",
+  "character": "Plucked glass with ringing high partials and a soft bowed swell behind it.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding>@30]#8U2~5/chimes>R#8L50;A0D1500S30R2000",
+   "A sped-up xpding pluck, with a reversed sped-up chime swell behind it."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "chimes",
+   "print"
+  ],
+  "priority": 2,
+  "dna": "xpding>@30]#8U2~5/chimes>R#8L50;A0D1500S30R2000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-alchemy-spectral-pad",
+  "category": "softsynth-pad-texture",
+  "name": "Alchemy 'Spectral' Pad",
+  "inspired_by": "Apple/Camel Alchemy additive and spectral resynthesis pads",
+  "character": "Smeared, frozen, resynthesized timbres: partials hang in time with a glassy, slightly phasey shimmer.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logon@30[@20]@0CP@0CP@0CP@0CPEE#8U2~8;A700S95R2500",
+   "A 'spectral freeze': take a short chunk, repeat it 16 times, then add echo to smear the seams."
+  ],
+  "suggested_sources": [
+   "logon",
+   "startup",
+   "notify"
+  ],
+  "priority": 2,
+  "dna": "logon@30[@20]@0CP@0CP@0CP@0CPEE#8U2~8;A700S95R2500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-massive-growl-reese",
+  "category": "softsynth-pad-texture",
+  "name": "Massive Growl/Reese",
+  "inspired_by": "NI Massive (dubstep and DnB growls and reese basses)",
+  "character": "A thick, detuned, distorted low buzz with a slow phasing motion; mono low end and gritty mids.",
+  "recipe_steps": [
+   "Start DNA (spec v1): error<<@10[@30]@0CP@0CP@0CP++++#12U4~25;A5S100R200",
+   "A clipped looped tone at -2 octaves; U4~25 gives the slow phasing beat."
+  ],
+  "suggested_sources": [
+   "error",
+   "critstop"
+  ],
+  "priority": 2,
+  "dna": "error<<@10[@30]@0CP@0CP@0CP++++#12U4~25;A5S100R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-serum-supersaw-pluck",
+  "category": "softsynth-pad-texture",
+  "name": "Serum Supersaw Pluck",
+  "inspired_by": "Xfer Serum future-bass and EDM plucks ('Future Bass Chord', 'Pluck Basic')",
+  "character": "A detuned saw stack with a fast filter-pluck envelope: bright attack, a 300 ms decay into a soft sustain, a wide stereo field.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@20[@30]@0CP@0CP@0CP++#16U6~25;A0D300S20R400",
+   "The supersaw core with a pluck envelope.",
+   "Future-bass chords: H0,4,7,11 (maj7) with #16. Each note eats 4 voices, so play one note."
+  ],
+  "suggested_sources": [
+   "chord",
+   "tada"
+  ],
+  "priority": 2,
+  "dna": "chord@20[@30]@0CP@0CP@0CP++#16U6~25;A0D300S20R400",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-spire-trance-lead",
+  "category": "softsynth-pad-texture",
+  "name": "Spire Trance Lead",
+  "inspired_by": "Reveal Sound Spire (trance and big-room leads, 'Hypersaw')",
+  "character": "A bright, wide, octave-stacked hypersaw lead that cuts and sings.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@20[@30]@0CP@0CP@0CP++#16H0,12U4~22;A5S100R300",
+   "The supersaw core plus an octave; pair it with an echo layer for the trance delay."
+  ],
+  "suggested_sources": [
+   "chord",
+   "error"
+  ],
+  "priority": 2,
+  "dna": "chord@20[@30]@0CP@0CP@0CP++#16H0,12U4~22;A5S100R300",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-sylenth-classic-trance-pluck",
+  "category": "softsynth-pad-texture",
+  "name": "Sylenth Classic Trance Pluck",
+  "inspired_by": "LennarDigital Sylenth1 ('Pluck' and 'Arp' factory presets, 2000s trance and progressive house)",
+  "character": "A short, round-but-bright pluck with a hint of detune and a 1/8-dotted delay tail. Made for arps.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@15]#8U2~10/xpding@15]<E>#4L45;A0D220S0R180",
+   "Layer 2 uses <E> (slow down, echo, speed up) for a delay that is twice as long, at the original pitch.",
+   "[planned offsets] better: 3 recorders at 0 / 187 / 375 ms (dotted 1/8 at 120 bpm), at 100 / 50 / 25% volume, panned C/L/R."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "default",
+   "balloon"
+  ],
+  "priority": 2,
+  "dna": "xpding@15]#8U2~10/xpding@15]<E>#4L45;A0D220S0R180",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-nexus-trance-pad",
+  "category": "softsynth-pad-texture",
+  "name": "Nexus 'Trance Pad'",
+  "inspired_by": "reFX Nexus ROM ('Trance Pad', 'Hands Up' and 'Euro' supersaw pads)",
+  "character": "A bright supersaw pad with a long release: euphoric, wall-of-sound.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@20[@30]@0CP@0CP@0CP+#16U8~30;A400S95R1500",
+   "Supersaw core with a slow attack."
+  ],
+  "suggested_sources": [
+   "chord"
+  ],
+  "priority": 3,
+  "dna": "chord@20[@30]@0CP@0CP@0CP+#16U8~30;A400S95R1500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-zebra-dark-zebra-cinematic",
+  "category": "softsynth-pad-texture",
+  "name": "Zebra 'Dark Zebra' Cinematic",
+  "inspired_by": "u-he Zebra2 / Dark Zebra (Hans Zimmer cinematic pads and drones)",
+  "character": "A dark, low, ominous drone pad with a slow, grinding metallic motion.",
+  "recipe_steps": [
+   "Start DNA (spec v1): critstop<<#6U3~18/shutdown<<R#6L60/recycle<<<#4FL20;A1500S100R4000",
+   "critstop at -2 octaves is a doom bed; a reversed slow shutdown swells; slowed crumple adds grinding texture."
+  ],
+  "suggested_sources": [
+   "critstop",
+   "shutdown",
+   "recycle"
+  ],
+  "priority": 2,
+  "dna": "critstop<<#6U3~18/shutdown<<R#6L60/recycle<<<#4FL20;A1500S100R4000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-kontakt-factory-bowed-glass",
+  "category": "softsynth-pad-texture",
+  "name": "Kontakt Factory 'Bowed Glass'",
+  "inspired_by": "Kontakt factory 'Synth Pads' and bowed-glass/waterphone FX (2000s scoring)",
+  "character": "Glass bowed into a slow, eerie swell with pitchy shimmer and dissonant partials.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes>REE#8U2~25/ding>R#4L50;A800S90R2000",
+   "Reversed glassy chimes with echo smear and a wide detune for eeriness."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "ding"
+  ],
+  "priority": 2,
+  "dna": "chimes>REE#8U2~25/ding>R#4L50;A800S90R2000",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "softsynth-pad-texture-kontakt-factory-music-box",
+  "category": "softsynth-pad-texture",
+  "name": "Kontakt Factory 'Music Box'",
+  "inspired_by": "Kontakt factory 'Music Box' / celesta (and every lullaby in 2000s media)",
+  "character": "A tiny tine pluck at a high register with a fast decay and a mechanical, slightly out-of-tune charm.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@20]>#12U2~7;A0D900S0R400",
+   "xpding up an octave; slight detune."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "print",
+   "xpnotify"
+  ],
+  "priority": 2,
+  "dna": "xpding@20]>#12U2~7;A0D900S0R400",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-ethno-world-duduk",
+  "category": "softsynth-pad-texture",
+  "name": "Ethno World Duduk",
+  "inspired_by": "Best Service Ethno World duduk (Gladiator-style; 2000s film)",
+  "character": "A mournful, nasal, reedy double-reed tone with breath, a slow swell and expressive vibrato.",
+  "recipe_steps": [
+   "Start DNA (spec v1): batcrit@10[@20]@0CP@0CP@0CP<#8U2~9/recycle<@5]#2FL15;A250S95R600",
+   "A looped sine-ish alert tone, slowed for a lower nasal register, plus breath."
+  ],
+  "suggested_sources": [
+   "batcrit",
+   "notify",
+   "recycle"
+  ],
+  "priority": 2,
+  "dna": "batcrit@10[@20]@0CP@0CP@0CP<#8U2~9/recycle<@5]#2FL15;A250S95R600",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-ethno-world-ethnic-vox",
+  "category": "softsynth-pad-texture",
+  "name": "Ethno World Ethnic Vox",
+  "inspired_by": "Ethno World / Ethno Vocal chants ('Ethnic female vox', 'Lisa Gerrard' style)",
+  "character": "Wordless, exotic, melismatic vocal wail with a long reverb and melancholy.",
+  "recipe_steps": [
+   "Start DNA (spec v1): notify<<#6U2~10/xpnotify<R#4L60;A400S85R2000",
+   "A low notify vocal formant with a reversed swell."
+  ],
+  "suggested_sources": [
+   "notify",
+   "xpnotify"
+  ],
+  "priority": 3,
+  "dna": "notify<<#6U2~10/xpnotify<R#4L60;A400S85R2000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-omnisphere-pluck-box-shimmer-arp",
+  "category": "softsynth-pad-texture",
+  "name": "Omnisphere 'Pluck Box' Shimmer Arp",
+  "inspired_by": "Omnisphere/Keyscape arpeggiated shimmer plucks",
+  "character": "A soft bell pluck with a long reverse-reverb shimmer tail building between notes.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@20]#8/xpding@20]RER#4L50;A0D800S0R1500",
+   "RER = reverse, echo, reverse: a pre-echo/reverse-reverb that swells into the note."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "chimes"
+  ],
+  "priority": 2,
+  "dna": "xpding@20]#8/xpding@20]RER#4L50;A0D800S0R1500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "softsynth-pad-texture-serum-granular-air-pad",
+  "category": "softsynth-pad-texture",
+  "name": "Serum 'Granular Air' Pad",
+  "inspired_by": "Serum/Vital noise-wavetable airy pads",
+  "character": "Breathy, hissy air with a tonal center: wind through a tube, a modern 'airy' top.",
+  "recipe_steps": [
+   "Start DNA (spec v1): minimize<#4F/restore<#4F/ringout@20[@40]#8U2~8L60;A900S90R2500",
+   "Slowed minimize/restore whooshes as air (fixed pitch), over a sine-ish tone."
+  ],
+  "suggested_sources": [
+   "minimize",
+   "restore",
+   "ringout"
+  ],
+  "priority": 3,
+  "dna": "minimize<#4F/restore<#4F/ringout@20[@40]#8U2~8L60;A900S90R2500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bass-808-sub-boom",
+  "category": "bass",
+  "name": "808 Sub Boom",
+  "inspired_by": "Roland TR-808 kick-as-bass (trap and hip-hop 808, sub-bass category benchmark)",
+  "character": "A nearly pure sine at 40 to 60 Hz with a short click, a pitch drop at the start and a long decay. All weight, no top.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@40]<<<#8/start<#2FL50;A0D2500S40R200",
+   "ringout chunk at -3 octaves (sine-ish).",
+   "The slowed start.wav click is the 808 knock.",
+   "[planned env graph] a long decay.",
+   "Saturate with ++ for 'distorted 808'."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "xpringout",
+   "start",
+   "batlow"
+  ],
+  "priority": 1,
+  "rank": 14,
+  "dna": "ringout@20[@40]<<<#8/start<#2FL50;A0D2500S40R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bass-reese-bass",
+  "category": "bass",
+  "name": "Reese Bass",
+  "inspired_by": "Kevin Saunderson 'Just Want Another Chance' Reese (DnB/jungle benchmark)",
+  "character": "Two detuned saws beating against each other: a slow, menacing phasing motion with mono weight and a hollow, buzzy mid.",
+  "recipe_steps": [
+   "Start DNA (spec v1): error<<@10[@30]@0CP@0CP@0CP+++#16U2~18;A5S100R150",
+   "U2~18 = exactly two voices +/-18 cents: the classic two-saw beat.",
+   "A clipped looped tone is the saw.",
+   "Lower the cents for a slower roll."
+  ],
+  "suggested_sources": [
+   "error",
+   "critstop",
+   "chord"
+  ],
+  "priority": 1,
+  "rank": 13,
+  "dna": "error<<@10[@30]@0CP@0CP@0CP+++#16U2~18;A5S100R150",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bass-fm-slap-bass",
+  "category": "bass",
+  "name": "FM Slap Bass",
+  "inspired_by": "Yamaha DX7 'SLAP BASS' / Korg M1 'SlapBass' (80s funk pop)",
+  "character": "A metallic, percussive pop transient into a short, bright, twangy bass with a fast decay.",
+  "recipe_steps": [
+   "Start DNA (spec v1): error<@20]++#8/start#4FL70;A0D220S20R60",
+   "A clipped error front plus the start.wav click for the slap."
+  ],
+  "suggested_sources": [
+   "error",
+   "start",
+   "critstop"
+  ],
+  "priority": 2,
+  "dna": "error<@20]++#8/start#4FL70;A0D220S20R60",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bass-moog-style-deep-sub",
+  "category": "bass",
+  "name": "Moog-style Deep Sub",
+  "inspired_by": "Minimoog / Model D bass (70s-80s funk, synth-pop)",
+  "character": "A fat, round, warm low tone with a soft attack and a slight filter 'thump'.",
+  "recipe_steps": [
+   "Start DNA (spec v1): error<<@40]+#8U2~5/ringout@20[@40]<<<#4L70;A5D300S70R120",
+   "Error tone plus sine sub, lightly detuned."
+  ],
+  "suggested_sources": [
+   "error",
+   "ringout"
+  ],
+  "priority": 2,
+  "dna": "error<<@40]+#8U2~5/ringout@20[@40]<<<#4L70;A5D300S70R120",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bass-acid-303-squelch",
+  "category": "bass",
+  "name": "Acid 303 Squelch",
+  "inspired_by": "Roland TB-303 (acid house, benchmark squelch bass)",
+  "character": "A resonant, rubbery, squelchy saw with an envelope-swept filter 'yow' and accents.",
+  "recipe_steps": [
+   "Start DNA (spec v1): hwin<@10[@40]+++#8/hwout<@10[@40]++#8L80;A0D200S50R80",
+   "Hardware Insert/Remove have rising/falling 'bloops' that act like a filter sweep; slowed and clipped they become the squelch.",
+   "Layer 1 = 'yow up', layer 2 = 'down'.",
+   "[planned macro] M1 = crossfade between them (cutoff), M2 = clip (resonance feel)."
+  ],
+  "suggested_sources": [
+   "hwin",
+   "hwout",
+   "balloon"
+  ],
+  "priority": 2,
+  "dna": "hwin<@10[@40]+++#8/hwout<@10[@40]++#8L80;A0D200S50R80",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bass-wobble-bass",
+  "category": "bass",
+  "name": "Wobble Bass",
+  "inspired_by": "Dubstep LFO wobble (Massive/Serum, 2009-2012)",
+  "character": "A sub plus a mid growl whose filter/volume pulses rhythmically (1/4 to 1/16 note).",
+  "recipe_steps": [
+   "Start DNA (spec v1): error<<@10[@30]@0CP@0CP@0CP++++#8U2~12/error<<@10[@30]@0CP@0CP#8;A0S100R100",
+   "The growl core.",
+   "[planned env graph] draw a looping volume graph at tempo (wub).",
+   "[planned macro] M1 = wobble rate, automatable."
+  ],
+  "suggested_sources": [
+   "error",
+   "critstop"
+  ],
+  "priority": 3,
+  "dna": "error<<@10[@30]@0CP@0CP@0CP++++#8U2~12/error<<@10[@30]@0CP@0CP#8;A0S100R100",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bass-lo-fi-upright-thump",
+  "category": "bass",
+  "name": "Lo-fi Upright Thump",
+  "inspired_by": "Upright/acoustic bass in lo-fi hip-hop (sampled jazz bass)",
+  "character": "A woody, muted, short thump with a round low and finger noise.",
+  "recipe_steps": [
+   "Start DNA (spec v1): default<<@20]#8/start<<#2FL40;A0D500S10R100",
+   "XP Default at -2 octaves is a woody body."
+  ],
+  "suggested_sources": [
+   "default",
+   "start"
+  ],
+  "priority": 2,
+  "dna": "default<<@20]#8/start<<#2FL40;A0D500S10R100",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bass-pluck-bass-synth-pop",
+  "category": "bass",
+  "name": "Pluck Bass (Synth-pop)",
+  "inspired_by": "Juno-106 / SH-101 plucked bass (synthwave and 80s synth-pop)",
+  "character": "A short, bright, filter-plucked bass. Eighth-note sequencer staple.",
+  "recipe_steps": [
+   "Start DNA (spec v1): batlow@5[@20]@0CP@0CP@0CP++<<#8;A0D180S10R60",
+   "A looped clipped alert tone at -2 octaves with a short decay."
+  ],
+  "suggested_sources": [
+   "batlow",
+   "error"
+  ],
+  "priority": 2,
+  "dna": "batlow@5[@20]@0CP@0CP@0CP++<<#8;A0D180S10R60",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bass-korg-m1-house-bass-organ-bass",
+  "category": "bass",
+  "name": "Korg M1 'House Bass' / Organ Bass",
+  "inspired_by": "Korg M1 organ bass and 90s house bass presets",
+  "character": "A rounded, slightly clicky, sine-plus-octave bass that bounces.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@30]@0CP@0CP@0CP<<#8H0,12/start>#4FL50;A0D200S45R70",
+   "The M1 Organ 2 recipe, two octaves down."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "start"
+  ],
+  "priority": 2,
+  "dna": "ringout@20[@30]@0CP@0CP@0CP<<#8H0,12/start>#4FL50;A0D200S45R70",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bass-critical-doom-sub",
+  "category": "bass",
+  "name": "Critical Doom Sub",
+  "inspired_by": "Cinematic sub-drop / 'braam' low end (Inception-era trailers)",
+  "character": "A colossal, slowly growing low brass-bass blast with grit.",
+  "recipe_steps": [
+   "Start DNA (spec v1): critstop<<<#8U3~12++/critstop<<#8L60;A200S100R2500",
+   "critstop at -3 octaves is the braam; clip it for snarl."
+  ],
+  "suggested_sources": [
+   "critstop",
+   "shutdown"
+  ],
+  "priority": 2,
+  "dna": "critstop<<<#8U3~12++/critstop<<#8L60;A200S100R2500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "keys-rhodes-mk-i-suitcase",
+  "category": "keys",
+  "name": "Rhodes Mk I Suitcase",
+  "inspired_by": "Fender Rhodes (Stevie Wonder, neo-soul, lo-fi: the EP benchmark)",
+  "character": "A bell-like tine attack with a warm, sine-ish body, a long sustain, a bark when played hard and a stereo tremolo.",
+  "recipe_steps": [
+   "Start DNA (spec v1): default@50]#8/ringout@30[@30]<#6L60;A2D2000S30R400V90",
+   "See 'Vintage Keys Rhodes'.",
+   "[planned pan] tremolo = per-recorder pan alternation driven by M1."
+  ],
+  "suggested_sources": [
+   "default",
+   "ringout"
+  ],
+  "priority": 2,
+  "dna": "default@50]#8/ringout@30[@30]<#6L60;A2D2000S30R400V90",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "keys-wurlitzer-200a",
+  "category": "keys",
+  "name": "Wurlitzer 200A",
+  "inspired_by": "Wurlitzer electric piano (Supertramp, Ray Charles, indie)",
+  "character": "A reedy, nasal, slightly overdriven bark, shorter and edgier than a Rhodes, with tremolo.",
+  "recipe_steps": [
+   "Start DNA (spec v1): default@40]+++#8/batcrit@10[@20]@0CP@0CP+#4L50;A0D1400S25R250",
+   "A clipped mallet with a reedy looped alert tone."
+  ],
+  "suggested_sources": [
+   "default",
+   "batcrit"
+  ],
+  "priority": 2,
+  "dna": "default@40]+++#8/batcrit@10[@20]@0CP@0CP+#4L50;A0D1400S25R250",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "keys-tonewheel-drawbar-organ",
+  "category": "keys",
+  "name": "Tonewheel Drawbar Organ",
+  "inspired_by": "Hammond B3 (+ Leslie): the organ benchmark",
+  "character": "Additive sine drawbars, a key-click, percussion and a Leslie swirl (doppler and amp motion).",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@30]@0CP@0CP@0CP#12H0,12,19,24U2~6/start>>#4FL40;A5S100R60",
+   "Looped sine chunk; drawbars via H0,12,19,24 (8', 4', 2 2/3', 2').",
+   "U2~6 is the Leslie chorus.",
+   "[planned pan] slow L/R alternation for the rotor."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "xpringout",
+   "start"
+  ],
+  "priority": 2,
+  "dna": "ringout@20[@30]@0CP@0CP@0CP#12H0,12,19,24U2~6/start>>#4FL40;A5S100R60",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "keys-gospel-organ-full",
+  "category": "keys",
+  "name": "Gospel Organ 'Full'",
+  "inspired_by": "Hammond full-drawbar gospel/rock organ",
+  "character": "Every drawbar out, overdriven, Leslie fast: a thick, gritty roar.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@30]@0CP@0CP@0CP++#16H0,7,12,19U2~10;A5S100R60",
+   "Clip for tube overdrive."
+  ],
+  "suggested_sources": [
+   "ringout"
+  ],
+  "priority": 3,
+  "dna": "ringout@20[@30]@0CP@0CP@0CP++#16H0,7,12,19U2~10;A5S100R60",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "keys-clavinet-d6-funk",
+  "category": "keys",
+  "name": "Clavinet D6 Funk",
+  "inspired_by": "Hohner Clavinet ('Superstition': the clav benchmark)",
+  "character": "A bright, percussive, plucked-string bite with a quick decay and a nasal 'wah' honk. Very funky, very short.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpringin@5]++EE>#10/start>>#4FL40;A0D250S15R60",
+   "A pluck front, clipped, with an EE> comb for the string nasality."
+  ],
+  "suggested_sources": [
+   "xpringin",
+   "start",
+   "error"
+  ],
+  "priority": 2,
+  "dna": "xpringin@5]++EE>#10/start>>#4FL40;A0D250S15R60",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "keys-fm-ep-dx-tine-90s",
+  "category": "keys",
+  "name": "FM EP 'DX Tine' (90s)",
+  "inspired_by": "Yamaha DX7II 'Full Tines' / Korg M1 'E.Piano' (90s R&B)",
+  "character": "A softer FM EP: rounder bell, more chorus, a lush ballad tone.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@20]#6H0,12U2~6/ringout@25[@35]#8L80;A0D1800S30R500",
+   "E.PIANO 1, but less high bell, more chorus."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "ringout"
+  ],
+  "priority": 2,
+  "dna": "xpding@20]#6H0,12U2~6/ringout@25[@35]#8L80;A0D1800S30R500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "keys-harpsichord",
+  "category": "keys",
+  "name": "Harpsichord",
+  "inspired_by": "Harpsichord (baroque; also M1/JV 'Harpsi' presets)",
+  "character": "A bright, buzzy, jangly pluck with a sharp attack and a metallic sheen. No dynamics.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpringin@4]EEE>>#12H0,12;A0D700S0R200V0",
+   "A comb ring from echo then speed-up gives the jangle; V0 for no dynamics."
+  ],
+  "suggested_sources": [
+   "xpringin",
+   "chimes"
+  ],
+  "priority": 3,
+  "dna": "xpringin@4]EEE>>#12H0,12;A0D700S0R200V0",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "keys-toy-piano-celesta",
+  "category": "keys",
+  "name": "Toy Piano / Celesta",
+  "inspired_by": "Celesta and toy piano (Danny Elfman, Y2K whimsy)",
+  "character": "A tiny bell-hammer pluck, very high and sweet, with a short metallic ping.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding>@20]#10/default>@20]#4L50;A0D700S0R300",
+   "Both up an octave."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "default"
+  ],
+  "priority": 3,
+  "dna": "xpding>@20]#10/default>@20]#4L50;A0D700S0R300",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "keys-vaporwave-ep-slowed-dx",
+  "category": "keys",
+  "name": "Vaporwave EP (slowed DX)",
+  "inspired_by": "DX7 EP slowed and drenched (Macintosh Plus 'リサフランク420' sound)",
+  "character": "A woozy, pitched-down electric piano: smeared transients, washed-out reverb, thick and dreamy.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@20]<E<E#6/ringout@25[@35]<#8U2~15L70;A40D2500S40R2500",
+   "Two octaves down with echo between each slow-down: the echoes grow longer and blurrier.",
+   "Wide detune for tape wobble."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "ringout",
+   "chord"
+  ],
+  "priority": 2,
+  "dna": "xpding@20]<E<E#6/ringout@25[@35]<#8U2~15L70;A40D2500S40R2500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "keys-pipe-church-organ",
+  "category": "keys",
+  "name": "Pipe/Church Organ",
+  "inspired_by": "Pipe organ (cathedral full organ)",
+  "character": "Stacked flue pipes, slow 'speak' onset, an immense reverb. Awe.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@30]@0CP@0CP@0CPEE#16H0,12,-12,19;A120S100R2200",
+   "Octave stacking plus echo for the cathedral."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "xpringout"
+  ],
+  "priority": 3,
+  "dna": "ringout@20[@30]@0CP@0CP@0CPEE#16H0,12,-12,19;A120S100R2200",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "arps-plucks-trance-pluck",
+  "category": "arps-plucks",
+  "name": "Trance Pluck",
+  "inspired_by": "Classic trance pluck (Sylenth 'Pluck' / Nexus 'Pluck' / Gaia-style)",
+  "character": "A clean bright pluck with a 150 ms decay, a wide stereo and an echo tail. It arpeggiates beautifully.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@15]#8U2~10/xpding@15]<<E>>#4L40;A0D150S0R200",
+   "Layer 2 uses <<E>> for an echo 4x longer at the original pitch.",
+   "[planned offsets] true tempo delay: 3 recorders 0/250/500 ms."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "balloon",
+   "default"
+  ],
+  "priority": 1,
+  "rank": 21,
+  "dna": "xpding@15]#8U2~10/xpding@15]<<E>>#4L40;A0D150S0R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "arps-plucks-bubble-arp",
+  "category": "arps-plucks",
+  "name": "Bubble Arp",
+  "inspired_by": "Aero 'bubble' arps (MSN-era, Frutiger Aero aesthetic) / Massive 'Bubbles'",
+  "character": "Round 'bloop' plucks with an upward pitch flick. Wet, playful and watery.",
+  "recipe_steps": [
+   "Start DNA (spec v1): balloon#8/balloon>#4L50;A0D300S0R200",
+   "XP Balloon (a soft pop) is the source of all Aero bubbles.",
+   "An octave-up copy adds fizz.",
+   "Arpeggiate at 1/16."
+  ],
+  "suggested_sources": [
+   "balloon",
+   "hwin",
+   "xpding"
+  ],
+  "priority": 2,
+  "dna": "balloon#8/balloon>#4L50;A0D300S0R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "arps-plucks-marimba-arp",
+  "category": "arps-plucks",
+  "name": "Marimba Arp",
+  "inspired_by": "Marimba/kalimba arpeggios (Nexus, Steve Reich, 2000s ringtones)",
+  "character": "A woody mallet pluck with a fast decay and a warm resonator.",
+  "recipe_steps": [
+   "Start DNA (spec v1): default@30]#10/xpringin@8]#6L50;A0D500S0R200",
+   "XP Default and the XP Ringin front."
+  ],
+  "suggested_sources": [
+   "default",
+   "xpringin"
+  ],
+  "priority": 2,
+  "dna": "default@30]#10/xpringin@8]#6L50;A0D500S0R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "arps-plucks-harp-gliss",
+  "category": "arps-plucks",
+  "name": "Harp Gliss",
+  "inspired_by": "Concert harp (JV-1080 'Harp', Proteus/2 harp)",
+  "character": "A soft, round pluck that rings long; glissandi are the iconic gesture.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpringin@6]E#12;A0D1800S0R1000",
+   "[planned offsets] strum: a chord voiced across 6 recorders with offsets 0/20/40/60/80/100 ms is the gliss."
+  ],
+  "suggested_sources": [
+   "xpringin",
+   "default"
+  ],
+  "priority": 2,
+  "dna": "xpringin@6]E#12;A0D1800S0R1000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "arps-plucks-guitar-ish-nylon-pluck",
+  "category": "arps-plucks",
+  "name": "Guitar-ish Nylon Pluck",
+  "inspired_by": "GM 25 'Nylon Guitar' / JV 'Nylon Gtr'",
+  "character": "A soft thumb pluck: warm mids, short body.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpringin@7]<#10/start<#2FL30;A0D900S0R200",
+   "Slowed ringin front."
+  ],
+  "suggested_sources": [
+   "xpringin",
+   "start"
+  ],
+  "priority": 3,
+  "dna": "xpringin@7]<#10/start<#2FL30;A0D900S0R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "arps-plucks-pizzicato-ostinato",
+  "category": "arps-plucks",
+  "name": "Pizzicato Ostinato",
+  "inspired_by": "Proteus/JV 'Pizzicato' (90s scoring ostinatos)",
+  "character": "A short, bouncy string pluck.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpringin@8]E#8U2~6;A0D200S0R120",
+   "See 'Proteus Pizzicato'."
+  ],
+  "suggested_sources": [
+   "xpringin",
+   "default"
+  ],
+  "priority": 3,
+  "dna": "xpringin@8]E#8U2~6;A0D200S0R120",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "arps-plucks-glass-pluck-delay",
+  "category": "arps-plucks",
+  "name": "Glass Pluck Delay",
+  "inspired_by": "Modern 'glass pluck' (Future garage, chillstep)",
+  "character": "A crystalline, very bright pluck with ping-pong echoes.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes>>@20]#8/chimes>>@20]<<E>>#4L40;A0D300S0R300",
+   "Chimes at x4 front, plus a long echo copy.",
+   "[planned pan] echo layer hard R."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "xpding",
+   "print"
+  ],
+  "priority": 2,
+  "dna": "chimes>>@20]#8/chimes>>@20]<<E>>#4L40;A0D300S0R300",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "arps-plucks-8-bit-chiptune-arp",
+  "category": "arps-plucks",
+  "name": "8-bit Chiptune Arp",
+  "inspired_by": "NES/Game Boy pulse arps (chiptune, Y2K Flash games)",
+  "character": "A buzzy pulse wave, rapid arpeggios, no reverb, instant attack and release.",
+  "recipe_steps": [
+   "Start DNA (spec v1): batlow@5[@15]@0CP@0CP@0CP@0CP++++#8;A0S100R20V0",
+   "A looped clipped alert tone gives the pulse.",
+   "Play fast arps."
+  ],
+  "suggested_sources": [
+   "batlow",
+   "batcrit"
+  ],
+  "priority": 2,
+  "dna": "batlow@5[@15]@0CP@0CP@0CP@0CP++++#8;A0S100R20V0",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "pads-warm-analog-pad",
+  "category": "pads",
+  "name": "Warm Analog Pad",
+  "inspired_by": "Oberheim OB-X / Juno-60 strings-pad (warm pad benchmark)",
+  "character": "A detuned saw/pulse pad with a slow attack, a filter softness, chorus and a long release. Warm, soft-focus.",
+  "recipe_steps": [
+   "Start DNA (spec v1): startup@20[<#10U3~14/logoff@30[<#6U2~10L60;A600S90R1800",
+   "XP Startup's middle plus logoff, both slowed: the warmest Windows audio."
+  ],
+  "suggested_sources": [
+   "startup",
+   "logoff",
+   "logon"
+  ],
+  "priority": 1,
+  "rank": 22,
+  "dna": "startup@20[<#10U3~14/logoff@30[<#6U2~10L60;A600S90R1800",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "pads-glass-pad",
+  "category": "pads",
+  "name": "Glass Pad",
+  "inspired_by": "Glass/crystal pads (Wavestation, JD-800, Nexus 'Glass')",
+  "character": "Bright, cold, high-partial shimmer with a soft attack and glittery motion.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes>R#8U2~10/xpding>R#4L60/logon@30[#4L40;A600S85R2200",
+   "Reversed glassy sources."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "xpding",
+   "logon",
+   "print"
+  ],
+  "priority": 2,
+  "dna": "chimes>R#8U2~10/xpding>R#4L60/logon@30[#4L40;A600S85R2200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "pads-evolving-motion-pad",
+  "category": "pads",
+  "name": "Evolving Motion Pad",
+  "inspired_by": "Wavestation/Omnisphere-style motion pads",
+  "character": "Timbre and rhythm change over the length of the note.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logon@20[IchimesIstartupIxpdingEE#10U2~8/startup<#6L50;A400S90R2500",
+   "A spliced sequence with echo smearing; the note plays through the splice for movement."
+  ],
+  "suggested_sources": [
+   "logon",
+   "chimes",
+   "startup",
+   "xpding"
+  ],
+  "priority": 2,
+  "dna": "logon@20[IchimesIstartupIxpdingEE#10U2~8/startup<#6L50;A400S90R2500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "pads-choir-pad",
+  "category": "pads",
+  "name": "Choir Pad",
+  "inspired_by": "Choir pads (M1 'Choir', JV 'Vox Pad', Omnisphere 'Choir Pad')",
+  "character": "A breathy vowel 'aah' blended with synth pad.",
+  "recipe_steps": [
+   "Start DNA (spec v1): notify<#8U3~12/startup@20[<#8L50;A500S90R1800",
+   "notify choir plus startup pad."
+  ],
+  "suggested_sources": [
+   "notify",
+   "startup"
+  ],
+  "priority": 2,
+  "dna": "notify<#8U3~12/startup@20[<#8L50;A500S90R1800",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "pads-swell-pad-reverse",
+  "category": "pads",
+  "name": "Swell Pad (Reverse)",
+  "inspired_by": "Reverse-reverb swells (shoegaze, ambient)",
+  "character": "Sound grows out of silence into the note, then cuts. Sucking, hypnotic.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logon<RE#8U2~8/chordRE#8L50;A50S100R400",
+   "Reverse plus echo: the 'swell pad' idiom.",
+   "The env attack can stay short: the swell is baked in."
+  ],
+  "suggested_sources": [
+   "logon",
+   "chord",
+   "startup",
+   "tada"
+  ],
+  "priority": 2,
+  "dna": "logon<RE#8U2~8/chordRE#8L50;A50S100R400",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "pads-strings-machine-pad",
+  "category": "pads",
+  "name": "Strings Machine Pad",
+  "inspired_by": "ARP Solina / Logan String Melody (Jarre, Joy Division)",
+  "character": "A buzzy, ensemble-chorused string synth pad with heavy triple-chorus motion. Thin, but iconic.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logoff@30[@20]@0CP@0CP@0CP#16U4~22;A300S95R1000",
+   "A looped chunk with U4~22 for the ensemble effect."
+  ],
+  "suggested_sources": [
+   "logoff",
+   "startup"
+  ],
+  "priority": 2,
+  "dna": "logoff@30[@20]@0CP@0CP@0CP#16U4~22;A300S95R1000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "pads-dark-ambient-pad",
+  "category": "pads",
+  "name": "Dark Ambient Pad",
+  "inspired_by": "Dark ambient (Brian Eno 'Music for Airports' / Biosphere)",
+  "character": "Deep, slow, slightly unstable tones. Long fades, very little high end.",
+  "recipe_steps": [
+   "Start DNA (spec v1): startup<<#8U2~10/shutdown<<#8U2~8L70;A2000S100R5000",
+   "Two octaves down."
+  ],
+  "suggested_sources": [
+   "startup",
+   "shutdown"
+  ],
+  "priority": 2,
+  "dna": "startup<<#8U2~10/shutdown<<#8U2~8L70;A2000S100R5000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "pads-shimmer-pad",
+  "category": "pads",
+  "name": "Shimmer Pad",
+  "inspired_by": "Shimmer reverb pads (Eventide 'Shimmer', U2/The Edge, ambient guitar)",
+  "character": "Octave-up reverb cascade: the note grows a sparkling halo an octave and two octaves above.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logon@20[#8/logon@20[>E>E#4L50/logon@20[>>RER#4L30;A400S90R2500",
+   "Layers at +12 and +24 baked by speed-up with echo between, so the higher echoes cascade."
+  ],
+  "suggested_sources": [
+   "logon",
+   "startup"
+  ],
+  "priority": 2,
+  "dna": "logon@20[#8/logon@20[>E>E#4L50/logon@20[>>RER#4L30;A400S90R2500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "pads-sweep-pad",
+  "category": "pads",
+  "name": "Sweep Pad",
+  "inspired_by": "Filter-sweep pads (Prophet-5, trance breakdowns)",
+  "character": "A pad whose brightness slowly opens and closes.",
+  "recipe_steps": [
+   "Start DNA (spec v1): minimize<<R#4F/startup@20[<#8U2~10/restore<<#4FL40;A600S90R2000",
+   "Whoosh layers give a noise-band sweep.",
+   "[planned macro] M1 = 'cutoff', crossfading a dull layer (<<) into a bright layer (>)."
+  ],
+  "suggested_sources": [
+   "startup",
+   "minimize",
+   "restore"
+  ],
+  "priority": 3,
+  "dna": "minimize<<R#4F/startup@20[<#8U2~10/restore<<#4FL40;A600S90R2000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "pads-pwm-pad",
+  "category": "pads",
+  "name": "PWM Pad",
+  "inspired_by": "Juno-106 PWM pad",
+  "character": "A hollow pulse with a slow pulse-width modulation: a constant, gentle chorus warble.",
+  "recipe_steps": [
+   "Start DNA (spec v1): batlow@5[@20]@0CP@0CP@0CP++#12U3~9;A400S90R1500",
+   "A clipped pulse loop; unison beat simulates the PWM."
+  ],
+  "suggested_sources": [
+   "batlow",
+   "batcrit"
+  ],
+  "priority": 3,
+  "dna": "batlow@5[@20]@0CP@0CP@0CP++#12U3~9;A400S90R1500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "vocal-choir-mellotron-choir",
+  "category": "vocal-choir",
+  "name": "Mellotron Choir",
+  "inspired_by": "Mellotron M400 '8-Voice Choir' (Bowie 'Space Oddity', Genesis, King Crimson, Radiohead)",
+  "character": "A haunting, dusty tape choir with a slow onset, wow and flutter, a mid-focused 'ah' and an 8-second tape length. Eerie, melancholy, unrealistic in the best way.",
+  "recipe_steps": [
+   "Start DNA (spec v1): notify<<-#8U3~16/logon<<@25[#6U2~12L50/recycle<<<#2FL10;A350S95R700",
+   "notify at -2 octaves, slightly quieter, gives the low choir formant.",
+   "Wide unison gives tape wow.",
+   "Slowed crumple is the tape hiss.",
+   "The natural buffer end (no loop) is the tape stop, authentically Mellotron."
+  ],
+  "suggested_sources": [
+   "notify",
+   "logon",
+   "recycle"
+  ],
+  "priority": 1,
+  "rank": 12,
+  "dna": "notify<<-#8U3~16/logon<<@25[#6U2~12L50/recycle<<<#2FL10;A350S95R700",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "vocal-choir-gm-choir-aahs",
+  "category": "vocal-choir",
+  "name": "GM Choir Aahs",
+  "inspired_by": "GM 53 'Choir Aahs' (SC-55/88, every MIDI file)",
+  "character": "See 'SC-55 Choir Aahs'.",
+  "recipe_steps": [
+   "Start DNA (spec v1): notify<#8U3~12/xpnotify<<@20[#6U2~10L60;A300S90R900V40",
+   "Same as 'SC-55 Choir Aahs'; a duplicate entry in the category list."
+  ],
+  "suggested_sources": [
+   "notify",
+   "xpnotify"
+  ],
+  "priority": 3,
+  "dna": "notify<#8U3~12/xpnotify<<@20[#6U2~10L60;A300S90R900V40",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "vocal-choir-fairlight-arr1-choir-hit",
+  "category": "vocal-choir",
+  "name": "Fairlight 'Arr1' Choir Hit",
+  "inspired_by": "Fairlight CMI ARR1 (Kate Bush, Tears for Fears 'Mad World')",
+  "character": "A short, breathy sampled 'aah' stab: lo-fi, dramatic, 80s.",
+  "recipe_steps": [
+   "Start DNA (spec v1): notify<@40]><#10U2~8;A20D500S40R400",
+   "A front-trimmed, decimated notify."
+  ],
+  "suggested_sources": [
+   "notify"
+  ],
+  "priority": 2,
+  "dna": "notify<@40]><#10U2~8;A20D500S40R400",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "vocal-choir-gregorian-monks",
+  "category": "vocal-choir",
+  "name": "Gregorian Monks",
+  "inspired_by": "Male choir chant ('Enigma' 'Sadeness', 90s new age)",
+  "character": "A low, sustained male unison 'oo' with a church reverb.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@40]<<EE#10U3~10/notify<<<#4L50;A500S95R2000",
+   "Two octaves down, sine-ish, with an echo hall."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "notify"
+  ],
+  "priority": 2,
+  "dna": "ringout@20[@40]<<EE#10U3~10/notify<<<#4L50;A500S95R2000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "vocal-choir-ethereal-female-ooh",
+  "category": "vocal-choir",
+  "name": "Ethereal Female 'Ooh'",
+  "inspired_by": "Enya / Lisa Gerrard airy vocal pads (new age)",
+  "character": "A high, breathy, floaty 'ooh' with a huge reverb.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@40]>#8U3~10/minimize<#2FL20;A600S90R2500",
+   "ringout up an octave, with air."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "minimize"
+  ],
+  "priority": 2,
+  "dna": "ringout@20[@40]>#8U3~10/minimize<#2FL20;A600S90R2500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "vocal-choir-vox-chop",
+  "category": "vocal-choir",
+  "name": "Vox Chop",
+  "inspired_by": "Vocal chops (future bass, deep house)",
+  "character": "A short, pitched vocal syllable, chopped and rhythmic.",
+  "recipe_steps": [
+   "Start DNA (spec v1): notify@30]E#12;A0D200S0R100",
+   "A short notify front."
+  ],
+  "suggested_sources": [
+   "notify",
+   "xpnotify"
+  ],
+  "priority": 3,
+  "dna": "notify@30]E#12;A0D200S0R100",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "vocal-choir-space-choir-aah-vangelis",
+  "category": "vocal-choir",
+  "name": "Space Choir 'Aah' (Vangelis)",
+  "inspired_by": "Yamaha CS-80 + choir / Vangelis 'Blade Runner' vox",
+  "character": "A huge, slow, brassy-vocal pad with a big reverb.",
+  "recipe_steps": [
+   "Start DNA (spec v1): notify<#8U3~14/startup<@20[#8U2~10L60;A800S95R3000",
+   "Choir plus warm pad."
+  ],
+  "suggested_sources": [
+   "notify",
+   "startup"
+  ],
+  "priority": 2,
+  "dna": "notify<#8U3~14/startup<@20[#8U2~10L60;A800S95R3000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bells-mallets-glassy-speed-bell",
+  "category": "bells-mallets",
+  "name": "Glassy Speed Bell",
+  "inspired_by": "Glassy FM bell (DX7 'E.BELL', M1 'Bell', 'glass bell' trope)",
+  "character": "Pure, bright, inharmonic shimmer: an instant strike and a long ringing decay, stacked an octave and a fifth for sparkle.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes>>#6H0,12,19U2~5;A0D3000S0R1500",
+   "Speed x2 twice on chimes for the glassy bell.",
+   "3 harmony voices at the root, octave and octave+fifth.",
+   "Slight detune.",
+   "[planned env graph] a slow-attack version for a 'bowed' glass bell."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "xpding",
+   "ding"
+  ],
+  "priority": 1,
+  "rank": 10,
+  "dna": "chimes>>#6H0,12,19U2~5;A0D3000S0R1500",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "bells-mallets-vibraphone",
+  "category": "bells-mallets",
+  "name": "Vibraphone",
+  "inspired_by": "Vibraphone (jazz, ambient; JV 'Vibes')",
+  "character": "A soft mallet onto a sine-like bar, with a long ring and motor tremolo.",
+  "recipe_steps": [
+   "Start DNA (spec v1): default@40]#8/ringout@25[@35]>#6L60;A0D2500S10R800",
+   "A mallet plus a sine tail.",
+   "[planned macro] M1 = tremolo depth via volume automation."
+  ],
+  "suggested_sources": [
+   "default",
+   "ringout"
+  ],
+  "priority": 2,
+  "dna": "default@40]#8/ringout@25[@35]>#6L60;A0D2500S10R800",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bells-mallets-glockenspiel",
+  "category": "bells-mallets",
+  "name": "Glockenspiel",
+  "inspired_by": "Glockenspiel (film whimsy, GM 10)",
+  "character": "A very bright, high, metallic strike with a short ring.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding>>@25]#10;A0D1200S0R500",
+   "xpding up two octaves."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "chimes"
+  ],
+  "priority": 2,
+  "dna": "xpding>>@25]#10;A0D1200S0R500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bells-mallets-tubular-bells",
+  "category": "bells-mallets",
+  "name": "Tubular Bells",
+  "inspired_by": "Tubular bells (Mike Oldfield; orchestral chimes)",
+  "character": "A heavy strike with deep inharmonic partials and a long decay.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes<@30]#8U2~10/ding<#4L60;A0D5000S0R2500",
+   "Slowed chimes and ding."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "ding"
+  ],
+  "priority": 2,
+  "dna": "chimes<@30]#8U2~10/ding<#4L60;A0D5000S0R2500",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "bells-mallets-marimba",
+  "category": "bells-mallets",
+  "name": "Marimba",
+  "inspired_by": "Marimba (GM 13; Reich)",
+  "character": "A woody mallet with a short resonant decay and warm low partials.",
+  "recipe_steps": [
+   "Start DNA (spec v1): default@30]#10;A0D600S0R200",
+   "XP Default's soft 'bong'."
+  ],
+  "suggested_sources": [
+   "default",
+   "xpringin"
+  ],
+  "priority": 2,
+  "dna": "default@30]#10;A0D600S0R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "bells-mallets-steel-gamelan-bell",
+  "category": "bells-mallets",
+  "name": "Steel Gamelan Bell",
+  "inspired_by": "Balinese gamelan bell / gong (Proteus World)",
+  "character": "Paired-detune shimmer: metallic, long.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes@20]#8U2~22;A0D3000S0R1500",
+   "See 'Proteus 3 Ethnic Gamelan'."
+  ],
+  "suggested_sources": [
+   "chimes"
+  ],
+  "priority": 3,
+  "dna": "chimes@20]#8U2~22;A0D3000S0R1500",
+  "cross_listed": true,
+  "works_on_311": true
+ },
+ {
+  "id": "bells-mallets-music-box",
+  "category": "bells-mallets",
+  "name": "Music Box",
+  "inspired_by": "Cylinder music box (lullaby trope)",
+  "character": "A tiny tine with a mechanical pluck, high register and a slightly sour tuning.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@20]>#12U2~8/start>>#2FL30;A0D900S0R400",
+   "See 'Kontakt Factory Music Box'."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "start"
+  ],
+  "priority": 3,
+  "dna": "xpding@20]>#12U2~8/start>>#2FL30;A0D900S0R400",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "bells-mallets-crystal-bowl-singing-glass",
+  "category": "bells-mallets",
+  "name": "Crystal Bowl / Singing Glass",
+  "inspired_by": "Singing bowls (wellness, ambient)",
+  "character": "A soft rub onset, then a pure, beating, endlessly sustained tone.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ding@30[@30]@0CP@0CP@0CP#8U2~4/dingR#4L40;A700S100R3000",
+   "The ring tail of ding, looped.",
+   "U2~4 gives a slow beat."
+  ],
+  "suggested_sources": [
+   "ding",
+   "xpding"
+  ],
+  "priority": 2,
+  "dna": "ding@30[@30]@0CP@0CP@0CP#8U2~4/dingR#4L40;A700S100R3000",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "strings-string-ensemble-lush",
+  "category": "strings",
+  "name": "String Ensemble (Lush)",
+  "inspired_by": "JV-1080 'Velo Strings' / Proteus/2 'Strings' (the 90s lush section)",
+  "character": "Slow attack, warm mids, ensemble shimmer, wide hall.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logoff@25[#10U3~12/shutdown@30[<#6U2~8L50;A250S95R1500",
+   "See 'JV-1080 Velo Strings'."
+  ],
+  "suggested_sources": [
+   "logoff",
+   "shutdown"
+  ],
+  "priority": 2,
+  "dna": "logoff@25[#10U3~12/shutdown@30[<#6U2~8L50;A250S95R1500",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "strings-staccato-strings",
+  "category": "strings",
+  "name": "Staccato Strings",
+  "inspired_by": "Short staccato strings (spiccato, scoring ostinatos)",
+  "character": "A short bowed bite, 150 ms, a woody room.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logoff@10[@15]#12U2~8/recycle>>>@3]#2FL30;A0D150S0R120",
+   "A short logoff chunk with a bow-noise tick."
+  ],
+  "suggested_sources": [
+   "logoff",
+   "recycle"
+  ],
+  "priority": 2,
+  "dna": "logoff@10[@15]#12U2~8/recycle>>>@3]#2FL30;A0D150S0R120",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "strings-tremolo-strings",
+  "category": "strings",
+  "name": "Tremolo Strings",
+  "inspired_by": "Tremolo strings (horror and suspense)",
+  "character": "Rapid bow repetition: shivering motion.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logoff@30[@5]@0CP@0CP@0CP@0CP@0CP#12U3~10;A150S95R800",
+   "A tiny chunk repeated 32x: the paste seams give a fast re-bow tremolo."
+  ],
+  "suggested_sources": [
+   "logoff"
+  ],
+  "priority": 2,
+  "dna": "logoff@30[@5]@0CP@0CP@0CP@0CP@0CP#12U3~10;A150S95R800",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "strings-solo-cello",
+  "category": "strings",
+  "name": "Solo Cello",
+  "inspired_by": "Solo cello (Ethno World, Kontakt)",
+  "character": "A rich, woody, nasal low bowed tone with vibrato.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logoff@30[<<#8U2~6/critstop<<@20[#4L30;A200S95R600",
+   "logoff two octaves down."
+  ],
+  "suggested_sources": [
+   "logoff",
+   "critstop"
+  ],
+  "priority": 3,
+  "dna": "logoff@30[<<#8U2~6/critstop<<@20[#4L30;A200S95R600",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "strings-synth-strings-1-gm-51",
+  "category": "strings",
+  "name": "Synth Strings 1 (GM 51)",
+  "inspired_by": "GM 'SynthStrings 1' (SC-55, every 90s MIDI)",
+  "character": "A slightly brassy, buzzy synth string with a soft attack.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logoff@30[@20]@0CP@0CP@0CP+#12U3~12;A250S95R900",
+   "A looped string chunk."
+  ],
+  "suggested_sources": [
+   "logoff"
+  ],
+  "priority": 3,
+  "dna": "logoff@30[@20]@0CP@0CP@0CP+#12U3~12;A250S95R900",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "strings-disco-strings-rise",
+  "category": "strings",
+  "name": "Disco Strings Rise",
+  "inspired_by": "Disco string runs (Salsoul, French house samples)",
+  "character": "A bright, glossy section with an upward sweep before the hit.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logoff@25[#8U3~10/restore#4FL60;A40S95R800",
+   "The restore whoosh up gives the rise."
+  ],
+  "suggested_sources": [
+   "logoff",
+   "restore"
+  ],
+  "priority": 3,
+  "dna": "logoff@25[#8U3~10/restore#4FL60;A40S95R800",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "brass-stabs-orchestra-hit",
+  "category": "brass-stabs",
+  "name": "Orchestra Hit",
+  "inspired_by": "Fairlight ORCH5 / Emulator orch hit (Art of Noise, Yes, 'Owner of a Lonely Heart'; everywhere since)",
+  "character": "See 'Emulator Orchestra Hit': a full chord in one transient.",
+  "recipe_steps": [
+   "Start DNA (spec v1): tada@25]++E#10H0,12/critstop@10]<#6L80;A0D300S0R200V70",
+   "See 'Emulator Orchestra Hit'."
+  ],
+  "suggested_sources": [
+   "tada",
+   "critstop"
+  ],
+  "priority": 2,
+  "dna": "tada@25]++E#10H0,12/critstop@10]<#6L80;A0D300S0R200V70",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "brass-stabs-brass-stab-jump",
+  "category": "brass-stabs",
+  "name": "Brass Stab (Jump)",
+  "inspired_by": "Oberheim OB-Xa brass stab (Van Halen 'Jump') / Prophet brass",
+  "character": "A bright, punchy, detuned saw brass chord with a quick 'blat' attack.",
+  "recipe_steps": [
+   "Start DNA (spec v1): tada@10[@20]@0CP@0CP@0CP++#16U3~14;A15D300S70R200",
+   "A looped tada chunk, clipped and detuned, gives the synth brass."
+  ],
+  "suggested_sources": [
+   "tada",
+   "chord"
+  ],
+  "priority": 2,
+  "dna": "tada@10[@20]@0CP@0CP@0CP++#16U3~14;A15D300S70R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "brass-stabs-synth-brass-pad-vangelis",
+  "category": "brass-stabs",
+  "name": "Synth Brass Pad (Vangelis)",
+  "inspired_by": "Yamaha CS-80 brass (Vangelis 'Chariots of Fire')",
+  "character": "A slow, swelling, warm brass pad with expressive brightness.",
+  "recipe_steps": [
+   "Start DNA (spec v1): tada@10[<#8U3~12/startup@20[<#6L50;A350S95R1500",
+   "tada slowed into a warm brass bed."
+  ],
+  "suggested_sources": [
+   "tada",
+   "startup"
+  ],
+  "priority": 2,
+  "dna": "tada@10[<#8U3~12/startup@20[<#6L50;A350S95R1500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "brass-stabs-real-horn-section-stab",
+  "category": "brass-stabs",
+  "name": "Real Horn Section Stab",
+  "inspired_by": "Horn stab (JV/Proteus 'Brass Section', funk/soul)",
+  "character": "A tight 3-horn 'baap' with a brassy rip and a fast decay.",
+  "recipe_steps": [
+   "Start DNA (spec v1): tada@20]+#10H0,4,7;A0D200S20R150",
+   "The tada front, triad voiced."
+  ],
+  "suggested_sources": [
+   "tada"
+  ],
+  "priority": 2,
+  "dna": "tada@20]+#10H0,4,7;A0D200S20R150",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "brass-stabs-french-horns-epic",
+  "category": "brass-stabs",
+  "name": "French Horns (Epic)",
+  "inspired_by": "Epic horn swell (Hans Zimmer, trailer)",
+  "character": "Massed, round, dark horns with a slow crescendo.",
+  "recipe_steps": [
+   "Start DNA (spec v1): tada@10[<<#8U3~10/critstop<@20[#6L60;A600S100R2000",
+   "tada and critstop slowed."
+  ],
+  "suggested_sources": [
+   "tada",
+   "critstop"
+  ],
+  "priority": 2,
+  "dna": "tada@10[<<#8U3~10/critstop<@20[#6L60;A600S100R2000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "brass-stabs-rave-stab",
+  "category": "brass-stabs",
+  "name": "Rave Stab",
+  "inspired_by": "Rave/hardcore stab (Korg M1 'Organ 2'/Mentasm/Orch hits)",
+  "character": "A short, loud, chordal, minor stab with grit.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@30]+++#12H0,3,7;A0D200S0R100",
+   "Clipped chord front, minor triad."
+  ],
+  "suggested_sources": [
+   "chord",
+   "tada"
+  ],
+  "priority": 2,
+  "dna": "chord@30]+++#12H0,3,7;A0D200S0R100",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "leads-supersaw-lead",
+  "category": "leads",
+  "name": "Supersaw Lead",
+  "inspired_by": "Roland JP-8000 supersaw (trance benchmark)",
+  "character": "See 'XV Supersaw Pad', with a shorter attack and an octave.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@20[@30]@0CP@0CP@0CP++#16H0,12U4~25;A5S100R300",
+   "The supersaw core."
+  ],
+  "suggested_sources": [
+   "chord"
+  ],
+  "priority": 2,
+  "dna": "chord@20[@30]@0CP@0CP@0CP++#16H0,12U4~25;A5S100R300",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "leads-sync-lead",
+  "category": "leads",
+  "name": "Sync Lead",
+  "inspired_by": "Oscillator-sync lead (Cars 'Let's Go', Prophet-5)",
+  "character": "A tearing, vocal, metallic lead with a sweeping formant.",
+  "recipe_steps": [
+   "Start DNA (spec v1): hwin@10[@40]@0CP@0CP+++#8/hwout@10[@40]@0CP@0CP++#4L50;A5S100R200",
+   "A looped bloop chunk, clipped: the rising formant reads as 'sync'."
+  ],
+  "suggested_sources": [
+   "hwin",
+   "hwout"
+  ],
+  "priority": 3,
+  "dna": "hwin@10[@40]@0CP@0CP+++#8/hwout@10[@40]@0CP@0CP++#4L50;A5S100R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "leads-square-lead-chip-gm-81",
+  "category": "leads",
+  "name": "Square Lead (Chip / GM 81)",
+  "inspired_by": "GM Square Lead / pulse leads",
+  "character": "A hollow square: video-game melody.",
+  "recipe_steps": [
+   "Start DNA (spec v1): batlow@5[@20]@0CP@0CP@0CP+++#8;A5S100R150",
+   "See 'SC-55 Square Lead'."
+  ],
+  "suggested_sources": [
+   "batlow"
+  ],
+  "priority": 3,
+  "dna": "batlow@5[@20]@0CP@0CP@0CP+++#8;A5S100R150",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "leads-sine-whistle-lead",
+  "category": "leads",
+  "name": "Sine Whistle Lead",
+  "inspired_by": "Moog/Theremin-ish sine lead (G-funk whistle: Dr. Dre)",
+  "character": "A pure, high, singing sine with portamento and vibrato.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@40]>#8U2~6;A60S100R300B12",
+   "A sine-ish ringout up an octave.",
+   "B12 for expressive bends (G-funk glides)."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "xpringout"
+  ],
+  "priority": 2,
+  "dna": "ringout@20[@40]>#8U2~6;A60S100R300B12",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "leads-mono-saw-lead-minimoog",
+  "category": "leads",
+  "name": "Mono Saw Lead (Minimoog)",
+  "inspired_by": "Minimoog lead (Jan Hammer, prog)",
+  "character": "A fat, slightly detuned, warm saw lead.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@20[@30]@0CP@0CP@0CP+++#8U2~8;A10S100R250",
+   "The saw core, mono feel, small detune."
+  ],
+  "suggested_sources": [
+   "chord",
+   "error"
+  ],
+  "priority": 3,
+  "dna": "chord@20[@30]@0CP@0CP@0CP+++#8U2~8;A10S100R250",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "leads-pan-flute-lead-zamfir",
+  "category": "leads",
+  "name": "Pan-Flute Lead (Zamfir)",
+  "inspired_by": "Pan flute lead (see world)",
+  "character": "See 'Pan Flute'.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@25[@40]#8U2~7/minimize>@15]#3FL35;A40S90R600",
+   "See 'D-50 Breathy Chiffer'."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "minimize"
+  ],
+  "priority": 3,
+  "dna": "ringout@25[@40]#8U2~7/minimize>@15]#3FL35;A40S90R600",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "leads-distorted-hoover-lead",
+  "category": "leads",
+  "name": "Distorted Hoover Lead",
+  "inspired_by": "Hoover as lead (gabber and rave)",
+  "character": "See 'Alpha Juno Hoover'.",
+  "recipe_steps": [
+   "Start DNA (spec v1): error@10[@40]@0CP@0CP@0CP+++#16U8~60;A10S100R400B12",
+   "See 'Alpha Juno Hoover'."
+  ],
+  "suggested_sources": [
+   "error"
+  ],
+  "priority": 3,
+  "dna": "error@10[@40]@0CP@0CP@0CP+++#16U8~60;A10S100R400B12",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "world-koto",
+  "category": "world",
+  "name": "Koto",
+  "inspired_by": "Koto (DX7, Emulator, Proteus World)",
+  "character": "See 'DX7 Koto': a twang with a pitch drop and a buzzing resonance.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpringin@5]EE>#10/start>>#4FL30;A0D500S0R250",
+   "See 'DX7 Koto'."
+  ],
+  "suggested_sources": [
+   "xpringin",
+   "xpding"
+  ],
+  "priority": 2,
+  "dna": "xpringin@5]EE>#10/start>>#4FL30;A0D500S0R250",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "world-shakuhachi",
+  "category": "world",
+  "name": "Shakuhachi",
+  "inspired_by": "Shakuhachi (E-II 'Sledgehammer', Fairlight, Proteus World)",
+  "character": "See 'Shakuhachi Hammer'.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@30[@40]#3/recycle>>@8]#2F;A15D400S70R250V80",
+   "See 'Shakuhachi Hammer'."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "recycle"
+  ],
+  "priority": 2,
+  "dna": "ringout@30[@40]#3/recycle>>@8]#2F;A15D400S70R250V80",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "world-sitar",
+  "category": "world",
+  "name": "Sitar",
+  "inspired_by": "Sitar (Ravi Shankar; 60s psych; Proteus World 'Sitar')",
+  "character": "A bright, buzzy, sweeping 'jawari' resonance, sympathetic string drones and a nasal twang.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpringin@6]EEE>>#8/xpringin@6]EEE>>R#4L30/ringout@20[@40]<#4L30;A0D1500S20R800",
+   "The EEE>> comb gives the jawari buzz.",
+   "A reversed copy is the sympathetic-string swell.",
+   "The sine drone layer underneath is the tanpura."
+  ],
+  "suggested_sources": [
+   "xpringin",
+   "chimes",
+   "ringout"
+  ],
+  "priority": 2,
+  "dna": "xpringin@6]EEE>>#8/xpringin@6]EEE>>R#4L30/ringout@20[@40]<#4L30;A0D1500S20R800",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "world-kalimba",
+  "category": "world",
+  "name": "Kalimba",
+  "inspired_by": "Kalimba / mbira (Proteus World, Alchemy, Earth Wind & Fire)",
+  "character": "See 'Proteus World Kalimba'.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@25]#10/start>#4FL50;A0D600S0R250",
+   "See 'Proteus World Kalimba'."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "start"
+  ],
+  "priority": 2,
+  "dna": "xpding@25]#10/start>#4FL50;A0D600S0R250",
+  "cross_listed": true,
+  "works_on_311": false
+ },
+ {
+  "id": "world-pan-flute",
+  "category": "world",
+  "name": "Pan Flute",
+  "inspired_by": "Pan flute (Zamfir; GM 76; Korg M1 'PanFlute')",
+  "character": "A breathy, hollow, airy tone with a strong 'chiff' and gentle vibrato. Very 90s 'relaxing'.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@25[@40]#8U2~7/minimize>@15]#3FL35;A40S90R600",
+   "A sine-ish body plus a whoosh chiff.",
+   "[planned env graph] a small overshoot at 60 ms for the chiff."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "minimize",
+   "recycle"
+  ],
+  "priority": 1,
+  "rank": 24,
+  "dna": "ringout@25[@40]#8U2~7/minimize>@15]#3FL35;A40S90R600",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "world-steel-drum",
+  "category": "world",
+  "name": "Steel Drum",
+  "inspired_by": "Steel drum / steelpan (GM 115; Proteus World; tropical house)",
+  "character": "A bright, metallic, round strike with characteristic inharmonic 'boing' partials and a medium decay. Happy and tropical.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@20]EE>#8/default@30]#4L60;A0D700S0R300",
+   "The xpding strike's EE> comb gives the 'pan' ring.",
+   "XP Default's mallet gives the round body."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "default",
+   "exclaim"
+  ],
+  "priority": 1,
+  "rank": 25,
+  "dna": "xpding@20]EE>#8/default@30]#4L60;A0D700S0R300",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "world-ocarina",
+  "category": "world",
+  "name": "Ocarina",
+  "inspired_by": "Ocarina (Zelda; GM 80)",
+  "character": "A pure, round, hollow tone with a breathy onset.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@25[@40]>#8/recycle>>@5]#2FL15;A30S95R300",
+   "ringout plus breath."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "recycle"
+  ],
+  "priority": 2,
+  "dna": "ringout@25[@40]>#8/recycle>>@5]#2FL15;A30S95R300",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "world-tabla-hand-drums",
+  "category": "world",
+  "name": "Tabla / Hand Drums",
+  "inspired_by": "Tabla/hand percussion (Ethno World; Proteus World)",
+  "character": "A pitched drum 'dha' with a resonant bend and a dry slap.",
+  "recipe_steps": [
+   "Start DNA (spec v1): default<@20]#8/start<#4F;A0D300S0R100",
+   "A slowed mallet plus a slap click."
+  ],
+  "suggested_sources": [
+   "default",
+   "start"
+  ],
+  "priority": 3,
+  "dna": "default<@20]#8/start<#4F;A0D300S0R100",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "world-erhu",
+  "category": "world",
+  "name": "Erhu",
+  "inspired_by": "Erhu (Chinese fiddle; Ethno World)",
+  "character": "A nasal, expressive, sliding bowed tone.",
+  "recipe_steps": [
+   "Start DNA (spec v1): batcrit@10[@20]@0CP@0CP@0CP#8U2~10;A120S95R400B12",
+   "A looped nasal tone with a wide bend."
+  ],
+  "suggested_sources": [
+   "batcrit",
+   "logoff"
+  ],
+  "priority": 3,
+  "dna": "batcrit@10[@20]@0CP@0CP@0CP#8U2~10;A120S95R400B12",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "world-didgeridoo",
+  "category": "world",
+  "name": "Didgeridoo",
+  "inspired_by": "Didgeridoo (Ethno World, ambient)",
+  "character": "A low, growling, rhythmic formant drone.",
+  "recipe_steps": [
+   "Start DNA (spec v1): error<<<@10[@30]@0CP@0CP@0CP@0CPE#8F;A300S100R1000",
+   "A looped low error tone with echo."
+  ],
+  "suggested_sources": [
+   "error",
+   "critstop"
+  ],
+  "priority": 3,
+  "dna": "error<<<@10[@30]@0CP@0CP@0CP@0CPE#8F;A300S100R1000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "drones-tanpura-drone",
+  "category": "drones",
+  "name": "Tanpura Drone",
+  "inspired_by": "Tanpura (Indian classical drone)",
+  "character": "Constantly shimmering overtones on a fixed root and fifth.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@30]@0CP@0CP@0CP@0CPEE#8H0,7,12U2~6;A1500S100R4000",
+   "A looped sine tone, root/fifth/octave, plus echo shimmer."
+  ],
+  "suggested_sources": [
+   "ringout"
+  ],
+  "priority": 2,
+  "dna": "ringout@20[@30]@0CP@0CP@0CP@0CPEE#8H0,7,12U2~6;A1500S100R4000",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "drones-deep-space-drone",
+  "category": "drones",
+  "name": "Deep Space Drone",
+  "inspired_by": "Ambient space drone (Stars of the Lid, Brian Eno)",
+  "character": "Very slow, dense, dark, gently beating tones.",
+  "recipe_steps": [
+   "Start DNA (spec v1): startup<<<#8U3~15/shutdown<<<R#8;A3000S100R6000",
+   "Three octaves down."
+  ],
+  "suggested_sources": [
+   "startup",
+   "shutdown"
+  ],
+  "priority": 2,
+  "dna": "startup<<<#8U3~15/shutdown<<<R#8;A3000S100R6000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "drones-machine-hum-drone",
+  "category": "drones",
+  "name": "Machine Hum Drone",
+  "inspired_by": "Industrial hum (server room, 50/60 Hz)",
+  "character": "Steady, buzzy low hum with harmonic grit.",
+  "recipe_steps": [
+   "Start DNA (spec v1): batlow@5[@15]@0CP@0CP@0CP@0CP++<<<#8F;A1000S100R2000",
+   "A clipped looped tone, low, fixed."
+  ],
+  "suggested_sources": [
+   "batlow",
+   "error"
+  ],
+  "priority": 3,
+  "dna": "batlow@5[@15]@0CP@0CP@0CP@0CP++<<<#8F;A1000S100R2000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "drones-eerie-bowed-metal",
+  "category": "drones",
+  "name": "Eerie Bowed Metal",
+  "inspired_by": "Bowed cymbal / waterphone (horror)",
+  "character": "A metallic, dissonant, screeching sustain.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes<REE#8U3~30;A1500S100R3000",
+   "Reversed, slowed chimes with echo; wide detune for dissonance."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "ding"
+  ],
+  "priority": 2,
+  "dna": "chimes<REE#8U3~30;A1500S100R3000",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "drones-organ-drone-cathedral",
+  "category": "drones",
+  "name": "Organ Drone (Cathedral)",
+  "inspired_by": "Church organ drone (Arvo Part, ambient)",
+  "character": "A pure, immovable stack.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@30]@0CP@0CP@0CP@0CP#12H0,12,-12;A2000S100R4000",
+   "Looped sine-ish tone in octaves."
+  ],
+  "suggested_sources": [
+   "ringout"
+  ],
+  "priority": 3,
+  "dna": "ringout@20[@30]@0CP@0CP@0CP@0CP#12H0,12,-12;A2000S100R4000",
+  "cross_listed": false,
+  "works_on_311": true
+ },
+ {
+  "id": "risers-fx-white-noise-riser",
+  "category": "risers-fx",
+  "name": "White Noise Riser",
+  "inspired_by": "EDM noise riser/sweep (Nexus FX, Massive)",
+  "character": "Noise rising in pitch and brightness over 4 to 8 bars.",
+  "recipe_steps": [
+   "Start DNA (spec v1): restore<<#8F/minimizeR<<#8F;A3000S100R500",
+   "restore is an upward whoosh; reversed minimize also rises.",
+   "<< stretches them.",
+   "[planned env graph] a long exponential ramp."
+  ],
+  "suggested_sources": [
+   "restore",
+   "minimize",
+   "recycle"
+  ],
+  "priority": 2,
+  "dna": "restore<<#8F/minimizeR<<#8F;A3000S100R500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "risers-fx-reverse-cymbal",
+  "category": "risers-fx",
+  "name": "Reverse Cymbal",
+  "inspired_by": "Reverse cymbal swell (pop and hip-hop transitions)",
+  "character": "A shimmering noise swell into the downbeat.",
+  "recipe_steps": [
+   "Start DNA (spec v1): recycleRE#8F/chimesR#4FL50;A0S100R200",
+   "Reversed crumple and chimes."
+  ],
+  "suggested_sources": [
+   "recycle",
+   "xprecycle",
+   "chimes"
+  ],
+  "priority": 2,
+  "dna": "recycleRE#8F/chimesR#4FL50;A0S100R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "risers-fx-downlifter-impact",
+  "category": "risers-fx",
+  "name": "Downlifter / Impact",
+  "inspired_by": "Downlifter and trailer impact (sub drop)",
+  "character": "A big hit, then a falling noise and pitch tail.",
+  "recipe_steps": [
+   "Start DNA (spec v1): critstop<<#8F/minimize<#8F;A0S100R2000",
+   "A low critstop hit plus a downward whoosh."
+  ],
+  "suggested_sources": [
+   "critstop",
+   "minimize",
+   "shutdown"
+  ],
+  "priority": 2,
+  "dna": "critstop<<#8F/minimize<#8F;A0S100R2000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "risers-fx-laser-zap",
+  "category": "risers-fx",
+  "name": "Laser Zap",
+  "inspired_by": "Laser 'pew' (Y2K, retro FX)",
+  "character": "A fast falling-pitch zap.",
+  "recipe_steps": [
+   "Start DNA (spec v1): hwout>>#8/balloon>>#4L50;A0D150S0R80",
+   "The descending Hardware Remove at x4 speed."
+  ],
+  "suggested_sources": [
+   "hwout",
+   "balloon"
+  ],
+  "priority": 2,
+  "dna": "hwout>>#8/balloon>>#4L50;A0D150S0R80",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "risers-fx-glitch-stutter",
+  "category": "risers-fx",
+  "name": "Glitch Stutter",
+  "inspired_by": "Glitch FX (Autechre, 2000s IDM; Massive 'Stutter')",
+  "character": "Rapid-fire, chopped, repeating fragments.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@5]@0CP@0CP@0CPImenu@0CP#8F;A0S100R80",
+   "Repeat a tiny chunk with an Insert-File click inside the loop."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "menu",
+   "start"
+  ],
+  "priority": 2,
+  "dna": "xpding@5]@0CP@0CP@0CPImenu@0CP#8F;A0S100R80",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "risers-fx-sci-fi-computer-babble",
+  "category": "risers-fx",
+  "name": "Sci-fi Computer Babble",
+  "inspired_by": "Sci-fi computer bleeps (Star Trek, 70s/80s)",
+  "character": "Random, rapid, pitched bleeps.",
+  "recipe_steps": [
+   "Start DNA (spec v1): batcrit>IbatlowIhwin>IhwoutIprint>#8F;A0S100R100",
+   "Splice alert tones into a sequence of bleeps."
+  ],
+  "suggested_sources": [
+   "batcrit",
+   "batlow",
+   "hwin",
+   "hwout",
+   "print"
+  ],
+  "priority": 3,
+  "dna": "batcrit>IbatlowIhwin>IhwoutIprint>#8F;A0S100R100",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "risers-fx-underwater-bubbles",
+  "category": "risers-fx",
+  "name": "Underwater Bubbles",
+  "inspired_by": "Bubble FX (Frutiger Aero aquariums; Massive 'Bubbles')",
+  "character": "A random cascade of round 'blips' with a watery resonance.",
+  "recipe_steps": [
+   "Start DNA (spec v1): balloon>IballoonIballoon>>Iballoon<E#8F;A0S100R300",
+   "Splice balloon pops at varied speeds; echo for water."
+  ],
+  "suggested_sources": [
+   "balloon",
+   "hwin"
+  ],
+  "priority": 2,
+  "dna": "balloon>IballoonIballoon>>Iballoon<E#8F;A0S100R300",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "risers-fx-tape-stop",
+  "category": "risers-fx",
+  "name": "Tape Stop",
+  "inspired_by": "Tape stop/slowdown (vaporwave, hip-hop)",
+  "character": "The sound grinds down in pitch to a halt.",
+  "recipe_steps": [
+   "Start DNA (spec v1): startup<<<@50]#8F;A0S100R1000",
+   "Can't glide pitch, so fake it as a cascade.",
+   "[planned offsets] 4 recorders at speed x1, /2, /4, /8 with offsets 0/150/300/450 ms and falling volume."
+  ],
+  "suggested_sources": [
+   "startup",
+   "tada",
+   "chord"
+  ],
+  "priority": 3,
+  "dna": "startup<<<@50]#8F;A0S100R1000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "lofi-vaporwave-vaporwave-slowed-pad",
+  "category": "lofi-vaporwave",
+  "name": "Vaporwave Slowed Pad",
+  "inspired_by": "Vaporwave ('Floral Shoppe', 'Eccojams' slowed, reverbed)",
+  "character": "Pitched down 30%-plus (here an octave), heavy reverb, smeared, thick and nostalgic. The pad is a corporate sound remembered half-asleep.",
+  "recipe_steps": [
+   "Start DNA (spec v1): startup<E<E#8U2~12/logon<E#8L60;A300S95R3000",
+   "Slow, then echo, then slow, then echo: each echo comes out longer and lower (the step order is the effect).",
+   "[planned env graph] a long fade."
+  ],
+  "suggested_sources": [
+   "startup",
+   "logon",
+   "chord",
+   "tada"
+  ],
+  "priority": 1,
+  "rank": 11,
+  "dna": "startup<E<E#8U2~12/logon<E#8L60;A300S95R3000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "lofi-vaporwave-mallsoft-atrium",
+  "category": "lofi-vaporwave",
+  "name": "Mallsoft Atrium",
+  "inspired_by": "Mallsoft (Disconscious, 'Hologram Plaza'; '猫 シ Corp')",
+  "character": "Muzak in an empty mall: distant, reverberant, muffled and endless.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord<<EEE#8U2~10/recycle<<<#4FL15/logon<<#4L50;A600S90R3500",
+   "Many echoes give distance.",
+   "Slowed crumple is the crowd/HVAC murmur.",
+   "[planned pan] wide.",
+   "[planned macro] M1 = distance (echo layer vs dry)."
+  ],
+  "suggested_sources": [
+   "chord",
+   "logon",
+   "recycle",
+   "startup"
+  ],
+  "priority": 1,
+  "rank": 26,
+  "dna": "chord<<EEE#8U2~10/recycle<<<#4FL15/logon<<#4L50;A600S90R3500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "lofi-vaporwave-eccojam-loop",
+  "category": "lofi-vaporwave",
+  "name": "Eccojam Loop",
+  "inspired_by": "Daniel Lopatin 'Eccojams' (looped slowed pop fragments)",
+  "character": "A short phrase looped hypnotically, slowed and echoed.",
+  "recipe_steps": [
+   "Start DNA (spec v1): startup<@20[@20]@0CP@0CP@0CPE#8F;A50S100R1500",
+   "A chunk looped with @0CP and echoed, played at a fixed pitch."
+  ],
+  "suggested_sources": [
+   "startup",
+   "logon",
+   "tada"
+  ],
+  "priority": 2,
+  "dna": "startup<@20[@20]@0CP@0CP@0CPE#8F;A50S100R1500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "lofi-vaporwave-lo-fi-tape-keys",
+  "category": "lofi-vaporwave",
+  "name": "Lo-fi Tape Keys",
+  "inspired_by": "Lo-fi hip-hop keys (ChilledCow era)",
+  "character": "A warm, wobbly, dusty EP with a soft attack and noise.",
+  "recipe_steps": [
+   "Start DNA (spec v1): default@50]><#8U2~14/ringout@30[@30]<#6L60/recycle<<<#2FL10;A10D2000S30R700",
+   "A Rhodes recipe with decimation, wide wow and dust."
+  ],
+  "suggested_sources": [
+   "default",
+   "ringout",
+   "recycle"
+  ],
+  "priority": 2,
+  "dna": "default@50]><#8U2~14/ringout@30[@30]<#6L60/recycle<<<#2FL10;A10D2000S30R700",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "lofi-vaporwave-bitcrushed-chiptune-pad",
+  "category": "lofi-vaporwave",
+  "name": "Bitcrushed Chiptune Pad",
+  "inspired_by": "8-bit lo-fi texture",
+  "character": "Aliasing, quantization noise, stepped tone.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord>>><<<----++++#8;A200S90R800",
+   "A >>><<< round trip (decimate by 8) plus a ----++++ requantize (hypothesis: loses bits on 8-bit sources)."
+  ],
+  "suggested_sources": [
+   "chord",
+   "chimes"
+  ],
+  "priority": 2,
+  "dna": "chord>>><<<----++++#8;A200S90R800",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "lofi-vaporwave-vhs-warble",
+  "category": "lofi-vaporwave",
+  "name": "VHS Warble",
+  "inspired_by": "VHS tape warble pads (synthwave, chillwave)",
+  "character": "A wobbly pitch, a dull top and soft saturation.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logon<><#8U4~20+/startup@20[<#4L50;A400S90R1800",
+   "Wide unison for warble, decimation for the dull top."
+  ],
+  "suggested_sources": [
+   "logon",
+   "startup"
+  ],
+  "priority": 2,
+  "dna": "logon<><#8U4~20+/startup@20[<#4L50;A400S90R1800",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "lofi-vaporwave-vinyl-crackle-bed",
+  "category": "lofi-vaporwave",
+  "name": "Vinyl Crackle Bed",
+  "inspired_by": "Lo-fi vinyl noise layer",
+  "character": "Crackle and hiss as a texture under everything.",
+  "recipe_steps": [
+   "Start DNA (spec v1): recycle>>><@0CP@0CP@0CP#4F;A0S100R500G-12",
+   "Crumple chopped and looped into crackle.",
+   "Use it as a layer under keys."
+  ],
+  "suggested_sources": [
+   "recycle",
+   "xprecycle"
+  ],
+  "priority": 3,
+  "dna": "recycle>>><@0CP@0CP@0CP#4F;A0S100R500G-12",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "lofi-vaporwave-slowed-reverb-chord",
+  "category": "lofi-vaporwave",
+  "name": "Slowed + Reverb Chord",
+  "inspired_by": "'Slowed + reverb' YouTube edits (2017-2020)",
+  "character": "A chord stab slowed into a vast dreamy wash.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord<EE<E#10U2~8;A100S95R3000",
+   "Interleave < and E so the echoes grow longer."
+  ],
+  "suggested_sources": [
+   "chord",
+   "tada"
+  ],
+  "priority": 2,
+  "dna": "chord<EE<E#10U2~8;A100S95R3000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-frutiger-aero-aero-startup-swell",
+  "category": "aesthetic-frutiger-aero",
+  "name": "Aero Startup Swell",
+  "inspired_by": "Windows XP/Vista startup sounds (Brian Eno 95 / XP / Vista 'Aero' startup)",
+  "character": "A glossy, optimistic swell: a bright pad bloom, sparkle notes, a big airy reverb. Pure 2001-2009 'future'.",
+  "recipe_steps": [
+   "Start DNA (spec v1): startup#10U2~6/chimes>R#6L50;A200S90R2500",
+   "XP Startup itself, playable chromatically, with a reversed glass shimmer.",
+   "This is the brand preset: the source sound IS the aesthetic."
+  ],
+  "suggested_sources": [
+   "startup",
+   "logon",
+   "chimes"
+  ],
+  "priority": 1,
+  "rank": 7,
+  "dna": "startup#10U2~6/chimes>R#6L50;A200S90R2500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-frutiger-aero-water-droplet-pluck",
+  "category": "aesthetic-frutiger-aero",
+  "name": "Water Droplet Pluck",
+  "inspired_by": "Frutiger Aero water drop (Vista/Windows 7 'notify', Apple 'Drip', 2000s UI)",
+  "character": "A tiny round bloop with a rising pitch flick, very short, plus a watery resonance.",
+  "recipe_steps": [
+   "Start DNA (spec v1): balloon@40]#10/hwin>@20]#4L40;A0D200S0R150",
+   "The balloon front plus a short rising Hardware Insert bloop."
+  ],
+  "suggested_sources": [
+   "balloon",
+   "hwin",
+   "xpding"
+  ],
+  "priority": 1,
+  "rank": 16,
+  "dna": "balloon@40]#10/hwin>@20]#4L40;A0D200S0R150",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-frutiger-aero-bubbly-aero-arp",
+  "category": "aesthetic-frutiger-aero",
+  "name": "Bubbly Aero Arp",
+  "inspired_by": "Frutiger Aero bubbles (MSN Messenger, 'Aqua' UI, Wii menus)",
+  "character": "Bouncy, rounded, glossy plucks with soft echoes, like bubbles in an aquarium.",
+  "recipe_steps": [
+   "Start DNA (spec v1): balloon#8/balloon<<E>>#4L40;A0D300S0R300",
+   "Balloon plus a long-echo copy."
+  ],
+  "suggested_sources": [
+   "balloon"
+  ],
+  "priority": 2,
+  "dna": "balloon#8/balloon<<E>>#4L40;A0D300S0R300",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-frutiger-aero-glassy-aqua-pad",
+  "category": "aesthetic-frutiger-aero",
+  "name": "Glassy Aqua Pad",
+  "inspired_by": "Frutiger Aero glassy pads (Vista 'Aurora', 2000s tech commercials)",
+  "character": "Clean, bright, transparent pad with sparkly top, slow shimmer.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logon@20[#8U2~8/xpding>R#4L50/chimes>>R#4L30;A500S90R2500",
+   "Logon body with reversed bright sparkle layers."
+  ],
+  "suggested_sources": [
+   "logon",
+   "xpding",
+   "chimes"
+  ],
+  "priority": 2,
+  "dna": "logon@20[#8U2~8/xpding>R#4L50/chimes>>R#4L30;A500S90R2500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-frutiger-aero-airy-breath-pad",
+  "category": "aesthetic-frutiger-aero",
+  "name": "Airy Breath Pad",
+  "inspired_by": "Aero airy pads (Vista/Win7 'Windows Calendar' etc.)",
+  "character": "Breathy air over a soft sine chord.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout@20[@40]#8H0,7U2~6/minimize<#4FL30;A800S90R2500",
+   "A sine-ish fifth with air."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "minimize"
+  ],
+  "priority": 2,
+  "dna": "ringout@20[@40]#8H0,7U2~6/minimize<#4FL30;A800S90R2500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-frutiger-aero-msn-nudge-boing",
+  "category": "aesthetic-frutiger-aero",
+  "name": "MSN Nudge Boing",
+  "inspired_by": "MSN Messenger nudge/sign-in style blips (2000s chat)",
+  "character": "A playful, rubbery boing with a quick pitch wobble.",
+  "recipe_steps": [
+   "Start DNA (spec v1): hwin#8U2~15/balloon#4L50;A0D300S0R200",
+   "Hardware Insert's bloop plus balloon."
+  ],
+  "suggested_sources": [
+   "hwin",
+   "balloon",
+   "xpnotify"
+  ],
+  "priority": 2,
+  "dna": "hwin#8U2~15/balloon#4L50;A0D300S0R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-frutiger-aero-aero-keyboard-chime",
+  "category": "aesthetic-frutiger-aero",
+  "name": "Aero Keyboard Chime",
+  "inspired_by": "Windows Vista / 7 chord chimes (Windows 7 'Windows Background', 'Notify')",
+  "character": "A soft glassy chord pluck with a long gentle decay.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpnotify#8H0,7,12/print#4L40;A0D1500S0R1000",
+   "XP Notify, voiced as an open chord."
+  ],
+  "suggested_sources": [
+   "xpnotify",
+   "print",
+   "xpding"
+  ],
+  "priority": 2,
+  "dna": "xpnotify#8H0,7,12/print#4L40;A0D1500S0R1000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-frutiger-aero-aquarium-ambience",
+  "category": "aesthetic-frutiger-aero",
+  "name": "Aquarium Ambience",
+  "inspired_by": "Aero aquariums, screensavers ('Aquarium', 'Windows Media visualizations')",
+  "character": "Water movement, bubbles and a soft pad: calm, glossy.",
+  "recipe_steps": [
+   "Start DNA (spec v1): recycle<<#4F/balloon<IballoonIballoon>E#4F/logon<#8L60;A1200S90R3000",
+   "Slowed crumple = water; balloon splice = bubbles; logon = calm pad."
+  ],
+  "suggested_sources": [
+   "recycle",
+   "balloon",
+   "logon"
+  ],
+  "priority": 3,
+  "dna": "recycle<<#4F/balloon<IballoonIballoon>E#4F/logon<#8L60;A1200S90R3000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-frutiger-aero-vista-sparkle-glissando",
+  "category": "aesthetic-frutiger-aero",
+  "name": "Vista Sparkle Glissando",
+  "inspired_by": "Vista 'Windows Startup' / iPod-era sparkles",
+  "character": "A rising cascade of crystalline notes.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chimes>R@0CP#8/print#4L50;A0D2000S0R1500",
+   "Reversed x2 chimes repeated.",
+   "[planned offsets] harmony H0,4,7,12 voices with 40 ms offsets each = an upward gliss."
+  ],
+  "suggested_sources": [
+   "chimes",
+   "print"
+  ],
+  "priority": 2,
+  "dna": "chimes>R@0CP#8/print#4L50;A0D2000S0R1500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-frutiger-aero-liquid-glass-bell",
+  "category": "aesthetic-frutiger-aero",
+  "name": "Liquid Glass Bell",
+  "inspired_by": "Aero-style glass bell (Apple 'Glass', 'Crystal' alert sounds)",
+  "character": "A pure, bright, glassy single tone with a soft halo.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding>#8U2~5/xpding>RER#4L30;A0D1800S0R1500",
+   "The bell, with a reverse-reverb halo."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "chimes"
+  ],
+  "priority": 2,
+  "dna": "xpding>#8U2~5/xpding>RER#4L30;A0D1800S0R1500",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-y2k-corporate-corporate-logo-sting",
+  "category": "aesthetic-y2k-corporate",
+  "name": "Corporate Logo Sting",
+  "inspired_by": "2000s corporate intro stings (Intel bong, PowerPoint templates, 'Microsoft Sound')",
+  "character": "Three to five bright, confident notes, then a big shiny chord bloom with reverb. Sounds like 'innovation'.",
+  "recipe_steps": [
+   "Start DNA (spec v1): tada#8H0,12/chimes>#4L50/startup@20[#4L40;A0D1800S30R2000",
+   "tada fanfare, chime sparkle, startup bloom.",
+   "Play a I-V chord."
+  ],
+  "suggested_sources": [
+   "tada",
+   "chimes",
+   "startup"
+  ],
+  "priority": 1,
+  "rank": 27,
+  "dna": "tada#8H0,12/chimes>#4L50/startup@20[#4L40;A0D1800S30R2000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-y2k-corporate-web-portal-click",
+  "category": "aesthetic-y2k-corporate",
+  "name": "Web Portal Click",
+  "inspired_by": "2000s web-portal UI clicks (Internet Explorer 'navigation start' click, Yahoo! / MSN portals)",
+  "character": "A crisp, dry, pitched tick.",
+  "recipe_steps": [
+   "Start DNA (spec v1): start#16F;A0S100R30V50",
+   "start.wav: the actual IE navigation click.",
+   "Drop F for a pitched percussion kit."
+  ],
+  "suggested_sources": [
+   "start",
+   "xpstart",
+   "menu",
+   "popup"
+  ],
+  "priority": 2,
+  "dna": "start#16F;A0S100R30V50",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-y2k-corporate-hold-music-muzak-keys",
+  "category": "aesthetic-y2k-corporate",
+  "name": "Hold Music Muzak Keys",
+  "inspired_by": "2000s on-hold music / corporate training video (Kevin MacLeod-era stock)",
+  "character": "Bland, bright, slightly chorused EP and strings: inoffensive, glossy.",
+  "recipe_steps": [
+   "Start DNA (spec v1): xpding@20]#6H0,24/ringout@25[@35]#5L70/logoff@30[#5U2~10L40;A0D1500S40R1200",
+   "The DX EP plus strings combination, mixed polite."
+  ],
+  "suggested_sources": [
+   "xpding",
+   "ringout",
+   "logoff"
+  ],
+  "priority": 2,
+  "dna": "xpding@20]#6H0,24/ringout@25[@35]#5L70/logoff@30[#5U2~10L40;A0D1500S40R1200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-y2k-corporate-dial-up-handshake-texture",
+  "category": "aesthetic-y2k-corporate",
+  "name": "Dial-up Handshake Texture",
+  "inspired_by": "56k modem handshake (Y2K internet)",
+  "character": "Screeching tones, noise bursts and pitched beeps in a sequence.",
+  "recipe_steps": [
+   "Start DNA (spec v1): ringout>IrecycleIbatcrit>>Irecycle>>IringinE#8F;A0S100R200",
+   "A tone-noise-tone splice.",
+   "Try ringin's chirp."
+  ],
+  "suggested_sources": [
+   "ringout",
+   "ringin",
+   "recycle",
+   "batcrit"
+  ],
+  "priority": 2,
+  "dna": "ringout>IrecycleIbatcrit>>Irecycle>>IringinE#8F;A0S100R200",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-y2k-corporate-nokia-style-ringtone-lead",
+  "category": "aesthetic-y2k-corporate",
+  "name": "Nokia-style Ringtone Lead",
+  "inspired_by": "Early-2000s monophonic ringtones",
+  "character": "A pure square-ish tone, staccato, high and cheerful.",
+  "recipe_steps": [
+   "Start DNA (spec v1): batlow@5[@20]@0CP@0CP@0CP++>#8;A0D200S60R40",
+   "A looped clipped alert tone, up an octave."
+  ],
+  "suggested_sources": [
+   "batlow",
+   "batcrit"
+  ],
+  "priority": 2,
+  "dna": "batlow@5[@20]@0CP@0CP@0CP++>#8;A0D200S60R40",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-y2k-corporate-tech-presentation-pad",
+  "category": "aesthetic-y2k-corporate",
+  "name": "Tech Presentation Pad",
+  "inspired_by": "Corporate keynote background pads (2000s product launch)",
+  "character": "A bright, optimistic, wide synth-pad bed with a gentle pulse.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logon@20[#8U2~8/start>@0CP@0CP@0CP@0CP#4FL20;A400S90R2000",
+   "The logon pad with a quiet ticking clock layer."
+  ],
+  "suggested_sources": [
+   "logon",
+   "startup",
+   "start"
+  ],
+  "priority": 2,
+  "dna": "logon@20[#8U2~8/start>@0CP@0CP@0CP@0CP#4FL20;A400S90R2000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-y2k-corporate-y2k-trance-gate",
+  "category": "aesthetic-y2k-corporate",
+  "name": "Y2K Trance Gate",
+  "inspired_by": "Y2K trance-gate pads (ATB '9PM', Darude)",
+  "character": "A pad chopped into a 16th-note rhythmic gate.",
+  "recipe_steps": [
+   "Start DNA (spec v1): chord@20[@15]@0CP@0CP@0CP@0CP#12U4~20;A0S100R100",
+   "Seams of paste-insert copies give the rhythmic gate.",
+   "[planned env graph] a draw-a-gate pattern."
+  ],
+  "suggested_sources": [
+   "chord",
+   "logon"
+  ],
+  "priority": 2,
+  "dna": "chord@20[@15]@0CP@0CP@0CP@0CP#12U4~20;A0S100R100",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-y2k-corporate-windows-error-choir",
+  "category": "aesthetic-y2k-corporate",
+  "name": "Windows Error Choir",
+  "inspired_by": "Windows-error remixes (YouTube 'Windows sounds' meme music)",
+  "character": "Error and critical sounds as playable instruments: comic and nostalgic.",
+  "recipe_steps": [
+   "Start DNA (spec v1): error#8/critstop#4L60/exclaim#4L50;A0D600S30R300",
+   "The source sounds as they are, layered and chromatically playable. That is the meme."
+  ],
+  "suggested_sources": [
+   "error",
+   "critstop",
+   "exclaim",
+   "batcrit"
+  ],
+  "priority": 1,
+  "rank": 28,
+  "dna": "error#8/critstop#4L60/exclaim#4L50;A0D600S30R300",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-y2k-corporate-flash-intro-whoosh-hit",
+  "category": "aesthetic-y2k-corporate",
+  "name": "Flash Intro Whoosh-Hit",
+  "inspired_by": "2000s Flash website intros (whoosh, then bright hit)",
+  "character": "A fast noise sweep, then a sparkly impact chord.",
+  "recipe_steps": [
+   "Start DNA (spec v1): restore#4F/tada@20]#8H0,12/chimes>#4L50;A0D800S0R1000",
+   "[planned offsets] whoosh at 0 ms, hit at 250 ms."
+  ],
+  "suggested_sources": [
+   "restore",
+   "tada",
+   "chimes"
+  ],
+  "priority": 2,
+  "dna": "restore#4F/tada@20]#8H0,12/chimes>#4L50;A0D800S0R1000",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-y2k-corporate-cd-rom-encyclopedia-pad",
+  "category": "aesthetic-y2k-corporate",
+  "name": "CD-ROM Encyclopedia Pad",
+  "inspired_by": "90s/Y2K edutainment (Encarta, MS Plus! themes)",
+  "character": "A gentle, clean, wondering digital pad with bell plinks.",
+  "recipe_steps": [
+   "Start DNA (spec v1): logon@20[#8U2~6/chimes@20]>#4L40;A300S90R1800",
+   "The logon pad with chime plinks."
+  ],
+  "suggested_sources": [
+   "logon",
+   "chimes"
+  ],
+  "priority": 3,
+  "dna": "logon@20[#8U2~6/chimes@20]>#4L40;A300S90R1800",
+  "cross_listed": false,
+  "works_on_311": false
+ },
+ {
+  "id": "aesthetic-y2k-corporate-shutdown-fall",
+  "category": "aesthetic-y2k-corporate",
+  "name": "Shutdown Fall",
+  "inspired_by": "Windows XP Shutdown as a falling cadence instrument",
+  "character": "A descending melancholic cadence, played chromatically.",
+  "recipe_steps": [
+   "Start DNA (spec v1): shutdown#10U2~6/logoff#6L50;A0S100R2000",
+   "The source, layered with logoff."
+  ],
+  "suggested_sources": [
+   "shutdown",
+   "logoff"
+  ],
+  "priority": 2,
+  "dna": "shutdown#10U2~6/logoff#6L50;A0S100R2000",
+  "cross_listed": false,
+  "works_on_311": false
+ }
+]
