@@ -6,7 +6,7 @@
   // the product's names (the UI, the files it saves); files saved under the old name (.b16, BASILISK-SYNTH state,
   // the plugin's .vstpreset) still open
   var NAME = 'SNDWAVE2000', FILE = 'SNDWAVE2000', EXT = '.b16';
-  var CFG = /*CONFIG*/{"v":"e57fdac49b","files":[{"name":"b16.wasm","size":2688068,"gz":1096821},{"name":"w31web.state","size":6082943,"gz":1445584},{"name":"drive.zip","size":3603619,"gz":3603619}],"lead":2048,"buildFile":{"name":"w31build.state","size":4866610,"gz":990383}}/*END*/;
+  var CFG = /*CONFIG*/{"v":"0b525d5939","files":[{"name":"b16.wasm","size":2688068,"gz":1096821},{"name":"w31web.state","size":6080039,"gz":1440286},{"name":"drive.zip","size":3605805,"gz":3605805}],"lead":2048,"buildFile":{"name":"w31build.state","size":4866610,"gz":990375}}/*END*/;
   var DATA = null;   // b16-data.json, fetched on the click: the machine's settings, the library's names, the presets
   var root = document.getElementById('b16try');
   if (!root) return;
