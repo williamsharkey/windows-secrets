@@ -10,6 +10,7 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <vector>
 #include "dna.h"
 
 namespace bsynth {
@@ -21,12 +22,14 @@ struct State {
     std::string dna = kDefaultDna;
     bool reference = false;
     std::map<std::string, std::string> extra;
+    std::vector<std::string> users;   // `user <name> <sha1> <bytes> [<base64>]` (RECORDING.md 4.2): repeated, so not in extra
 
     std::string write() const
     {
         std::ostringstream o;
         o << "BASILISK-SYNTH " << version << "\n" << "dna " << canonical(dna) << "\n" << "reference " << (reference ? 1 : 0) << "\n";
         for (auto &kv : extra) o << kv.first << " " << kv.second << "\n";
+        for (auto &u : users) o << "user " << u << "\n";
         return o.str();
     }
     // Accepts the text above; a bare DNA line is accepted too (a preset can be just a DNA string).
@@ -49,6 +52,7 @@ struct State {
             std::string k = line.substr(0, sp), v = sp == std::string::npos ? "" : line.substr(sp + 1);
             if (k == "dna") s.dna = canonical(v);
             else if (k == "reference") s.reference = v == "1";
+            else if (k == "user") s.users.push_back(v);
             else if (!k.empty()) s.extra[k] = v;
         }
         *this = s;

@@ -19,6 +19,7 @@
 #include "V3Voice.h"
 #include "V3Alloc.h"
 #include "V3Host.h"
+#include "UserRec.h"
 
 #include <atomic>
 #include <chrono>
@@ -30,6 +31,9 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <set>
+#include <map>
+#include <algorithm>
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -89,6 +93,10 @@ static bool copyFile(const std::string &from, const std::string &to)
     std::fclose(a); std::fclose(b);
     return true;
 }
+
+static std::mutex gLibMtx;
+static std::vector<std::string> gLibNames;
+static std::set<std::string> gUserNames;
 
 static std::string tempDir()
 {
@@ -284,6 +292,21 @@ protected:
                                 std::to_string(kp.labels) + " " + std::to_string(kp.anchor);
             if (kp.mask) s.extra["keymask"] = std::to_string(kp.mask);
         }
+        {   // the recordings the DNA uses: hash, and the audio while the total stays under 8 MB (RECORDING.md 3.3)
+            size_t total = 0;
+            for (const auto &n : b16rec::usedNames(dnaText_)) {
+                std::vector<uint8_t> wav;
+                const auto pin = userPin_.find(n);
+                if (myRec_.empty() || !b16rec::findWav(myRec_, n, pin == userPin_.end() ? "" : pin->second, wav)) {
+                    const auto kept = userKept_.find(n);   // missing here: the line as it was loaded, so it is not lost
+                    if (kept != userKept_.end()) s.users.push_back(kept->second);
+                    continue;
+                }
+                const bool embed = total + wav.size() <= (8u << 20);
+                if (embed) total += wav.size();
+                s.users.push_back(bsynth::userLine(n, wav, embed));
+            }
+        }
         return String(s.write().c_str());
     }
 
@@ -297,6 +320,21 @@ protected:
             if (s.extra.count("keyopt")) kp.readLine("keyopt " + s.extra["keyopt"]);
             if (s.extra.count("keymask")) kp.readLine("keymask " + s.extra["keymask"]);
             setKeyParams(kp);
+            {   // its recordings (RECORDING.md 3.3): found by hash, the embedded copy saved if this machine lacks it
+                std::lock_guard<std::mutex> l(mtx_);
+                userPin_.clear(); userKept_.clear();
+                for (const auto &v : s.users) {
+                    std::string name, sha, line; bool pinned = false;
+                    if (myRec_.empty()) myRec_ = b16rec::myRecordingsDir();
+                    const bool ok = !recDir_.empty() && b16rec::recall(myRec_, recDir_, v, name, sha, line, pinned);
+                    if (name.empty()) continue;
+                    userKept_[name] = v;
+                    if (!ok) { std::fprintf(stderr, "BASILISK 16: missing recording %s (%s)\n", name.c_str(), sha.c_str()); continue; }
+                    if (pinned) { userPin_[name] = sha; userLines_.push_back(line); pendingUser_.push_back(line); }
+                    if (std::find(userNames_.begin(), userNames_.end(), name) == userNames_.end()) userNames_.push_back(name);
+                }
+            }
+            publishNames();
             setDna(s.dna, true);
         }
     }
@@ -468,6 +506,12 @@ private:
     std::thread worker_;
     std::atomic<bool> quit_{false};
     std::string tmp_, coreCopy_, conf_;
+    std::string recDir_, myRec_;            // R: (this instance's copy) and Documents/BASILISK/My Recordings (RECORDING.md 3)
+    std::vector<std::string> userLines_;    // `user` lines for Windows, sent after hello
+    std::vector<std::string> userNames_;    // and their names, for the core's name table
+    std::vector<std::string> pendingUser_;  // `user` lines to send before the next DNA (a loaded state's pinned versions)
+    std::map<std::string, std::string> userPin_;    // name -> the sha1 a loaded state pinned (not the folder's current file)
+    std::map<std::string, std::string> userKept_;   // name -> its state line as loaded (written back if it is missing here)
 
     mutable std::mutex mtx_;          // guards the fields below
     std::string dnaText_;
@@ -721,6 +765,18 @@ private:
         // a private copy of the core: each instance its own machine, even in one process
         coreCopy_ = tmp_ + "/" + coreName;
         conf_ = tmp_ + "/w31.conf";
+        recDir_ = tmp_ + "/rec";
+        b16rec::makeDir(recDir_);
+        myRec_ = b16rec::myRecordingsDir();
+        {
+            std::lock_guard<std::mutex> l(mtx_);
+            userNames_.clear();
+            userLines_ = b16rec::populate(myRec_, recDir_, userNames_);
+        }
+        publishNames();
+#ifdef _WIN32
+        for (auto &ch : recDir_) if (ch == '/') ch = '\\';
+#endif
         if (!copyFile(machine + coreName, coreCopy_)) { status("BASILISK 16: cannot copy the emulator core."); sh_.S->state = BS_FAILED; return; }
         {
             FILE *f = std::fopen((machine + "w31.conf").c_str(), "rb");
@@ -737,6 +793,8 @@ private:
                 if (p != std::string::npos) s.replace(p, 9, "\"" + mdir + "\"");
                 const size_t q = s.find("@DRIVE@");
                 if (q != std::string::npos) s.replace(q, 7, "\"" + mdir + "/drive\"");
+                const size_t rr = s.find("@RECDIR@");
+                if (rr != std::string::npos) s.replace(rr, 8, "\"" + recDir_ + "\"");
                 out += s;
             }
             std::fclose(f);
@@ -765,6 +823,7 @@ private:
 #endif
         std::remove(coreCopy_.c_str());
         std::remove(conf_.c_str());
+        b16rec::clearDir(recDir_);
 #ifdef _WIN32
         RemoveDirectoryA(tmp_.c_str());
 #else
@@ -773,6 +832,31 @@ private:
     }
 
     void status(const char *s) { std::snprintf(sh_.status, sizeof sh_.status, "%s", s); }
+
+    // Windows saved a recording on R: (RECORDING.md 2.4): check it, publish it in My Recordings, tell Windows its name
+    void recSaved(std::string path)
+    {
+        const size_t sp = path.find(' '); if (sp != std::string::npos) path.resize(sp);   // (`take <rec>` follows a take)
+        std::string stemFrom = path, line, name, err;
+        {   // U0001.WAV ...: a recording the host copied in, saved again: it keeps its name
+            const size_t s = path.find_last_of("\\:");
+            const std::string f = s == std::string::npos ? path : path.substr(s + 1);
+            for (size_t k = 0; k < userNames_.size(); k++) if (f == b16rec::hostName((int)k)) { stemFrom = "R:\\" + userNames_[k].substr(2) + ".WAV"; break; }
+        }
+        if (!b16rec::publish(myRec_, recDir_, path, stemFrom, "w31", line, name, err)) {
+            const std::string r = "rec refused " + path + " " + err;
+            sendLine(r.substr(0, 240).c_str(), 0, 0);
+            return;
+        }
+        {
+            std::lock_guard<std::mutex> l(mtx_);
+            bool have = false; for (auto &n : userNames_) if (n == name) have = true;
+            if (!have) userNames_.push_back(name);
+            userLines_.push_back(line);
+        }
+        publishNames();
+        sendLine(line.c_str(), 0, 0);
+    }
 
     // the library disc's sound names (machine/library.names.txt, written with library.zip): a DNA may use them
     void loadLibraryNames()
@@ -791,8 +875,19 @@ private:
                 if (!s.empty()) names.push_back(s);
             }
             std::fclose(f);
+            std::lock_guard<std::mutex> l(gLibMtx);
+            gLibNames = names;
             setLibrary(names);
         });
+    }
+    // the core's name table: the library disc's names and My recordings' (u_), process-wide
+    void publishNames()
+    {
+        std::lock_guard<std::mutex> l(gLibMtx);
+        std::vector<std::string> all = gLibNames;
+        for (const auto &n : userNames_) gUserNames.insert(n);
+        for (const auto &n : gUserNames) all.push_back(n);
+        setLibrary(all);
     }
 
     // ------------------------------------------------------------------ the worker: Windows' replies, hello, DNA
@@ -829,6 +924,11 @@ private:
                     std::string cat = x.category; for (auto &ch : cat) if (ch == ' ') ch = '_';
                     const std::string line = "scale " + std::to_string(x.id) + " " + cat + " " + x.label;
                     sendLine(line.c_str(), 0, 0);
+                }
+                {   // My recordings (RECORDING.md 4.3)
+                    std::vector<std::string> ul;
+                    { std::lock_guard<std::mutex> l(mtx_); ul = userLines_; }
+                    for (const auto &u : ul) if (u.size() < 240) sendLine(u.c_str(), 0, 0);
                 }
                 keyVerGuest_ = 0;   // and the key
                 std::lock_guard<std::mutex> l(mtx_);
@@ -912,6 +1012,11 @@ private:
                 if (hello && lenvDirty_ && !send && !inFlight_) { sendEnv = true; lenvDirty_ = false; eff = effective(parse(dnaText_)); d3e = d3ForAudio_; }
             }
             if (send) {
+                {   // a loaded state's recordings first: the DNA names them
+                    std::vector<std::string> pu;
+                    { std::lock_guard<std::mutex> l(mtx_); pu.swap(pendingUser_); }
+                    for (const auto &u : pu) sendLine(u.c_str(), 0, 0);
+                }
                 std::string line = "dna " + d;   // as written: Windows shows it, and does N itself
                 building_ = rebuild;   // ("built 0" for a DNA that Sound Recorder has nothing to do for)
                 sendLine(line.c_str(), 0, 0);
@@ -983,8 +1088,9 @@ private:
             return;
         }
         if (line.rfind("rsrc ", 0) == 0) { recSelf_ = line.compare(5, 4, "self") == 0; return; }   // the visitor chose the input (RECORDING.md 4.3)
-        if (line.rfind("rec start ", 0) == 0) { const int r = std::atoi(line.c_str() + 10); if (r >= 0 && r < 16) recBusy_ |= 1u << r; return; }
-        if (line.rfind("rec stop ", 0) == 0) { const int r = std::atoi(line.c_str() + 9); if (r >= 0 && r < 16) recBusy_ &= ~(1u << r); return; }
+        if (line.rfind("rec start ", 0) == 0) { if (line[10] == 'R') return; const int r = std::atoi(line.c_str() + 10); if (r >= 0 && r < 16) recBusy_ |= 1u << r; return; }   // R: the Recorder
+        if (line.rfind("rec stop ", 0) == 0) { if (line[9] == 'R') return; const int r = std::atoi(line.c_str() + 9); if (r >= 0 && r < 16) recBusy_ &= ~(1u << r); return; }
+        if (line.rfind("rec saved ", 0) == 0) { recSaved(line.substr(10)); return; }
         proto::Reply r = proto::parse(line);
         switch (r.kind) {
         case proto::Reply::Ready: status(""); ready_ = true; break;

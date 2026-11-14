@@ -20,6 +20,7 @@ pcspeaker=false
 [autoexec]
 mount c @DRIVE@
 mount d @MACHINE@
+mount r @RECDIR@
 imgmount l d:\library.zip -t zip
 c:
 SET BLASTER=A220 I5 D1 H5 P330 T6

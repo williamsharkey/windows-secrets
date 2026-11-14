@@ -26,7 +26,9 @@
 #define STRIPH 30   /* (a strip shorter than its row leaves gaps that make every repaint of the window slow) */
 #define PANEL 550
 #define KBY 684      /* the keyboard strip: mod wheel, pitch bend, Hold, Keys, five octaves */
-#define ENVX 262
+#define ENVX 150     /* the envelope view; the Recorder (RECX) takes the space right of it (RECORDING.md 2.1) */
+#define RECX 290
+#define RECW 112
 #define NL 8
 #define NS 64
 
@@ -41,6 +43,8 @@
 #define SR_STOP 207
 #define SR_REC 208
 #define SR_FWD 209
+#define SR_OPEN 12
+#define SR_SAVEAS 14
 #define SR_COPY 20
 #define SR_PASTE 24
 #define SR_PASTEMIX 25
@@ -58,6 +62,7 @@
 HINSTANCE hInst;
 HWND hMain, hClock, hDna;
 HWND hEnvRec;          /* a seventeenth Sound Recorder: its green wave display draws the envelope */
+HWND hRecRec;          /* an eighteenth: the Recorder, for your own sounds (RECORDING.md 2.1) */
 int envN[8], envT[8][8], envL[8][8];   /* the layers' amplitude envelopes as the host last sent them */
 static void show_envelope(void);
 static DWORD envWant;   /* the envelope view is redrawn when Windows is idle, 120 ms after the last change */
@@ -93,11 +98,12 @@ static void wait_ms(DWORD ms);
 static void page_add(HWND w);
 static void scales_values(void);
 /* the tabs and pages (PRESET-ENGINE-2 section 8) */
-#define NTAB 4
+#define NTAB 5
 #define ID_TAB 1390
 #define ID_PG 1400
-static const char *tabNames[NTAB] = {"Main", "Voices", "Playback", "Scales"};
-static const char *tabIds[NTAB] = {"main", "voices", "play", "scales"};
+#define ID_RECPG 1480     /* + 0..6: the Rec page's controls */
+static const char *tabNames[NTAB] = {"Main", "Voices", "Playback", "Scales", "Rec"};
+static const char *tabIds[NTAB] = {"main", "voices", "play", "scales", "rec"};
 static HWND hTab[NTAB], pgWin[64], pgSb[24], pgVal[24], pgBtn[24];
 static int curTab, npg, npgSb, npgBtn;
 static const COLORREF layerColor[NL] = {RGB(0, 128, 0), RGB(0, 0, 160), RGB(160, 0, 0), RGB(128, 0, 128),
@@ -140,6 +146,8 @@ static int sound_index(const char *s, int n)
 }
 /* DNA v2 library sounds (DNA.md 5.5): the library drive L: holds \LIBRARY.TSV (name, category, path, seconds,
    source) and the WAVs. A name found there gets an index from 1000 on, into this small table for the build. */
+#define NUSR 64           /* My recordings, as the host sent them: `user <name> <path> <ms> <fmt>` */
+static char usrName[NUSR][28], usrPath[NUSR][16]; static long usrMs[NUSR]; static int nusr;
 #define NLIB 32
 static char libPath[NLIB][72], libName[NLIB][33];
 static long libCs[NLIB], libRate[NLIB];
@@ -151,6 +159,16 @@ static int lib_index(const char *name, int n)
     if (n > 32) return -1;
     for (k = 0; k < nlib; k++) if ((int)strlen(libName[k]) == n && !strncmp(libName[k], name, n)) return 1000 + k;   /* this build's */
     if (nlib >= NLIB) return -1;
+    if (n > 2 && name[0] == 'u' && name[1] == '_') {   /* a recording of yours (RECORDING.md 4.1): the host's table */
+        for (k = 0; k < nusr; k++) if ((int)strlen(usrName[k]) == n && !strncmp(usrName[k], name, n)) break;
+        if (k == nusr) return -1;
+        ln = nlib++;
+        strcpy(libPath[ln], usrPath[k]); libCs[ln] = usrMs[k] / 10; libRate[ln] = 22050;
+        {   HFILE w = OpenFile(libPath[ln], &of, OF_READ); BYTE h[64];
+            if (w != HFILE_ERROR) { if (_lread(w, h, 64) == 64) libRate[ln] = *(long *)(h + 24); _lclose(w); } }
+        memcpy(libName[ln], name, n); libName[ln][n] = 0;
+        return 1000 + ln;
+    }
     f = OpenFile("L:\\LIBRARY.TSV", &of, OF_READ);
     if (f == HFILE_ERROR) return -1;
     while ((got = _lread(f, buf, sizeof buf)) > 0) {
@@ -801,21 +819,27 @@ static void rate_rec(int r, DWORD id, DWORD hz, int glide_ms, int regate)
 }
 /* Recording (RECORDING.md 1.3, 4.3): the card has one ADC, so while a recorder records every other Record button
    is grey; the host hears `rec start <rec>` / `rec stop <rec> <ms>` (it keeps its notes off that recorder) */
-static int recording = -1; static DWORD recT0;
+static int recording = -1; static DWORD recT0;   /* (NR: the Recorder) */
 static void watch_rec(void)
 {
     int r, now = -1; char t[24];
     for (r = 0; r < NR && now < 0; r++) { GetDlgItemText(rw[AR(r)], SR_STATUS, t, sizeof t); if (t[0] == 'R' && t[2] == 'c') now = r; }
+    if (now < 0 && hRecRec) { GetDlgItemText(hRecRec, SR_STATUS, t, sizeof t); if (t[0] == 'R' && t[2] == 'c') now = NR; }
     if (now != recording) {
-        if (recording >= 0) say("rec stop %d %ld", recording, (long)(timeGetTime() - recT0));
-        if (now >= 0) { say("rec start %d", now); recT0 = timeGetTime(); }
+        if (recording == NR) say("rec stop R %ld", (long)(timeGetTime() - recT0));
+        else if (recording >= 0) say("rec stop %d %ld", recording, (long)(timeGetTime() - recT0));
+        if (now == NR) { say("rec start R"); recT0 = timeGetTime(); }
+        else if (now >= 0) { say("rec start %d", now); recT0 = timeGetTime(); }
         recording = now;
-        if (now < 0) for (r = 0; r < NR; r++) EnableWindow(GetDlgItem(rw[AR(r)], SR_REC), TRUE);
+        if (now < 0) { for (r = 0; r < NR; r++) EnableWindow(GetDlgItem(rw[AR(r)], SR_REC), TRUE); if (hRecRec) EnableWindow(GetDlgItem(hRecRec, SR_REC), TRUE); }
     }
-    if (recording >= 0)   /* Sound Recorder enables its own button again on its state changes: keep the others grey */
+    if (recording >= 0) {   /* Sound Recorder enables its own button again on its state changes: keep the others grey */
         for (r = 0; r < NR; r++) if (r != recording && IsWindowEnabled(GetDlgItem(rw[AR(r)], SR_REC))) EnableWindow(GetDlgItem(rw[AR(r)], SR_REC), FALSE);
+        if (hRecRec && recording != NR && IsWindowEnabled(GetDlgItem(hRecRec, SR_REC))) EnableWindow(GetDlgItem(hRecRec, SR_REC), FALSE);
+    }
 }
 static void stops_due(void);
+static void rec_scan(void);
 static void watch_ends(void)
 {
     static DWORD last; int r;
@@ -823,6 +847,7 @@ static void watch_ends(void)
     if (timeGetTime() - last < 25) return;
     last = timeGetTime();
     watch_rec();
+    if (assembled) { rec_keep(); rec_scan(); }
     dig_watch();
     for (r = 0; r < NR; r++) if (rplay[AR(r)] && !is_playing(AR(r))) { rplay[AR(r)] = FALSE; say("end %d", r); }
 }
@@ -1328,7 +1353,7 @@ static void panel_refresh(void)
     int i; char t[48];
     dig_refresh_all();   /* the selected layer's keys show the focus rectangle */
     kit_from_dna();
-    if (curTab > 0) page_values_layer();   /* an open page follows the selected layer and the DNA */
+    if (curTab == 1 || curTab == 2) page_values_layer();   /* an open page follows the selected layer and the DNA */
     if (!hSb[0]) return;
     harmony_from_dna();
     if (hHarm) btn_text(hHarm, harmNames[harmIdx]);
@@ -1457,6 +1482,7 @@ static void panel_lists(void)
     int i; char t[48];
     preset_list();
     SendMessage(hLibrary, CB_RESETCONTENT, 0, 0L);
+    for (i = 0; i < nusr; i++) { sprintf(t, "my recordings: %.24s", usrName[i] + 2); SendMessage(hLibrary, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t); }   /* at the top (RECORDING.md 2.4) */
     read_lines("L:\\LIBRARY.TSV", add_sound);
     {   /* C:\\WINDOWS: WfW 3.11's four and 3.1's CHORD and TADA */
         static const char *w[6] = {"chimes", "chord", "ding", "ringin", "ringout", "tada"};
@@ -1477,6 +1503,7 @@ static void combo_pick(int id)
     }
     SendMessage(cb, CB_GETLBTEXT, i, (LPARAM)(LPSTR)t);
     nm = strstr(t, ": "); if (!nm) return; nm += 2;
+    if (!strncmp(t, "my recordings: ", 15)) { nm -= 2; nm[0] = 'u'; nm[1] = '_'; }   /* lists show it without u_ */
     span(selLayer, &b, &e);
     if (b >= 0) { int p = b; while (isname(dnaText[p])) p++; splice(b, p, nm); edited(TRUE); }
 }
@@ -1870,7 +1897,7 @@ static const PC pagePlay[] = {
     {"at", 'V', 'f', 1, 30, K_PAIR1, "Hz", 1}, {"Scoop", 'V', 's', 0, 200, K_PAIR0, "c", 1}, {"over", 'V', 's', 0, 2000, K_PAIR1, "ms", 1},
     {"Delay", 'W', 'o', 0, 30000, K_INT, "ms", 2}, {"Beat delay", 'W', 'b', 0, 64, K_INT, "/16", 2}, {"Gate", 'W', 'g', 0, 64, K_INT, "/16", 2},
     {"Tempo sync", 'W', 't', 0, 0, K_FLAG, "", 2}, {"Loop amp", 'W', 'r', 0, 8, K_INT, "", 2}, {"Loop pan", 'W', 'p', 0, 8, K_INT, "", 2}, {NULL}};
-static const PC *pgDef[NTAB] = {NULL, pageVoices, pagePlay, NULL};
+static const PC *pgDef[NTAB] = {NULL, pageVoices, pagePlay, NULL, NULL};
 /* the Scales page (PRESET-ENGINE-2 18.6): the key options and the 12 notes from the root; it edits the host's Key
    parameters (keyopt / keymask lines), not the DNA */
 #define ID_SC (ID_PG + 48)
@@ -1988,12 +2015,18 @@ static void page_close(void)
     npg = npgSb = npgBtn = 0; nScBtn = 0;
 }
 static void page_add(HWND w) { if (npg < 64) pgWin[npg++] = w; }
+static void rec_page(int y0);
+static void rec_leave(void);
+static void rec_command(int k);
+static void rec_open_whole(int y);
 static void page_open(int t)
 {
     int g, i, row, x, w, y0 = PANEL + 32;
     static const int mainGroups[4] = {1, 2, 3, 5};
     DWORD t0 = timeGetTime();
     if (t < 0 || t >= NTAB) return;
+    if (curTab == 4 && t != 4) rec_leave();   /* the Recorder goes back to the header */
+    if (t == 4) rec_open_whole(PANEL + 30);    /* or comes down to the page, whole */
     SendMessage(hMain, WM_SETREDRAW, FALSE, 0L);   /* one repaint at the end, not one per window */
     page_close();
     curTab = t;
@@ -2012,7 +2045,8 @@ static void page_open(int t)
         (void)g; (void)mainGroups;
     }
 
-    if (t == 3) {   /* the Scales page */
+    if (t == 4) rec_page(y0);   /* the Rec page (the Recorder came down before: see above) */
+    else if (t == 3) {   /* the Scales page */
         page_add(mk("STATIC", "Key", WS_VISIBLE, 8, y0 + 4, 80, 16, -1));
         scales_page(y0);
     }
@@ -2049,6 +2083,7 @@ static void page_open(int t)
     {   /* the band, children included, at once */
         RECT rb; SetRect(&rb, 0, PANEL + 28, 880, KBY - 1);
         RedrawWindow(hMain, &rb, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+        for (i = 0; i < NTAB; i++) if (hTab[i]) RedrawWindow(hTab[i], NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);   /* (above the band: opened from elsewhere, not clicked) */
     }
     say("tab %s", (LPSTR)tabIds[t]);
     logf_("page %s in %ld ms", (LPSTR)tabIds[t], (long)(timeGetTime() - t0));
@@ -2095,6 +2130,7 @@ static void page_command(int id)
     if (id >= ID_TAB && id < ID_TAB + NTAB && id - ID_TAB == curTab && npg) return;   /* already open */
     if (id >= ID_TAB && id < ID_TAB + NTAB) { page_open(id - ID_TAB); return; }
     if (id >= ID_SC && id < ID_SC + nScBtn) { scales_command(id - ID_SC); return; }
+    if (id >= ID_RECPG && id < ID_RECPG + 7 && curTab == 4) { rec_command(id - ID_RECPG); return; }
     if (id >= ID_PG + 32 && id < ID_PG + 32 + npgBtn) {
         const PC *c = &pgDef[curTab][pgBtnCtl[id - ID_PG - 32]];
         int v = pc_value(c);
@@ -2265,6 +2301,256 @@ static void lerp_rect(RECT *o, const RECT *a, int x, int y, int w, int h, long f
     o->bottom = (a->bottom - a->top) + (int)((long)(h - (a->bottom - a->top)) * f / 1000);
 }
 static long ease(long f) { /* smoothstep, 0..1000 */ if (f < 0) f = 0; if (f > 1000) f = 1000; return f * f / 1000 * (3000 - 2 * f) / 1000; }
+
+/* ================================================================ the Recorder (RECORDING.md 2.1, R3)
+   An eighteenth Sound Recorder. In the header it is compact: its wave display (right of the envelope view) and its
+   own Record, Stop and Play buttons under it. A click on its wave display opens the Rec page, where the same program
+   glides down and is whole: its menu bar and its strip, laid out as the sixteen are, and BASILISK 16's own rows of
+   recording choices under it. Leaving the page glides it back into the header. One real program in two places.
+   (A child window cannot have a menu: whole, it is a popup owned by BASILISK 16; compact, a child again.) */
+#define RECH 48     /* (the column captions start at 51) */
+static FARPROC oldRecWaveProc, recWaveInst;
+static int recInput;      /* 0 the DAW input (the sidechain), 1 the synth's own output */
+static HWND recCtl[8], recStatus, recList; static int nRecCtl, recWhole;
+static char recCur[28], recSaving[16];   /* the recording the Recorder holds (u_ name), once saved or opened */
+static PART recStrip[] = {   /* the whole Recorder's strip: the sixteen's, the seek bar shorter (the clock is right of it) */
+    {SR_STATUS, 4, 7, 80, 16}, {SR_WAVE, 88, -4, 133, 35}, {SR_POS, 228, 8, 66, 14}, {SR_LEN, 298, 8, 66, 14},
+    {SR_SCROLL, 370, 6, 218, 17}, {SR_REW, 596, 1, 52, 28}, {SR_FWD, 650, 1, 52, 28}, {SR_PLAY, 704, 1, 52, 28},
+    {SR_STOP, 758, 1, 52, 28}, {SR_REC, 812, 1, 52, 28}};
+#define RECSTRIPW 868
+long FAR PASCAL __export RecWaveProc(HWND h, UINT m, WPARAM w, LPARAM l)
+{   /* (runs on Sound Recorder's stack: no pointers to locals) */
+    if ((m == WM_LBUTTONDOWN || m == WM_LBUTTONDBLCLK) && !recWhole) { PostMessage(hMain, WM_USER + 8, 0, 0L); return 0; }
+    return CallWindowProc(oldRecWaveProc, h, m, w, l);
+}
+static void rec_hook(void)
+{
+    HWND wv = GetDlgItem(hRecRec, SR_WAVE);
+    if (!wv) return;
+    if (!recWaveInst) { recWaveInst = MakeProcInstance((FARPROC)RecWaveProc, hInst); oldRecWaveProc = (FARPROC)GetWindowLong(wv, GWL_WNDPROC); }
+    if ((FARPROC)GetWindowLong(wv, GWL_WNDPROC) != recWaveInst) SetWindowLong(wv, GWL_WNDPROC, (LONG)recWaveInst);
+}
+static void rec_compact_parts(void)   /* the wave display, and Record / Stop / Play under it */
+{
+    HWND ch;
+    for (ch = GetWindow(hRecRec, GW_CHILD); ch; ch = GetWindow(ch, GW_HWNDNEXT)) {
+        int id = GetDlgCtrlID(ch);
+        if (id != SR_WAVE && id != SR_REC && id != SR_STOP && id != SR_PLAY) ShowWindow(ch, SW_HIDE);
+    }
+    /* the wave display: its centre line is drawn 18 rows down whatever its height, so it starts 6 rows up: line in the middle of 25 */
+    SetWindowPos(GetDlgItem(hRecRec, SR_WAVE), NULL, 0, -6, RECW, 31, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    SetWindowPos(GetDlgItem(hRecRec, SR_REC), NULL, 0, 25, 36, 23, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    SetWindowPos(GetDlgItem(hRecRec, SR_STOP), NULL, 38, 25, 36, 23, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    SetWindowPos(GetDlgItem(hRecRec, SR_PLAY), NULL, 76, 25, 36, 23, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    rec_hook();
+}
+static void rec_whole_parts(void)
+{
+    int i;
+    for (i = 0; i < 5; i++) ShowWindow(GetDlgItem(hRecRec, hidden[i]), SW_HIDE);
+    for (i = 0; i < NPART; i++)
+        SetWindowPos(GetDlgItem(hRecRec, recStrip[i].id), NULL, recStrip[i].x, recStrip[i].y, recStrip[i].w, recStrip[i].h, SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+}
+static void rec_glide(int x, int y, int w, int h)   /* screen coordinates */
+{
+    RECT a; RECT q; DWORD t1 = timeGetTime();
+    GetWindowRect(hRecRec, &a);
+    for (;;) {
+        long f = ease((long)(timeGetTime() - t1) * 1000 / 220);
+        lerp_rect(&q, &a, x, y, w, h, f);
+        SetWindowPos(hRecRec, NULL, q.left, q.top, q.right, q.bottom, SWP_NOZORDER | SWP_NOACTIVATE);
+        paint_now(hRecRec); paint_now(hMain);
+        poll_host();
+        if (f >= 1000) break;
+    }
+}
+static void rec_to_popup(void)   /* the child in the header becomes a popup over BASILISK 16, where it is */
+{
+    RECT c; LONG st;
+    GetWindowRect(hRecRec, &c);
+    ShowWindow(hRecRec, SW_HIDE);
+    SetParent(hRecRec, NULL);
+    st = GetWindowLong(hRecRec, GWL_STYLE);
+    SetWindowLong(hRecRec, GWL_STYLE, (st & ~WS_CHILD) | WS_POPUP);
+    SetWindowWord(hRecRec, GWW_HWNDPARENT, (WORD)hMain);   /* owned: it stays above BASILISK 16 */
+    SetWindowPos(hRecRec, HWND_TOP, c.left, c.top, c.right - c.left, c.bottom - c.top, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+}
+static void rec_to_child(void)
+{
+    LONG st;
+    ShowWindow(hRecRec, SW_HIDE);
+    SetMenu(hRecRec, NULL);
+    st = GetWindowLong(hRecRec, GWL_STYLE);
+    SetWindowLong(hRecRec, GWL_STYLE, (st & ~WS_POPUP) | WS_CHILD);
+    SetParent(hRecRec, hMain);
+    SetWindowPos(hRecRec, HWND_TOP, RECX, 2, RECW, RECH, SWP_NOACTIVATE | SWP_SHOWWINDOW);
+}
+static HMENU hRecMenu;   /* its menu, kept while it is compact */
+static void rec_open_whole(int y)   /* from the header down to the page, at y in BASILISK 16's client area */
+{
+    POINT o; RECT hr;
+    if (!hRecRec || recWhole) return;
+    recWhole = 1;
+    rec_to_popup();
+    o.x = 8; o.y = y; ClientToScreen(hMain, &o);
+    rec_glide(o.x, o.y, RECSTRIPW, 30 + GetSystemMetrics(SM_CYMENU));
+    SetMenu(hRecRec, hRecMenu);
+    rec_whole_parts();
+    SetWindowPos(hRecRec, NULL, o.x, o.y, RECSTRIPW, 30 + GetSystemMetrics(SM_CYMENU), SWP_NOZORDER | SWP_NOACTIVATE);
+    paint_now(hRecRec);
+    SetRect(&hr, RECX, 0, RECX + RECW, RECH + 2); InvalidateRect(hMain, &hr, TRUE);
+}
+static void rec_leave(void)   /* back to the header */
+{
+    POINT o;
+    if (!hRecRec || !recWhole) return;
+    recWhole = 0;
+    SetMenu(hRecRec, NULL);
+    rec_compact_parts();
+    o.x = RECX; o.y = 2; ClientToScreen(hMain, &o);
+    rec_glide(o.x, o.y, RECW, RECH);
+    rec_to_child();
+    paint_now(hRecRec);
+}
+static void rec_status(const char *t) { if (recStatus && curTab == 4) SetWindowText(recStatus, t); }
+static void rec_list(void)
+{
+    int i;
+    if (!recList || curTab != 4) return;
+    SendMessage(recList, CB_RESETCONTENT, 0, 0L);
+    for (i = 0; i < nusr; i++) SendMessage(recList, CB_ADDSTRING, 0, (LPARAM)(LPSTR)(usrName[i] + 2));
+    for (i = 0; i < nusr; i++) if (!lstrcmp(usrName[i], recCur)) SendMessage(recList, CB_SETCURSEL, i, 0L);
+}
+static void rec_values(void)
+{
+    if (nRecCtl < 2) return;
+    SendMessage(recCtl[0], BM_SETCHECK, recInput == 0, 0L);
+    SendMessage(recCtl[1], BM_SETCHECK, recInput == 1, 0L);
+}
+/* the Rec page: the Recorder whole, then
+     Input: (o) DAW input ( ) Synth output   [Save As...] [To all 16]
+     My recordings [ .... v] [Open] [Use]     status */
+static void rec_page(int y0)
+{
+    int x, w, y1, y2; HWND b;
+    nRecCtl = 0;
+    y1 = y0 + 50; y2 = y1 + 26;
+    if (!hRecRec) { page_add(mk("STATIC", "The Recorder did not start.", WS_VISIBLE, 8, y0 + 4, 300, 16, -1)); return; }
+    x = 8;
+    page_add(mklbl("Input:", x, y1 + 4, 16, &w)); x += w + 4;
+    w = text_w("DAW input") + 22; b = mk("BUTTON", "DAW input", WS_VISIBLE | BS_RADIOBUTTON, x, y1 + 4, w, 16, ID_RECPG + 0); page_add(b); recCtl[nRecCtl++] = b; x += w + 4;
+    w = text_w("Synth output") + 22; b = mk("BUTTON", "Synth output", WS_VISIBLE | BS_RADIOBUTTON, x, y1 + 4, w, 16, ID_RECPG + 1); page_add(b); recCtl[nRecCtl++] = b; x += w + 14;
+    b = mkbtn("Save As...", x, y1, 24, ID_RECPG + 2, &w); page_add(b); recCtl[nRecCtl++] = b; x += w + 3;
+    b = mkbtn("To all 16", x, y1, 24, ID_RECPG + 3, &w); page_add(b); recCtl[nRecCtl++] = b;
+    x = 8;
+    page_add(mklbl("My recordings", x, y2 + 4, 16, &w)); x += w + 4;
+    recList = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, x, y2 + 1, 150, 100, ID_RECPG + 4); page_add(recList); x += 154;
+    b = mkbtn("Open", x, y2, 24, ID_RECPG + 5, &w); page_add(b); recCtl[nRecCtl++] = b; x += w + 3;
+    b = mkbtn("Use", x, y2, 24, ID_RECPG + 6, &w); page_add(b); recCtl[nRecCtl++] = b; x += w + 10;
+    recStatus = mk("STATIC", nusr ? "" : "Record, then File > Save As on R:.", WS_VISIBLE, x, y2 + 4, 870 - x, 16, -1); page_add(recStatus);
+    rec_values();
+    rec_list();
+}
+static int usr_find(const char *n) { int i; for (i = 0; i < nusr; i++) if (!lstrcmp(usrName[i], n)) return i; return -1; }
+static void rec_command(int k)
+{
+    if (k == 0 || k == 1) { recInput = k; rec_values(); say("rsrc %s", (LPSTR)(k ? "self" : "side")); return; }
+    if (k == 2) { PostMessage(hRecRec, WM_COMMAND, SR_SAVEAS, 0L); return; }   /* the real dialog */
+    if (k == 5 || k == 6) {
+        int i = recList ? (int)SendMessage(recList, CB_GETCURSEL, 0, 0L) : -1;
+        if (i < 0 || i >= nusr) { rec_status("Pick a recording first."); return; }
+        if (k == 5) {   /* File > Open, the real command (the hook fills its dialog) */
+            HookActive(TRUE); HookPending(usrPath[i]);
+            SendMessage(hRecRec, WM_COMMAND, SR_OPEN, 0L);
+            HookActive(FALSE);
+            lstrcpy(recCur, usrName[i]);
+            if (recWhole) rec_whole_parts(); else rec_compact_parts();
+            rec_status(usrName[i] + 2);
+            return;
+        }
+        {   /* Use: the selected layer's source */
+            int b, e;
+            span(selLayer, &b, &e);
+            if (b >= 0) { int p = b; while (isname(dnaText[p])) p++; splice(b, p, usrName[i]); edited(TRUE); }
+        }
+        return;
+    }
+    if (k == 3) {   /* To all 16: one layer of the recording, the globals kept */
+        char *g = strchr(dnaText, ';'); static char d[1100];
+        if (!recCur[0]) { rec_status("Save the recording first (File > Save As)."); return; }
+        wsprintf(d, "%s#16%s", (LPSTR)recCur, (LPSTR)(g ? g : ""));
+        lstrcpyn(dnaText, d, sizeof dnaText); selLayer = 0; edited(TRUE);
+        return;
+    }
+}
+/* `user <name> <path> <ms> <fmt>` / `user - <name>` (RECORDING.md 4.3) */
+static void rec_user(char *rest)
+{
+    char n[28], p[16]; long ms = 0; int i;
+    if (rest[0] == '-' && rest[1] == ' ') {
+        if ((i = usr_find(rest + 2)) >= 0) { for (; i + 1 < nusr; i++) { lstrcpy(usrName[i], usrName[i + 1]); lstrcpy(usrPath[i], usrPath[i + 1]); usrMs[i] = usrMs[i + 1]; } nusr--; }
+        rec_list(); listsWanted = TRUE; return;
+    }
+    if (sscanf(rest, "%27s %15s %ld", n, p, &ms) < 2 || strncmp(n, "u_", 2)) return;
+    if ((i = usr_find(n)) < 0) { if (nusr >= NUSR) return; i = nusr++; }
+    lstrcpy(usrName[i], n); lstrcpy(usrPath[i], p); usrMs[i] = ms;
+    if (assembled) {   /* a recording we saved: it is the Recorder's now */
+        static char t[64];
+        if (recSaving[0] && !lstrcmpi(recSaving, p)) { lstrcpy(recCur, n); recSaving[0] = 0; wsprintf(t, "Saved: %s (%ld.%02ld s)", (LPSTR)(n + 2), ms / 1000, ms % 1000 / 10); rec_status(t); }
+        rec_list(); listsWanted = TRUE;
+    }
+}
+/* Sound Recorder lays its window out again when it records, opens or saves (and drops the menu we gave it): keep
+   ours, checked on the watch's 25 ms tick */
+static BOOL rec_at(int id, int x, int y, int w)
+{
+    HWND c = GetDlgItem(hRecRec, id); RECT r; POINT o;
+    if (!c || !IsWindowVisible(c)) return FALSE;
+    GetWindowRect(c, &r); o.x = r.left; o.y = r.top; ScreenToClient(hRecRec, &o);
+    return o.x == x && o.y == y && r.right - r.left == w;
+}
+static void rec_keep(void)
+{
+    static BOOL dlg; BOOL fix = FALSE; RECT r; int w, h;
+    if (!hRecRec || !assembled) return;
+    if (!IsWindowEnabled(hRecRec)) { dlg = TRUE; return; }   /* its dialog is open (a modal dialog disables its owner): after it, all of it again */
+    if (dlg) { dlg = FALSE; fix = TRUE; }
+    GetWindowRect(hRecRec, &r);
+    if (recWhole) {
+        w = RECSTRIPW; h = 30 + GetSystemMetrics(SM_CYMENU);
+        {   /* above BASILISK 16 (a build brings BASILISK 16 to the top) */
+            HWND x; int k;
+            for (x = GetWindow(hRecRec, GW_HWNDNEXT), k = 0; x && x != hMain && k < 64; x = GetWindow(x, GW_HWNDNEXT), k++) ;
+            if (x != hMain) { SetWindowPos(hRecRec, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE); fix = TRUE; }
+        }
+        if (GetMenu(hRecRec) != hRecMenu) { SetMenu(hRecRec, hRecMenu); fix = TRUE; }
+        if (r.right - r.left != w || r.bottom - r.top != h) { SetWindowPos(hRecRec, NULL, 0, 0, w, h, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE); fix = TRUE; }
+        if (!rec_at(SR_SCROLL, 370, 6, 218) || !rec_at(SR_FWD, 650, 1, 52) || !rec_at(SR_WAVE, 88, -4, 133)) { rec_whole_parts(); fix = TRUE; }
+    } else {
+        if (GetMenu(hRecRec)) { SetMenu(hRecRec, NULL); fix = TRUE; }
+        if (r.right - r.left != RECW || r.bottom - r.top != RECH) { SetWindowPos(hRecRec, NULL, 0, 0, RECW, RECH, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE); fix = TRUE; }
+        if (!rec_at(SR_WAVE, 0, -6, RECW) || !rec_at(SR_PLAY, 76, 25, 36) || IsWindowVisible(GetDlgItem(hRecRec, SR_SCROLL))) { rec_compact_parts(); fix = TRUE; }
+    }
+    if (fix) RedrawWindow(hRecRec, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+}
+/* R: (My Recordings): a new or changed WAV is reported, `rec saved R:\NAME.WAV`, once a second */
+#define NRF 80
+static char rfName[NRF][13]; static unsigned rfTime[NRF], rfDate[NRF]; static long rfSize[NRF]; static int nrf, rfScanned;
+static void rec_scan(void)
+{
+    static DWORD last; struct find_t f; unsigned rc;
+    if (timeGetTime() - last < 1000) return;
+    last = timeGetTime();
+    for (rc = _dos_findfirst("R:\\*.*", _A_NORMAL, &f); rc == 0; rc = _dos_findnext(&f)) {   /* (Save As adds no .WAV to a bare name) */
+        int i;
+        for (i = 0; i < nrf; i++) if (!strcmp(rfName[i], f.name)) break;
+        if (i < nrf && rfTime[i] == f.wr_time && rfDate[i] == f.wr_date && rfSize[i] == (long)f.size) continue;
+        if (i == nrf) { if (nrf >= NRF) continue; nrf++; strcpy(rfName[i], f.name); }
+        rfTime[i] = f.wr_time; rfDate[i] = f.wr_date; rfSize[i] = (long)f.size;
+        if (rfScanned && f.size > 44) { wsprintf(recSaving, "R:\\%s", (LPSTR)f.name); say("rec saved %s", (LPSTR)recSaving); }
+    }
+    rfScanned = 1;
+}
 
 /* stage 1: the menu bar goes; 2: the title bar and frame go, and it becomes part of BASILISK 16;
    3: the frames and captions inside go; 4..: the controls line up and the strip glides into its row */
@@ -2621,38 +2907,50 @@ static void assemble(void)
         pump();
     }
     stage[2] = timeGetTime() - tStart;
-    if (hEnvRec) {   /* the seventeenth recorder: everything but its wave display goes, and it glides to the header */
-        RECT c, q, a2; DWORD t1; POINT o; LONG st; HWND ch;
-        SetMenu(hEnvRec, NULL); DrawMenuBar(hEnvRec);
-        for (ch = GetWindow(hEnvRec, GW_CHILD); ch; ch = GetWindow(ch, GW_HWNDNEXT))
-            if (GetDlgCtrlID(ch) != SR_WAVE) ShowWindow(ch, SW_HIDE);
-        UpdateWindow(hEnvRec);
-        {   /* the wave display alone, at the window's corner */
-            HWND wv = GetDlgItem(hEnvRec, SR_WAVE);
-            SetWindowPos(wv, NULL, 0, 0, 133, 35, SWP_NOZORDER | SWP_NOACTIVATE);   /* native height: centred line */
+    {   /* the seventeenth recorder (the envelope: everything but its wave display goes) and the eighteenth (the
+           Recorder: its wave display, Record, Stop and Play) glide to the header together */
+        HWND g[2]; int gx[2], gw[2], gh[2], n, k; RECT a2[2], q; DWORD t1; POINT o; LONG st; HWND ch;
+        n = 0;
+        if (hEnvRec) { g[n] = hEnvRec; gx[n] = ENVX; gw[n] = 133; gh[n] = 35; n++; }
+        if (hRecRec) { g[n] = hRecRec; gx[n] = RECX; gw[n] = RECW; gh[n] = RECH; n++; hRecMenu = GetMenu(hRecRec); }
+        for (k = 0; k < n; k++) {
+            RECT c;
+            SetMenu(g[k], NULL); DrawMenuBar(g[k]);
+            if (g[k] == hRecRec) rec_compact_parts();
+            else {
+                for (ch = GetWindow(g[k], GW_CHILD); ch; ch = GetWindow(ch, GW_HWNDNEXT))
+                    if (GetDlgCtrlID(ch) != SR_WAVE) ShowWindow(ch, SW_HIDE);
+                SetWindowPos(GetDlgItem(g[k], SR_WAVE), NULL, 0, 0, 133, 35, SWP_NOZORDER | SWP_NOACTIVATE);   /* native height: centred line */
+            }
+            UpdateWindow(g[k]);
+            GetWindowRect(g[k], &c);
+            st = GetWindowLong(g[k], GWL_STYLE);
+            SetWindowLong(g[k], GWL_STYLE, (st & ~(WS_CAPTION | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_DLGFRAME | WS_BORDER)) | WS_POPUP);
+            SetWindowPos(g[k], HWND_TOPMOST, c.left, c.top, gw[k], gh[k], SWP_NOACTIVATE | SWP_FRAMECHANGED);
+            SetRect(&a2[k], c.left, c.top, c.left + gw[k], c.top + gh[k]);
         }
-        GetWindowRect(hEnvRec, &c);
-        st = GetWindowLong(hEnvRec, GWL_STYLE);
-        SetWindowLong(hEnvRec, GWL_STYLE, (st & ~(WS_CAPTION | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_DLGFRAME | WS_BORDER)) | WS_POPUP);
-        SetWindowPos(hEnvRec, HWND_TOPMOST, c.left, c.top, 133, 35, SWP_NOACTIVATE | SWP_FRAMECHANGED);
-        SetRect(&a2, c.left, c.top, c.left + 133, c.top + 35);
-        o.x = ENVX; o.y = 2; ClientToScreen(hMain, &o);
         t1 = timeGetTime();
         for (;;) {
             long f = ease((long)(timeGetTime() - t1) * 1000 / 220);
-            lerp_rect(&q, &a2, o.x, o.y, 133, 35, f);
-            SetWindowPos(hEnvRec, HWND_TOPMOST, q.left, q.top, q.right, q.bottom, SWP_NOACTIVATE);
-            paint_now(hEnvRec); paint_now(hMain);
+            for (k = 0; k < n; k++) {
+                o.x = gx[k]; o.y = 2; ClientToScreen(hMain, &o);
+                lerp_rect(&q, &a2[k], o.x, o.y, gw[k], gh[k], f);
+                SetWindowPos(g[k], HWND_TOPMOST, q.left, q.top, q.right, q.bottom, SWP_NOACTIVATE);
+            }
+            for (k = 0; k < n; k++) paint_now(g[k]);
+            paint_now(hMain);
             poll_host();
             if (f >= 1000) break;
         }
-        SetWindowPos(hEnvRec, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-        ShowWindow(hEnvRec, SW_HIDE);
-        st = GetWindowLong(hEnvRec, GWL_STYLE);
-        SetWindowLong(hEnvRec, GWL_STYLE, (st & ~WS_POPUP) | WS_CHILD);
-        SetParent(hEnvRec, hMain);
-        SetWindowPos(hEnvRec, HWND_TOP, ENVX, 2, 133, 35, SWP_NOACTIVATE | SWP_SHOWWINDOW);
-        UpdateWindow(hEnvRec);
+        for (k = 0; k < n; k++) {
+            SetWindowPos(g[k], HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            ShowWindow(g[k], SW_HIDE);
+            st = GetWindowLong(g[k], GWL_STYLE);
+            SetWindowLong(g[k], GWL_STYLE, (st & ~WS_POPUP) | WS_CHILD);
+            SetParent(g[k], hMain);
+            SetWindowPos(g[k], HWND_TOP, gx[k], 2, gw[k], gh[k], SWP_NOACTIVATE | SWP_SHOWWINDOW);
+            UpdateWindow(g[k]);
+        }
     }
     stage[3] = timeGetTime() - tStart;
     {   /* the panel: four groups, one after another */
@@ -2827,6 +3125,19 @@ static void host_line(char *s)
             }
         }
     }
+    else if (!strcmp(s, "user")) rec_user(rest);
+    else if (!strcmp(s, "recdump") && hRecRec) {   /* test aid: the Recorder's window and controls */
+        HWND c; RECT r; char t[24];
+        GetWindowRect(hRecRec, &r);
+        say("recwin %d %d %d %d menu %d vis %d parent %d", r.left, r.top, r.right, r.bottom, GetMenu(hRecRec) != NULL, IsWindowVisible(hRecRec), GetParent(hRecRec) == hMain);
+        for (c = GetWindow(hRecRec, GW_CHILD); c; c = GetWindow(c, GW_HWNDNEXT)) {
+            GetWindowRect(c, &r); GetWindowText(c, t, sizeof t);
+            say("recctl %d %d %d %d %d vis %d en %d %s", GetDlgCtrlID(c), r.left, r.top, r.right, r.bottom, IsWindowVisible(c), IsWindowEnabled(c), (LPSTR)t);
+        }
+    }
+    else if (!strcmp(s, "rec")) {   /* rec refused <path> <reason> <message...> */
+        if (!strncmp(rest, "refused ", 8)) { char *m = strchr(rest + 8, ' '); if (m) m = strchr(m + 1, ' '); recSaving[0] = 0; rec_status(m ? m + 1 : "Not saved."); }
+    }
     else if (!strcmp(s, "tab")) { int t; for (t = 0; t < NTAB; t++) if (!strcmp(rest, tabIds[t])) { if (assembled) page_open(t); break; } }
     else if (!strcmp(s, "klabels")) {   /* klabels <first> <l|l|...>: the keyboard strip's labels ('~' out of the scale) */
         int n = atoi(rest); char *p = strchr(rest, ' ');
@@ -2934,7 +3245,7 @@ static void paint(HWND h)
     SetTextColor(dc, RGB(0, 0, 128));
     if (titleShown) TextOut(dc, 12, 10, "BASILISK 16", 11);
     SelectObject(dc, sm);
-    if (assembled) TextOut(dc, ENVX - 58, 12, "Envelope", 8);
+    if (assembled) TextOut(dc, ENVX + (133 - (int)LOWORD(GetTextExtent(dc, "Envelope", 8))) / 2, 41, "Envelope", 8);   /* under its view */
     SelectObject(dc, big);
     SelectObject(dc, sm);
     SetTextColor(dc, RGB(0, 0, 0));
@@ -2962,6 +3273,7 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
     switch (m) {
     case WM_PAINT: paint(h); return 0;
     case WM_USER + 7: page_values(); scales_values(); return 0;   /* the page's buttons, after a click */
+    case WM_USER + 8: if (assembled && curTab != 4) page_open(4); return 0;   /* a click on the Recorder's wave display */
     case WM_LBUTTONDOWN: case WM_LBUTTONDBLCLK: {   /* a dimmed (out-of-scale) key is disabled: its clicks come here */
         int vel; POINT p; p.x = (short)LOWORD(l); p.y = (short)HIWORD(l);
         if (note_at(p.x, p.y, &vel) >= 0) { SetCapture(h); kb_mouse(h, l, 0); return 0; }
@@ -2995,7 +3307,8 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
             return 0;
         }
         /* a reparented recorder's buttons report to us: hand the click to its recorder */
-        for (r = 0; r < NALL; r++) if (rw[r] && (HWND)LOWORD(l) && GetParent((HWND)LOWORD(l)) == rw[r]) {
+        if (hRecRec && (HWND)LOWORD(l) && GetParent((HWND)LOWORD(l)) == hRecRec) { PostMessage(hRecRec, WM_COMMAND, w, l); return 0; }
+        for (r = 0; r < NR * NB; r++) if (rw[r] && (HWND)LOWORD(l) && GetParent((HWND)LOWORD(l)) == rw[r]) {
             PostMessage(rw[r], WM_COMMAND, w, l);
             return 0;
         }
@@ -3059,6 +3372,13 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
     hClock = launch("CLOCK.EXE", SW_SHOWNOACTIVATE);
     hEnvRec = launch("SOUNDREC.EXE C:\\WINDOWS\\DING.WAV", SW_SHOWNOACTIVATE);
     if (hEnvRec) MoveWindow(hEnvRec, 700, 560, 320, 186, TRUE);
+    {   /* the Recorder, empty, started on R: (My Recordings) so that its Save As begins there */
+        union REGS rg;
+        rg.h.ah = 0x0E; rg.h.dl = 'R' - 'A'; intdos(&rg, &rg);
+        hRecRec = launch("C:\\WINDOWS\\SOUNDREC.EXE", SW_SHOWNOACTIVATE);
+        rg.h.ah = 0x0E; rg.h.dl = 'C' - 'A'; intdos(&rg, &rg);
+        if (hRecRec) MoveWindow(hRecRec, 380, 560, 320, 186, TRUE);
+    }
     if (hClock) { SendMessage(hClock, WM_COMMAND, 1, 0L); MoveWindow(hClock, 868, 8, 148, 160, TRUE); }   /* Settings > Analog */
     for (r = 0; r < NR; r++) {
         int c = r % 4, row = r / 4;

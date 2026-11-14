@@ -105,7 +105,8 @@ conf_name = 'w31-folder.conf.in' if folder else 'w31.conf.in'
 conf_in = open(os.path.join(here, '..', 'engine', conf_name)).read()
 shutil.copy(os.path.join(here, '..', 'engine', conf_name), os.path.join(out, 'w31.conf'))
 run_conf = os.path.join(out, 'make.conf')
-open(run_conf, 'w').write(conf_in.replace('@MACHINE@', '"%s"' % os.path.abspath(out)).replace('@DRIVE@', '"%s"' % os.path.abspath(drive)))
+recdir = os.path.join(out, 'recdir'); os.makedirs(recdir, exist_ok=True)   # R:, My Recordings (RECORDING.md 3.2)
+open(run_conf, 'w').write(conf_in.replace('@MACHINE@', '"%s"' % os.path.abspath(out)).replace('@DRIVE@', '"%s"' % os.path.abspath(drive)).replace('@RECDIR@', '"%s"' % os.path.abspath(recdir)))
 state = os.path.join(out, 'w31.state')
 log = os.path.join(out, 'make.log')
 e = Engine(run_conf, core=core, make_state=state, log=log, name='bs311make')
@@ -116,4 +117,5 @@ try:
 finally:
     e.close()
 os.remove(run_conf)
+shutil.rmtree(recdir, ignore_errors=True)
 print('machine:', out, 'snapshot', os.path.getsize(state), 'bytes')

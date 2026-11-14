@@ -4,6 +4,7 @@
 //             [--tail SECONDS] [--log FILE] [--bits 24|32] [--bpm BPM]   (BPM: the tempo for v3 Wt, Wb, Wg; 120)
 //             [--key 0-11] [--scale ID] [--use-preset-scale 0|1] [--snap 1-4] [--remap 0|1] [--anchor NOTE]   (the plugin's
 //             Key, Scale, Use Preset Scale, Snap, Remap Keys and Remap Anchor parameters: PRESET-ENGINE-2 18.2)
+//             [--user-dir DIR]   (My Recordings: index.tsv and the WAVs; their u_ names play, RECORDING.md 4.4)
 //
 // --score: notes as t:note:velocity:duration in seconds (the format of packages/basilisk-synth/tools/batch_render.py).
 // DNA v2 (DNA.md 5): library NAMEs come from DIR/library.names.txt; macros are applied as the plugin applies them.
@@ -21,6 +22,7 @@
 #include "../plugin/V3Voice.h"
 #include "../plugin/V3Alloc.h"
 #include "../plugin/V3Host.h"
+#include "../plugin/UserRec.h"
 
 #include <algorithm>
 #include <chrono>
@@ -229,20 +231,31 @@ int main(int argc, char **argv)
     const double bpm = a.count("--bpm") ? std::atof(a["--bpm"].c_str()) : 120.0;   // v3 Wt, Wb, Wg
     const std::string machine = a["--machine"];
     const double t0 = nowSec();
+    std::vector<std::string> libNames;
     {   // the library disc's NAMEs (DNA.md 5.5)
-        std::ifstream in(machine + "/library.names.txt"); std::vector<std::string> names; std::string l;
-        while (std::getline(in, l)) { while (!l.empty() && (l.back() == '\r' || l.back() == ' ')) l.pop_back(); if (!l.empty()) names.push_back(l); }
-        setLibrary(names);
+        std::ifstream in(machine + "/library.names.txt"); std::string l;
+        while (std::getline(in, l)) { while (!l.empty() && (l.back() == '\r' || l.back() == ' ')) l.pop_back(); if (!l.empty()) libNames.push_back(l); }
+        setLibrary(libNames);
     }
 
     // the machine's settings, with its own folder filled in
     // (its own file: batch jobs run side by side on one machine folder)
     std::string conf = tempConf();
+    const std::string recDir = conf + ".rec";   // R:, My Recordings (RECORDING.md 3.2): --user-dir's recordings copied in
+    b16rec::makeDir(recDir);
+    std::vector<std::string> userLines;
+    if (a.count("--user-dir")) {
+        std::vector<std::string> un;
+        userLines = b16rec::populate(a["--user-dir"], recDir, un);
+        for (auto &n : un) libNames.push_back(n);
+        setLibrary(libNames);
+    }
     {
         std::ifstream in(machine + "/w31.conf"); std::string s((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
         size_t p;
         while ((p = s.find("@MACHINE@")) != std::string::npos) s.replace(p, 9, "\"" + machine + "\"");
         while ((p = s.find("@DRIVE@")) != std::string::npos) s.replace(p, 7, "\"" + machine + "/drive\"");
+        while ((p = s.find("@RECDIR@")) != std::string::npos) s.replace(p, 8, "\"" + recDir + "\"");
         std::ofstream o(conf); o << s;
     }
 #if defined(__APPLE__) && defined(__aarch64__)
@@ -284,6 +297,7 @@ int main(int argc, char **argv)
         std::vector<std::string> ls; M.lines(ls);
         for (auto &l : ls) { if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str()); if (l.rfind("hi ", 0) == 0) { hi = true; win = bsynth3::hasCap(bsynth3::parseHi3(l), "win"); loopCap = bsynth3::hasCap(bsynth3::parseHi3(l), "loop"); rateCap = bsynth3::hasCap(bsynth3::parseHi3(l), "rate"); } }
     }
+    for (auto &u : userLines) M.send(u);    // My recordings (before the DNA that may name them)
     M.send("dna " + written.canonical);     // as written: Windows does N itself
     char b[160]; proto::env(b, sizeof b, dna.g); b[std::strlen(b) - 1] = 0; M.send(b);
     for (bool built = false; !built;) {
@@ -348,6 +362,7 @@ int main(int argc, char **argv)
     if (a.count("--bits") && a["--bits"] == "32") writeWavFloat(a["--out"], out); else writeWav(a["--out"], out);
     bs_engine_stop(M.e);
     std::remove(conf.c_str());
+    b16rec::clearDir(recDir);
     const double t1 = nowSec();
     std::fprintf(stderr, "render311: %.2f s of audio in %.2f s (resume+build %.2f s, play %.2f s: %.1fx real time); late notes %u of %u\n",
                  endSec, t1 - t0, tBuilt - t0, t1 - tBuilt, endSec / (t1 - tBuilt), S->sched_late, S->sched_late + S->sched_ontime);
