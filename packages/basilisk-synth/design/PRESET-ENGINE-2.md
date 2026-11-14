@@ -1175,6 +1175,41 @@ output), radio buttons (Fixed/Follow/Range, One-shot/Gated), horizontal SCROLLBA
 start, end, fade) and EDIT fields for numbers. Buttons: GM map, Auto-map, Learn, Audition. The 3.11 kit uses the
 3.11 sounds and the 3.11 library drive.
 
+### 15.4b The kit button and the pad calculator (owner request, BASILISK 16 1.3.0 with phase 5b)
+
+**The kit button.** A fixed-size button beside the keyboard strip (no reflow of the strip). It shows `CALC.EXE`'s
+own icon resource, pixel-exact, and no text. When the current DNA is a kit (it has `k` pads and no `kd`) the icon is
+drawn normally; otherwise the button is disabled and Windows draws the icon greyed (its own disabled look).
+
+**The pad calculator.** A click on the button opens a real Calculator window, with its real frame. Its keys are
+rearranged into a 4 x 4 grid of 16 pads, each labelled with its computer key:
+
+```
+ 1 2 3 4        pads 13 14 15 16
+ q w e r        pads  9 10 11 12
+ a s d f        pads  5  6  7  8
+ z x c v        pads  1  2  3  4      (MPC order: pad 1 is bottom left)
+```
+
+- **Pad n** is the kit's n-th `k` token in DNA order (the order the Kit tab and the recipe show). A pad with a note
+  range plays its first note. Kits with more than 16 pads: the calculator shows pads 1-16 (a later bank switch can
+  use Calculator's own `Hex`/`Dec` buttons; not in 1.3.0).
+- Under each key a tiny pad label or note name (`kick`, `C2`), only where it fits without clutter (the key width
+  decides; otherwise no label).
+- **Playing:** a mouse click on a key plays its pad. The key shows pressed while the pad sounds (until its one-shot
+  ends or the key is let go for a gated pad). Incoming MIDI that hits a pad lights its key the same way (the host's
+  `show` lines).
+- **Computer keys:** while the pad calculator has the focus, its 16 keys play the pads and override the strip's
+  PC-keys mode (which uses `a w s e d f ...`); when it does not, the strip's Keys mode applies as before.
+- **Timing:** a pad key sends the same `key <note> <vel>` line as the strip's keys, so it has the same timing (the
+  host's voice allocator, the same latency). Velocity: as the strip (where the key is clicked; a fixed 100 for the
+  computer keys, as the strip).
+
+**On 3.11** Windows 3.1's Calculator paints its own keys (they are not child button windows), so the pad keys are
+pixel captures of its drawing, the same technique as the keyboard strip's 0-F keys; the README says so. **On XP**
+Calculator's keys are real `BUTTON` children: they can be repositioned and relabelled directly (`SetWindowPos`,
+`SetWindowText`), so the XP version is real buttons, not captures (XP follows with its kit tab).
+
 ### 15.5 Output pairs
 
 The plugin gets up to 8 stereo outputs (DPF: more audio outputs; the main pair stays output 1, so a host that
