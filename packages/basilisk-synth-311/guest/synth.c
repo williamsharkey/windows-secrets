@@ -2085,6 +2085,7 @@ static void page_close(void)
 }
 static void page_add(HWND w) { if (npg < 64) pgWin[npg++] = w; }
 static void rec_page(int y0);
+static void about_open(void);
 static void rec_leave(void);
 static void mine_page(int y0);
 static void mine_hide(void);
@@ -3426,6 +3427,7 @@ static void host_line(char *s)
         }
     }
     else if (!strcmp(s, "user")) rec_user(rest);
+    else if (!strcmp(s, "about")) about_open();   /* test aid */
     else if (!strcmp(s, "step")) mine_step(atoi(rest));   /* the sequencer's playhead */
     else if (!strcmp(s, "newgame") && hMine) PostMessage(hMine, WM_KEYDOWN, VK_F2, 0L);   /* the host's Randomize */
     else if (!strcmp(s, "scala")) {   /* scala ok <steps> <name> | scala error <message> */
@@ -3596,8 +3598,54 @@ static void strip_picked(int r)   /* the last strip clicked: To slot N's N */
     lastStrip = r;
     if (recSlotBtn && curTab == 4) { wsprintf(t, "To slot %X", r); SetWindowText(recSlotBtn, t); }
 }
+/* About SNDWAVE2000 (design/brand/sndwave2000/COPY.md): from the window's system menu. Modeless, a popup of our own:
+   a modal box would stop the notes while it is open. The free memory and resources are the machine's own. */
+#define ID_ABOUT 0x0F10
+#define ID_ABOUTOK 1490
+static HWND hAbout;
+long FAR PASCAL __export AboutProc(HWND h, UINT m, WPARAM w, LPARAM l)
+{
+    if (m == WM_COMMAND && w == ID_ABOUTOK) { DestroyWindow(h); return 0; }
+    if (m == WM_CLOSE) { DestroyWindow(h); return 0; }
+    if (m == WM_DESTROY) { hAbout = NULL; return 0; }
+    if (m == WM_CTLCOLOR) { SetBkColor((HDC)w, GetSysColor(COLOR_BTNFACE)); return (LRESULT)(WORD)GetStockObject(LTGRAY_BRUSH); }
+    return DefWindowProc(h, m, w, l);
+}
+static void about_open(void)
+{
+    static const char *ln[] = {"SNDWAVE2000", "Executive Audiophile Edition", "Version 1.00 (Build 0311)",
+        "Copyright \xA9 1993-1995 Algorithmic Industries", "", "This product is licensed to:", "Valued Customer", "",
+        "Voices:", "Sample rate:", "Free Memory:", "System Resources:"};
+    char t[64]; int i, y = 12; WNDCLASS wc; RECT r; HFONT bold;
+    if (hAbout) { SetWindowPos(hAbout, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); return; }
+    memset(&wc, 0, sizeof wc); wc.lpfnWndProc = AboutProc; wc.hInstance = hInst; wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.lpszClassName = "SndAbout"; RegisterClass(&wc);
+    GetWindowRect(hMain, &r);
+    hAbout = CreateWindow("SndAbout", "About SNDWAVE2000", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_DLGFRAME,
+                          (r.left + r.right) / 2 - 170, (r.top + r.bottom) / 2 - 150, 340, 300, hMain, NULL, hInst, NULL);
+    bold = CreateFont(16, 0, 0, 0, FW_BOLD, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Arial");
+    for (i = 0; i < 12; i++) {
+        HWND s = CreateWindow("STATIC", ln[i], WS_CHILD | WS_VISIBLE, 20, y, 140, 16, hAbout, (HMENU)-1, hInst, NULL);
+        if (i == 0) { SendMessage(s, WM_SETFONT, (WPARAM)bold, 0L); SetWindowPos(s, NULL, 0, 0, 300, 18, SWP_NOMOVE | SWP_NOZORDER); }
+        else if (i < 8) SetWindowPos(s, NULL, 0, 0, 300, 16, SWP_NOMOVE | SWP_NOZORDER);
+        if (i == 3 || i == 6) { CreateWindow("STATIC", "", WS_CHILD | WS_VISIBLE | SS_BLACKRECT, 20, y + 20, 296, 1, hAbout, (HMENU)-1, hInst, NULL); y += 8; }
+        if (i >= 8) {
+            if (i == 8) lstrcpy(t, "16 recorders");
+            else if (i == 9) lstrcpy(t, "22,050 Hz");
+            else if (i == 10) { DWORD k = GetFreeSpace(0) / 1024; wsprintf(t, "%ld,%03ld KB", k / 1000, k % 1000); if (k < 1000) wsprintf(t, "%ld KB", k); }
+            else wsprintf(t, "%d%% Free", GetFreeSystemResources(GFSR_SYSTEMRESOURCES));
+            CreateWindow("STATIC", t, WS_CHILD | WS_VISIBLE, 170, y, 140, 16, hAbout, (HMENU)-1, hInst, NULL);
+        }
+        y += i == 0 ? 20 : 16;
+        if (i == 4 || i == 7) y -= 8;
+    }
+    CreateWindow("BUTTON", "OK", WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON, 130, y + 10, 76, 26, hAbout, (HMENU)ID_ABOUTOK, hInst, NULL);
+    SetWindowPos(hAbout, NULL, 0, 0, 340, y + 70, SWP_NOMOVE | SWP_NOZORDER);
+    ShowWindow(hAbout, SW_SHOW);
+}
 long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
+    if (m == WM_SYSCOMMAND && (w & 0xFFF0) == ID_ABOUT) { about_open(); return 0; }
     switch (m) {
     case WM_PAINT: paint(h); return 0;
     case WM_USER + 7: page_values(); scales_values(); return 0;   /* the page's buttons, after a click */
@@ -3692,9 +3740,13 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
     wc.hIcon = ExtractIcon(hi, "C:\\WINDOWS\\SOUNDREC.EXE", 0);   /* minimized, BASILISK 16 is Sound Recorder's icon */
     if ((UINT)wc.hIcon <= 1) wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     RegisterClass(&wc);
-    hMain = CreateWindow("Basilisk16", "SNDWAVE2000 - Executive Audiophile Edition", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN,
+    hMain = CreateWindow("Basilisk16", "SNDWAVE2000 - [Untitled]", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN,
                          0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, hi, NULL);
 
+    {   /* the system menu's last item: About SNDWAVE2000... (COPY.md) */
+        HMENU sm = GetSystemMenu(hMain, FALSE);
+        AppendMenu(sm, MF_SEPARATOR, 0, NULL); AppendMenu(sm, MF_STRING, ID_ABOUT, "&About SNDWAVE2000...");
+    }
     /* the desktop as the visitor first sees it: Program Manager out of the way, a clock, sixteen recorders */
     pm = FindWindow("Progman", NULL);
     if (pm) ShowWindow(pm, SW_MINIMIZE);
