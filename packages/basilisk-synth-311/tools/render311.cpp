@@ -321,7 +321,7 @@ int main(int argc, char **argv)
     {   // every pack disc in (P:, the Library tab): their sound NAMEs are unique, so all of them may resolve
         std::ifstream in(machine + "/packs/PACKS.TSV"); std::string l, ids;
         while (std::getline(in, l)) { const size_t a1 = l.find('\t'), a2 = a1 == std::string::npos ? a1 : l.find('\t', a1 + 1); if (a2 != std::string::npos) ids += (ids.empty() ? "" : ",") + l.substr(a1 + 1, a2 - a1 - 1); }
-        if (!ids.empty()) M.send(("packs " + ids).substr(0, 240));
+        if (!ids.empty()) M.send("packs " + ids);   // (a long line: it goes in parts)
     }
     M.send("dna " + written.canonical);     // as written: Windows does N itself
     char b[160]; proto::env(b, sizeof b, dna.g); b[std::strlen(b) - 1] = 0; M.send(b);

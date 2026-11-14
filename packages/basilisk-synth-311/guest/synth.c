@@ -2844,11 +2844,17 @@ static void lib_command(int k, int code)
 }
 static int lib_packs_index(const char *name, int n)
 {
-    int i, k; char f[32], pre[16];
-    for (i = 0; i < npk; i++) if (pkIn[i]) {
-        wsprintf(f, "P:\\%s\\LIBRARY.TSV", (LPSTR)pkDir[i]); wsprintf(pre, "P:\\%s", (LPSTR)pkDir[i]);
-        if ((k = lib_index_in(name, n, f, pre)) >= 0) return k;
-    }
+    int i, k, pass; char f[32], pre[16];
+    pk_load();
+    for (pass = 0; pass < 2; pass++)   /* the inserted discs first; then the others, and the disc goes in (16.1:
+                                          a preset needs the discs of its NAMEs, which are unique across packs) */
+        for (i = 0; i < npk; i++) if (pkIn[i] == !pass) {
+            wsprintf(f, "P:\\%s\\LIBRARY.TSV", (LPSTR)pkDir[i]); wsprintf(pre, "P:\\%s", (LPSTR)pkDir[i]);
+            if ((k = lib_index_in(name, n, f, pre)) >= 0) {
+                if (!pkIn[i]) { pkIn[i] = 1; say("pack insert %s", (LPSTR)pkId[i]); if (curTab == 6) lib_discs(); }
+                return k;
+            }
+        }
     return -1;
 }
 /* `packs <id,id,...>`: the inserted discs, from the state */

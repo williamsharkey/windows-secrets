@@ -1045,7 +1045,7 @@ private:
             if (hello && sh_.importReady.exchange(false)) importNow();
             if (hello && packsDirty_.exchange(false)) {   // the inserted discs, before a DNA that may use their sounds
                 std::string p; { std::lock_guard<std::mutex> l(mtx_); p = packs_; }
-                sendLine(("packs " + p).substr(0, 240).c_str(), 0, 0);
+                sendLine(("packs " + p).c_str(), 0, 0);   // (sendLine splits a long line)
             }
             {   // the sequencer's playhead, for the bar under the game
                 const int st = stepShow_.exchange(-1);
