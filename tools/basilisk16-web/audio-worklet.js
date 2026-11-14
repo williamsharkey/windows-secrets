@@ -31,12 +31,14 @@ class B16Out extends AudioWorkletProcessor {
     const u = this.u32, f = this.f32, ring = this.ring, len = this.len;
     const dac = u[this.dacLo] + u[this.dacLo + 1] * 4294967296;
     // start (or jump, after a pause or a long stall) a little behind the newest sample
-    if (this.pos < 0 || dac - this.pos > this.lead + 24000) { this.pos = Math.max(0, dac - this.lead); this.fade = 0; this.starved = true; }
+    if (this.pos < 0 || dac - this.pos > this.lead + 24000) { this.pos = Math.max(2, dac - this.lead);   // (never below 2: the Hermite reads k-1)
+      this.fade = 0; this.starved = true; }
     const g = f[this.gain] || 1;
     let missing = 0;
     for (let i = 0; i < n; i++) {
       const p = this.pos, k = Math.floor(p), fr = p - k;
-      if (k + 2 >= dac || k < 1) {   // dry: hold the place, fade the last sample out
+      if (k + 2 >= dac) {   // dry: hold the place, fade the last sample out (held, it must still be able to move on:
+                            // the emulator runs to host_r + lead, so a hold below `lead` would wait forever)
         if (!this.starved) { this.starved = true; this.gaps++; this.gapLen = 0; }
         this.gapLen++;
         missing++;

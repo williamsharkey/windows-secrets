@@ -109,7 +109,7 @@
   function onWorker(e) {
     var m = e.data;
     if (m.t === 'progress') { bar.style.width = Math.min(100, 100 * m.loaded / Math.max(1, m.total)).toFixed(1) + '%'; if (m.loaded >= m.total) say('Resuming the machine…'); }
-    else if (m.t === 'mem') memMsg = m;
+    else if (m.t === 'mem') { memMsg = m; api.mem = m; }
     else if (m.t === 'resumed') { if (building) { over.hidden = true; say(''); stat.textContent = 'Watching Windows build BASILISK 16 from its own parts…'; api.resumedAt = Math.round(performance.now() - tClick); } }
     else if (m.t === 'ready') {
       // the sound starts now (not while the machine resumes, which would only be a stretch of silence)

@@ -3,7 +3,7 @@
 // pressed. The machine runs in a worker; the page only forwards the pointer, the keys and MIDI, and watches it.
 (function () {
   'use strict';
-  var CFG = /*CONFIG*/{"v":"174e1736f6","files":[{"name":"b16.wasm","size":2524744,"gz":1034547},{"name":"w31web.state","size":5970216,"gz":1408448},{"name":"drive.zip","size":3392083,"gz":3392083}],"lead":2048,"buildFile":{"name":"w31build.state","size":4875514,"gz":989927}}/*END*/;
+  var CFG = /*CONFIG*/{"v":"4aa21a16b6","files":[{"name":"b16.wasm","size":2524744,"gz":1034547},{"name":"w31web.state","size":6044263,"gz":1421721},{"name":"drive.zip","size":3577754,"gz":3577754}],"lead":2048,"buildFile":{"name":"w31build.state","size":4875514,"gz":989950}}/*END*/;
   var DATA = null;   // b16-data.json, fetched on the click: the machine's settings, the library's names, the presets
   var root = document.getElementById('b16try');
   if (!root) return;
@@ -109,7 +109,7 @@
   function onWorker(e) {
     var m = e.data;
     if (m.t === 'progress') { bar.style.width = Math.min(100, 100 * m.loaded / Math.max(1, m.total)).toFixed(1) + '%'; if (m.loaded >= m.total) say('Resuming the machine…'); }
-    else if (m.t === 'mem') memMsg = m;
+    else if (m.t === 'mem') { memMsg = m; api.mem = m; }
     else if (m.t === 'resumed') { if (building) { over.hidden = true; say(''); stat.textContent = 'Watching Windows build BASILISK 16 from its own parts…'; api.resumedAt = Math.round(performance.now() - tClick); } }
     else if (m.t === 'ready') {
       // the sound starts now (not while the machine resumes, which would only be a stretch of silence)
