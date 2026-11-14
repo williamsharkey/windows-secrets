@@ -143,8 +143,12 @@ def main():
             boxsrc = os.path.join(R, 'box.png')
         for stale in ('splash.png',):
             if os.path.exists(os.path.join(dst, stale)): os.remove(os.path.join(dst, stale))
-        art['half'] = thumb(boxsrc, os.path.join(dst, 'half.png'), 2)     # the shelf's thumbnails (1/2 and 1/3, box filter)
-        art['thumb'] = thumb(boxsrc, os.path.join(dst, 'thumb.png'), 3)
+        small = W and os.path.join(WEB, pid, W['files'].get('box_small', 'box_small.png'))
+        if small and os.path.exists(small):   # the packs lane's own small render: nothing on the site is downscaled
+            copy(small, os.path.join(dst, 'thumb.png')); art['thumb'] = size(small)
+            if os.path.exists(os.path.join(dst, 'half.png')): os.remove(os.path.join(dst, 'half.png'))
+        else:   # until it exists: the box at 1/3 (each pixel the mean of a 3 x 3 block)
+            art['thumb'] = thumb(boxsrc, os.path.join(dst, 'thumb.png'), 3)
         files = {}
         fl = P.get('files', {})
         man = W and os.path.join(WEB, pid, W['files'].get('manual', 'manual.pdf'))
