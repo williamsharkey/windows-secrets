@@ -74,5 +74,7 @@ for n in sorted(dirs | set(files)):
     zi.compress_type = zipfile.ZIP_DEFLATED; zi.external_attr = 0o644 << 16; z.writestr(zi, files[n]); nkept += 1
 z.close()
 conf = open(os.path.join(pkg, 'engine', 'w31.conf.in')).read()
+# R: (My Recordings, @RECDIR@): the web edition has no folder for it yet, so the line goes
+conf = '\n'.join(l for l in conf.split('\n') if '@RECDIR@' not in l)
 open(os.path.join(out, 'w31.conf'), 'w').write(conf.replace('@MACHINE@', '/machine'))
 print('drive.zip', os.path.getsize(os.path.join(out, 'drive.zip')), 'bytes,', nkept, 'files', '(%d left out)' % dropped if keep else '')

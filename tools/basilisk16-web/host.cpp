@@ -79,6 +79,7 @@ b16v3::NoteHost noteHost;           // the notes: V3Host.h, the same code as the
 uint32_t recBusy = 0;              // recorders recording now: notes leave them alone
 bool recSelf = false;              // the card's ADC records the synth's own output (else the microphone)
 std::map<std::string, std::string> stateExtra;   // the state's other lines, kept (STATE.md)
+std::vector<std::string> stateUsers;             // its `user` lines (My Recordings, RECORDING.md 4.2), kept
 uint64_t inNext = 0;               // the microphone: the next DAC sample to write into the input ring
 int pendingStateIO = 0;
 std::vector<uint32_t> pendSegs[kMaxLayers]; bool segsDirty = false;   // the guest's seg lines, after the DNA they belong to (as the plugin's housekeeping)            // Windows' Save state... / Load state... (1 / 2), for the page
@@ -412,7 +413,7 @@ EMSCRIPTEN_KEEPALIVE void b16_bpm(double v) { if (v > 1 && v < 1000 && std::fabs
 EMSCRIPTEN_KEEPALIVE const char *b16_get_state()
 {
     static std::string out;
-    bsynth::State s; s.dna = dnaText; s.extra = stateExtra;
+    bsynth::State s; s.dna = dnaText; s.extra = stateExtra; s.users = stateUsers;
     s.extra.erase("key"); s.extra.erase("keyopt"); s.extra.erase("keymask");
     if (keyParams != b16v3::KeyParams()) {
         s.extra["key"] = std::to_string(keyParams.root) + " " + std::to_string(keyParams.scale);
@@ -431,7 +432,7 @@ EMSCRIPTEN_KEEPALIVE int b16_set_state(const char *text)
     if (s.extra.count("key")) kp.readLine("key " + s.extra["key"]);
     if (s.extra.count("keyopt")) kp.readLine("keyopt " + s.extra["keyopt"]);
     if (s.extra.count("keymask")) kp.readLine("keymask " + s.extra["keymask"]);
-    stateExtra = s.extra;
+    stateExtra = s.extra; stateUsers = s.users;
     setKeyParams(kp);
     setDna(s.dna, true);
     return 1;
