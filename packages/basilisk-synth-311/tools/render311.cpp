@@ -246,6 +246,8 @@ int main(int argc, char **argv)
     {   // the library disc's NAMEs (DNA.md 5.5)
         std::ifstream in(machine + "/library.names.txt"); std::string l;
         while (std::getline(in, l)) { while (!l.empty() && (l.back() == '\r' || l.back() == ' ')) l.pop_back(); if (!l.empty()) libNames.push_back(l); }
+        std::ifstream pn(machine + "/packs/packs.names.txt");   // the pack discs' own sounds (P:)
+        while (std::getline(pn, l)) { while (!l.empty() && (l.back() == '\r' || l.back() == ' ')) l.pop_back(); if (!l.empty()) libNames.push_back(l); }
         setLibrary(libNames);
     }
 
@@ -267,6 +269,7 @@ int main(int argc, char **argv)
         while ((p = s.find("@MACHINE@")) != std::string::npos) s.replace(p, 9, "\"" + machine + "\"");
         while ((p = s.find("@DRIVE@")) != std::string::npos) s.replace(p, 7, "\"" + machine + "/drive\"");
         while ((p = s.find("@RECDIR@")) != std::string::npos) s.replace(p, 8, "\"" + recDir + "\"");
+        while ((p = s.find("@PACKS@")) != std::string::npos) s.replace(p, 7, "\"" + machine + "/packs\"");
         std::ofstream o(conf); o << s;
     }
 #if defined(__APPLE__) && defined(__aarch64__)
@@ -315,6 +318,11 @@ int main(int argc, char **argv)
         for (auto &l : ls) { if (std::getenv("RENDER311_VERBOSE")) std::fprintf(stderr, "windows: %s\n", l.c_str()); if (l.rfind("hi ", 0) == 0) { hi = true; win = bsynth3::hasCap(bsynth3::parseHi3(l), "win"); loopCap = bsynth3::hasCap(bsynth3::parseHi3(l), "loop"); rateCap = bsynth3::hasCap(bsynth3::parseHi3(l), "rate"); tapeCap = bsynth3::hasCap(bsynth3::parseHi3(l), "tape"); } }
     }
     for (auto &u : userLines) M.send(u);    // My recordings (before the DNA that may name them)
+    {   // every pack disc in (P:, the Library tab): their sound NAMEs are unique, so all of them may resolve
+        std::ifstream in(machine + "/packs/PACKS.TSV"); std::string l, ids;
+        while (std::getline(in, l)) { const size_t a1 = l.find('\t'), a2 = a1 == std::string::npos ? a1 : l.find('\t', a1 + 1); if (a2 != std::string::npos) ids += (ids.empty() ? "" : ",") + l.substr(a1 + 1, a2 - a1 - 1); }
+        if (!ids.empty()) M.send(("packs " + ids).substr(0, 240));
+    }
     M.send("dna " + written.canonical);     // as written: Windows does N itself
     char b[160]; proto::env(b, sizeof b, dna.g); b[std::strlen(b) - 1] = 0; M.send(b);
     for (bool built = false; !built;) {

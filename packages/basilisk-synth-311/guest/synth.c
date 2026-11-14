@@ -98,12 +98,13 @@ static void wait_ms(DWORD ms);
 static void page_add(HWND w);
 static void scales_values(void);
 /* the tabs and pages (PRESET-ENGINE-2 section 8) */
-#define NTAB 6
+#define NTAB 7
 #define ID_TAB 1390
 #define ID_PG 1400
-#define ID_RECPG 1480     /* + 0..6: the Rec page's controls */
-static const char *tabNames[NTAB] = {"Main", "Voices", "Playback", "Scales", "Rec", "Mines"};
-static const char *tabIds[NTAB] = {"main", "voices", "play", "scales", "rec", "seq"};
+#define ID_RECPG 1480     /* + 0..11: the Rec page's controls */
+#define ID_LIBPG 1500     /* + 0..7: the Library page's */
+static const char *tabNames[NTAB] = {"Main", "Voices", "Playback", "Scales", "Rec", "Mines", "Library"};
+static const char *tabIds[NTAB] = {"main", "voices", "play", "scales", "rec", "seq", "lib"};
 static HWND hTab[NTAB], pgWin[64], pgSb[24], pgVal[24], pgBtn[24];
 static int curTab, npg, npgSb, npgBtn;
 static const COLORREF layerColor[NL] = {RGB(0, 128, 0), RGB(0, 0, 160), RGB(160, 0, 0), RGB(128, 0, 128),
@@ -152,7 +153,14 @@ static char usrName[NUSR][28], usrPath[NUSR][16]; static long usrMs[NUSR]; stati
 static char libPath[NLIB][72], libName[NLIB][33];
 static long libCs[NLIB], libRate[NLIB];
 static int nlib;
+static int lib_index_in(const char *name, int n, const char *file, const char *prefix);
+static int lib_packs_index(const char *name, int n);
 static int lib_index(const char *name, int n)
+{
+    int k = lib_index_in(name, n, "L:\\LIBRARY.TSV", "L:");
+    return k >= 0 ? k : lib_packs_index(name, n);   /* then the inserted pack discs (Library tab) */
+}
+static int lib_index_in(const char *name, int n, const char *file, const char *prefix)
 {
     static char buf[1024]; static char line[400];
     HFILE f; OFSTRUCT of; int got, ln = 0, k;
@@ -169,7 +177,7 @@ static int lib_index(const char *name, int n)
         memcpy(libName[ln], name, n); libName[ln][n] = 0;
         return 1000 + ln;
     }
-    f = OpenFile("L:\\LIBRARY.TSV", &of, OF_READ);
+    f = OpenFile(file, &of, OF_READ);
     if (f == HFILE_ERROR) return -1;
     while ((got = _lread(f, buf, sizeof buf)) > 0) {
         int i;
@@ -183,7 +191,7 @@ static int lib_index(const char *name, int n)
                     pth = c + 1; sec = strchr(pth, '\t');
                     if (sec) *sec++ = 0;
                     k = nlib++;
-                    strcpy(libPath[k], "L:"); strncat(libPath[k], pth, 60);
+                    strcpy(libPath[k], prefix); if (pth[0] != '\\') strcat(libPath[k], "\\"); strncat(libPath[k], pth, 71 - lstrlen(libPath[k]));
                     { char *cr = strchr(libPath[k], '\r'); if (cr) *cr = 0; }
                     libCs[k] = sec ? (long)(atof(sec) * 100) : 100;
                     libRate[k] = 22050;
@@ -1489,6 +1497,21 @@ static void read_lines(const char *path, void (*fn)(char *line, long off))   /* 
     _lclose(f);
     busy = 0;
 }
+/* the same, at once (no pumping, its own buffers): small files, and safe while a read_lines is under way */
+static void read_lines_now(const char *path, void (*fn)(char *line, long off))
+{
+    OFSTRUCT of; HFILE f; static char __far buf[512]; static char __far ln[1100]; int n, i, m = 0; long off = 0, start = 0;   /* (far: DGROUP is full) */
+    f = OpenFile(path, &of, OF_READ);
+    if (f == HFILE_ERROR) return;
+    while ((n = _lread(f, buf, sizeof buf)) > 0)
+        for (i = 0; i < n; i++, off++) {
+            char c = buf[i];
+            if (c == '\n') { ln[m] = 0; if (m && ln[m - 1] == '\r') ln[m - 1] = 0; fn(ln, start); m = 0; start = off + 1; }
+            else if (m < (int)sizeof ln - 1) ln[m++] = c;
+        }
+    if (m) { ln[m] = 0; fn(ln, start); }
+    _lclose(f);
+}
 /* does a DNA use an XP file? (its sources and its I/M sounds; DNA.md 2.4: everything but the six 3.x files) */
 static int uses_xp(const char *d)
 {
@@ -1960,7 +1983,7 @@ static const PC pagePlay[] = {
     {"at", 'V', 'f', 1, 30, K_PAIR1, "Hz", 1}, {"Scoop", 'V', 's', 0, 200, K_PAIR0, "c", 1}, {"over", 'V', 's', 0, 2000, K_PAIR1, "ms", 1},
     {"Delay", 'W', 'o', 0, 30000, K_INT, "ms", 2}, {"Beat delay", 'W', 'b', 0, 64, K_INT, "/16", 2}, {"Gate", 'W', 'g', 0, 64, K_INT, "/16", 2},
     {"Tempo sync", 'W', 't', 0, 0, K_FLAG, "", 2}, {"Loop amp", 'W', 'r', 0, 8, K_INT, "", 2}, {"Loop pan", 'W', 'p', 0, 8, K_INT, "", 2}, {NULL}};
-static const PC *pgDef[NTAB] = {NULL, pageVoices, pagePlay, NULL, NULL, NULL};
+static const PC *pgDef[NTAB] = {NULL, pageVoices, pagePlay, NULL, NULL, NULL, NULL};
 /* the Scales page (PRESET-ENGINE-2 18.6): the key options and the 12 notes from the root; it edits the host's Key
    parameters (keyopt / keymask lines), not the DNA */
 #define ID_SC (ID_PG + 48)
@@ -2075,19 +2098,22 @@ static void page_values(void)   /* the controls show the selected layer's tokens
         else SendMessage(pgBtn[i], BM_SETSTATE, pc_value(c), 0L);
     }
 }
-static HWND recAsk[2], recStatus, recList, recSlotBtn;   /* the Rec page's collision Yes / No, status and list */
+static HWND recAsk[2], recStatus, recList, recSlotBtn;
+static HWND hLibDiscs, hLibPre, hLibInfo;   /* the Library page's lists */   /* the Rec page's collision Yes / No, status and list */
 static void page_close(void)
 {
     int i;
     for (i = 0; i < npg; i++) DestroyWindow(pgWin[i]);
     npg = npgSb = npgBtn = 0; nScBtn = 0;
-    recAsk[0] = recAsk[1] = NULL; recStatus = recList = recSlotBtn = NULL; scScala = NULL;   /* (the Rec page's, gone with it) */
+    recAsk[0] = recAsk[1] = NULL; recStatus = recList = recSlotBtn = NULL; scScala = NULL; hLibDiscs = hLibPre = hLibInfo = NULL;   /* (the Rec page's, gone with it) */
 }
 static void page_add(HWND w) { if (npg < 64) pgWin[npg++] = w; }
 static void rec_page(int y0);
 static void about_open(void);
 static void rec_leave(void);
 static void mine_page(int y0);
+static void lib_page(int y0);
+static void lib_command(int k, int code);
 static void mine_hide(void);
 static void rec_command(int k);
 static void rec_open_whole(int y);
@@ -2120,6 +2146,7 @@ static void page_open(int t)
 
     if (t == 4) rec_page(y0);   /* the Rec page (the Recorder came down before: see above) */
     else if (t == 5) mine_page(y0);   /* the mine-grid sequencer */
+    else if (t == 6) lib_page(y0);    /* the pack discs */
     else if (t == 3) {   /* the Scales page */
         page_add(mk("STATIC", "Key", WS_VISIBLE, 8, y0 + 4, 80, 16, -1));
         scales_page(y0);
@@ -2204,6 +2231,7 @@ static void page_command(int id)
     if (id >= ID_TAB && id < ID_TAB + NTAB && id - ID_TAB == curTab && npg) return;   /* already open */
     if (id >= ID_TAB && id < ID_TAB + NTAB) { page_open(id - ID_TAB); return; }
     if (id >= ID_SC && id < ID_SC + nScBtn) { scales_command(id - ID_SC); return; }
+    if (id >= ID_LIBPG && id < ID_LIBPG + 8 && curTab == 6) { lib_command(id - ID_LIBPG, 0); return; }
     if (id >= ID_RECPG && id < ID_RECPG + 12 && curTab == 4) { rec_command(id - ID_RECPG); return; }
     if (id >= ID_PG + 32 && id < ID_PG + 32 + npgBtn) {
         const PC *c = &pgDef[curTab][pgBtnCtl[id - ID_PG - 32]];
@@ -2720,6 +2748,122 @@ static void rec_keep(void)
     if (fix) RedrawWindow(hRecRec, NULL, NULL, RDW_FRAME | RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
 }
 
+
+/* ================================================================ the Library tab: the pack discs (PRESET-ENGINE-2 16.3)
+   Drive P: holds the discs, one folder each, and P:\PACKS.TSV lists them (tools/make_packs311.py: any number of
+   discs). A disc in the drive is "inserted": its presets are listed, its sounds (its LIBRARY.TSV) resolve, and the
+   state keeps the set (`packs` from the host after hello, `pack insert|eject <id>` from here). Everything else about
+   a disc is the disc itself: File Manager shows its folders and .BSP presets, Notepad its PACK.TXT, Windows Help its
+   .HLP. */
+#define NPK 48
+static char __far pkDir[NPK][9]; static char __far pkId[NPK][28]; static char __far pkLabel[NPK][13]; static char __far pkTitle[NPK][40]; static int pkN[NPK], npk, pkIn[NPK], pkLoaded, pkSel;   /* (far: DGROUP is full) */
+static void pk_add(char *ln, long off)
+{
+    char *f[5]; int i;
+    (void)off;
+    if (npk >= NPK || ln[0] == '#') return;
+    f[0] = ln; for (i = 1; i < 5; i++) { f[i] = f[i - 1] ? strchr(f[i - 1], '\t') : NULL; if (f[i]) *f[i]++ = 0; }
+    if (!f[3]) return;
+    lstrcpyn(pkDir[npk], f[0], 9); lstrcpyn(pkId[npk], f[1], 28); lstrcpyn(pkLabel[npk], f[2], 13); lstrcpyn(pkTitle[npk], f[3], 40);
+    pkN[npk] = f[4] ? atoi(f[4]) : 0; npk++;
+}
+static void pk_load(void) { if (!pkLoaded) { npk = 0; read_lines_now("P:\\PACKS.TSV", pk_add); pkLoaded = npk > 0; } }   /* (again later if a read was busy) */
+static int pk_find(const char *id) { int i; for (i = 0; i < npk; i++) if (!lstrcmp(pkId[i], id)) return i; return -1; }
+static void lib_discs(void)
+{
+    int i; char t[80];
+    if (!hLibDiscs) return;
+    SendMessage(hLibDiscs, WM_SETREDRAW, FALSE, 0L);
+    SendMessage(hLibDiscs, LB_RESETCONTENT, 0, 0L);
+    for (i = 0; i < npk; i++) { wsprintf(t, "%s %s", (LPSTR)(pkIn[i] ? "[\x95]" : "[  ]"), (LPSTR)pkTitle[i]); SendMessage(hLibDiscs, LB_ADDSTRING, 0, (LPARAM)(LPSTR)t); }
+    SendMessage(hLibDiscs, LB_SETCURSEL, pkSel, 0L);
+    SendMessage(hLibDiscs, WM_SETREDRAW, TRUE, 0L); InvalidateRect(hLibDiscs, NULL, TRUE);
+}
+static void lib_pre_add(char *ln, long off)   /* category TAB name TAB DNA TAB pack TAB editions ... (3.11 ones only) */
+{
+    char *a = strchr(ln, '\t'), *b, *c, *d, *e, t[80]; int i;
+    if (!a || ln[0] == '#') return;
+    *a = 0; b = strchr(a + 1, '\t'); if (!b) return; *b = 0;
+    c = strchr(b + 1, '\t'); d = c ? strchr(c + 1, '\t') : NULL; e = d ? strchr(d + 1, '\t') : NULL;
+    if (d && !strstr(d, "3.11")) return;
+    (void)e;
+    sprintf(t, "%.20s: %.44s", ln, a + 1);
+    i = (int)SendMessage(hLibPre, LB_ADDSTRING, 0, (LPARAM)(LPSTR)t);
+    if (i >= 0) SendMessage(hLibPre, LB_SETITEMDATA, i, off);
+}
+static void lib_presets(void)
+{
+    char p[40], t[120];
+    if (!hLibPre) return;
+    SendMessage(hLibPre, WM_SETREDRAW, FALSE, 0L);
+    SendMessage(hLibPre, LB_RESETCONTENT, 0, 0L);
+    if (pkSel >= 0 && pkSel < npk) {
+        wsprintf(p, "P:\\%s\\PRESETS.TSV", (LPSTR)pkDir[pkSel]);
+        read_lines_now(p, lib_pre_add);
+        wsprintf(t, "%s  (%s:)  %d presets%s", (LPSTR)pkLabel[pkSel], (LPSTR)"P", pkN[pkSel], (LPSTR)(pkIn[pkSel] ? "" : "  - not inserted"));
+        if (hLibInfo) SetWindowText(hLibInfo, t);
+    }
+    SendMessage(hLibPre, WM_SETREDRAW, TRUE, 0L); InvalidateRect(hLibPre, NULL, TRUE);
+}
+static void lib_page(int y0)
+{
+    int x = 8, w; HWND b;
+    pk_load();
+    if (!npk) { page_add(mk("STATIC", "No pack discs in drive P:.", WS_VISIBLE, 8, y0 + 4, 300, 16, -1)); return; }
+    hLibDiscs = mk("LISTBOX", "", WS_VISIBLE | WS_BORDER | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT, x, y0, 250, 98, ID_LIBPG + 0); page_add(hLibDiscs); x += 254;
+    hLibPre = mk("LISTBOX", "", WS_VISIBLE | WS_BORDER | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT, x, y0 + 18, 330, 80, ID_LIBPG + 1); page_add(hLibPre);
+    hLibInfo = mk("STATIC", "", WS_VISIBLE, x, y0 + 1, 330, 16, -1); page_add(hLibInfo); x += 334;
+    b = mkbtn("Insert / Eject", x, y0, 24, ID_LIBPG + 2, &w); page_add(b);
+    b = mkbtn("Load preset", x, y0 + 25, 24, ID_LIBPG + 3, &w); page_add(b);
+    b = mkbtn("Read Me", x, y0 + 50, 24, ID_LIBPG + 4, &w); page_add(b);
+    b = mkbtn("File Manager", x, y0 + 75, 24, ID_LIBPG + 5, &w); page_add(b);
+    lib_discs(); lib_presets();
+}
+static void lib_command(int k, int code)
+{
+    char t[80];
+    if (k == 0) { int i = (int)SendMessage(hLibDiscs, LB_GETCURSEL, 0, 0L); if (code == LBN_DBLCLK) k = 2; else { if (i >= 0 && i != pkSel) { pkSel = i; lib_presets(); } return; } }
+    if (k == 2 && pkSel >= 0 && pkSel < npk) {   /* the disc goes in or out */
+        pkIn[pkSel] = !pkIn[pkSel];
+        say("pack %s %s", (LPSTR)(pkIn[pkSel] ? "insert" : "eject"), (LPSTR)pkId[pkSel]);
+        lib_discs(); lib_presets(); listsWanted = TRUE;
+        return;
+    }
+    if ((k == 1 && code == LBN_DBLCLK) || k == 3) {   /* a preset: it becomes the DNA (its disc goes in) */
+        int i = (int)SendMessage(hLibPre, LB_GETCURSEL, 0, 0L);
+        if (i < 0 || pkSel < 0) return;
+        if (!pkIn[pkSel]) { pkIn[pkSel] = 1; say("pack insert %s", (LPSTR)pkId[pkSel]); lib_discs(); }
+        wantOff = SendMessage(hLibPre, LB_GETITEMDATA, i, 0L); pickedDna[0] = 0;
+        wsprintf(t, "P:\\%s\\PRESETS.TSV", (LPSTR)pkDir[pkSel]);
+        read_lines_now(t, pick_preset);
+        if (pickedDna[0]) { char *tab = strchr(pickedDna, '\t'); if (tab) *tab = 0; lstrcpyn(dnaText, pickedDna, sizeof dnaText); selLayer = 0; edited(TRUE); }
+        return;
+    }
+    if (k == 4 && pkSel >= 0) { wsprintf(t, "NOTEPAD.EXE P:\\%s\\PACK.TXT", (LPSTR)pkDir[pkSel]); WinExec(t, SW_SHOWNORMAL); return; }
+    if (k == 5) { WinExec("WINFILE.EXE", SW_SHOWNORMAL); return; }
+}
+static int lib_packs_index(const char *name, int n)
+{
+    int i, k; char f[32], pre[16];
+    for (i = 0; i < npk; i++) if (pkIn[i]) {
+        wsprintf(f, "P:\\%s\\LIBRARY.TSV", (LPSTR)pkDir[i]); wsprintf(pre, "P:\\%s", (LPSTR)pkDir[i]);
+        if ((k = lib_index_in(name, n, f, pre)) >= 0) return k;
+    }
+    return -1;
+}
+/* `packs <id,id,...>`: the inserted discs, from the state */
+static void lib_packs(const char *ids)
+{
+    char id[28]; const char *p = ids; int i, n;
+    pk_load();
+    for (i = 0; i < npk; i++) pkIn[i] = 0;
+    while (*p) {
+        for (n = 0; p[n] && p[n] != ',' && n < 27; n++) id[n] = p[n];
+        id[n] = 0; if ((i = pk_find(id)) >= 0) pkIn[i] = 1;
+        p += n; if (*p == ',') p++; else if (*p) p++;
+    }
+    if (curTab == 6) lib_discs();
+}
 /* ================================================================ the mine-grid sequencer (PRESET-ENGINE-2 9)
    The real Minesweeper (WINMINE.EXE) holds the pattern. It runs as itself, an owned window over the strips while
    the Mines tab is open; its board is read from its own data segment (Win16: the instance handle is the selector;
@@ -3428,6 +3572,7 @@ static void host_line(char *s)
     }
     else if (!strcmp(s, "user")) rec_user(rest);
     else if (!strcmp(s, "about")) about_open();   /* test aid */
+    else if (!strcmp(s, "packs")) lib_packs(rest);   /* the inserted discs */
     else if (!strcmp(s, "step")) mine_step(atoi(rest));   /* the sequencer's playhead */
     else if (!strcmp(s, "newgame") && hMine) PostMessage(hMine, WM_KEYDOWN, VK_F2, 0L);   /* the host's Randomize */
     else if (!strcmp(s, "scala")) {   /* scala ok <steps> <name> | scala error <message> */
@@ -3566,7 +3711,19 @@ static void paint(HWND h)
     SetBkMode(dc, TRANSPARENT);
     of = SelectObject(dc, big);
     SetTextColor(dc, RGB(0, 0, 128));
-    if (titleShown) TextOut(dc, 12, 10, "SNDWAVE2000", 11);
+    if (titleShown) {   /* the name, as large as fits left of the envelope view */
+        static int hgt; HFONT f, o2;
+        if (!hgt) for (hgt = 26; hgt > 12; hgt--) {
+            f = CreateFont(hgt, 0, 0, 0, FW_BOLD, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Arial");
+            o2 = SelectObject(dc, f);
+            if ((int)LOWORD(GetTextExtent(dc, "SNDWAVE2000", 11)) <= ENVX - 16) { SelectObject(dc, o2); DeleteObject(f); break; }
+            SelectObject(dc, o2); DeleteObject(f);
+        }
+        f = CreateFont(hgt, 0, 0, 0, FW_BOLD, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Arial");
+        o2 = SelectObject(dc, f);
+        TextOut(dc, 10, 10 + (26 - hgt) / 2, "SNDWAVE2000", 11);
+        SelectObject(dc, o2); DeleteObject(f);
+    }
     SelectObject(dc, sm);
     if (assembled) TextOut(dc, ENVX + (133 - (int)LOWORD(GetTextExtent(dc, "Envelope", 8))) / 2, 41, "Envelope", 8);   /* under its view */
     SelectObject(dc, big);
@@ -3675,6 +3832,7 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
         int r;
         if (w >= 1100 && w < 1200) { panel_command(w, HIWORD(l)); return 0; }
         if (w == ID_KITBTN) { if (HIWORD(l) == BN_CLICKED && kitOn) padcalc_open(); return 0; }
+        if (w >= ID_LIBPG && w < ID_LIBPG + 8) { int k = w - ID_LIBPG; if (k <= 1 || HIWORD(l) == BN_CLICKED) lib_command(k, HIWORD(l)); return 0; }
         if (w == ID_STATESAVE || w == ID_STATELOAD) { if (HIWORD(l) == BN_CLICKED) say(w == ID_STATESAVE ? "state save" : "state load"); return 0; }
         if (w >= ID_TAB && w < ID_PG + 100) {
             /* only a click on the button itself: a push button set down by BM_SETSTATE reports a click again when

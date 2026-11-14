@@ -294,6 +294,7 @@ protected:
             if (kp.mask) s.extra["keymask"] = std::to_string(kp.mask);
             if (!kp.tuning.empty()) s.extra["tuning"] = kp.tuning;
         }
+        if (!packs_.empty()) s.extra["packs"] = packs_;   // the Library tab's inserted discs (ids, PRESET-ENGINE-2 16.1)
         {   // the recordings the DNA uses: hash, and the audio while the total stays under 8 MB (RECORDING.md 3.3)
             size_t total = 0;
             for (const auto &n : b16rec::usedNames(dnaText_)) {
@@ -323,6 +324,7 @@ protected:
             if (s.extra.count("keymask")) kp.readLine("keymask " + s.extra["keymask"]);
             if (s.extra.count("tuning")) kp.readLine("tuning " + s.extra["tuning"]);
             setKeyParams(kp);
+            { std::lock_guard<std::mutex> l(mtx_); packs_ = s.extra.count("packs") ? s.extra["packs"] : ""; packsDirty_ = true; }
             {   // its recordings (RECORDING.md 3.3): found by hash, the embedded copy saved if this machine lacks it
                 std::lock_guard<std::mutex> l(mtx_);
                 userPin_.clear(); userKept_.clear();
@@ -829,6 +831,8 @@ private:
                 if (q != std::string::npos) s.replace(q, 7, "\"" + mdir + "/drive\"");
                 const size_t rr = s.find("@RECDIR@");
                 if (rr != std::string::npos) s.replace(rr, 8, "\"" + recDir_ + "\"");
+                const size_t pp = s.find("@PACKS@");
+                if (pp != std::string::npos) s.replace(pp, 7, "\"" + mdir + "/packs\"");
                 out += s;
             }
             std::fclose(f);
@@ -907,6 +911,8 @@ private:
         std::string nm = t.name; for (auto &c : nm) if (c == ' ') c = '_';
         sendLine(("scala ok " + std::to_string(t.size()) + " " + nm).substr(0, 200).c_str(), 0, 0);
     }
+    std::string packs_;                    // inserted pack discs: "id,id" (guarded by mtx_)
+    std::atomic<bool> packsDirty_{true};
     std::string askPath_;   // a Save As waiting for the collision answer
     void recSaved(std::string path, int mode = 0)
     {
@@ -968,6 +974,14 @@ private:
                 if (!s.empty()) names.push_back(s);
             }
             std::fclose(f);
+            if (FILE *pf = std::fopen((std::string(res) + "/machine/packs/packs.names.txt").c_str(), "rb")) {   // the pack discs' sounds
+                while (std::fgets(line, sizeof line, pf)) {
+                    std::string s = line;
+                    while (!s.empty() && (s.back() == '\n' || s.back() == '\r' || s.back() == ' ')) s.pop_back();
+                    if (!s.empty()) names.push_back(s);
+                }
+                std::fclose(pf);
+            }
             std::lock_guard<std::mutex> l(gLibMtx);
             gLibNames = names;
             setLibrary(names);
@@ -1023,11 +1037,16 @@ private:
                     { std::lock_guard<std::mutex> l(mtx_); ul = userLines_; }
                     for (const auto &u : ul) if (u.size() < 240) sendLine(u.c_str(), 0, 0);
                 }
+                packsDirty_ = true;
                 keyVerGuest_ = 0;   // and the key
                 std::lock_guard<std::mutex> l(mtx_);
                 dnaToGuest_ = true;
             }
             if (hello && sh_.importReady.exchange(false)) importNow();
+            if (hello && packsDirty_.exchange(false)) {   // the inserted discs, before a DNA that may use their sounds
+                std::string p; { std::lock_guard<std::mutex> l(mtx_); p = packs_; }
+                sendLine(("packs " + p).substr(0, 240).c_str(), 0, 0);
+            }
             {   // the sequencer's playhead, for the bar under the game
                 const int st = stepShow_.exchange(-1);
                 if (hello && st >= 0) { char b[24]; std::snprintf(b, sizeof b, "step %d", st); sendLine(b, 0, 0); }
@@ -1189,6 +1208,15 @@ private:
             std::vector<uint32_t> v; uint32_t f; while (in >> f) v.push_back(f);
             std::lock_guard<std::mutex> l(mtx_);
             if (L >= 0 && L < kMaxLayers) { pendSegs_[L] = v; segsDirty_ = true; }
+            return;
+        }
+        if (line.rfind("pack insert ", 0) == 0 || line.rfind("pack eject ", 0) == 0) {   // the Library tab
+            const bool ins = line[5] == 'i'; const std::string id = line.substr(ins ? 12 : 11);
+            std::lock_guard<std::mutex> l(mtx_);
+            std::vector<std::string> v; std::string cur;
+            for (char c : packs_ + ",") { if (c == ',') { if (!cur.empty() && cur != id) v.push_back(cur); cur.clear(); } else cur += c; }
+            if (ins) v.push_back(id);
+            packs_.clear(); for (auto &x : v) packs_ += (packs_.empty() ? "" : ",") + x;
             return;
         }
         if (line.rfind("grid ", 0) == 0) { std::lock_guard<std::mutex> l(mtx_); gridLine_ = line; gridDirty_ = true; return; }   // the mine-grid board
