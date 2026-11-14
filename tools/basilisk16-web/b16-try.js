@@ -10,7 +10,7 @@
   var DATA = null;   // b16-data.json, fetched on the click: the machine's settings, the library's names, the presets
   var root = document.getElementById('b16try');
   if (!root) return;
-  var base = (function () { var s = document.currentScript; return s ? s.src.replace(/[^\/]*$/, '') : 'sndrec/try/'; })();
+  var base = (function () { var s = document.currentScript; return s ? s.src.replace(/[^\/]*$/, '') : '/sndwave2000/play/'; })();
   var $ = function (s) { return root.querySelector(s); };
   var over = $('.b16over'), go = $('.b16go'), bar = $('.b16prog i'),
       msg = $('.b16msg'), stopB = $('.b16stop'), midiB = $('.b16midi'), presetS = $('.b16preset'), stat = $('.b16stat');
