@@ -385,6 +385,10 @@ is in `core/` as its own files: `dna3.*` (the tokens: `parse3`, `canonical3`, `s
 - The v3 wire (`hi 3 <edition> <state> <caps>`, `on` with a window, `rate`, `lmod`, `lgrain`, `desk`, `choke`,
   `kit`, `tab`, ...) is sent only to a guest that answered `hi 3`, and only for the features in its caps.
 
+- Keys and scales (spec 18.7, as built on 3.11): host -> guest `key ...`, `scale <id> <category> <label>` and
+  `klabels <first> <l|l|...>`; guest -> host `keyset <root> <id>` and `keyopt <use> <snap> <remap> <labels> <anchor>`
+  (`keyset`, because `key <note> <vel>` is the keyboard strip's note line, 5.4).
+
 ## Appendix: the Windows 3.11 edition (BASILISK 16, packages/basilisk-synth-311)
 
 The DNA, pools, voice allocator, parameters and preset state are the same code (`core/`), so a DNA or a preset
