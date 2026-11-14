@@ -1,6 +1,7 @@
 [Pack]
 Id=diagnostics
 Title=DIAGNOSTICS
+Product=SNDWAVE2000 by Algorithmic Industries
 Version=1.0
 Author=Wendmoor Center for Computer Music
 Date=1994-05-20

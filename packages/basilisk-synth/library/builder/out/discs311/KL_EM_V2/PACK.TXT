@@ -1,8 +1,11 @@
 ELEKTROMECHANIK
 ===============
 
+A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+
 Id: electromech-heritage
 Title: ELEKTROMECHANIK
+Product: SNDWAVE2000 by Algorithmic Industries
 Version: 2.0
 Author: Kessler & Lohrmann Studiotechnik GmbH
 Date: 1996-10-07

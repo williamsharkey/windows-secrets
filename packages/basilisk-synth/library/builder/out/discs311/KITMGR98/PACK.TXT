@@ -1,8 +1,11 @@
 Kit Manager 98
 ==============
 
+A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+
 Id: kit-manager
 Title: Kit Manager 98
+Product: SNDWAVE2000 by Algorithmic Industries
 Version: 1.02
 Author: Fennwick Systems Corporation
 Date: 1998-08-24

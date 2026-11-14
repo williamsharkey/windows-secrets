@@ -30,7 +30,7 @@ def mono_phrase(dna):
 
 
 def job(p, dna):
-    notes, tail, label = phrases.phrase(p['kind'], mono=mono_phrase(dna))
+    notes, tail, label = phrases.phrase(p['kind'], mono=mono_phrase(dna), dna=dna)
     j = dict(dna=dna, score=notes, tail=tail, kind=p['kind'], keep=True)
     from evolve import needs_bpm, BPM
     if needs_bpm(dna): j['bpm'] = BPM.get(p['pack'], 120); p['bpm'] = j['bpm']
@@ -106,7 +106,7 @@ def main():
                 if r['peak_db'] < -45: why.append('silent')
                 if r['heard'] < r['onsets']: why.append('%d of %d onsets not heard' % (r['onsets'] - r['heard'], r['onsets']))
                 if r['dc'] > 0.08: why.append('DC')
-                if r['end_rel_db'] > -14: why.append('still sounding at the end')
+                if r['end_rel_db'] > -14 and p['kind'] != 'kit': why.append('still sounding at the end')   # kit pads are one-shots
                 if r.get('late'): p['late'] = r['late']
             if why:
                 p['dropped'] = why; p['final_ok'] = False

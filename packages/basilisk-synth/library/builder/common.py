@@ -14,8 +14,8 @@ WORK = os.environ.get('LIBBUILD', os.path.expanduser('~/libbuild'))
 # 1.2.1 release machine's (checked), so one renderer serves v2 and v3 presets
 # 15040db adds N (voice modes), S (stacks), D, W time (Wo Wb Wg Wt Wr Wp) and --bpm; its renders of v2 and W/Y DNAs
 # are bit-identical to 4bda617's (checked), so the cached analyses stay valid
-MACHINE = os.path.join(WORK, os.environ.get('LIBBUILD_V3', 'v3b'), 'machine')
-RENDER311 = os.path.join(WORK, os.environ.get('LIBBUILD_V3', 'v3b'), 'render311')
+MACHINE = os.path.join(WORK, os.environ.get('LIBBUILD_V3', 'r6'), 'machine')
+RENDER311 = os.path.join(WORK, os.environ.get('LIBBUILD_V3', 'r6'), 'render311')
 RECIPE_CLI = os.path.join(WORK, 'bin', 'recipe_cli')
 
 # core/dna.cpp kSoundNames, in index order (XPSOUNDS\X<nn>.WAV on 3.11 is index nn)
@@ -47,8 +47,8 @@ def display_name(n):
 # ------------------------------------------------------------------ DNA v2 model
 NAME = r'[a-z0-9_]+'
 STEP_RE = re.compile(r'@t\d+|@\d+|[IM]' + NAME + r'|[-+<>ERCPX\[\]]')
-GENE_RE = re.compile(r'W(?:[selvmobgtrp][\d.~]*)+|Y(?:[dltq]\d+|[kr])+|N(?:[mlcpgk][\dnhl]*)+|S(?:[rxpgsw][\d.x]*)+|D(?:[hbis][\d,]*)+|#\d+|T-?\d+|H-?\d+(?:,-?\d+)*|U\d+~\d+|F|L\d+|O\d+|Q-?\d+|Ja[\d,.]+|Jp[-\d,.]+')
-GLOB_RE = re.compile(r'(m\d[^A-Za-z]*(?:[A-Z][-\d,.~]*)?|[A-Z]-?\d+)')
+GENE_RE = re.compile(r'V(?:[wfs][\d,]*)+|W(?:[selvmobgtrp][\d.~]*)+|Y(?:[dltq]\d+|[kr])+|N(?:[mlcpgk][\dnhl]*)+|S(?:[rxpgsw][\d.x]*)+|D(?:[hbis][\d,]*)+|#\d+|T-?\d+|H-?\d+(?:,-?\d+)*|U\d+~\d+|F|L\d+|O\d+|Q-?\d+|Ja[\d,.]+|Jp[-\d,.]+')
+GLOB_RE = re.compile(r'([kqx][0-9,.~a-jl-pr-wyz]*|m\d[^A-Za-z]*(?:[A-Z][-\d,.~]*)?|[A-Z]-?\d+)')
 
 
 class Layer:
@@ -63,11 +63,11 @@ class Layer:
     def text(self):
         g = self.genes
         out = self.src + ''.join(self.steps)
-        for k in ('#', 'T', 'H', 'U', 'F', 'L', 'O', 'Q', 'Ja', 'Jp', 'W', 'N', 'S', 'Y', 'D'):
+        for k in ('#', 'T', 'H', 'U', 'F', 'L', 'O', 'Q', 'Ja', 'Jp', 'W', 'N', 'S', 'Y', 'V', 'D'):
             if k not in g: continue
             v = g[k]
             if k == 'F': out += 'F'
-            elif k in 'WYNSD': out += k + v
+            elif k in 'WYNSDV': out += k + v
             elif k == 'H': out += 'H' + ','.join(str(int(x)) for x in v)
             elif k == 'U': out += 'U%d~%d' % v
             elif k in ('Ja', 'Jp'): out += k + '.'.join('%d,%d' % (int(t), int(l)) for t, l in v)
@@ -80,8 +80,8 @@ class Layer:
 
 
 class DNA:
-    def __init__(self, layers=None, glob=None, macros=''):
-        self.layers, self.glob, self.macros = layers or [], dict(glob or {}), macros
+    def __init__(self, layers=None, glob=None, macros='', pads=''):
+        self.layers, self.glob, self.macros, self.pads = layers or [], dict(glob or {}), macros, pads
 
     @staticmethod
     def parse(s):
@@ -100,7 +100,7 @@ class DNA:
                     L.steps.append(ms.group(0)); p = ms.end(); continue
                 if mg:
                     t = mg.group(0)
-                    if t[0] in 'WYNSD': L.genes[t[0]] = L.genes.get(t[0], '') + t[1:]
+                    if t[0] in 'WYNSDV': L.genes[t[0]] = L.genes.get(t[0], '') + t[1:]
                     elif t == 'F': L.genes['F'] = True
                     elif t[0] == '#': L.genes['#'] = int(t[1:])
                     elif t[0] == 'H': L.genes['H'] = [int(x) for x in t[1:].split(',')]
@@ -116,20 +116,21 @@ class DNA:
                     p = mg.end(); continue
                 p += 1
             layers.append(L)
-        glob, macros = {}, ''
+        glob, macros, pads = {}, '', ''
         for tok in GLOB_RE.findall(gl):
-            if tok.startswith('m'): macros += tok
+            if tok[0] in 'kqx': pads += tok              # v3 kit pads, scale, sequencer: kept verbatim, in order
+            elif tok.startswith('m'): macros += tok
             else: glob[tok[0]] = int(tok[1:])
-        return DNA(layers, glob, macros)
+        return DNA(layers, glob, macros, pads)
 
     def text(self):
         s = '/'.join(L.text() for L in self.layers)
         g = ''.join('%s%d' % (k, self.glob[k]) for k in 'ADSRBVKG' if k in self.glob)
-        g += self.macros
+        g += self.macros + self.pads
         return s + (';' + g if g else '')
 
     def copy(self):
-        return DNA([L.copy() for L in self.layers], self.glob, self.macros)
+        return DNA([L.copy() for L in self.layers], self.glob, self.macros, self.pads)
 
     def names(self):
         return [n for L in self.layers for n in L.names()]
@@ -145,7 +146,8 @@ def edition(s):
 
 
 def uses_v3(s):
-    return any(k in L.genes for L in DNA.parse(s).layers for k in 'WYNSD')
+    d = DNA.parse(s)
+    return bool(d.pads) or any(k in L.genes for L in d.layers for k in 'WYNSDV')
 
 
 def origins(s):

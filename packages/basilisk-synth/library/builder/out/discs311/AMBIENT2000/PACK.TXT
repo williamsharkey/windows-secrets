@@ -1,8 +1,11 @@
 Ambient Screen Saver Collection
 ===============================
 
+A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+
 Id: screen-saver
 Title: Ambient Screen Saver Collection
+Product: SNDWAVE2000 by Algorithmic Industries
 Version: 2000
 Author: Corvane Business Systems, Inc.
 Date: 1999-11-29

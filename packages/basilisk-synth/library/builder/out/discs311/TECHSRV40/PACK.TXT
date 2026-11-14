@@ -1,8 +1,11 @@
 Techno Server 4.0
 =================
 
+A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+
 Id: techno-server
 Title: Techno Server 4.0
+Product: SNDWAVE2000 by Algorithmic Industries
 Version: 4.0
 Author: Jadewave Electronics Co., Ltd.
 Date: 1997-03-18

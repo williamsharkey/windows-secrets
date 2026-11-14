@@ -1,8 +1,11 @@
 Game Port Sound Set
 ===================
 
+A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+
 Id: game-port
 Title: Game Port Sound Set
+Product: SNDWAVE2000 by Algorithmic Industries
 Version: 1.0
 Author: Static Lagoon
 Date: 1995-08-14

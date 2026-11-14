@@ -34,13 +34,13 @@ def check(r, cat, kind=None):
     if r['dc'] > 0.08: why.append('DC %.3f' % r['dc'])
     # the card's float output is not clamped: samples over the G full scale are overs that the G gene removes
     # (finalize keeps peaks under -1 dBFS); flat tops inside Sound Recorder (Increase Volume) are the recipe's sound
-    endlim = {'drone': -3, 'fx': -6, 'pad': -10}.get(kind, -24)
+    endlim = {'drone': -3, 'fx': -6, 'pad': -10, 'kit': 99}.get(kind, -24)   # kit pads are one-shots: cymbals ring out
     if r['end_rel_db'] > endlim: why.append('still sounding at the end (%.0f dB)' % r['end_rel_db'])
     info = {}
     score = 100.0
     mid = notes[len(notes) // 2] if notes else None
     if mid and mid.get('heard'):
-        if mid['dec20'] < 0.03 and kind != 'perc': why.append('too short')
+        if mid['dec20'] < 0.03 and kind not in ('perc', 'kit'): why.append('too short')
         # descriptors
         a = mid['attack']
         lo, hi = c['attack']

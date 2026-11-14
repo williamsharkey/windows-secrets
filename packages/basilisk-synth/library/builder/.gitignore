@@ -1,2 +1,5 @@
 out/vstpreset/
 __pycache__/
+# disc content stage: the packs lane builds the final ISOs; pack sounds are audio and stay out of git
+out/discs311/*.ISO
+out/discs311/*/SOUNDS/

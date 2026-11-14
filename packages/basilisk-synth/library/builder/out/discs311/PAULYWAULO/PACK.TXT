@@ -1,0 +1,25 @@
+Paulywaulophone
+===============
+
+A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+
+Id: paulywaulophone
+Title: Paulywaulophone
+Product: SNDWAVE2000 by Algorithmic Industries
+Version: 1.0
+Author: Breakroom Media Group, Inc.
+Date: 1996-12-06
+Presets: 62
+Presets311: 62
+PresetsXP: 0
+Favourites: 0
+Description: Uncle Homunculus plays the office piano. Everyone sings along.
+
+Sounds on this disc (SOUNDS\, listed in LIBRARY.TSV):
+  Alexander Holm (Salamander Grand Piano V3); soft layer by William Sharkey
+  Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)
+  William Sharkey
+  Rendered from William Sharkey's own instruments in midigarden / Bele Dance and ghosts.garden.
+  Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly): permission from the author, via the owner, 2026-11-14.
+
+Favourites (the owner's picks): FAVORITE\

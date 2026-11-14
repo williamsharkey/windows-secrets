@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The 17 packs as disc images for BASILISK 16's Library tab (PRESET-ENGINE-2.md section 16.3: packs as real discs
+"""The packs as disc images for SNDWAVE2000's Library tab (the 3.11 synth, formerly BASILISK 16) (PRESET-ENGINE-2.md section 16.3: packs as real discs
 in File Manager), with the owner's ratings attached.
 
     PYTHONPATH=<pycdlib> make_discs.py [--edition 311|xp]     out/library.json + ratings/*.json -> out/discs<ed>/
@@ -31,8 +31,11 @@ FOLDER = {'workgroup-house': 'workgrp', 'techno-server': 'techsrv', 'trance-conn
           'retro-display': 'retrodsp', 'screen-saver': 'screensv', 'diagnostics': 'diagnost', 'leisure': 'leisure',
           'game-port': 'gameport', 'workstation-classics': 'workstn', 'studio-archive': 'studarch',
           'w3x-heritage': 'heritage', 'rom-reference': 'romref', 'lifestyle-aesthetics': 'lifestyl',
-          'electromech-heritage': 'emheritg', 'kit-manager': 'kitmgr'}
+          'electromech-heritage': 'emheritg', 'kit-manager': 'kitmgr', 'paulywaulophone': 'paulyw', 'garden-rhythm': 'gardenrw'}
 FAV_RATING = 6.5
+# the product strings (design/brand/sndwave2000/COPY.md when the names lane commits it)
+PRODUCT = os.environ.get('SNDWAVE_PRODUCT', 'SNDWAVE2000')
+MAKER = os.environ.get('SNDWAVE_MAKER', 'Algorithmic Industries')
 
 
 def ratings():
@@ -48,12 +51,29 @@ def ratings():
 def persona(pid):
     f = os.path.join(LIB, 'packs', FOLDER.get(pid, ''), 'persona.json')
     p = json.load(open(f)) if os.path.exists(f) else {}
+    pk = dict(p.get('pack', {}))
+    if isinstance(p.get('maker'), dict): pk.setdefault('maker', p['maker'].get('name'))
     inf = os.path.join(LIB, 'packs', FOLDER.get(pid, ''), 'disc', 'PACK.INF')
     kv = {}
     if os.path.exists(inf):
         for l in open(inf, encoding='latin-1'):
             if '=' in l: k, v = l.rstrip('\r\n').split('=', 1); kv[k] = v
-    return p.get('pack', {}), kv
+    return pk, kv
+
+
+PACK_CATEGORIES = ('garden', 'pauly')          # catalog categories that ship on pack discs, not on L:
+
+
+def stock_names():
+    """the NAMEs of the stock library disc (L:): every catalog sound outside the pack-disc categories"""
+    return {i for i, e in catalog().items() if e['category'] not in PACK_CATEGORIES}
+
+
+def catalog():
+    out = {}
+    for f in glob.glob(os.path.join(LIB, 'catalog', '*.json')):
+        for e in json.load(open(f)): out[e['id']] = e
+    return out
 
 
 def short83(name, taken, ext):
@@ -84,9 +104,9 @@ def crlf(s):
 
 
 def kit_manager():
-    """Kit Manager 98: the packs lane's 39 kits (library/packs/kitmgr/disc/PRESETS.TSV) as they are, with their
+    """Kit Manager 98: the packs lane's 39 kits (library/packs/kitmgr/KITS.TSV) as they are, with their
     editions (the 12 electromech kits are XP-only: their Insert File steps name library-disc sounds)"""
-    f = os.path.join(LIB, 'packs', 'kitmgr', 'disc', 'PRESETS.TSV')
+    f = os.path.join(LIB, 'packs', 'kitmgr', 'KITS.TSV')           # the packs lane's stable list (not the disc copy)
     out = []
     if not os.path.exists(f): return None, out
     for l in open(f, encoding='utf-8'):
@@ -139,18 +159,41 @@ def main():
         for p, fd, fn, dna, rating, verdict in sorted(favs, key=lambda f: (-(f[4] or 0), f[0]['name'])):
             ff = short83(p['name'], ftaken, '.BSP')
             files['FAVORITE/%s' % ff] = (crlf(dna + '\n'), 'Favourites/%s.bsp' % re.sub(r'[\\/:*?"<>|]', '', p['name']))
+        # a pack's own sounds (the gardens packs): the NAMEs its presets use that the stock library disc lacks
+        lib_lines, credits = [], set()
+        if pk.get('new'):
+            from common import dna_names, BUILTIN
+            stock = stock_names()
+            cat = catalog()
+            used = sorted({n for p in ps for n in dna_names(p['canonical']) if n not in BUILTIN and n not in stock})
+            staken = set()
+            for n in used:
+                e = cat.get(n)
+                src = e and os.path.join(LIB, 'sources', e['category'], n + '.wav')
+                if not src or not os.path.exists(src): raise SystemExit('missing sound %s for %s' % (n, pk['id']))
+                fn = short83(n.replace('gd_', '').replace('pw_', 'pw'), staken, '.WAV')
+                data = open(src, 'rb').read()
+                files['SOUNDS/' + fn] = (data, 'Sounds/%s.wav' % n)
+                secs = (len(data) - 44) / 2 / 22050
+                lib_lines.append('%s\t%s\t\\SOUNDS\\%s\t%.2f\t%s' % (n, e['category'], fn, secs, e.get('license', '') if e.get('author', '') in e.get('license', '') else '%s, %s' % (e.get('author', ''), e.get('license', ''))))
+                credits.add(e.get('author', ''))
         nxp = sum('XP' in p['ships'] for p in ps)
         n311 = sum('3.11' in p['ships'] for p in ps)
-        info = [('Id', pk['id']), ('Title', title), ('Version', pp.get('version') or kv.get('Version') or '1.0'),
-                ('Author', kv.get('Author', '')), ('Date', pp.get('date') or kv.get('Date', '')), ('Presets', str(len(ps))),
+        info = [('Id', pk['id']), ('Title', title), ('Product', '%s by %s' % (PRODUCT, MAKER)), ('Version', pp.get('version') or kv.get('Version') or '1.0'),
+                ('Author', kv.get('Author') or pp.get('maker') or ''), ('Date', pp.get('date') or kv.get('Date', '')), ('Presets', str(len(ps))),
                 ('Presets311', str(n311)), ('PresetsXP', str(nxp)), ('Favourites', str(len(favs))), ('Description', pk['blurb'])]
         files['PACK.INF'] = (crlf('[Pack]\n' + ''.join('%s=%s\n' % kv_ for kv_ in info)), 'PACK.INF')
-        txt = '%s\n%s\n\n' % (title, '=' * len(title)) + ''.join('%s: %s\n' % kv_ for kv_ in info)
+        txt = '%s\n%s\n\nA sound pack for %s by %s (Windows 3.11).\n\n' % (title, '=' * len(title), PRODUCT, MAKER) + ''.join('%s: %s\n' % kv_ for kv_ in info)
+        if pk.get('new'):
+            txt += '\nSounds on this disc (SOUNDS\\, listed in LIBRARY.TSV):\n' + ''.join('  %s\n' % c for c in sorted(credits) if c)
+            txt += '  Rendered from William Sharkey\'s own instruments in midigarden / Bele Dance and ghosts.garden.\n'
+            if any('Paul Chauncy' in c for c in credits):
+                txt += '  Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly): permission from the author, via the owner, 2026-11-14.\n'
         txt += '\nFavourites (the owner\'s picks): FAVORITE\\\n' + ''.join('  %s (%s)\n' % (f[0]['name'], f[0]['category']) for f in favs)
         files['PACK.TXT'] = (crlf(txt), 'PACK.TXT')
         files['AUTORUN.INF'] = (crlf('[autorun]\nlabel=%s\n' % title[:32]), 'AUTORUN.INF')
-        files['PRESETS.TSV'] = (crlf('# category\tname\tDNA\tpack\teditions\trating\tverdict\tfile\n' + '\n'.join(rows) + '\n'), 'PRESETS.TSV')
-        files['LIBRARY.TSV'] = (crlf('# name\tcategory\tpath\tseconds\tsource/licence\n'), 'LIBRARY.TSV')
+        files['PRESETS.TSV'] = (crlf('# %s by %s presets: category\tname\tDNA\tpack\teditions\trating\tverdict\tfile\n' % (PRODUCT, MAKER) + '\n'.join(rows) + '\n'), 'PRESETS.TSV')
+        files['LIBRARY.TSV'] = (crlf('# name\tcategory\tpath\tseconds\tsource/licence\n' + ''.join(l + '\n' for l in lib_lines)), 'LIBRARY.TSV')
         # the folder copy and the ISO
         root = os.path.join(outdir, label)
         for path, (data, _) in files.items():
@@ -171,7 +214,7 @@ def main():
         index.append('\t'.join([pk['id'], label, label + '.ISO', title, str(len(ps)), str(n311), str(nxp), str(len(favs))]))
         print('%-22s %-12s %4d presets, %3d favourites, %6d bytes' % (pk['id'], label, len(ps), len(favs), os.path.getsize(isop)))
     open(os.path.join(outdir, 'DISCS.TSV'), 'w', newline='\r\n').write(
-        '# id\tlabel\tiso\ttitle\tpresets\tpresets_311\tpresets_xp\tfavourites\n' + '\n'.join(index) + '\n')
+        '# %s by %s sound pack discs: id\tlabel\tiso\ttitle\tpresets\tpresets_311\tpresets_xp\tfavourites\n' % (PRODUCT, MAKER) + '\n'.join(index) + '\n')
 
 
 if __name__ == '__main__':

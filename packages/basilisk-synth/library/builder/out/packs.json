@@ -388,5 +388,72 @@
    "w311": "w311/electromech-heritage.tsv",
    "xp": "xp/electromech-heritage.tsv"
   }
+ },
+ {
+  "id": "paulywaulophone",
+  "name": "Paulywaulophone",
+  "blurb": "Uncle Homunculus plays the office piano. Everyone sings along.",
+  "presets": 62,
+  "xp": 0,
+  "w311_badge": 48,
+  "v3": 6,
+  "library": 61,
+  "categories": {
+   "Bass": 8,
+   "Bell": 8,
+   "Keys": 14,
+   "Kit": 6,
+   "Lead": 6,
+   "Pad": 10,
+   "Vocal": 10
+  },
+  "files": {
+   "w311": "w311/paulywaulophone.tsv",
+   "xp": "xp/paulywaulophone.tsv"
+  }
+ },
+ {
+  "id": "garden-rhythm",
+  "name": "Garden Rhythm Works",
+  "blurb": "Drums, rave stabs and talking machines from the garden shed.",
+  "presets": 56,
+  "xp": 0,
+  "w311_badge": 56,
+  "v3": 14,
+  "library": 56,
+  "categories": {
+   "Kit": 14,
+   "Mallet": 8,
+   "Pad": 10,
+   "Perc": 8,
+   "Stab": 8,
+   "Vocal": 8
+  },
+  "files": {
+   "w311": "w311/garden-rhythm.tsv",
+   "xp": "xp/garden-rhythm.tsv"
+  }
+ },
+ {
+  "id": "tape-parlour",
+  "name": "Tape Parlour Ensemble",
+  "blurb": "Eight seconds of tape behind every key.",
+  "presets": 41,
+  "xp": 0,
+  "w311_badge": 41,
+  "v3": 41,
+  "library": 41,
+  "categories": {
+   "Brass": 6,
+   "Keys": 4,
+   "Lead": 8,
+   "Organ": 5,
+   "Strings": 10,
+   "Vocal": 8
+  },
+  "files": {
+   "w311": "w311/tape-parlour.tsv",
+   "xp": "xp/tape-parlour.tsv"
+  }
  }
 ]

@@ -137,10 +137,11 @@ def assign_pools(d, poly):
 def compose(cat, rng, prefer=(), only=None):
     c = CATS[cat]
     if only:
-        pool = [((n, t), w) for n, w, t in c['pool'] if n in only]
-        if len(pool) < 3:
-            pool += [((n, [None, 'loop'] if c['kind'] in ('pad', 'lead', 'drone') else [None, (0, SRC[n]['seconds'] * 0.4)]), 1)
-                     for n in only if n not in [p[0][0] for p in pool]]
+        # the group's own sounds lead (weight 3; Windows sounds listed for sparkle stay companions mostly)
+        pool = [((n, t), 1) for n, w, t in c['pool'] if n in only]
+        pool += [((n, [None, 'loop'] if c['kind'] in ('pad', 'lead', 'drone') else [None, (0, SRC[n]['seconds'] * 0.4)]),
+                  3 if (n.startswith('gd_') or n.startswith('pw_')) else 1)
+                 for n in sorted(only) if known(n) and n not in [p[0][0] for p in pool]]
     else:
         pool = [((n, t), w * (4 if n in prefer else 1)) for n, w, t in c['pool'] if known(n)]
         pool += [((n, [None]), 3) for n in prefer if known(n) and n not in [p[0][0] for p in pool]
@@ -191,6 +192,10 @@ def compose(cat, rng, prefer=(), only=None):
 
 def companion(role, root, rng, c, only=None):
     pool = [((n, t), w) for n, w, t in ROLES[role] if known(n) and (not only or n in only)]
+    if not pool and only:
+        # a pack with its own sounds: companions come from them (tonal ones for pitched roles, others for click/air)
+        want_tonal = role not in ('click', 'air')
+        pool = [((n, [None]), 1) for n in sorted(only) if known(n) and bool(SRC[n].get('tonal')) == want_tonal]
     if not pool: return None
     name, trims = wpick(rng, pool)
     L = Layer(name, trim_steps(name, rng.choice(trims)))
@@ -421,3 +426,81 @@ V3_IDEAS = [
     {'idea': 'Round-robin clicks for typewriter/relay instruments', 'needs': 'v3 round robin', 'from': 'Electromech'},
     {'idea': 'Pitch envelopes (scoops, drops, 808 glide)', 'needs': 'v3 pitch envelope', 'from': 'Shakuhachi Hammer, 808 bass targets'},
 ]
+
+
+# ------------------------------------------------------------------ kits (DNA v3 kit mode: PRESET-ENGINE-2.md 15)
+PAULY_KIT = [(36, 'pw_boop'), (35, 'pw_bass'), (38, 'pw_doo'), (37, 'gd_kit_studio_rim'), (39, 'pw_hmm'),
+             (40, 'gd_kit_studio_snare'), (42, 'gd_kit_studio_hat'), (44, 'gd_kit_studio_tighthat'),
+             (46, 'gd_kit_studio_openhat'), (45, 'pw_sax'), (47, 'pw_guitar_pad'), (50, 'pw_flutecorder'),
+             (49, 'pw_glock'), (51, 'pw_fork'), (54, 'gd_kit_studio_tamb'), (56, 'pw_bee_organ')]
+MODAL_PADS = {'taiko': ['odaiko', 'shime', 'nagadolo', 'nagado', 'okedo', 'atarigane', 'chappa', 'ka'],
+              'tabla': ['ge', 'na', 'ke', 'tin', 'tun', 'te', 'gheglide', 'ra'],
+              'glitch': ['kick', 'snap', 'grit', 'zap', 'tick', 'fuzz', 'blip', 'err'],
+              'timpani': ['c3', 'd3', 'e3', 'g3', 'a3', 'c4', 'd4', 'e4']}
+HATS = (42, 44, 46)
+
+
+def kit_map(kit, style):
+    """[(note, NAME)] for a kit, in note order"""
+    from packs import GM, HANDS
+    if style == 'pauly': m = PAULY_KIT
+    elif style in ('rosewood', 'mouth'):
+        m = [(n, 'gd_kit_%s_%s' % (kit, p)) for p, n in GM[style].items()]
+    elif style == 'hands':
+        m = [(36 + i, 'gd_kit_%s_%s' % (kit, p)) for i, p in enumerate(HANDS)]
+    else:   # modal: the eight pads chromatic from C2, then again an octave up as the edge strokes would be
+        m = [(36 + i, 'gd_%s_%s' % (kit, p)) for i, p in enumerate(MODAL_PADS[kit])]
+    return sorted((n, s) for n, s in m if known(s))
+
+
+def kit_dna(kit, style, rng, strip_step=None, release=None):
+    m = kit_map(kit, style)
+    names = [s for _, s in m]
+    steps = []
+    for s in names[1:]:
+        steps += ['@t30000', 'I' + s]
+    st = strip_step if strip_step is not None else wpick(rng, [('', 6), ('E', 2), ('<', 1), ('+', 1), ('-', 1)])
+    steps += treat_steps(st)
+    L = Layer(names[0], steps, {'#': 16})
+    pads = ''
+    for j, (n, s) in enumerate(m):
+        t = 'k%dj%d' % (n, j + 1)
+        if n in HATS and style in ('rosewood', 'mouth'): t += 'c1'
+        pads += t
+    d = DNA([L], {'R': release or int(rng.choice([80, 120, 160, 220, 300])), 'V': int(rng.choice([80, 90, 100]))}, '', pads)
+    return d
+
+
+def kit_mutate(d, rng):
+    d = d.copy()
+    op = rng.choice(['rel', 'vel', 'step', 'level'])
+    L = d.layers[0]
+    if op == 'rel': d.glob['R'] = clampi(d.glob.get('R', 120) * 2 ** rng.gauss(0, 0.6), 40, 900)
+    elif op == 'vel': d.glob['V'] = clampi(d.glob.get('V', 90) + rng.uniform(-15, 15), 50, 100)
+    elif op == 'step':
+        tail = [x for x in L.steps if not (x.startswith('@t') or x.startswith('I'))]
+        body = [x for x in L.steps if x.startswith('@t') or x.startswith('I')]
+        tail = [] if tail else treat_steps(rng.choice(['E', '<', '+', '-', 'EE', '<E']))
+        L.steps = body + tail
+    else:   # one pad louder or softer
+        toks = re.findall(r'k\d+[^k]*', d.pads)
+        if toks:
+            i = rng.randrange(len(toks)); t = re.sub(r'i\d+', '', toks[i]) + 'i%d' % rng.choice([60, 75, 125, 150])
+            toks[i] = t; d.pads = ''.join(toks)
+    return d, [op]
+
+
+def tapeify(d, rng):
+    """tape-replay character (PRESET-ENGINE-2.md 6): an 8 s tape per key (Wm8000), a little per-key detune and level
+    (Yd..l..k: seeded per key, so each key keeps its own tape), wow and flutter (Vw, Vf), a tape-start scoop (Vs), a
+    slow tape-start attack, little velocity response and the quick stop of a released tape"""
+    d = d.copy()
+    for L in d.layers:
+        if L.genes.get('F'): continue
+        L.genes['W'] = re.sub(r'm\d+', '', L.genes.get('W', '')) + 'm8000'
+        L.genes['Y'] = 'd%dl%dk' % (rng.choice([3, 4, 6, 8]), rng.choice([0, 6, 10]))
+        L.genes['V'] = 'w%d,%df%d,%ds%d,%d' % (rng.choice([6, 10, 14, 20]), rng.choice([4, 6, 8]), rng.choice([2, 3, 5]),
+                                               rng.choice([7, 9, 11]), rng.choice([20, 35, 50]), rng.choice([60, 90, 140]))
+        L.genes.pop('U', None) if rng.random() < 0.5 else None
+    d.glob.update(A=rng.choice([25, 40, 60]), D=0, S=100, R=rng.choice([120, 180, 250]), V=rng.choice([20, 30, 45]))
+    return d

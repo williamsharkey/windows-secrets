@@ -147,6 +147,25 @@ def plan_targets(a, rng):
                 TT.append(T(id='%s-%s-%03d' % (p['id'], name.lower().replace(' ', '-'), i), src='fill', name='', pack=p['id'],
                             group=name, scat=cat, role=name.lower(), seed=None, alts=[], v3=None, character='', priority=3,
                             only=p.get('only'), prefer=p.get('prefer', [])))
+    if getattr(a, 'packs2', False):
+        # the gardens packs (packs.PACKS2): fills from each group's own sounds, and the kits of KITS2
+        from packs import PACKS2, GROUP_ONLY, KITS2
+        TT = []
+        for p in PACKS2:
+            if getattr(a, 'pack', None) and p['id'] != a.pack: continue
+            for name, cat, n2, n3 in p['groups']:
+                if cat == 'Kit':
+                    for kit, style in KITS2.get(p['id'], []):
+                        TT.append(T(id='%s-kit-%s' % (p['id'], kit), src='kit', name='', pack=p['id'], group=name, scat='Kit',
+                                    role='kit', seed=None, alts=[], v3=None, character='', priority=2, kit=(kit, style)))
+                    continue
+                if getattr(a, 'kits_only', False): continue
+                only = GROUP_ONLY.get((p['id'], name))
+                for i in range(int(round(n2 * a.fill * 1.8))):
+                    TT.append(T(id='%s-%s-%03d' % (p['id'], name.lower(), i), src='fill', name='', pack=p['id'], group=name,
+                                scat=cat, role=name.lower(), seed=None, alts=[], v3=None, character='', priority=3,
+                                only=only, prefer=[]))
+        return TT
     if getattr(a, 'repair', None):
         # a repair wave: researched targets with no passing lineage, restarted from their best candidate
         TT = [T(**t) for t in json.load(open(a.repair))]
@@ -186,10 +205,15 @@ def lineages(t, rng):
             g = [x for x in pk['groups'] if x[0] == t.group]
             if t.v3: out.append(('v3', t.v3))
             elif g and g[0][3] > 0 or t.scat in gen.V3W: out.append(('v3', gen.humanize(d, t.scat, rng).text()))
+    elif getattr(t, 'kit', None):
+        kit, style = t.kit
+        for st in ('', 'E', '<'):
+            out.append(('kit-' + (st or 'dry'), gen.kit_dna(kit, style, rng, strip_step=st).text()))
     else:
         for i in range(2):
             d, _ = gen.compose(t.scat, rng, prefer=set(t.prefer or ()), only=set(t.only) if t.only else None)
-            out.append(('fill', d.text()))
+            if PACK_BY_ID[t.pack].get('tape'): out.append(('v3-tape', gen.tapeify(d, rng).text()))
+            else: out.append(('fill', d.text()))
     return out
 
 
@@ -234,7 +258,7 @@ def v3_variants(t, rng):
 
 def job_for(t, dna):
     k = CATS[t.scat]['kind']
-    s, tail, singles = phrases.probe(k)
+    s, tail, singles = phrases.probe(k, dna)
     j = dict(dna=dna, score=s, tail=tail, kind=k, singles=singles)
     if needs_bpm(dna): j['bpm'] = BPM.get(t.pack, 120)
     return j
@@ -266,6 +290,8 @@ def main():
     ap.add_argument('--pack'); ap.add_argument('--limit', type=int)
     ap.add_argument('--seed', type=int, default=1999)
     ap.add_argument('--out', default='evolve')
+    ap.add_argument('--packs2', action='store_true', help='the gardens packs (packs.PACKS2)')
+    ap.add_argument('--kits-only', action='store_true')
     ap.add_argument('--repair', help='JSON list of targets (with seed = best DNA so far)')
     ap.add_argument('--deficits', help='JSON {pack: {group: missing}}: a fill wave for those groups')
     ap.add_argument('--v3pass', action='store_true', help='only the v3 (N S W-time) variants of the plan targets')
@@ -306,7 +332,11 @@ def main():
                 cn.append((ti, lin, gen.retune(d, best['info']['retune']).text(), 'retune'))
             n = 1 if best['ok'] else 2
             for _ in range(n):
+                if t.scat == 'Kit':
+                    m, log = gen.kit_mutate(d, rng)
+                    cn.append((ti, lin, m.text(), 'mutant:' + '+'.join(log))); continue
                 m, log = gen.mutate(d, t.scat, rng)
+                if lin == 'v3-tape': m = gen.tapeify(m, rng)
                 if lin == 'w311' or getattr(t, 'only', None):
                     m = twin31(m) or m
                 if not lin.startswith('v3'):

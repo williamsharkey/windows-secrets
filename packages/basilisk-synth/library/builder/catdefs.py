@@ -265,6 +265,9 @@ CATS = {
               attack=(0, 0.02), sus=(-120, 0), dec20=(0.01, 0.6), cen=(40, 12000), flat_max=1.0,
               companions=[('click', 3), ('air', 2), ('sub', 1)], treat=[('', 5), ('>', 2), ('<', 2), ('+', 2), ('E', 1)],
               speed=False, poly=6, fixed=0.5, layers=(1, 2), lw=(3, 3)),
+    'Kit': C(kind='kit', tonal=False, tol=999, pool=[], U=[((1, 0), 1)], H=[([0], 1)], A=(0, 0), D=(0, 0), S=(100, 100),
+             R=(60, 400), attack=(0, 0.05), sus=(-120, 6), dec20=(0.01, 3), cen=(40, 14000), flat_max=1.0,
+             companions=[], treat=[('', 1)], speed=False, poly=6, layers=(1,), lw=(1,)),
 }
 
 # which builder kind each research category maps to, and our category
@@ -293,4 +296,4 @@ EM_KIND = {'Bells': 'bell', 'Mallets': 'bell', 'Leads': 'lead', 'Drones': 'drone
 # how many to keep per category (quality over count: these are ceilings, not quotas)
 QUOTA = {'Keys': 75, 'EP': 50, 'Organ': 45, 'Bass': 80, 'Pads': 85, 'Strings': 45, 'Choir/Vox': 40, 'Brass/Stabs': 55,
          'Leads': 70, 'Plucks/Arps': 80, 'Bells/Mallets': 90, 'World': 50, 'FX/Risers': 60, 'Drones/Ambient': 50,
-         'Textures': 50, 'Perc': 40, 'Lo-fi/Vaporwave': 65, 'Frutiger Aero': 65, 'Y2K/Corporate': 55, 'Electromech': 65}
+         'Textures': 50, 'Perc': 40, 'Kit': 40, 'Lo-fi/Vaporwave': 65, 'Frutiger Aero': 65, 'Y2K/Corporate': 55, 'Electromech': 65}

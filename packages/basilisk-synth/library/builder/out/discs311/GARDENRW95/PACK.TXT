@@ -1,0 +1,22 @@
+Garden Rhythm Works
+===================
+
+A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+
+Id: garden-rhythm
+Title: Garden Rhythm Works
+Product: SNDWAVE2000 by Algorithmic Industries
+Version: 4.0
+Author: Potting Shed Software
+Date: 1995-04-22
+Presets: 56
+Presets311: 56
+PresetsXP: 0
+Favourites: 0
+Description: Drums, rave stabs and talking machines from the garden shed.
+
+Sounds on this disc (SOUNDS\, listed in LIBRARY.TSV):
+  William Sharkey
+  Rendered from William Sharkey's own instruments in midigarden / Bele Dance and ghosts.garden.
+
+Favourites (the owner's picks): FAVORITE\

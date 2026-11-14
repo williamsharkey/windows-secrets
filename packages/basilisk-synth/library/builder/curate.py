@@ -45,6 +45,8 @@ def main():
     ap.add_argument('--min-dist', type=float, default=1.6)
     ap.add_argument('--min-score', type=float, default=55)
     ap.add_argument('--min-score-research', type=float, default=20)
+    ap.add_argument('--out', default='selection.json')
+    ap.add_argument('--avoid', help='a library json whose names must not be reused')
     ap.add_argument('--rescore', action='store_true'); ap.add_argument('--feat', default=os.path.expanduser('~/libbuild/feat'))
     a = ap.parse_args()
     T, rows = [], []
@@ -80,6 +82,9 @@ def main():
         if k not in best or r['score'] > best[k]['score']: best[k] = r
     print(len(rows), 'rows,', sum(r['ok'] for r in rows), 'pass,', len(best), 'lineages with a keeper')
     namer = Namer()
+    if a.avoid:   # names already shipped elsewhere stay unique
+        from common import load_json
+        for q in load_json(a.avoid, []): namer.used.add(q['name'].lower())
     chosen, used_dna = [], set()
     pack_feats = {}
 
@@ -133,6 +138,7 @@ def main():
                 return (r['lin'] == 'hero', r['score'] + (6 if r['lin'] != 'fill' else 0))
             cs.sort(key=key, reverse=True)
             n_v2 = n_v3 = 0
+            if cat == 'Kit' or p.get('tape'): n3, n2 = n2 + n3, 0       # kits and tape presets are v3 by nature
             for r in cs:
                 if r['lin'] == 'w311' and edition(r['dna']) == 'w31' and 'library' not in origins(r['dna']):
                     continue          # the 3.x twins go to the Heritage Edition first (below)
@@ -153,7 +159,7 @@ def main():
             if n >= n2 + n3: break
             if r.get('v3') and n >= n2: pass
             if take('w3x-heritage', gname, prog_of(gname), r, 'heritage'): n += 1
-    save_json('selection.json', chosen)
+    save_json(a.out, chosen)
     # what each pack group still lacks (for evolve.py --deficits)
     de = {}
     for p in PACKS:
