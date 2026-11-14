@@ -74,3 +74,82 @@
 #results .prow .pc a { color: inherit; }
 main.wait { min-height: 180vh; }   /* until packs.json is in: the footer stays below the fold, so filling the shelf shifts nothing in view */
 .card b, .pside, .ptext { overflow-wrap: anywhere; }
+
+/* ---- the media player (Windows 3.1: grey bevels, the system font; the brand's Grid sun in the title bar) */
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.pbody .viewer { grid-column: 1 / -1; }
+.mp { margin: 16px 4px 10px; background: var(--face); font: 13px/1.35 "MS Sans Serif", "Microsoft Sans Serif", "SW Sans", "DejaVu Sans", Arial, sans-serif; color: #000; }
+.mp .cap .t { display: flex; align-items: center; justify-content: safe center; gap: 6px; min-width: 0; }
+.mp .cap .tt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.mp .cap .t img { width: 16px; height: 16px; flex: none; }
+.mp-body { display: grid; grid-template-columns: 300px minmax(0, 1fr) 216px; grid-template-areas: "left art side" "left rec rec" "left trans trans";
+  gap: 8px 10px; padding: 10px; }
+.mp-left { grid-area: left; display: flex; flex-direction: column; gap: 5px; min-height: 0; min-width: 0; }
+.mp-lbl { font-weight: 700; display: block; margin-bottom: 4px; }
+.mp-combo, .mp-field { font: inherit; color: #000; background: #fff; border: 1px solid #000; border-radius: 0; padding: 2px 4px; width: 100%; box-shadow: inset 1px 1px 0 var(--lo); }
+.mp-combo { height: 24px; }
+.mp-list { flex: 1 1 0; min-height: 200px; overflow-y: auto; background: #fff; border: 1px solid #000; box-shadow: inset 1px 1px 0 var(--lo); outline: none; }
+.mp-list:focus-visible { outline: 1px dotted #000; outline-offset: -3px; }
+.mp-cat { position: sticky; top: 0; z-index: 1; background: #e8e8e8; border-bottom: 1px solid #808080; padding: 1px 6px; font-weight: 700; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; }
+.mp-it { display: flex; align-items: center; gap: 4px; padding: 1px 4px 1px 2px; cursor: default; white-space: nowrap; }
+.mp-it .pl { width: 12px; flex: none; text-align: center; font-size: 9px; }
+.mp-it.on .pl::before { content: "\25B6"; }
+.mp-it .nm { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.mp-it .st { color: #8a1c1c; }
+.mp-it .rt { margin-left: auto; font-size: 11px; color: #404040; }
+.mp-it .soon { margin-left: auto; font-size: 10.5px; color: #808080; font-style: italic; }
+.mp-it .rt + .soon { margin-left: 6px; }
+.mp-it.na .nm { color: #808080; }
+.mp-it[aria-selected="true"] { background: var(--sel); color: #fff; }
+.mp-it[aria-selected="true"] .nm, .mp-it[aria-selected="true"] .st, .mp-it[aria-selected="true"] .rt, .mp-it[aria-selected="true"] .soon { color: #fff; }
+.mp-checks { display: flex; flex-wrap: wrap; gap: 2px 14px; }
+.mp-checks label { display: inline-flex; align-items: center; gap: 4px; }
+.mp-art { grid-area: art; min-width: 0; }
+.mp-artbox { background: var(--face); display: flex; justify-content: center; align-items: center; line-height: 0; padding: 0; }
+.mp-artbox canvas { display: block; box-shadow: 0 0 0 1px #000; image-rendering: pixelated; image-rendering: crisp-edges; max-width: 100%; height: auto; }
+.mp-side { grid-area: side; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.mp-lcd { background: #000; color: #00ff00; border: 1px solid #000; box-shadow: inset 1px 1px 0 var(--lo), inset -1px -1px 0 var(--hi); padding: 4px 8px;
+  font: 700 24px/1.1 "DejaVu Sans Mono", "Lucida Console", ui-monospace, monospace; letter-spacing: .02em; display: flex; flex-direction: column; }
+.mp-lcd .len { font-size: 12px; color: #00a000; font-weight: 400; }
+.mp-scopebox { background: #000; border: 1px solid #000; line-height: 0; display: flex; justify-content: center; }
+.mp-scopebox canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; max-width: 100%; height: auto; }
+.mp-now { background: #fff; border: 1px solid #000; box-shadow: inset 1px 1px 0 var(--lo); padding: 5px 7px; display: flex; flex-direction: column; gap: 1px; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.mp-now .nm { font-size: 14.5px; overflow-wrap: anywhere; }
+.mp-now .st { color: #8a1c1c; }
+.mp-now .rt { font: 700 11px/16px Arial, sans-serif; background: #8a1c1c; color: #fff; padding: 0 4px; }
+.mp-now a { color: #000080; }
+.mp-now .mk { color: #404040; font-size: 12px; }
+.mp-rec { grid-area: rec; min-width: 0; }
+.mp-rec pre { margin: 0; height: 74px; overflow: auto; background: #fff; color: #000; border: 1px solid #000; box-shadow: inset 1px 1px 0 var(--lo); padding: 4px 6px;
+  font: 12px/1.45 "DejaVu Sans Mono", "Lucida Console", ui-monospace, monospace; white-space: pre; }
+.mp-recb { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-top: 5px; }
+.mp-recb .btn { margin: 0; font-size: 12.5px; padding: 2px 10px; }
+.mp-links { display: inline-flex; flex-wrap: wrap; gap: 2px 12px; margin-left: auto; }
+.mp-links a { color: #000080; }
+.mp-trans { grid-area: trans; display: flex; align-items: center; gap: 4px; min-width: 0; }
+.mp-b { width: 40px; height: 30px; padding: 0; margin: 0; display: grid; place-items: center; background: var(--face); border: 1px solid #000; border-radius: 2px;
+  box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--lo); cursor: pointer; color: #000; flex: none; }
+.mp-b:active, .mp-b.on { box-shadow: inset 2px 2px 0 var(--lo); }
+.mp-b svg { width: 16px; height: 12px; fill: currentColor; }
+.mp-b .i-pause, .mp-b.on .i-play { display: none; }
+.mp-b.on .i-pause { display: block; }
+.mp-seek { flex: 1 1 auto; min-width: 60px; margin: 0 0 0 8px; height: 18px; -webkit-appearance: none; appearance: none; background: #fff; border: 1px solid #000; box-shadow: inset 1px 1px 0 var(--lo); }
+.mp-seek::-webkit-slider-runnable-track { height: 16px; background: transparent; }
+.mp-seek::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 16px; background: var(--face); border: 1px solid #000; box-shadow: inset 1px 1px 0 var(--hi), inset -1px -1px 0 var(--lo); }
+.mp-seek::-moz-range-track { height: 16px; background: transparent; }
+.mp-seek::-moz-range-thumb { width: 14px; height: 16px; border-radius: 0; background: var(--face); border: 1px solid #000; box-shadow: inset 1px 1px 0 var(--hi), inset -1px -1px 0 var(--lo); }
+.mp-status { display: flex; justify-content: space-between; gap: 10px; border-top: 1px solid var(--lo); box-shadow: inset 0 1px 0 var(--hi); padding: 3px 8px; font-size: 12px; white-space: nowrap; overflow: hidden; }
+.mp-status span:first-child { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.mp-help { margin: 0 4px 6px; }
+@media (min-width: 901px) {   /* one screen: the list fills the window's height */
+  .mp-left { height: 0; min-height: 100%; }
+}
+@media (max-width: 900px) {
+  .mp-body { grid-template-columns: minmax(0, 1fr); grid-template-areas: "pick" "art" "side" "trans" "rec" "find" "list" "checks"; padding: 8px; }
+  .mp-left { display: contents; }
+  .mp-pick { grid-area: pick; } .mp-field { grid-area: find; } .mp-list { grid-area: list; } .mp-checks { grid-area: checks; }
+  .mp-side { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px; }
+  .mp-side .mp-now { grid-column: 1 / -1; }
+  .mp-scopebox { align-self: stretch; align-items: center; }
+  .mp-list { flex: none; height: 46vh; }
+}
