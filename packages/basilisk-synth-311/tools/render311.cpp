@@ -4,6 +4,7 @@
 //             [--tail SECONDS] [--log FILE] [--bits 24|32] [--bpm BPM]   (BPM: the tempo for v3 Wt, Wb, Wg; 120)
 //             [--key 0-11] [--scale ID] [--use-preset-scale 0|1] [--snap 1-4] [--remap 0|1] [--anchor NOTE]   (the plugin's
 //             Key, Scale, Use Preset Scale, Snap, Remap Keys and Remap Anchor parameters: PRESET-ENGINE-2 18.2)
+//             [--scala FILE.scl]   (an imported tuning, as the Scales page's Scala... button)
 //             [--user-dir DIR]   (My Recordings: index.tsv and the WAVs; their u_ names play, RECORDING.md 4.4)
 //
 // --score: notes as t:note:velocity:duration in seconds (the format of packages/basilisk-synth/tools/batch_render.py).
@@ -296,6 +297,12 @@ int main(int argc, char **argv)
         auto num = [&](const char *k, int &v) { if (a.count(k)) v = std::atoi(a[k].c_str()); };
         num("--key", kp.root); num("--scale", kp.scale); num("--use-preset-scale", kp.usePreset); num("--snap", kp.snap);
         num("--remap", kp.remap); num("--anchor", kp.anchor);
+        if (a.count("--scala")) {   // a Scala .scl (the plugin's Scala... import)
+            std::ifstream in(a["--scala"]); std::string t((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>()), err;
+            bsynth3::Tuning tu;
+            if (!bsynth3::parseScl(t, tu, &err)) { std::fprintf(stderr, "render311: --scala: %s\n", err.c_str()); return 2; }
+            kp.tuning = bsynth3::tuningText(tu);
+        }
         host.setKey(kp);
     }
     bool rateCap = false, tapeCap = false;

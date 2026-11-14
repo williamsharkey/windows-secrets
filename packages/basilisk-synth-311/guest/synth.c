@@ -923,32 +923,38 @@ static int mouseNote = -1, holdOn, keysOn, octBase = 60, modVal, bendVal;
 static WNDPROC oldBtnProc, oldStaticProc;
 static char kLabel[128][5]; static BYTE kOut[128];   /* the key's label from the host's scale; out of the scale */
 static HFONT kSmall;
+static int kLinear;   /* the linear strip: every key the same, side by side (a remap, or a tuning that is not 12-note) */
+static HWND hKeyLin[128];   /* the black notes' keys in the linear strip (push buttons like the whites) */
+#define KLW 13
 static int is_black(int n) { int k = n % 12; return k == 1 || k == 3 || k == 6 || k == 8 || k == 10; }
+static int key_black(int n) { return !kLinear && is_black(n); }   /* drawn as a black key now */
+static HWND key_wnd(int n) { return kLinear && is_black(n) ? hKeyLin[n] : hKey[n]; }
 static int white_index(int n) { static const int w[12] = {0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6}; return (n / 12 - KLO / 12) * 7 + w[n % 12]; }
 static void key_rect(int n, RECT *r)
 {
+    if (kLinear) { int x = KX0 + (n - KLO) * KLW; SetRect(r, x, KBY, x + KLW + 1, KBY + KWH); return; }
     if (is_black(n)) { int x = KX0 + (white_index(n) + 1) * KWW - KBW / 2; SetRect(r, x, KBY, x + KBW, KBY + KBH); }
     else { int x = KX0 + white_index(n) * KWW; SetRect(r, x, KBY, x + KWW + 1, KBY + KWH); }
 }
 static void key_visual(int n)
 {
-    int down;
-    if (n < KLO || n > KHI || !hKey[n]) return;
+    int down; HWND hk = key_wnd(n);
+    if (n < KLO || n > KHI || !hk) return;
     down = hostDown[n] || kbdDown[n] || latched[n] || mouseNote == n;
-    if (is_black(n)) {
-        LONG st = GetWindowLong(hKey[n], GWL_STYLE), want = (st & ~0x1FL) | (down ? SS_GRAYRECT : SS_BLACKRECT);
-        if (st != want) { SetWindowLong(hKey[n], GWL_STYLE, want); InvalidateRect(hKey[n], NULL, TRUE); }
+    if (key_black(n)) {
+        LONG st = GetWindowLong(hk, GWL_STYLE), want = (st & ~0x1FL) | (down ? SS_GRAYRECT : SS_BLACKRECT);
+        if (st != want) { SetWindowLong(hk, GWL_STYLE, want); InvalidateRect(hk, NULL, TRUE); }
     } else {   /* pushed in, with a dot on it; up, its scale label (a dimmed dash when out of the scale) */
         static HFONT dot;
-        if (!dot) dot = (HFONT)SendMessage(hKey[n], WM_GETFONT, 0, 0L);
-        SendMessage(hKey[n], BM_SETSTATE, down ? TRUE : FALSE, 0L);
-        if (down) { if (kLabel[n][0] || kOut[n]) SendMessage(hKey[n], WM_SETFONT, (WPARAM)dot, 0L); SetWindowText(hKey[n], "\x95"); }
+        if (!dot) dot = (HFONT)SendMessage(hk, WM_GETFONT, 0, 0L);
+        SendMessage(hk, BM_SETSTATE, down ? TRUE : FALSE, 0L);
+        if (down) { if (kLabel[n][0] || kOut[n]) SendMessage(hk, WM_SETFONT, (WPARAM)dot, 0L); SetWindowText(hk, "\x95"); }
         else if (kOut[n] || kLabel[n][0]) {
             if (!kSmall) kSmall = CreateFont(12, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Arial");
-            SendMessage(hKey[n], WM_SETFONT, (WPARAM)kSmall, 0L);
-            SetWindowText(hKey[n], kOut[n] ? "-" : kLabel[n]);
-        } else SetWindowText(hKey[n], "");
-        EnableWindow(hKey[n], !kOut[n] || down);   /* greyed out of the scale (a click still plays: the parent takes it) */
+            SendMessage(hk, WM_SETFONT, (WPARAM)kSmall, 0L);
+            SetWindowText(hk, kOut[n] ? "-" : kLabel[n]);
+        } else SetWindowText(hk, "");
+        EnableWindow(hk, !kOut[n] || down);   /* greyed out of the scale (a click still plays: the parent takes it) */
     }
 }
 static void note_on(int n, int vel) { if (n < 0 || n > 127) return; latched[n] = 0; say("key %d %d", n, vel); }
@@ -963,6 +969,7 @@ static int note_at(int x, int y, int *vel)
     int n;
     if (y < KBY || y >= KBY + KWH || x < KX0) return -1;
     *vel = 40 + 87 * (y - KBY) / KWH;   /* nearer the front of the key, louder */
+    if (kLinear) { n = KLO + (x - KX0) / KLW; return n <= KHI ? n : -1; }
     if (y < KBY + KBH)
         for (n = KLO; n <= KHI; n++) if (is_black(n)) { RECT r; key_rect(n, &r); if (x >= r.left && x < r.right) return n; }
     for (n = KLO; n <= KHI; n++) if (!is_black(n)) { RECT r; key_rect(n, &r); if (x >= r.left && x < r.right - 1) return n; }
@@ -1093,6 +1100,29 @@ static void keyboard_create(void)   /* at boot, hidden */
         SetWindowPos(hKey[n], HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     }
     mkGroup = g;
+}
+/* the strip's two layouts (PRESET-ENGINE-2 18.5): the piano, or linear when the keys walk scale steps (remap) or the
+   tuning is not a 12-note one: then every key is the same push button, one per MIDI note, with its step's label */
+static int kWantLin;
+static void kb_layout(int lin)
+{
+    int n;
+    kWantLin = lin;
+    if (lin == kLinear || !hKey[KLO] || !assembled) return;   /* (before the assembly: applied when it is done) */
+    kLinear = lin;
+    for (n = KLO; n <= KHI; n++) {
+        RECT r; key_rect(n, &r);
+        if (is_black(n)) {
+            if (lin && !hKeyLin[n]) {
+                hKeyLin[n] = mk("BUTTON", "", WS_CLIPSIBLINGS | BS_PUSHBUTTON, r.left, r.top, r.right - r.left, r.bottom - r.top, 0x100 | n);
+                SetWindowLong(hKeyLin[n], GWL_WNDPROC, (LONG)MakeProcInstance((FARPROC)KeyProc, hInst));
+            }
+            ShowWindow(hKey[n], lin ? SW_HIDE : SW_SHOWNA);
+            if (hKeyLin[n]) { SetWindowPos(hKeyLin[n], NULL, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_NOZORDER | SWP_NOACTIVATE); ShowWindow(hKeyLin[n], lin ? SW_SHOWNA : SW_HIDE); }
+        } else SetWindowPos(hKey[n], NULL, r.left, r.top, r.right - r.left, r.bottom - r.top, SWP_NOZORDER | SWP_NOACTIVATE);
+        key_visual(n);
+    }
+    { RECT kr; SetRect(&kr, KX0, KBY, 1024, KBY + KWH + 2); InvalidateRect(hMain, &kr, TRUE); }
 }
 /* After a rebuild (and the assembly) controls can be left unpainted: a window that saved the screen bits under it
    (one of Sound Recorder's dialog boxes while the DNA is built, before the hook moves it off screen) gives them back
@@ -1950,6 +1980,7 @@ static void scales_values(void)
     SetScrollPos(scAnchorSb, SB_CTL, keyAnchor, TRUE);
     sprintf(t, "%s%d", nm[keyAnchor % 12], keyAnchor / 12 - 1); SetWindowText(scAnchorVal, t);
 }
+static HWND scScala; static char scalaText[80];   /* the imported Scala tuning, if any */
 static void scales_page(int y0)
 {
     int k, x, w; HWND b;
@@ -1971,7 +2002,9 @@ static void scales_page(int y0)
     page_add(mklbl("Anchor", x, y0 + 64, 16, &w)); x += w + 3;
     scAnchorSb = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, x, y0 + 64, 90, 14, ID_SC + 40); page_add(scAnchorSb);
     SetScrollRange(scAnchorSb, SB_CTL, 24, 96, FALSE); x += 94;
-    scAnchorVal = mk("STATIC", "", WS_VISIBLE, x, y0 + 64, 40, 16, -1); page_add(scAnchorVal);
+    scAnchorVal = mk("STATIC", "", WS_VISIBLE, x, y0 + 64, 40, 16, -1); page_add(scAnchorVal); x += 52;
+    b = mkbtn("Scala...", x, y0 + 60, 24, ID_SC + nScBtn, &w); page_add(b); scBtn[nScBtn++] = b; x += w + 6;   /* (i 23) */
+    scScala = mk("STATIC", scalaText, WS_VISIBLE, x, y0 + 64, 870 - x, 16, -1); page_add(scScala);
     scales_values();
 }
 static void scales_command(int i)
@@ -1981,6 +2014,7 @@ static void scales_command(int i)
     else if (i >= 5 && i <= 9) keyLabels = i - 5;
     else if (i >= 10 && i <= 21) { int k = i - 10; if (k) { if (keySteps > 12) keyMask = 0xAB5; keyMask ^= 1 << k; keyMask |= 1; say("keymask %d", keyMask); PostMessage(hMain, WM_USER + 7, 0, 0L); return; } }
     else if (i == 22) keyRemap = !keyRemap;
+    else if (i == 23) { say("scala import"); return; }   /* the host's open dialog: a .scl or .kbm */
     say("keyopt %d %d %d %d %d", keyUse, keySnap, keyRemap, keyLabels, keyAnchor);
     PostMessage(hMain, WM_USER + 7, 0, 0L);   /* the buttons' down states after the click is over: a push button
                                                   set down (BM_SETSTATE) inside its own BN_CLICKED clicks again later */
@@ -2046,7 +2080,7 @@ static void page_close(void)
     int i;
     for (i = 0; i < npg; i++) DestroyWindow(pgWin[i]);
     npg = npgSb = npgBtn = 0; nScBtn = 0;
-    recAsk[0] = recAsk[1] = NULL; recStatus = recList = recSlotBtn = NULL;   /* (the Rec page's, gone with it) */
+    recAsk[0] = recAsk[1] = NULL; recStatus = recList = recSlotBtn = NULL; scScala = NULL;   /* (the Rec page's, gone with it) */
 }
 static void page_add(HWND w) { if (npg < 64) pgWin[npg++] = w; }
 static void rec_page(int y0);
@@ -3126,6 +3160,7 @@ static void assemble(void)
     stage[5] = timeGetTime() - tStart;   /* (keys made: now with the Calculator's) */
     assembled = TRUE;
     assembling = FALSE;
+    kb_layout(kWantLin);
     for (r = 0; r < NR; r++) layout_strip(r);
     for (r = 0; NB > 1 && r < NR; r++) {   /* a spare bank (NB 2) would take the same rows, hidden */
         HWND w = rw[NR + r]; LONG st;
@@ -3288,6 +3323,12 @@ static void host_line(char *s)
         }
     }
     else if (!strcmp(s, "user")) rec_user(rest);
+    else if (!strcmp(s, "scala")) {   /* scala ok <steps> <name> | scala error <message> */
+        if (!strncmp(rest, "ok ", 3)) { char *n = strchr(rest + 3, ' '), *c; wsprintf(scalaText, "Scala: %s (%d notes)", (LPSTR)(n ? n + 1 : ""), atoi(rest + 3)); for (c = scalaText; *c; c++) if (*c == '_') *c = ' '; }
+        else if (!strcmp(rest, "off")) scalaText[0] = 0;
+        else lstrcpyn(scalaText, rest, sizeof scalaText);
+        if (scScala && curTab == 3) SetWindowText(scScala, scalaText);
+    }
     else if (!strcmp(s, "recstop")) {   /* stop recording now (an offline render): Sound Recorder's own Stop */
         if (recording == NR && hRecRec) SendMessage(hRecRec, WM_COMMAND, SR_STOP, MAKELPARAM(GetDlgItem(hRecRec, SR_STOP), BN_CLICKED));
         else if (recording >= 0) SendMessage(rw[AR(recording)], WM_COMMAND, SR_STOP, MAKELPARAM(GetDlgItem(rw[AR(recording)], SR_STOP), BN_CLICKED));
@@ -3323,7 +3364,7 @@ static void host_line(char *s)
                 if (kOut[n] || L > 4) L = kOut[n] ? 0 : 4;
                 memcpy(kLabel[n], p, L); kLabel[n][L] = 0;
                 { char *c; for (c = kLabel[n]; *c; c++) if (*c == '_') *c = ' '; }
-                if (!is_black(n)) key_visual(n);
+                if (!key_black(n)) key_visual(n);
                 if (!e) break;
                 p = e + 1;
             }
@@ -3333,6 +3374,7 @@ static void host_line(char *s)
         char st[200]; int n = 0, per = 0;
         if (sscanf(rest, "%d %d %d %d %199s %d %d %d %d %d %d", &keyRoot, &keyScale, &n, &per, st, &keyRemap, &keyAnchor, &keyLabels, &keyMask, &keyUse, &keySnap) >= 9) {
             keySteps = n;
+            kb_layout(keyRemap || keyMask == 0);   /* tuningMask is 0 for a tuning that is not 12-note */
             key_boxes();
             scales_values();
         }

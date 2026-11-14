@@ -291,6 +291,7 @@ protected:
             s.extra["keyopt"] = std::to_string(kp.usePreset) + " " + std::to_string(kp.snap) + " " + std::to_string(kp.remap) + " " +
                                 std::to_string(kp.labels) + " " + std::to_string(kp.anchor);
             if (kp.mask) s.extra["keymask"] = std::to_string(kp.mask);
+            if (!kp.tuning.empty()) s.extra["tuning"] = kp.tuning;
         }
         {   // the recordings the DNA uses: hash, and the audio while the total stays under 8 MB (RECORDING.md 3.3)
             size_t total = 0;
@@ -319,6 +320,7 @@ protected:
             if (s.extra.count("key")) kp.readLine("key " + s.extra["key"]);
             if (s.extra.count("keyopt")) kp.readLine("keyopt " + s.extra["keyopt"]);
             if (s.extra.count("keymask")) kp.readLine("keymask " + s.extra["keymask"]);
+            if (s.extra.count("tuning")) kp.readLine("tuning " + s.extra["tuning"]);
             setKeyParams(kp);
             {   // its recordings (RECORDING.md 3.3): found by hash, the embedded copy saved if this machine lacks it
                 std::lock_guard<std::mutex> l(mtx_);
@@ -861,6 +863,24 @@ private:
             std::vector<uint8_t> d; if (b16rec::readFile(recDir_ + "/" + f, d)) hostSha_[f] = bsynth::sha1Hex(d.data(), d.size());
         }
     }
+    void scalaNow()   // a Scala file the editor read: the tuning of new notes (PRESET-ENGINE-2 18.4)
+    {
+        std::vector<uint8_t> in; std::string name, err;
+        { std::lock_guard<std::mutex> l(sh_.fileMtx); in.swap(sh_.fileBytes); name = sh_.fileName; }
+        const std::string text(in.begin(), in.end());
+        b16v3::KeyParams kp = keyParams();
+        bsynth3::Tuning t;
+        if (!kp.tuning.empty()) bsynth3::tuningFromText(kp.tuning, t);
+        std::string lower = name; for (auto &c : lower) c = (char)std::tolower((unsigned char)c);
+        const bool kbm = lower.size() > 4 && lower.compare(lower.size() - 4, 4, ".kbm") == 0;
+        const bool ok = kbm ? (!kp.tuning.empty() && bsynth3::parseKbm(text, t, &err)) : bsynth3::parseScl(text, t, &err);
+        if (!ok) { sendLine(("scala error " + (kbm && kp.tuning.empty() ? std::string("open a .scl first") : err)).substr(0, 200).c_str(), 0, 0); return; }
+        if (t.name.empty() || !kbm) { std::string st = name; const size_t d = st.rfind('.'); if (d != std::string::npos) st.resize(d); if (t.name.empty()) t.name = st; }
+        kp.tuning = bsynth3::tuningText(t);
+        setKeyParams(kp);
+        std::string nm = t.name; for (auto &c : nm) if (c == ' ') c = '_';
+        sendLine(("scala ok " + std::to_string(t.size()) + " " + nm).substr(0, 200).c_str(), 0, 0);
+    }
     std::string askPath_;   // a Save As waiting for the collision answer
     void recSaved(std::string path, int mode = 0)
     {
@@ -982,6 +1002,7 @@ private:
                 dnaToGuest_ = true;
             }
             if (hello && sh_.importReady.exchange(false)) importNow();
+            if (hello && sh_.scalaReady.exchange(false)) scalaNow();
             {   // an offline render while something records: stop it cleanly (RECORDING.md 4.3, TR8)
                 static thread_local double lastStop = 0;
                 if (hello && offlineNow_.load() && (recBusy_.load() || recR_.load()) && nowSec() - lastStop > 0.5) { lastStop = nowSec(); sendLine("recstop", 0, 0); }
@@ -1122,6 +1143,7 @@ private:
     {
         if (line.rfind("keyset ", 0) == 0 || line.rfind("keyopt ", 0) == 0 || line.rfind("keymask ", 0) == 0) {   // the visitor changed the key in Windows
             b16v3::KeyParams kp = keyParams();                                       // (`key <note> <vel>` is the strip's)
+            if ((line.rfind("keyset ", 0) == 0 || line.rfind("keymask ", 0) == 0) && !kp.tuning.empty()) { kp.tuning.clear(); sendLine("scala off", 0, 0); }   // a library scale or the notes: Scala goes
             if (line.rfind("keyset ", 0) == 0) kp.mask = 0;                          // a library scale: the custom notes go
             if (kp.readLine(line.rfind("keyset ", 0) == 0 ? "key " + line.substr(7) : line)) setKeyParams(kp);
             return;
@@ -1151,6 +1173,12 @@ private:
             { std::lock_guard<std::mutex> l(sh_.fileMtx); sh_.fileBytes.swap(wav); sh_.fileName = n.substr(2) + ".wav"; }
             sh_.fileReq = 3;
             if (sh_.editors.load() == 0) sendLine("rec refused - full Open the plugin's editor to export.", 0, 0);
+            return;
+        }
+        if (line == "scala import") {   // the host's open dialog: a Scala .scl (a tuning) or .kbm (its keyboard mapping)
+            { std::lock_guard<std::mutex> l(sh_.fileMtx); sh_.fileName.clear(); }
+            sh_.fileReq = 5;
+            if (sh_.editors.load() == 0) sendLine("scala error open the plugin's editor to import a Scala file", 0, 0);
             return;
         }
         if (line == "rec import") {

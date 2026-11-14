@@ -16,7 +16,8 @@ struct Basilisk16Shared {
     std::atomic<int> fileReq{0};                   // 1 save, 2 load, 3 export a recording, 4 import a WAV
     std::vector<uint8_t> fileBytes;                // (3) the recording's bytes, exactly as Sound Recorder saved them
     std::string fileName;                          // (3) its default file name
-    std::atomic<bool> importReady{false};          // (4) the editor read a WAV: fileBytes, fileName (the plugin takes them)
+    std::atomic<bool> importReady{false};
+    std::atomic<bool> scalaReady{false};           // (5) the editor read a Scala file: fileBytes, fileName          // (4) the editor read a WAV: fileBytes, fileName (the plugin takes them)
     std::mutex fileMtx; std::string stateText;     // the state to save
     std::string fileMsg;                           // a message back to Windows (`state saved <name>` / `state error ...`)
 };

@@ -444,7 +444,8 @@ struct KeyParams {
     int anchor = 60;     // remap: this key plays the root
     int labels = 0;      // the keyboard strip's labels: 0 none, 1 degrees, 2 sargam, 3 names, 4 cents
     unsigned mask = 0;   // the Scales page's 12 toggles: a custom 12-note scale (0: the Scale parameter's)
-    bool operator==(const KeyParams &o) const { return root == o.root && scale == o.scale && usePreset == o.usePreset && snap == o.snap && remap == o.remap && anchor == o.anchor && labels == o.labels && mask == o.mask; }
+    std::string tuning;  // an imported Scala tuning (scales.h tuningText; "" none): it wins over scale and mask
+    bool operator==(const KeyParams &o) const { return root == o.root && scale == o.scale && usePreset == o.usePreset && snap == o.snap && remap == o.remap && anchor == o.anchor && labels == o.labels && mask == o.mask && tuning == o.tuning; }
     bool operator!=(const KeyParams &o) const { return !(*this == o); }
     // state lines (STATE.md): key <root> <scale> / keyopt <usePreset> <snap> <remap> <labels> <anchor>
     std::string lines() const
@@ -460,6 +461,7 @@ struct KeyParams {
         if (n >= 4) { usePreset = a ? 1 : 0; snap = b >= 1 && b <= 4 ? b : 1; remap = c ? 1 : 0; labels = d >= 0 && d <= 4 ? d : 0; if (n == 5 && e >= 0 && e <= 127) anchor = e; return true; }
         unsigned m = 0;
         if (std::sscanf(l.c_str(), "keymask %u", &m) == 1) { mask = m & 0xFFFu; if (mask) mask |= 1u; return true; }
+        if (l.rfind("tuning ", 0) == 0) { bsynth3::Tuning t; tuning = bsynth3::tuningFromText(l.substr(7), t) ? l.substr(7) : ""; return true; }
         return false;
     }
 };
@@ -474,7 +476,9 @@ inline bsynth3::Key effectiveKey(const KeyParams &p, const bsynth3::Dna3 &d3)
         mask = (unsigned)d3.g.mask; edo = d3.g.edo;
     }
     if (!mask && p.mask && !(p.usePreset && d3.g.hasQ)) mask = p.mask;   // the Scales page's own notes
-    if (mask) k.tuning = bsynth3::maskTuning(mask);
+    bsynth3::Tuning scl;
+    if (!p.tuning.empty() && !(p.usePreset && d3.g.hasQ) && bsynth3::tuningFromText(p.tuning, scl)) k.tuning = scl;   // Scala
+    else if (mask) k.tuning = bsynth3::maskTuning(mask);
     else if (edo > 0) k.tuning = bsynth3::edo(edo);
     else if (!bsynth3::libraryTuning(id, k.tuning)) bsynth3::libraryTuning(0, k.tuning);
     k.root = root; k.remap = p.remap != 0; k.anchor = p.anchor; k.snap = p.snap;
