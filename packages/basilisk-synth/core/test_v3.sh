@@ -8,3 +8,6 @@ out=${PE2_BUILD:-$HOME/pe2-build}; mkdir -p "$out"
 g++ -std=c++17 -O1 -Wall -Wextra -DCORE_KEEPS=1 -I"$here" "$here/test_v3.cpp" "$here/dna3.cpp" "$here/engine3.cpp" "$here/scales.cpp" "$here/dna.cpp" -o "$out/v3-core"
 g++ -std=c++17 -O1 -Wall -I"$here" "$here/test_recipe.cpp" "$here/dna3.cpp" "$here/engine3.cpp" "$here/scales.cpp" "$here/recipe.cpp" "$here/dna.cpp" -o "$out/recipe-core"
 "$out/v3-core"; "$out/recipe-core" ${1:+"$1"}
+# user recordings and the .b16 state file (design/RECORDING.md, design/STATE.md)
+g++ -std=c++17 -O1 -Wall -Wextra -I"$here" "$here/test_userstore.cpp" "$here/userstore.cpp" -o "$out/userstore-core"
+"$out/userstore-core"
