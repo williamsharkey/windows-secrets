@@ -52,8 +52,9 @@ public:
             L.level = v.level; L.pan = v.pan; L.offset = v.offset; L.H = v.harmony.empty() ? std::vector<int>{0} : v.harmony;
             if (i < (int)d3.layers.size()) {
                 const bsynth3::Layer3 &x = d3.layers[i];
-                L.own = x.has[1] || x.has[2] || x.has[7] || x.has[6];
+                L.own = x.has[1] || x.has[2] || x.has[7] || x.has[6] || x.has[5];
                 L.grain = x.has[6]; L.g = x.g; L.w = x.w;
+                L.zoned = x.has[5]; L.z = x.z;   // Z: the layer answers only its key range, at its own root
                 L.n = x.n; L.s = x.s; L.d = x.d; L.hasD = x.has[7]; L.tempo = x.has[0] && x.w.tempo;
             }
             L.mono = L.own && L.n.mode != 'p';
@@ -88,6 +89,7 @@ public:
         for (int li = 0; li < nlay_; li++) {
             Lay &L = lay_[li];
             if (!owns(li) || !L.info.known || L.info.count <= 0) continue;
+            if (L.zoned && !bsynth3::inZone(L.z, note)) continue;   // Z: outside its keys, the layer is silent
             if (L.s.group && !groupTurn(li)) continue;
             if (L.grain) { GNote gn; gn.li = li; gn.note = note; gn.vel = vel; gn.start = gn.next = t; gn.seed = counter_ * 2654435761u ^ (uint32_t)note * 40503u; gnotes_.push_back(gn); continue; }
             if (L.mono) { monoActs(li, L.plan.keyDown(note, ms(t), ms(soundingUntil(li))), note, vel, t, out); continue; }
@@ -187,7 +189,8 @@ public:
 
 private:
     struct Lay {
-        bool valid = false, own = false, mono = false, fixed = false, hasD = false, tempo = false, grain = false;
+        bool valid = false, own = false, mono = false, fixed = false, hasD = false, tempo = false, grain = false, zoned = false;
+        bsynth3::Zone z;
         bsynth3::Grain g; bsynth3::Window w;
         int T = 0, U = 1, C = 0, level = 100, pan = 0, offset = 0, vel = 100;
         std::vector<int> H{0};
@@ -420,7 +423,11 @@ private:
         gn.next += (uint64_t)std::llround(gapMs * 48.0);
         gn.n++;
     }
-    double voiceSemis(const Lay &L, int note, double iv) const { return L.fixed ? L.T + iv : (note - root_) + L.T + iv; }
+    double voiceSemis(const Lay &L, int note, double iv) const
+    {
+        const int root = L.zoned ? bsynth3::zoneRoot(L.z, root_) : root_;   // Z: the zone's root plays the buffer's own rate
+        return L.fixed ? L.T + iv : (note - root) + L.T + iv;
+    }
     double voiceCents(const Lay &L, int ui) const { return L.U > 1 ? -L.C + 2.0 * L.C * ui / (L.U - 1) : 0; }
 
     void polyOn(int li, int note, int vel, uint64_t t, std::vector<Out> &out)
