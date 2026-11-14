@@ -160,6 +160,12 @@ def main():
             copy(src, os.path.join(dst, name))
             files[k] = {'name': name, 'kb': max(1, round(os.path.getsize(src) / 1024))}
             if k == 'pdf': files[k]['pages'] = pdf_pages(src); files[k]['size'] = fl.get('pdf_size')
+        booklet = None
+        if W and W.get('booklet') and os.path.exists(os.path.join(WEB, pid, W['booklet'])):   # one page per category (384 x 288)
+            bsrc = os.path.dirname(os.path.join(WEB, pid, W['booklet'])); bdst = os.path.join(dst, 'booklet')
+            shutil.rmtree(bdst, ignore_errors=True); os.makedirs(bdst)   # the export as it is now: no stale pages
+            for f in os.listdir(bsrc): copy(os.path.join(bsrc, f), os.path.join(bdst, f))
+            booklet = 'booklet/' + os.path.basename(W['booklet'])
         iso = W and W.get('iso') and os.path.join(LIB, 'packs', 'out', 'discs', W['iso'])
         if iso and os.path.exists(iso):   # the disc image (it also ships inside the release, on drive P:)
             copy(iso, os.path.join(dst, W['iso'])); files['iso'] = {'name': W['iso'], 'kb': max(1, round(os.path.getsize(iso) / 1024))}
@@ -200,7 +206,7 @@ def main():
                       'note': T.get('maker_note', []), 'copyright': T.get('copyright'),
                       'accent': P.get('look', {}).get('accent'), 'n': len(presets), 'cats': cats,
                       'fav': sum(1 for q in presets if q.get('fav')), 'picks': sum(1 for q in presets if q.get('rt', 0) >= 6.5),
-                      'art': art, 'files': files})
+                      'art': art, 'files': files, 'booklet': booklet})
         print(pid, lid, len(presets), 'presets', files.get('pdf', {}).get('pages'), 'pages', 'web' if W else 'renders')
     index.sort(key=lambda p: -p['n'])
     json.dump({'packs': index, 'total': sum(p['n'] for p in index), 'previews': bool(prev)},

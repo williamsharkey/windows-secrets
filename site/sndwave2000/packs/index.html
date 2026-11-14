@@ -36,7 +36,7 @@
       <div class="mp-list" id="mp-list" role="listbox" tabindex="0" aria-label="Presets"></div>
       <div class="mp-checks"><label><input type="checkbox" id="mp-fav" accesskey="f"><span><u>F</u>avourites only</span></label><label><input type="checkbox" id="mp-shuf" accesskey="h"><span>S<u>h</u>uffle</span></label></div>
     </div>
-    <div class="mp-art"><div class="mp-artbox"><canvas id="mp-art" width="240" height="180" data-px="240x180" role="img" aria-label="Artwork"></canvas></div></div>
+    <div class="mp-art"><div class="mp-artbox"><canvas id="mp-art" width="384" height="288" data-px="384x288" role="img" aria-label="Artwork"></canvas></div><p class="mp-credit" id="mp-credit"></p></div>
     <div class="mp-side">
       <div class="mp-lcd" aria-live="off"><span id="mp-time">00:00.0</span><span class="len" id="mp-len">00:00.0</span></div>
       <div class="mp-scopebox"><canvas id="mp-scope" width="96" height="32" data-px="96x32" aria-hidden="true"></canvas></div>
@@ -56,7 +56,7 @@
 </section>
 <p class="note mp-help">Space plays and pauses, the up and down arrows step through the list, left and right go back and forward. At the end of a preview the next one plays, on into the next pack. <span id="status">25 packs, 1,357 presets, all on the discs that ship with SNDWAVE2000 1.3.0. Previews of every preset are being rendered on the release build; until then the owner's top picks play the demos already made, and the rest say "preview coming".</span></p>
 
-<section id="pack" class="pack" hidden></section>
+<section id="pack" class="pack pending"></section>
 
 <section class="allpacks" aria-labelledby="h-all">
   <h2 id="h-all" class="shelfh">All sound packs</h2>
@@ -68,7 +68,7 @@
 <footer class="foot">
   <nav aria-label="SNDWAVE2000"><a href="/sndwave2000/">Home</a><a href="/sndwave2000/packs/">Sound packs</a><a href="/sndwave2000/play/" class="playlink">Play</a><a href="/sndwave2000/#download">Download</a></nav>
   <p>SNDWAVE2000 &middot; Executive Audiophile Edition &middot; Copyright &copy; 1993-1995 Algorithmic Industries. All rights reserved.</p>
-  <p class="legal">SNDWAVE2000 and the Grid Sun device are trademarks of Algorithmic Industries. All other product names are the property of their respective owners. The library's recordings are public domain and CC0, credited on each disc. Windows for Workgroups 3.11, its sounds and Sound Recorder are &copy; 1985&ndash;1993 Microsoft Corporation. Each preset's picture is a detail of its pack's printed box or disc, dithered to 16 colours.</p>
+  <p class="legal">SNDWAVE2000 and the Grid Sun device are trademarks of Algorithmic Industries. All other product names are the property of their respective owners. The library's recordings are public domain and CC0, credited on each disc. Windows for Workgroups 3.11, its sounds and Sound Recorder are &copy; 1985&ndash;1993 Microsoft Corporation. Each preset's picture is its category's page of the pack's booklet; the pictures in the booklets are public domain or CC0, credited under each page and on each pack's page.</p>
   <p class="colophon">SNDWAVE2000 by William Sharkey. Source code: <a href="https://github.com/williamsharkey/windows-secrets">github.com/williamsharkey/windows-secrets</a>.</p>
   <p class="archived">Also: <a href="/sndrec-xp.html">the earlier Windows XP edition (archived)</a></p>
 </footer>

@@ -3,10 +3,11 @@
    tools/sndrec-demo/sndwave_site.py. #ID or #ID/SLUG opens a pack (and a preset).
 
    The player plays one preview at a time (loaded only when played; the next one is prefetched) and goes on to the next
-   preset with a preview at the end of each, into the next pack after the last. Each preset's picture is a detail of
-   its pack's printed art (front, back or disc label, at the art's own pixel size, never scaled), chosen by a hash of
-   the preset's slug, dithered to 16 colours (Floyd-Steinberg, its own palette by median cut) with the category's
-   glyph in the corner; it and the Sound Recorder wave view are shown on whole device pixels through /sndrec/pxfit.js. */
+   preset with a preview at the end of each, into the next pack after the last. The picture is the page of the pack's
+   booklet for the preset's category (384 x 288, packs/out/web/ID/booklet/booklet.json; on a listing page the preset's
+   line is inverted), with the page's picture credit below it; a pack without a booklet shows a seeded detail of its
+   printed art, dithered to 16 colours. The picture and the Sound Recorder wave view are shown on whole device pixels
+   through /sndrec/pxfit.js. */
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
@@ -62,7 +63,7 @@
   }
   function hash(s) { var h = 2166136261; for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
   function rng(seed) { return function () { seed = (seed + 0x6D2B79F5) | 0; var t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
-  var AW = 240, AH = 180;
+  var AW = 384, AH = 288;   // the booklet's page size; the crops (packs without a booklet) use the same frame
   function crop(S, r) {   // the most detailed of six seeded 240 x 180 windows
     var best = null, bs = -1;
     for (var i = 0; i < 6; i++) {
@@ -111,14 +112,58 @@
     return GLYPH.note;
   }
   var artNative = document.createElement('canvas'); artNative.width = AW; artNative.height = AH;
-  var artToken = 0;
+  var artToken = 0, BOOK = {}, pageImg = {};
+  function booklet(pid) {
+    var p = BY[pid];
+    if (!p.booklet) return Promise.resolve(null);
+    if (!BOOK[pid]) BOOK[pid] = fetch(pid + '/' + p.booklet).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+    return BOOK[pid];
+  }
+  function pageImage(url) {
+    if (!pageImg[url]) pageImg[url] = new Promise(function (ok, no) { var im = new Image(); im.onload = function () { ok(im); }; im.onerror = no; im.src = url; });
+    return pageImg[url];
+  }
+  // the preset's page of its pack's booklet (its category's page, else the cover), at its own pixels; on a listing,
+  // the preset's line is inverted, as Windows' InvertRect would
   function drawArt(x) {
-    var p = BY[x.pk], tok = ++artToken, keys = ['front', 'back', 'disc'].filter(function (k) { return p.art[k]; });
+    var tok = ++artToken;
+    booklet(x.pk).then(function (B) {
+      if (tok !== artToken) return;
+      if (!B) { drawCrop(x, tok); return; }
+      var file = B.by_category[x.c], pg = null;
+      B.pages.forEach(function (q) { if (q.file === (file || 'cover.png')) pg = q; });
+      if (!pg) pg = B.pages[0];
+      var url = x.pk + '/booklet/' + pg.file;
+      pageImage(url).then(function (im) {
+        if (tok !== artToken) return;
+        var ctx = artNative.getContext('2d');
+        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, AW, AH); ctx.drawImage(im, 0, 0);
+        var row = null; (pg.rows || []).forEach(function (r) { if (r.name === x.n) row = r; });
+        if (row) {
+          var R = row.rect, d = ctx.getImageData(R[0], R[1], R[2], R[3]);
+          for (var i = 0; i < d.data.length; i += 4) { d.data[i] = 255 - d.data[i]; d.data[i + 1] = 255 - d.data[i + 1]; d.data[i + 2] = 255 - d.data[i + 2]; }
+          ctx.putImageData(d, R[0], R[1]);
+        }
+        artC.setAttribute('aria-label', 'The ' + BY[x.pk].title + ' booklet, ' + (pg.category ? 'the ' + pg.category + ' page' : 'the cover') + (row ? ', with ' + x.n + ' highlighted' : ''));
+        credit(pg.credit);
+        window.pxfit && pxfit.draw(artC);
+      }, function () { drawCrop(x, tok); });
+    });
+  }
+  function credit(c) {
+    var e = $('mp-credit');
+    if (!c) { e.textContent = ''; return; }
+    e.innerHTML = 'Picture: ' + (c.source ? '<a href="' + esc(c.source) + '" target="_blank" rel="noopener">' + esc(c.title) + '</a>' : esc(c.title)) +
+      (c.author ? ', ' + esc(c.author) : '') + (c.license ? ' (' + esc(c.license) + ')' : '');
+  }
+  function drawCrop(x, tok) {
+    var p = BY[x.pk], keys = ['front', 'back', 'disc'].filter(function (k) { return p.art[k]; });
     if (!keys.length) keys = ['box'];
     var r = rng(hash(x.s)), k = keys[Math.floor(r() * keys.length)];
     artC.setAttribute('aria-label', x.n + ': a detail of the ' + p.title + ' ' + (k === 'disc' ? 'disc label' : k + ' of the box') + ', dithered to 16 colours');
     srcPixels(p.id, k).then(function (S) {
       if (tok !== artToken) return;
+      credit(null);
       var o = crop(S, r), w = Math.min(AW, S.w), h = Math.min(AH, S.h);
       var ctx = artNative.getContext('2d'), id = ctx.createImageData(AW, AH), d = id.data, px = [];
       var f = new Float32Array(AW * AH * 3);
@@ -386,7 +431,7 @@
   // the open pack, below the player: its art at native size, its story, its maker and its files
   function about(id) {
     var p = BY[id];
-    packEl.hidden = false; packEl.innerHTML = '';
+    packEl.hidden = false; packEl.classList.remove('pending'); packEl.innerHTML = '';
     packEl.style.setProperty('--pk', p.accent || 'var(--bk-accent)');
     var head = el('div', 'phead');
     head.innerHTML = '<p class="kicker">' + esc(p.label) + ' &middot; ' + esc(p.year) + ' &middot; ' + esc(p.maker.name) + '</p>' +
@@ -428,8 +473,17 @@
       (f.iso ? '<a class="btn" href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image (' + esc(f.iso.name) + ', ' + (f.iso.kb >= 1024 ? (f.iso.kb / 1024).toFixed(1) + ' MB' : f.iso.kb + ' KB') + ')</a>' : '') + '</p>' +
       (f.iso ? '<p class="note">The disc is already in SNDWAVE2000 1.3.0 (Library tab, drive P:). The image is for another machine, or to keep.</p>' : '');
     if (p.credits && p.credits.length) t += '<div class="credits"><p class="kicker">Sound credits</p><ul>' + p.credits.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul></div>';
+    t += '<div class="credits bcred" id="bcred"></div>';
     if (p.note && p.note.length) t += '<blockquote class="mnote"><p class="kicker">From the maker</p>' + p.note.map(function (s) { return '<p>' + esc(s) + '</p>'; }).join('') + '</blockquote>';
     txt.innerHTML = t;
+    booklet(id).then(function (B) {
+      var e = $('bcred'); if (!B || !e) return;
+      e.innerHTML = '<p class="kicker">Booklet pictures</p><ul>' + B.pages.map(function (q) {
+        var c = q.credit || {};
+        return '<li><b>' + esc(q.category || 'Cover') + ':</b> ' + (c.source ? '<a href="' + esc(c.source) + '" target="_blank" rel="noopener">' + esc(c.title) + '</a>' : esc(c.title || '')) +
+          (c.author ? ', ' + esc(c.author) : '') + (c.license ? ' (' + esc(c.license) + ')' : '') + '</li>';
+      }).join('') + '</ul>';
+    });
     var m = p.maker;
     side.innerHTML = '<div class="maker"><p class="kicker">The company</p><address>' + (m.contact || [m.name, m.place]).map(esc).join('<br>') + '</address>' +
       (m.kind ? '<p class="note">' + esc(m.kind) + '. ' + esc(m.place) + '.</p>' : '') +
