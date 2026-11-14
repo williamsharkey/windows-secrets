@@ -2,7 +2,7 @@
 """Sound Pack Explorer previews on the release build: one clip per preset, its demo phrase chosen per preset
 (demophrases.py: role, pack mood, envelope; seeded by id), levelled to -16 LUFS, MP3 48 kbps + Opus 24 kbps.
 
-    LIBBUILD_V3=<release build> previews.py [--out ~/libbuild/previews] [--parallel 4] [--kits] [--only slug ...]   data/library.json
+    LIBBUILD_V3=<release build> previews.py [--out ~/libbuild/previews] [--parallel 4] [--kits] [--disc DIR] [--only slug ...]   data/library.json
 Writes OUT/<slug>.{mp3,ogg}, OUT/manifest.json and OUT/index.json (the same list).
 """
 import argparse, json, os, re, sys
@@ -13,11 +13,31 @@ from recheck import encode
 from make_discs import kit_manager, ratings
 
 
+KIND = {'Keys': 'keys', 'Organ': 'keys', 'Stab': 'keys', 'Chord': 'keys', 'Brass': 'keys', 'Bass': 'bass', 'Sub': 'bass',
+        'Pad': 'pad', 'Vocal': 'pad', 'Strings': 'pad', 'Lead': 'lead', 'FX': 'fx', 'Texture': 'fx', 'Bell': 'bell',
+        'Mallet': 'bell', 'Pluck': 'pluck', 'Arp': 'pluck', 'Perc': 'perc', 'Kit': 'kit', 'Drone': 'drone'}
+
+
+def disc_presets(D):
+    """a pack disc built outside this library (its PRESETS.TSV), slugs <pack id>-<name>"""
+    inf = dict(l.rstrip('\r\n').split('=', 1) for l in open(os.path.join(D, 'PACK.TXT'), encoding='cp1252') if '=' in l)
+    out = []
+    for l in open(os.path.join(D, 'PRESETS.TSV'), encoding='cp1252'):
+        if l.startswith('#') or l.count('\t') < 2: continue
+        c, n, d = l.rstrip('\r\n').split('\t')[:3]
+        out.append(dict(pack=inf['Id'], pack_name=inf['Title'], category=c, kind=KIND.get(c, 'keys'), name=n, dna_final=d,
+                        canonical=d, slug=inf['Id'] + '-' + re.sub(r'[^a-z0-9]+', '-', n.lower()).strip('-'),
+                        edition='3.11', v3=True, recipe_one=None, recipe=None))
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', default=os.path.expanduser('~/libbuild/previews')); ap.add_argument('--parallel', type=int, default=4)
     ap.add_argument('--build', default=os.environ.get('SNDWAVE_BUILD', '?'))
     ap.add_argument('--kits', action='store_true', help="add Kit Manager 98's kits (packs/kitmgr/KITS.TSV) to the list")
+    ap.add_argument('--disc', action='append', default=[], help="add a pack disc's presets (DIR with PACK.TXT and PRESETS.TSV); "
+                    "render with a machine that has the disc installed")
     ap.add_argument('--only', nargs='+', help='re-render just these slugs and merge them into OUT/manifest.json')
     a = ap.parse_args()
     L = load_json('library.json'); R = ratings()
@@ -31,6 +51,8 @@ def main():
                          preview_note='preview without the step sequencer (render311 has no host clock)')
             L.append(dict(k, category='Kit', kind='kit', dna_final=k['dna'], pack_name=pk['name'], edition=' '.join(k['ships']),
                           v3=False, recipe_one=None, recipe=None))
+    for D in a.disc:
+        L += disc_presets(D)
     if a.only: L = [p for p in L if p['slug'] in set(a.only)]
     os.makedirs(a.out, exist_ok=True)
     jobs, meta = [], []
