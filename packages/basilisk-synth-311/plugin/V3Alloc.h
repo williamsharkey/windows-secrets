@@ -26,6 +26,7 @@ struct Out {
     enum Kind { Cmd, Rate, Choke } kind = Cmd;
     uint32_t winFrom = 0, winTo = 0;   // Cmd On of a kit pad: its window in the layer's buffer (0 0: the whole)
     int fadeMs = 0;                    // Choke: `choke <rec> <fade_ms>`
+    int grainAttackMs = -1;            // Cmd On of a grain: its attack (a `mod` line before it), no stamped cut (a Choke ends it)
     bsynth::Cmd c{bsynth::Cmd::On, 0, 0, 0, 0};   // Cmd: an On (delayMs = O plus strum), Off or Cut
     int rec = 0; uint32_t hz = 0; int glideMs = 0; bool regate = false;   // Rate
     uint64_t at = 0;                                                       // Rate: its stamp
@@ -51,7 +52,8 @@ public:
             L.level = v.level; L.pan = v.pan; L.offset = v.offset; L.H = v.harmony.empty() ? std::vector<int>{0} : v.harmony;
             if (i < (int)d3.layers.size()) {
                 const bsynth3::Layer3 &x = d3.layers[i];
-                L.own = x.has[1] || x.has[2] || x.has[7];
+                L.own = x.has[1] || x.has[2] || x.has[7] || x.has[6];
+                L.grain = x.has[6]; L.g = x.g; L.w = x.w;
                 L.n = x.n; L.s = x.s; L.d = x.d; L.hasD = x.has[7]; L.tempo = x.has[0] && x.w.tempo;
             }
             L.mono = L.own && L.n.mode != 'p';
@@ -87,6 +89,7 @@ public:
             Lay &L = lay_[li];
             if (!owns(li) || !L.info.known || L.info.count <= 0) continue;
             if (L.s.group && !groupTurn(li)) continue;
+            if (L.grain) { GNote gn; gn.li = li; gn.note = note; gn.vel = vel; gn.start = gn.next = t; gn.seed = counter_ * 2654435761u ^ (uint32_t)note * 40503u; gnotes_.push_back(gn); continue; }
             if (L.mono) { monoActs(li, L.plan.keyDown(note, ms(t), ms(soundingUntil(li))), note, vel, t, out); continue; }
             polyOn(li, note, vel, t, out);
         }
@@ -103,9 +106,10 @@ public:
             }
             return;
         }
+        for (auto &gn : gnotes_) if (gn.note == note && gn.end == ~(uint64_t)0) { if (sustain_) gn.held = true; else gn.end = t; }   // grains: no new ones
         for (int li = 0; li < nlay_; li++) {
             Lay &L = lay_[li];
-            if (!owns(li)) continue;
+            if (!owns(li) || L.grain) continue;
             if (L.mono) {
                 if (sustain_) { L.sustained.push_back(note); continue; }
                 monoActs(li, L.plan.keyUp(note, ms(t), ms(soundingUntil(li))), note, L.vel, t, out);
@@ -124,6 +128,7 @@ public:
     {
         sustain_ = down;
         if (down) return;
+        for (auto &gn : gnotes_) if (gn.held) { gn.held = false; gn.end = t; }
         for (int li = 0; li < nlay_; li++) {
             Lay &L = lay_[li];
             if (!owns(li)) continue;
@@ -138,8 +143,22 @@ public:
         }
     }
     void end(int r) { if (r >= 0 && r < bsynth::kRecorders) { if (rec_[r].layer >= 0) rec_[r] = Rec{}; live_[r].on = false; } }
-    void allOff() { for (auto &r : rec_) r = Rec{}; for (auto &l : live_) l.on = false; for (int i = 0; i < bsynth::kMaxLayers; i++) { lay_[i].plan.reset(); lay_[i].sustained.clear(); } sustain_ = false; }
+    void allOff() { gnotes_.clear(); for (auto &r : rec_) r = Rec{}; for (auto &l : live_) l.on = false; for (int i = 0; i < bsynth::kMaxLayers; i++) { lay_[i].plan.reset(); lay_[i].sustained.clear(); } sustain_ = false; }
 
+    // ---- grains (PRESET-ENGINE-2 7, 3.11): every grain due before `upTo` (a DAC stamp), each its own `on` with a window
+    // of the layer's buffer, a stamped attack and a choke for its release; positions, sizes and pitches drawn from
+    // a seed per note, so a render repeats
+    void tick(uint64_t upTo, std::vector<Out> &out)
+    {
+        for (size_t k = 0; k < gnotes_.size();) {
+            GNote &gn = gnotes_[k];
+            const Lay &L = lay_[gn.li];
+            if (gn.li >= nlay_ || !L.grain || !L.info.known || L.info.count <= 0 || L.info.frames <= 0) { gnotes_.erase(gnotes_.begin() + (long)k); continue; }
+            while (gn.next < upTo && gn.next < gn.end) { grain(gn, out); }
+            if (gn.next >= gn.end) { gnotes_.erase(gnotes_.begin() + (long)k); continue; }
+            k++;
+        }
+    }
     // ---- live bend: every sounding recorder (ours and core's) follows the wheel
     // follow: each On/Off/Cut the caller sends (core's and ours), with the bend it was made with
     void follow(const bsynth::Cmd &c, bool fixedLayer)
@@ -168,7 +187,8 @@ public:
 
 private:
     struct Lay {
-        bool valid = false, own = false, mono = false, fixed = false, hasD = false, tempo = false;
+        bool valid = false, own = false, mono = false, fixed = false, hasD = false, tempo = false, grain = false;
+        bsynth3::Grain g; bsynth3::Window w;
         int T = 0, U = 1, C = 0, level = 100, pan = 0, offset = 0, vel = 100;
         std::vector<int> H{0};
         bsynth3::VoiceMode n; bsynth3::Stack s; bsynth3::Degrees d;
@@ -348,6 +368,57 @@ private:
         o.c.layer = (uint8_t)li;
         out.push_back(o);
         follow(o.c, L.fixed);
+    }
+    struct GNote { int li = 0, note = 0, vel = 100; uint64_t start = 0, next = 0, end = ~(uint64_t)0; uint32_t seed = 0, n = 0; bool held = false; };
+    std::vector<GNote> gnotes_;
+    uint32_t grainRR_ = 0;
+    static double unit(uint32_t &s) { s ^= s << 13; s ^= s >> 17; s ^= s << 5; return (s >> 8) / 16777216.0; }   // 0..1
+    void grain(GNote &gn, std::vector<Out> &out)
+    {
+        const Lay &L = lay_[gn.li];
+        const bsynth3::Grain &g = L.g;
+        uint32_t s = gn.seed ^ (gn.n * 0x9E3779B9u); unit(s); unit(s);
+        const double tMs = (double)(gn.next - gn.start) / 48.0;
+        // where: the position (a fraction of the window), moved by the scan (x real time), plus the spray
+        const double bufMs = (double)L.info.frames * 1000.0 / std::max(1, L.info.rate);
+        double pos = g.pos / (double)bsynth3::kOne;
+        if (!g.freeze && g.scan) pos += (g.back ? -1 : 1) * tMs / bufMs * g.scan / (double)bsynth3::kOne;
+        pos += (unit(s) * 2 - 1) * g.spray / (double)bsynth3::kOne;
+        pos -= std::floor(pos);   // (wraps)
+        const double w0 = L.w.s.lo / (double)bsynth3::kOne, w1 = std::max(w0 + 1e-6, L.w.e.lo / (double)bsynth3::kOne);
+        // pitch: the note, the spread, sometimes an octave up
+        double semis = voiceSemis(L, gn.note, 0) + (unit(s) * 2 - 1) * g.cents / 100.0;
+        if (g.octPct && unit(s) * 100 < g.octPct) semis += 12;
+        const double bend = L.fixed ? 0 : bend_ * bendRange_;
+        const uint32_t rate = bsynth::Voices::rateFor(L.info.rate, semis + bend, 0);
+        const int sizeMs = g.sizeMs + (g.sizeHiMs > g.sizeMs ? (int)(unit(s) * (g.sizeHiMs - g.sizeMs + 1)) : 0);
+        const uint32_t from = (uint32_t)((w0 + (w1 - w0) * pos) * L.info.frames);
+        uint32_t to = from + (uint32_t)((double)sizeMs * rate / 1000.0);
+        if (to > (uint32_t)L.info.frames) to = (uint32_t)L.info.frames;
+        // the stream: the pool, round robin, at most g.streams recorders for this layer
+        const int nstream = std::max(1, std::min(L.info.count, g.streams > 0 ? g.streams : L.info.count));
+        const int r = L.info.first + (int)(grainRR_++ % (uint32_t)nstream);
+        if (r < bsynth::kRecorders && to > from + 8) {
+            // the shape: attack and release (rectangle, triangle, smooth, percussive)
+            const int att = g.shape == 0 ? 2 : g.shape == 1 ? sizeMs / 2 : g.shape == 2 ? sizeMs / 3 : 2;
+            const int rel = g.shape == 0 ? 2 : g.shape == 1 ? sizeMs / 2 : g.shape == 2 ? sizeMs / 3 : sizeMs * 4 / 5;
+            const int panW = g.width ? (int)std::lround((unit(s) * 2 - 1) * 100.0 * g.width / bsynth3::kOne) : 0;
+            Out o;
+            o.c = bsynth::Cmd{bsynth::Cmd::On, (uint8_t)r, (uint8_t)gn.note, rate, bsynth::Voices::volumeFor(gn.vel, velocity_, L.level)};
+            o.c.pan = (int8_t)std::max(-100, std::min(100, L.pan + panW));
+            o.c.layer = (uint8_t)gn.li;
+            o.winFrom = from; o.winTo = to; o.grainAttackMs = att; o.at = gn.next;
+            out.push_back(o);
+            Out c; c.kind = Out::Choke; c.rec = r; c.fadeMs = std::max(2, rel);
+            c.at = gn.next + (uint64_t)std::max(0, sizeMs - c.fadeMs) * 48;
+            out.push_back(c);
+            Rec &R = rec_[r]; R = Rec{}; R.layer = gn.li; R.note = gn.note; R.start = gn.next; R.finish = gn.next + (uint64_t)sizeMs * 48; R.released = true;
+        }
+        // the next grain: density per second per note (Gy: per beat), never closer than 2 ms
+        const double per = g.sync ? 60.0 / bpm_ : 1.0;
+        const double gapMs = std::max(2.0, 1000.0 * per / std::max(1, g.density));
+        gn.next += (uint64_t)std::llround(gapMs * 48.0);
+        gn.n++;
     }
     double voiceSemis(const Lay &L, int note, double iv) const { return L.fixed ? L.T + iv : (note - root_) + L.T + iv; }
     double voiceCents(const Lay &L, int ui) const { return L.U > 1 ? -L.C + 2.0 * L.C * ui / (L.U - 1) : 0; }

@@ -71,10 +71,30 @@ public:
         const int vel = st == 0x90 ? d2 : 100;
         for (int k = 0; k < n; k++) v3_.follow(c[k], c[k].layer < bsynth::kMaxLayers && fixed_[c[k].layer]);
         for (int k = 0; k < n; k++) sendCmd(c[k], vel, at, 0, 0, sink);
+        outs(vel, at, sink);
+    }
+    // grains due before DAC stamp `upTo` (call it every block with the latest stamp a note could have now)
+    void tick(uint64_t upTo, const Sink &sink)
+    {
+        vo_.clear();
+        v3_.tick(upTo, vo_);
+        if (!vo_.empty()) outs(100, upTo, sink);
+    }
+
+private:
+    void outs(int vel, uint64_t at, const Sink &sink)
+    {
         for (const Out &o : vo_) {   // then v3's, in order (a Rate after the On it moves)
+            if (o.kind == Out::Cmd && o.grainAttackMs >= 0) {   // a grain: its attack, its window; a Choke ends it
+                char line[96];
+                if (!capWin) continue;
+                std::snprintf(line, sizeof line, "mod %d 0 0 0 0 0 0 0 %d", o.c.rec, o.grainAttackMs); sink(line, o.at);
+                std::snprintf(line, sizeof line, "on %d %u %u %d 0 %d %u %u", o.c.rec, o.c.rateHz, o.c.vol, o.c.pan, o.c.layer, o.winFrom, o.winTo); sink(line, o.at);
+                continue;
+            }
             if (o.kind == Out::Cmd) { sendCmd(o.c, vel, at, o.winFrom, o.winTo, sink); continue; }
             char line[64];
-            if (o.kind == Out::Choke) { std::snprintf(line, sizeof line, "choke %d %d", o.rec, o.fadeMs); sink(line, o.at); continue; }   // a kit's cut group
+            if (o.kind == Out::Choke) { std::snprintf(line, sizeof line, "choke %d %d", o.rec, o.fadeMs); sink(line, o.at); continue; }   // a kit's cut group, a grain's end
             if (!capRate) continue;
             std::snprintf(line, sizeof line, "rate %d %u %d %d", o.rec, o.hz, o.glideMs, o.regate ? 1 : 0);
             sink(line, o.at);

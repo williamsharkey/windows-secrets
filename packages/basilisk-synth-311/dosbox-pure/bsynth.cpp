@@ -97,7 +97,7 @@ static struct {
 	Bit16u chtask[BS_CH];
 	Bit64u dac;                    /* DAC samples produced so far */
 	/* arms: task -> (event id, rate, gain) for the next open / stop by that task */
-	struct Arm { Bit16u task; Bit32u id; Bit32u hz; float gain; float pan; int layer; Bit32u fade; bool stop; bool used; int mod[7]; bool hasMod; } arms[64];
+	struct Arm { Bit16u task; Bit32u id; Bit32u hz; float gain; float pan; int layer; Bit32u fade; bool stop; bool used; int mod[8]; bool hasMod; } arms[64];
 	BSEnv lenv_a[8], lenv_p[8];          /* the layers' envelopes (LENV), for voices armed with a layer */
 	Bit32u env_a, env_d; float env_s;   /* the envelope new voices get (ENV) */
 	/* host -> guest events, guest -> host reports */
@@ -488,10 +488,12 @@ static void command(Bit16u c)
 				v.m_wow = (float)m[0]; v.m_wowhz = m[1] / 10.f; v.m_flu = (float)m[2]; v.m_fluhz = (float)m[3];
 				v.m_scoop = (float)m[4]; v.m_scoopms = (float)m[5]; v.m_phase = m[6] / 1000.f; v.m_fac = 1.f; v.m_age = 0;
 			}
+			const int grainAtt = bs.arms[a].hasMod ? bs.arms[a].mod[7] : 0;
 			if (bs.arms[a].layer >= 0 && bs.arms[a].layer < 8) {
 				v.ea = bs.lenv_a[bs.arms[a].layer]; v.ep = bs.lenv_p[bs.arms[a].layer];
 				if (v.ea.n) { v.env_a = 0; v.env_d = 0; v.env_s = 1.f; }   /* a drawn envelope replaces A, D, S */
 			}
+			if (grainAtt > 0) { v.env_a = (Bit32u)grainAtt * (BS_RATE / 1000); v.env_d = 0; v.env_s = 1.f; v.ea.n = 0; }   /* a grain: its own attack */
 		}
 		if (trace) fprintf(stderr, "bsyn open ch%d task %04x arm %d id %u start %llu dac %llu tgt_id %u tgt_at %llu\n", ch, arg(0), a, v.voice_id,
 			(unsigned long long)v.start_at, (unsigned long long)bs.dac, a >= 0 ? bs.tgt_id[v.voice_id & 4095] : 0, a >= 0 ? (unsigned long long)bs.tgt_at[v.voice_id & 4095] : 0ULL);
@@ -565,6 +567,7 @@ static void command(Bit16u c)
 			A.layer = bs.args.size() > 7 ? (int)arg(7) - 1 : -1;
 			A.hasMod = bs.args.size() > 14;   /* v3: the tape modulation */
 			for (int k = 0; k < 7; k++) A.mod[k] = A.hasMod ? (int)arg(8 + k) : 0;
+			A.mod[7] = bs.args.size() > 15 ? (int)arg(15) : 0;   /* a grain's attack (ms) */
 		}
 		else A.fade = (Bit32u)arg(3) * (BS_RATE / 1000);
 		break; }

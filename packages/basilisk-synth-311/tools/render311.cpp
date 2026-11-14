@@ -356,6 +356,7 @@ int main(int argc, char **argv)
             host.capWin = win; host.capRate = rateCap; host.capTape = tapeCap;
             host.midi(m.st, m.a, m.b, at, [&](const char *line, uint64_t when) { M.send(line, ++M.nextId, when); });
         }
+        host.tick(anchor + blockEnd + kLat, [&](const char *line, uint64_t when) { M.send(line, ++M.nextId, when); });   // grains
         // Windows' `end` replies free recorders, as in the plugin
         std::vector<std::string> ls; M.lines(ls);
         for (auto &l : ls) { proto::Reply r = proto::parse(l); if (r.kind == proto::Reply::End) host.end(r.rec); }

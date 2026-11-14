@@ -84,7 +84,7 @@ static void bs_arm3(HTASK task, DWORD id, DWORD hz, WORD gain, int pan, int laye
     _disable();
     bs_put((WORD)task); bs_put(LOWORD(id)); bs_put(HIWORD(id)); bs_put(LOWORD(hz)); bs_put(HIWORD(hz)); bs_put(gain);
     bs_put((WORD)(pan + 100)); bs_put((WORD)(layer + 1));
-    for (k = 0; k < 7; k++) bs_put((WORD)mod[k]);
+    for (k = 0; k < 8; k++) bs_put((WORD)mod[k]);   /* (the 8th: a grain's attack in ms, 0 = the layer's own) */
     outpw(BS_CMD, BSC_ARM);
     _enable();
 }

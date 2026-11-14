@@ -469,6 +469,11 @@ protected:
                                          (unsigned long long)when, dacPos_, (unsigned long long)S->dac_w, S->sched_late, S->sched_ontime, S->sched_latemax);
             });
         }
+        {   // grains due by this block's end (V3Host.h), stamped like its notes
+            const uint64_t upTo = (uint64_t)std::floor(anchor_ + (double)(hcount_ + frames) * ratio) + kLatency48;
+            host_.bpm = bpm_; host_.capWin = capWin_; host_.capRate = capRate_; host_.capTape = capTape_; host_.recBusy = recBusy_.load();
+            host_.tick(upTo, [&](const char *line, uint64_t when) { sendLine(line, ++nextId_, when); });
+        }
         // wait for the machine if it is behind (offline rendering runs faster than real time)
         const double need = dacPos_ + frames * ratio + 3;
         for (int k = 0; offline && k < 400 && (double)S->dac_w < need && S->state != BS_FAILED && !S->quit && !quit_; k++) {

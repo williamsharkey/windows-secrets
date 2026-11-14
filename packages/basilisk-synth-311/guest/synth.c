@@ -646,7 +646,7 @@ static int run_steps(int r, LAYER *L)
 
 static void stop_rec(int r, DWORD id, int fade_ms);
 
-static int modArg[NR][7], modOn[NR];   /* `mod` (v3 V genes) for the next `on` of a recorder */
+static int modArg[NR][8], modOn[NR];   /* `mod` (v3 V genes) for the next `on` of a recorder */
 static char lastSig[1400];
 static int layer_len[NL];
 static long layerFrames[NL];   /* each layer's length in frames, as told to the host (v3 windows are in these frames) */
@@ -3259,9 +3259,9 @@ static void host_line(char *s)
         play_rec((int)f[0], curId, (DWORD)f[1], (WORD)f[2], (int)f[3], (int)f[5], f[6]);
     }
     else if (!strcmp(s, "mod")) {   /* mod <rec> <wow c> <wow 0.1Hz> <flutter c> <flutter Hz> <scoop c> <scoop ms> <phase 0..999> */
-        int f[8] = {-1, 0, 0, 0, 0, 0, 0, 0}, nf = 0, k; char *p = rest;
-        while (*p && nf < 8) { f[nf++] = atoi(p); p = strchr(p, ' '); if (!p) break; p++; }
-        if (f[0] >= 0 && f[0] < NR) { for (k = 0; k < 7; k++) modArg[f[0]][k] = f[k + 1] < 0 ? 0 : f[k + 1]; modOn[f[0]] = 1; }
+        int f[9] = {-1, 0, 0, 0, 0, 0, 0, 0, 0}, nf = 0, k; char *p = rest;   /* (+ <attack ms>: a grain's shape) */
+        while (*p && nf < 9) { f[nf++] = atoi(p); p = strchr(p, ' '); if (!p) break; p++; }
+        if (f[0] >= 0 && f[0] < NR) { for (k = 0; k < 8; k++) modArg[f[0]][k] = f[k + 1] < 0 ? 0 : f[k + 1]; modOn[f[0]] = 1; }
     }
     else if (!strcmp(s, "off")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, envR); }
     else if (!strcmp(s, "cut")) { int r = atoi(rest); if (r >= 0 && r < NR) stop_rec(AR(r), curId, 5); }
