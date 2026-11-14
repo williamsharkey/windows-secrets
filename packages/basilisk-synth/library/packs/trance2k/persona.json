@@ -270,7 +270,7 @@
     "burst_fill": "#ffff00",
     "burst_ink": "#ff0000",
     "features": [
-      "7 TRANCE presets (uplifting, prog, hard!!)",
+      "{count} TRANCE presets (uplifting, prog, hard!!)",
       "made in 1 summer on my moms PC",
       "plz sign my guestbook!!!"
     ],
@@ -332,7 +332,7 @@
     "heads": {
       "Introduction": "~*~ WELCOME!!! ~*~",
       "Getting Started": "how 2 use it",
-      "The Presets": "the presets (all 7!!)",
+      "The Presets": "the presets (all {count}!!)",
       "License": "the rules (plz read)",
       "note": "shoutouts"
     }
@@ -346,7 +346,7 @@
     "tagline": "Connects your hands to the ceiling!!!",
     "blurb": "THE ULTIMATE TRANCE PRESETS!!! 7 uplifting, progressive and hard trance presets for your Sound Recorder synth. Made by DJ StarLite over one whole summer. FREE for everyone (but plz send a postcard!!).",
     "intro": [
-      "HI and WELCOME to Trance Connectivity Kit 2000!!! This is my second preset pack and it is WAY better than the first one. There are 7 trance presets: big supersaw leads, gated pads and a pluck that sounds like the ceiling is coming down.",
+      "HI and WELCOME to Trance Connectivity Kit 2000!!! This is my second preset pack and it is WAY better than the first one. There are {count} trance presets: big supersaw leads, gated pads and a pluck that sounds like the ceiling is coming down.",
       "I made these over the whole summer of 1999 on my mom's PC (166 MHz with MMX!!). If you make a song with them PLZ e-mail me an MP3 and I will put it on my homepage."
     ],
     "maker_note": [
@@ -373,7 +373,7 @@
         "|        TRANCE CONNECTIVITY KIT 2000   v2.0 FINAL",
         "|              by DJ StarLite  (StarLite Productions)",
         "|~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~*~",
-        "HI!!! thanks for getting my preset pack. there are 7 TRANCE presets on this CD for the sound recorder synth. they are in the folders Leads, Pads, Plucks and the rest.",
+        "HI!!! thanks for getting my preset pack. there are {count} TRANCE presets on this CD for the sound recorder synth. they are in the folders Leads, Pads, Plucks and the rest.",
         "HOW TO USE: put the CD in, go to the Library tab, it is called TRANCEKIT2K. double click a preset. thats it!!",
         "OTHER STUFF ON THIS CD: TRANCE2K.HLP (help file), TRANCE2K.PDF (the manual, you need a PDF reader), WEBRING.TXT (the webring!!), GUESTBK.TXT (plz sign it), TRANCE2K.BMP (a wallpaper i made).",
         "|plz sign my guestbook:  http://www.hometownpages.net/Nebula/Orbit/2049/",

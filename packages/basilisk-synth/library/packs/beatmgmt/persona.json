@@ -194,7 +194,7 @@
       {
         "t": "lines",
         "items": [
-          "FULL PACK: 20 hip-hop presets!",
+          "FULL PACK: {count} hip-hop presets!",
           "Boom bap, lo-fi, trap and trip-hop",
           "Turn to page 42 for the walkthrough"
         ],
@@ -414,10 +414,10 @@
   },
   "text": {
     "tagline": "Centralised administration of the boom and the bap.",
-    "blurb": "FREE with Computer Rhythm issue 14: the FULL Beat Management Console pack, worth £30! Twenty hip-hop presets for the sound recorder synths: boom bap, lo-fi, trap and trip-hop. Exclusive to CR readers.",
+    "blurb": "FREE with Computer Rhythm issue 14: the FULL Beat Management Console pack, worth £30! {count} hip-hop presets for the sound recorder synths: boom bap, lo-fi, trap and trip-hop. Exclusive to CR readers.",
     "intro": [
       "Welcome to Cover CD 14! This month we have something special: the complete Beat Management Console pack, worth £30 in the shops, FREE to every Computer Rhythm reader.",
-      "Twenty presets of dusty keys, 808s, bells and vinyl texture for the sound recorder synths. Our reviews desk gave it 9/10 last issue. Turn to page 42 for the step-by-step walkthrough, and page 46 for our beat-making masterclass."
+      "{count} presets of dusty keys, 808s, bells and vinyl texture for the sound recorder synths. Our reviews desk gave it 9/10 last issue. Turn to page 42 for the step-by-step walkthrough, and page 46 for our beat-making masterclass."
     ],
     "maker_note": [
       "Every month we try to put something on the disc that we would pay for ourselves. This month it was easy.",

@@ -317,7 +317,7 @@
     "burst_fill": "#ff2a6d",
     "burst_ink": "#ffffff",
     "features": [
-      "20 house presets for the whole office",
+      "{count} house presets for the whole office",
       "Deep, classic and French house",
       "Includes 50 FREE hours online!"
     ],
@@ -453,7 +453,7 @@
     "tagline": "Four-on-the-floor productivity for the whole department.",
     "blurb": "Bring the dance floor to your desktop! Twenty deep, classic and French house presets, made for teams that groove together. Plus: 50 FREE hours on the InfoLane online service and our exclusive Keyword WORKGROUP area!",
     "intro": [
-      "Welcome to Workgroup House Edition, the first interactive house music collection for the networked office! Twenty presets of deep, classic and French house are ready to play on your Sound Recorder synthesizer. No samplers. No studio. Just point, click and groove!",
+      "Welcome to Workgroup House Edition, the first interactive house music collection for the networked office! {count} presets of deep, classic and French house are ready to play on your Sound Recorder synthesizer. No samplers. No studio. Just point, click and groove!",
       "Workgroup House Edition is also your passport to the Velvetline online area. Use Keyword WORKGROUP to download new presets every month, chat with other house heads in the Groove Room, and enter our monthly Mix Contest."
     ],
     "maker_note": [

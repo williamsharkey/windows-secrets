@@ -56,6 +56,10 @@ def write(page, packs_dir, personas):
             prev = json.load(open(os.path.join(pd, 'build', 'previews.json'), encoding='utf-8'))
         except OSError:
             prev = {}
+        try:
+            meta = json.load(open(os.path.join(pd, 'build', 'meta.json')))
+        except OSError:
+            meta = {}
         order = [F.get('nfo'), 'README.TXT'] + list(prev)
         first = next((k for k in order if k and k in prev), None)
         disc = os.path.join(pd, 'disc')
@@ -100,7 +104,7 @@ def write(page, packs_dir, personas):
    <dt>Package</dt><dd>{e(p['box']['type'])}, price sticker "{e(' '.join(p['box']['price']))}"{', starburst "' + e(' '.join(p['box']['burst'])) + '"' if p['box'].get('burst') else ''}</dd>
    <dt>Look</dt><dd>{''.join('<span class="sw" style="background:%s"></span>' % c for c in pal[:16])} {e(str(L['dither']))}{', no anti-aliasing' if not L['aa'] else ''}</dd>
    <dt>Voice</dt><dd>{e(M.get('voice', ''))}</dd>
-   <dt>Presets</dt><dd>{nbsp} on the disc (placeholder seeds until the library builder has this pack)</dd>
+   <dt>Presets</dt><dd>{nbsp} on the disc{', %d of them also on BASILISK SYNTH' % meta['presets_xp'] if meta.get('presets_xp') is not None else ''} &middot; {'<b>placeholder</b> (no library pack)' if meta.get('placeholder', True) else 'from the library (' + e(meta.get('source', '')) + ')'}</dd>
   </dl>
   <div class="links">{''.join('<a href="%s">%s</a>' % (winpath(u), t) for t, u in links)}</div>
   {'<details open><summary>%s</summary><pre>%s</pre></details>' % (e(first), e(prev[first])) if first else ''}

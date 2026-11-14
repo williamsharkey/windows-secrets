@@ -314,7 +314,7 @@
     "blurb": "Lowfold's first release as a limited company. Ten basses for the sound recorder synths: wobble, growl, sub, reese and organ bass, built for UK garage, 2-step, speed garage and the heavy stuff after midnight.",
     "intro": [
       "Bass Enterprise Edition is LFS012, the twelfth Lowfold release and the first since we became a proper company with a registered office and a fax machine.",
-      "It holds ten bass presets for the sound recorder synths. Wobbles, growls, subs, a reese and an organ bass. They were built for 2-step and speed garage at 130 to 140 and tested on a rig in a railway arch."
+      "It holds {count} bass presets for the sound recorder synths. Wobbles, growls, subs, a reese and an organ bass. They were built for 2-step and speed garage at 130 to 140 and tested on a rig in a railway arch."
     ],
     "maker_note": [
       "We started Lowfold on a pirate frequency in 1995. We are now Lowfold Sound System Ltd. The accountant says this is progress. The neighbours disagree.",

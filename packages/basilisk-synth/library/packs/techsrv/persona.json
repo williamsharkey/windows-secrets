@@ -180,7 +180,7 @@
         "t": "lines",
         "items": [
           "Most powerful techno sound!",
-          "16 professional dance programs",
+          "{count} professional dance programs",
           "Enjoy the studio quality at home",
           "Dub delay, acid and minimal",
           "Plug and Play - Easy Setup!"
@@ -298,7 +298,7 @@
     "burst_fill": "#ffd000",
     "burst_ink": "#d40000",
     "features": [
-      "16 techno programs: Detroit, minimal, dub",
+      "{count} techno programs: Detroit, minimal, dub",
       "Bundled with JW-3216 PnP Audio Card",
       "Free technical support by BBS and e-mail"
     ],
@@ -361,13 +361,13 @@
   },
   "text": {
     "tagline": "Most powerful techno sound for your PC!",
-    "blurb": "Techno Server 4.0 is the most powerful techno program set for Sound Recorder synthesizer. With 16 professional programs of Detroit, minimal and dub techno, you can enjoy the studio quality at your home. Bundled with JW-3216 PnP Audio Card.",
+    "blurb": "Techno Server 4.0 is the most powerful techno program set for Sound Recorder synthesizer. With {count} professional programs of Detroit, minimal and dub techno, you can enjoy the studio quality at your home. Bundled with JW-3216 PnP Audio Card.",
     "intro": [
       "Thank you for purchase of JW-3216 PnP 16-bit Audio Card. This CD-ROM contains Techno Server 4.0 Bundle Edition, the most powerful techno program set for Sound Recorder synthesizer.",
-      "Techno Server 4.0 have 16 professional programs of Detroit, minimal and dub techno. Each program is carefully designed by Jadewave Audio R&D Department to make the best performance with your new audio card. Please enjoy the mission-critical repetition!"
+      "Techno Server 4.0 have {count} professional programs of Detroit, minimal and dub techno. Each program is carefully designed by Jadewave Audio R&D Department to make the best performance with your new audio card. Please enjoy the mission-critical repetition!"
     ],
     "maker_note": [
-      "This Bundle Edition is only for the user of Jadewave audio products. It is not for retail sale. For the full version Techno Server 4.0 Professional with 64 programs, please contact your dealer.",
+      "This Bundle Edition is only for the user of Jadewave audio products. It is not for retail sale. For the full version Techno Server 4.0 Professional with 128 programs, please contact your dealer.",
       "Jadewave Electronics Co., Ltd. reserve the right to change the specifications without notice. All trademarks are property of their owner.",
       "Jadewave Audio R&D Dept."
     ],

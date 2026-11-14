@@ -337,7 +337,7 @@
     },
     "burst": null,
     "features": [
-      "198 programs across 21 categories",
+      "{count} programs across {ncat} categories",
       "Programmed from the great workstations of 1985-1994",
       "Licence-free for commercial productions"
     ],
@@ -399,9 +399,9 @@
   },
   "text": {
     "tagline": "The great workstations, archived.",
-    "blurb": "198 programs that reference the classic workstations, samplers and synthesizers of 1985 to 1994, programmed from scratch for the Sound Recorder synthesizers. Volumes 1, 2 and 3 of the ROM Reference series on one disc.",
+    "blurb": "{count} programs that reference the classic workstations, samplers and synthesizers of 1985 to 1994, programmed from scratch for the Sound Recorder synthesizers. Volumes 1, 2 and 3 of the ROM Reference series on one disc.",
     "intro": [
-      "HAA-CD 0094 collects Volumes 1, 2 and 3 of the ROM Reference series: 198 programs that reference the factory sounds of the workstations and samplers found in professional studios between 1985 and 1994.",
+      "HAA-CD 0094 collects Volumes 1, 2 and 3 of the ROM Reference series: {count} programs that reference the factory sounds of the workstations and samplers found in professional studios between 1985 and 1994.",
       "No sample or program from any instrument maker was used. Every program was built from the operating-system sounds with Sound Recorder, then compared by ear against the reference in Studio C."
     ],
     "maker_note": [

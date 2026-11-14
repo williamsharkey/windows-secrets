@@ -112,7 +112,8 @@ def build(p, data, workdir, out_path):
         d.p('{\\i %s}' % esc(x), raw=True)
     d.head('On this disc')
     d.row('{\\b %s}' % esc(pk['label']), 'volume label (%s)' % pk['label_long'])
-    d.row('{\\b %d}' % len(data['presets']), 'presets in %d folders' % len({x['folder'] for x in data['presets']}))
+    nx = sum(1 for x in data['presets'] if 'XP' in x.get('ships', ['XP']))
+    d.row('{\\b %d}' % len(data['presets']), 'presets in %d folders (%d also play on BASILISK SYNTH)' % (len({x['folder'] for x in data['presets']}), nx))
     d.row('{\\b %s}' % esc(p['files']['pdf']), 'the printed manual, as a PDF')
     d.end()
 
@@ -167,6 +168,8 @@ def build(p, data, workdir, out_path):
         d.topic('p%03d' % i, x['name'], popup=True)
         d.p('File: \\\\%s' % x['disp'].replace('\\', '\\\\'), raw=True, fs=18)
         d.mono(x['dna'])
+        sh = x.get('ships', ['3.11', 'XP'])
+        d.p('Plays on: %s' % ('BASILISK 16 and BASILISK SYNTH' if 'XP' in sh else 'BASILISK 16 only'), fs=16)
         d.end()
 
     rtf = d.text()

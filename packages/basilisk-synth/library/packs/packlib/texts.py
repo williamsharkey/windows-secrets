@@ -317,8 +317,10 @@ STYLES = {'nfo': nfo_style, 'shareware': shareware_style, 'corporate': corporate
 
 def pack_inf(p, data):
     pk, M = p['pack'], p['maker']
-    inf = ('[Pack]\nId=%s\nTitle=%s\nVersion=%s\nAuthor=%s\nLicence=%s\nDate=%s\nPresets=%d\nDescription=%s\n'
-           % (p['id'], pk['title'], pk['version'], M['name'], p['files']['license'], pk['date'], len(data['presets']), p['text']['blurb']))
+    nx = sum(1 for x in data['presets'] if 'XP' in x.get('ships', ['XP']))
+    inf = ('[Pack]\nId=%s\nTitle=%s\nVersion=%s\nAuthor=%s\nLicence=%s\nDate=%s\nPresets=%d\nPresetsXP=%d\nDescription=%s\n'
+           % (pk.get('plan_id') or p['id'], pk['title'], pk['version'], M['name'], p['files']['license'], pk['date'], len(data['presets']), nx,
+              p['text']['blurb']))
     return inf
 
 

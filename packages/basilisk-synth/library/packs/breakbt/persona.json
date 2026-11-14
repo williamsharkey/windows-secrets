@@ -65,7 +65,7 @@
     "price": ["FREE", "CD-R"],
     "sticker": {"bg": "#33ff33", "ink": "#000000", "shape": "rect", "font": "lucon.ttf"},
     "burst": null,
-    "features": ["23 break kits, basses and chops", "jungle / dnb / big beat / electro / footwork", "never sell this. trade it."],
+    "features": ["{count} presets: break kits, basses and chops", "jungle / dnb / big beat / electro / footwork", "never sell this. trade it."],
     "barcode": false
   },
   "disc": {"style": "cdr", "base": "#3a8a6a", "label": "sticker", "pic": "bg", "paper": "#f4f4ec", "lines": ["CSC-007  BREAKBEAT KIT", "chopshop crew  02/98  #23 of 50"], "inks": ["#000000", "#008800"], "side": ["NOT", "4 SALE"], "ring": "CHOPSHOP CREW * #CHOPSHOP @ SPLICENET * CSC-007 * RESPECT DUE * TRADE DONT SELL *", "ring_ink": "#003300"},

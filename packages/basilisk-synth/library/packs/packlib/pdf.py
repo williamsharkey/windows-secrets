@@ -237,7 +237,7 @@ def build(p, data, cover_png, credits, out_path):
         P((HD.get('The Presets') or {SW: 'Klangprogramme / Programs', 'zine': 'the tapes'}.get(st, 'The Presets')), 'h1')
     rows = [['File', 'Name', 'DNA']]
     for x in data['presets']:
-        rows.append([Paragraph(_esc('\\' + x['disp']), S['mono']), Paragraph(_esc(x['name']), S['small']),
+        rows.append([Paragraph(_esc('\\' + x['disp']), S['mono']), Paragraph(_esc(x['name']) + ('' if 'XP' in x.get('ships', ['XP']) else ' <font size="6">(16 only)</font>'), S['small']),
                      Paragraph(_esc(x['dna']), S['mono'])])
     cw = W - 2 * m
     t = Table(rows, colWidths=[cw * .27, cw * .25, cw * .48], repeatRows=1)
@@ -246,6 +246,8 @@ def build(p, data, cover_png, credits, out_path):
                            ('LINEBELOW', (0, 0), (-1, -1), .3, colors.HexColor('#999999')), ('VALIGN', (0, 0), (-1, -1), 'TOP'),
                            ('LEFTPADDING', (0, 0), (-1, -1), 2), ('RIGHTPADDING', (0, 0), (-1, -1), 2)]))
     F.append(t)
+    if any('XP' not in x.get('ships', ['XP']) for x in data['presets']):
+        P('(16 only): plays on BASILISK 16; BASILISK SYNTH lists the others.', 'small')
     if data['placeholder']:
         P('Preview disc: these presets are placeholders until the library lane builds this pack.', 'small')
     F.append(PageBreak())

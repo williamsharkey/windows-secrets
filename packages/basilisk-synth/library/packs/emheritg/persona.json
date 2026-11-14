@@ -22,7 +22,16 @@
       "Drones": "DRONES",
       "Keys": "TASTEN",
       "Texture": "TEXTUR",
-      "*": "DIVERSES"
+      "*": "DIVERSES",
+      "Bell": "GLOCKEN",
+      "Drone": "DRONES",
+      "FX": "EFFEKTE",
+      "Lead": "LEADS",
+      "Pluck": "ZUPF",
+      "Pad": "FLAECHEN",
+      "Vocal": "STIMMEN",
+      "Perc": "SCHLAG",
+      "Mallet": "MALLETS"
     },
     "plan_id": "electromech",
     "plan_title": "Electromechanical Heritage"
@@ -178,7 +187,7 @@
           "Sound from relays, bells",
           "and teleprinters.",
           "",
-          "40 Klangprogramme"
+          "{count} Klangprogramme"
         ],
         "font": "body",
         "size": 0.033,
@@ -259,7 +268,7 @@
     "burst_fill": "#ff6a00",
     "burst_ink": "#ffffff",
     "features": [
-      "40 Klangprogramme / 40 programs",
+      "{count} Klangprogramme / {count} programs",
       "Relais, Glocken, Fernschreiber",
       "Handbuch deutsch/englisch"
     ],
@@ -312,14 +321,14 @@
   "text": {
     "tagline": "Klang aus Relais, Glocken und Fernschreibern.",
     "tagline_en": "Sound from relays, bells and teleprinters.",
-    "blurb": "Forty programs built from the machines of the telephone exchange and the office: relays, ringers, teleprinters, motors. Measured, tuned and documented in Bielefeld.",
-    "blurb_de": "Vierzig Klangprogramme aus den Maschinen der Vermittlungsstelle und des Bueros: Relais, Wecker, Fernschreiber, Motoren. Gemessen, gestimmt und dokumentiert in Bielefeld.",
+    "blurb": "{count} programs built from the machines of the telephone exchange and the office: relays, ringers, teleprinters, motors. Measured, tuned and documented in Bielefeld.",
+    "blurb_de": "{count} Klangprogramme aus den Maschinen der Vermittlungsstelle und des Bueros: Relais, Wecker, Fernschreiber, Motoren. Gemessen, gestimmt und dokumentiert in Bielefeld.",
     "intro": [
-      "ELEKTROMECHANIK 2.0 is the second disc of the K&L Studio Serie. It contains forty programs for the Sound Recorder synthesizers BASILISK 16 and BASILISK SYNTH.",
+      "ELEKTROMECHANIK 2.0 is the second disc of the K&L Studio Serie. It contains {count} programs for the Sound Recorder synthesizers BASILISK 16 and BASILISK SYNTH.",
       "Every program is built from the sound of an electromechanical machine: relays, selector switches, bells, teleprinters, motors and transformers. Each program was tuned against a reference tone of 440 Hz."
     ],
     "intro_de": [
-      "ELEKTROMECHANIK 2.0 ist die zweite CD der K&L Studio Serie. Sie enthaelt vierzig Klangprogramme fuer die Sound-Recorder-Synthesizer BASILISK 16 und BASILISK SYNTH.",
+      "ELEKTROMECHANIK 2.0 ist die zweite CD der K&L Studio Serie. Sie enthaelt {count} Klangprogramme fuer die Sound-Recorder-Synthesizer BASILISK 16 und BASILISK SYNTH.",
       "Jedes Programm beruht auf dem Klang einer elektromechanischen Maschine: Relais, Waehler, Wecker, Fernschreiber, Motoren und Transformatoren. Alle Programme sind auf den Kammerton 440 Hz gestimmt."
     ],
     "maker_note": [

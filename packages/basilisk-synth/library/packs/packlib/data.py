@@ -77,6 +77,24 @@ def _seeds():
     return g + m
 
 
+LIBMAP = {'workgrp': 'workgroup-house', 'techsrv': 'techno-server', 'trance2k': 'trance-connectivity', 'breakbt': 'breakbeat-resource',
+          'bassent': 'bass-enterprise', 'beatmgmt': 'beat-management', 'retrodsp': 'retro-display', 'screensv': 'screen-saver',
+          'diagnost': 'diagnostics', 'leisure': 'leisure', 'gameport': 'game-port', 'workstn': 'workstation-classics',
+          'studarch': 'studio-archive', 'heritage': 'w3x-heritage', 'romref': 'rom-reference', 'lifestyl': 'lifestyle-aesthetics',
+          'emheritg': 'electromech-heritage'}
+BUILDER_OUT = os.path.join(LIB, 'builder', 'out')
+
+
+def _library(persona):
+    """The library lane's presets for this pack (builder/out/library.json), or None."""
+    lid = persona['pack'].get('library_id') or LIBMAP.get(persona['id'])
+    f = os.path.join(BUILDER_OUT, 'library.json')
+    if not lid or not os.path.exists(f):
+        return None, None
+    rows = [x for x in json.load(open(f, encoding='utf-8')) if x['pack'] == lid]
+    return (rows or None), lid
+
+
 def _builder_folder(persona):
     pk = persona['pack']
     if pk.get('data'):
@@ -101,7 +119,13 @@ def load(persona):
     folders = pk.get('folders', {})
     presets = []
     folder = _builder_folder(persona)
-    if folder:
+    lib, lid = _library(persona)
+    if lib:
+        for x in lib:
+            presets.append({'category': x['category'], 'name': x['name'], 'dna': x['dna'], 'ships': x['ships'],
+                            'badge': x.get('badge', ''), 'library': x.get('library', False)})
+        src, placeholder, sounds = 'builder/out/library.json, pack %s' % lid, False, []
+    elif folder:
         for line in open(os.path.join(folder, 'PRESETS.TSV'), encoding='utf-8'):
             if line.startswith('#') or not line.strip():
                 continue

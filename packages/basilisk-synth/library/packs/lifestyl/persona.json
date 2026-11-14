@@ -225,7 +225,7 @@
     "burst_fill": "#ffd700",
     "burst_ink": "#7a3a00",
     "features": [
-      "101 presets: mall, lobby, aquarium, startup",
+      "{count} presets: mall, lobby, aquarium, startup",
       "Water, glass, slush and late-night signal",
       "Bilingual manual (PDF)"
     ],
@@ -282,7 +282,7 @@
   "text": {
     "tagline": "Mall. Lobby. Aquarium. Startup.",
     "tagline_ja": "暮らしに、透明なサウンドを。",
-    "blurb": "A hundred and one presets for the moods of modern life: the shopping-mall atrium, the hotel lobby, the aquarium, the moment your computer starts. Designed in Tokyo by Sound Design Group 2.",
+    "blurb": "{count} presets for the moods of modern life: the shopping-mall atrium, the hotel lobby, the aquarium, the moment your computer starts. Designed in Tokyo by Sound Design Group 2.",
     "intro": [
       "Thank you for choosing the Lifestyle Aesthetics Pack, Gold Edition. This collection brings the fresh feeling of clean glass, clear water and quiet lobbies to your desktop music.",
       "The presets are arranged in ten moods: Mall, Lobby, Aqua, Glass, Startup, Utopia, Slush, Late Night, Signal and Funk. Each one was designed by the Sound Design Group 2 at Meridian Interactive."

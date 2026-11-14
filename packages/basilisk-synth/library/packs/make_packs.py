@@ -62,6 +62,24 @@ def manual_blocks(p, data):
     return B
 
 
+def with_counts(p, data):
+    """Fills {count} (presets on the disc), {count_xp} (those that ship to XP) and {ncat} (folders) everywhere."""
+    n = len(data['presets'])
+    nx = sum(1 for x in data['presets'] if 'XP' in x.get('ships', ['XP']))
+    nc = len({x['folder'] for x in data['presets']})
+    def sub(v):
+        if isinstance(v, str):
+            return v.replace('{count}', str(n)).replace('{count_xp}', str(nx)).replace('{ncat}', str(nc))
+        if isinstance(v, list):
+            return [sub(x) for x in v]
+        if isinstance(v, dict):
+            return {k: sub(x) for k, x in v.items()}
+        return v
+    q = sub(p)
+    q['_count'] = n
+    return q
+
+
 def build_pack(p, opt):
     pid = p['id']
     root = os.path.join(HERE, pid)
@@ -73,6 +91,7 @@ def build_pack(p, opt):
     for d in (disc, rend, build):
         os.makedirs(d, exist_ok=True)
     data = pdata.load(p)
+    p = with_counts(p, data)
     files = {}          # disc path (8.3, '/' separated) -> bytes
     joliet = {}         # disc path -> Joliet path (when it differs)
     pk, F = p['pack'], p['files']
@@ -125,8 +144,14 @@ def build_pack(p, opt):
     inf = texts.pack_inf(p, data)
     files['PACK.INF'] = texts.enc(inf)
     files['PACK.TXT'] = texts.enc(inf.replace('[Pack]\n', '%s\n%s\n\n' % (pk['title'], '=' * len(pk['title']))))
-    files['PRESETS.TSV'] = texts.enc('# category\tname\tDNA\tpack\n' + ''.join(
-        '%s\t%s\t%s\t%s\n' % (x['folder'], x['name'], x['dna'], pid) for x in data['presets']), 'utf-8')
+    files['PRESETS.TSV'] = texts.enc('# category\tname\tDNA\tpack\teditions (3.11 = BASILISK 16, XP = BASILISK SYNTH)\n' + ''.join(
+        '%s\t%s\t%s\t%s\t%s\n' % (x['category'], x['name'], x['dna'], pk.get('plan_id') or pid, ' '.join(x.get('ships', ['3.11', 'XP'])))
+        for x in data['presets']), 'utf-8')
+    lid = pdata.LIBMAP.get(pid)
+    for ed, disc_name in (('xp', 'XP.TSV'), ('w311', 'W311.TSV')):   # the library lane's per-edition lists, as built
+        src = os.path.join(pdata.BUILDER_OUT, ed, '%s.tsv' % lid) if lid else None
+        if src and os.path.exists(src) and not data['placeholder']:
+            files[disc_name] = texts.enc(open(src, encoding='utf-8').read(), 'utf-8')
     files['LIBRARY.TSV'] = texts.enc('# name\tcategory\tpath\tseconds\tsource/licence\n' + ''.join(
         '%s\t%s\t%s\t%s\t%s\n' % tuple(x) for x in data['sounds']), 'utf-8')
     for x in data['presets']:
@@ -166,6 +191,9 @@ def build_pack(p, opt):
         with open(fp, 'wb') as f:
             f.write(b)
         os.utime(fp, (datetime.datetime(date.year, date.month, date.day, 12).timestamp(),) * 2)
+    with open(os.path.join(build, 'meta.json'), 'w', encoding='utf-8') as f:
+        json.dump({'source': data['source'], 'placeholder': data['placeholder'], 'presets': len(data['presets']),
+                   'presets_xp': sum(1 for x in data['presets'] if 'XP' in x.get('ships', ['XP']))}, f)
     with open(os.path.join(build, 'previews.json'), 'w', encoding='utf-8') as f:
         json.dump(previews, f, ensure_ascii=False, indent=1)
 
