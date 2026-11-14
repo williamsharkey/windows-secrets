@@ -294,6 +294,10 @@ def box_scene():
     if t == 'dvd':
         dist = max(w, h) * 2.9
     rx, ry = (560, 700) if tall else (720, 600)
+    lg = int(os.environ.get('PACK_LONG', '0'))      # a small render made at its own size (the site's shelf), never downscaled
+    if lg:
+        k = lg / max(rx, ry)
+        rx, ry = int(round(rx * k)), int(round(ry * k))
     render(job['out_box'], rx, ry)
 
 

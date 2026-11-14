@@ -34,7 +34,7 @@ def export(here, personas, out=None):
         files = {}
         for src, name in ((os.path.join(tex, 'front.png'), 'front.png'), (os.path.join(tex, 'spine.png'), 'spine.png'),
                           (os.path.join(tex, 'back.png'), 'back.png'), (os.path.join(rend, 'label.png'), 'disc.png'),
-                          (os.path.join(rend, 'box.png'), 'box.png'), (os.path.join(rend, 'disc.png'), 'disc3d.png'),
+                          (os.path.join(rend, 'box.png'), 'box.png'), (os.path.join(rend, 'box_small.png'), 'box_small.png'), (os.path.join(rend, 'disc.png'), 'disc3d.png'),
                           (os.path.join(rend, 'icon32.png'), 'icon32.png'), (os.path.join(rend, 'icon48.png'), 'icon48.png'),
                           (os.path.join(disc, p['files']['pdf']), 'manual.pdf')):
             if os.path.exists(src):

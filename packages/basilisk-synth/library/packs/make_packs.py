@@ -260,15 +260,20 @@ def render_pack(p, opt):
                'out_box': os.path.join(build, 'box_raw.png'), 'out_disc': os.path.join(build, 'disc_raw.png'),
                'disc_base': p['disc']['base'], 'disc_style': p['disc']['style'], 'obi': bool(p['box'].get('obi')),
                'sticker_pos': p['box'].get('sticker', {}).get('pos')}
+        small = os.environ.get('PACK_ONLY') == 'small'
+        if small:   # box_small.png: the box rendered at about 240 px on its long side
+            job['out_box'] = os.path.join(build, 'box_small_raw.png')
         jp = os.path.join(build, 'job.json')
         json.dump(job, open(jp, 'w'))
-        r = subprocess.CompletedProcess([], 0) if os.environ.get('PACK_ONLY') == 'post' else subprocess.run([BLENDER, '-b', '--factory-startup', '-t', os.environ.get('BLENDER_THREADS', '4'), '-P', os.path.join(HERE, 'packlib', 'render_blender.py'), '--', jp],
+        benv = dict(os.environ, PACK_ONLY='box', PACK_LONG=os.environ.get('PACK_LONG', '240')) if small else None
+        r = subprocess.CompletedProcess([], 0) if os.environ.get('PACK_ONLY') == 'post' else subprocess.run(env=benv, args=[BLENDER, '-b', '--factory-startup', '-t', os.environ.get('BLENDER_THREADS', '4'), '-P', os.path.join(HERE, 'packlib', 'render_blender.py'), '--', jp],
                            capture_output=True, text=True)
         if r.returncode:
             print(r.stdout[-3000:], r.stderr[-3000:])
             raise SystemExit('blender failed for ' + pid)
         post = p['look'].get('render_post')
-        for raw, name in ((job['out_box'], 'box.png'), (job['out_disc'], 'disc.png')):
+        outs = ((job['out_box'], 'box_small.png'),) if small else ((job['out_box'], 'box.png'), (job['out_disc'], 'disc.png'))
+        for raw, name in outs:
             if not os.path.exists(raw):
                 continue
             im = gfx.Image.open(raw).convert('RGBA')
@@ -280,7 +285,7 @@ def render_pack(p, opt):
                 im.putalpha(a.point(lambda v: 255 if v >= 96 else 0))
             bb = im.getchannel('A').point(lambda v: 255 if v > 24 else 0).getbbox()
             if bb:   # crop to the object and its shadow, with a margin (no scaling)
-                mg = 16
+                mg = 6 if name == 'box_small.png' else 16
                 im = im.crop((max(0, bb[0] - mg), max(0, bb[1] - mg), min(im.width, bb[2] + mg), min(im.height, bb[3] + mg)))
             im.save(os.path.join(rend, name), optimize=True)
         print('[%s] rendered' % pid, flush=True)
