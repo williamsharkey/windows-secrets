@@ -33,6 +33,14 @@ Every sound comes from the sixteen Sound Recorders through the emulated card, as
   inside Windows' own modal loops, such as dragging a scroll-bar thumb. So while the left button is held, the motion
   also goes to the emulated mouse as relative motion (`web_engine.c`, `host.cpp`). WIN.INI gets `MouseSpeed=0`, so
   that motion is 1:1.
+- **DNA v3.** `host.cpp` follows `plugin/Basilisk16Plugin.cpp` line for line: the v3 allocator and per-note windows
+  (`V3Alloc.h`, `V3Voice.h`), kit pads with their segment windows and choke groups, mono and legato glide, Wo/Wb/Wt
+  delays at the page's tempo, the key and scale (`key`, `klabels`, the scale list in the hello), Windows' Save/Load
+  state. The core is compiled from the plugin's own `SharedCore*.cpp` units. Checked against `render311` (same DNA,
+  score and key; the web engine under node, granted exactly as render311 runs its engine): kit with chokes, degree
+  chords in C and in D, 16-TET remap, mono and legato glide, W windows with seeds, Wt at 60 and 150 BPM all render
+  bit-identical. (A heavy DNA such as a kit needs Windows to finish building and repainting first; notes sent
+  while it is still busy arrive late, in the plugin as here.)
 
 ## Build and deploy
 

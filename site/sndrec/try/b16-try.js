@@ -3,7 +3,7 @@
 // pressed. The machine runs in a worker; the page only forwards the pointer, the keys and MIDI, and watches it.
 (function () {
   'use strict';
-  var CFG = /*CONFIG*/{"v":"4aa21a16b6","files":[{"name":"b16.wasm","size":2524744,"gz":1034547},{"name":"w31web.state","size":6044263,"gz":1421721},{"name":"drive.zip","size":3577754,"gz":3577754}],"lead":2048,"buildFile":{"name":"w31build.state","size":4875514,"gz":989950}}/*END*/;
+  var CFG = /*CONFIG*/{"v":"1081288890","files":[{"name":"b16.wasm","size":2634522,"gz":1073529},{"name":"w31web.state","size":6044959,"gz":1423389},{"name":"drive.zip","size":3577754,"gz":3577754}],"lead":2048,"buildFile":{"name":"w31build.state","size":4875514,"gz":989952}}/*END*/;
   var DATA = null;   // b16-data.json, fetched on the click: the machine's settings, the library's names, the presets
   var root = document.getElementById('b16try');
   if (!root) return;
@@ -129,6 +129,7 @@
       if (m.building) stat.textContent = 'Sound Recorder is building the sound…'; else status();
     } else if (m.t === 'frame') {
       if (running) show(m.bitmap); else if (m.bitmap.close) m.bitmap.close();
+    } else if (m.t === 'stateio') { onStateIO(m);
     } else if (m.t === 'info') { var cb = pending[m.id]; delete pending[m.id]; if (cb) cb(m.info); }
     else if (m.t === 'error') fail('The emulator stopped: ' + m.msg);
   }
@@ -269,8 +270,9 @@
   // A state is the plugin's own state text (packages/basilisk-synth/design/STATE.md): the DNA (parameters, globals and
   // macros are in it) and any other lines, kept as they came. `.b16` is that text, zlib-compressed, with a 16-byte
   // header; a `.vstpreset` carries the same text as the plugin's component state, so either opens in the DAW.
-  var curDna = '', extras = [], pendingState = null, savedText = '', autoT = 0, U = window.B16UI;
-  function stateText(dna) { return 'BASILISK-SYNTH 1\ndna ' + (dna || curDna || 'ding#16;R120') + '\nreference 0\n' + extras.join(''); }
+  // (the running synth's state comes from the host itself, the plugin's getState: the DNA, the key lines, the rest kept)
+  var curDna = '', curState = '', pendingState = null, savedText = '', autoT = 0, U = window.B16UI;
+  function stateText() { return curState || 'BASILISK-SYNTH 1\ndna ' + (curDna || 'ding#16;R120') + '\nreference 0\n'; }
   function parseState(text) {
     var lines = text.replace(/\r/g, '').split('\n'), dna = null, ex = [];
     if (!/^BASILISK-SYNTH /.test(lines[0])) { var t = lines[0].trim(); return t ? { dna: t, extras: [] } : null; }   // a bare DNA line
@@ -346,8 +348,7 @@
   function applyState(text) {
     var st = parseState(text);
     if (!st) { note('That state has no DNA.'); return false; }
-    extras = st.extras;
-    if (running && ready && worker) { curDna = st.dna; worker.postMessage({ t: 'dna', text: st.dna }); savedText = ''; }
+    if (running && ready && worker) { worker.postMessage({ t: 'state', text: text }); savedText = ''; }
     else { pendingState = text; if (!running) start(); }
     return true;
   }
@@ -578,7 +579,11 @@
     showButtons(); refreshSlots();
   }
   function onHeartbeat(m) {
-    if (m.dna && m.dna !== curDna) { curDna = m.dna; autosave(); }
+    if (m.state && m.state !== curState) { curState = m.state; curDna = m.dna; autosave(); }
+  }
+  function onStateIO(m) {   // Windows' own Save state... and Load state... (STATE.md 3): a download, or the file picker
+    if (m.op === 'save') { curState = m.state || curState; encodeB16(stateText()).then(function (b) { download(b, 'BASILISK.b16', 'application/x-basilisk16-state'); }); }
+    else if (B.open) B.open.click();
   }
   function onStopped() { stopMic(); showButtons(); }
   if (U) U.load(base, CFG.v).then(buildRow).catch(function () {});
