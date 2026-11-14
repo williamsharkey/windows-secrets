@@ -220,6 +220,7 @@ struct TrackJob {
     std::string machine, core, dna, log, userDir, grid;   // machine: the folder (absolute); grid: a Mines board
     std::vector<MidiEv> ev;                               // sorted by time
     double tail = 3.0, bpm = 120.0;
+    uint64_t lookahead48 = 0;   // send events this many samples before their block: Windows gets more time for dense chords
     b16v3::KeyParams kp;
     bool verbose = false, setLibrary = true;              // setLibrary: the core's name table (process-wide)
     const std::atomic<bool> *cancel = nullptr;
@@ -352,7 +353,7 @@ inline bool renderTrack(const TrackJob &J, TrackOut &R)
     size_t ei = 0;
     for (uint64_t h = 0; h < total; h += kBlock) {
         const uint64_t blockEnd = h + kBlock;
-        while (ei < J.ev.size() && (uint64_t)(J.ev[ei].t * 48000) < blockEnd) {
+        while (ei < J.ev.size() && (uint64_t)(J.ev[ei].t * 48000) < blockEnd + J.lookahead48) {
             const MidiEv &m = J.ev[ei++];
             const uint64_t at = anchor + (uint64_t)(m.t * 48000) + kLat;
             host.capWin = win; host.capRate = rateCap; host.capTape = tapeCap;

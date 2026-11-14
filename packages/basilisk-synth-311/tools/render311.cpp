@@ -6,6 +6,7 @@
 //             Key, Scale, Use Preset Scale, Snap, Remap Keys and Remap Anchor parameters: PRESET-ENGINE-2 18.2)
 //             [--scala FILE.scl]   (an imported tuning, as the Scales page's Scala... button)
 //             [--grid "<w> <h> <state> <cells>"]   (a Minesweeper board for a DNA with x tokens: the sequencer)
+//             [--lookahead MS]   (send each event this long before its block: dense chords arm on time; 0 default)
 //             [--user-dir DIR]   (My Recordings: index.tsv and the WAVs; their u_ names play, RECORDING.md 4.4)
 //
 // --score: notes as t:note:velocity:duration in seconds (the format of packages/basilisk-synth/tools/batch_render.py).
@@ -38,6 +39,7 @@ int main(int argc, char **argv)
     if (a.count("--user-dir")) J.userDir = a["--user-dir"];
     if (a.count("--grid")) J.grid = a["--grid"];
     J.verbose = std::getenv("RENDER311_VERBOSE") != nullptr;
+    if (a.count("--lookahead")) J.lookahead48 = (uint64_t)(std::atof(a["--lookahead"].c_str()) * 48.0);   // ms
     {   // the key and scale parameters (PRESET-ENGINE-2 18.2), as the plugin's
         auto num = [&](const char *k, int &v) { if (a.count(k)) v = std::atoi(a[k].c_str()); };
         num("--key", J.kp.root); num("--scale", J.kp.scale); num("--use-preset-scale", J.kp.usePreset); num("--snap", J.kp.snap);
