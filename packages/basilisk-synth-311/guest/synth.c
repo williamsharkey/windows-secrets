@@ -1836,11 +1836,11 @@ static void scales_values(void)
     int k; char t[16];
     static const char *nm[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
     if (!nScBtn) return;
-    SendMessage(scBtn[0], BM_SETSTATE, keyUse, 0L);
-    for (k = 0; k < 4; k++) SendMessage(scBtn[1 + k], BM_SETSTATE, keySnap == k + 1, 0L);
-    for (k = 0; k < 5; k++) SendMessage(scBtn[5 + k], BM_SETSTATE, keyLabels == k, 0L);
-    for (k = 0; k < 12; k++) SendMessage(scBtn[10 + k], BM_SETSTATE, keySteps <= 12 && (keyMask >> k & 1), 0L);
-    SendMessage(scBtn[22], BM_SETSTATE, keyRemap, 0L);
+    SendMessage(scBtn[0], BM_SETCHECK, keyUse, 0L);                                        /* check box */
+    for (k = 0; k < 4; k++) SendMessage(scBtn[1 + k], BM_SETCHECK, keySnap == k + 1, 0L);  /* radio buttons */
+    for (k = 0; k < 5; k++) SendMessage(scBtn[5 + k], BM_SETCHECK, keyLabels == k, 0L);
+    for (k = 0; k < 12; k++) SendMessage(scBtn[10 + k], BM_SETSTATE, keySteps <= 12 && (keyMask >> k & 1), 0L);   /* push buttons, down = on */
+    SendMessage(scBtn[22], BM_SETCHECK, keyRemap, 0L);
     SetScrollPos(scAnchorSb, SB_CTL, keyAnchor, TRUE);
     sprintf(t, "%s%d", nm[keyAnchor % 12], keyAnchor / 12 - 1); SetWindowText(scAnchorVal, t);
 }
@@ -1849,15 +1849,19 @@ static void scales_page(int y0)
     int k, x, w; HWND b;
     nScBtn = 0;
     x = 92;
-    b = mkbtn("Use the preset's scale", x, y0, 24, ID_SC + nScBtn, &w); page_add(b); scBtn[nScBtn++] = b; x += w + 14;
+#define SC_BOX(txt, style) (w = text_w(txt) + 22, b = mk("BUTTON", txt, WS_VISIBLE | (style), x, y0 + 4, w, 16, ID_SC + nScBtn), page_add(b), scBtn[nScBtn++] = b, x += w + 4)
+    SC_BOX("Use the preset's scale", BS_CHECKBOX); x += 10;
     page_add(mklbl("Out of the scale:", x, y0 + 4, 16, &w)); x += w + 3;
-    for (k = 0; k < 4; k++) { b = mkbtn(scSnap[k], x, y0, 24, ID_SC + nScBtn, &w); page_add(b); scBtn[nScBtn++] = b; x += w + 1; }
-    x += 12;
-    for (k = 0; k < 5; k++) { b = mkbtn(scLbl[k], x, y0, 24, ID_SC + nScBtn, &w); page_add(b); scBtn[nScBtn++] = b; x += w + 1; }
+    for (k = 0; k < 4; k++) SC_BOX(scSnap[k], BS_RADIOBUTTON);
     x = 92; page_add(mklbl("Notes from the root:", x, y0 + 34, 16, &w)); x += w + 4;
+    {   /* (the label radios go on this row, after the notes: ids stay in the order scales_command expects) */
+        int xl = x; for (k = 0; k < 12; k++) xl += btn_w(scNotes[k]) + 1;
+        xl += 14; page_add(mklbl("Labels:", xl, y0 + 34, 16, &w)); xl += w + 3;
+        { int xs = x; x = xl; y0 += 30; for (k = 0; k < 5; k++) SC_BOX(k ? scLbl[k] : "None", BS_RADIOBUTTON); y0 -= 30; x = xs; }
+    }
     for (k = 0; k < 12; k++) { b = mkbtn(scNotes[k], x, y0 + 30, 24, ID_SC + nScBtn, &w); page_add(b); scBtn[nScBtn++] = b; x += w + 1; }
-    x = 92;
-    b = mkbtn("Remap keys to scale steps", x, y0 + 60, 24, ID_SC + nScBtn, &w); page_add(b); scBtn[nScBtn++] = b; x += w + 10;
+    x = 92; y0 += 60;
+    SC_BOX("Remap keys to scale steps", BS_CHECKBOX); y0 -= 60; x += 6;
     page_add(mklbl("Anchor", x, y0 + 64, 16, &w)); x += w + 3;
     scAnchorSb = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, x, y0 + 64, 90, 14, ID_SC + 40); page_add(scAnchorSb);
     SetScrollRange(scAnchorSb, SB_CTL, 24, 96, FALSE); x += 94;
@@ -1869,10 +1873,11 @@ static void scales_command(int i)
     if (i == 0) keyUse = !keyUse;
     else if (i >= 1 && i <= 4) keySnap = i;
     else if (i >= 5 && i <= 9) keyLabels = i - 5;
-    else if (i >= 10 && i <= 21) { int k = i - 10; if (k) { if (keySteps > 12) keyMask = 0xAB5; keyMask ^= 1 << k; keyMask |= 1; say("keymask %d", keyMask); scales_values(); return; } }
+    else if (i >= 10 && i <= 21) { int k = i - 10; if (k) { if (keySteps > 12) keyMask = 0xAB5; keyMask ^= 1 << k; keyMask |= 1; say("keymask %d", keyMask); PostMessage(hMain, WM_USER + 7, 0, 0L); return; } }
     else if (i == 22) keyRemap = !keyRemap;
     say("keyopt %d %d %d %d %d", keyUse, keySnap, keyRemap, keyLabels, keyAnchor);
-    scales_values();
+    PostMessage(hMain, WM_USER + 7, 0, 0L);   /* the buttons' down states after the click is over: a push button
+                                                  set down (BM_SETSTATE) inside its own BN_CLICKED clicks again later */
 }
 static int pgSbCtl[24], pgBtnCtl[24];
 
@@ -2049,7 +2054,7 @@ static void page_command(int id)
         pc_set(c, c->kind == K_PRIO ? (v + 1) % 3 : c->kind == K_MODE ? 1 : !v);
         if (hDna) SetWindowText(hDna, dnaText);
         edited(FALSE);
-        page_values();
+        PostMessage(hMain, WM_USER + 7, 0, 0L);   /* (see scales_command) */
     }
 }
 
@@ -2744,7 +2749,7 @@ static void host_line(char *s)
         HWND c; char cls[16], t[40]; RECT r;
         for (c = GetWindow(hMain, GW_CHILD); c; c = GetWindow(c, GW_HWNDNEXT)) {
             GetClassName(c, cls, sizeof cls);
-            if (lstrcmpi(cls, "Button") || (GetWindowLong(c, GWL_STYLE) & 0x0F) > 1 || !IsWindowVisible(c)) continue;
+            if (lstrcmpi(cls, "Button") || (GetWindowLong(c, GWL_STYLE) & 0x0F) > 4 || !IsWindowVisible(c)) continue;
             GetWindowText(c, t, sizeof t); GetWindowRect(c, &r);
             if (!t[0] || t[0] == '\x95') continue;
             say("btn %d %d %d %d %s", r.left, r.top, r.right, r.bottom, t);
@@ -2899,6 +2904,7 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
     switch (m) {
     case WM_PAINT: paint(h); return 0;
+    case WM_USER + 7: page_values(); scales_values(); return 0;   /* the page's buttons, after a click */
     case WM_LBUTTONDOWN: case WM_LBUTTONDBLCLK: {   /* a dimmed (out-of-scale) key is disabled: its clicks come here */
         int vel; POINT p; p.x = (short)LOWORD(l); p.y = (short)HIWORD(l);
         if (note_at(p.x, p.y, &vel) >= 0) { SetCapture(h); kb_mouse(h, l, 0); return 0; }
@@ -2925,7 +2931,12 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
         if (w >= 1100 && w < 1200) { panel_command(w, HIWORD(l)); return 0; }
         if (w == ID_KITBTN) { if (HIWORD(l) == BN_CLICKED && kitOn) padcalc_open(); return 0; }
         if (w == ID_STATESAVE || w == ID_STATELOAD) { if (HIWORD(l) == BN_CLICKED) say(w == ID_STATESAVE ? "state save" : "state load"); return 0; }
-        if (w >= ID_TAB && w < ID_PG + 100) { if (HIWORD(l) == BN_CLICKED) page_command(w); return 0; }
+        if (w >= ID_TAB && w < ID_PG + 100) {
+            /* only a click on the button itself: a push button set down by BM_SETSTATE reports a click again when
+               the next button is pressed (measured: it fires with the pointer on the other button) */
+            if (HIWORD(l) == BN_CLICKED) { POINT p; RECT r; GetCursorPos(&p); GetWindowRect((HWND)LOWORD(l), &r); if (PtInRect(&r, p)) page_command(w); }
+            return 0;
+        }
         /* a reparented recorder's buttons report to us: hand the click to its recorder */
         for (r = 0; r < NALL; r++) if (rw[r] && (HWND)LOWORD(l) && GetParent((HWND)LOWORD(l)) == rw[r]) {
             PostMessage(rw[r], WM_COMMAND, w, l);
