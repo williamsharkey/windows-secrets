@@ -258,7 +258,15 @@
     "back_head": "#cc0000",
     "bullet": "+ ",
     "posterize_final": true,
-    "render_post": null
+    "render_post": null,
+    "compat": {
+      "pos": [
+        0.97,
+        0.98
+      ],
+      "anchor": "rb",
+      "size": 0.13
+    }
   },
   "box": {
     "type": "mailer",

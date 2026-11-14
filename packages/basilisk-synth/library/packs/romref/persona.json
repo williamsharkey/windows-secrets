@@ -321,7 +321,15 @@
     "bullet": "- ",
     "req_head": "FORMAT",
     "posterize_final": false,
-    "render_post": null
+    "render_post": null,
+    "compat": {
+      "pos": [
+        0.97,
+        0.97
+      ],
+      "anchor": "rb",
+      "size": 0.13
+    }
   },
   "box": {
     "type": "jewel",

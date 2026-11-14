@@ -1,0 +1,323 @@
+{
+  "id": "paulyw",
+  "category": "Paulywaulophone (library lane, new)",
+  "pack": {
+    "plan_id": "paulywaulophone",
+    "library_id": "paulywaulophone",
+    "title": "Paulywaulophone",
+    "subtitle": "The Office Singalong Collection",
+    "edition": "Volume 1",
+    "version": "1.0",
+    "date": "1996-12-06",
+    "label": "PAULYWAULO",
+    "label_long": "Paulywaulophone Vol 1",
+    "sources": {
+      "plan": "paulywaulophone"
+    }
+  },
+  "maker": {
+    "name": "Breakroom Media Group, Inc.",
+    "short": "Breakroom",
+    "kind": "office-party multimedia label",
+    "year": 1996,
+    "place": "Rochester, New York, USA",
+    "contact": [
+      "Breakroom Media Group, Inc.",
+      "1200 East Avenue, Suite 4",
+      "Rochester, NY 14699",
+      "Orders 1-800-555-0163",
+      "Fax (716) 555-0164"
+    ],
+    "people": [
+      [
+        "Paul Chauncy",
+        "sounds (Uncle Homunculus / Paulywauly)"
+      ],
+      [
+        "The Breakroom Choir",
+        "everyone else in the office"
+      ]
+    ],
+    "voice": "warm, jokey, office-party; Friday afternoon at the photocopier"
+  },
+  "look": {
+    "palette": [
+      "#2b1d0e",
+      "#5a3b1a",
+      "#8a5a2b",
+      "#c99a3c",
+      "#f2c84b",
+      "#f6ecd2",
+      "#ffffff",
+      "#a83a2a"
+    ],
+    "dither": "fs",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#2b1d0e",
+    "paper": "#f6ecd2",
+    "accent": "#a83a2a",
+    "accent2": "#c99a3c",
+    "fonts": {
+      "display": "georgiaz.ttf",
+      "body": "georgia.ttf",
+      "mono": "cour.ttf",
+      "hand": "comic.ttf",
+      "black": "georgiab.ttf",
+      "type": "cour.ttf"
+    },
+    "art": {
+      "bg": "books/objects/phonautograph-1909.png",
+      "back": "books/telharmonium-console-1897.png",
+      "mark": "global/marks/mk-key-computer-keyboard-key.png",
+      "object": "books/objects/phonautograph-1909.png"
+    },
+    "title": {
+      "style": "extrude",
+      "colors": [
+        "#f2c84b",
+        "#5a3b1a"
+      ],
+      "font": "display"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#f6ecd2"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0,
+          1,
+          0.2
+        ],
+        "c": "#5a3b1a"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.1
+        ],
+        "size": 0.13,
+        "maxw": 0.92
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}  -  {edition}",
+        "font": "body",
+        "size": 0.034,
+        "pos": [
+          0.5,
+          0.235
+        ],
+        "anchor": "mm",
+        "c": "#2b1d0e",
+        "maxw": 0.9
+      },
+      {
+        "t": "pic",
+        "key": "object",
+        "box": [
+          0.08,
+          0.3,
+          0.52,
+          0.78
+        ],
+        "frame": "polaroid",
+        "caption": "office piano, Fri 4:55",
+        "rot": -4
+      },
+      {
+        "t": "lines",
+        "items": [
+          "SONG SHEET  (please return)",
+          "1. Doo-doo song .......... all",
+          "2. The Hmm ............ altos",
+          "3. Boop the Bass ..... Accounts",
+          "4. Bee Organ Blues ...... Paul",
+          "5. Flutecorder Waltz ..... IT"
+        ],
+        "font": "type",
+        "size": 0.027,
+        "pos": [
+          0.56,
+          0.34
+        ],
+        "c": "#2b1d0e",
+        "step": 1.45
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.7,
+          0.72
+        ],
+        "size": 0.2
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.88,
+          1,
+          1
+        ],
+        "c": "#5a3b1a"
+      },
+      {
+        "t": "text",
+        "s": "Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)",
+        "font": "body",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.94
+        ],
+        "anchor": "mm",
+        "c": "#f2c84b",
+        "maxw": 0.94
+      }
+    ],
+    "spine_bg": "#5a3b1a",
+    "spine_ink": "#f6ecd2",
+    "spine_title": "#f2c84b",
+    "back_bg": "#f6ecd2",
+    "back_ink": "#2b1d0e",
+    "back_head": "#a83a2a",
+    "back_tint": [
+      "#2b1d0e",
+      "#f6ecd2"
+    ],
+    "bullet": "* ",
+    "compat": {
+      "pos": [
+        0.97,
+        0.86
+      ],
+      "anchor": "rb",
+      "size": 0.13
+    }
+  },
+  "box": {
+    "type": "jewel",
+    "price": [
+      "$12.99",
+      "OFFICE PARTY PRICE"
+    ],
+    "sticker": {
+      "bg": "#f2c84b",
+      "ink": "#2b1d0e",
+      "shape": "round",
+      "pos": [
+        0.84,
+        0.3
+      ]
+    },
+    "burst": [
+      "EVERYONE",
+      "SINGS!"
+    ],
+    "burst_fill": "#a83a2a",
+    "burst_ink": "#f6ecd2",
+    "features": [
+      "{count} presets of piano, voices, glock and bee organ",
+      "Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)",
+      "Song sheet included"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "sticker",
+    "paper": "#f6ecd2",
+    "pic": "object",
+    "lines": [
+      "Paulywaulophone vol.1",
+      "the office singalong"
+    ],
+    "inks": [
+      "#5a3b1a",
+      "#a83a2a"
+    ],
+    "side": [],
+    "ring": "BREAKROOM MEDIA GROUP * PAULYWAULOPHONE * SOUNDS BY PAUL CHAUNCY *",
+    "ring_ink": "#2b1d0e"
+  },
+  "icon": {
+    "motif": "keys",
+    "colors": [
+      "#f6ecd2",
+      "#2b1d0e",
+      "#c99a3c",
+      "#5a3b1a"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENSE.TXT",
+    "hlp": "PAULYW.HLP",
+    "pdf": "SONGBOOK.PDF",
+    "pdf_size": "letter",
+    "pdf_style": "corporate",
+    "rtf": null,
+    "wri": null,
+    "splash": "PAULYW.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "band": "#5a3b1a",
+    "band2": "#f2c84b",
+    "line1": "Song Book and User's Guide",
+    "heads": {
+      "The Presets": "The Song Book (Presets)"
+    }
+  },
+  "hlp": {
+    "font": "Georgia",
+    "family": "roman",
+    "title_color": "#a83a2a"
+  },
+  "text": {
+    "tagline": "Uncle Homunculus plays the office piano. Everyone sings along.",
+    "credit": "Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)",
+    "blurb": "The office piano, the hum from the back row, the bass from Accounts and a bee-buzzing organ: {count} presets for the Friday singalong. Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly).",
+    "intro": [
+      "Welcome to Paulywaulophone, Volume 1: The Office Singalong Collection. These presets turn your computer into the office piano, the choir that gathers round it, and the odd instruments people bring from home.",
+      "Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly). The doo, hmm, boop, flutecorder, glock, fork, guitar pad, bee organ, flute and sax are his own recordings, used with his permission."
+    ],
+    "maker_note": [
+      "Every office has one person who can play anything on the old piano by the coffee machine. On this disc that person is Uncle Homunculus.",
+      "Hand out the song sheet, dim the fluorescent lights and play.",
+      "The Breakroom Media Group"
+    ],
+    "install": [
+      "Insert the disc. In the Library tab it appears as PAULYWAULO.",
+      "Open a folder and double-click a preset to load it.",
+      "The song book is SONGBOOK.PDF."
+    ],
+    "license": [
+      "BREAKROOM MEDIA GROUP LICENSE",
+      "You may use the presets on one computer and use the sounds you make with them in your own music.",
+      "The source recordings are by Paul Chauncy (Uncle Homunculus / Paulywauly) and are used with his permission. They may not be extracted, resold or redistributed as a sound collection.",
+      "No warranty. Sing responsibly."
+    ],
+    "copyright": "(c) 1996 Breakroom Media Group, Inc. Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly).",
+    "files": {
+      "CREDITS.TXT": [
+        "PAULYWAULOPHONE - CREDITS",
+        "|Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)",
+        "Paul Chauncy's recordings (doo, hmm, boop, bass, glock, flutecorder, fork, guitar pad, bee organ, flute, sax) are used by permission of the author.",
+        "Everything else on this disc: Breakroom Media Group, Inc. (a fictional company)."
+      ]
+    }
+  }
+}

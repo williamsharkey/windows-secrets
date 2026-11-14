@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """make_packs.py - builds every preset pack's disc, docs and renders from <pack>/persona.json + the pack data.
 
-    make_packs.py [PACK_ID ...] [--no-render] [--no-iso] [--gallery DIR]
+    make_packs.py [PACK_ID ...] [--no-render] [--render-only] [--no-iso] [--web] [--gallery PAGE]
+
+Content: when the library lane's disc folder exists (library/builder/out/discs311/<LABEL>/, make_discs.py), its files
+are copied as built (PRESETS.TSV, PACK.INF, LIBRARY.TSV, category folders, FAVORITE) and this lane adds the identity.
+The final set is out/discs/ (<LABEL>/, <LABEL>.ISO, DISCS.TSV); --web writes out/web/ for the site (packlib/webexport.py).
 
 For each pack folder (one with a persona.json):
   disc/        the disc's files: AUTORUN.INF, PACK.ICO, PACK.INF, PACK.TXT, PRESETS.TSV, LIBRARY.TSV, the preset
@@ -25,7 +29,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from packlib import artwork, data as pdata, docs, gfx, hlp, iso, pdf, texts  # noqa: E402
+from packlib import artwork, brand, data as pdata, docs, gfx, hlp, iso, pdf, texts  # noqa: E402
 
 BLENDER = os.environ.get('BLENDER', os.path.expanduser('~/packwork/blender-4.2.3-linux-x64/blender'))
 
@@ -85,7 +89,13 @@ def build_pack(p, opt):
     root = os.path.join(HERE, pid)
     disc, rend, build = (os.path.join(root, x) for x in ('disc', 'renders', 'build'))
     if opt.get('render_only'):
+        if not os.path.isdir(os.path.join(root, 'build', 'tex')):
+            print('[%s] no textures yet (build it first): skipped' % pid, flush=True)
+            return None
         return render_pack(p, opt)
+    if not pdata.content_dir(p) and p['pack'].get('sources', {}).get('plan') and p['pack'].get('library_id') and not opt.get('force'):
+        print('[%s] waiting for the library lane\'s disc content (%s): skipped' % (pid, p['pack']['library_id']), flush=True)
+        return None
     for d in (disc, build):
         shutil.rmtree(d, ignore_errors=True)
     for d in (disc, rend, build):
@@ -141,23 +151,38 @@ def build_pack(p, opt):
     # ---- disc files
     files['PACK.ICO'] = open(os.path.join(build, 'PACK.ICO'), 'rb').read()
     files['AUTORUN.INF'] = texts.enc(texts.autorun_inf(p))
-    inf = texts.pack_inf(p, data)
-    files['PACK.INF'] = texts.enc(inf)
-    files['PACK.TXT'] = texts.enc(inf.replace('[Pack]\n', '%s\n%s\n\n' % (pk['title'], '=' * len(pk['title']))))
-    files['PRESETS.TSV'] = texts.enc('# category\tname\tDNA\tpack\teditions (3.11 = BASILISK 16, XP = BASILISK SYNTH)\n' + ''.join(
-        '%s\t%s\t%s\t%s\t%s\n' % (x['category'], x['name'], x['dna'], pk.get('plan_id') or pid, ' '.join(x.get('ships', ['3.11', 'XP'])))
-        for x in data['presets']), 'utf-8')
-    lid = pdata.LIBMAP.get(pid)
-    for ed, disc_name in (('xp', 'XP.TSV'), ('w311', 'W311.TSV')):   # the library lane's per-edition lists, as built
-        src = os.path.join(pdata.BUILDER_OUT, ed, '%s.tsv' % lid) if lid else None
-        if src and os.path.exists(src) and not data['placeholder']:
-            files[disc_name] = texts.enc(open(src, encoding='utf-8').read(), 'utf-8')
-    files['LIBRARY.TSV'] = texts.enc('# name\tcategory\tpath\tseconds\tsource/licence\n' + ''.join(
-        '%s\t%s\t%s\t%s\t%s\n' % tuple(x) for x in data['sounds']), 'utf-8')
-    for x in data['presets']:
-        path = '%s/%s' % (x['folder83'], x['file83'])
-        files[path] = (x['dna'] + '\r\n').encode('ascii')
-        joliet[path] = '%s/%s' % (x['folder'], x['joliet'])
+    if data.get('content_dir'):
+        # the library lane owns the content: copy its disc folder as built (PRESETS.TSV, PACK.INF, LIBRARY.TSV, the
+        # category folders, FAVORITE); this lane adds the identity (AUTORUN, icon, PACK.TXT, docs, help, art)
+        cd_ = data['content_dir']
+        for root_, dirs_, fns in os.walk(cd_):
+            for fn in fns:
+                rel = os.path.relpath(os.path.join(root_, fn), cd_).replace(os.sep, '/')
+                if rel in ('AUTORUN.INF', 'PACK.TXT'):
+                    continue
+                files[rel] = open(os.path.join(root_, fn), 'rb').read()
+        inf = open(os.path.join(cd_, 'PACK.INF'), encoding='cp1252', errors='replace').read().replace('\r\n', '\n')
+        files['PACK.TXT'] = texts.enc(inf.replace('[Pack]\n', '%s\n%s\n\nfor %s and %s\n\n' % (pk['title'], '=' * len(pk['title']), brand.SW, brand.XP)))
+        for x in data['presets']:
+            joliet['%s/%s' % (x['folder83'], x['file83'])] = '%s/%s' % (x['folder'], x['joliet'])
+    else:
+        inf = texts.pack_inf(p, data)
+        files['PACK.INF'] = texts.enc(inf)
+        files['PACK.TXT'] = texts.enc(inf.replace('[Pack]\n', '%s\n%s\n\n' % (pk['title'], '=' * len(pk['title']))))
+        files['PRESETS.TSV'] = texts.enc('# category\tname\tDNA\tpack\teditions (3.11 = SNDWAVE2000, XP = BASILISK SYNTH)\n' + ''.join(
+            '%s\t%s\t%s\t%s\t%s\n' % (x['category'], x['name'], x['dna'], pk.get('plan_id') or pid, ' '.join(x.get('ships', ['3.11', 'XP'])))
+            for x in data['presets']), 'utf-8')
+        lid = pdata.LIBMAP.get(pid)
+        for ed, disc_name in (('xp', 'XP.TSV'), ('w311', 'W311.TSV')):   # the library lane's per-edition lists, as built
+            src = os.path.join(pdata.BUILDER_OUT, ed, '%s.tsv' % lid) if lid else None
+            if src and os.path.exists(src) and not data['placeholder']:
+                files[disc_name] = texts.enc(open(src, encoding='utf-8').read(), 'utf-8')
+        files['LIBRARY.TSV'] = texts.enc('# name\tcategory\tpath\tseconds\tsource/licence\n' + ''.join(
+            '%s\t%s\t%s\t%s\t%s\n' % tuple(x) for x in data['sounds']), 'utf-8')
+        for x in data['presets']:
+            path = '%s/%s' % (x['folder83'], x['file83'])
+            files[path] = (x['dna'] + '\r\n').encode('ascii')
+            joliet[path] = '%s/%s' % (x['folder'], x['joliet'])
     tf, previews = texts.STYLES[F['readme']](p, data)
     files.update(tf)
     for k, v in texts.extra_texts(p).items():
@@ -199,10 +224,12 @@ def build_pack(p, opt):
 
     # ---- ISO
     if not opt.get('no_iso'):
-        out = os.path.join(HERE, 'out')
+        out = os.path.join(HERE, 'out', 'discs')          # the final disc set: <LABEL>/ folders, <LABEL>.ISO, DISCS.TSV
         os.makedirs(out, exist_ok=True)
         ents = [('/' + k, '/' + joliet.get(k, k), v) for k, v in files.items()]
         iso.build(os.path.join(out, pk['label'] + '.ISO'), pk['label'], pk['label_long'], ents, date)
+        shutil.rmtree(os.path.join(out, pk['label']), ignore_errors=True)
+        shutil.copytree(disc, os.path.join(out, pk['label']))
 
     if not opt.get('no_render'):
         render_pack(p, opt)
@@ -271,6 +298,7 @@ def main():
     a = sys.argv[1:]
     opt = {'no_render': '--no-render' in a, 'no_iso': '--no-iso' in a, 'render_only': '--render-only' in a}
     gal = None
+    web = '--web' in a
     if '--gallery' in a:
         gal = a[a.index('--gallery') + 1]
         a.remove(gal)
@@ -278,6 +306,15 @@ def main():
     results = []
     for p in personas(ids):
         results.append(build_pack(p, opt))
+    if not opt.get('no_iso') and not opt.get('render_only'):
+        out = os.path.join(HERE, 'out', 'discs')
+        for idx in ('DISCS.TSV', 'XP-ONLY.TSV'):          # the library lane's index of the set, labels as on the discs
+            src = os.path.join(pdata.CONTENT, idx)
+            if os.path.exists(src) and os.path.isdir(out):
+                shutil.copy2(src, os.path.join(out, idx))
+    if web:
+        from packlib import webexport
+        webexport.export(HERE, [p for p in personas([])])
     if gal:
         from packlib import gallery
         gallery.write(gal, HERE, [p for p in personas([])])

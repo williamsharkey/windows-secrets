@@ -17,7 +17,7 @@ import random
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
-from . import gfx
+from . import gfx, brand
 
 PX_PER_MM = 5          # texture resolution: 5 px per mm (127 dpi), enough for a 640 px render
 BOX_MM = {             # w, h, d in mm (front width, front height, depth)
@@ -379,8 +379,23 @@ def final(p, im):
     return im.convert('RGB')
 
 
+def add_badge(p, im, where='front'):
+    """Pastes the compatibility badge: look.compat (or look.compat_<where>) = {pos: [x, y], size, anchor}; size is a
+    fraction of the face height. Default: bottom left on fronts, bottom right on backs."""
+    L = p['look']
+    c = dict({'front': {'pos': [.03, .97], 'size': .16, 'anchor': 'lb'}, 'back': {'pos': [.6, .955], 'size': .11, 'anchor': 'rb'},
+              'disc': {'pos': [.5, .8], 'size': .13, 'anchor': 'mm'}}[where], **L.get('compat_' + where, L.get('compat', {}) if where == 'front' else {}))
+    if c.get('off'):
+        return im
+    w, h = im.size
+    b = compat_badge(max(24, int(h * c['size'])), aa=L['aa'])
+    im = im.convert('RGBA')
+    paste(im, b, c['pos'][0] * w, c['pos'][1] * h, c['anchor'])
+    return im
+
+
 def front(p, w, h):
-    return final(p, compose(p, w, h, p['look']['front']))
+    return final(p, add_badge(p, compose(p, w, h, p['look']['front'])))
 
 
 def back(p, w, h):
@@ -410,7 +425,7 @@ def back(p, w, h):
         gfx.text(d, (int(w * .08), y), L.get('bullet', '* ') + ft, fb, ink, aa=aa)
         y += int(fb.size * 1.4)
     y += fb.size
-    req = [L.get('req_head', 'SYSTEM REQUIREMENTS'), 'BASILISK 16 (the 16-bit edition) or', 'BASILISK SYNTH (the 32-bit edition)',
+    req = [L.get('req_head', 'SYSTEM REQUIREMENTS'), brand.SW + ' (16-bit) or', brand.XP + ' (32-bit)',
            'CD-ROM drive (the plugin provides one)']
     bh = int(len(req) * fb.size * 1.35 + 12)
     d.rectangle((int(w * .06), y, int(w * .94), y + bh), outline=ink, width=1)
@@ -429,7 +444,7 @@ def back(p, w, h):
     if B.get('barcode'):
         bc = barcode(int(w * .3), int(h * .09), p['id'])
         paste(im, bc, int(w * .94), int(h * .94), 'rb')
-    return final(p, im)
+    return final(p, add_badge(p, im, 'back'))
 
 
 def spine(p, w, h):
@@ -554,6 +569,9 @@ def disc_label(p, D=None):
         paste(im, mk, c - 40 * s, c, 'mm')
         gfx.text(d, (c, c + 33 * s), M['name'], gfx.fit_font(F['body'], M['name'], 80 * s, int(4.2 * s)), ink, anchor='mm', aa=True)
         gfx.text(d, (c + 40 * s, c), DS.get('mark_text', 'CD-ROM'), gfx.font(F['display'], int(5 * s)), ink, anchor='mm', aa=True)
+    if DS['label'] != 'full' and not DS.get('no_badge'):   # full labels carry the front, badge included
+        b = compat_badge(int(10 * s), aa=L['aa'])
+        paste(im, b, c, c + 45 * s, 'mm')
     ring = DS.get('ring')
     if ring:
         fr = gfx.font(F['body'], int(3.2 * s))
@@ -780,3 +798,34 @@ def floppy(p):
         gfx.text(d, (lab[0] + int(3 * s), lab[1] + int((10 + i * 7) * s)), ln, gfx.fit_font(L['fonts'].get('type', L['fonts']['mono']), ln, 74 * s, f.size) if ln else f,
                  '#101010', aa=L['aa'])
     return im.convert('RGB')
+
+
+def compat_badge(h, aa=False):
+    """The 'Designed for SNDWAVE2000' compatibility badge, h px tall, in the brand's look (design/brand/sndwave2000:
+    paper ground, red stripe on the left, the Grid Sun mark at a whole-number scale, DejaVu type, COPY.md strings)."""
+    B = brand.BADGE
+    w = int(h * .8)
+    im = Image.new('RGBA', (w, h), B['bg'])
+    d = ImageDraw.Draw(im)
+    sw = max(2, w // 9)
+    d.rectangle((0, 0, sw, h), fill=B['accent'])
+    d.line((sw + max(1, w // 60) + 1, 0, sw + max(1, w // 60) + 1, h), fill=B['accent'], width=max(1, w // 60))
+    d.rectangle((0, 0, w - 1, h - 1), outline=B['frame'], width=max(1, h // 80))
+    x0 = sw + max(3, w // 20)
+    cw = w - x0 - max(3, w // 25)
+    cx = x0 + cw // 2
+    ft = gfx.fit_font(brand.FONT_SANS_BOLD, B['top'], cw * .95, max(6, int(h * .085)), spacing=1)
+    gfx.text(d, (cx, int(h * .1)), B['top'], ft, B['ink'], anchor='mm', aa=aa, spacing=1)
+    room = int(min(cw, h * .44))
+    gs = brand.gridsun(room)
+    if gs:
+        m = Image.open(gs).convert('RGBA')
+        k = max(1, room // m.width)                      # whole-number scale only
+        m = gfx.zoom(m, k) if k > 1 else m
+        im.alpha_composite(m, (cx - m.width // 2, int(h * .17) + (room - m.height) // 2))
+    fn = gfx.fit_font(brand.FONT_SERIF_BOLD, B['name'], cw * .98, int(h * .14))
+    gfx.text(d, (cx, int(h * .74)), B['name'], fn, B['ink'], anchor='mm', aa=aa)
+    d.line((cx - cw * .42, int(h * .74) + fn.size * .6, cx + cw * .42, int(h * .74) + fn.size * .6), fill=B['ink'], width=1)
+    fb = gfx.fit_font(brand.FONT_SANS, B['by'], cw * .98, max(5, int(h * .065)), spacing=1)
+    gfx.text(d, (cx, int(h * .9)), B['by'], fb, B['accent'], anchor='mm', aa=aa, spacing=1)
+    return im

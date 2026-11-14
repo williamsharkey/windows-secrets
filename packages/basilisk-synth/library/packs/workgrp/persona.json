@@ -296,7 +296,15 @@
     "back_head": "#ffd200",
     "bullet": "> ",
     "posterize_final": true,
-    "render_post": null
+    "render_post": null,
+    "compat": {
+      "pos": [
+        0.97,
+        0.5
+      ],
+      "anchor": "rm",
+      "size": 0.12
+    }
   },
   "box": {
     "type": "bigbox",

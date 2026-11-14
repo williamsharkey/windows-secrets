@@ -202,7 +202,15 @@
     "back_bg": "#e8f9ff",
     "back_ink": "#00264d",
     "back_head": "#2a8fd6",
-    "bullet": "■ "
+    "bullet": "■ ",
+    "compat": {
+      "pos": [
+        0.03,
+        0.82
+      ],
+      "anchor": "lb",
+      "size": 0.12
+    }
   },
   "box": {
     "type": "dvd",

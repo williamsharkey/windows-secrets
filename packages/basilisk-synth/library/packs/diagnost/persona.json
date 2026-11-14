@@ -174,7 +174,15 @@
       "#141414",
       "#f2efe6"
     ],
-    "bullet": "- "
+    "bullet": "- ",
+    "compat": {
+      "pos": [
+        0.97,
+        0.97
+      ],
+      "anchor": "rb",
+      "size": 0.12
+    }
   },
   "box": {
     "type": "jewel",

@@ -249,7 +249,15 @@
     "back_head": "#ff00ff",
     "bullet": "*~ ",
     "posterize_final": true,
-    "render_post": "web216"
+    "render_post": "web216",
+    "compat": {
+      "pos": [
+        0.03,
+        0.6
+      ],
+      "anchor": "lm",
+      "size": 0.14
+    }
   },
   "box": {
     "type": "jewel",

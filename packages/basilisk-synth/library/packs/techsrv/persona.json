@@ -229,7 +229,7 @@
       },
       {
         "t": "text",
-        "s": "For BASILISK 16 / BASILISK SYNTH  -  CD-ROM",
+        "s": "For SNDWAVE2000 / BASILISK SYNTH  -  CD-ROM",
         "font": "display",
         "size": 0.034,
         "pos": [
@@ -277,7 +277,15 @@
       "face": "#c0c0c0"
     },
     "posterize_final": true,
-    "render_post": null
+    "render_post": null,
+    "compat": {
+      "pos": [
+        0.62,
+        0.8
+      ],
+      "anchor": "rb",
+      "size": 0.12
+    }
   },
   "box": {
     "type": "bigbox",

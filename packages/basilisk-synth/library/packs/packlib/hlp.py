@@ -3,6 +3,8 @@
 (each preset a popup with its file and DNA), Using the presets, the maker's note, the licence or registration, Credits.
 The font, heading colour and wording come from the persona."""
 import os
+
+from . import brand
 import subprocess
 import sys
 
@@ -113,8 +115,10 @@ def build(p, data, workdir, out_path):
     d.head('On this disc')
     d.row('{\\b %s}' % esc(pk['label']), 'volume label (%s)' % pk['label_long'])
     nx = sum(1 for x in data['presets'] if 'XP' in x.get('ships', ['XP']))
-    d.row('{\\b %d}' % len(data['presets']), 'presets in %d folders (%d also play on BASILISK SYNTH)' % (len({x['folder'] for x in data['presets']}), nx))
+    d.row('{\\b %d}' % len(data['presets']), ('presets in %d folders (%d also play on %s)' % (len({x['folder'] for x in data['presets']}), nx, brand.XP)))
     d.row('{\\b %s}' % esc(p['files']['pdf']), 'the printed manual, as a PDF')
+    if data.get('favourites'):
+        d.row('{\\b FAVORITE}', '%d of the best presets again, in one folder' % len(data['favourites']))
     d.end()
 
     d.topic('presets', 'The Presets', ['presets', 'DNA'], 'main:030')
@@ -169,8 +173,8 @@ def build(p, data, workdir, out_path):
         d.p('File: \\\\%s' % x['disp'].replace('\\', '\\\\'), raw=True, fs=18)
         d.mono(x['dna'])
         sh = x.get('ships', ['3.11', 'XP'])
-        d.p('Plays on: %s' % ('BASILISK 16 and BASILISK SYNTH' if 'XP' in sh and '3.11' in sh else
-                              'BASILISK 16 only' if '3.11' in sh else 'BASILISK SYNTH (library disc sounds)'), fs=16)
+        d.p('Plays on: %s' % (brand.SW + ' and ' + brand.XP if 'XP' in sh and '3.11' in sh else
+                              brand.SW + ' only' if '3.11' in sh else brand.XP + ' (library disc sounds)'), fs=16)
         d.end()
 
     rtf = d.text()

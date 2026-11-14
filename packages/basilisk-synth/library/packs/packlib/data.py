@@ -83,6 +83,24 @@ LIBMAP = {'workgrp': 'workgroup-house', 'techsrv': 'techno-server', 'trance2k': 
           'studarch': 'studio-archive', 'heritage': 'w3x-heritage', 'romref': 'rom-reference', 'lifestyl': 'lifestyle-aesthetics',
           'emheritg': 'electromech-heritage'}
 BUILDER_OUT = os.path.join(LIB, 'builder', 'out')
+CONTENT = os.environ.get('PACK_CONTENT', os.path.join(BUILDER_OUT, 'discs311'))   # the library lane's disc content
+
+
+def content_dir(persona):
+    """The library lane's folder for this pack's disc (make_discs.py: PRESETS.TSV, category folders, FAVORITE,
+    PACK.INF, LIBRARY.TSV), found through DISCS.TSV by pack id or by volume label; or None."""
+    idx = os.path.join(CONTENT, 'DISCS.TSV')
+    lid = persona['pack'].get('library_id') or LIBMAP.get(persona['id']) or persona['pack'].get('plan_id')
+    if not os.path.exists(idx):
+        return None
+    for line in open(idx, encoding='utf-8'):
+        if line.startswith('#') or not line.strip():
+            continue
+        f = line.rstrip('\n').split('\t')
+        if f[0] == lid or f[1] == persona['pack']['label']:
+            d = os.path.join(CONTENT, f[1])
+            return d if os.path.exists(os.path.join(d, 'PRESETS.TSV')) else None
+    return None
 
 
 def _library(persona):
@@ -120,6 +138,23 @@ def load(persona):
     presets = []
     folder = _builder_folder(persona)
     lib, lid = _library(persona)
+    cdir = content_dir(persona)
+    if cdir:
+        rows = [l.rstrip('\n').split('\t') for l in open(os.path.join(cdir, 'PRESETS.TSV'), encoding='utf-8') if l.strip() and not l.startswith('#')]
+        out = []
+        for r in rows:
+            cat, name, dna, _pk, eds, rating, verdict, f = (r + [''] * 8)[:8]
+            fold83, file83 = f.split('\\')
+            disp_folder = cat if not folders.get(cat) or len({v for v in folders.values()}) < len(folders) else folders[cat]
+            x = {'category': cat, 'name': name, 'dna': dna, 'ships': eds.split(), 'rating': rating, 'verdict': verdict,
+                 'folder': disp_folder, 'folder83': fold83, 'file83': file83,
+                 'joliet': re.sub(r'[\\/:*?"<>|]', '', name) + '.bsp'}
+            x['disp'] = disp(persona, x)
+            x['dfolder'], x['dfile'] = x['disp'].split('\\')
+            out.append(x)
+        favs = sorted(os.listdir(os.path.join(cdir, 'FAVORITE'))) if os.path.isdir(os.path.join(cdir, 'FAVORITE')) else []
+        return {'presets': out, 'sounds': [], 'placeholder': False, 'favourites': favs, 'content_dir': cdir,
+                'source': 'library disc content ' + os.path.relpath(cdir, LIB)}
     if lib:
         for x in lib:
             presets.append({'category': x['category'], 'name': x['name'], 'dna': x['dna'], 'ships': x['ships'],
@@ -141,16 +176,7 @@ def load(persona):
         placeholder, sounds = True, []
         s = pk['sources']
         if s.get('kits'):
-            # real kit DNAs (DNA v3 kit pads, PRESET-ENGINE-2.md 15): the kit seeds of the genre and favourites research,
-            # and the electromech kits; written in the v3 canonical form (KITCHECK canonicalizes, see kit_canonical)
-            for x in _seeds():
-                if x.get('pack') == 'kit-manager' and x.get('v3_dna'):
-                    presets.append({'category': 'Machine' if 'favorite' in x else 'Genre', 'name': clean_name(x['name']),
-                                    'dna': x['v3_dna'], 'ships': ['3.11', 'XP']})
-            em = json.load(open(os.path.join(LIB, 'research', 'electromech-presets.json')))
-            for x in em['kits']:
-                presets.append({'category': 'Electromech', 'name': clean_name(x['name']), 'dna': x['dna'], 'ships': ['XP']})
-            presets = kit_canonical(presets)
+            presets = kits()
             src = 'kit seeds (genres.json, modern-favorites.json) + electromech kits, v3 canonical'
         elif s.get('electromech'):
             em = json.load(open(os.path.join(LIB, 'research', 'electromech-presets.json')))
@@ -242,6 +268,31 @@ def disp(persona, p):
     if persona['maker']['year'] >= 1998:
         return '%s\\%s' % (p['folder'], p['joliet'])
     return '%s\\%s' % (p['folder83'], p['file83'])
+
+
+def kits():
+    """Kit Manager 98's kits: the kit seeds of the genre and favourites research (their v3 DNAs) and the electromech
+    kits, checked as kits by the core's v3 parser (kit_canonical). Category Genre / Machine / Electromech."""
+    presets = []
+    for x in _seeds():
+        if x.get('pack') == 'kit-manager' and x.get('v3_dna'):
+            presets.append({'category': 'Machine' if 'favorite' in x else 'Genre', 'name': clean_name(x['name']),
+                            'dna': x['v3_dna'], 'ships': ['3.11', 'XP']})
+    em = json.load(open(os.path.join(LIB, 'research', 'electromech-presets.json')))
+    for x in em['kits']:
+        presets.append({'category': 'Electromech', 'name': clean_name(x['name']), 'dna': x['dna'], 'ships': ['XP']})
+    return kit_canonical(presets)
+
+
+def write_kits_tsv(path):
+    """KITS.TSV for the library lane's make_discs.py: category, name, DNA, pack, editions (the first five columns of
+    PRESETS.TSV). A stable source, so the content discs never read their own output back."""
+    ks = kits()
+    with open(path, 'w', encoding='utf-8', newline='\n') as f:
+        f.write('# Kit Manager 98 kits (library/packs, packlib/data.py kits()): category\tname\tDNA\tpack\teditions\n')
+        for x in ks:
+            f.write('%s\t%s\t%s\tkit-manager\t%s\n' % (x['category'], x['name'], x['dna'], ' '.join(x['ships'])))
+    return len(ks)
 
 
 KITCHECK = os.environ.get('KITCHECK', os.path.expanduser('~/packwork/kitcheck/kitcheck'))

@@ -158,7 +158,15 @@
       "bar2": "#000080",
       "face": "#c0c0c0"
     },
-    "render_post": "vga16"
+    "render_post": "vga16",
+    "compat": {
+      "pos": [
+        0.97,
+        0.97
+      ],
+      "anchor": "rb",
+      "size": 0.15
+    }
   },
   "box": {
     "type": "mailer",

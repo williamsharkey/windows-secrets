@@ -252,7 +252,15 @@
       "#ecebe6"
     ],
     "bullet": "■ ",
-    "req_head": "SYSTEMVORAUSSETZUNGEN / REQUIREMENTS"
+    "req_head": "SYSTEMVORAUSSETZUNGEN / REQUIREMENTS",
+    "compat": {
+      "pos": [
+        0.97,
+        0.88
+      ],
+      "anchor": "rb",
+      "size": 0.14
+    }
   },
   "box": {
     "type": "bigbox",
@@ -324,11 +332,11 @@
     "blurb": "{count} programs built from the machines of the telephone exchange and the office: relays, ringers, teleprinters, motors. Measured, tuned and documented in Bielefeld.",
     "blurb_de": "{count} Klangprogramme aus den Maschinen der Vermittlungsstelle und des Bueros: Relais, Wecker, Fernschreiber, Motoren. Gemessen, gestimmt und dokumentiert in Bielefeld.",
     "intro": [
-      "ELEKTROMECHANIK 2.0 is the second disc of the K&L Studio Serie. It contains {count} programs for the Sound Recorder synthesizers BASILISK 16 and BASILISK SYNTH.",
+      "ELEKTROMECHANIK 2.0 is the second disc of the K&L Studio Serie. It contains {count} programs for the Sound Recorder synthesizers SNDWAVE2000 and BASILISK SYNTH.",
       "Every program is built from the sound of an electromechanical machine: relays, selector switches, bells, teleprinters, motors and transformers. Each program was tuned against a reference tone of 440 Hz."
     ],
     "intro_de": [
-      "ELEKTROMECHANIK 2.0 ist die zweite CD der K&L Studio Serie. Sie enthaelt {count} Klangprogramme fuer die Sound-Recorder-Synthesizer BASILISK 16 und BASILISK SYNTH.",
+      "ELEKTROMECHANIK 2.0 ist die zweite CD der K&L Studio Serie. Sie enthaelt {count} Klangprogramme fuer die Sound-Recorder-Synthesizer SNDWAVE2000 und BASILISK SYNTH.",
       "Jedes Programm beruht auf dem Klang einer elektromechanischen Maschine: Relais, Waehler, Wecker, Fernschreiber, Motoren und Transformatoren. Alle Programme sind auf den Kammerton 440 Hz gestimmt."
     ],
     "maker_note": [
@@ -338,13 +346,13 @@
     ],
     "install": [
       "Insert the CD. In the Library tab the CD appears as drive KL_EM_V2.",
-      "The programs are in folders by type (GLOCKEN, LEADS, FLAECHEN, ...). Double-click a program to load it.",
-      "System requirements: BASILISK 16 (16 Bit) or BASILISK SYNTH (32 Bit)."
+      "The programs are in folders by type (BELL, LEAD, DRONE, ...); the owner's picks are also in FAVORITE. Double-click a program to load it.",
+      "System requirements: SNDWAVE2000 (16 Bit) or BASILISK SYNTH (32 Bit)."
     ],
     "install_de": [
       "CD einlegen. Im Library-Register erscheint die CD als Laufwerk KL_EM_V2.",
-      "Die Programme liegen nach Art sortiert in Ordnern (GLOCKEN, LEADS, FLAECHEN, ...). Doppelklick laedt ein Programm.",
-      "Systemvoraussetzungen: BASILISK 16 (16 Bit) oder BASILISK SYNTH (32 Bit)."
+      "Die Programme liegen nach Art sortiert in Ordnern (BELL, LEAD, DRONE, ...); die Auswahl des Hauses liegt auch in FAVORITE. Doppelklick laedt ein Programm.",
+      "Systemvoraussetzungen: SNDWAVE2000 (16 Bit) oder BASILISK SYNTH (32 Bit)."
     ],
     "license": [
       "LIZENZVERTRAG / LICENCE AGREEMENT",

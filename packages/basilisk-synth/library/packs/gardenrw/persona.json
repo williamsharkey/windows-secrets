@@ -1,0 +1,320 @@
+{
+  "id": "gardenrw",
+  "category": "Garden Rhythm Works (library lane, new)",
+  "pack": {
+    "plan_id": "garden-rhythm",
+    "library_id": "garden-rhythm",
+    "title": "Garden Rhythm Works",
+    "subtitle": "Grown in a garden shed",
+    "edition": "Packet No. 4",
+    "version": "4.0",
+    "date": "1995-04-22",
+    "label": "GARDENRW95",
+    "label_long": "Garden Rhythm Works No 4",
+    "sources": {
+      "plan": "garden-rhythm"
+    }
+  },
+  "maker": {
+    "name": "Potting Shed Software",
+    "short": "Potting Shed",
+    "kind": "British garden-shed software house",
+    "year": 1995,
+    "place": "Maidstone, Kent, England",
+    "contact": [
+      "Potting Shed Software",
+      "The Shed, 14 Orchard Lane",
+      "Maidstone, Kent ME99 4PS",
+      "Tel 01622 555 0144 (evenings)"
+    ],
+    "people": [
+      [
+        "Colin Ashdown",
+        "sounds and programming"
+      ],
+      [
+        "Margaret Ashdown",
+        "packets, posting and accounts"
+      ]
+    ],
+    "voice": "cheerful British, gardening metaphors; sow, grow, harvest"
+  },
+  "look": {
+    "palette": [
+      "#1e2a12",
+      "#3f5a1e",
+      "#6b8e23",
+      "#a8c46a",
+      "#e9e4c8",
+      "#c46a2b",
+      "#7a4a26",
+      "#ffffff"
+    ],
+    "dither": "fs",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#1e2a12",
+    "paper": "#e9e4c8",
+    "accent": "#c46a2b",
+    "accent2": "#3f5a1e",
+    "fonts": {
+      "display": "framd.ttf",
+      "body": "trebuc.ttf",
+      "mono": "cour.ttf",
+      "black": "framd.ttf",
+      "italic": "trebucit.ttf"
+    },
+    "art": {
+      "bg": "aero/botany-fern-fiddlehead-s44.jpg",
+      "back": "aero/meadow-coastal-sedge-meadow-s271.jpg",
+      "mark": "aero/objects/leaf-the-ferns-of-great-britain-a-s585-01.png",
+      "object": "aero/objects/leaf-the-ferns-of-great-britain-a-s588-01.png"
+    },
+    "title": {
+      "style": "shadow",
+      "colors": [
+        "#e9e4c8",
+        "#1e2a12"
+      ],
+      "font": "display"
+    },
+    "front": [
+      {
+        "t": "fill",
+        "c": "#e9e4c8"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.04,
+          0.03,
+          0.96,
+          0.97
+        ],
+        "c": null,
+        "outline": "#3f5a1e",
+        "w": 4
+      },
+      {
+        "t": "text",
+        "s": "POTTING SHED SOFTWARE  *  SEEDS FOR SOUND",
+        "font": "display",
+        "size": 0.032,
+        "pos": [
+          0.5,
+          0.075
+        ],
+        "anchor": "mm",
+        "c": "#3f5a1e",
+        "spacing": 1,
+        "maxw": 0.86
+      },
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0.08,
+          0.12,
+          0.92,
+          0.62
+        ],
+        "frame": "line",
+        "c": "#3f5a1e"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.08,
+          0.5,
+          0.92,
+          0.62
+        ],
+        "c": "#3f5a1e"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.56
+        ],
+        "size": 0.08,
+        "maxw": 0.8
+      },
+      {
+        "t": "text",
+        "s": "{edition}  -  {subtitle}",
+        "font": "italic",
+        "size": 0.034,
+        "pos": [
+          0.5,
+          0.67
+        ],
+        "anchor": "mm",
+        "c": "#1e2a12"
+      },
+      {
+        "t": "lines",
+        "items": [
+          "SOWING: insert disc, open the Library tab",
+          "GROWING: double-click a preset",
+          "HARVEST: {count} presets of drums,",
+          "rave stabs and talking machines"
+        ],
+        "font": "body",
+        "size": 0.027,
+        "pos": [
+          0.1,
+          0.73
+        ],
+        "c": "#1e2a12",
+        "step": 1.35
+      },
+      {
+        "t": "pic",
+        "key": "object",
+        "box": [
+          0.62,
+          0.7,
+          0.9,
+          0.93
+        ]
+      },
+      {
+        "t": "burst",
+        "pos": [
+          0.82,
+          0.24
+        ],
+        "size": 0.22
+      }
+    ],
+    "spine_bg": "#3f5a1e",
+    "spine_ink": "#e9e4c8",
+    "back_bg": "#e9e4c8",
+    "back_ink": "#1e2a12",
+    "back_head": "#c46a2b",
+    "bullet": "* ",
+    "compat": {
+      "pos": [
+        0.08,
+        0.955
+      ],
+      "anchor": "lb",
+      "size": 0.1
+    }
+  },
+  "box": {
+    "type": "bigbox",
+    "shape": "big",
+    "price": [
+      "£9.99",
+      "PACKET PRICE"
+    ],
+    "sticker": {
+      "bg": "#ffffff",
+      "ink": "#c46a2b",
+      "pos": [
+        0.5,
+        0.045
+      ]
+    },
+    "burst": [
+      "FRESH",
+      "SEEDS!"
+    ],
+    "burst_fill": "#c46a2b",
+    "burst_ink": "#e9e4c8",
+    "features": [
+      "{count} presets: kits, stabs, pads, voices, perc, mallets",
+      "Talking machines and rave stabs",
+      "Grown in Kent"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "full",
+    "ring": "POTTING SHED SOFTWARE * GARDEN RHYTHM WORKS * PACKET NO. 4 * MAIDSTONE KENT *",
+    "ring_ink": "#1e2a12"
+  },
+  "icon": {
+    "motif": "drum",
+    "colors": [
+      "#6b8e23",
+      "#1e2a12",
+      "#e9e4c8",
+      "#c46a2b"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENCE.TXT",
+    "hlp": "GARDENRW.HLP",
+    "pdf": "GROWING.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "swiss",
+    "rtf": null,
+    "wri": null,
+    "splash": "GARDENRW.BMP",
+    "splash_bpp": 4,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "ink": "#1e2a12",
+    "accent": "#3f5a1e",
+    "line1": "Growing Guide  -  Packet No. 4",
+    "foot": "POTTING SHED SOFTWARE  -  MAIDSTONE, KENT",
+    "heads": {
+      "Introduction": "Before You Sow",
+      "Getting Started": "Sowing and Growing",
+      "The Presets": "What Comes Up",
+      "License": "Licence"
+    }
+  },
+  "hlp": {
+    "font": "Trebuchet MS",
+    "family": "swiss",
+    "title_color": "#3f5a1e"
+  },
+  "text": {
+    "tagline": "Drums, rave stabs and talking machines from the garden shed.",
+    "blurb": "Packet No. 4 from the shed at the bottom of the garden: {count} presets of drum kits, rave stabs, pads, talking machines, taiko, tabla and mallets. Sow them in your music and watch them grow.",
+    "intro": [
+      "Thank you for buying Garden Rhythm Works, Packet No. 4. Like the three packets before it, it was grown in a shed in Maidstone, between the lawnmower and the tomato plants.",
+      "Inside are drum kits, rave stabs, pads, perc, mallets and talking machines that say hello, meow and goose. Every preset is ready to sow."
+    ],
+    "maker_note": [
+      "Colin wrote these on a 486 in the shed over the winter, with a paraffin heater and a lot of tea. Margaret says they are the best crop yet.",
+      "If a preset does not come up, write to us and we will send a fresh packet.",
+      "Potting Shed Software"
+    ],
+    "install": [
+      "Insert the disc. In the Library tab it appears as GARDENRW95.",
+      "Open a folder and double-click a preset to load it.",
+      "The growing guide is GROWING.PDF."
+    ],
+    "license": [
+      "POTTING SHED SOFTWARE - LICENCE",
+      "You may use the presets on one computer and use the sounds you make in your own music, free of charge.",
+      "Please do not copy the packet for your friends: tell them to send us a cheque.",
+      "No warranty. Results depend on soil."
+    ],
+    "copyright": "(c) 1995 Potting Shed Software, Maidstone.",
+    "files": {
+      "ORDER.TXT": [
+        "POTTING SHED SOFTWARE - SEED CATALOGUE AND ORDER FORM",
+        "|Packet No. 1  Kitchen Percussion ........ £7.99",
+        "|Packet No. 2  Greenhouse Pads ........... £7.99",
+        "|Packet No. 3  Allotment Bass ............ £8.99",
+        "|Packet No. 4  Garden Rhythm Works ....... £9.99",
+        "|Postage and packing: 75p per order (UK), £2.00 (Europe).",
+        "Cheques and postal orders payable to Potting Shed Software. Allow 28 days for delivery."
+      ]
+    }
+  }
+}

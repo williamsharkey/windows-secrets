@@ -210,7 +210,15 @@
     "back_ink": "#ffffff",
     "back_head": "#ff71ce",
     "bullet": "* ",
-    "posterize_final": true
+    "posterize_final": true,
+    "compat": {
+      "pos": [
+        0.03,
+        0.5
+      ],
+      "anchor": "lm",
+      "size": 0.16
+    }
   },
   "box": {
     "type": "jewel",

@@ -254,7 +254,15 @@
     "bullet": "• ",
     "req_head": "FOR CLASSROOM AND HOME COMPUTERS",
     "posterize_final": false,
-    "render_post": null
+    "render_post": null,
+    "compat": {
+      "pos": [
+        0.95,
+        0.62
+      ],
+      "anchor": "rm",
+      "size": 0.12
+    }
   },
   "box": {
     "type": "mailer",

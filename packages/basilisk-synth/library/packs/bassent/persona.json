@@ -232,7 +232,15 @@
     "bullet": "- ",
     "req_head": "OPERATING REQUIREMENTS",
     "posterize_final": false,
-    "render_post": null
+    "render_post": null,
+    "compat": {
+      "pos": [
+        0.97,
+        0.97
+      ],
+      "anchor": "rb",
+      "size": 0.12
+    }
   },
   "box": {
     "type": "dvd",

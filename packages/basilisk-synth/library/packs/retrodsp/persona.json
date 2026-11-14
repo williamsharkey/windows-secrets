@@ -254,7 +254,15 @@
     "bullet": "> ",
     "req_head": "WHAT YOU NEED",
     "posterize_final": true,
-    "render_post": "vga16"
+    "render_post": "vga16",
+    "compat": {
+      "pos": [
+        0.03,
+        0.33
+      ],
+      "anchor": "lm",
+      "size": 0.15
+    }
   },
   "box": {
     "type": "bigbox",
