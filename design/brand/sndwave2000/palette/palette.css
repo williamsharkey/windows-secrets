@@ -1,0 +1,8 @@
+:root{
+  --sw-ink: #141414;
+  --sw-paper: #f6f3ea;
+  --sw-stripe-red: #8a1c1c;
+  --sw-rose: #d9b8b0;
+}
+/* pixel art: always scale by whole numbers with */
+.pix{image-rendering:pixelated;image-rendering:crisp-edges}
