@@ -169,7 +169,8 @@ def build(p, data, workdir, out_path):
         d.p('File: \\\\%s' % x['disp'].replace('\\', '\\\\'), raw=True, fs=18)
         d.mono(x['dna'])
         sh = x.get('ships', ['3.11', 'XP'])
-        d.p('Plays on: %s' % ('BASILISK 16 and BASILISK SYNTH' if 'XP' in sh else 'BASILISK 16 only'), fs=16)
+        d.p('Plays on: %s' % ('BASILISK 16 and BASILISK SYNTH' if 'XP' in sh and '3.11' in sh else
+                              'BASILISK 16 only' if '3.11' in sh else 'BASILISK SYNTH (library disc sounds)'), fs=16)
         d.end()
 
     rtf = d.text()

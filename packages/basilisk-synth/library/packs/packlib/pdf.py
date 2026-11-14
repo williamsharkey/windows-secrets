@@ -237,7 +237,7 @@ def build(p, data, cover_png, credits, out_path):
         P((HD.get('The Presets') or {SW: 'Klangprogramme / Programs', 'zine': 'the tapes'}.get(st, 'The Presets')), 'h1')
     rows = [['File', 'Name', 'DNA']]
     for x in data['presets']:
-        rows.append([Paragraph(_esc('\\' + x['disp']), S['mono']), Paragraph(_esc(x['name']) + ('' if 'XP' in x.get('ships', ['XP']) else ' <font size="6">(16 only)</font>'), S['small']),
+        rows.append([Paragraph(_esc('\\' + x['disp']), S['mono']), Paragraph(_esc(x['name']) + ('' if {'XP', '3.11'} <= set(x.get('ships', ['XP', '3.11'])) else ' <font size="6">(%s only)</font>' % ('16' if '3.11' in x.get('ships', []) else 'XP')), S['small']),
                      Paragraph(_esc(x['dna']), S['mono'])])
     cw = W - 2 * m
     t = Table(rows, colWidths=[cw * .27, cw * .25, cw * .48], repeatRows=1)
@@ -248,6 +248,8 @@ def build(p, data, cover_png, credits, out_path):
     F.append(t)
     if any('XP' not in x.get('ships', ['XP']) for x in data['presets']):
         P('(16 only): plays on BASILISK 16; BASILISK SYNTH lists the others.', 'small')
+    if any('3.11' not in x.get('ships', ['3.11']) for x in data['presets']):
+        P('(XP only): needs the library disc sounds, so BASILISK SYNTH only for now.', 'small')
     if data['placeholder']:
         P('Preview disc: these presets are placeholders until the library lane builds this pack.', 'small')
     F.append(PageBreak())

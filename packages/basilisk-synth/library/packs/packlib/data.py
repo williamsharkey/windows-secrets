@@ -140,7 +140,19 @@ def load(persona):
     else:
         placeholder, sounds = True, []
         s = pk['sources']
-        if s.get('electromech'):
+        if s.get('kits'):
+            # real kit DNAs (DNA v3 kit pads, PRESET-ENGINE-2.md 15): the kit seeds of the genre and favourites research,
+            # and the electromech kits; written in the v3 canonical form (KITCHECK canonicalizes, see kit_canonical)
+            for x in _seeds():
+                if x.get('pack') == 'kit-manager' and x.get('v3_dna'):
+                    presets.append({'category': 'Machine' if 'favorite' in x else 'Genre', 'name': clean_name(x['name']),
+                                    'dna': x['v3_dna'], 'ships': ['3.11', 'XP']})
+            em = json.load(open(os.path.join(LIB, 'research', 'electromech-presets.json')))
+            for x in em['kits']:
+                presets.append({'category': 'Electromech', 'name': clean_name(x['name']), 'dna': x['dna'], 'ships': ['XP']})
+            presets = kit_canonical(presets)
+            src = 'kit seeds (genres.json, modern-favorites.json) + electromech kits, v3 canonical'
+        elif s.get('electromech'):
             em = json.load(open(os.path.join(LIB, 'research', 'electromech-presets.json')))
             for x in em['instruments']:
                 presets.append({'category': x['category'], 'name': clean_name(x['name']), 'dna': x['dna']})
@@ -171,7 +183,10 @@ def load(persona):
             src = 'research/preset-targets.json'
         if s.get('limit'):
             presets = presets[:s['limit']]
-        src += ' (placeholder until library/builder has this pack)'
+        if s.get('kits'):
+            placeholder = False      # real kit DNAs, checked by the core's v3 parser: not a placeholder
+        else:
+            src += ' (placeholder until library/builder has this pack)'
     ren = pk.get('rename', {})
     for p in presets:
         p['name'] = ren.get(p['name'], p['name'])
@@ -227,3 +242,30 @@ def disp(persona, p):
     if persona['maker']['year'] >= 1998:
         return '%s\\%s' % (p['folder'], p['joliet'])
     return '%s\\%s' % (p['folder83'], p['file83'])
+
+
+KITCHECK = os.environ.get('KITCHECK', os.path.expanduser('~/packwork/kitcheck/kitcheck'))
+
+
+def kit_canonical(presets):
+    """Runs every kit DNA through the core's v3 parser (core/dna3.cpp, built as KITCHECK): keeps only real kits and
+    writes them in the v3 canonical form, except where that would drop library-sound steps. Without the checker the
+    DNAs are kept as written."""
+    import subprocess
+    if not os.path.exists(KITCHECK):
+        print('  KITCHECK not built: kit DNAs kept as written')
+        return presets
+    r = subprocess.run([KITCHECK], input='\n'.join(p['dna'] for p in presets) + '\n', capture_output=True, text=True, check=True)
+    out = []
+    for p, line in zip(presets, r.stdout.splitlines()):
+        pads, kit, same, layers, canon = line.split('\t', 4)
+        if kit != '1':
+            print('  not a kit, dropped: %s' % p['name'])
+            continue
+        # library sounds are unknown to the checker (no catalogue), so a canonical form that drops them is not used
+        if same != '1' and canon.count('@') + canon.count('I') < p['dna'].count('@') + p['dna'].count('I'):
+            pass
+        else:
+            p['dna'] = canon
+        out.append(p)
+    return out

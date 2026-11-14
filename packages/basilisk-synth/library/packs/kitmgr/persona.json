@@ -12,7 +12,12 @@
     "label": "KITMGR98",
     "label_long": "Kit Manager 98 Release 1.02",
     "sources": {
-      "plan": "kit-manager"
+      "kits": true
+    },
+    "folders": {
+      "Genre": "GENRE",
+      "Machine": "MACHINE",
+      "Electromech": "ELECTRO"
     }
   },
   "maker": {
@@ -251,7 +256,7 @@
     "burst_fill": "#c00000",
     "burst_ink": "#ffffff",
     "features": [
-      "27 genre kits + 6 classic machine kits",
+      "{count} kits: genre, machine and electromech",
       "Auto-Map assigns every pad in seconds",
       "Velocity and round-robin variants"
     ],
@@ -373,7 +378,7 @@
   },
   "text": {
     "tagline": "Map any drum to any key. Restart not required.",
-    "blurb": "Kit Manager 98 puts every drum on the right key, automatically. 27 genre kits, 6 classic machine kits and velocity variants, all built from the sounds already on your computer. Fast. Safe. Automatic.",
+    "blurb": "Kit Manager 98 puts every drum on the right key, automatically. {count} kits: genre kits, classic machine kits and electromechanical kits, built from the sounds already on your computer and the library disc. Fast. Safe. Automatic.",
     "intro": [
       "Thank you for choosing Kit Manager 98 from Fennwick Systems, the makers of PlatterTune and MemPilot. Kit Manager 98 brings the speed and safety of Fennwick utilities to your drum programming.",
       "Each kit maps one drum to each key, with choke groups, velocity layers and round-robin variants. Kit Manager 98 needs no installation, changes no system files and never asks you to restart."
@@ -385,7 +390,7 @@
     ],
     "install": [
       "Insert the Kit Manager 98 CD-ROM. In the Library tab, the disc appears as KITMGR98.",
-      "Open the Kits folder and double-click any kit to load it. Each key now plays a different drum.",
+      "Open the GENRE, MACHINE or ELECTRO folder and double-click any kit to load it. Each key now plays a different drum.",
       "Kits need the v3 kit mode of the synthesizer. For support, see SUPPORT.TXT."
     ],
     "license": [
@@ -406,7 +411,7 @@
         "|Phone:  (503) 555-0145, Monday to Friday, 7am-6pm Pacific",
         "|Fax-back documents: (503) 555-0146, request document 4410 for the Kit Manager FAQ",
         "|Web:    http://www.fennwicksys.com/support",
-        "Q: The kits play the wrong drum on some keys.  A: Load the kit again from the Kits folder. Kit Manager 98 never changes your other presets.",
+        "Q: The kits play the wrong drum on some keys.  A: Load the kit again from its folder. Kit Manager 98 never changes your other presets.",
         "Q: Do I need to restart?  A: No. Never."
       ],
       "CDKEY.TXT": [
