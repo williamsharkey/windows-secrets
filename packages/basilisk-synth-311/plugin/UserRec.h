@@ -14,6 +14,8 @@
 #include <ctime>
 #include <algorithm>
 #include <cstdint>
+#include <cstring>
+#include <cmath>
 #ifdef _WIN32
 #include <windows.h>
 #include <direct.h>
@@ -143,8 +145,11 @@ inline std::vector<std::string> populate(const std::string &myDir, const std::st
 // Windows saved `path` (R:\NAME.WAV): check it (PCM, at most 30 s), name it (u_ + the stem), publish it in My
 // Recordings (a new name if another recording has it, the old version kept by hash). Returns the `user` line.
 // (`stemFrom`: the path whose stem names it; a U0001.WAV the host copied in keeps its recording's name)
+// The name taken by a different recording (RECORDING.md 2.4): mode 0 asks (returns false, `ask` = "<name> <ms>
+// <date>"), 1 replaces it (the old one stays in .versions), 2 keeps both (name_2 ...).
 inline bool publish(const std::string &myDir, const std::string &recDir, const std::string &path, const std::string &stemFrom,
-                    const std::string &edition, std::string &line, std::string &name, std::string &err)
+                    const std::string &edition, std::string &line, std::string &name, std::string &err, int mode = 0,
+                    std::string *ask = nullptr)
 {
     std::string file = path;
     { const size_t s = file.find_last_of("\\/:"); if (s != std::string::npos) file = file.substr(s + 1); }
@@ -165,7 +170,16 @@ inline bool publish(const std::string &myDir, const std::string &recDir, const s
     if (!lock.held) { err = "full My Recordings is busy (index.lock)"; return false; }
     std::vector<uint8_t> idxText; readFile(myDir + "/index.tsv", idxText);
     std::vector<bsynth::UserEntry> idx = bsynth::readIndex(std::string(idxText.begin(), idxText.end()));
-    n = bsynth::freeName(idx, n, sha);
+    int at = -1;
+    for (size_t k = 0; k < idx.size(); k++) if (idx[k].name == n) at = (int)k;
+    if (at >= 0 && idx[at].sha1 != sha) {
+        if (mode == 0) {
+            if (ask) *ask = n + " " + std::to_string(idx[at].ms) + " " + (idx[at].saved.empty() ? "-" : idx[at].saved);
+            err = "ask"; return false;
+        }
+        if (mode == 1) idx.erase(idx.begin() + at);   // replaced (its bytes are in .versions under its hash)
+        else n = bsynth::freeName(idx, n, sha);
+    }
     bool known = false;
     for (auto &e : idx) if (e.name == n) { known = true; break; }
     const std::string out = n.substr(2) + ".wav";
@@ -248,6 +262,69 @@ inline bool recall(const std::string &myDir, const std::string &recDir, const st
     line = "user " + name + " R:\\" + f + " " + std::to_string(w.ms) + " " + w.fmt;
     pinned = true;
     return true;
+}
+
+// ---- import (RECORDING.md 2.6): a WAV made fit for Sound Recorder. PCM 8/16 at 11, 22 or 44 kHz goes as it is;
+// anything else (float, 24 or 32 bit, other rates, more channels) becomes 16-bit PCM at 44.1 kHz.
+inline bool importWav(const std::vector<uint8_t> &in, std::vector<uint8_t> &out, std::string &err)
+{
+    if (in.size() < 44 || std::memcmp(in.data(), "RIFF", 4) || std::memcmp(in.data() + 8, "WAVE", 4)) { err = "not a WAV file"; return false; }
+    int fmt = 0, ch = 0, rate = 0, bits = 0; size_t p = 12, data = 0, len = 0;
+    auto u16 = [&](size_t o) { return (int)(in[o] | in[o + 1] << 8); };
+    auto u32 = [&](size_t o) { return (uint32_t)(in[o] | in[o + 1] << 8 | in[o + 2] << 16 | (uint32_t)in[o + 3] << 24); };
+    while (p + 8 <= in.size()) {
+        const uint32_t n = u32(p + 4);
+        if (!std::memcmp(in.data() + p, "fmt ", 4) && p + 24 <= in.size()) {
+            fmt = u16(p + 8); ch = u16(p + 10); rate = (int)u32(p + 12); bits = u16(p + 22);
+            if (fmt == 0xFFFE && p + 34 <= in.size()) fmt = u16(p + 32);   // WAVE_FORMAT_EXTENSIBLE: the sub-format
+        } else if (!std::memcmp(in.data() + p, "data", 4)) { data = p + 8; len = std::min<size_t>(n, in.size() - data); break; }
+        p += 8 + n + (n & 1);
+    }
+    if (!data || !ch || !rate || !(fmt == 1 || fmt == 3)) { err = "only PCM or float WAV files"; return false; }
+    const bool native = fmt == 1 && (bits == 8 || bits == 16) && ch <= 2 && (rate == 11025 || rate == 22050 || rate == 44100);
+    if (native) { out = in; return true; }
+    const int bps = bits / 8; const size_t frames = len / ((size_t)bps * ch);
+    if (!bps || frames == 0) { err = "empty"; return false; }
+    auto sample = [&](size_t f, int c) -> float {
+        const size_t o = data + (f * ch + c) * bps;
+        if (fmt == 3 && bits == 32) { float x; std::memcpy(&x, &in[o], 4); return x; }
+        if (fmt == 3 && bits == 64) { double x; std::memcpy(&x, &in[o], 8); return (float)x; }
+        switch (bits) {
+        case 8: return (in[o] - 128) / 128.f;
+        case 16: return (int16_t)(in[o] | in[o + 1] << 8) / 32768.f;
+        case 24: return (float)((int32_t)((uint32_t)in[o] << 8 | (uint32_t)in[o + 1] << 16 | (uint32_t)in[o + 2] << 24) >> 8) / 8388608.f;
+        case 32: return (float)(int32_t)u32(o) / 2147483648.f;
+        }
+        return 0.f;
+    };
+    const int och = ch >= 2 ? 2 : 1;
+    const double step = (double)rate / 44100.0;
+    const size_t on = (size_t)((double)frames / step);
+    std::vector<int16_t> pcm(on * och);
+    for (size_t i = 0; i < on; i++) {
+        const double t = i * step; const size_t f = (size_t)t; const float fr = (float)(t - f);
+        for (int c = 0; c < och; c++) {
+            const float a = sample(std::min(f, frames - 1), c), b = sample(std::min(f + 1, frames - 1), c);
+            float x = a + (b - a) * fr; x = x > 1.f ? 1.f : x < -1.f ? -1.f : x;
+            pcm[i * och + c] = (int16_t)std::lrint(x * 32767.f);
+        }
+    }
+    const uint32_t db = (uint32_t)(pcm.size() * 2);
+    out.assign(44, 0);
+    auto w32 = [&](size_t o, uint32_t v) { for (int k = 0; k < 4; k++) out[o + k] = (uint8_t)(v >> (8 * k)); };
+    auto w16 = [&](size_t o, int v) { out[o] = (uint8_t)v; out[o + 1] = (uint8_t)(v >> 8); };
+    std::memcpy(&out[0], "RIFF", 4); w32(4, 36 + db); std::memcpy(&out[8], "WAVEfmt ", 8); w32(16, 16);
+    w16(20, 1); w16(22, och); w32(24, 44100); w32(28, 44100 * 2 * och); w16(32, 2 * och); w16(34, 16);
+    std::memcpy(&out[36], "data", 4); w32(40, db);
+    out.insert(out.end(), (const uint8_t *)pcm.data(), (const uint8_t *)pcm.data() + db);
+    return true;
+}
+inline std::string dosStem(const std::string &file)   // "My Loop (final).wav" -> "MYLOOPFI"
+{
+    std::string st = file; const size_t d = st.rfind('.'); if (d != std::string::npos) st.resize(d);
+    std::string o;
+    for (char c : st) { if (c >= 'a' && c <= 'z') c = (char)(c - 32); if ((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_') o += c; if (o.size() == 8) break; }
+    return o.empty() ? "IMPORT" : o;
 }
 
 }  // namespace b16rec

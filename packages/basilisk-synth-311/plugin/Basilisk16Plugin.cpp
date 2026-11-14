@@ -330,7 +330,7 @@ protected:
                     if (name.empty()) continue;
                     userKept_[name] = v;
                     if (!ok) { std::fprintf(stderr, "BASILISK 16: missing recording %s (%s)\n", name.c_str(), sha.c_str()); continue; }
-                    if (pinned) { userPin_[name] = sha; userLines_.push_back(line); pendingUser_.push_back(line); }
+                    if (pinned) { userPin_[name] = sha; userLines_.push_back(line); pendingUser_.push_back(line); noteHostFiles(); }
                     if (std::find(userNames_.begin(), userNames_.end(), name) == userNames_.end()) userNames_.push_back(name);
                 }
             }
@@ -772,6 +772,7 @@ private:
             std::lock_guard<std::mutex> l(mtx_);
             userNames_.clear();
             userLines_ = b16rec::populate(myRec_, recDir_, userNames_);
+            noteHostFiles();
         }
         publishNames();
 #ifdef _WIN32
@@ -834,16 +835,47 @@ private:
     void status(const char *s) { std::snprintf(sh_.status, sizeof sh_.status, "%s", s); }
 
     // Windows saved a recording on R: (RECORDING.md 2.4): check it, publish it in My Recordings, tell Windows its name
-    void recSaved(std::string path)
+    // an imported WAV (the editor read it): fit for Sound Recorder, onto R:\IMPORT\, opened in the Recorder
+    void importNow()
+    {
+        std::vector<uint8_t> in, out; std::string name, err;
+        { std::lock_guard<std::mutex> l(sh_.fileMtx); in.swap(sh_.fileBytes); name = sh_.fileName; }
+        if (!b16rec::importWav(in, out, err)) { sendLine(("rec refused - format " + err).c_str(), 0, 0); return; }
+        const std::string dir = recDir_ + "/IMPORT", stem = b16rec::dosStem(name);
+        b16rec::makeDir(dir);
+        if (!b16rec::writeFile(dir + "/" + stem + ".WAV", out.data(), out.size())) { sendLine("rec refused - full cannot write R:", 0, 0); return; }
+        sendLine(("rec open R:\\IMPORT\\" + stem + ".WAV").c_str(), 0, 0);
+    }
+    std::map<std::string, std::string> hostSha_;   // R: files the host wrote -> their sha1 (guarded by mtx_)
+    void noteHostFiles()   // (after populate or recall wrote userLines_' files)
+    {
+        for (const auto &u : userLines_) {
+            std::istringstream in(u); std::string w, n, p; in >> w >> n >> p;
+            const size_t s = p.find_last_of("\\:"); const std::string f = p.substr(s + 1);
+            if (hostSha_.count(f)) continue;
+            std::vector<uint8_t> d; if (b16rec::readFile(recDir_ + "/" + f, d)) hostSha_[f] = bsynth::sha1Hex(d.data(), d.size());
+        }
+    }
+    std::string askPath_;   // a Save As waiting for the collision answer
+    void recSaved(std::string path, int mode = 0)
     {
         const size_t sp = path.find(' '); if (sp != std::string::npos) path.resize(sp);   // (`take <rec>` follows a take)
         std::string stemFrom = path, line, name, err;
-        {   // U0001.WAV ...: a recording the host copied in, saved again: it keeps its name
+        {   // a file the host put on R: (U0001.WAV, a pinned V...WAV): unchanged, nothing to do; saved again, it keeps its name
             const size_t s = path.find_last_of("\\:");
             const std::string f = s == std::string::npos ? path : path.substr(s + 1);
-            for (size_t k = 0; k < userNames_.size(); k++) if (f == b16rec::hostName((int)k)) { stemFrom = "R:\\" + userNames_[k].substr(2) + ".WAV"; break; }
+            std::vector<uint8_t> now; b16rec::readFile(recDir_ + "/" + f, now);
+            std::lock_guard<std::mutex> l(mtx_);
+            for (const auto &u : userLines_) {   // user <name> <path> <ms> <fmt>
+                std::istringstream in(u); std::string w, n, p; in >> w >> n >> p;
+                if (p != path) continue;
+                if (!now.empty() && bsynth::sha1Hex(now.data(), now.size()) == hostSha_[f]) return;
+                stemFrom = "R:\\" + n.substr(2) + ".WAV";
+            }
         }
-        if (!b16rec::publish(myRec_, recDir_, path, stemFrom, "w31", line, name, err)) {
+        std::string ask;
+        if (!b16rec::publish(myRec_, recDir_, path, stemFrom, "w31", line, name, err, mode, &ask)) {
+            if (err == "ask") { askPath_ = path; sendLine(("rec ask " + ask).c_str(), 0, 0); return; }
             const std::string r = "rec refused " + path + " " + err;
             sendLine(r.substr(0, 240).c_str(), 0, 0);
             return;
@@ -934,6 +966,7 @@ private:
                 std::lock_guard<std::mutex> l(mtx_);
                 dnaToGuest_ = true;
             }
+            if (hello && sh_.importReady.exchange(false)) importNow();
             const uint32_t seq = paramSeq_.load();
             if (paramsDirty_.exchange(false)) {
                 std::string d;
@@ -1091,6 +1124,27 @@ private:
         if (line.rfind("rec start ", 0) == 0) { if (line[10] == 'R') return; const int r = std::atoi(line.c_str() + 10); if (r >= 0 && r < 16) recBusy_ |= 1u << r; return; }   // R: the Recorder
         if (line.rfind("rec stop ", 0) == 0) { if (line[9] == 'R') return; const int r = std::atoi(line.c_str() + 9); if (r >= 0 && r < 16) recBusy_ &= ~(1u << r); return; }
         if (line.rfind("rec saved ", 0) == 0) { recSaved(line.substr(10)); return; }
+        if (line.rfind("rec export ", 0) == 0) {   // the host's save dialog, the exact bytes (RECORDING.md 2.6)
+            const std::string n = line.substr(11);
+            std::vector<uint8_t> wav;
+            const auto pin = userPin_.find(n);
+            if (!b16rec::findWav(myRec_, n, pin == userPin_.end() ? "" : pin->second, wav)) { sendLine(("rec refused - name " + n.substr(2) + " is not in My Recordings.").c_str(), 0, 0); return; }
+            { std::lock_guard<std::mutex> l(sh_.fileMtx); sh_.fileBytes.swap(wav); sh_.fileName = n.substr(2) + ".wav"; }
+            sh_.fileReq = 3;
+            if (sh_.editors.load() == 0) sendLine("rec refused - full Open the plugin's editor to export.", 0, 0);
+            return;
+        }
+        if (line == "rec import") {
+            { std::lock_guard<std::mutex> l(sh_.fileMtx); sh_.fileName.clear(); }
+            sh_.fileReq = 4;
+            if (sh_.editors.load() == 0) sendLine("rec refused - full Open the plugin's editor to import.", 0, 0);
+            return;
+        }
+        if (line.rfind("rec answer ", 0) == 0) {   // the collision question's answer: replace or keep both
+            const std::string p = askPath_; askPath_.clear();
+            if (!p.empty()) recSaved(p, line.compare(11, 7, "replace") == 0 ? 1 : 2);
+            return;
+        }
         proto::Reply r = proto::parse(line);
         switch (r.kind) {
         case proto::Reply::Ready: status(""); ready_ = true; break;

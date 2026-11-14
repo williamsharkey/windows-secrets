@@ -840,6 +840,7 @@ static void watch_rec(void)
 }
 static void stops_due(void);
 static void rec_scan(void);
+static void rec_keep(void);
 static void watch_ends(void)
 {
     static DWORD last; int r;
@@ -2008,11 +2009,13 @@ static void page_values(void)   /* the controls show the selected layer's tokens
         else SendMessage(pgBtn[i], BM_SETSTATE, pc_value(c), 0L);
     }
 }
+static HWND recAsk[2], recStatus, recList;   /* the Rec page's collision Yes / No, status and list */
 static void page_close(void)
 {
     int i;
     for (i = 0; i < npg; i++) DestroyWindow(pgWin[i]);
     npg = npgSb = npgBtn = 0; nScBtn = 0;
+    recAsk[0] = recAsk[1] = NULL; recStatus = recList = NULL;   /* (the Rec page's, gone with it) */
 }
 static void page_add(HWND w) { if (npg < 64) pgWin[npg++] = w; }
 static void rec_page(int y0);
@@ -2130,7 +2133,7 @@ static void page_command(int id)
     if (id >= ID_TAB && id < ID_TAB + NTAB && id - ID_TAB == curTab && npg) return;   /* already open */
     if (id >= ID_TAB && id < ID_TAB + NTAB) { page_open(id - ID_TAB); return; }
     if (id >= ID_SC && id < ID_SC + nScBtn) { scales_command(id - ID_SC); return; }
-    if (id >= ID_RECPG && id < ID_RECPG + 7 && curTab == 4) { rec_command(id - ID_RECPG); return; }
+    if (id >= ID_RECPG && id < ID_RECPG + 11 && curTab == 4) { rec_command(id - ID_RECPG); return; }
     if (id >= ID_PG + 32 && id < ID_PG + 32 + npgBtn) {
         const PC *c = &pgDef[curTab][pgBtnCtl[id - ID_PG - 32]];
         int v = pc_value(c);
@@ -2311,7 +2314,7 @@ static long ease(long f) { /* smoothstep, 0..1000 */ if (f < 0) f = 0; if (f > 1
 #define RECH 48     /* (the column captions start at 51) */
 static FARPROC oldRecWaveProc, recWaveInst;
 static int recInput;      /* 0 the DAW input (the sidechain), 1 the synth's own output */
-static HWND recCtl[8], recStatus, recList; static int nRecCtl, recWhole;
+static HWND recCtl[8]; static int nRecCtl, recWhole;
 static char recCur[28], recSaving[16];   /* the recording the Recorder holds (u_ name), once saved or opened */
 static PART recStrip[] = {   /* the whole Recorder's strip: the sixteen's, the seek bar shorter (the clock is right of it) */
     {SR_STATUS, 4, 7, 80, 16}, {SR_WAVE, 88, -4, 133, 35}, {SR_POS, 228, 8, 66, 14}, {SR_LEN, 298, 8, 66, 14},
@@ -2441,7 +2444,9 @@ static void rec_page(int y0)
     w = text_w("DAW input") + 22; b = mk("BUTTON", "DAW input", WS_VISIBLE | BS_RADIOBUTTON, x, y1 + 4, w, 16, ID_RECPG + 0); page_add(b); recCtl[nRecCtl++] = b; x += w + 4;
     w = text_w("Synth output") + 22; b = mk("BUTTON", "Synth output", WS_VISIBLE | BS_RADIOBUTTON, x, y1 + 4, w, 16, ID_RECPG + 1); page_add(b); recCtl[nRecCtl++] = b; x += w + 14;
     b = mkbtn("Save As...", x, y1, 24, ID_RECPG + 2, &w); page_add(b); recCtl[nRecCtl++] = b; x += w + 3;
-    b = mkbtn("To all 16", x, y1, 24, ID_RECPG + 3, &w); page_add(b); recCtl[nRecCtl++] = b;
+    b = mkbtn("To all 16", x, y1, 24, ID_RECPG + 3, &w); page_add(b); recCtl[nRecCtl++] = b; x += w + 14;
+    b = mkbtn("Export...", x, y1, 24, ID_RECPG + 9, &w); page_add(b); recCtl[nRecCtl++] = b; x += w + 3;
+    b = mkbtn("Import WAV...", x, y1, 24, ID_RECPG + 10, &w); page_add(b); recCtl[nRecCtl++] = b;
     x = 8;
     page_add(mklbl("My recordings", x, y2 + 4, 16, &w)); x += w + 4;
     recList = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, x, y2 + 1, 150, 100, ID_RECPG + 4); page_add(recList); x += 154;
@@ -2452,19 +2457,58 @@ static void rec_page(int y0)
     rec_list();
 }
 static int usr_find(const char *n) { int i; for (i = 0; i < nusr; i++) if (!lstrcmp(usrName[i], n)) return i; return -1; }
+/* the collision question's Yes / No, in the status's place */
+static void rec_ask_close(void)
+{
+    int i;
+    for (i = 0; i < 2; i++) if (recAsk[i]) { DestroyWindow(recAsk[i]); recAsk[i] = NULL; }
+}
+/* `rec ask <name> <ms> <date>`: another recording has the name. The question is asked in the page itself, not in
+   a MessageBox: a modal box would stop BASILISK 16 serving the notes while it waits. */
+static void rec_ask(char *rest)
+{
+    static char t[120]; char n[28], d[16]; long ms = 0; RECT r; POINT o; int x, w;
+    if (sscanf(rest, "%27s %ld %15s", n, &ms, d) < 3) return;
+    if (curTab != 4) page_open(4);
+    rec_ask_close();
+    wsprintf(t, "%s already exists (%ld.%02ld s, %s). Replace it?", (LPSTR)(n + 2), ms / 1000, ms % 1000 / 10, (LPSTR)d);
+    rec_status(t);
+    GetWindowRect(recStatus, &r); o.x = r.left; o.y = r.top; ScreenToClient(hMain, &o);
+    x = o.x + text_w(t) + 8;
+    recAsk[0] = mkbtn("Yes", x, o.y - 4, 24, ID_RECPG + 7, &w); page_add(recAsk[0]); x += w + 3;
+    recAsk[1] = mkbtn("No", x, o.y - 4, 24, ID_RECPG + 8, &w); page_add(recAsk[1]);
+}
+static void rec_open(const char *path)   /* File > Open in the Recorder, the real command (the hook fills its dialog) */
+{
+    HookActive(TRUE); HookPending(path);
+    SendMessage(hRecRec, WM_COMMAND, SR_OPEN, 0L);
+    HookActive(FALSE);
+    if (recWhole) rec_whole_parts(); else rec_compact_parts();
+}
 static void rec_command(int k)
 {
+    if (k == 9) {   /* Export...: the host's save dialog writes the bytes */
+        int i = recList ? (int)SendMessage(recList, CB_GETCURSEL, 0, 0L) : -1;
+        if (i >= 0 && i < nusr) say("rec export %s", (LPSTR)usrName[i]);
+        else if (recCur[0]) say("rec export %s", (LPSTR)recCur);
+        else rec_status("Pick a recording first.");
+        return;
+    }
+    if (k == 10) { say("rec import"); return; }
+    if (k == 7 || k == 8) {   /* Yes: replace it (the old one is kept by hash); No: keep both (name_2) */
+        rec_ask_close();
+        say("rec answer %s", (LPSTR)(k == 7 ? "replace" : "keep"));
+        rec_status(k == 7 ? "Replacing..." : "Keeping both...");
+        return;
+    }
     if (k == 0 || k == 1) { recInput = k; rec_values(); say("rsrc %s", (LPSTR)(k ? "self" : "side")); return; }
     if (k == 2) { PostMessage(hRecRec, WM_COMMAND, SR_SAVEAS, 0L); return; }   /* the real dialog */
     if (k == 5 || k == 6) {
         int i = recList ? (int)SendMessage(recList, CB_GETCURSEL, 0, 0L) : -1;
         if (i < 0 || i >= nusr) { rec_status("Pick a recording first."); return; }
-        if (k == 5) {   /* File > Open, the real command (the hook fills its dialog) */
-            HookActive(TRUE); HookPending(usrPath[i]);
-            SendMessage(hRecRec, WM_COMMAND, SR_OPEN, 0L);
-            HookActive(FALSE);
+        if (k == 5) {
+            rec_open(usrPath[i]);
             lstrcpy(recCur, usrName[i]);
-            if (recWhole) rec_whole_parts(); else rec_compact_parts();
             rec_status(usrName[i] + 2);
             return;
         }
@@ -3136,7 +3180,13 @@ static void host_line(char *s)
         }
     }
     else if (!strcmp(s, "rec")) {   /* rec refused <path> <reason> <message...> */
-        if (!strncmp(rest, "refused ", 8)) { char *m = strchr(rest + 8, ' '); if (m) m = strchr(m + 1, ' '); recSaving[0] = 0; rec_status(m ? m + 1 : "Not saved."); }
+        if (!strncmp(rest, "ask ", 4)) rec_ask(rest + 4);
+        else if (!strncmp(rest, "open ", 5) && hRecRec) {   /* an import: trim it, then Save As */
+            if (assembled && curTab != 4) page_open(4);
+            rec_open(rest + 5); recCur[0] = 0;
+            rec_status("Imported. Trim it if you like, then File > Save As.");
+        }
+        else if (!strncmp(rest, "refused ", 8)) { char *m = strchr(rest + 8, ' '); if (m) m = strchr(m + 1, ' '); recSaving[0] = 0; rec_status(m ? m + 1 : "Not saved."); }
     }
     else if (!strcmp(s, "tab")) { int t; for (t = 0; t < NTAB; t++) if (!strcmp(rest, tabIds[t])) { if (assembled) page_open(t); break; } }
     else if (!strcmp(s, "klabels")) {   /* klabels <first> <l|l|...>: the keyboard strip's labels ('~' out of the scale) */

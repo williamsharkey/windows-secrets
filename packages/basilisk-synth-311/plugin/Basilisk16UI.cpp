@@ -72,15 +72,34 @@ protected:
         if (sh_->S->vid_seq != seenSeq_) repaint();
         if (const int req = sh_->fileReq.exchange(0)) {   // Windows asked for Save state / Load state
             FileBrowserOptions o;
-            o.saving = req == 1; o.title = req == 1 ? "Save BASILISK 16 state" : "Load BASILISK 16 state";
-            o.defaultName = "BASILISK 16.b16";
-            fileSaving_ = req == 1;
+            std::string def;
+            if (req >= 3) { std::lock_guard<std::mutex> l(sh_->fileMtx); def = sh_->fileName; }
+            o.saving = req == 1 || req == 3;
+            o.title = req == 1 ? "Save BASILISK 16 state" : req == 2 ? "Load BASILISK 16 state" : req == 3 ? "Export recording" : "Import WAV";
+            o.defaultName = req >= 3 ? def.c_str() : "BASILISK 16.b16";
+            fileReqNow_ = req;
+            fileSaving_ = o.saving;
             openFileBrowser(o);
         }
     }
     void uiFileBrowserSelected(const char *path) override
     {
         if (!path || !sh_) return;
+        if (fileReqNow_ == 3) {   // Export: the exact bytes
+            std::vector<uint8_t> b; { std::lock_guard<std::mutex> l(sh_->fileMtx); b = sh_->fileBytes; }
+            if (FILE *f = std::fopen(path, "wb")) { std::fwrite(b.data(), 1, b.size(), f); std::fclose(f); }
+            return;
+        }
+        if (fileReqNow_ == 4) {   // Import: the bytes to the plugin (it converts what Sound Recorder cannot open)
+            FILE *f = std::fopen(path, "rb"); if (!f) return;
+            std::vector<uint8_t> b; uint8_t buf[65536]; size_t n;
+            while ((n = std::fread(buf, 1, sizeof buf, f)) > 0 && b.size() < (256u << 20)) b.insert(b.end(), buf, buf + n);
+            std::fclose(f);
+            std::string nm = path; const size_t s = nm.find_last_of("\\/"); if (s != std::string::npos) nm = nm.substr(s + 1);
+            { std::lock_guard<std::mutex> l(sh_->fileMtx); sh_->fileBytes.swap(b); sh_->fileName = nm; }
+            sh_->importReady = true;
+            return;
+        }
         if (fileSaving_) {
             std::string text; { std::lock_guard<std::mutex> l(sh_->fileMtx); text = sh_->stateText; }
             const std::vector<uint8_t> b = bsynth::b16Write(text);
@@ -238,6 +257,7 @@ private:
     int scale_ = 1;
     unsigned shotFrames_ = 0;
     bool snapping_ = false;
+    int fileReqNow_ = 0;
     bool fileSaving_ = false;
 
     // a host resize snaps to the nearest whole multiple of 1024x768 (where the host allows it; otherwise the screen
