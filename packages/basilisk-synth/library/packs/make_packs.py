@@ -250,6 +250,8 @@ def build_pack(p, opt):
     # ---- ISO
     if not opt.get('no_iso'):
         out = os.path.join(HERE, 'out', os.environ.get('PACK_DISCS', 'discs-1.4'))          # the final disc set: <LABEL>/ folders, <LABEL>.ISO, DISCS.TSV
+        if pk.get('stage') is False:      # not yet approved for a release: built, but kept out of the set and its index
+            out = os.path.join(HERE, 'out', 'held')
         os.makedirs(out, exist_ok=True)
         ents = [('/' + k, '/' + joliet.get(k, k), v) for k, v in files.items()]
         iso.build(os.path.join(out, pk['label'] + '.ISO'), pk['label'], pk['label_long'], ents, date)
@@ -349,7 +351,7 @@ def write_index(out):
     for p in personas([]):     # discs handed over directly (pack.content), not yet in the library lane's index
         lid = p['pack'].get('library_id') or p['pack'].get('plan_id')
         mf = os.path.join(HERE, p['id'], 'build', 'meta.json')
-        if p['pack'].get('content') and lid not in listed and os.path.exists(os.path.join(out, p['pack']['label'] + '.ISO')) and os.path.exists(mf):
+        if p['pack'].get('content') and p['pack'].get('stage') is not False and lid not in listed and os.path.exists(os.path.join(out, p['pack']['label'] + '.ISO')) and os.path.exists(mf):
             mt = json.load(open(mf))
             rows.append('\t'.join([lid, p['pack']['label'], p['pack']['label'] + '.ISO', p['pack']['title'], str(mt['presets']),
                                     str(mt['presets']), str(mt['presets_xp']), str(mt.get('favourites', 0))]))

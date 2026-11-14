@@ -14,7 +14,8 @@
     "content": "~/cpd/disc/RAINYLOFT",
     "sources": {
       "plan": "rainy-loft"
-    }
+    },
+    "stage": false
   },
   "maker": {
     "name": "Harborlight Audio Works Co., Ltd.",
