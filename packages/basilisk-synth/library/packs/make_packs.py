@@ -249,7 +249,7 @@ def build_pack(p, opt):
 
     # ---- ISO
     if not opt.get('no_iso'):
-        out = os.path.join(HERE, 'out', 'discs')          # the final disc set: <LABEL>/ folders, <LABEL>.ISO, DISCS.TSV
+        out = os.path.join(HERE, 'out', os.environ.get('PACK_DISCS', 'discs'))          # the final disc set: <LABEL>/ folders, <LABEL>.ISO, DISCS.TSV
         os.makedirs(out, exist_ok=True)
         ents = [('/' + k, '/' + joliet.get(k, k), v) for k, v in files.items()]
         iso.build(os.path.join(out, pk['label'] + '.ISO'), pk['label'], pk['label_long'], ents, date)
@@ -366,7 +366,7 @@ def main():
     for p in personas(ids):
         results.append(build_pack(p, opt))
     if not opt.get('no_iso') and not opt.get('render_only'):
-        out = os.path.join(HERE, 'out', 'discs')
+        out = os.path.join(HERE, 'out', os.environ.get('PACK_DISCS', 'discs'))
         write_index(out)
     if book:   # booklet pages for the site's player (packlib/booklet.py), one per category, from the content as built
         from packlib import booklet
