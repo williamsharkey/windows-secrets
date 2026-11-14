@@ -1,0 +1,392 @@
+[
+ {
+  "id": "workgroup-house",
+  "name": "Workgroup House Edition",
+  "blurb": "Four-on-the-floor productivity for the whole department.",
+  "presets": 84,
+  "xp": 71,
+  "w311_badge": 32,
+  "v3": 2,
+  "library": 47,
+  "categories": {
+   "Bass": 12,
+   "FX": 10,
+   "Keys": 10,
+   "Lead": 4,
+   "Organ": 6,
+   "Pad": 7,
+   "Perc": 6,
+   "Pluck": 6,
+   "Stab": 15,
+   "Strings": 4,
+   "Vocal": 4
+  },
+  "files": {
+   "w311": "w311/workgroup-house.tsv",
+   "xp": "xp/workgroup-house.tsv"
+  }
+ },
+ {
+  "id": "techno-server",
+  "name": "Techno Server 4.0",
+  "blurb": "Mission-critical repetition, now with dub delay.",
+  "presets": 70,
+  "xp": 52,
+  "w311_badge": 24,
+  "v3": 4,
+  "library": 38,
+  "categories": {
+   "Bass": 10,
+   "FX": 10,
+   "Lead": 6,
+   "Pad": 10,
+   "Perc": 15,
+   "Stab": 12,
+   "Texture": 7
+  },
+  "files": {
+   "w311": "w311/techno-server.tsv",
+   "xp": "xp/techno-server.tsv"
+  }
+ },
+ {
+  "id": "trance-connectivity",
+  "name": "Trance Connectivity Kit 2000",
+  "blurb": "Connects your hands to the ceiling.",
+  "presets": 56,
+  "xp": 43,
+  "w311_badge": 14,
+  "v3": 3,
+  "library": 34,
+  "categories": {
+   "Bass": 6,
+   "Chord": 5,
+   "FX": 5,
+   "Keys": 4,
+   "Lead": 16,
+   "Pad": 8,
+   "Pluck": 12
+  },
+  "files": {
+   "w311": "w311/trance-connectivity.tsv",
+   "xp": "xp/trance-connectivity.tsv"
+  }
+ },
+ {
+  "id": "breakbeat-resource",
+  "name": "Breakbeat Resource Kit",
+  "blurb": "Every break your network will ever need.",
+  "presets": 77,
+  "xp": 62,
+  "w311_badge": 26,
+  "v3": 4,
+  "library": 37,
+  "categories": {
+   "Bass": 19,
+   "FX": 12,
+   "Keys": 8,
+   "Lead": 6,
+   "Pad": 8,
+   "Perc": 8,
+   "Stab": 12,
+   "Vocal": 4
+  },
+  "files": {
+   "w311": "w311/breakbeat-resource.tsv",
+   "xp": "xp/breakbeat-resource.tsv"
+  }
+ },
+ {
+  "id": "bass-enterprise",
+  "name": "Bass Enterprise Edition",
+  "blurb": "Low-end infrastructure for medium and large businesses.",
+  "presets": 49,
+  "xp": 41,
+  "w311_badge": 16,
+  "v3": 1,
+  "library": 25,
+  "categories": {
+   "Bass": 31,
+   "FX": 4,
+   "Stab": 6,
+   "Sub": 6,
+   "Vocal": 2
+  },
+  "files": {
+   "w311": "w311/bass-enterprise.tsv",
+   "xp": "xp/bass-enterprise.tsv"
+  }
+ },
+ {
+  "id": "beat-management",
+  "name": "Beat Management Console",
+  "blurb": "Centralised administration of the boom and the bap.",
+  "presets": 90,
+  "xp": 71,
+  "w311_badge": 37,
+  "v3": 7,
+  "library": 68,
+  "categories": {
+   "Bass": 10,
+   "Bell": 9,
+   "FX": 10,
+   "Keys": 13,
+   "Lead": 6,
+   "Pad": 12,
+   "Pluck": 4,
+   "Strings": 10,
+   "Texture": 13,
+   "Vocal": 3
+  },
+  "files": {
+   "w311": "w311/beat-management.tsv",
+   "xp": "xp/beat-management.tsv"
+  }
+ },
+ {
+  "id": "retro-display",
+  "name": "Retro Display Properties",
+  "blurb": "Adjust your colour depth to 1985.",
+  "presets": 61,
+  "xp": 46,
+  "w311_badge": 15,
+  "v3": 2,
+  "library": 34,
+  "categories": {
+   "Bass": 10,
+   "Brass": 9,
+   "FX": 6,
+   "Keys": 16,
+   "Lead": 8,
+   "Pad": 7,
+   "Perc": 5
+  },
+  "files": {
+   "w311": "w311/retro-display.tsv",
+   "xp": "xp/retro-display.tsv"
+  }
+ },
+ {
+  "id": "screen-saver",
+  "name": "Ambient Screen Saver Collection",
+  "blurb": "Protects your monitor and your nervous system.",
+  "presets": 64,
+  "xp": 62,
+  "w311_badge": 30,
+  "v3": 0,
+  "library": 53,
+  "categories": {
+   "Bell": 16,
+   "Drone": 3,
+   "Lead": 6,
+   "Pad": 19,
+   "Texture": 20
+  },
+  "files": {
+   "w311": "w311/screen-saver.tsv",
+   "xp": "xp/screen-saver.tsv"
+  }
+ },
+ {
+  "id": "diagnostics",
+  "name": "Experimental Diagnostics Suite",
+  "blurb": "Finds errors. Plays them back in time.",
+  "presets": 50,
+  "xp": 44,
+  "w311_badge": 25,
+  "v3": 5,
+  "library": 34,
+  "categories": {
+   "Bell": 7,
+   "FX": 14,
+   "Lead": 7,
+   "Pad": 3,
+   "Perc": 12,
+   "Vocal": 7
+  },
+  "files": {
+   "w311": "w311/diagnostics.tsv",
+   "xp": "xp/diagnostics.tsv"
+  }
+ },
+ {
+  "id": "leisure",
+  "name": "Leisure Accessories Pack",
+  "blurb": "For the executive lounge.",
+  "presets": 39,
+  "xp": 38,
+  "w311_badge": 28,
+  "v3": 0,
+  "library": 32,
+  "categories": {
+   "Keys": 6,
+   "Lead": 4,
+   "Mallet": 10,
+   "Perc": 5,
+   "Strings": 6,
+   "Texture": 8
+  },
+  "files": {
+   "w311": "w311/leisure.tsv",
+   "xp": "xp/leisure.tsv"
+  }
+ },
+ {
+  "id": "game-port",
+  "name": "Game Port Sound Set",
+  "blurb": "Joystick not included.",
+  "presets": 31,
+  "xp": 24,
+  "w311_badge": 12,
+  "v3": 2,
+  "library": 16,
+  "categories": {
+   "Bass": 6,
+   "FX": 9,
+   "Lead": 10,
+   "Perc": 6
+  },
+  "files": {
+   "w311": "w311/game-port.tsv",
+   "xp": "xp/game-port.tsv"
+  }
+ },
+ {
+  "id": "workstation-classics",
+  "name": "Professional Workstation Classics",
+  "blurb": "The sounds of the leading software, re-engineered for your desktop.",
+  "presets": 59,
+  "xp": 48,
+  "w311_badge": 18,
+  "v3": 2,
+  "library": 36,
+  "categories": {
+   "Bass": 13,
+   "Chord": 7,
+   "FX": 5,
+   "Lead": 13,
+   "Pad": 9,
+   "Pluck": 12
+  },
+  "files": {
+   "w311": "w311/workstation-classics.tsv",
+   "xp": "xp/workstation-classics.tsv"
+  }
+ },
+ {
+  "id": "studio-archive",
+  "name": "Studio Instruments Archive",
+  "blurb": "Every keyboard in the building, catalogued.",
+  "presets": 71,
+  "xp": 62,
+  "w311_badge": 46,
+  "v3": 0,
+  "library": 64,
+  "categories": {
+   "Bass": 4,
+   "Bell": 10,
+   "Brass": 10,
+   "Keys": 24,
+   "Pad": 9,
+   "Perc": 4,
+   "Strings": 10
+  },
+  "files": {
+   "w311": "w311/studio-archive.tsv",
+   "xp": "xp/studio-archive.tsv"
+  }
+ },
+ {
+  "id": "w3x-heritage",
+  "name": "Windows 3.x Heritage Edition",
+  "blurb": "Sixteen bits of history. Eight of them audible.",
+  "presets": 52,
+  "xp": 52,
+  "w311_badge": 52,
+  "v3": 0,
+  "library": 0,
+  "categories": {
+   "Bass": 8,
+   "Bell": 8,
+   "Keys": 8,
+   "Lead": 6,
+   "Pad": 7,
+   "Perc": 8,
+   "Stab": 7
+  },
+  "files": {
+   "w311": "w311/w3x-heritage.tsv",
+   "xp": "xp/w3x-heritage.tsv"
+  }
+ },
+ {
+  "id": "rom-reference",
+  "name": "ROM Reference Library",
+  "blurb": "The great workstations, archived.",
+  "presets": 116,
+  "xp": 93,
+  "w311_badge": 20,
+  "v3": 0,
+  "library": 14,
+  "categories": {
+   "Bass": 10,
+   "Bell": 18,
+   "Drone": 3,
+   "FX": 7,
+   "Keys": 27,
+   "Lead": 7,
+   "Organ": 1,
+   "Pad": 11,
+   "Pluck": 17,
+   "Stab": 4,
+   "Strings": 6,
+   "Vocal": 5
+  },
+  "files": {
+   "w311": "w311/rom-reference.tsv",
+   "xp": "xp/rom-reference.tsv"
+  }
+ },
+ {
+  "id": "lifestyle-aesthetics",
+  "name": "Lifestyle Aesthetics Pack",
+  "blurb": "Mall. Lobby. Aquarium. Startup.",
+  "presets": 44,
+  "xp": 36,
+  "w311_badge": 15,
+  "v3": 0,
+  "library": 16,
+  "categories": {
+   "Bell": 14,
+   "Keys": 30
+  },
+  "files": {
+   "w311": "w311/lifestyle-aesthetics.tsv",
+   "xp": "xp/lifestyle-aesthetics.tsv"
+  }
+ },
+ {
+  "id": "electromech-heritage",
+  "name": "Electromechanical Heritage",
+  "blurb": "Relays, typewriters, telephones.",
+  "presets": 26,
+  "xp": 26,
+  "w311_badge": 26,
+  "v3": 0,
+  "library": 26,
+  "categories": {
+   "Bell": 10,
+   "Drone": 4,
+   "FX": 4,
+   "Keys": 2,
+   "Lead": 2,
+   "Pad": 1,
+   "Pluck": 2,
+   "Vocal": 1
+  },
+  "files": {
+   "w311": "w311/electromech-heritage.tsv",
+   "xp": "xp/electromech-heritage.tsv"
+  }
+ }
+]

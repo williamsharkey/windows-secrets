@@ -1,0 +1,72 @@
+# Beat Management Console: "Centralised administration of the boom and the bap." (library/builder, DNA.md). category <TAB> name <TAB> DNA
+Bass	Dub Cellar Bass	ringout@20[@40]@0CP@0CP@0CP<<Q47;A20R250K45G2
+Bass	Long Boom Glide	balloon<<<+#8/ringout@20[@40]@0CP@0CP@0CP<<<#6L60;A0D3000S40R300K45G6
+Bass	Rusty Anchor	epiano_bell_c3+#8/xprecycle#8FL24Ja0,100.132,30.634,0;A1D450S31R106V80K48G-4
+Bass	Still End	harp_a2@t2500]+#8/start#8FL28;A1D867S36R84V96K45G-3
+Bass	Upright Thump	contrabass_pizz_e1><#10;A0D600S20R150K28G2
+Bell	Amber Steeple	emh_crossbar_gong_c3H0,7;A5D781S14R1510V95K48G3
+Bell	Clear Chimes	epiano_bell_c3>#8/marimba_c4#8L44Q22;A1D960S11R514V74K60G-1
+Bell	Coded Mallets	ems_typewriter_bellEE<<<#10H0,12,24/hwfail#3T7L46Q14/chimesxpRE#3L25O318Q42;A2D1726S5R996V91K55G-5
+Bell	Dark Ding Bell	error@5]E#10/default@10]<#6L40;A0D1500S10R600K87G6
+Bell	Dusty Vibes	vibraphone_c_lowE>>>#5/crystal_bell_bb5@t2000]#5T-5L21Q-24/printR>#6T-5L29O368Q40;A1D802S24R904V98K65G3
+Bell	Satin Ring	ding;A2D888S29R603V85K79G4
+Bell	Study Vibes	vibraphone_c_low#8Ja0,100.250,70.500,100.750,70.1000,100/chimesEE#8T-7L26O272Q53;A0R900K48G3
+Bell	Waxed Chimes	ems_exchange_bell_c4#11H0,7/glass_ping#5T-20L25O9Q32;A0D1578S19R2121V84K60G-4
+FX	Cobalt Lift	logonRE#8U2~12/hwfail#4T-16L32/organ_pedal_25@t3000]@t300[#4T-16L51;A45S100R1449V76K44G2
+FX	Cobalt Sweep	restoreRE#12U3~17/crystal_glass_tap#4L32;A138S100R333V87G11
+FX	Echo Ascent	whoosh_in<<U2~9;A59S100R521V88G-7
+FX	Neon Wake	hdd_conner_spin@t5000]<<U3~22Q34;A107S100R1840V92K27G7
+FX	Paper Sweep	splash_bigR#5/soft_wind@t4000]@t1000[#5L29/batlow#6T-10L68;A86S100R417V73K38G2
+FX	Rubber Descent	chimesRU2~9;A394S100R999V79K67
+FX	Satin Warp	logoffCRP#12U3~22/batlow#4T-9L67;A32S100R1370V75K39G3
+FX	Silver Sweep	minimize>R#6F/restore>#6;A0R80B12G24
+FX	Violet Swoosh	piano_upright_cs4<R#5/wind_chime_single@t2000]E#5T-10L18O167Q-59/recycle#6FL28;A1084S100R837V72K49G24
+Keys	Cedar Study	piano_upright_cs4#5/glass_ping#5T-7L20Q-31/epiano_bell_c3#6T25L66Q-8;A0D2251S14R506V70K61G-7
+Keys	Early Piano	print@25]<><E#10;A0D2200S30R700K46G17
+Keys	Felt Ding Piano	xpding@30]<E#10U2~6;A5D2200S25R800V70K47G-1
+Keys	Global Felt	xpding#12U2~8/rain_on_window#4FL15;A10D2500S40R700V70K59G-1
+Keys	Midnight Chords	ding<<#8/balloon#8FL36;A0D451S16R177V87K55G5
+Keys	Midnight Piano	dingxpE<<#11U2~10/glockenspiel_c6#5T-17L32Q10;A1D784S43R372V70K55
+Keys	Misty Recital	xpding><@0CPQ53;A0D1500S40R300K59G9
+Keys	Shaded Keys	piano_upright_cs5E<U2~8;A0D618S38R168V74K61G-8
+Keys	Signal Chords	steel_tongue_drum_f3>#5/ems_relay_release>#5FL19/ringout#6T-16L27Q-31;A5D1631S30R262V95K65G-7
+Lead	Ballroom Call	tadaxp#12/recycle>>@8]#4FL25;A30R250K72G14
+Lead	Civic Wire	flute_vib_c5@t6000]@t300[E<H0,-12U3~14;A13D48S71R300V91K60G-8
+Lead	Distant Spark	popup@t116]@t33[@0CP@0CP@0CP#13U4~20/organ_pedal_25@t3000]@t300[#3L43;A29D416S74R168V78G4
+Lead	Ether Wire Lead	print@15[@50]@0CP@0CP@0CP#8;A80R400B12K82G18
+Lead	Ivory Call	tadaxp@15[@50]@0CP@0CP@0CP#8;A80R400B12K84G12
+Pad	Daylight Canopy	flute_vib_c5@t7500]@t400[E<#11U2~18/ringout#5T-9L51Q33;A357D95S79R1108V89K60G-7
+Pad	Felt Bloom	singing_bowl_long@t8000]@t200[U2~8Q-34Ja0,0.722,100.2985,72;A406D433S84R1438V71K73G10
+Pad	Humid Wash	startup>#8U2~17/xpding#4T-3L52Q-39/organ_hammond_m100_flute_c@t3000]@t300[#4T-16L57Q13;A1298D630S74R1255V79K56G-6
+Pad	Night Choir Pad	choir_aah<E#10U2~8;A600S90R1800K45G-3
+Pad	Pewter Canopy	piano_upright_cs4#11U2~16/chimesxp>#5T-6L26O146Q22;A975D655S92R1285V89K61G-2
+Pad	Static Tide	xpringout@t349]@t99[@0CP@0CP@0CP<#11U4~17/dingxpRE#3T-10L17O322Q59/xpringout#2T-24L53Q6;A752D807S87R1031V77K57G6
+Pad	Violet Field	choir_aah@t6000]@t300[<#14H0,7U4~4/chimesxpR>#2T-10L20O250Q59;A898D33S72R926V78K57G-4
+Pad	Yellow Horizon	violin_section_sus_c4@t7500]@t300[R#13U4~20/chimes>#3T5L30O378Q2;A431D638S97R1435V95K60G-11
+Pluck	Coded Plink	xpding#8U2~7/emh_relay_ping_e5#4T-5L30Q9/ems_relay_release#4FL24;A2D192S9R100V77K59G2
+Pluck	Marble Ticks	xpding#8/start#8FL20;A3D187S6R104V80K59G9
+Pluck	Wide Flick	epiano_yamaha_vibe>>;A2D170S6R99V71K60G-1
+Pluck	Wired Pluck	ems_ks_spring_g3@t1200]E#11H0,12/key_press_down>#5FL31;A3D202S1R84V94K55G-2
+Strings	Dusk Tremolo	erhu_d3@t4500]@t100[>U3~10;A210S89R1106V76K62G-14
+Strings	Ember Orchestra	epiano_yamaha_vibe>>H0,-12U3~13;A218S88R550V90K60G-8
+Strings	Folded Swell	cello_section_sus_c3<E<#8/violin_section_sus_c4<#6L60;A740S90R1500K24G-4
+Strings	Golden Section	violin_section_sus_c4@t7500]@t200[U2~8;A103S92R803V95K60G-6
+Strings	Hazy Quartet	cello_section_sus_c3@t7500]@t200[>#12H0,-12U3~10/hwfail#2T24L61Q20/minimize#2FL34Ja0,100.82,30.478,0;A111S85R1466V88K60G-10
+Strings	Noir Strings	cello_section_sus_c3<E#8/violin_section_sus_c4<#6L60;A400S90R1500K36G-4
+Strings	Wired Swell	erhu_d3@t4500]@t100[>#10U3~15/soft_wind@t4000]@t1000[#3L17/xpding#3T3L56Q4;A96S99R1368V93K62G-12
+Texture	Broadcast Ambience	startup>>E#4F/xprecycle>>>E#4FL60;A100S100R500G5
+Texture	Floor Murmur	underwater_lake@t10000]@t1000[<;A412S100R593V85K17G4
+Texture	Humid Murmur	piano_upright_cs4E#8F/contrabass_sus_d1@t3000]@t200[#8L28;A217S100R589V84G3
+Texture	Lagoon Ambience	rain_summer@t10000]@t1000[#5F/hwfail#5L49/spirit_breath#6FL22;A424S100R743V92G4
+Texture	Ocean Traffic	epiano_yamaha_vibe#5F/glass_ping#5L45/spirit_breath#6FL17;A392S100R1446V89G-2
+Texture	Orbital Weather	ringin>>E#5F/ringin>>>E#5FL60/kalimba_c4@t1500]#6L67Q9;A100S100R500G7
+Texture	Rural Rain	piano_upright_cs4#5F/vibraphone_c_low#5L54/print#6L55;A20S100R2152V93G3
+Texture	Saffron Weather	fax_teletype_loop@t8000]#8/xprecycle#8L19;A679S100R2489V71G6
+Texture	Steady Murmur	floppy_read_write@t8000]C@50X#8U2~13F/chimes#4L43/recycle#4FL11;A113S100R627V89G1
+Texture	Still Murmur	piano_upright_cs4C@50X#5/contrabass_sus_d1@t3000]@t200[#5T23L38/chimesxp>#6T-6L35O289Q58;A60S100R727V99K61G4
+Texture	Sunday Rain	rain_on_window@t10000]@t1000[<#5F/chimes#5L32/dingxp#6L37;A547S100R1051V90G5
+Texture	Window Rain Room	rain_on_window<E#4F;A2000S100R3000G5
+Texture	Woven Rain	printer_dot_matrix_b@t8000]C@50X#8F/chimesxp#8L56;A325S100R1125V95
+Vocal	Coral Breath	epiano_yamaha_vibe>>#11U2~8/contrabass_sus_d1@t3000]@t200[#5T22L55;A202D364S72R610V84K60G-6
+Vocal	Tidal Singers	ringout@t328]@t93[@0CP@0CP@0CP<#11U2~6/minimize#5FL31;A88D235S96R1818V85K57G-9
+Vocal	Winter Choir	choir_aah@t6000]@t300[E#11U2~10/dingxpR#5T2L34O74Q16;A93D544S94R1335V78K69G-7

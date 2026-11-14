@@ -1,0 +1,63 @@
+# Breakbeat Resource Kit: "Every break your network will ever need." (library/builder, DNA.md). category <TAB> name <TAB> DNA
+Bass	Blue End	tuba_sus_f1@t2000]+>Q-50;A1D177S30R61V94K41G2
+Bass	Delta Rumble	ringout@t127]@20[@40]@0CP@0CP@0CP+++C@2X<<<EU2~25Ja0,100.43,40.86,100.129,40.172,100;A0R120K33G-11
+Bass	Indigo Bottom	cello_section_sus_g1@t2500]#8/hwfail#8T-29L40;A0D211S25R52V95K31G12
+Bass	Laser Foundation	marimba_c2+U2~4;A2D159S24R155V77K36G-8
+Bass	Lucid Rumble	piano_upright_cs2@t3000]#8/batlow#8T-11L61;A3D532S25R138V80K37G-4
+Bass	Neuro Growl	xpringout@20[@40]@0CP@0CP@0CP+++C@2X<<<#16U2~25Ja0,100.43,40.86,100.129,40.172,100;A0R120K33G4
+Bass	Night End	critstop@t40[+#8/batlow#8T-12L52;A3D402S66R93V92K36G-2
+Bass	Rusty Floor	ringout@15[@50]@0CP@0CP@0CP<<<#8Ja0,100.400,85.2000,70;A0R300V80K45G-1
+Bass	Sound System Sub	print@15[@50]@0CP@0CP@0CP<<<#8Ja0,100.400,85.2000,70;A0R300V80K46G17
+Bass	Swift Bass	bass_guitar_gs@t2500]#8Q57/balloon#8FL38;A5D158S55R56V80K44G2
+Bass	Tinted Weight	xpding#8/mouse_click@t150]#8FL21;A5D338S62R53V76K59G9
+Bass	Topaz Foundation	ringout@20[@40]@0CP@0CP@0CP+++<<<U2~18Ja0,100.49,51.536,0;A5S100R150K33G-5
+FX	Block Party Siren	ringin<@0CP@0CPE#8;A10S100R500B7K80
+FX	Elevated Descent	recycle<RH0,-12;A2S100R1775V95G19
+FX	Flat Ascent	ringin<<#10U3~21/ems_line_hiss@t1500]#3L25/xprecycle#3FL18;A158S100R2200V76K68G-5
+FX	Folded Ascent	restore<@0CP@0CPER;A10S100R500B7K80G23
+FX	Inland Warp	ringinEEEH0,12U3~14;A9S100R2256V77K92G-12
+FX	Lattice Uplink	tadaxpRE#11H0,-12/xprecycle#5L18Ja0,100.114,30.476,0;A1449S100R445V94K48G12
+FX	Mint Lift	chord<#13H0,-12U2~13/hwfail#3T-27L38;A3S100R2425V92K33G1
+FX	Tidal Descent	chimesxpRE#8/air_duster@t2000]@t500[#8L10;A1S100R2465V73K67G11
+FX	Wired Descent	prelinger_office_courtesy<#8U2~11/recycle#4FL18Ja0,100.135,30.632,0/minimize#4L23Ja0,100.170,30.512,0;A269S100R355V97G-4
+FX	Yellow Dive	ems_tape_drive_shuttle<R#14H0,-12U3~17/contrabass_sus_d1@t3000]@t200[#2L53;A4S100R339V84G-9
+FX	Zap Gun	popup<E#8;A0R100B24K80G17
+Keys	Faded Etude	xpnotify@t130[+#5/kalimba_g5@t1200]#5T15L13Q-25/ringout#6T13L65Q-19;A0D1358S40R333V79K70G1
+Keys	Felt Etude	dingE#8/ding#8T12L35Q-15;A0D1148S43R631V72K79G-1
+Keys	Jade Salon	piano_upright_cs5E<#5/epiano_bell_c3#5T13L60Q-10/ui_glass_ping#6T-11L13Q26;A1D440S32R314V93K61G-3
+Keys	Liquid Tine	xpding@25]#6U2~7/ringout@20[@40]@0CP@0CP@0CP#6T2L45;A0D2000S35R600V85K59
+Keys	Night Upright	dingxp<<;A5D1532S30R326V95K55G7
+Keys	Vinyl Chords	harp_c5@t2500]<#5/marimba_c4#5L37Q39/xylophone_c5#6L13Q-12;A0D509S4R565V83K60G-1
+Lead	Freestyle Square	ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#8H0,12;A0R120K59G-2
+Lead	Night Spark	xpringout@t349]@t99[@0CP@0CP@0CP#11H0,7/xpstart#5FL15;A17D227S85R149V79K69G11
+Lead	Steady Ray	xpringout@t349]@t99[@0CP@0CP@0CPE<#8/xpding#8T-14L45;A3D227S75R178V79K57G11
+Lead	Upper Whistle	ems_motor_whine_a4@t3500]@t300[<;A26D72S90R116V71K57G-5
+Lead	Velvet Pilot	ems_motor_whine_a4@t3500]@t300[+#12U3~11/batlow#4T21L32;A1D445S85R98V89K69G-15
+Pad	Cathode Bloom	xpringout@t349]@t99[@0CP@0CP@0CPEE<U2~7;A741D692S83R1420V99K57G7
+Pad	Granite Pad	ringout@t328]@t93[@0CP@0CP@0CP<#13H0,7U2~7/dingxpE#3T-3L15O294Q44;A297D771S97R2096V77K57G-12
+Pad	Ivory Drift	xpringout@t349]@t99[@0CP@0CP@0CPCRP<#13H0,7U2~14/air_duster@t2000]@t500[#3FL17Ja0,100.160,30.609,0;A663D435S77R912V74K57G4
+Pad	Lobby Cloud	cello_section_sus_c3@t7500]@t300[>#11U2~6/chimes>#5T-7L36O350Q21;A585D443S70R1326V89K60G-8
+Pad	Mild Cloud	glass_harp@t8000]@t500[<#11H0,12U2~6/xpringout#3T-5L58Q9/batlow#2T16L60;A680D675S92R1285V92K64G-8
+Pad	Modular Haze	xpnotifyE#13H0,12U2~6/xpding#3T-1L32Q34;A1088D571S96R1233V70K70G16
+Pad	Spare Halo	cello_section_sus_c3@t7500]@t300[R>U2~16;A1453D482S82R1279V94K60G-8
+Perc	Floor Rim	critstop@t400]@t40[<;D160S0R109V77K24G2
+Perc	Glass Tap	chord@t200]<#11U2~10/hwfail#5T-27L31;D136S0R31V85K33G3
+Perc	Inland Clap	ringin@t150]<F;D205S0R32V86G3
+Perc	Plaza Shaker	em_stamp_a;D109S0R149V94G8
+Perc	Shaded Click	light_switch_on#5Q61/infobar#5FL31/balloon#6FL33;D361S0R69V85
+Perc	Sunlit Click	glass_tap<F;D102S0R41V79G1
+Perc	Washed Hat	em_stamp_a;D188S0R42V71G7
+Stab	Blue Accent	trombone_sus_c3@t3000]>#11U2~5/hwfail#5T12L46Q-17;A2D854S60R131V98K60G-9
+Stab	Breaker Orchestra Hit	tada@15]+#8H0,12/chord@8]E#4T5L60/organ_hammond_m100_flute_c@t3000]@t300[#4T-12L29Q-21;A0D665S0R200V100K60G1
+Stab	Hazy Chord	critstop@t40[>>+Q51;A49D202S74R303V79K60G1
+Stab	Northern Hit	trumpet_sus_c4@t3000]+U2~6;A1D754S36R326V76K62G-13
+Stab	Radiant Accent	trombone_sus_c3@t3000]+#11H0,7/xpding#5T-11L32Q-15;A61D220S50R465V93K48G-11
+Stab	Rainy Chord	trombone_sus_c3@t3000]#8/xpding#8T-23L44Q-28;A1D606S21R135V74K48G-6
+Stab	Stadium Riff Stab	tadaxp@15]+++#10H0,12/recycle>@15]#4FL50;A0D300S0R150K60G10
+Stab	Sub Stab Juke	ringout@20[@40]@0CP@0CP@0CP<<@20]#12;A0R60V100K45G-1
+Stab	Sunday Accent	tadaxpE#13H0,-12U2~7/ringout#3T-21L26Q7;A38D268S4R146V71K48G6
+Stab	Sunday Chord	horn_sus_c3@t3000]>#5/marimba_c4#5T12L49Q-8/relay_click>#6FL44;A11D597S19R159V79K60G-7
+Stab	Winter Horns	tadaxp+>EU3~13;A5D883S75R311V80K60G3
+Vocal	Inland Vox	notify@0CP#8/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#6T3L35;A10R200K62G4
+Vocal	Robot Workgroup Voice	ems_704_vowel_a3@0CP#8/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#6T-2L35;A10R200K57G-8
+Vocal	Western Breath	ringout@t328]@t93[@0CP@0CP@0CP#10U3~12/chimes>#3T2L25O246Q49/air_duster@t2000]@t500[#3FL15Ja0,100.141,30.380,0;A87D460S84R660V73K69G-10

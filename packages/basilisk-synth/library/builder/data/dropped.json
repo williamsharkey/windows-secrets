@@ -1,0 +1,387 @@
+[
+ {
+  "pack": "rom-reference",
+  "group": "Pads",
+  "name": "Ivory Glow",
+  "dna": "chimes@40]IxpdingIchimes>Iprint@0CP#11U2~6/organ_hammond_m100_flute_c@t3000]@t300[#5T-12L47Q18;A80S90R1600V100",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "hero",
+  "target": "pt-rompler-korg-wavestation-glass-pad"
+ },
+ {
+  "pack": "rom-reference",
+  "group": "Plucks/Arps",
+  "name": "Amber Flick",
+  "dna": "xpringin@6]E#12;A0D1800S0R1000K86",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "hero",
+  "target": "pt-arps-plucks-harp-gliss"
+ },
+ {
+  "pack": "rom-reference",
+  "group": "Plucks/Arps",
+  "name": "Sunday Flick",
+  "dna": "xpringin@10]E#8U2~6;A0D200S0R120K86",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "hero",
+  "target": "pt-rompler-emu-proteus-pizzicato"
+ },
+ {
+  "pack": "rom-reference",
+  "group": "Plucks/Arps",
+  "name": "Office Ticks",
+  "dna": "xpringin@7]<#10/start<#2FL30;A0D900S0R200K74",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "hero",
+  "target": "pt-arps-plucks-guitar-ish-nylon-pluck"
+ },
+ {
+  "pack": "rom-reference",
+  "group": "Pads",
+  "name": "Steady Atrium",
+  "dna": "logon@20[#5/logon@20[>>RER#5L42/wind_chime_single@t2000]>#6T-27L25O136Q-52;A400S90R2500K44",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "hero",
+  "target": "pt-pads-shimmer-pad-r"
+ },
+ {
+  "pack": "lifestyle-aesthetics",
+  "group": "Lo-fi/Vaporwave",
+  "name": "Fanfare Fragment",
+  "dna": "tada@30[@50]@0CP@0CP<EE#8U2~10;A30S100R1500K48",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "hero",
+  "target": "ae-fanfare-fragment"
+ },
+ {
+  "pack": "lifestyle-aesthetics",
+  "group": "Lo-fi/Vaporwave",
+  "name": "Carpet Corridor",
+  "dna": "xpnotify<<EEE--#12U2~10;A600S90R5000K46",
+  "dropped": [
+   "1 of 13 onsets not heard"
+  ],
+  "lineage": "hero",
+  "target": "ae-carpet-corridor"
+ },
+ {
+  "pack": "lifestyle-aesthetics",
+  "group": "Lo-fi/Vaporwave",
+  "name": "Chord Screw Down",
+  "dna": "chord@60]#6/chord@60]<#5L80O350/chord@60]<<#5L60O1050;A0S100R600K57",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "hero",
+  "target": "ae-chord-screw-down"
+ },
+ {
+  "pack": "lifestyle-aesthetics",
+  "group": "Lo-fi/Vaporwave",
+  "name": "Static Lullaby",
+  "dna": "chimes@30]>>><<<#8/xpding#8T8L48Q-25;A0D1500S0R1200K79",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "hero",
+  "target": "ae-static-lullaby-r"
+ },
+ {
+  "pack": "techno-server",
+  "group": "Texture",
+  "name": "Metro Murmur",
+  "dna": "startup<<<EE#6F/recycle<<<E#4FL60;A1500S100R3000",
+  "dropped": [
+   "still sounding at the end"
+  ],
+  "lineage": "swap-startup",
+  "target": "dub-techno-tape-hiss-fog"
+ },
+ {
+  "pack": "trance-connectivity",
+  "group": "FX",
+  "name": "Dusk Surge",
+  "dna": "minimize<<<E#3F/xprecycle<<E#6H0,12FL70O1300/xprecycle<E#3FL50O2600/restore#4L161O3300;A2250S100R800",
+  "dropped": [
+   "1 of 2 onsets not heard"
+  ],
+  "lineage": "swap-minimize",
+  "target": "trance-two-bar-noise-riser"
+ },
+ {
+  "pack": "breakbeat-resource",
+  "group": "Vocal",
+  "name": "Pearl Murmur",
+  "dna": "ems_704_vowel_a3@0CP#8Ws.15~.45l.16Yd9l10/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#6T-2L35Ws.10e.65Yd4;A10R200K57",
+  "dropped": [
+   "still sounding at the end"
+  ],
+  "lineage": "v3",
+  "target": "electro-robot-workgroup-voice"
+ },
+ {
+  "pack": "screen-saver",
+  "group": "Pad",
+  "name": "Steel Mist",
+  "dna": "wind_chime_singleE<#11U2~15/kalimba_c4@t1500]#5T-13L64Q-5;A871D459S78R1542V92K59",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "fill",
+  "target": "screen-saver-pad-w006"
+ },
+ {
+  "pack": "screen-saver",
+  "group": "Pad",
+  "name": "Spare Haze",
+  "dna": "wind_chime_singleE#8U2~10/epiano_bell_c3#4T11L49Q39/air_duster@t2000]@t500[#4FL28Ja0,100.191,30.883,0;A1554D781S75R981V79K71",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "fill",
+  "target": "screen-saver-pad-w013"
+ },
+ {
+  "pack": "screen-saver",
+  "group": "Drone",
+  "name": "Folded Depth",
+  "dna": "singing_bowl_long@t12000]@t200[#14H0,-12U3~14/hwfail#2T13L59;A1747S100R4901V94K73",
+  "dropped": [
+   "still sounding at the end"
+  ],
+  "lineage": "fill",
+  "target": "screen-saver-drone-w017"
+ },
+ {
+  "pack": "diagnostics",
+  "group": "Perc",
+  "name": "Modular Rim",
+  "dna": "xpstart#8F/menu#8FL39;D158S0R110V73",
+  "dropped": [
+   "8 of 26 onsets not heard"
+  ],
+  "lineage": "fill",
+  "target": "diagnostics-perc-w001"
+ },
+ {
+  "pack": "leisure",
+  "group": "Perc",
+  "name": "Cobalt Block",
+  "dna": "flute_vib_c5>#8/ems_line_hiss@t1500]#8L11;D157S0R56V99K84",
+  "dropped": [
+   "2 of 26 onsets not heard"
+  ],
+  "lineage": "fill",
+  "target": "leisure-perc-w003"
+ },
+ {
+  "pack": "game-port",
+  "group": "Perc",
+  "name": "Field Clap",
+  "dna": "xpstart+#8/spirit_breath#8L10Ja0,100.172,30.491,0;D96S0R90V76",
+  "dropped": [
+   "6 of 26 onsets not heard"
+  ],
+  "lineage": "fill",
+  "target": "game-port-perc-001"
+ },
+ {
+  "pack": "game-port",
+  "group": "FX",
+  "name": "Rural Wake",
+  "dna": "recycleR#8/spirit_breath#8FL11Ja0,100.65,30.810,0;A15S100R503V92",
+  "dropped": [
+   "1 of 2 onsets not heard"
+  ],
+  "lineage": "fill",
+  "target": "game-port-fx-007"
+ },
+ {
+  "pack": "workstation-classics",
+  "group": "FX",
+  "name": "Gentle Burst",
+  "dna": "restore<;A857S100R663V78",
+  "dropped": [
+   "1 of 2 onsets not heard"
+  ],
+  "lineage": "fill",
+  "target": "workstation-classics-fx-002"
+ },
+ {
+  "pack": "w3x-heritage",
+  "group": "Pad",
+  "name": "Cathode Drift",
+  "dna": "chimes<<E#12U2~10;A500S90R2000K55",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "w311",
+  "target": "idm-glitch-grain-error-pad"
+ },
+ {
+  "pack": "w3x-heritage",
+  "group": "Pad",
+  "name": "White Halo",
+  "dna": "ding#13H0,12U2~8/chimesR>#3T12L39O104Q42;A1553D820S97R1613V94K79",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "fill",
+  "target": "w3x-heritage-pad-005"
+ },
+ {
+  "pack": "rom-reference",
+  "group": "Textures",
+  "name": "Rose Room",
+  "dna": "startup<<#4U2~20/logon<R#4/chimes>>R#4/recycle<<<#4FL20;A1500S80R4000",
+  "dropped": [
+   "still sounding at the end"
+  ],
+  "lineage": "hero",
+  "target": "pt-softsynth-pad-texture-absynth-evolving-atmosphere"
+ },
+ {
+  "pack": "rom-reference",
+  "group": "Frutiger Aero",
+  "name": "Broadcast Breeze",
+  "dna": "balloon@40]#10/hwin>@20]#4L40;A0D200S0R150",
+  "dropped": [
+   "4 of 10 onsets not heard"
+  ],
+  "lineage": "hero",
+  "target": "pt-aesthetic-frutiger-aero-water-droplet-pluck"
+ },
+ {
+  "pack": "lifestyle-aesthetics",
+  "group": "Y2K/Corporate",
+  "name": "Sixteen-Bit Chimes",
+  "dna": "chimes<E<E>#12;A0D2500S0R2000K67",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "hero",
+  "target": "ae-sixteen-bit-chimes"
+ },
+ {
+  "pack": "lifestyle-aesthetics",
+  "group": "Lo-fi/Vaporwave",
+  "name": "Lazy Trap Hat",
+  "dna": "menu#4F/popup>#4FL40;A0S100R30V100",
+  "dropped": [
+   "4 of 13 onsets not heard"
+  ],
+  "lineage": "hero",
+  "target": "ae-lazy-trap-hat"
+ },
+ {
+  "pack": "techno-server",
+  "group": "Perc",
+  "name": "Satin Hat",
+  "dna": "xpstart+#8/xpstart#8FL29;D281S0R47V76",
+  "dropped": [
+   "2 of 26 onsets not heard"
+  ],
+  "lineage": "fill",
+  "target": "techno-server-perc-w002"
+ },
+ {
+  "pack": "techno-server",
+  "group": "Texture",
+  "name": "Office HVAC Bed",
+  "dna": "office_ambience_01<<FQ-57;A2000S100R3000",
+  "dropped": [
+   "still sounding at the end"
+  ],
+  "lineage": "hero",
+  "target": "minimal-techno-office-hvac-bed"
+ },
+ {
+  "pack": "techno-server",
+  "group": "Texture",
+  "name": "Remote Murmur",
+  "dna": "xprecycle<<FQ-50Ja0,100.157,65.1289,12;A2000S100R3000",
+  "dropped": [
+   "1 of 2 onsets not heard"
+  ],
+  "lineage": "swap-xprecycle",
+  "target": "minimal-techno-office-hvac-bed"
+ },
+ {
+  "pack": "retro-display",
+  "group": "Snare tom",
+  "name": "Gated Neon Snare",
+  "dna": "recycle>@40]+EEE#8FJa0,100.200,90.220,0/xpstart>#8FL27;A0R10V90",
+  "dropped": [
+   "8 of 26 onsets not heard"
+  ],
+  "lineage": "hero",
+  "target": "synthwave-gated-neon-snare"
+ },
+ {
+  "pack": "screen-saver",
+  "group": "Pad",
+  "name": "Startup Cloud",
+  "dna": "startup<<U3~7;A1763S65R4000K44",
+  "dropped": [
+   "still sounding at the end"
+  ],
+  "lineage": "hero",
+  "target": "ambient-startup-cloud"
+ },
+ {
+  "pack": "diagnostics",
+  "group": "Perc",
+  "name": "Clear Snare",
+  "dna": "menu#8F/start#8FL39;D157S0R68V90",
+  "dropped": [
+   "8 of 26 onsets not heard"
+  ],
+  "lineage": "fill",
+  "target": "diagnostics-perc-005"
+ },
+ {
+  "pack": "game-port",
+  "group": "Perc",
+  "name": "Slate Block",
+  "dna": "xpstart<F;D299S0R131V91",
+  "dropped": [
+   "6 of 26 onsets not heard"
+  ],
+  "lineage": "fill",
+  "target": "game-port-perc-007"
+ },
+ {
+  "pack": "w3x-heritage",
+  "group": "Pad",
+  "name": "Brushed Tide",
+  "dna": "dingEU3~12;A1156D425S71R1457V90K79",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "fill",
+  "target": "w3x-heritage-pad-w001"
+ },
+ {
+  "pack": "w3x-heritage",
+  "group": "Stab hit",
+  "name": "Brushed Chord",
+  "dna": "chord@5[@60]C@3X<#10H0,5Ja0,10.40,100.240,60.484,10.524,100.724,60/ringin>>>@30]#2FL15;A0R300V60K45",
+  "dropped": [
+   "DC"
+  ],
+  "lineage": "w311",
+  "target": "french-house-filtered-disco-loop-chord"
+ }
+]

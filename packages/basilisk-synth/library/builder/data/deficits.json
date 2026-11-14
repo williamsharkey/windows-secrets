@@ -1,0 +1,44 @@
+{
+ "workgroup-house": {
+  "Pad": 1
+ },
+ "breakbeat-resource": {
+  "Pad": 4
+ },
+ "bass-enterprise": {
+  "Growl": 1,
+  "Sub": 3,
+  "Organ bass": 4,
+  "Reese": 2
+ },
+ "beat-management": {
+  "Keys": 1,
+  "Vocal": 1,
+  "Texture": 1
+ },
+ "retro-display": {
+  "Pad": 5,
+  "Lead": 2,
+  "Brass strings": 1
+ },
+ "screen-saver": {
+  "Drone": 14
+ },
+ "diagnostics": {
+  "Lead": 3,
+  "Pad grain": 2
+ },
+ "game-port": {
+  "Lead": 4
+ },
+ "workstation-classics": {
+  "Lead": 1,
+  "Pad": 3
+ },
+ "studio-archive": {
+  "Pad": 1
+ },
+ "w3x-heritage": {
+  "Bell": 2
+ }
+}

@@ -1,0 +1,47 @@
+# Retro Display Properties: "Adjust your colour depth to 1985." (library/builder, DNA.md). category <TAB> name <TAB> DNA
+Bass	Misty Line	hwout@t800]@t130[#13H0,-12U2~4/floppy_seek_clunk#3FL40;A0D301S44R109V70K48G3
+Bass	Quiet End	bass_guitar_gs@t2500]E#11U2~11/xprecycle#5L30;A3D239S52R128V72K44G-4
+Bass	Radiant Sub	ems_ks_wire_c3E<#11U2~4/organ_pedal_25@t3000]@t300[#5T-24L63;A5D261S57R126V74K36G-10
+Bass	Remote Basement	ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+<#8Ja0,100.80,40.110,0;A0D400S0R40V80K35G6
+Bass	Tokyo Slap	xpding@20]<<+++C@50X#5/balloon<#5FL50Ja0,100.32,33.249,0/hwfail#6T-25L68;A0D350S40R80V95K35G1
+Bass	Western Cellar	contrabass_sus_d1@t2500]#11H0,12/key_press_down#5FL38;A0D436S69R64V94K26G-4
+Brass	Azure Chamber	startup@t1690[#14H0,-12U3~11/xpding#2T-32L53;A87S98R1238V93K39
+Brass	Coral Section	contrabass_sus_d1@t7500]@t200[>>H0,-12U2~12;A409S96R1162V86K50G-14
+Brass	Lagoon Quartet	violin_section_sus_c4#10U2~8/tada<#6T8L30;A250S90R1200K60G-5
+Brass	Silver Bows	xpding#12U3~12/organ_pedal_25@t3000]@t300[#4T-1L56;A89S88R1411V74K59G-4
+Brass	Waxed Orchestra	tadaxp>U3~11;A293S98R401V84K60G4
+Brass	Western Violins	violin_section_sus_c4@t7500]@t200[#12U3~15/xprecycle#4FL26;A238S88R605V92K60G-8
+FX	Azure Descent	xpdingR#5/hwfail#5T-1L50/glass_pingE#6T-14L37O98Q47;A6S100R1166V94K59G5
+FX	Dial Swoosh	xprecycle<RE#6/minimize<#6;A200R900G20
+FX	Laser Grid Sweep	restore<RE#6/minimize<#6;A200R900G22
+Keys	Cedar Upright	logon>#8U2~3/xpding#4T-3L60Q6/xpringout#4T-1L53Q38;A3D2398S12R161V71K56G4
+Keys	Dial Chords	default#6/xpding@25]#6T4L60;A0D2200S20R700K87G6
+Keys	Faded Postcard Keys	xpding@30]<E#5/default@20]<<#5T-4L40/glass_ping#6T-33L26Q-7;A20D2000S40R900K47G6
+Keys	Glass Study	piano_upright_cs4E#5/glockenspiel_c6#5T-4L19Q-17/xpding#6T2L42Q-22;A3D1298S41R600V95K61G-3
+Keys	Humid Felt	dingxpE<<#11U2~5/hwfail#5T7L67Q4;A3D1416S4R481V91K55
+Keys	Lunar Ballad	piano_upright_cs3+>#5/default#5T10L23O11Q-34/balloon#6FL19;A5D1863S24R268V89K61G-4
+Keys	Office Etude	logon>#11U2~3/crystal_bell_bb5@t2000]#5T-14L23Q-4;A0D2401S24R176V74K56G1
+Keys	Rusty Upright	defaultE#5/balloon#5FL26/default#6T19L29O14Q-1;A5D471S4R189V76K63G9
+Keys	Satin Lounge	piano_upright_cs5+#8/xpding#8T14L25Q18;A1D939S5R465V91K73G-6
+Keys	Second Ballad	dingxp+<<#5/kalimba_c4@t1500]#5T7L54Q34/dingxp#6L16Q-14;A5D1112S27R453V84K55G2
+Keys	Shiny Tine Plaza	default@10]#6U2~6Q-20/print@5[@60]#6T5U2~6L60Q20;A0D2500S25R600V85K75G4
+Keys	Tinted Hammers	tadaxp>#5/vibraphone_c_low#5T19L30Q-23/kalimba_g5@t1200]#6L28O9Q-8;A0D1143S5R479V79K60G7
+Keys	Violet Chords	kalimba_c4U2~5;A2D641S43R688V77K60G-5
+Lead	Brass Signal	ems_motor_whine_a4@t3500]@t300[<H0,12;A33D485S93R214V80K57G-10
+Lead	Chrome Brass Lead	tadaxp@40[@20]@0CP@0CP@0CP@0CP#10U3~18;A60R350B2K60G7
+Lead	Field Pilot	ems_csirac_pulse_e4E#12U3~13/ui_glass_ping#4T-8L34Q4;A9D65S84R331V71K64G-7
+Lead	Molten Wire	tadaxp@10[@60]@0CP@0CP#10U2~14;A40R500K84G7
+Lead	Rooftop Sax Lead	trumpet_sus_c4+#10;A30R250K62G-6
+Lead	Satin Voice	flute_vib_c5@t6000]@t300[+<;A2D239S90R249V76K60G-1
+Lead	Still Call	xpringout@t349]@t99[@0CP@0CP@0CP<;A4D239S98R339V86K57G13
+Lead	Sun Glare Lead	print@10[@60]@0CP@0CP#10U2~14;A40R500K82G13
+Pad	Civic Glow	xpringout@t349]@t99[@0CP@0CP@0CP<#11U2~17/chimes>#5T-3L18O338Q-59;A277D438S79R997V80K57G6
+Pad	Inland Tide	logon@20[@60]<E#10U2~12;A800S95R2500K56G17
+Pad	Kinetic Veil	violin_section_sus_c4@t7500]@t300[E#8U2~9/chimesRE#4T5L25O346Q20/contrabass_sus_d1@t3000]@t200[+#4T22L55;A1569D677S94R1388V91K60G-6
+Pad	Northern Bloom	startup@10[#8U2~10/print@10[@50]#6T-2U2~8L35;A500S90R1500K56
+Pad	Shaded Cloud	choir_aah@t6000]@t300[E<H0,12U3~13;A1533D548S88R1177V77K57G-7
+Perc	Long Block	logon<;D92S0R47V83K32G21
+Perc	Slate Hat	xprecycle@t300]+;D205S0R53V79G20
+Perc	Sonic Block	key_press_down>#8F/air_duster@t2000]@t500[#8L26Ja0,100.88,30.487,0;D164S0R97V92G3
+Perc	Twilight Block	key_mechanical_hard>#8F/start#8FL42;D225S0R78V71G3
+Perc	Yellow Snare	emh_cardpunch_thumpF;D133S0R53V78G2

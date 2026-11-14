@@ -1,0 +1,42 @@
+[
+ {
+  "idea": "Drum kits from Windows clicks and electromech hits",
+  "needs": "v3 kit DNA (k/j tokens: one pad per key, segments of Insert File strips)",
+  "from": "electromech-presets.json kits (12), Funk & Hard drafts"
+ },
+ {
+  "idea": "Granular pads from long field recordings (rain, mall, NASA loops)",
+  "needs": "v3 grains (position/size/spray per voice)",
+  "from": "Textures, Lo-fi"
+ },
+ {
+  "idea": "Tape wow and flutter on hold-music chops",
+  "needs": "v3 tape (pitch LFO per voice); v2 only fakes it with unison detune",
+  "from": "Lo-fi/Vaporwave, Mall"
+ },
+ {
+  "idea": "Velocity layers (soft/hard samples per key range)",
+  "needs": "v3 key/velocity zones",
+  "from": "electromech kits, piano"
+ },
+ {
+  "idea": "Round-robin clicks for typewriter/relay instruments",
+  "needs": "v3 round robin",
+  "from": "Electromech"
+ },
+ {
+  "idea": "Pitch scoops and drops (808 glide down, Shakuhachi scoop)",
+  "needs": "v3 V (rate modulation: Vs scoop) - tape lands later; N glide is used now for legato basses and leads",
+  "from": "genres v3_dna with Vs, preset-targets"
+ },
+ {
+  "idea": "Scale-aware degree chords (D) in the pack key",
+  "needs": "§18 key parameters (D plays in C major until then)",
+  "from": "genres v3_dna with Sd/q"
+ },
+ {
+  "idea": "Mine-grid sequencer arps (Retro Display Arp, Game Port Arp, Workstation Arp groups)",
+  "needs": "v3 x sequencer (PE2 section 9)",
+  "from": "pack-plan 2.1 Arp groups"
+ }
+]

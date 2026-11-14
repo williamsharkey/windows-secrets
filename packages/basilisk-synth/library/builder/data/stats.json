@@ -1,0 +1,195 @@
+{
+ "candidates": 7521,
+ "pass": 4010,
+ "targets": 1892,
+ "reject_reasons": {
+  "out of tune (N cents)": 2175,
+  "does not track the keyboard (N cents spread)": 674,
+  "N of N notes not heard": 550,
+  "DC N": 252,
+  "still sounding at the end (N dB)": 183,
+  "a single note not heard": 172,
+  "too short": 96,
+  "uneven across the keyboard (N dB)": 35,
+  "silent": 30,
+  "noisy for a tonal category": 9
+ },
+ "by_category": {
+  "Bass": {
+   "n": 1070,
+   "pass": 584
+  },
+  "Bells/Mallets": {
+   "n": 419,
+   "pass": 254
+  },
+  "Brass/Stabs": {
+   "n": 489,
+   "pass": 304
+  },
+  "Choir/Vox": {
+   "n": 356,
+   "pass": 114
+  },
+  "Drones/Ambient": {
+   "n": 233,
+   "pass": 88
+  },
+  "EP": {
+   "n": 31,
+   "pass": 3
+  },
+  "FX/Risers": {
+   "n": 461,
+   "pass": 366
+  },
+  "Frutiger Aero": {
+   "n": 150,
+   "pass": 35
+  },
+  "Keys": {
+   "n": 660,
+   "pass": 396
+  },
+  "Leads": {
+   "n": 815,
+   "pass": 350
+  },
+  "Lo-fi/Vaporwave": {
+   "n": 317,
+   "pass": 51
+  },
+  "Organ": {
+   "n": 47,
+   "pass": 32
+  },
+  "Pads": {
+   "n": 1096,
+   "pass": 534
+  },
+  "Perc": {
+   "n": 396,
+   "pass": 278
+  },
+  "Plucks/Arps": {
+   "n": 265,
+   "pass": 167
+  },
+  "Strings": {
+   "n": 259,
+   "pass": 204
+  },
+  "Textures": {
+   "n": 250,
+   "pass": 202
+  },
+  "World": {
+   "n": 60,
+   "pass": 22
+  },
+  "Y2K/Corporate": {
+   "n": 147,
+   "pass": 26
+  }
+ },
+ "by_lineage": {
+  "fill": {
+   "n": 3373,
+   "pass": 2730
+  },
+  "hero": {
+   "n": 2314,
+   "pass": 607
+  },
+  "register": {
+   "n": 198,
+   "pass": 56
+  },
+  "swap": {
+   "n": 556,
+   "pass": 154
+  },
+  "v3": {
+   "n": 828,
+   "pass": 357
+  },
+  "w311": {
+   "n": 252,
+   "pass": 106
+  }
+ },
+ "score_quartiles": [
+  -292.6,
+  36.8,
+  95.2,
+  100.0,
+  104.0
+ ],
+ "retuned": 216,
+ "retune_pass": 83,
+ "render_stats": [
+  {
+   "renders": 815,
+   "cached": 100,
+   "audio_s": 5905.655000000047,
+   "wall_s": 2058.6778416633606,
+   "fail": 0
+  },
+  {
+   "renders": 849,
+   "cached": 92,
+   "audio_s": 6162.083000000043,
+   "wall_s": 2768.4587173461914,
+   "fail": 0
+  },
+  {
+   "renders": 935,
+   "cached": 68,
+   "audio_s": 6721.882000000079,
+   "wall_s": 3102.986319065094,
+   "fail": 0
+  },
+  {
+   "renders": 898,
+   "cached": 67,
+   "audio_s": 6674.695000000066,
+   "wall_s": 1802.0461831092834,
+   "fail": 0
+  },
+  {
+   "renders": 884,
+   "cached": 75,
+   "audio_s": 6124.665000000051,
+   "wall_s": 3126.0213441848755,
+   "fail": 0
+  },
+  {
+   "renders": 466,
+   "cached": 0,
+   "audio_s": 3291.630999999989,
+   "wall_s": 4710.227986574173,
+   "fail": 0
+  },
+  {
+   "renders": 850,
+   "cached": 0,
+   "audio_s": 6164.330000000046,
+   "wall_s": 1282.6804032325745,
+   "fail": 0
+  },
+  {
+   "renders": 846,
+   "cached": 0,
+   "audio_s": 6168.398000000042,
+   "wall_s": 2027.2686672210693,
+   "fail": 0
+  },
+  {
+   "renders": 437,
+   "cached": 139,
+   "audio_s": 3281.2430000000163,
+   "wall_s": 1091.8003945350647,
+   "fail": 0
+  }
+ ]
+}

@@ -1,0 +1,85 @@
+# Workgroup House Edition: "Four-on-the-floor productivity for the whole department." (library/builder, DNA.md). category <TAB> name <TAB> DNA
+Bass	Acid Accent Line	default@3]<<+++#8Ja0,100.40,60.220,25/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<+#8T4L50;A0R60V100K51G2
+Bass	Cedar Pulse	epiano_yamaha_vibeH0,-12U2~10;A0D334S15R65V91K36G-9
+Bass	Chrome Anchor	piano_upright_cs2@t3000];A3D296S22R59V93K37
+Bass	Foggy Anchor	default@3]<<+++<#8Ja0,100.40,60.220,25/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<+#8T4L50;A0D400S60R60V100K39G3
+Bass	Granite Sub	xpding<<H0,12;A1D287S70R124V77K35G3
+Bass	Pearl End	ringout@30]<<++#8/balloon<@30]#4FL60;A0D300S50R80V95K33
+Bass	Remote Foundation	ringout@20[@40]@0CP@0CP@0CP<<#6/balloon<<@40]#2FL35;A0D450S35R120V90K45G3
+Bass	Round Floor Sub	xpringout@20[@40]@0CP@0CP@0CP<<#11U2~4/balloon<<@40]E#5FL35;A0D450S35R120V90K45G11
+Bass	Shaded End	xpding<<#11H0,12/batlow#5T-13L62;A0D296S19R79V97K35G3
+Bass	Slap Disco Bass	xpding@30]<<++#8/balloon<@30]#4FL60;A0D300S50R80V95K35G5
+Bass	Steady Rumble	contrabass_pizz_e1EH0,12;A0D454S74R145V97K28G-1
+Bass	Sunday Cellar	xpding@30]<<++#5Nlg140/balloon<@30]#5FL60/xpding#6T-36L34;A0D300S50R124V95K35G5
+FX	Amber Ascent	ringoutRE#8/hwfail#8T9L60;A541S100R383V89K69G6
+FX	Arctic Uplink	whoosh_awayEEE#13H0,12U2~11Q-32/dingxp+#3L22;A107D0S100R594V94G-1
+FX	Ember Ascent	ringoutR#8/crystal_glass_tapEE#8T-2L30O354Q-57;A1S100R2370V76K69G1
+FX	Frosted Burst	minimize<#10U3~17/recycle#3FL25/hwfail#3T-33L47;A88S100R1518V72K16G17
+FX	Golden Burst	xprecycleREU2~13;A10S100R757V97G19
+FX	Lagoon Burst	minimize<<E#8/xprecycle<<<E#8FL40;A1200S100R2500G24
+FX	Low-Pass Sweep Wash	restore<<E#8/xprecycle<<<E#8FL70;A1200S100R2500G23
+FX	Misty Warp	bubbles_in_water_burst<#8H0,12/chimesxp#4L27/dingxp#4L54;A14S100R2457V81G-1
+FX	Pastel Uplink	emh_modem_crush@t5000]R#8/soft_wind@t4000]@t1000[#8FL21Ja0,100.157,30.499,0;A498S100R817V83K34G-2
+FX	Polar Ascent	modem_dialup_a@t9000]@t3000[RU2~11;A8S100R1948V95G1
+Keys	Afterhours Tine	xpding@25]#5/print@5[@60]<E#11T1U2~6L50Q-20Ja0,100.302,42.1572,31;A0D1800S30R500V85G13m11L20,90m1=40K59
+Keys	Cable Upright	piano_upright_cs4Q45;A2D536S18R317V99K61G2
+Keys	Coral Ballad	epiano_yamaha_vibeE>>#8/print#8T-3L31O20Q-28;A5D421S26R460V80K60G-4
+Keys	Open Ballad	emh_typewriter_ks#8/default@t300]#8T23L17O19Q-10;A0D2051S37R399V90K62
+Keys	Rose Ballad	chord>-#8Q-31/ems_typebar#8FL35;A0D2109S5R579V83K57G4
+Keys	Rose Upright	tada+#5/crystal_bell_bb5@t2000]#5T-6L38O23Q15/floppy_seek_clunk#6FL43;A2D2344S27R179V74K64G-6
+Keys	Soft Ivories	piano_upright_cs3>#8/kalimba_g5@t1200]#8T6L22Q18;A1D687S36R194V90K61G-3
+Keys	Stone Etude	marimba_c4#8/ems_typebar>#8FL39;A3D1065S1R315V82K60G-4
+Keys	Urban Parlour	xpding;A5D584S13R227V71K59G5
+Keys	Warehouse Piano Stack	chord@5[@40]#10H0,12/ding@15]#6L35;A0D1100S20R250V70K57G-3
+Lead	Kinetic Song	tadaxp@30[@30]@0CP@0CP@0CP@0CP#8/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#4T1L30;A20R150V80K60G9
+Lead	Lucid Call	ems_motor_whine_a4@t3500]@t300[E#14H0,12U4~18/balloon#2FL19;A1D92S85R112V87K69G-19
+Lead	Robot Mouth Lead	ems_704_vowel_a3@30[@30]@0CP@0CP@0CP@0CP#8/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#4T-2L30;A20R150V80K57G-7
+Lead	Solar Voice	ringout@t328]@t93[@0CP@0CP@0CP<#11H0,7/menu#5FL29;A3D63S76R99V72K57G-4
+Organ	Gentle Revival	ems_ferranti_hoot_c4;A2S100R98V75K60G-13
+Organ	Harbor Bark	xpringout@t349]@t99[@0CP@0CP@0CPE#14H0,12,24U2~3/glass_ping#2T1L17Q33;A5S100R219V99K69G5
+Organ	Humid Organ	ems_ferranti_hoot_c4#14H0,12,19U2~2/menu#2FL36;A9S100R209V96K60G-18
+Organ	Jack Organ	ringout@20[@40]@0CP@0CP@0CP+#12H0,12,19/ding>>@5]#4FL40;A0D250S45R90V70K69G-5
+Organ	Slow Manual	xpringout@t349]@t99[@0CP@0CP@0CP<H0,7,12U2~3;A3S100R100V92K57G5
+Organ	Tidal Cathedral	organ_hammond_m100_flute_c@t6000]@t300[#13H0,12U2~3/start#3FL19;A4S100R160V78K72G-16
+Pad	Felt Field	crowd_sing_aah_f@t7500]@t500[RE#12U3~5/printE#4T-5L39O50Q-47;A344D187S82R2537V77K53G-11
+Pad	Granite Cloud	flute_vib_c5@t7500]@t400[E<#14H0,7U3~15/xpringout#2T-9L28Q23;A1260D752S99R1367V70K60G-14
+Pad	Lagoon Field	ringout@t328]@t93[@0CP@0CP@0CPEE#13U4~13/hwfail#3T9L49;A1172D132S89R1222V88K69G-9
+Pad	Marble Atrium	organ_hammond_m100_flute_c#5Ja0,0.1194,100.2091,77/printE#11T9U2~7L28O56Q-39;A413D283S87R1086V70K72G-10
+Pad	Midnight Haze	crowd_sing_aah_f@t7500]@t500[CRP>EH0,12U2~10;A646D872S78R1010V82K65G-13
+Pad	Saffron Bloom	horn_sus_c3@t7500]@t300[#11U2~16/xpding#5T1L61Q-2;A697D135S72R1139V70K48G-13
+Pad	Smoke Room Pad	logoff<@20[#10U3~10/ringout@20[@40]@0CP@0CP@0CP<#6T-6U2~8L19O14;A900D2S90R1800K51G10
+Perc	Bright Shaker	em_stamp_a#8F/infobar#8FL34;D372S0R52V97G3
+Perc	Crystal Tick	chordxpF;D109S0R47V72G9
+Perc	Dial Hat	chord@t200]EF;D298S0R145V82G4
+Perc	Hollow Tap	relay_loud_click>#8/air_duster@t2000]@t500[#8L32Ja0,100.192,30.654,0;D351S0R61V85G3
+Perc	Rubber Knock	em_stamp_a#8F/spirit_breath#8L26Ja0,100.165,30.678,0;D115S0R125V99G7
+Perc	Stone Block	ringout>#8/floppy_seek_clunk#8FL19;D64S0R70V99K81G13
+Pluck	Brass Pluck	default@t250]#11H0,12/emh_relay_ping_e5#5T-1L33O16Q23;A0D284S9R94V87K63G4
+Pluck	Lucid Strum	ui_glass_ping<<<H0,12;A1D425S5R67V99K55G-4
+Pluck	Rural Strum	default@t250]+#8/dingxp#8T3L28O12Q21;A0D107S2R162V98K63G9
+Pluck	Solar Snap	default@t250]#5/marimba_c4#5T-9L32Q20/dingxp#6T-4L20Q1;A3D319S7R118V84K63G3
+Pluck	Steel Flick	harp_c5@t1500]<#11H0,12/dingxp#5L33O16Q23;A1D188S7R256V82K60G-4
+Pluck	Tinted Pizz	epiano_yamaha_vibe+>>#8/organ_hammond_m100_flute_c@t3000]@t300[#8T-12L44Q19;A3D326S9R167V95K60G-5
+Stab	Bakelite Section	epiano_yamaha_vibe>>U2~8;A1D325S8R203V97K60G-5
+Stab	Clear Section	startup@t1690]E#8U2~6/batlow#4T-4L34/ringout#4T-13L44Q-24;A1D533S88R246V97K44
+Stab	Daylight Hit	chordxp@5[@60]C@3X<#10H0,5Ja0,10.40,100.240,60.484,10.524,100.724,60/xprecycle>>>@30]#2FL15;A0R300V60K43G7
+Stab	Delta Stab	chordxpE#8/organ_hammond_m100_flute_c@t3000]@t300[#8T-17L40Q-24;A2D214S86R480V97K55G-1
+Stab	Faded Punch	organ_hammond_m100_flute_c<#5/ringout#5T-9L65Q-21/ringout#6T-9L30Q-10;A3D304S44R139V91K60G-7
+Stab	Global Stab	tadaxp@t130[+>#11H0,-12/xpding#5T-11L31Q-24;A2D861S71R221V94K60G4
+Stab	Hotel Brass	xpding@25]<#6H0,3,7,10,14Ss60/xpding@25]<E#5H0,3,7,10L30O375Q-45/xpding@25]<#5H0,3,7L18O750Q45;A0D700S20R450V80K47G5
+Stab	Lattice Section	epiano_yamaha_vibeE>>H0,-12U2~6;A1D330S50R201V74K60G-13
+Stab	Night Accent	tada#11U2~7/organ_pedal_25@t3000]@t300[#5T4L51;A8D751S16R451V84K64G-4
+Stab	Radiant Blast	chord#11H0,12U2~5/kalimba_c4@t1500]#3T-15L65Q-31/contrabass_sus_d1@t3000]@t200[#2T7L56;A15D670S45R465V75K45G-4
+Stab	Rainy Accent	chordxpU2~5;A1D261S36R449V72K55
+Stab	Soft Hit	horn_sus_c3@t3000]#10U3~8/ringout#3T-33L40/batlow#3L42;A25D278S58R150V95K48G-10
+Stab	Steel Stab	chordxp@20]<+C@50XC@50XH0,12;A0D400S0R200V80K55G-1
+Stab	Velvet Minor Nine	xpding@25]<#6H0,3,7,10,14/xpding@25]<E#5H0,3,7,10L30O375Q-45/xpding@25]<#5H0,3,7L18O750Q45;A0D700S20R450V80K47G3
+Stab	Woven Herald	chord@25]<#9H0,3,7,10,14/hwfail#2T-15L51/xpding@25]<#5T-2H0,3,7L18O750Q45;A0D700S20R450V80K45
+Strings	Cathode Strings	cello_section_sus_c3@t7500]@t200[EE#12U3~9/hwfailC@50X#4T-12L67;A120S87R715V74K48G-12
+Strings	Sampled Strings Swell	violin_section_sus_c4@10[E#10U2~10Ja0,20.300,100.484,30.540,100;A0R600K60G-6
+Strings	Shaded Tremolo	startup<@15[#12U3~14Q-28/chimes>R#4T1L40;A150D800S80R700K44
+Strings	Warm Quartet	erhu_d3@t4500]@t100[H0,12U2~13;A160S85R742V93K50G-13
+Vocal	Crystal Vox	ringout@t328]@t93[@0CP@0CP@0CP<H0,12;A125D364S96R607V85K57G-9
+Vocal	Folded Hymn	ems_704_vowel_a3U3~9;A79D330S75R1236V77K57G-15
+Vocal	Lobby Ahh	xpding#8H0,12/chimesxpRE#4T4L28O169Q10/dingxpE#4T-1L36O100Q32;A82D499S96R932V97K59G4
+Vocal	Plaza Cantor	choir_aah@t6000]@t300[U2~10;A236D346S80R722V82K69G-3
