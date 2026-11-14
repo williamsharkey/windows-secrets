@@ -859,8 +859,18 @@ private:
     std::string askPath_;   // a Save As waiting for the collision answer
     void recSaved(std::string path, int mode = 0)
     {
-        const size_t sp = path.find(' '); if (sp != std::string::npos) path.resize(sp);   // (`take <rec>` follows a take)
+        const size_t sp = path.find(' ');
+        const bool take = sp != std::string::npos && path.compare(sp + 1, 5, "take ") == 0;   // a strip's take (RECORDING.md 2.5)
+        if (sp != std::string::npos) path.resize(sp);
         std::string stemFrom = path, line, name, err;
+        if (take) {   // named u_take01, u_take02 ...: the first free
+            const auto idx = b16rec::index(myRec_);
+            for (int k = 1; k < 1000; k++) {
+                char nm[16]; std::snprintf(nm, sizeof nm, "u_take%02d", k);
+                bool used = false; for (const auto &e : idx) if (e.name == nm) used = true;
+                if (!used) { stemFrom = std::string("R:\\") + (nm + 2) + ".WAV"; break; }
+            }
+        }
         {   // a file the host put on R: (U0001.WAV, a pinned V...WAV): unchanged, nothing to do; saved again, it keeps its name
             const size_t s = path.find_last_of("\\:");
             const std::string f = s == std::string::npos ? path : path.substr(s + 1);

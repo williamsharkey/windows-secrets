@@ -254,7 +254,7 @@ static int sound_lookup(const char *s, int n)   /* the built-in table first, the
 }
 
 typedef struct { char op; int arg; int sound; } STEP;
-typedef struct { int source; STEP st[NS]; int nst; int pool; int first, count; } LAYER;
+typedef struct { int source; STEP st[NS]; int nst; int pool; int first, count; int bind; } LAYER;   /* bind: B r, 1-16 (0 none) */
 LAYER lay[NL];
 int nlay;
 
@@ -326,6 +326,7 @@ static void dna_parse(const char *t)
                 if (si >= 0 && L.nst < NS) { L.st[L.nst].op = c; L.st[L.nst].sound = si; L.nst++; }
                 break; }
             case '#': L.pool = clampi(getint(&p, 1), 1, NR); break;
+            case 'B': L.bind = clampi(getint(&p, 1), 1, NR); break;   /* v3 (RECORDING.md 4.1): the pool starts at recorder r */
             case 'T': case 'L': getint(&p, 0); break;
             case 'H': do { if (*p == ',') p++; getint(&p, 0); } while (*p == ','); break;
             case 'U': getint(&p, 1); if (*p == '~') { p++; getint(&p, 0); } break;
@@ -369,7 +370,31 @@ static void dna_parse(const char *t)
             for (k = 0; k < nf; k++) lay[f[k]].count = each + (k < rem ? 1 : 0);
         }
     }
-    for (i = 0; i < nlay; i++) { lay[i].first = at; at += lay[i].count; }
+    {   /* where the pools go: bound layers (B r) at their recorder first, then the others, in order, each at the
+           first free run as long as its count (else the longest free run: pools stay contiguous) */
+        BOOL used[NR]; int nb = 0;
+        for (k = 0; k < NR; k++) used[k] = FALSE;
+        for (i = 0; i < nlay; i++) if (lay[i].bind && lay[i].count) nb++;
+        if (!nb) { for (i = 0; i < nlay; i++) { lay[i].first = at; at += lay[i].count; } return; }
+        for (i = 0; i < nlay; i++) {
+            LAYER *L = &lay[i]; int f = L->bind - 1, c;
+            if (!L->bind || !L->count) continue;
+            for (c = 0; c < L->count && f + c < NR && !used[f + c]; c++) used[f + c] = TRUE;
+            L->first = f; L->count = c;
+        }
+        for (i = 0; i < nlay; i++) {
+            LAYER *L = &lay[i]; int s0, best = -1, bestLen = 0, run, want = L->count;
+            if (L->bind || !want) continue;
+            for (s0 = 0; s0 < NR; s0 = s0 + (run ? run : 1)) {
+                for (run = 0; s0 + run < NR && !used[s0 + run]; run++) ;
+                if (run >= want) { best = s0; bestLen = want; break; }
+                if (run > bestLen) { best = s0; bestLen = run; }
+            }
+            if (best < 0) { L->count = 0; L->first = 0; continue; }
+            L->first = best; L->count = bestLen;
+            for (k = 0; k < bestLen; k++) used[best + k] = TRUE;
+        }
+    }
 }
 
 /* ================================================================ driving one Sound Recorder */
@@ -819,7 +844,8 @@ static void rate_rec(int r, DWORD id, DWORD hz, int glide_ms, int regate)
 }
 /* Recording (RECORDING.md 1.3, 4.3): the card has one ADC, so while a recorder records every other Record button
    is grey; the host hears `rec start <rec>` / `rec stop <rec> <ms>` (it keeps its notes off that recorder) */
-static int recording = -1; static DWORD recT0;   /* (NR: the Recorder) */
+static int recording = -1; static DWORD recT0;
+static void strip_take(int r);   /* (NR: the Recorder) */
 static void watch_rec(void)
 {
     int r, now = -1; char t[24];
@@ -827,7 +853,7 @@ static void watch_rec(void)
     if (now < 0 && hRecRec) { GetDlgItemText(hRecRec, SR_STATUS, t, sizeof t); if (t[0] == 'R' && t[2] == 'c') now = NR; }
     if (now != recording) {
         if (recording == NR) say("rec stop R %ld", (long)(timeGetTime() - recT0));
-        else if (recording >= 0) say("rec stop %d %ld", recording, (long)(timeGetTime() - recT0));
+        else if (recording >= 0) { say("rec stop %d %ld", recording, (long)(timeGetTime() - recT0)); strip_take(recording); }
         if (now == NR) { say("rec start R"); recT0 = timeGetTime(); }
         else if (now >= 0) { say("rec start %d", now); recT0 = timeGetTime(); }
         recording = now;
@@ -2009,13 +2035,13 @@ static void page_values(void)   /* the controls show the selected layer's tokens
         else SendMessage(pgBtn[i], BM_SETSTATE, pc_value(c), 0L);
     }
 }
-static HWND recAsk[2], recStatus, recList;   /* the Rec page's collision Yes / No, status and list */
+static HWND recAsk[2], recStatus, recList, recSlotBtn;   /* the Rec page's collision Yes / No, status and list */
 static void page_close(void)
 {
     int i;
     for (i = 0; i < npg; i++) DestroyWindow(pgWin[i]);
     npg = npgSb = npgBtn = 0; nScBtn = 0;
-    recAsk[0] = recAsk[1] = NULL; recStatus = recList = NULL;   /* (the Rec page's, gone with it) */
+    recAsk[0] = recAsk[1] = NULL; recStatus = recList = recSlotBtn = NULL;   /* (the Rec page's, gone with it) */
 }
 static void page_add(HWND w) { if (npg < 64) pgWin[npg++] = w; }
 static void rec_page(int y0);
@@ -2133,7 +2159,7 @@ static void page_command(int id)
     if (id >= ID_TAB && id < ID_TAB + NTAB && id - ID_TAB == curTab && npg) return;   /* already open */
     if (id >= ID_TAB && id < ID_TAB + NTAB) { page_open(id - ID_TAB); return; }
     if (id >= ID_SC && id < ID_SC + nScBtn) { scales_command(id - ID_SC); return; }
-    if (id >= ID_RECPG && id < ID_RECPG + 11 && curTab == 4) { rec_command(id - ID_RECPG); return; }
+    if (id >= ID_RECPG && id < ID_RECPG + 12 && curTab == 4) { rec_command(id - ID_RECPG); return; }
     if (id >= ID_PG + 32 && id < ID_PG + 32 + npgBtn) {
         const PC *c = &pgDef[curTab][pgBtnCtl[id - ID_PG - 32]];
         int v = pc_value(c);
@@ -2313,9 +2339,12 @@ static long ease(long f) { /* smoothstep, 0..1000 */ if (f < 0) f = 0; if (f > 1
    (A child window cannot have a menu: whole, it is a popup owned by BASILISK 16; compact, a child again.) */
 #define RECH 48     /* (the column captions start at 51) */
 static FARPROC oldRecWaveProc, recWaveInst;
-static int recInput;      /* 0 the DAW input (the sidechain), 1 the synth's own output */
+/* To slot N (recSlotBtn): N the last strip clicked (its Calculator key, or one of its buttons) */
+static int recInput;
+int lastStrip;      /* 0 the DAW input (the sidechain), 1 the synth's own output */
 static HWND recCtl[8]; static int nRecCtl, recWhole;
-static char recCur[28], recSaving[16];   /* the recording the Recorder holds (u_ name), once saved or opened */
+static char recCur[28], recSaving[16];
+static int takeStrip = -1; static char takePath[16];   /* a strip's take waiting to be published */   /* the recording the Recorder holds (u_ name), once saved or opened */
 static PART recStrip[] = {   /* the whole Recorder's strip: the sixteen's, the seek bar shorter (the clock is right of it) */
     {SR_STATUS, 4, 7, 80, 16}, {SR_WAVE, 88, -4, 133, 35}, {SR_POS, 228, 8, 66, 14}, {SR_LEN, 298, 8, 66, 14},
     {SR_SCROLL, 370, 6, 218, 17}, {SR_REW, 596, 1, 52, 28}, {SR_FWD, 650, 1, 52, 28}, {SR_PLAY, 704, 1, 52, 28},
@@ -2444,6 +2473,8 @@ static void rec_page(int y0)
     w = text_w("DAW input") + 22; b = mk("BUTTON", "DAW input", WS_VISIBLE | BS_RADIOBUTTON, x, y1 + 4, w, 16, ID_RECPG + 0); page_add(b); recCtl[nRecCtl++] = b; x += w + 4;
     w = text_w("Synth output") + 22; b = mk("BUTTON", "Synth output", WS_VISIBLE | BS_RADIOBUTTON, x, y1 + 4, w, 16, ID_RECPG + 1); page_add(b); recCtl[nRecCtl++] = b; x += w + 14;
     b = mkbtn("Save As...", x, y1, 24, ID_RECPG + 2, &w); page_add(b); recCtl[nRecCtl++] = b; x += w + 3;
+    {   char t[16]; wsprintf(t, "To slot %X", lastStrip);
+        recSlotBtn = b = mkbtn("To slot F", x, y1, 24, ID_RECPG + 11, &w); SetWindowText(b, t); page_add(b); recCtl[nRecCtl++] = b; x += w + 3; }
     b = mkbtn("To all 16", x, y1, 24, ID_RECPG + 3, &w); page_add(b); recCtl[nRecCtl++] = b; x += w + 14;
     b = mkbtn("Export...", x, y1, 24, ID_RECPG + 9, &w); page_add(b); recCtl[nRecCtl++] = b; x += w + 3;
     b = mkbtn("Import WAV...", x, y1, 24, ID_RECPG + 10, &w); page_add(b); recCtl[nRecCtl++] = b;
@@ -2478,6 +2509,63 @@ static void rec_ask(char *rest)
     recAsk[0] = mkbtn("Yes", x, o.y - 4, 24, ID_RECPG + 7, &w); page_add(recAsk[0]); x += w + 3;
     recAsk[1] = mkbtn("No", x, o.y - 4, 24, ID_RECPG + 8, &w); page_add(recAsk[1]);
 }
+static void slot_bind(const char *name, int strip)   /* strip `strip` (0-15) gets `name#1B<strip+1>`, or a new source */
+{
+    static char d[1100]; char tag[8]; int b = 0, e, found = 0; const char *g;
+    wsprintf(tag, "B%d", strip + 1);
+    g = strchr(dnaText, ';'); if (!g) g = dnaText + lstrlen(dnaText);
+    while (dnaText + b < g) {   /* the layers, looking for one bound to that strip */
+        const char *t; int L = lstrlen(tag);
+        for (e = b; dnaText + e < g && dnaText[e] != '/'; e++) ;
+        for (t = dnaText + b + 1; t < dnaText + e; t++)
+            if (!strncmp(t, tag, L) && !(t[L] >= '0' && t[L] <= '9') && !isname(t[-1])) break;
+        if (t < dnaText + e) { found = 1; break; }
+        b = e + 1;
+    }
+    if (found) {   /* already bound: only its source changes */
+        int p = b; while (isname(dnaText[p])) p++;
+        splice(b, p, name);
+    } else {
+        if (nlay >= NL) { rec_status("8 layers: free one first."); return; }
+        lstrcpyn(d, dnaText, (int)(g - dnaText) + 1);
+        wsprintf(d + lstrlen(d), "%s%s#1%s%s", (LPSTR)(d[0] ? "/" : ""), (LPSTR)name, (LPSTR)tag, (LPSTR)g);
+        if (kitOn) {   /* a kit (PRESET-ENGINE-2 15, RECORDING.md 2.5): the new layer gets a pad, the next free note from 36 */
+            int note = 36, k, used = 1;
+            while (used && note < 128) { used = 0; for (k = 0; k < nPad; k++) if (padNote[k] == note) { used = 1; note++; break; } }
+            wsprintf(d + lstrlen(d), "%sk%dl%d", (LPSTR)(*g ? "" : ";"), note, nlay + 1);
+        }
+        lstrcpyn(dnaText, d, sizeof dnaText);
+        selLayer = nlay;
+    }
+    edited(TRUE);
+}
+/* Per-slot Record (RECORDING.md 2.5): Record on a strip at position 0 starts a new take (File > New first); on Stop
+   the strip's buffer is saved as a take with a real, hidden Save As (R:\TAKEnn.WAV), the host publishes it
+   (u_takenn), and the strip gets the bound layer u_takenn#1B<n> */
+#define SR_NEW 1000
+static void rfMark(const char *name);
+static void strip_record(int r)   /* (before its Record button's click is handed on) */
+{
+    if (field_cs(r, SR_POS) > 0) return;   /* elsewhere: Sound Recorder's own record at that position */
+    HookActive(TRUE);
+    SendMessage(rw[r], WM_COMMAND, SR_NEW, 0L);
+    HookActive(FALSE);
+}
+static void strip_take(int r)
+{
+    static int next = 1; OFSTRUCT of; char p[16];
+    if (r < 0 || r >= NR || !rw[AR(r)] || field_cs(AR(r), SR_LEN) <= 0) return;
+    for (; next < 100; next++) { wsprintf(p, "R:\\TAKE%02d.WAV", next); if (OpenFile(p, &of, OF_EXIST) == HFILE_ERROR) break; }
+    if (next >= 100) return;
+    next++;
+    HookActive(TRUE); HookPending(p);
+    SendMessage(rw[AR(r)], WM_COMMAND, SR_SAVEAS, 0L);
+    HookActive(FALSE);
+    layout_strip(AR(r));
+    lstrcpy(takePath, p); takeStrip = r;
+    rfMark(p + 3);   /* (the scan would report it again) */
+    say("rec saved %s take %d", (LPSTR)p, r);
+}
 static void rec_open(const char *path)   /* File > Open in the Recorder, the real command (the hook fills its dialog) */
 {
     HookActive(TRUE); HookPending(path);
@@ -2495,6 +2583,11 @@ static void rec_command(int k)
         return;
     }
     if (k == 10) { say("rec import"); return; }
+    if (k == 11) {   /* To slot N: strip N gets a one-recorder layer of its own, the recording its source (RECORDING.md 2.5) */
+        if (!recCur[0]) { rec_status("Save the recording first (File > Save As)."); return; }
+        slot_bind(recCur, lastStrip);
+        return;
+    }
     if (k == 7 || k == 8) {   /* Yes: replace it (the old one is kept by hash); No: keep both (name_2) */
         rec_ask_close();
         say("rec answer %s", (LPSTR)(k == 7 ? "replace" : "keep"));
@@ -2540,7 +2633,11 @@ static void rec_user(char *rest)
     lstrcpy(usrName[i], n); lstrcpy(usrPath[i], p); usrMs[i] = ms;
     if (assembled) {   /* a recording we saved: it is the Recorder's now */
         static char t[64];
-        if (recSaving[0] && !lstrcmpi(recSaving, p)) { lstrcpy(recCur, n); recSaving[0] = 0; wsprintf(t, "Saved: %s (%ld.%02ld s)", (LPSTR)(n + 2), ms / 1000, ms % 1000 / 10); rec_status(t); }
+        if (takeStrip >= 0 && !lstrcmpi(takePath, p)) {   /* a strip's take, published: the strip plays it (RECORDING.md 2.5) */
+            int st = takeStrip; takeStrip = -1;
+            slot_bind(n, st);
+        }
+        else if (recSaving[0] && !lstrcmpi(recSaving, p)) { lstrcpy(recCur, n); recSaving[0] = 0; wsprintf(t, "Saved: %s (%ld.%02ld s)", (LPSTR)(n + 2), ms / 1000, ms % 1000 / 10); rec_status(t); }
         rec_list(); listsWanted = TRUE;
     }
 }
@@ -2580,6 +2677,17 @@ static void rec_keep(void)
 /* R: (My Recordings): a new or changed WAV is reported, `rec saved R:\NAME.WAV`, once a second */
 #define NRF 80
 static char rfName[NRF][13]; static unsigned rfTime[NRF], rfDate[NRF]; static long rfSize[NRF]; static int nrf, rfScanned;
+static void rfMark(const char *name)   /* a file we report ourselves: the scan takes it as known */
+{
+    struct find_t f; char p[20];
+    wsprintf(p, "R:\\%s", (LPSTR)name);
+    if (_dos_findfirst(p, _A_NORMAL, &f) == 0) {
+        int i;
+        for (i = 0; i < nrf; i++) if (!strcmp(rfName[i], f.name)) break;
+        if (i == nrf) { if (nrf >= NRF) return; nrf++; strcpy(rfName[i], f.name); }
+        rfTime[i] = f.wr_time; rfDate[i] = f.wr_date; rfSize[i] = (long)f.size;
+    }
+}
 static void rec_scan(void)
 {
     static DWORD last; struct find_t f; unsigned rc;
@@ -3170,6 +3278,7 @@ static void host_line(char *s)
         }
     }
     else if (!strcmp(s, "user")) rec_user(rest);
+    else if (!strcmp(s, "reccur")) lstrcpyn(recCur, rest, sizeof recCur);   /* test aid: the Recorder holds this recording */
     else if (!strcmp(s, "recdump") && hRecRec) {   /* test aid: the Recorder's window and controls */
         HWND c; RECT r; char t[24];
         GetWindowRect(hRecRec, &r);
@@ -3318,6 +3427,13 @@ static void paint(HWND h)
     EndPaint(h, &ps);
 }
 
+static void strip_picked(int r)   /* the last strip clicked: To slot N's N */
+{
+    char t[16];
+    if (r == lastStrip) return;
+    lastStrip = r;
+    if (recSlotBtn && curTab == 4) { wsprintf(t, "To slot %X", r); SetWindowText(recSlotBtn, t); }
+}
 long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
     switch (m) {
@@ -3357,8 +3473,10 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
             return 0;
         }
         /* a reparented recorder's buttons report to us: hand the click to its recorder */
+        if (w >= ID_DIG && w < ID_DIG + NDIG) { if (HIWORD(l) == BN_CLICKED) strip_picked(w - ID_DIG); return 0; }
         if (hRecRec && (HWND)LOWORD(l) && GetParent((HWND)LOWORD(l)) == hRecRec) { PostMessage(hRecRec, WM_COMMAND, w, l); return 0; }
         for (r = 0; r < NR * NB; r++) if (rw[r] && (HWND)LOWORD(l) && GetParent((HWND)LOWORD(l)) == rw[r]) {
+            if (HIWORD(l) == BN_CLICKED) { strip_picked(r % NR); if (w == SR_REC && assembled) strip_record(r); }
             PostMessage(rw[r], WM_COMMAND, w, l);
             return 0;
         }
