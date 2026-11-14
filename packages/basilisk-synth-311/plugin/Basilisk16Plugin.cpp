@@ -282,6 +282,7 @@ protected:
             s.extra["key"] = std::to_string(kp.root) + " " + std::to_string(kp.scale);
             s.extra["keyopt"] = std::to_string(kp.usePreset) + " " + std::to_string(kp.snap) + " " + std::to_string(kp.remap) + " " +
                                 std::to_string(kp.labels) + " " + std::to_string(kp.anchor);
+            if (kp.mask) s.extra["keymask"] = std::to_string(kp.mask);
         }
         return String(s.write().c_str());
     }
@@ -294,6 +295,7 @@ protected:
             b16v3::KeyParams kp;
             if (s.extra.count("key")) kp.readLine("key " + s.extra["key"]);
             if (s.extra.count("keyopt")) kp.readLine("keyopt " + s.extra["keyopt"]);
+            if (s.extra.count("keymask")) kp.readLine("keymask " + s.extra["keymask"]);
             setKeyParams(kp);
             setDna(s.dna, true);
         }
@@ -532,6 +534,7 @@ private:
     std::atomic<bool> recSelf_{false};
     std::atomic<uint32_t> keyVer_{1};    // the key parameters changed (audio: the key; engine: the guest's display)
     uint32_t keyVerAudio_ = 0, keyVerGuest_ = 0;
+    std::atomic<unsigned> keyMask_{0};   // the Scales page's custom notes (state only, not a parameter)
     b16v3::KeyParams keyAudio_;
     bool keyDnaChanged_ = true;
     std::vector<uint32_t> pendSegs_[kMaxLayers]; bool segsDirty_ = false;   // the guest's seg lines (mtx_)
@@ -541,12 +544,14 @@ private:
         k.root = (int)std::lround(param_[pKey].load()); k.scale = (int)std::lround(param_[pScale].load());
         k.usePreset = param_[pUsePreset].load() >= 0.5f; k.snap = (int)std::lround(param_[pSnap].load());
         k.remap = param_[pRemap].load() >= 0.5f; k.anchor = (int)std::lround(param_[pAnchor].load()); k.labels = (int)std::lround(param_[pLabels].load());
+        k.mask = keyMask_.load();
         return k;
     }
     void setKeyParams(const b16v3::KeyParams &k)
     {
         param_[pKey] = (float)k.root; param_[pScale] = (float)k.scale; param_[pUsePreset] = (float)k.usePreset; param_[pSnap] = (float)k.snap;
         param_[pRemap] = (float)k.remap; param_[pAnchor] = (float)k.anchor; param_[pLabels] = (float)k.labels;
+        keyMask_ = k.mask;
         keyVer_++;
     }
     // audio thread: the effective key for new notes (the parameters, or the DNA's suggestion), and which layers core
@@ -1019,8 +1024,9 @@ private:
 
     void onLine(const std::string &line)
     {
-        if (line.rfind("keyset ", 0) == 0 || line.rfind("keyopt ", 0) == 0) {   // the visitor changed the key in Windows
+        if (line.rfind("keyset ", 0) == 0 || line.rfind("keyopt ", 0) == 0 || line.rfind("keymask ", 0) == 0) {   // the visitor changed the key in Windows
             b16v3::KeyParams kp = keyParams();                                       // (`key <note> <vel>` is the strip's)
+            if (line.rfind("keyset ", 0) == 0) kp.mask = 0;                          // a library scale: the custom notes go
             if (kp.readLine(line.rfind("keyset ", 0) == 0 ? "key " + line.substr(7) : line)) setKeyParams(kp);
             return;
         }

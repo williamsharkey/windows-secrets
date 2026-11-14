@@ -443,7 +443,8 @@ struct KeyParams {
     int remap = 0;       // 1: consecutive keys walk consecutive scale steps
     int anchor = 60;     // remap: this key plays the root
     int labels = 0;      // the keyboard strip's labels: 0 none, 1 degrees, 2 sargam, 3 names, 4 cents
-    bool operator==(const KeyParams &o) const { return root == o.root && scale == o.scale && usePreset == o.usePreset && snap == o.snap && remap == o.remap && anchor == o.anchor && labels == o.labels; }
+    unsigned mask = 0;   // the Scales page's 12 toggles: a custom 12-note scale (0: the Scale parameter's)
+    bool operator==(const KeyParams &o) const { return root == o.root && scale == o.scale && usePreset == o.usePreset && snap == o.snap && remap == o.remap && anchor == o.anchor && labels == o.labels && mask == o.mask; }
     bool operator!=(const KeyParams &o) const { return !(*this == o); }
     // state lines (STATE.md): key <root> <scale> / keyopt <usePreset> <snap> <remap> <labels> <anchor>
     std::string lines() const
@@ -457,6 +458,8 @@ struct KeyParams {
         if (std::sscanf(l.c_str(), "key %d %d", &a, &b) == 2) { root = (a % 12 + 12) % 12; scale = b < 0 ? 0 : b; return true; }
         int n = std::sscanf(l.c_str(), "keyopt %d %d %d %d %d", &a, &b, &c, &d, &e);
         if (n >= 4) { usePreset = a ? 1 : 0; snap = b >= 1 && b <= 4 ? b : 1; remap = c ? 1 : 0; labels = d >= 0 && d <= 4 ? d : 0; if (n == 5 && e >= 0 && e <= 127) anchor = e; return true; }
+        unsigned m = 0;
+        if (std::sscanf(l.c_str(), "keymask %u", &m) == 1) { mask = m & 0xFFFu; if (mask) mask |= 1u; return true; }
         return false;
     }
 };
@@ -470,6 +473,7 @@ inline bsynth3::Key effectiveKey(const KeyParams &p, const bsynth3::Dna3 &d3)
         if (d3.g.rootPc >= 0) root = d3.g.rootPc;
         mask = (unsigned)d3.g.mask; edo = d3.g.edo;
     }
+    if (!mask && p.mask && !(p.usePreset && d3.g.hasQ)) mask = p.mask;   // the Scales page's own notes
     if (mask) k.tuning = bsynth3::maskTuning(mask);
     else if (edo > 0) k.tuning = bsynth3::edo(edo);
     else if (!bsynth3::libraryTuning(id, k.tuning)) bsynth3::libraryTuning(0, k.tuning);

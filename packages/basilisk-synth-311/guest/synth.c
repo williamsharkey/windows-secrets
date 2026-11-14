@@ -90,12 +90,14 @@ static void pads_light(int note, int on);
 static void kit_from_dna(void);
 static HWND launch(const char *cmd, int show);
 static void wait_ms(DWORD ms);
+static void page_add(HWND w);
+static void scales_values(void);
 /* the tabs and pages (PRESET-ENGINE-2 section 8) */
-#define NTAB 3
+#define NTAB 4
 #define ID_TAB 1390
 #define ID_PG 1400
-static const char *tabNames[NTAB] = {"Main", "Voices", "Playback"};
-static const char *tabIds[NTAB] = {"main", "voices", "play"};
+static const char *tabNames[NTAB] = {"Main", "Voices", "Playback", "Scales"};
+static const char *tabIds[NTAB] = {"main", "voices", "play", "scales"};
 static HWND hTab[NTAB], pgWin[64], pgSb[24], pgVal[24], pgBtn[24];
 static int curTab, npg, npgSb, npgBtn;
 static const COLORREF layerColor[NL] = {RGB(0, 128, 0), RGB(0, 0, 160), RGB(160, 0, 0), RGB(128, 0, 128),
@@ -1821,7 +1823,57 @@ static const PC pagePlay[] = {
     {"at", 'V', 'f', 1, 30, K_PAIR1, "Hz", 1}, {"Scoop", 'V', 's', 0, 200, K_PAIR0, "c", 1}, {"over", 'V', 's', 0, 2000, K_PAIR1, "ms", 1},
     {"Delay", 'W', 'o', 0, 30000, K_INT, "ms", 2}, {"Beat delay", 'W', 'b', 0, 64, K_INT, "/16", 2}, {"Gate", 'W', 'g', 0, 64, K_INT, "/16", 2},
     {"Tempo sync", 'W', 't', 0, 0, K_FLAG, "", 2}, {"Loop amp", 'W', 'r', 0, 8, K_INT, "", 2}, {"Loop pan", 'W', 'p', 0, 8, K_INT, "", 2}, {NULL}};
-static const PC *pgDef[NTAB] = {NULL, pageVoices, pagePlay};
+static const PC *pgDef[NTAB] = {NULL, pageVoices, pagePlay, NULL};
+/* the Scales page (PRESET-ENGINE-2 18.6): the key options and the 12 notes from the root; it edits the host's Key
+   parameters (keyopt / keymask lines), not the DNA */
+#define ID_SC (ID_PG + 48)
+static HWND scBtn[24], scAnchorSb, scAnchorVal; static int nScBtn;
+static const char *scNotes[12] = {"1", "b2", "2", "b3", "3", "4", "#4", "5", "b6", "6", "b7", "7"};
+static const char *scSnap[4] = {"Nearest", "Down", "Up", "As played"};
+static const char *scLbl[5] = {"No labels", "Degrees", "Sargam", "Names", "Cents"};
+static void scales_values(void)
+{
+    int k; char t[16];
+    static const char *nm[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+    if (!nScBtn) return;
+    SendMessage(scBtn[0], BM_SETSTATE, keyUse, 0L);
+    for (k = 0; k < 4; k++) SendMessage(scBtn[1 + k], BM_SETSTATE, keySnap == k + 1, 0L);
+    for (k = 0; k < 5; k++) SendMessage(scBtn[5 + k], BM_SETSTATE, keyLabels == k, 0L);
+    for (k = 0; k < 12; k++) SendMessage(scBtn[10 + k], BM_SETSTATE, keySteps <= 12 && (keyMask >> k & 1), 0L);
+    SendMessage(scBtn[22], BM_SETSTATE, keyRemap, 0L);
+    SetScrollPos(scAnchorSb, SB_CTL, keyAnchor, TRUE);
+    sprintf(t, "%s%d", nm[keyAnchor % 12], keyAnchor / 12 - 1); SetWindowText(scAnchorVal, t);
+}
+static void scales_page(int y0)
+{
+    int k, x, w; HWND b;
+    nScBtn = 0;
+    x = 92;
+    b = mkbtn("Use the preset's scale", x, y0, 24, ID_SC + nScBtn, &w); page_add(b); scBtn[nScBtn++] = b; x += w + 14;
+    page_add(mklbl("Out of the scale:", x, y0 + 4, 16, &w)); x += w + 3;
+    for (k = 0; k < 4; k++) { b = mkbtn(scSnap[k], x, y0, 24, ID_SC + nScBtn, &w); page_add(b); scBtn[nScBtn++] = b; x += w + 1; }
+    x += 12;
+    for (k = 0; k < 5; k++) { b = mkbtn(scLbl[k], x, y0, 24, ID_SC + nScBtn, &w); page_add(b); scBtn[nScBtn++] = b; x += w + 1; }
+    x = 92; page_add(mklbl("Notes from the root:", x, y0 + 34, 16, &w)); x += w + 4;
+    for (k = 0; k < 12; k++) { b = mkbtn(scNotes[k], x, y0 + 30, 24, ID_SC + nScBtn, &w); page_add(b); scBtn[nScBtn++] = b; x += w + 1; }
+    x = 92;
+    b = mkbtn("Remap keys to scale steps", x, y0 + 60, 24, ID_SC + nScBtn, &w); page_add(b); scBtn[nScBtn++] = b; x += w + 10;
+    page_add(mklbl("Anchor", x, y0 + 64, 16, &w)); x += w + 3;
+    scAnchorSb = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, x, y0 + 64, 90, 14, ID_SC + 40); page_add(scAnchorSb);
+    SetScrollRange(scAnchorSb, SB_CTL, 24, 96, FALSE); x += 94;
+    scAnchorVal = mk("STATIC", "", WS_VISIBLE, x, y0 + 64, 40, 16, -1); page_add(scAnchorVal);
+    scales_values();
+}
+static void scales_command(int i)
+{
+    if (i == 0) keyUse = !keyUse;
+    else if (i >= 1 && i <= 4) keySnap = i;
+    else if (i >= 5 && i <= 9) keyLabels = i - 5;
+    else if (i >= 10 && i <= 21) { int k = i - 10; if (k) { if (keySteps > 12) keyMask = 0xAB5; keyMask ^= 1 << k; keyMask |= 1; say("keymask %d", keyMask); scales_values(); return; } }
+    else if (i == 22) keyRemap = !keyRemap;
+    say("keyopt %d %d %d %d %d", keyUse, keySnap, keyRemap, keyLabels, keyAnchor);
+    scales_values();
+}
 static int pgSbCtl[24], pgBtnCtl[24];
 
 static int pc_value(const PC *c)
@@ -1881,7 +1933,7 @@ static void page_close(void)
 {
     int i;
     for (i = 0; i < npg; i++) DestroyWindow(pgWin[i]);
-    npg = npgSb = npgBtn = 0;
+    npg = npgSb = npgBtn = 0; nScBtn = 0;
 }
 static void page_add(HWND w) { if (npg < 64) pgWin[npg++] = w; }
 static void page_open(int t)
@@ -1908,7 +1960,11 @@ static void page_open(int t)
         (void)g; (void)mainGroups;
     }
 
-    if (t > 0) {
+    if (t == 3) {   /* the Scales page */
+        page_add(mk("STATIC", "Key", WS_VISIBLE, 8, y0 + 4, 80, 16, -1));
+        scales_page(y0);
+    }
+    else if (t > 0) {
         const PC *d = pgDef[t];
         {   /* the layer the page edits */
             char tl[24]; sprintf(tl, "Layer %d of %d", selLayer + 1, nlay);
@@ -1949,6 +2005,17 @@ static void page_values_layer(void) { if (npg && pgWin[0]) { char tl[24]; sprint
 static BOOL page_scroll(HWND sb, int code, int pos)
 {
     int i, lo, hi, v;
+    if (nScBtn && sb == scAnchorSb) {   /* the remap anchor */
+        v = GetScrollPos(sb, SB_CTL);
+        switch (code) {
+        case SB_LINEUP: v--; break; case SB_LINEDOWN: v++; break; case SB_PAGEUP: v -= 12; break; case SB_PAGEDOWN: v += 12; break;
+        case SB_THUMBTRACK: case SB_THUMBPOSITION: v = pos; break; default: return TRUE;
+        }
+        if (v < 24) v = 24; if (v > 96) v = 96;
+        keyAnchor = v; scales_values();
+        if (code != SB_THUMBTRACK) say("keyopt %d %d %d %d %d", keyUse, keySnap, keyRemap, keyLabels, keyAnchor);
+        return TRUE;
+    }
     for (i = 0; i < npgSb; i++) if (pgSb[i] == sb) break;
     if (i >= npgSb) return FALSE;
     GetScrollRange(sb, SB_CTL, &lo, &hi);
@@ -1975,6 +2042,7 @@ static void page_command(int id)
     lastId = id; lastT = timeGetTime();
     if (id >= ID_TAB && id < ID_TAB + NTAB && id - ID_TAB == curTab && npg) return;   /* already open */
     if (id >= ID_TAB && id < ID_TAB + NTAB) { page_open(id - ID_TAB); return; }
+    if (id >= ID_SC && id < ID_SC + nScBtn) { scales_command(id - ID_SC); return; }
     if (id >= ID_PG + 32 && id < ID_PG + 32 + npgBtn) {
         const PC *c = &pgDef[curTab][pgBtnCtl[id - ID_PG - 32]];
         int v = pc_value(c);
@@ -2719,6 +2787,7 @@ static void host_line(char *s)
         if (sscanf(rest, "%d %d %d %d %199s %d %d %d %d %d %d", &keyRoot, &keyScale, &n, &per, st, &keyRemap, &keyAnchor, &keyLabels, &keyMask, &keyUse, &keySnap) >= 9) {
             keySteps = n;
             key_boxes();
+            scales_values();
         }
     }
     else if (!strcmp(s, "env")) {
@@ -2856,7 +2925,7 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
         if (w >= 1100 && w < 1200) { panel_command(w, HIWORD(l)); return 0; }
         if (w == ID_KITBTN) { if (HIWORD(l) == BN_CLICKED && kitOn) padcalc_open(); return 0; }
         if (w == ID_STATESAVE || w == ID_STATELOAD) { if (HIWORD(l) == BN_CLICKED) say(w == ID_STATESAVE ? "state save" : "state load"); return 0; }
-        if (w >= ID_TAB && w < ID_PG + 64) { if (HIWORD(l) == BN_CLICKED) page_command(w); return 0; }
+        if (w >= ID_TAB && w < ID_PG + 100) { if (HIWORD(l) == BN_CLICKED) page_command(w); return 0; }
         /* a reparented recorder's buttons report to us: hand the click to its recorder */
         for (r = 0; r < NALL; r++) if (rw[r] && (HWND)LOWORD(l) && GetParent((HWND)LOWORD(l)) == rw[r]) {
             PostMessage(rw[r], WM_COMMAND, w, l);

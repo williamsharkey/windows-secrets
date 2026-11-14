@@ -128,6 +128,9 @@ int main()
         CHECK(b16v3::KeyParams().lines() == "key 0 0\nkeyopt 0 1 0 0 60\n");
         b16v3::KeyParams r; CHECK(r.readLine("key 3 7") && r.root == 3 && r.scale == 7 && r.readLine("keyopt 1 3 1 2 48") && r.usePreset == 1 && r.snap == 3 && r.remap == 1 && r.labels == 2 && r.anchor == 48);
         (void)s;
+        b16v3::KeyParams m; CHECK(m.readLine("keymask 145") && m.mask == 145);   // C, E, G (bits 0, 4, 7)
+        bsynth3::Key km = b16v3::effectiveKey(m, bsynth3::parse3("ding"));
+        CHECK(km.tuning.size() == 3 && km.tuning.steps[1] == 400 && km.tuning.steps[2] == 700);
     }
     {   // a kit (section 15): pads, velocity layers, a cut group, segments, a silent unmapped note, one-shot vs gated
         const char *k = "ding#2/chord#4;k36k38l2y1,90k38l2i120y91,127k42l2j2c1k44l2j3c1f20k50l2g";
