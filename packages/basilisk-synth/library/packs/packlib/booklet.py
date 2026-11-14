@@ -71,6 +71,8 @@ _STOP = {'noaa', 'nasa', 'image', 'photo', 'plate', 'from', 'with', 'view', 'ove
 def _TEXTY(e):
     """Pictures that carry printed titles or lettering (covers, posters, title pages, maps): kept off the pages."""
     w = e['words'] + ' ' + e['path'].lower()
+    if any(t in w for t in ('chamberlin', 'mellotron', 'hammond', 'rca ', 'edison', 'olson', 'wurlitzer', 'moog', 'yamaha', 'bell labs')):
+        return True
     return any(t in w for t in ('cover', 'poster', 'typography', 'magazine', 'title', 'ephemera', 'map-', ' map', 'label',
                                 'advert', 'printing trade', 'layout', 'stamp', 'coin', 'wpa'))
 
@@ -103,6 +105,11 @@ def _rng(*k):
 def pick(p, cat, used, kind=('background',), extra=()):
     """The best public-domain picture for a category in this pack: subject words, the pack's own art lanes, unused."""
     B = p.get('booklet', {})
+    if cat in B.get('images', {}):
+        for e in art_index():
+            if e['path'] == B['images'][cat]:
+                used.add(e['path'])
+                return e
     keys = list(B.get('subjects', {}).get(cat, [])) + SUBJECT.get(cat.lower(), []) + list(extra) + [cat.lower()]
     lanes = {v.split('/')[0] for v in p['look']['art'].values() if isinstance(v, str) and '/' in v}
     lanes |= set(B.get('lanes', []))
@@ -199,6 +206,11 @@ def procedural(p, st, kind, size, seed):
 
 # ------------------------------------------------------------------------------------------------ pages
 
+def _sp(s, f):
+    """Small bitmap-style type can render a space one pixel wide: make every space at least 3 pixels."""
+    return s.replace(' ', '  ') if f.getlength(' ') < 3 else s
+
+
 def _font(st, key, size):
     f = st[key]
     try:
@@ -212,43 +224,59 @@ def _head(p, st, d, cat, y=0, h=26):
     f = gfx.fit_font(st['display'], cat.upper(), W - 120, 16)
     gfx.text(d, (10, y + h // 2), cat.upper(), f, st['band_ink'], anchor='lm', aa=st['aa'])
     f2 = gfx.fit_font(st['body'], p['pack']['title'], 110, 10)
-    gfx.text(d, (W - 8, y + h // 2), p['pack']['title'], f2, st['band_ink'], anchor='rm', aa=st['aa'])
+    gfx.text(d, (W - 8, y + h // 2), _sp(p['pack']['title'], f2), f2, st['band_ink'], anchor='rm', aa=st['aa'])
 
 
 def _foot(p, st, d, n):
     f = _font(st, 'body', 9)
-    gfx.text(d, (8, H - 5), p['maker']['name'], f, st['ink'], anchor='lb', aa=st['aa'])
+    gfx.text(d, (8, H - 5), _sp(p['maker']['name'], f), f, st['ink'], anchor='lb', aa=st['aa'])
     gfx.text(d, (W - 8, H - 5), str(n), f, st['ink'], anchor='rb', aa=st['aa'])
 
 
 def _list(st, d, presets, box, rows, max_rows=None):
-    """Writes preset names in columns inside box; records each preset's rectangle for the player's highlight."""
+    """Writes the presets' full names in columns inside box (never cut: the face gets smaller, then a long name wraps
+    onto a second line) and records each preset's rectangle for the player's highlight. Returns how many it showed."""
     x0, y0, x1, y1 = box
     names = [x['name'] for x in presets]
     if max_rows:
         names = names[:max_rows]
-    # type size follows the list: few presets set large, many set small in columns
-    lh = max(11, min(20, (y1 - y0) // max(1, len(names))))
-    per_col = max(1, (y1 - y0) // lh)
-    cols = max(1, min(3, math.ceil(len(names) / per_col)))
-    cw = (x1 - x0) // cols
-    size = max(9, min(15, lh - 3)) if cols == 1 else (10 if cols < 3 else 9)
-    f = _font(st, 'body', size)
-    for i, n in enumerate(names):
-        c, rr = divmod(i, per_col)
-        if c >= cols:
-            break
-        x, y = x0 + c * cw, y0 + rr * lh
-        s = n
-        while f.getlength(s) > cw - int(f.getlength('00')) - 10 and len(s) > 4:
-            s = s[:-2]
-        if s != n:
-            s = s.rstrip() + '.'
+    n = max(1, len(names))
+    for cols in (1, 2, 3):
+        cw = (x1 - x0) // cols
+        per_col = math.ceil(n / cols)
+        lh = max(10, min(20, (y1 - y0) // per_col))
+        size = max(8, min(15 if cols == 1 else 11, lh - 3))
+        while size > 8:
+            f = _font(st, 'body', size)
+            nw = int(f.getlength('00')) + 6
+            if max(f.getlength(_sp(s, f)) for s in names) <= cw - nw - 4:
+                break
+            size -= 1
+        f = _font(st, 'body', size)
         nw = int(f.getlength('00')) + 6
+        fits = max(f.getlength(_sp(s, f)) for s in names) <= cw - nw - 4
+        if per_col * max(lh, size + 2) <= (y1 - y0) and (fits or cols == 3):
+            break
+    lh = max(size + 2, min(20, (y1 - y0) // per_col))
+    x, y, c = x0, y0, 0
+    shown = 0
+    for i, s in enumerate(names):
+        lines = [_sp(s, f)]
+        if f.getlength(lines[0]) > cw - nw - 4:            # wrap a long name onto two lines
+            lines = [_sp(l, f) for l in gfx.wrap(s, f, cw - nw - 4)[:2]]
+        need = lh * len(lines)
+        if y + need > y1:
+            c += 1
+            if c >= cols:
+                break
+            x, y = x0 + c * cw, y0
         gfx.text(d, (x, y), '%2d' % (i + 1), f, st['accent'], aa=st['aa'])
-        gfx.text(d, (x + nw, y), s, f, st['ink'], aa=st['aa'])
-        rows.append({'name': n, 'rect': [x, y - 1, cw - 2, lh]})
-    return len(names)
+        for k, l in enumerate(lines):
+            gfx.text(d, (x + nw, y + k * lh), l, f, st['ink'], aa=st['aa'])
+        rows.append({'name': s, 'rect': [x, y - 1, cw - 2, need]})
+        y += need
+        shown += 1
+    return shown
 
 
 def page_listing(p, st, cat, presets, n, used, e=None):
@@ -329,6 +357,7 @@ def page_mixed(p, st, cat, presets, n, used):
     else:
         yy = 46
     shown = _list(st, d, presets, (x0, yy + 6, x1, H - 30), rows, max_rows=(H - 36 - yy) // 11)
+    shown = len(rows)
     if shown < len(presets):
         gfx.text(d, (x0, H - 26), 'and %d more on the disc' % (len(presets) - shown), _font(st, 'italic', 9), st['accent'], aa=st['aa'])
     _foot(p, st, d, n)

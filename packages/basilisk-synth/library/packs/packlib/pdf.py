@@ -284,6 +284,20 @@ def build(p, data, cover_png, credits, out_path):
     P('Picture credits', 'h2')
     for cr in credits:
         P(cr, 'small')
+    bdir = p.get('_booklet_dir')
+    if os.environ.get('PACK_PDF_BOOKLET') == '1' and bdir and os.path.exists(os.path.join(bdir, 'booklet.json')):
+        # the booklet section (planned for release 1.4; off by default so 1.3.0's PDFs stay as published)
+        import json as _json
+        from reportlab.platypus import Image as RLImage
+        bj = _json.load(open(os.path.join(bdir, 'booklet.json'), encoding='utf-8'))
+        F.append(PageBreak())
+        P(HD.get('Booklet', 'Booklet'), 'h1')
+        cw_ = W - 2 * m
+        for pg in bj['pages']:
+            img = RLImage(os.path.join(bdir, pg['file']), width=cw_, height=cw_ * 288 / 384)
+            cap = (pg['category'] or 'Cover') + ('' if not pg['credit'].get('title') or pg['credit']['title'] == 'procedural' else
+                                                  '  -  ' + pg['credit']['title'][:90] + '. ' + (pg['credit'].get('license') or ''))
+            F.append(KeepTogether([img, Paragraph(_esc(cap), S['small']), Spacer(1, 6)]))
     doc.build(F)
     # PDF 1.3 header (nothing in the file needs 1.4)
     with open(out_path, 'r+b') as f:

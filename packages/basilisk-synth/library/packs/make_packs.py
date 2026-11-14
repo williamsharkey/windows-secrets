@@ -217,6 +217,7 @@ def build_pack(p, opt):
     files[F['hlp']] = open(os.path.join(build, F['hlp']), 'rb').read()
     # manuals
     credits = artwork.credits_for(p)
+    p['_booklet_dir'] = os.path.join(HERE, 'out', 'web', pid, 'booklet')    # used only with PACK_PDF_BOOKLET=1 (release 1.4)
     pdf.build(p, data, cover, credits, os.path.join(build, F['pdf']))
     files[F['pdf']] = open(os.path.join(build, F['pdf']), 'rb').read()
     blocks = manual_blocks(p, data)

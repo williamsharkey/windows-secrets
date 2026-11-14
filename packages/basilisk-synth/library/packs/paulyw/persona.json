@@ -348,6 +348,9 @@
       "resort",
       "sun"
     ],
-    "script_font": "segoesc.ttf"
+    "script_font": "segoesc.ttf",
+    "images": {
+      "Vocal": "books/neets-dynamic-microphone-sound-waves-on-diaphragm-and-.png"
+    }
   }
 }
