@@ -32,4 +32,10 @@ for /d %%d in ("%windir%\$hf_mig$") do rd /s /q "%%d"
 rd /s /q "%windir%\SoftwareDistribution\Download" > nul 2>&1
 del /f /s /q "%TEMP%\*.*" > nul 2>&1
 del /f /q "%windir%\Temp\*.*" > nul 2>&1
+rem X1: the second AC97 is the recording card (the plugin feeds it the DAW's input); playback stays on the first
+reg add "HKCU\Software\Microsoft\Multimedia\Sound Mapper" /v Playback /d "Intel(r) Integrated Audio" /f
+reg add "HKCU\Software\Microsoft\Multimedia\Sound Mapper" /v Record /d "Intel(r) Integrated Audio (2)" /f
+reg add "HKCU\Software\Microsoft\Multimedia\Sound Mapper" /v PreferredOnly /t REG_DWORD /d 1 /f
+rem X1: new recordings default to CD Quality (44.1 kHz 16-bit stereo; XP ships "Radio Quality", 22 kHz 8-bit mono)
+reg add "HKCU\Software\Microsoft\Multimedia\Audio" /v DefaultFormat /d "CD Quality" /f
 echo prepared

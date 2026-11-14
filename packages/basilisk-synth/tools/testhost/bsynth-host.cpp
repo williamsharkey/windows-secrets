@@ -15,6 +15,8 @@
 //     --ui T:ACTION       with --editor: post a mouse or key message to the editor window at T seconds into the score
 //                         (repeatable). ACTION: click:X:Y, down:X:Y, move:X:Y, up:X:Y (editor pixels), key:C, keyup:C
 //     --state-roundtrip   after rendering: getState -> setState -> getState must give the same bytes
+//     --input-tone HZ     feed a sine of HZ at -6 dBFS into the plugin's audio input bus (its sidechain), for the
+//                         recording input (RECORDING.md TR1)
 //     --timing            report the process() call times and how late the real-time blocks ran (a dummy audio
 //                         device: one block per block length of wall clock)
 // It prints the reported latency, timing and peak levels. Output: 32-bit float stereo WAV.
@@ -35,6 +37,9 @@
 #endif
 #include "pluginterfaces/gui/iplugview.h"
 #include <chrono>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -85,7 +90,8 @@ int main(int argc, char **argv)
     double shotEvery = 0;       // --shots S: with --editor, a screenshot of the editor every S seconds
     std::string shotDir;
     bool editor = false, roundtrip = false, timing = false;
-    int edW = 0, edH = 0;       // --editor-size WxH: the host resizes the editor to this (pixels), as a DAW may
+    int edW = 0, edH = 0;
+    double inTone = 0;       // --editor-size WxH: the host resizes the editor to this (pixels), as a DAW may
     std::vector<SetAt> sets;
     std::vector<UiAt> uis;
     for (int i = 3; i < argc; i++) {
@@ -105,6 +111,7 @@ int main(int argc, char **argv)
         else if (a == "--shots") { shotEvery = atof(next().c_str()); shotDir = next(); }
         else if (a == "--state-roundtrip") roundtrip = true;
         else if (a == "--editor-size") sscanf(next().c_str(), "%dx%d", &edW, &edH);
+        else if (a == "--input-tone") inTone = atof(next().c_str());
         else if (a == "--timing") timing = true;
         else if (a == "--set") {
             std::string v = next();
@@ -167,6 +174,10 @@ int main(int argc, char **argv)
         I->proc->setupProcessing(setup);
         I->comp->activateBus(kAudio, kOutput, 0, true);
         I->comp->activateBus(kEvent, kInput, 0, true);
+        if (inTone > 0 && I->comp->getBusCount(kAudio, kInput) > 0) {
+            I->comp->activateBus(kAudio, kInput, 0, true);
+            printf("instance %d: audio input bus active (%.0f Hz tone)\n", k, inTone);
+        }
         if (!loadState.empty() || !dna.empty()) {
             std::vector<char> st;
             if (!loadState.empty()) { std::ifstream f(loadState, std::ios::binary); st.assign(std::istreambuf_iterator<char>(f), {}); }
@@ -244,7 +255,12 @@ int main(int argc, char **argv)
     }
     auto pump = [&]() { MSG m; while (PeekMessageA(&m, NULL, 0, 0, PM_REMOVE)) { TranslateMessage(&m); DispatchMessageA(&m); } };
     int shotN = 0;
-    auto shot = [&](double t) {
+    const double shotT0 = now();   // the grab thread's clock (the log's wall seconds count from here)
+    // sndrec-demo: grabs run on their own thread, triggered on the audio clock, so a slow screen copy (tens of ms
+    // under DWM) never stalls the audio loop; each grab's wall time is logged to shots.csv
+    std::mutex shotMu; std::condition_variable shotCv; std::vector<std::pair<int, double>> shotQ; bool shotQuit = false;
+    FILE *shotLog = nullptr;
+    auto grab = [&](int idx) {
         if (!win || shotDir.empty()) return;
         RECT cr; GetClientRect(win, &cr);
         POINT o = {0, 0}; ClientToScreen(win, &o);
@@ -258,12 +274,29 @@ int main(int argc, char **argv)
         std::vector<char> px((size_t)stride * h);
         GetDIBits(mdc, bm, 0, h, px.data(), (BITMAPINFO *)&bi, DIB_RGB_COLORS);
         char name[512];
-        snprintf(name, sizeof name, "%s\\%06d.bmp", shotDir.c_str(), shotN);   /* frame N is at N x --shots seconds: ffmpeg -framerate 1/S -i DIR\\%06d.bmp */
+        snprintf(name, sizeof name, "%s\\%06d.bmp", shotDir.c_str(), idx);   /* frame N is at N x --shots seconds: ffmpeg -framerate 1/S -i DIR\\%06d.bmp */
         std::ofstream f(name, std::ios::binary);
         BITMAPFILEHEADER fh = {0x4D42, (DWORD)(sizeof fh + sizeof bi + px.size()), 0, 0, (DWORD)(sizeof fh + sizeof bi)};
         bi.biHeight = -h;
         f.write((char *)&fh, sizeof fh); f.write((char *)&bi, sizeof bi); f.write(px.data(), px.size());
         DeleteObject(bm); DeleteDC(mdc); ReleaseDC(NULL, sdc);
+    };
+    std::thread shotThread;
+    auto shot = [&](double t) {
+        if (!win || shotDir.empty()) return;
+        if (!shotThread.joinable()) shotThread = std::thread([&] {
+            for (;;) {
+                std::pair<int, double> job;
+                { std::unique_lock<std::mutex> l(shotMu); shotCv.wait(l, [&] { return shotQuit || !shotQ.empty(); });
+                  if (shotQ.empty()) return; job = shotQ.front(); shotQ.erase(shotQ.begin()); }
+                double w0 = now();
+                grab(job.first);
+                if (!shotLog) shotLog = fopen((shotDir + "\\shots.csv").c_str(), "w");
+                if (shotLog) fprintf(shotLog, "%d,%.6f,%.6f,%.6f\n", job.first, job.second, w0 - shotT0, now() - shotT0);
+            }
+        });
+        { std::lock_guard<std::mutex> l(shotMu); shotQ.push_back({shotN, t}); }
+        shotCv.notify_one();
         shotN++;
     };
 #else
@@ -307,6 +340,12 @@ int main(int argc, char **argv)
             // the transport "plays" from one second before the first note, as when a DAW starts a bar early
             ctx.state = (pos >= w0 - (int64_t)sr ? ProcessContext::kPlaying : 0);
             I.data.processContext = &ctx;
+            if (inTone > 0 && I.data.numInputs > 0 && I.data.inputs[0].numChannels >= 2) {
+                for (int i = 0; i < block; i++) {
+                    float v = 0.5f * (float)std::sin(2 * 3.14159265358979 * inTone * (double)(pos + i) / sr);
+                    I.data.inputs[0].channelBuffers32[0][i] = v; I.data.inputs[0].channelBuffers32[1][i] = v;
+                }
+            }
             I.data.numSamples = block;
             I.outParams.clearQueue();
             double pt = now();
@@ -346,6 +385,12 @@ int main(int argc, char **argv)
         }
     }
     double took = now() - start;
+#ifdef _WIN32
+    { std::lock_guard<std::mutex> l(shotMu); shotQuit = true; }   // sndrec-demo: let the grab thread finish its queue
+    shotCv.notify_all();
+    if (shotThread.joinable()) shotThread.join();
+    if (shotLog) fclose(shotLog);
+#endif
     printf("rendered %.1f s of audio in %.1f s%s\n", total / sr, took, offline ? " (offline)" : "");
     if (timing)
         printf("timing: block %d (%.1f ms), process() avg %.3f ms max %.3f ms, real-time blocks late by more than a block: %lld, max late %.1f ms\n",

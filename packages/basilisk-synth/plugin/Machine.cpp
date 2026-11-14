@@ -1,5 +1,6 @@
 // BASILISK SYNTH - the Windows XP machine behind one plugin instance (see Machine.hpp)
 #include "Machine.hpp"
+#include "../core/engine3.h"
 #include "machine_info.h"
 #define BSYNTH_QEMU_TAG "11.1-1"   // the QEMU zipped into the Windows bundle (Stefan Weil's build, as packages/basilisk-xp)
 #include "../core/proto.h"
@@ -413,7 +414,13 @@ void Machine::log(const char *fmt, ...)
     time_t t = time(NULL);
     char ts[32];
     strftime(ts, sizeof ts, "%H:%M:%S", localtime(&t));
-    fprintf(f, "%s %.3f ", ts, fmod(Machine::now(), 1000.0));
+#ifdef _WIN32
+    const unsigned long pid = GetCurrentProcessId();
+#else
+    const unsigned long pid = (unsigned long)getpid();
+#endif
+    // [pid]: several hosts (and instances in other DAWs) write this one log
+    fprintf(f, "%s %.3f [%lu] ", ts, fmod(Machine::now(), 1000.0), pid);
     va_list a;
     va_start(a, fmt);
     vfprintf(f, fmt, a);
@@ -553,15 +560,26 @@ bool Machine::launch()
         "-drive", "if=none,id=cd0,media=cdrom,readonly=on", "-device", "ide-cd,drive=cd0,id=cdrom0,bus=ide.1,unit=0",
         "-vga", "cirrus", "-device", "rtl8139,netdev=n0,mac=52:54:00:12:34:56",
         "-netdev", "user,id=n0,restrict=on,net=10.0.2.0/24",
-        "-usb", "-device", "usb-tablet", "-rtc", "base=localtime", "-display", "none", "-boot", "menu=off",
+        "-usb", "-device", "usb-tablet", "-rtc", "base=localtime", "-boot", "menu=off",
+        // recording input (RECORDING.md 1.2): a second, input-only AC97 fed over QEMU's peer-to-peer D-Bus display
+        // (DBusIn); playback stays on the first card's wav pipe. Not in the saved state: only the backend is new
+        "-display", "dbus,p2p=yes,audiodev=snd1",
+        "-audiodev", "dbus,id=snd1,nsamples=2048,in.frequency=48000,in.channels=2,in.format=s16",
         "-L", mdir + SEP + "fw", "-L", share,
         "-accel", getenv("BSYNTH_ACCEL") ? getenv("BSYNTH_ACCEL") : "tcg,thread=single,tb-size=1024",   // one vCPU: single-threaded TCG is ~10% faster
         "-audiodev", "wav,id=snd0,path=" + esc(pipePath_) + ",out.frequency=96000,out.channels=2,out.format=s16" + std::string(getenv("BSYNTH_AUDIODEV") ? getenv("BSYNTH_AUDIODEV") : kAudiodevExtra),
         "-device", "AC97,audiodev=snd0",
+        // the recording card second, as make_machine.py builds the machine: devices take PCI slots in order, and the
+        // saved state puts XP's playback card in the first one
+        "-device", "AC97,audiodev=snd1",
         "-chardev", "socket,id=ser0,host=127.0.0.1,port=" + std::to_string(portCom_) + ",server=on,wait=off",
         "-serial", "chardev:ser0",
         "-vnc", "127.0.0.1:" + std::to_string(portVnc_ - 5900),
         "-qmp", "tcp:127.0.0.1:" + std::to_string(portQmp_) + ",server=on,wait=off",
+#ifndef _WIN32
+        // passing a socket to QEMU needs SCM_RIGHTS: a second QMP on a Unix socket
+        "-qmp", "unix:" + tmp_ + "/qmp.sock,server=on,wait=off",
+#endif
         "-incoming", "tcp:127.0.0.1:" + std::to_string(portMig_)};
     {
         std::ofstream l(log, std::ios::app);
@@ -669,6 +687,23 @@ void Machine::run()
     if (!resume() || stopping_) return;
     resumedAt = now();
     {
+#ifdef _WIN32
+        unsigned long qpid = proc_ ? GetProcessId((HANDLE)proc_) : 0;
+#else
+        unsigned long qpid = (unsigned long)pid_;
+#endif
+        if (input.start(tmp_ + "/qmp.sock", portQmp_, qpid)) Machine::log("recording input: connected");
+        else Machine::log("recording input: not available (%s)", input.error.c_str());
+        // the screen over the same connection (EMULATOR-TUNING.md 5): QEMU pushes each change; VNC keeps the mouse
+        // and keys. BSYNTH_DISPLAY=vnc keeps the old VNC screen (diagnosis)
+        const char *dm = getenv("BSYNTH_DISPLAY");
+        if (input.connected() && !(dm && !strcmp(dm, "vnc"))) {
+            if (input.startDisplay([this](int x, int y, int w, int h, const uint8_t *p, uint32_t stride, uint32_t fmt) { blit(x, y, w, h, p, stride, fmt); }, qpid))
+                Machine::log("screen: D-Bus display listener registered");
+            else Machine::log("screen: D-Bus display not available (%s), VNC", input.displayError.c_str());
+        }
+    }
+    {
         // the library disc goes into the (empty) CD drive; the guest reads its catalogue when told "lib"
         std::string iso = machineDir() + SEP + "library.iso";
         if (exists(iso)) {
@@ -703,8 +738,7 @@ void Machine::linkLoop()
         char b[96];
         proto::time(b, sizeof b, lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday, lt.tm_hour, lt.tm_min, lt.tm_sec);
         send_all(com_, b, strlen(b));
-        proto::hi(b, sizeof b);
-        send_all(com_, b, strlen(b));
+        send_all(com_, "hi 3\n", 5);   // DNA v3: the guest answers with its caps (hi 3 xp <state> <caps>)
         send_all(com_, "\n", 1);
     }
     std::string acc;
@@ -747,15 +781,14 @@ void Machine::linkLoop()
         else if (!asleep && now() - lastPing > 0.015) { out = "\n"; }
         if (!out.empty()) lastPing = now();
         if (!out.empty() && !send_all(com_, out.data(), out.size())) break;
-        if (!asleep && linked && !building && now() - lastTouch_.load() > kSleepAfter) {
+        if (!asleep && linked && !building && !keepAwake.load() && now() - lastTouch_.load() > kSleepAfter) {
             qmp(portQmp_, "{\"execute\":\"stop\"}", 2000);
             asleep = true;
             log("asleep");
         }
         if (!linked && !asleep && now() - lastHi > 1.0) {   // the guest may still be waking from the state: ask again
             char b[16];
-            proto::hi(b, sizeof b);
-            send_all(com_, b, strlen(b));
+            send_all(com_, "hi 3\n", 5);
             send_all(com_, "\n", 1);
             lastHi = now();
         }
@@ -770,7 +803,11 @@ void Machine::linkLoop()
                 if (!line.empty() && line.back() == '\r') line.pop_back();
                 proto::Reply r = proto::parse(line);
                 if (r.kind == proto::Reply::Hi && !linked) Machine::log("guest: %s", line.c_str());
-                if (r.kind == proto::Reply::Hi) linked = true;
+                if (r.kind == proto::Reply::Hi) {
+                    linked = true;
+                    const std::vector<std::string> caps = bsynth3::parseHi3(line);
+                    capWin = bsynth3::hasCap(caps, "win"); capRate = bsynth3::hasCap(caps, "rate"); capKit = bsynth3::hasCap(caps, "kit");
+                }
                 if (r.kind != proto::Reply::Hi) Machine::log("guest: %s", line.c_str());
                 if (r.kind == proto::Reply::Ready) ready = true;
                 if (r.kind == proto::Reply::Built) { building = false; touch(); }
@@ -884,6 +921,7 @@ void Machine::vncLoop()
             // shares (single-threaded TCG), and the eye does not need more for XP
             double wait = 0.033 - (now() - lastReq);
             if (wait > 0) sleep_ms((int)(wait * 1000));
+            if (dbusFrames_) { sleep_ms(50); continue; }   // the D-Bus display delivers the screen: VNC is only the mouse and keys
             lastReq = now();
             uint8_t req[10] = {3, (uint8_t)incremental, 0, 0, 0, 0, (uint8_t)(kW >> 8), (uint8_t)(kW & 255), (uint8_t)(kH >> 8), (uint8_t)(kH & 255)};
             { std::lock_guard<std::mutex> g(vncSendMu_); if (!send_all(s, req, 10)) break; }
@@ -963,6 +1001,41 @@ done:
     CLOSESOCK(s);
 }
 
+// one changed rectangle from the D-Bus display, in QEMU's pixman format, into the RGBA screen
+void Machine::blit(int x, int y, int w, int h, const uint8_t *p, uint32_t stride, uint32_t fmt)
+{
+    if (x < 0 || y < 0 || x >= kW || y >= kH || w <= 0 || h <= 0) return;
+    if (x + w > kW) w = kW - x;
+    if (y + h > kH) h = kH - y;
+    const uint32_t bpp = fmt >> 24, type = (fmt >> 16) & 0xff;
+    std::lock_guard<std::mutex> g(fbMu_);
+    for (int yy = 0; yy < h; yy++) {
+        const uint8_t *sp = p + (size_t)yy * stride;
+        uint8_t *d = &fb_[((size_t)(y + yy) * kW + x) * 4];
+        if (bpp == 32 && type == 2) {          // x8r8g8b8 / a8r8g8b8: bytes B G R x
+            for (int k = 0; k < w; k++) { d[4 * k] = sp[4 * k + 2]; d[4 * k + 1] = sp[4 * k + 1]; d[4 * k + 2] = sp[4 * k]; d[4 * k + 3] = 255; }
+        } else if (bpp == 32 && type == 3) {   // x8b8g8r8: R G B x
+            for (int k = 0; k < w; k++) { d[4 * k] = sp[4 * k]; d[4 * k + 1] = sp[4 * k + 1]; d[4 * k + 2] = sp[4 * k + 2]; d[4 * k + 3] = 255; }
+        } else if (bpp == 24 && type == 2) {   // r8g8b8: B G R
+            for (int k = 0; k < w; k++) { d[4 * k] = sp[3 * k + 2]; d[4 * k + 1] = sp[3 * k + 1]; d[4 * k + 2] = sp[3 * k]; d[4 * k + 3] = 255; }
+        } else if (bpp == 16) {                // r5g6b5 (or x1r5g5b5 when green has 5 bits)
+            const bool g6 = ((fmt >> 4) & 15) == 6;
+            for (int k = 0; k < w; k++) {
+                uint16_t v = (uint16_t)(sp[2 * k] | sp[2 * k + 1] << 8);
+                uint32_t r5 = g6 ? v >> 11 : (v >> 10) & 31, g = g6 ? (v >> 5) & 63 : (v >> 5) & 31, b5 = v & 31;
+                d[4 * k] = (uint8_t)(r5 << 3 | r5 >> 2);
+                d[4 * k + 1] = g6 ? (uint8_t)(g << 2 | g >> 4) : (uint8_t)(g << 3 | g >> 2);
+                d[4 * k + 2] = (uint8_t)(b5 << 3 | b5 >> 2); d[4 * k + 3] = 255;
+            }
+        } else return;
+    }
+    if (x < dx0_) dx0_ = x;
+    if (y < dy0_) dy0_ = y;
+    if (x + w > dx1_) dx1_ = x + w;
+    if (y + h > dy1_) dy1_ = y + h;
+    dbusFrames_ = true;
+}
+
 bool Machine::frame(std::vector<uint8_t> &rgba, int &x0, int &y0, int &x1, int &y1)
 {
     std::lock_guard<std::mutex> g(fbMu_);
@@ -995,6 +1068,7 @@ void Machine::key(uint32_t keysym, bool down)
 // ------------------------------------------------------------------ stopping
 void Machine::kill()
 {
+    input.stop();
 #ifdef _WIN32
     if (proc_) {
         if (portQmp_) qmp(portQmp_, "{\"execute\":\"quit\"}", 500);

@@ -9,6 +9,7 @@
 //   - VNC is the screen and the visitor's mouse and keys
 // Everything here runs on its own threads. The audio thread only touches the lock-free rings.
 #pragma once
+#include "DBusIn.hpp"
 #include <atomic>
 #include <cstdint>
 #include <mutex>
@@ -82,6 +83,8 @@ public:
     // (voices sounding, editor open). Lock-free; the audio thread may call it.
     void touch() { lastTouch_.store(now(), std::memory_order_relaxed); }
     std::atomic<bool> asleep{false};
+    std::atomic<bool> keepAwake{false};
+    std::atomic<bool> capWin{false}, capRate{false}, capKit{false};   // the guest's DNA v3 caps (hi 3)   // the plugin waits for its sounds to be built: no sleep meanwhile
     void sendLong(const std::string &line);   // a long line (a DNA); not from the audio thread
     // lines from the guest, for the plugin's own thread (not the audio thread)
     bool popReply(std::string &line);
@@ -94,6 +97,7 @@ public:
     void key(uint32_t keysym, bool down);
 
     AudioRing audio;
+    DBusIn input;          // the DAW's audio into XP's recording card (RECORDING.md 1.2)
     std::atomic<uint64_t> gapsIn_{0};   // exact-silence runs >= 5 ms in XP's stream that cut a sound off
     size_t zeroRun_ = 0; float lastLevel_ = 0;
     std::atomic<int> phase{Off};
@@ -116,6 +120,8 @@ private:
     void linkLoop();
     void audioLoop();
     void vncLoop();
+    void blit(int x, int y, int w, int h, const uint8_t *p, uint32_t stride, uint32_t fmt);
+    std::atomic<bool> dbusFrames_{false};
     void fail(const std::string &e);
     void setStatus(const std::string &s);
     void kill();

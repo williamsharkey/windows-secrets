@@ -79,6 +79,10 @@ static short chbuf[NCH][CH_MAXF * 2];
 static int ch_next;                     /* the next chunk to fill, in order */
 #define OUT_RATE 48000                  /* the handle's fixed rate: opened once, never reopened for a pitch */
 static DWORD src_frames, spos;          /* source frames; the next one (integer part of sp) */
+static DWORD wend;                      /* v3: this note ends at this source frame (its window's end) */
+static LONG seen_rate = -1, seen_choke = -1;   /* the "rate" and "choke" requests already applied */
+static unsigned __int64 step_a, step_b; /* v3 glide: the 16.16 step ramps from a to b ... */
+static DWORD glide_t0, glide_len;       /* ... over glide_len ms of note time from glide_t0 (0: no ramp) */
 static DWORD sfrac, sstep_i, sstep_f;   /* 16.16: source position fraction, and the step per output frame (pitch) */
 static DWORD ofr;                       /* output frames queued for this note */
 static int src_ch, src_bits, ended;     /* ended: no more source; the queued chunks play out */
@@ -176,8 +180,14 @@ static int fill_chunk(int k)
     short *o = chbuf[k];
     if (n > CH_MAXF) n = CH_MAXF;
     if (n < 16) n = 16;
-    if (ended || spos >= src_frames) { ended = 1; return 0; }
+    if (ended || spos >= wend) { ended = 1; return 0; }
     now = stream_now();
+    if (glide_len) {   /* a glide: this chunk's step on the line from step_a to step_b */
+        DWORD el = now + CH_MS / 2 - glide_t0;
+        unsigned __int64 st = el >= glide_len ? step_b : step_a + (unsigned __int64)((double)((__int64)(step_b - step_a)) * el / glide_len);
+        if (el >= glide_len) glide_len = 0;
+        sstep_i = (DWORD)(st >> 16); sstep_f = (DWORD)(st & 0xFFFF);
+    }
     if (!t_rel && (!S->gate || S->cut)) {     /* the note was let go (or cut): the release starts with this chunk */
         lvl_rel = S->level;
         rel_ms = S->cut ? 5 : (shm->env_r > 0 ? shm->env_r : 1);
@@ -193,7 +203,7 @@ static int fill_chunk(int k)
         DWORD idx = spos, frac = sfrac, si = sstep_i, sf = sstep_f;
         for (i = 0; i < n; i++) {
             LONG l = 0, r = 0;
-            if (src16 && idx < src_frames) {
+            if (src16 && idx < wend) {
                 const short *q = src16 + 2 * idx;
                 l = q[0] + (((LONG)q[2] - q[0]) * (LONG)(frac >> 1) >> 15);
                 r = q[1] + (((LONG)q[3] - q[1]) * (LONG)(frac >> 1) >> 15);
@@ -204,11 +214,11 @@ static int fill_chunk(int k)
             o[2 * i + 1] = (short)(r > 32767 ? 32767 : r < -32768 ? -32768 : r);
             xl += dgl; xr += dgr;
         }
-        spos = idx > src_frames ? src_frames : idx; sfrac = frac;
+        spos = idx > wend ? wend : idx; sfrac = frac;
     }
     g_l = gl; g_r = gr;
     ofr += n;
-    if (t_rel && lv == 0) { ended = 1; spos = src_frames; }        /* released to silence */
+    if (t_rel && lv == 0) { ended = 1; spos = wend; }        /* released to silence */
     if (h->dwFlags & 2 /* WHDR_PREPARED */) w_unprep(fh, h, sizeof *h);
     memset(h, 0, sizeof *h);
     h->lpData = (char *)o;
@@ -229,11 +239,13 @@ static int chunks_busy(void)
 
 /* stop the stream now: what is queued is faded out in place over 4 ms first (no click), then the card is reset */
 static void open_fh(void);
-static void stream_stop(void)
+static void stream_fade(DWORD ms);
+static void stream_stop(void) { stream_fade(4); }
+static void stream_fade(DWORD ms)
 {
     int k;
     MMT mt;
-    DWORD played, fade = OUT_RATE * 4 / 1000 * 4, lead = OUT_RATE * 3 / 1000 * 4;   /* bytes: 4 ms fade, from 3 ms ahead */
+    DWORD played, fade = OUT_RATE * ms / 1000 * 4, lead = OUT_RATE * 3 / 1000 * 4;   /* bytes: the fade, from 3 ms ahead */
     mt.wType = TIME_BYTES_; mt.u.cb = 0;
     if (!fh) return;
     if (w_pos) w_pos(fh, &mt, sizeof mt);
@@ -253,7 +265,7 @@ static void stream_stop(void)
             if (g < 1.0) { chbuf[k][2 * i] = (short)(chbuf[k][2 * i] * g); chbuf[k][2 * i + 1] = (short)(chbuf[k][2 * i + 1] * g); }
         }
     }
-    Sleep(8);
+    Sleep(ms + 4);
     w_reset(fh);
     for (k = 0; k < NCH; k++) if (chdr[k].dwFlags & 2) w_unprep(fh, &chdr[k], sizeof chdr[k]);
     memset(chdr, 0, sizeof chdr);
@@ -276,6 +288,31 @@ static DWORD WINAPI env_thread(LPVOID p)
                 lvl_rel = S->level;
                 rel_ms = S->cut ? 5 : (shm->env_r > 0 ? shm->env_r : 1);
                 t_rel = now;
+            }
+            if (cur == fh && fh && S->choke_seq != seen_choke) {
+                /* v3 "choke" (a kit's cut group): what is queued fades out in place over choke_ms, and the note ends */
+                seen_choke = S->choke_seq;
+                if (!ended) {
+                    LONG ms = S->choke_ms < 1 ? 1 : S->choke_ms > 200 ? 200 : S->choke_ms;
+                    stream_fade((DWORD)ms);
+                    ended = 1; spos = wend;
+                    cur = 0; S->playing = 0; S->level = 0;
+                    done(SYE_END, 0);
+                    LeaveCriticalSection(&cs);
+                    continue;
+                }
+            }
+            if (cur == fh && fh && S->rate_seq != seen_rate) {
+                /* v3 "rate": the sounding note goes on at the new rate from its position (from the next chunk filled),
+                   ramped over glide_ms; regate holds a released note again at the sustain level */
+                seen_rate = S->rate_seq;
+                if (!ended && S->rate_new > 0) {
+                    unsigned __int64 to = ((unsigned __int64)S->rate_new << 16) / OUT_RATE;
+                    step_a = ((unsigned __int64)sstep_i << 16) | sstep_f; step_b = to;
+                    if (S->glide_ms > 0) { glide_t0 = stream_now(); glide_len = (DWORD)S->glide_ms; }
+                    else { glide_len = 0; sstep_i = (DWORD)(to >> 16); sstep_f = (DWORD)(to & 0xFFFF); }
+                    if (S->regate && t_rel) { t_rel = 0; S->gate = 1; S->cut = 0; }
+                }
             }
             if (cur == fh && fh) {
                 /* the fast path: keep four chunks queued; the note ends when the last one has played */
@@ -453,7 +490,7 @@ static void finish_morph(HWND w)
 {
     int k;
     SetWindowPos(w, NULL, w1.left, w1.top, w1.right - w1.left, w1.bottom - w1.top, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
-    for (k = 0; k < 10; k++) {
+    for (k = 0; k < 13; k++) if (k != 10 && k != 11) {
         RECT *b = &shm->kid_final[k];
         if (kid[k]) SetWindowPos(kid[k], NULL, b->left, b->top, b->right - b->left, b->bottom - b->top, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
     }
@@ -471,10 +508,11 @@ static void CALLBACK fly_tick(HWND w, UINT m, UINT_PTR id, DWORD now)
     } else {
         SetWindowPos(w, NULL, lerp(w0.left, w1.left, x), lerp(w0.top, w1.top, x), lerp(w0.right - w0.left, w1.right - w1.left, x),
                      lerp(w0.bottom - w0.top, w1.bottom - w1.top, x), SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
-        dw = BeginDeferWindowPos(10);
-        for (k = 0; k < 10; k++) {
+        dw = BeginDeferWindowPos(11);
+        for (k = 0; k < 13; k++) if (k != 10 && k != 11) {
             /* the parts lag one another a little, so the row assembles left to right */
-            double y = ease(((double)(GetTickCount() - a_t0) - k * 18) / (a_dur - 10 * 18));
+            int li = k < 2 ? k : k == 12 ? 2 : k + 1;   /* left to right: Play, Stop, Record, then the rest */
+            double y = ease(((double)(GetTickCount() - a_t0) - li * 18) / (a_dur - 10 * 18));
             RECT *b = &shm->kid_final[k];
             if (kid[k]) dw = DeferWindowPos(dw, kid[k], NULL, lerp(k0[k].left, b->left, y), lerp(k0[k].top, b->top, y),
                                             lerp(k0[k].right - k0[k].left, b->right - b->left, y), lerp(k0[k].bottom - k0[k].top, b->bottom - b->top, y),
@@ -496,8 +534,8 @@ static void CALLBACK fly_tick(HWND w, UINT m, UINT_PTR id, DWORD now)
 static void CALLBACK drop_tick(HWND w, UINT m, UINT_PTR id, DWORD now)
 {
     int k, all = 1;
-    for (k = 10; k < 13; k++) {
-        double y = (double)(GetTickCount() - d_t0 - (12 - k) * 70) / 170;   /* Record first, then >>, then << */
+    for (k = 10; k < 12; k++) {
+        double y = (double)(GetTickCount() - d_t0 - (11 - k) * 70) / 170;   /* >> first, then <<; Record stays */
         if (!kid[k] || !IsWindowVisible(kid[k])) continue;
         all = 0;
         if (y < 0) continue;
@@ -605,6 +643,13 @@ static DWORD WINAPI note_thread(LPVOID p)
             S->opens++;
             S->playing = 1;
             spos = 0; sfrac = 0; ofr = 0; ended = 0; ch_next = 0; wbytes = 0;
+            wend = src_frames;
+            if (S->win_to > S->win_from && (DWORD)S->win_from < src_frames) {   /* v3: the note's window */
+                spos = (DWORD)S->win_from;
+                if ((DWORD)S->win_to < src_frames) wend = (DWORD)S->win_to;
+            }
+            glide_len = 0;
+            seen_rate = S->rate_seq; seen_choke = S->choke_seq;   /* requests from before this note do not apply */
             {
                 unsigned __int64 st = ((unsigned __int64)rate << 16) / OUT_RATE;
                 sstep_i = (DWORD)(st >> 16); sstep_f = (DWORD)(st & 0xFFFF);
@@ -762,11 +807,11 @@ static void run_op(int op, LONG arg)
         KillTimer(w, T_FLY);
         morphing = 0;
         SetWindowPos(w, NULL, S->fly[0], S->fly[1], S->fly[2], S->fly[3], SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
-        for (k = 0; k < 10; k++) {
+        for (k = 0; k < 13; k++) if (k != 10 && k != 11) {
             RECT *b = &shm->kid_final[k];
             if (kid[k]) SetWindowPos(kid[k], NULL, b->left, b->top, b->right - b->left, b->bottom - b->top, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOREDRAW);
         }
-        for (k = 10; k < 13; k++) if (kid[k]) ShowWindow(kid[k], SW_HIDE);
+        for (k = 10; k < 12; k++) if (kid[k]) ShowWindow(kid[k], SW_HIDE);
         RedrawWindow(w, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
         break;
     }
@@ -779,7 +824,7 @@ static void run_op(int op, LONG arg)
     case SYO_DROP: {
         int k;
         if (!kid[0]) find_kids();
-        for (k = 10; k < 13; k++) if (kid[k]) k0[k] = in_parent(kid[k]);
+        for (k = 10; k < 12; k++) if (kid[k]) k0[k] = in_parent(kid[k]);
         d_t0 = GetTickCount();
         SetTimer((HWND)S->hwnd, T_DROP, 25, drop_tick);
         return;
@@ -790,7 +835,7 @@ static void run_op(int op, LONG arg)
         int k;
         if (!kid[0]) find_kids();
         if (op == SYO_GLIDE && morphing) { KillTimer((HWND)S->hwnd, T_FLY); finish_morph((HWND)S->hwnd); }   /* a slow machine */
-        for (k = 0; k < 10; k++) if (kid[k]) k0[k] = in_parent(kid[k]);
+        for (k = 0; k < 13; k++) if (k != 10 && k != 11) if (kid[k]) k0[k] = in_parent(kid[k]);
         w0 = in_parent((HWND)S->hwnd);
         glide_only = op == SYO_GLIDE;
         morphing = op != SYO_GLIDE;

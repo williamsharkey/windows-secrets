@@ -27,7 +27,7 @@
 WINBASEAPI int WINAPI MultiByteToWideChar(UINT, DWORD, LPCSTR, int, LPWSTR, int);
 #endif
 
-#define VERSION "1.2.2"
+#define VERSION "1.3.0"
 #define ROW_H 34
 #define STRIP_X 30
 #define STRIP_Y 6
@@ -204,6 +204,7 @@ typedef struct {
     int first, count;        /* recorders, after pool sizing */
     char key[600];           /* source + steps: what the buffer depends on */
     int rate, frames;        /* of the built file */
+    int nseg; LONG seg[16];  /* v3 kits (PRESET-ENGINE-2 15.1): where each segment starts, in frames: 0, then each Insert File */
 } Layer;
 typedef struct {
     Layer l[MAXL];
@@ -433,10 +434,13 @@ static void build_layer(int li, Layer *L)
     rec_file(r, path);
     rec_cmd(r, SR_OPEN, 8000);
     rec_cmd(r, SR_COPY, 8000);           /* the clipboard starts as the source (DNA.md 2.1) */
+    double seg_ms[16];
+    int nseg = 1;
+    seg_ms[0] = 0;
     len_ms = clip_ms = read_ms(r, SR_LEN);
     for (i = 0; i < L->nstep; i++) {
         Step *s = &L->step[i];
-        int id = 0, grow = 0, pos;
+        int id = 0, grow = 0, pos, before = len_ms;
         switch (s->op) {
         case '+': id = SR_VOL_UP; break;
         case '-': id = SR_VOL_DOWN; break;
@@ -457,15 +461,28 @@ static void build_layer(int li, Layer *L)
         if (!id) continue;
         if (len_ms + grow > MAXLEN_MS) { logf_("layer %d step %d skipped (length)", li, i); continue; }
         if (s->op == 'I' || s->op == 'M') { media_path(path, s->arg); rec_file(r, path); }
+        if (s->op == 'I' && nseg < 16) seg_ms[nseg++] = read_ms(r, SR_POS);   /* the inserted sound starts here */
         rec_cmd(r, id, 15000);
         len_ms = read_ms(r, SR_LEN);
         if (s->op == 'C') clip_ms = len_ms;
+        if ((s->op == '<' || s->op == '>') && before > 0) {   /* a speed step stretches every point recorded so far */
+            int k;
+            for (k = 1; k < nseg; k++) seg_ms[k] = seg_ms[k] * len_ms / before;
+        }
     }
     sprintf(path, "C:\\synth\\layer%d.wav", li);
     DeleteFileA(path);
     rec_file(r, path);
     rec_cmd(r, SR_SAVEAS, 15000);
     if (!wav_info(path, &L->rate, &L->frames)) { L->rate = 22050; L->frames = 0; }
+    {
+        int k;
+        L->nseg = nseg;
+        for (k = 0; k < nseg; k++) {
+            LONG f = (LONG)(seg_ms[k] * L->rate / 1000.0);
+            L->seg[k] = f < 0 ? 0 : f > L->frames ? L->frames : f;
+        }
+    }
     logf_("layer %d built on rec %d: %d steps, %d ms, rate %d, %lu ms work", li, r, L->nstep, len_ms, L->rate, GetTickCount() - t0);
 }
 
@@ -496,7 +513,7 @@ static DWORD WINAPI build_thread(LPVOID p)
         Layer *L = &D.l[i], *O = i < built_dna.n ? &built_dna.l[i] : NULL;
         if (L->src < 0 || !L->count) continue;
         if (O && !strcmp(O->key, L->key) && O->first == L->first && O->count == L->count && O->frames) {
-            L->rate = O->rate; L->frames = O->frames;
+            L->rate = O->rate; L->frames = O->frames; L->nseg = O->nseg; memcpy(L->seg, O->seg, sizeof L->seg);
             continue;
         }
         if (O && !strcmp(O->key, L->key) && O->frames) {   /* same sound, other recorders: reload only */
@@ -504,7 +521,7 @@ static DWORD WINAPI build_thread(LPVOID p)
             sprintf(path, "C:\\synth\\layer%d.wav", i);
             rec_file(L->first, path);
             rec_op(L->first, SYO_CMD, SR_OPEN, 8000);
-            L->rate = O->rate; L->frames = O->frames;
+            L->rate = O->rate; L->frames = O->frames; L->nseg = O->nseg; memcpy(L->seg, O->seg, sizeof L->seg);
         } else build_layer(i, L);
         load_pool(i, L);
     }
@@ -536,7 +553,14 @@ static DWORD WINAPI build_thread(LPVOID p)
     built_dna = D;
     lstrcpynA(built_text, text, sizeof built_text);
     for (i = 0; i < D.n; i++)
+    {
         send_line("layer %d %d %d %d %d", i, D.l[i].first, D.l[i].count, D.l[i].src < 0 ? 0 : D.l[i].rate, D.l[i].src < 0 ? 0 : D.l[i].frames);
+        if (D.l[i].src >= 0 && D.l[i].nseg > 1) {   /* v3: the segments of a layer with Insert File steps (kit pads) */
+            char sl[200]; int k, n = sprintf(sl, "seg %d", i);
+            for (k = 0; k < D.l[i].nseg && n < 180; k++) n += sprintf(sl + n, " %ld", D.l[i].seg[k]);
+            send_line("%s", sl);
+        }
+    }
     send_line("built %lu", GetTickCount() - t0);
     logf_("built '%s' in %lu ms", text, GetTickCount() - t0);
     InterlockedExchange(&building, 0);
@@ -558,13 +582,92 @@ static void start_build(const char *text, int from_edit)
 
 /* ---------------------------------------------------------------- the lines from the plugin */
 static HANDLE note_ev[SY_NREC];
-/* notes go straight to each Sound Recorder's note thread (srhook.c): an event, no window message */
-static void note_line(char *l)
+/* ---------------------------------------------------------------- notes sent ahead (an offline render)
+   "on ... <delay_ms>", "off <r> <delay_ms>", "cut <r> <delay_ms>": the line runs delay_ms after it arrived, on
+   Windows' own millisecond clock, so a note's timing does not depend on when the host got to send it. Lines run in
+   the order they are due (the same due time: the order they came) */
+#define NSCHED 256
+static struct { DWORD due, seq; char line[96]; } sched[NSCHED];
+static int nsched;
+static DWORD sched_seq;
+static CRITICAL_SECTION sched_cs, note_cs;
+static HANDLE sched_ev;
+static void note_line(char *l);
+static DWORD WINAPI sched_thread(LPVOID p)
+{
+    typedef UINT (WINAPI *TBP)(UINT);
+    TBP tbp = (TBP)GetProcAddress(LoadLibraryA("winmm.dll"), "timeBeginPeriod");
+    typedef DWORD (WINAPI *TGT)(void);
+    TGT tgt = (TGT)GetProcAddress(LoadLibraryA("winmm.dll"), "timeGetTime");
+    if (tbp) tbp(1);
+    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+    for (;;) {
+        DWORD now = tgt(), wait = INFINITE;
+        int i, best = -1;
+        char line[96];
+        EnterCriticalSection(&sched_cs);
+        for (i = 0; i < nsched; i++)
+            if (best < 0 || (LONG)(sched[i].due - sched[best].due) < 0 || (sched[i].due == sched[best].due && sched[i].seq < sched[best].seq)) best = i;
+        if (best >= 0 && (LONG)(sched[best].due - now) <= 0) {
+            lstrcpynA(line, sched[best].line, sizeof line);
+            sched[best] = sched[--nsched];
+            LeaveCriticalSection(&sched_cs);
+            if (!strncmp(line, "on ", 3) || !strncmp(line, "off ", 4) || !strncmp(line, "cut ", 4) || !strncmp(line, "panic", 5) ||
+                !strncmp(line, "lenv ", 5) || !strncmp(line, "rate ", 5) || !strncmp(line, "choke ", 6)) note_line(line);
+            else if (win) PostMessageA(win, WM_LINE, 0, (LPARAM)_strdup(line));
+            continue;
+        }
+        if (best >= 0) wait = sched[best].due - now;
+        LeaveCriticalSection(&sched_cs);
+        WaitForSingleObject(sched_ev, wait);
+    }
+    return 0;
+}
+/* the line, its delay field removed, is run later; 0: no room (run it now) */
+static int sched_add(const char *line, int delay)
+{
+    typedef DWORD (WINAPI *TGT)(void);
+    static TGT tgt;
+    int ok = 0;
+    if (!tgt) tgt = (TGT)GetProcAddress(LoadLibraryA("winmm.dll"), "timeGetTime");
+    EnterCriticalSection(&sched_cs);
+    if (nsched < NSCHED) {
+        sched[nsched].due = tgt() + (DWORD)delay;
+        sched[nsched].seq = sched_seq++;
+        lstrcpynA(sched[nsched].line, line, sizeof sched[0].line);
+        nsched++; ok = 1;
+    }
+    LeaveCriticalSection(&sched_cs);
+    SetEvent(sched_ev);
+    return ok;
+}
+static void sched_start(void)
+{
+    InitializeCriticalSection(&sched_cs);
+    InitializeCriticalSection(&note_cs);
+    sched_ev = CreateEventA(NULL, FALSE, FALSE, NULL);
+    CloseHandle(CreateThread(NULL, 0, sched_thread, NULL, 0, NULL));
+}
+
+/* notes go straight to each Sound Recorder's note thread (srhook.c): an event, no window message. Called from the
+   COM thread and the scheduler: one at a time */
+static void note_line_(char *l);
+static void note_line(char *l) { EnterCriticalSection(&note_cs); note_line_(l); LeaveCriticalSection(&note_cs); }
+static void note_line_(char *l)
 {
     int r, rate, vol, pan = 0, delay = 0, layer = -1, k;
     char w, pts[200];
-    if ((k = sscanf(l, "on %d %d %d %d %d %d", &r, &rate, &vol, &pan, &delay, &layer)) >= 3) {
+    int wf = 0, wt = 0;
+    if ((k = sscanf(l, "on %d %d %d %d %d %d %d %d", &r, &rate, &vol, &pan, &delay, &layer, &wf, &wt)) >= 3) {
         if (r < 0 || r >= SY_NREC) return;      /* during a build too: each recorder plays the sound it has loaded */
+        if (delay > 0 && k >= 5) {
+            char later[96];
+            sprintf(later, "on %d %d %d %d 0 %d %d %d", r, rate, vol, pan, k >= 6 ? layer : -1, k >= 8 ? wf : 0, k >= 8 ? wt : 0);
+            if (sched_add(later, delay)) return;
+        }
+        if (k < 8) wf = wt = 0;
+        shm->s[r].win_from = wf < 0 ? 0 : wf;   /* v3 (cap win): the window [from, to) in the buffer's frames */
+        shm->s[r].win_to = wt < 0 ? 0 : wt;
         if (k < 6) layer = -1;
         shm->s[r].pan = pan < -100 ? -100 : pan > 100 ? 100 : pan;
         shm->s[r].layer = layer >= 0 && layer < 8 ? layer : -1;
@@ -574,13 +677,29 @@ static void note_line(char *l)
         shm->s[r].cut = 0;
         shm->s[r].t_post = GetTickCount();
         SetEvent(note_ev[r]);
-    } else if (sscanf(l, "off %d", &r) == 1) {
+    } else if ((k = sscanf(l, "off %d %d", &r, &delay)) >= 1) {
         if (r < 0 || r >= SY_NREC) return;
+        if (k == 2 && delay > 0) { char later[24]; sprintf(later, "off %d", r); if (sched_add(later, delay)) return; }
         shm->s[r].gate = 0;
-    } else if (sscanf(l, "cut %d", &r) == 1) {
+    } else if ((k = sscanf(l, "cut %d %d", &r, &delay)) >= 1 && !strncmp(l, "cut", 3)) {
+        if (k == 2 && delay > 0) { char later[24]; sprintf(later, "cut %d", r); if (r >= 0 && r < SY_NREC && sched_add(later, delay)) return; }
         if (r < 0 || r >= SY_NREC) return;
         shm->s[r].gate = 0;
         shm->s[r].cut = 1;
+    } else if (!strncmp(l, "rate ", 5)) {
+        /* v3 (cap rate): rate <rec> <hz> [<glide_ms> [<regate>]] on a sounding note (a silent recorder ignores it) */
+        int hz = 0, gl = 0, rg = 0;
+        if (sscanf(l, "rate %d %d %d %d", &r, &hz, &gl, &rg) >= 2 && r >= 0 && r < SY_NREC && hz > 0) {
+            shm->s[r].rate_new = hz; shm->s[r].glide_ms = gl < 0 ? 0 : gl; shm->s[r].regate = rg;
+            InterlockedIncrement(&shm->s[r].rate_seq);
+        }
+    } else if (!strncmp(l, "choke ", 6)) {
+        /* v3 (cap kit): choke <rec> <fade_ms>: a cut group ends this recorder's hit */
+        int fd = 10;
+        if (sscanf(l, "choke %d %d", &r, &fd) >= 1 && r >= 0 && r < SY_NREC) {
+            shm->s[r].choke_ms = fd;
+            InterlockedIncrement(&shm->s[r].choke_seq);
+        }
     } else if (sscanf(l, "lenv %d %c %199s", &layer, &w, pts) == 3) {
         /* a drawn envelope (DNA.md 5.3): "t,l.t,l...", or "-" for none */
         int which = w == 'p' ? 1 : 0, n = 0;
@@ -626,7 +745,19 @@ static DWORD WINAPI com_thread(LPVOID p)
             line[n] = 0;
             n = 0;
             /* notes are handled right here, on this thread: nothing on the window's thread can delay them */
-            if (!strncmp(line, "on ", 3) || !strncmp(line, "off ", 4) || !strncmp(line, "cut ", 4) || !strncmp(line, "panic", 5) || !strncmp(line, "lenv ", 5))
+            if (!strncmp(line, "at ", 3)) {
+                /* "at <delay_ms> <line>": the line runs that much later on Windows' clock (an offline render's notes,
+                   a note's place inside a block); the scheduler runs note lines itself, others go to the window */
+                int d = atoi(line + 3);
+                char *q = strchr(line + 3, ' ');
+                if (q) {
+                    q++;
+                    if (d > 0 && sched_add(q, d)) continue;
+                    memmove(line, q, strlen(q) + 1);
+                }
+            }
+            if (!strncmp(line, "on ", 3) || !strncmp(line, "off ", 4) || !strncmp(line, "cut ", 4) || !strncmp(line, "panic", 5) ||
+                !strncmp(line, "lenv ", 5) || !strncmp(line, "rate ", 5) || !strncmp(line, "choke ", 6))
                 note_line(line);
             else
                 PostMessageA(win, WM_LINE, 0, (LPARAM)_strdup(line));
@@ -667,6 +798,97 @@ static void keepalive(void)
     hd.dwFlags |= 0x4 | 0x8;
     hd.dwLoops = 0xFFFFFFFF;
     wr(h, &hd, sizeof hd);
+}
+
+
+/* ---------------------------------------------------------------- the recording card (RECORDING.md 1.2)
+   The second AC97 ("... (2)") is the one the plugin feeds; XP's preferred recording device is set to it here, at
+   startup, through winmm's own mapper messages (the same as Sound and Audio Devices' "Preferred device"), and the
+   first card stays the preferred playback device */
+#define DRVM_MAPPER_PREFERRED_GET_ 0x2015
+#define DRVM_MAPPER_PREFERRED_SET_ 0x2016
+static UINT rec_ndevs(void)
+{
+    typedef UINT (WINAPI *N)(void);
+    N n = (N)GetProcAddress(LoadLibraryA("winmm.dll"), "waveInGetNumDevs");
+    return n ? n() : 0;
+}
+static int rec_card(void)
+{
+    typedef MMRESULT (WINAPI *C)(UINT_PTR, void *, UINT);
+    C c = (C)GetProcAddress(LoadLibraryA("winmm.dll"), "waveInGetDevCapsA");
+    UINT i, n = rec_ndevs();
+    char cap[128];
+    for (i = 0; c && i < n; i++) { memset(cap, 0, sizeof cap); if (!c(i, cap, sizeof cap) && strstr(cap + 8, "(2)")) return (int)i; }
+    return -1;
+}
+static void rec_prefer(void)
+{
+    typedef MMRESULT (WINAPI *M)(HANDLE, UINT, DWORD_PTR, DWORD_PTR);
+    HMODULE m = LoadLibraryA("winmm.dll");
+    M wi = (M)GetProcAddress(m, "waveInMessage"), wo = (M)GetProcAddress(m, "waveOutMessage");
+    int dev = rec_card();
+    DWORD cur = 0, fl = 0;
+    if (wi && dev >= 0) {
+        MMRESULT r = wi((HANDLE)WAVE_MAPPER, DRVM_MAPPER_PREFERRED_SET_, (DWORD_PTR)dev, 0);
+        wi((HANDLE)WAVE_MAPPER, DRVM_MAPPER_PREFERRED_GET_, (DWORD_PTR)&cur, (DWORD_PTR)&fl);
+        logf_("recording card: device %d, preferred set %u, now %lu", dev, r, cur);
+    } else logf_("recording card: none (%u waveIn devices)", rec_ndevs());
+    if (wo) wo((HANDLE)WAVE_MAPPER, DRVM_MAPPER_PREFERRED_SET_, 0, 0);
+}
+
+/* ---------------------------------------------------------------- recording input test (RECORDING.md TR1) */
+/* "rectest S": record S seconds from XP's preferred recording device (the input-only card) through waveIn, at
+   48 kHz s16 stereo, and report a test tone's quality: "rectest frames F hz H glitches G silent S first MS" */
+static DWORD WINAPI rectest_thread(LPVOID p)
+{
+    typedef MMRESULT (WINAPI *P_OPEN)(HANDLE *, UINT, const WAVEFORMATEX *, DWORD_PTR, DWORD_PTR, DWORD);
+    typedef MMRESULT (WINAPI *P_HDR)(HANDLE, LPWAVEHDR, UINT);
+    typedef MMRESULT (WINAPI *P_H)(HANDLE);
+    HMODULE m = LoadLibraryA("winmm.dll");
+    P_OPEN op = (P_OPEN)GetProcAddress(m, "waveInOpen");
+    P_HDR prep = (P_HDR)GetProcAddress(m, "waveInPrepareHeader"), add = (P_HDR)GetProcAddress(m, "waveInAddBuffer"), unprep = (P_HDR)GetProcAddress(m, "waveInUnprepareHeader");
+    P_H start = (P_H)GetProcAddress(m, "waveInStart"), stop = (P_H)GetProcAddress(m, "waveInStop"), reset = (P_H)GetProcAddress(m, "waveInReset"), cls = (P_H)GetProcAddress(m, "waveInClose");
+    int secs = *(int *)p, i;
+    DWORD want = (DWORD)secs * 48000, got = 0, t0, first = 0;
+    long zc = 0, glitch = 0, runs = 0, run = 0, fz = -1, lz = -1;
+    int prev = 0, pk = 0;
+    static short bufs[8][4800 * 2];
+    WAVEHDR h[8];
+    WAVEFORMATEX f;
+    HANDLE w, ev = CreateEventA(NULL, FALSE, FALSE, NULL);
+    f.wFormatTag = 1; f.nChannels = 2; f.nSamplesPerSec = 48000; f.wBitsPerSample = 16; f.nBlockAlign = 4; f.nAvgBytesPerSec = 192000; f.cbSize = 0;
+    {
+        int dev = rec_card();
+        send_line("rectest open: device %d of %u", dev, rec_ndevs());
+        if (op(&w, dev >= 0 ? (UINT)dev : WAVE_MAPPER, &f, (DWORD_PTR)ev, 0, 0x50000)) { send_line("rectest open failed"); return 0; }
+    }
+    for (i = 0; i < 8; i++) { memset(&h[i], 0, sizeof h[i]); h[i].lpData = (char *)bufs[i]; h[i].dwBufferLength = sizeof bufs[i]; prep(w, &h[i], sizeof h[i]); add(w, &h[i], sizeof h[i]); }
+    t0 = GetTickCount();
+    start(w);
+    while (got < want && GetTickCount() - t0 < (DWORD)secs * 1000 + 5000) {
+        WaitForSingleObject(ev, 200);
+        for (i = 0; i < 8; i++) if (h[i].dwFlags & 1) {
+            DWORD k, nf = h[i].dwBytesRecorded / 4;
+            short *d = (short *)h[i].lpData;
+            if (!first && nf) first = GetTickCount() - t0;
+            for (k = 0; k < nf && got < want; k++, got++) {
+                int a = d[2 * k], dd = a - prev;
+                if (a > pk) pk = a;
+                if (prev < 0 && a >= 0) { zc++; if (fz < 0) fz = got; lz = got; }
+                if (got && (dd > 6000 || dd < -6000)) glitch++;
+                if (a > -50 && a < 50) run++; else { if (run > 24) runs++; run = 0; }
+                prev = a;
+            }
+            unprep(w, &h[i], sizeof h[i]); h[i].dwFlags = 0; h[i].dwBytesRecorded = 0; prep(w, &h[i], sizeof h[i]); add(w, &h[i], sizeof h[i]);
+        }
+    }
+    stop(w); reset(w);
+    for (i = 0; i < 8; i++) unprep(w, &h[i], sizeof h[i]);
+    cls(w);
+    send_line("rectest frames %lu in %lu ms, peak %d, hz %.3f, glitches %ld, silent %ld, first %lu ms", got, GetTickCount() - t0, pk,
+              zc > 1 ? (double)(zc - 1) * 48000.0 / (lz - fz) : 0.0, glitch, runs, first);
+    return 0;
 }
 
 /* ---------------------------------------------------------------- windows */
@@ -711,6 +933,84 @@ static DWORD launch(const char *cmdline, int show)
     return pi.dwProcessId;
 }
 
+/* ---------------------------------------------------------------- the strip keys: Calculator's own 0-F
+   XP's Calculator keys are real push buttons (a window dump: class Button, ids 124-133 for 0-9 and 134-139 for A-F,
+   which Hex enables). So the real ones are used: a Calculator is opened (hidden), put in Scientific view and Hex, and
+   its sixteen digit keys move onto the strips, one per recorder (DNA.md numbers them 0..F). They keep their own
+   drawing and their own button states only: idle is a normal key; a sounding recorder's key is pressed
+   (BM_SETSTATE); the selected layer's keys have the default-button border (BM_SETSTYLE); held with the mouse, a
+   key auditions its recorder at the root rate. */
+static HWND hCalc, hDig[SY_NREC];
+static HWND w_lbl[SY_NREC];   /* the strips' own number labels (made with the window): when there is no Calculator */
+static RECT strip_rect(int r);
+static int dig_pressed[SY_NREC], dig_held = -1, dig_def[SY_NREC];
+#define DIG_W 26
+#define DIG_H 29
+static void calc_prepare(void)
+{
+    DWORD pid = launch("calc.exe", SW_SHOWMINNOACTIVE);
+    int r;
+    hCalc = wait_top("SciCalc", NULL, pid, 15000);
+    if (!hCalc) { logf_("ERROR: calc.exe did not start: the strips keep their numbers"); return; }
+    ShowWindow(hCalc, SW_HIDE);
+    if (!GetDlgItem(hCalc, 134)) {   /* Standard view has no A-F: View > Scientific, found by its name */
+        HMENU m = GetMenu(hCalc);
+        int i, j;
+        char t[64];
+        for (i = 0; m && i < GetMenuItemCount(m); i++) {
+            HMENU sm = GetSubMenu(m, i);
+            for (j = 0; sm && j < GetMenuItemCount(sm); j++) {
+                GetMenuStringA(sm, j, t, sizeof t, MF_BYPOSITION);
+                if (!lstrcmpiA(t, "&Scientific") || !lstrcmpiA(t, "Scientific")) SendMessageA(hCalc, WM_COMMAND, GetMenuItemID(sm, j), 0);
+            }
+        }
+    }
+    SendMessageA(GetDlgItem(hCalc, 306), BM_CLICK, 0, 0);   /* Hex: A-F enabled */
+    for (r = 0; r < SY_NREC; r++) {
+        RECT s = strip_rect(r);
+        HWND k = GetDlgItem(hCalc, r < 10 ? 124 + r : 134 + r - 10);
+        if (!k) { logf_("ERROR: Calculator key %X missing", r); continue; }
+        ShowWindow(k, SW_HIDE);
+        SetParent(k, win);
+        SetWindowPos(k, HWND_TOP, 2, s.top + 2, DIG_W, DIG_H, SWP_NOACTIVATE);
+        hDig[r] = k;
+    }
+    logf_("Calculator keys on the strips (calc pid %lu)", pid);
+}
+static int is_dig(HWND h) { int r; for (r = 0; r < SY_NREC; r++) if (h && h == hDig[r]) return 1; return 0; }
+static void dig_show(int r)
+{
+    if (hDig[r]) { ShowWindow(hDig[r], SW_SHOWNA); UpdateWindow(hDig[r]); }
+    else { ShowWindow(w_lbl[r], SW_SHOWNA); UpdateWindow(w_lbl[r]); }
+}
+static int layers_now(void) { return built_dna.n; }
+/* every 30 ms: pressed while sounding or held; the default border on the selected layer; a held key auditions */
+static void dig_tick(void)
+{
+    int r, held = -1, nl = layers_now();
+    POINT pt;
+    if (GetAsyncKeyState(VK_LBUTTON) < 0 && GetCursorPos(&pt)) {
+        HWND w = WindowFromPoint(pt);
+        for (r = 0; r < SY_NREC; r++) if (hDig[r] && w == hDig[r] && IsWindowVisible(hDig[r])) held = r;
+    }
+    if (held != dig_held) {
+        if (dig_held >= 0) { shm->s[dig_held].gate = 0; PostMessageA(rec[dig_held].w, msg_op, SYO_CUT, 0); }
+        if (held >= 0 && rec[held].layer >= 0) {   /* the audition: the recorder at its root rate, like its Play */
+            shm->s[held].rate = 0; shm->s[held].vol = 65535; shm->s[held].gate = 1;
+            PostMessageA(rec[held].w, msg_op, SYO_PLAY, 0);
+        }
+        dig_held = held;
+    }
+    for (r = 0; r < SY_NREC; r++) {
+        int p, d;
+        if (!hDig[r]) continue;
+        p = shm->s[r].playing || r == held;
+        if (p != dig_pressed[r]) { SendMessageA(hDig[r], BM_SETSTATE, p, 0); dig_pressed[r] = p; }
+        d = nl > 1 && rec[r].layer >= 0 && rec[r].layer == sel_layer;
+        if (d != dig_def[r]) { SendMessageA(hDig[r], BM_SETSTYLE, d ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON, TRUE); dig_def[r] = d; }
+    }
+}
+
 /* rect of a window in its parent's client coordinates */
 static RECT rel_rect(HWND h)
 {
@@ -727,17 +1027,19 @@ static RECT rel_rect(HWND h)
 static RECT kid_final[NKID];
 static void final_kids(void)
 {
-    /* rows are 34 px: room under the strips for the envelope editor and the keyboard */
-    SetRect(&kid_final[K_PLAY], 4, 5, 4 + 48, 5 + 23);
-    SetRect(&kid_final[K_STOP], 54, 5, 54 + 48, 5 + 23);
-    SetRect(&kid_final[K_PFRAME], 110, 1, 110 + 60, 1 + 31);
-    SetRect(&kid_final[K_PLABEL], 113, 3, 113 + 54, 3 + 14);
-    SetRect(&kid_final[K_POS], 113, 17, 113 + 54, 17 + 13);
-    SetRect(&kid_final[K_WAVE], 176, 1, 176 + 114, 1 + 31);
-    SetRect(&kid_final[K_LFRAME], 296, 1, 296 + 60, 1 + 31);
-    SetRect(&kid_final[K_LLABEL], 299, 3, 299 + 54, 3 + 14);
-    SetRect(&kid_final[K_LEN], 299, 17, 299 + 54, 17 + 13);
-    SetRect(&kid_final[K_TRACK], 362, 4, 362 + 196, 4 + 26);
+    /* rows are 34 px: room under the strips for the envelope editor and the keyboard. Play, Stop and Record stay
+       (Record records the strip's recorder: RECORDING.md 2.2); << and >> drop off, and the slider is 28 px shorter */
+    SetRect(&kid_final[K_PLAY], 4, 5, 4 + 40, 5 + 23);
+    SetRect(&kid_final[K_STOP], 46, 5, 46 + 40, 5 + 23);
+    SetRect(&kid_final[K_REC], 88, 5, 88 + 40, 5 + 23);
+    SetRect(&kid_final[K_PFRAME], 138, 1, 138 + 60, 1 + 31);
+    SetRect(&kid_final[K_PLABEL], 141, 3, 141 + 54, 3 + 14);
+    SetRect(&kid_final[K_POS], 141, 17, 141 + 54, 17 + 13);
+    SetRect(&kid_final[K_WAVE], 204, 1, 204 + 114, 1 + 31);
+    SetRect(&kid_final[K_LFRAME], 324, 1, 324 + 60, 1 + 31);
+    SetRect(&kid_final[K_LLABEL], 327, 3, 327 + 54, 3 + 14);
+    SetRect(&kid_final[K_LEN], 327, 17, 327 + 54, 17 + 13);
+    SetRect(&kid_final[K_TRACK], 390, 4, 390 + 168, 4 + 26);
 }
 static RECT strip_rect(int r)
 {
@@ -789,7 +1091,7 @@ static HWND page_of(HWND dlg)          /* the visible child dialog: the page */
 #define IDM_SEL 4350         /* + layer */
 #define IDM_AT 4400          /* + 0..9: position 0%,10%..90% */
 #define IDM_ABOUT 4500
-static HWND w_dna, w_apply, w_mutate, w_undo, w_layers, w_sounds, w_lbl[SY_NREC], w_cat;
+static HWND w_dna, w_apply, w_mutate, w_undo, w_layers, w_sounds, w_cat;
 #define ID_CAT 3007
 #define ID_FILT 3008         /* + 0..2 */
 static HWND w_filt[3];
@@ -1136,6 +1438,19 @@ static void browser_pick(void)
 
 static HWND mk(const char *cls, const char *text, DWORD st, int x, int y, int w, int h, int id, HFONT f);
 static int lib_tries;
+/* a disc went into (or out of) the CD drive: XP's shell would keep showing the old disc's icon and label until
+   Explorer restarts, so it is told, as Windows' own CD-ROM notification does: removed, inserted, image updated */
+static void disc_changed(const char *root)
+{
+    typedef void (WINAPI *SCN)(LONG, UINT, LPCVOID, LPCVOID);
+    SCN scn = (SCN)GetProcAddress(LoadLibraryA("shell32.dll"), "SHChangeNotify");
+    if (!scn) return;
+    scn(0x00000040 /* SHCNE_MEDIAREMOVED */, 0x0001 /* SHCNF_PATHA */, root, NULL);
+    scn(0x00000020 /* SHCNE_MEDIAINSERTED */, 0x0001, root, NULL);
+    scn(0x00001000 /* SHCNE_UPDATEDIR */, 0x0001 | 0x1000 /* SHCNF_FLUSH */, root, NULL);
+    logf_("disc changed: %s (shell told)", root);
+}
+
 static void lib_ready(void)
 {
     browser_fill();
@@ -1381,6 +1696,8 @@ static void env_show(void)
 #define ID_QWERTY 3263
 #define ID_OCTDN 3264
 #define ID_OCTUP 3265
+#define ID_KIT 3266           /* kit mode: the pad calculator */
+static HWND w_kit;
 static HWND w_key[KB_KEYS], w_bend, w_mod, w_hold, w_qwerty, w_octdn, w_octup, w_kbinfo, w_kbttl[4];
 static int kb_lo = 48;                 /* the lowest key: C3 */
 static int kb_oct = 0;                 /* the computer keyboard's octave, relative to kb_lo + 12 */
@@ -1531,6 +1848,14 @@ static void kb_make(void)
     w_octdn = mk("BUTTON", "<", BS_PUSHBUTTON, fr_kbd.left + 80, y0 + 51, 30, 20, ID_OCTDN, font);
     w_octup = mk("BUTTON", ">", BS_PUSHBUTTON, fr_kbd.left + 112, y0 + 51, 30, 20, ID_OCTUP, font);
     w_kbinfo = mk("STATIC", "", SS_LEFT, fr_kbd.left + 78, y0 + 74, 70, 13, 0, font);
+    {   /* kit mode: Calculator's icon, right of the keys (no reflow); disabled (greyed by Windows) without a kit */
+        typedef HICON (WINAPI *EIA)(HINSTANCE, LPCSTR, UINT);   /* shell32 through GetProcAddress (tcc has no import lib) */
+        EIA eia = (EIA)GetProcAddress(LoadLibraryA("shell32.dll"), "ExtractIconA");
+        HICON ic = eia ? eia(inst, "C:\\WINDOWS\\system32\\calc.exe", 0) : NULL;
+        w_kit = mk("BUTTON", "", BS_ICON | BS_PUSHBUTTON, fr_kbd.right - 32, y0 + 22, 28, 28, ID_KIT, NULL);
+        if ((UINT_PTR)ic > 1) SendMessageA(w_kit, BM_SETIMAGE, IMAGE_ICON, (LPARAM)ic);
+        EnableWindow(w_kit, FALSE);
+    }
     (void)hb;
     kb_info();
 }
@@ -1551,13 +1876,96 @@ static int kb_wheel_scroll(HWND c, int code)
     }
     return 0;
 }
+static void pad_show(int note, int on);
 static void kb_line(const char *l)             /* display lines from the host */
 {
     int a, b;
-    if (sscanf(l, "show %d %d", &a, &b) == 2 && a >= 0 && a < 128) { kb_host[a] = b > 0; key_show(a); }
+    if (sscanf(l, "show %d %d", &a, &b) == 2 && a >= 0 && a < 128) { kb_host[a] = b > 0; key_show(a); pad_show(a, b > 0); }
     else if (sscanf(l, "cc %d %d", &a, &b) == 2 && a == 1) { if (GetCapture() != w_mod) SendMessageA(w_mod, TBM_SETPOS_, TRUE, 127 - b); }
     else if (sscanf(l, "bend %d", &a) == 1) { if (GetCapture() != w_bend) SendMessageA(w_bend, TBM_SETPOS_, TRUE, 64 - a / 128); }
 }
+/* ---------------------------------------------------------------- kit mode: the button and the pad calculator
+   (PRESET-ENGINE-2 15.4b, as BASILISK 16 does it). By the keyboard strip, a button with Calculator's own icon:
+   active when the DNA is a kit (it has k pad tokens), greyed by Windows itself (disabled) when not. It opens a second,
+   real Calculator in Standard view whose sixteen keys on the left are the pads, 4 x 4 in MPC order (pad 1 bottom
+   left), each labelled with its computer key (1234 / QWER / ASDF / ZXCV, top row first). A click or that key plays
+   the pad's note (the k token's own note, in written order) through the plugin like the keyboard strip; the host's
+   notes light the pads (BM_SETSTATE). Calculator's other keys and display are hidden. */
+static HWND hPadCalc, hPad[16];
+static int pad_note[16], npad, pad_held[16], pad_lit[16];
+static const int pad_id[16] = {124, 80, 85, 92,  125, 126, 127, 93,  128, 129, 130, 91,  131, 132, 133, 90};   /* rows bottom..top */
+static const char pad_key[16] = {'Z', 'X', 'C', 'V',  'A', 'S', 'D', 'F',  'Q', 'W', 'E', 'R',  '1', '2', '3', '4'};
+static void kit_scan(const char *dna)   /* the k tokens' notes, in written order; "kd": the map is off */
+{
+    const char *g = strchr(dna, ';'), *q;
+    int on = 1;
+    npad = 0;
+    if (g) for (q = g + 1; *q && npad < 16; q++) {
+        if (*q != 'k') continue;
+        if (q[1] == 'd') { on = 0; continue; }
+        if (q[1] >= '0' && q[1] <= '9') pad_note[npad++] = atoi(q + 1);
+    }
+    if (!on) npad = 0;
+    if (w_kit) EnableWindow(w_kit, npad > 0);
+    if (!npad && hPadCalc && IsWindow(hPadCalc)) ShowWindow(hPadCalc, SW_HIDE);
+}
+static void padcalc_open(void)
+{
+    DWORD pid;
+    int i;
+    HWND c;
+    if (hPadCalc && IsWindow(hPadCalc)) { ShowWindow(hPadCalc, SW_SHOWNORMAL); SetForegroundWindow(hPadCalc); return; }
+    pid = launch("calc.exe", SW_SHOWNORMAL);
+    hPadCalc = wait_top("SciCalc", NULL, pid, 15000);
+    if (!hPadCalc) { logf_("ERROR: the pad calculator: calc.exe did not start"); return; }
+    if (GetDlgItem(hPadCalc, 134)) {   /* Scientific view: View > Standard, found by its name */
+        HMENU m = GetMenu(hPadCalc);
+        int a, b;
+        char t[64];
+        for (a = 0; m && a < GetMenuItemCount(m); a++) {
+            HMENU sm = GetSubMenu(m, a);
+            for (b = 0; sm && b < GetMenuItemCount(sm); b++) {
+                GetMenuStringA(sm, b, t, sizeof t, MF_BYPOSITION);
+                if (!lstrcmpiA(t, "S&tandard") || !lstrcmpiA(t, "&Standard") || !lstrcmpiA(t, "Standard")) SendMessageA(hPadCalc, WM_COMMAND, GetMenuItemID(sm, b), 0);
+            }
+        }
+    }
+    for (c = GetWindow(hPadCalc, GW_CHILD); c; c = GetWindow(c, GW_HWNDNEXT)) ShowWindow(c, SW_HIDE);   /* its own keys go */
+    for (i = 0; i < 16; i++) {
+        char t[2] = {pad_key[i], 0};
+        hPad[i] = GetDlgItem(hPadCalc, pad_id[i]);
+        if (!hPad[i]) continue;
+        SetWindowTextA(hPad[i], t);
+        EnableWindow(hPad[i], i < npad);
+        ShowWindow(hPad[i], SW_SHOWNA);
+    }
+    SetWindowTextA(hPadCalc, "Pads");
+    SetWindowPos(hPadCalc, HWND_TOP, 640, 420, 0, 0, SWP_NOSIZE);
+    SetForegroundWindow(hPadCalc);
+    logf_("pad calculator open (pid %lu), %d pads", pid, npad);
+}
+/* every 30 ms while the pads are up: a click held on a pad or its key pressed (Calculator in front) plays it */
+static void pad_tick(void)
+{
+    int i;
+    POINT pt;
+    HWND under = NULL, fg = GetForegroundWindow();
+    if (!hPadCalc || !IsWindow(hPadCalc) || !IsWindowVisible(hPadCalc)) {
+        for (i = 0; i < 16; i++) if (pad_held[i]) { pad_held[i] = 0; send_line("key %d 0", pad_note[i]); }
+        return;
+    }
+    if (GetAsyncKeyState(VK_LBUTTON) < 0 && GetCursorPos(&pt)) under = WindowFromPoint(pt);
+    for (i = 0; i < 16 && i < npad; i++) {
+        int h = (hPad[i] && under == hPad[i]) || (fg == hPadCalc && GetAsyncKeyState(pad_key[i]) < 0);
+        if (h != pad_held[i]) { pad_held[i] = h; send_line("key %d %d", pad_note[i], h ? 100 : 0); }
+    }
+}
+static void pad_show(int note, int on)   /* the host's notes light the pads */
+{
+    int i;
+    for (i = 0; i < npad; i++) if (pad_note[i] == note && hPad[i] && on != pad_lit[i]) { SendMessageA(hPad[i], BM_SETSTATE, on, 0); pad_lit[i] = on; }
+}
+
 /* the computer keyboard: a w s e d f t g y h u j k = C..C, z x octave, c v velocity */
 static int kb_pc(MSG *m)
 {
@@ -1692,7 +2100,8 @@ static LRESULT CALLBACK wnd_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
     switch (m) {
     case WM_LINE: {
         char *l = (char *)lp;
-        if (!strncmp(l, "hi", 2)) send_line("hi 1 xp %s", assembled ? "ready" : "wait");
+        if (!strncmp(l, "hi 3", 4)) send_line("hi 3 xp %s win,rate,kit", assembled ? "ready" : "wait");   /* DNA v3: the caps */
+        else if (!strncmp(l, "hi", 2)) send_line("hi 1 xp %s", assembled ? "ready" : "wait");
         else if (!strncmp(l, "dna ", 4)) { SetWindowTextA(w_dna, l + 4); refresh_panel(); start_build(l + 4, 0); }
         else if (!strncmp(l, "env ", 4)) {
             int a, d, s, r;
@@ -1724,11 +2133,12 @@ static LRESULT CALLBACK wnd_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
             }
         } else if (!strncmp(l, "go", 2)) PostMessageA(h, WM_APP + 9, 0, 0);
         else if (!strncmp(l, "vis ", 4)) visible_build = atoi(l + 4);
+        else if (!strncmp(l, "rectest ", 8)) { static int secs; secs = atoi(l + 8); CloseHandle(CreateThread(NULL, 0, rectest_thread, &secs, 0, NULL)); }
         else if (!strncmp(l, "show ", 5) || !strncmp(l, "cc ", 3) || !strncmp(l, "bend ", 5)) kb_line(l);
         else if (!strncmp(l, "lib", 3)) {
             const char *q = l + 3;
             while (*q == ' ') q++;
-            if (*q) { char root[8]; lstrcpynA(root, q, 4); if (root[2] != '\\') { root[2] = '\\'; root[3] = 0; } lib_load(root); }
+            if (*q) { char root[8]; lstrcpynA(root, q, 4); if (root[2] != '\\') { root[2] = '\\'; root[3] = 0; } lib_load(root); disc_changed(root); }
             else lib_find();
             if (!lib_root[0]) { lib_tries = 0; SetTimer(h, 77, 500, NULL); }   /* XP has not seen the disc yet */
             else lib_ready();
@@ -1738,12 +2148,14 @@ static LRESULT CALLBACK wnd_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
     }
     case WM_BUILT:
         InvalidateRect(h, &plate_rc, TRUE);
+        kit_scan(built_text);
         if (wp) send_line("edit %s", built_text);
         if (strcmp(dna_text, built_text)) start_build(dna_text, (int)wp);   /* a newer one came in meanwhile */
         refresh_panel();
         return 0;
     case WM_COMMAND: {
         int id = LOWORD(wp), code = HIWORD(wp), r;
+        if (is_dig((HWND)lp)) return 0;   /* a Calculator key: held is handled by dig_tick, a click is nothing more */
         /* a strip's own buttons and slider were reparented here, so their clicks arrive here: hand them back */
         for (r = 0; r < SY_NREC; r++) {
             if (lp && (HWND)lp == rec[r].kid[K_PLAY]) { shm->s[r].rate = 0; shm->s[r].vol = 65535; shm->s[r].gate = 1; PostMessageA(rec[r].w, msg_op, SYO_PLAY, 0); return 0; }
@@ -1754,6 +2166,7 @@ static LRESULT CALLBACK wnd_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
         if (id == ID_CAT && code == CBN_SELCHANGE) { browser_list(); return 0; }
         if (id >= ID_FILT && id < ID_FILT + 3 && code == BN_CLICKED) { pre_filter = id - ID_FILT; browser_list(); return 0; }
         if (id == ID_ENV + 20 && code == BN_CLICKED) { env_clear(); return 0; }
+        if (id == ID_KIT) { padcalc_open(); return 0; }
         if (id == ID_HOLD) { if (SendMessageA(w_hold, BM_GETCHECK, 0, 0) != BST_CHECKED) kb_release_hold(); SetFocus(win); return 0; }
         if (id == ID_QWERTY) { SetFocus(win); return 0; }
         if (id == ID_OCTDN || id == ID_OCTUP) { kb_oct += id == ID_OCTDN ? -1 : 1; if (kb_oct < -3) kb_oct = -3; if (kb_oct > 4) kb_oct = 4; kb_info(); SetFocus(win); return 0; }
@@ -1762,6 +2175,8 @@ static LRESULT CALLBACK wnd_proc(HWND h, UINT m, WPARAM wp, LPARAM lp)
         return 0;
     }
     case WM_TIMER:
+        if (wp == 79) { dig_tick(); return 0; }
+        if (wp == 80) { pad_tick(); return 0; }
         if (wp == 78) {
             /* the recorders' stream underruns (srhook): each one is a gap of silence in XP's output */
             static LONG last;
@@ -1889,6 +2304,8 @@ static void make_window(void)
     env_make();
     kb_make();
     SetTimer(win, 78, 2000, NULL);
+    SetTimer(win, 79, 30, NULL);   /* the Calculator keys' states */
+    SetTimer(win, 80, 30, NULL);   /* the pad calculator */
     mac_make();
     port_clk = CreateWindowExA(0, "BasiliskPort", "", WS_CHILD | WS_CLIPCHILDREN, fr_clk.left + (fr_clk.right - fr_clk.left - sz_clk.cx) / 2, fr_clk.top + 16, sz_clk.cx, sz_clk.cy, win, NULL, inst, NULL);
 }
@@ -1970,13 +2387,13 @@ static void run_ev(Ev *e)
         if (r == 0) { kbd_frame = 1; { RECT e = fr_kbd; InvalidateRect(win, &e, TRUE); } ShowWindow(w_kbttl[0], SW_SHOWNA); }
         if (r < KB_KEYS) { ShowWindow(w_key[r], SW_SHOWNA); UpdateWindow(w_key[r]); }
         else {
-            HWND c[] = {w_bend, w_mod, w_hold, w_qwerty, w_octdn, w_octup, w_kbinfo, w_kbttl[1], w_kbttl[2]};
+            HWND c[] = {w_bend, w_mod, w_hold, w_qwerty, w_octdn, w_octup, w_kbinfo, w_kbttl[1], w_kbttl[2], w_kit};
             int i;
-            for (i = 0; i < 9; i++) ShowWindow(c[i], SW_SHOWNA);
+            for (i = 0; i < 10; i++) ShowWindow(c[i], SW_SHOWNA);
             UpdateWindow(win);
         }
         break;
-    case EV_LBL: ShowWindow(w_lbl[r], SW_SHOWNA); UpdateWindow(w_lbl[r]); break;
+    case EV_LBL: dig_show(r); break;
     case EV_PANEL: {
         HWND p[] = {w_dna, w_apply, w_mutate, w_undo, w_layers, w_sounds};
         if (r < 6) { ShowWindow(p[r], SW_SHOWNA); UpdateWindow(p[r]); }
@@ -2011,7 +2428,7 @@ void assemble(void)
     logf_("go");
     nev = 0;
     final_kids();
-    memcpy(shm->kid_final, kid_final, sizeof kid_final[0] * 10);
+    memcpy(shm->kid_final, kid_final, sizeof kid_final[0] * NKID);
     add_ev(0, EV_TRAY, 0);
     for (r = 0; r < SY_NREC; r++) {
         /* a wave across the desktop: each loses its menu bar, then its frame, then the buttons it won't need ... */
@@ -2051,7 +2468,7 @@ void assemble(void)
             }
             for (r = 0; r < SY_NREC; r++) if (flying[r] == 1 && WaitForSingleObject(ev_done[r], 0) == WAIT_OBJECT_0) {
                 flying[r] = 2; landed++;
-                ShowWindow(w_lbl[r], SW_SHOWNA); UpdateWindow(w_lbl[r]);
+                dig_show(r);
             }
             /* the borrowed pages move in once every strip has landed: nothing flies over them after that */
             /* the borrowed pages move in as the last strip leaves their side of the screen */
@@ -2143,7 +2560,9 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp_, LPSTR cmd, int show)
     lib_find();
     make_window();
     shm->synth_hwnd = (LONG)win;
+    rec_prefer();
     keepalive();
+    sched_start();
     open_com();
     tx_ev = CreateEventA(NULL, FALSE, FALSE, NULL);
     CloseHandle(CreateThread(NULL, 0, com_thread, NULL, 0, NULL));
@@ -2154,6 +2573,12 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp_, LPSTR cmd, int show)
         DWORD pid = launch("rundll32.exe shell32.dll,Control_RunDLL timedate.cpl", SW_SHOWNOACTIVATE);
         dt_dlg = wait_top("#32770", "Date and Time", 0, 20000);
         if (dt_dlg) { SetWindowPos(dt_dlg, HWND_BOTTOM, 24, 404, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE); Sleep(300); dt_page = page_of(dt_dlg); }
+        if (dt_page) {
+            /* the page's own "Time" group box would repeat the panel's title (one label: the panel's) */
+            HWND c = GetDlgItem(dt_page, 104);   /* the "&Time" group box (a window dump of XP's timedate.cpl) */
+            if (c && (GetWindowLongA(c, GWL_STYLE) & 0x0F) == 7 /* BS_GROUPBOX */) { ShowWindow(c, SW_HIDE); logf_("date and time: its Time group box hidden"); }
+            else logf_("date and time: no Time group box (id 104)");
+        }
         logf_("date and time %p page %p (pid %lu)", dt_dlg, dt_page, pid);
     }
     {
@@ -2169,6 +2594,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp_, LPSTR cmd, int show)
         }
         logf_("task manager %p page %p", tm_dlg, tm_page);
     }
+    calc_prepare();   /* the strips' 0-F keys */
 
     /* sixteen Sound Recorders, tiled over the desktop */
     dll = LoadLibraryA("C:\\synth\\srhook.dll");

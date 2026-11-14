@@ -12,8 +12,12 @@ DPF_TARGET_DIR ?= $(CURDIR)/bin
 FILES_DSP = \
 	BasiliskSynthPlugin.cpp \
 	Machine.cpp \
+	DBusIn.cpp \
 	../core/dna.cpp \
-	../core/voices.cpp
+	../core/voices.cpp \
+	../core/dna3.cpp \
+	../core/engine3.cpp \
+	../core/scales.cpp
 
 FILES_UI = \
 	BasiliskSynthUI.cpp

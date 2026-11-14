@@ -24,6 +24,10 @@ inline int on2(char *b, int n, int rec, unsigned rate, unsigned vol, int pan, un
 inline int lenv(char *b, int n, int layer, char which, const Env &e) { return std::snprintf(b, n, "lenv %d %c %s\n", layer, which, envText(e).c_str()); }
 inline int off(char *b, int n, int rec) { return std::snprintf(b, n, "off %d\n", rec); }
 inline int cut(char *b, int n, int rec) { return std::snprintf(b, n, "cut %d\n", rec); }
+// XP 1.3: an offline render sends notes ahead; "off <rec> <delay_ms>" and "cut <rec> <delay_ms>" run that much later
+// (only when the delay is not 0, so every other line is unchanged)
+inline int off(char *b, int n, int rec, unsigned delayMs) { return delayMs ? std::snprintf(b, n, "off %d %u\n", rec, delayMs) : off(b, n, rec); }
+inline int cut(char *b, int n, int rec, unsigned delayMs) { return delayMs ? std::snprintf(b, n, "cut %d %u\n", rec, delayMs) : cut(b, n, rec); }
 inline int panic(char *b, int n) { return std::snprintf(b, n, "panic\n"); }
 inline int env(char *b, int n, int a, int d, int s, int r) { return std::snprintf(b, n, "env %d %d %d %d\n", a, d, s, r); }
 inline int time(char *b, int n, int Y, int M, int D, int h, int m, int s) { return std::snprintf(b, n, "time %d %d %d %d %d %d\n", Y, M, D, h, m, s); }
@@ -33,8 +37,8 @@ inline int cmd(char *b, int n, const Cmd &c)
 {
     switch (c.kind) {
     case Cmd::On: return on2(b, n, c.rec, c.rateHz, c.vol, c.pan, c.delayMs, c.layer);
-    case Cmd::Off: return off(b, n, c.rec);
-    case Cmd::Cut: return cut(b, n, c.rec);
+    case Cmd::Off: return off(b, n, c.rec, c.delayMs);
+    case Cmd::Cut: return cut(b, n, c.rec, c.delayMs);
     case Cmd::Panic: return panic(b, n);
     }
     return 0;

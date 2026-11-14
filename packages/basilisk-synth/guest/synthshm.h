@@ -74,6 +74,10 @@ typedef struct {
     volatile LONG under;      /* the fast path's stream ran dry this many times (a gap in XP's output) */
     volatile LONG layer;      /* v2: which layer's envelope applies (-1: none) */
     volatile LONG menu_x, menu_y;   /* SYO_CMDV: where the menu pops up (screen) */
+    /* v3 (PRESET-ENGINE-2 3): set before the note's event / with their sequence numbers bumped last */
+    volatile LONG win_from, win_to;   /* this note plays source frames [from, to); 0 0: the whole sound */
+    volatile LONG rate_new, glide_ms, regate, rate_seq;   /* "rate": a sounding note's new rate, its ramp, hold again */
+    volatile LONG choke_ms, choke_seq;                    /* "choke": end the sounding note with a fade of choke_ms */
     WCHAR pcmfile[260];       /* SYO_LOADPCM: the Sound Recorder's own file */
     WCHAR file[260];          /* the next Open/Save/Insert/Mix dialog answers with this file */
 } SySlot;
@@ -84,6 +88,7 @@ typedef struct {
     volatile LONG pad[10];
     struct { volatile LONG n; volatile LONG t[8], v[8]; } env[8][2];   /* v2 lenv: per layer, [0] amplitude, [1] pan */
     RECT kid_final[16];       /* where a strip's controls end up, in this order: Play, Stop, Position frame,
-                                 "Position:", position, wave, Length frame, "Length:", length, slider */
+                                 "Position:", position, wave, Length frame, "Length:", length, slider, <<, >>, Record
+                                 (<< and >> are not placed: they drop off) */
     SySlot s[SY_NREC];
 } SyShm;

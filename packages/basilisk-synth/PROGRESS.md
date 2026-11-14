@@ -202,6 +202,34 @@ Done and measured in the real machine (machine-3):
 - Not done: bit-identical renders (XP is not sample-accurate); Windows pitch ~10 cents mean (the playout drift
   trim modulates speed under load); the layer table from ui-layouts.md (the Layers list stays); .vstpreset files.
 
+## Open for the batched release (from the site lane's 1.2.1 renders)
+- Macro Echoes: 6/8 chords - chords landing during an echo-count (N) rebuild drop. Fix with guest-scheduled
+  offline notes (send ahead with delay_ms) on top of keep-old-buffers.
+- Recycle Perc 24/26; Click Harp 27/32 in 1.2.1 vs 31/32 in 1.2.0 with the same DNA - a small timing regression to
+  bisect (candidates: offline pacing + build wait, globals-only dna lines, keep-old pools).
+
+- Library tab / packs as discs (PE2 16): after a disc swap XP keeps the old disc's icon until Explorer restarts.
+  Plan: synth.exe sends SHChangeNotify(SHCNE_MEDIAREMOVED then SHCNE_MEDIAINSERTED, SHCNF_PATH, "D:\\") after each
+  "lib" swap, plus SHCNE_UPDATEIMAGE if the icon persists; test with the pack ISOs in library/packs/out/.
+
+- Calculator 0-F channel keys (owner): real XP button states only, no solid colour blocks. Idle = normal;
+  sounding = pressed (BM_SETSTATE); selected = focus rectangle or default-button border; hot = themed hot state;
+  layer membership = a light tint only if needed (replaces the colour bar). Match BASILISK 16; verify each state
+  with 8x crops. Clicking auditions the slot at its root rate while held.
+
+- Editor smoothness (site lane): 138/315 frames identical, still runs up to 0.37 s - the VNC client only gets a
+  frame when it asks; keep an update request always outstanding (and cap at 30 fps), or take frames from the dbus
+  display now that it is connected (Listener Scanout/Update). Target a steady 30 fps without smearing.
+- Possible playout gap (site lane): a -29 dB tail in Wide Chimes' 700 ms release cut to exact silence for ~240 ms,
+  then resumed. Check for an unprime/re-prime (underrun) in the audio log during that render, or the voice cut
+  (steal/end) path; reproduce with the same DNA and score.
+- bsynth-host: the site lane has a local patch with screen grabs on their own thread, triggered on the audio
+  clock - ask for it before changing --shots.
+
+- Kit mode (later, match BASILISK 16 / PE2 15): a Calculator-icon button by the keyboard strip, greyed without a
+  kit and active with one, no reflow; it opens a "pad calculator" (a modified real calc.exe) with a 4x4 pad grid
+  labelled 1234/qwer/asdf/zxcv, triggered by clicks and those keys, lit by MIDI.
+
 ## X0 (2026-11-13): audio input through QEMU's dbus backend on a second, input-only AC97 card
 Probes in tools/x0. Upstream QEMU 11.1 (the builds we ship: Stefan Weil's on Windows, Homebrew's on macOS) is enough:
 no QEMU build of our own is needed.

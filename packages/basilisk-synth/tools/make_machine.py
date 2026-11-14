@@ -109,6 +109,9 @@ def main():
                   '-L', os.path.join(q, 'share'), '-accel', 'tcg,thread=multi,tb-size=256',
                   '-audiodev', 'wav,id=snd0,path=%s,out.frequency=44100,out.channels=2,out.format=s16' % os.path.join(work, 'boot.wav'),
                   '-device', 'AC97,audiodev=snd0',
+                  # X1 (RECORDING.md 1.2): the second, input-only AC97; the plugin backs it with -audiodev dbus (the
+                  # backend is not part of the saved state, so the build machine's QEMU can use none)
+                  '-audiodev', 'none,id=snd1', '-device', 'AC97,audiodev=snd1',
                   '-chardev', 'socket,id=ser0,path=%s,server=on,wait=off' % coms, '-serial', 'chardev:ser0',
                   '-vnc', 'unix:%s' % os.path.join(work, 'vnc.sock'),
                   '-qmp', 'unix:%s,server=on,wait=off' % qmps, '-gdb', 'tcp:127.0.0.1:1239']
@@ -124,6 +127,7 @@ def main():
     c.settimeout(1)
     buf = b''
     state = None
+    built = False
     while time.time() - t0 < 1200:
         if p.poll() is not None:
             sys.exit('QEMU stopped')
@@ -139,11 +143,13 @@ def main():
             if line.startswith(b'built'):
                 built = True
         buf = buf.split(b'\n')[-1]
-        if state == 'wait':
+        # the snapshot is taken only once the default sound is built: a build still running when the machine is
+        # saved finishes after a resume, and its "built" then arrives after the plugin's own DNA (1.2.2)
+        if state == 'wait' and built:
             break
         time.sleep(2)
-    if state != 'wait':
-        sys.exit('synth.exe never answered')
+    if state != 'wait' or not built:
+        sys.exit('synth.exe never answered' if state != 'wait' else 'the default sound was never built')
     print('synth.exe answered after %.0fs; settling %.0fs' % (time.time() - t0, a.settle), flush=True)
     time.sleep(a.settle)
     g = Gdb(1239)
