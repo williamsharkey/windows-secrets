@@ -15,7 +15,7 @@ Every sound comes from the sixteen Sound Recorders through the emulated card, as
   every file next to it and its own `.htaccess` (COOP/COEP on the page, CORP on the files). In git:
   `site/sndwave2000/play/` (the large files are not).
 - **sndrec/try/** (BASILISK 16, the earlier build): retired. Only a redirect is left there (`.htaccess` 301 and an
-  `index.html` meta refresh to /sndwave2000/play/), plus `poster.png`, which /sndwave2000/ shows.
+  `index.html` meta refresh to /sndwave2000/play/).
   `insert_section.py` can still put the block into another page.
 
 ## How it runs
