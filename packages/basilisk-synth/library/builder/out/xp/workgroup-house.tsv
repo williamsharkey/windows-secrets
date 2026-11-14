@@ -27,7 +27,7 @@ Keys	Open Ballad	emh_typewriter_ks#8/default@t300]#8T23L17O19Q-10;A0D2051S37R399
 Keys	Rose Ballad	chord>-#8Q-31/ems_typebar#8FL35;A0D2109S5R579V83K57G4
 Keys	Rose Upright	tada+#5/crystal_bell_bb5@t2000]#5T-6L38O23Q15/floppy_seek_clunk#6FL43;A2D2344S27R179V74K64G-6
 Keys	Soft Ivories	piano_upright_cs3>#8/kalimba_g5@t1200]#8T6L22Q18;A1D687S36R194V90K61G-3
-Keys	Stone Etude	marimba_c4#8/ems_typebar>#8FL39;A3D1065S1R315V82K60G-4
+Keys	Stone Etude	marimba_c4#8/ems_typebar>#8FL39;A3D1065S1R315V82K72G-4
 Keys	Urban Parlour	xpding;A5D584S13R227V71K59G5
 Keys	Warehouse Piano Stack	chord@5[@40]#10H0,12/ding@15]#6L35;A0D1100S20R250V70K57G-3
 Lead	Kinetic Song	tadaxp@30[@30]@0CP@0CP@0CP@0CP#8/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#4T1L30;A20R150V80K60G9
@@ -69,7 +69,7 @@ Stab	Lattice Section	epiano_yamaha_vibeE>>H0,-12U2~6;A1D330S50R201V74K60G-13
 Stab	Night Accent	tada#11U2~7/organ_pedal_25@t3000]@t300[#5T4L51;A8D751S16R451V84K64G-4
 Stab	Radiant Blast	chord#11H0,12U2~5/kalimba_c4@t1500]#3T-15L65Q-31/contrabass_sus_d1@t3000]@t200[#2T7L56;A15D670S45R465V75K45G-4
 Stab	Rainy Accent	chordxpU2~5;A1D261S36R449V72K55
-Stab	Soft Hit	horn_sus_c3@t3000]#10U3~8/ringout#3T-33L40/batlow#3L42;A25D278S58R150V95K48G-10
+Stab	Soft Hit	horn_sus_c3@t3000]#10U3~8/ringout#3T-21L40/batlow#3T12L42;A25D278S58R150V95K60G-10
 Stab	Steel Stab	chordxp@20]<+C@50XC@50XH0,12;A0D400S0R200V80K55G-1
 Stab	Velvet Minor Nine	xpding@25]<#6H0,3,7,10,14/xpding@25]<E#5H0,3,7,10L30O375Q-45/xpding@25]<#5H0,3,7L18O750Q45;A0D700S20R450V80K47G3
 Stab	Woven Herald	chord@25]<#9H0,3,7,10,14/hwfail#2T-15L51/xpding@25]<#5T-2H0,3,7L18O750Q45;A0D700S20R450V80K45

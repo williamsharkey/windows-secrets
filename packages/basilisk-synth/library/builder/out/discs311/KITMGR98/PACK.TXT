@@ -10,7 +10,7 @@ Version: 1.02
 Author: Fennwick Systems Corporation
 Date: 1998-08-24
 Presets: 39
-Presets311: 27
+Presets311: 39
 PresetsXP: 39
 Favourites: 0
 Description: Map any drum to any key. Restart not required.

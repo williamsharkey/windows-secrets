@@ -76,6 +76,7 @@ def main():
     ap.add_argument('--parallel', type=int, default=4)
     ap.add_argument('--out', default=os.path.expanduser('~/libbuild/previews'))
     ap.add_argument('--build', default=os.environ.get('SNDWAVE_BUILD', '?'))
+    ap.add_argument('--check-only', action='store_true')
     a = ap.parse_args()
     libs = {f: load_json(f) for f in a.libs}
     from make_discs import ratings
@@ -94,6 +95,9 @@ def main():
         p['check311'] = {'build': a.build, 'ok': ok, 'why': why, 'score': sc}
         nok += ok
     print('re-check: %d/%d pass' % (nok, len(allp)), flush=True)
+    if a.check_only:
+        for f, L in libs.items(): save_json(f, L)
+        return
     # 2. the previews
     jobs = []
     for f, p in allp:

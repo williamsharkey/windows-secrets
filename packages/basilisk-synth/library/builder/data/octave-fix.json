@@ -1,0 +1,564 @@
+{
+ "fixed": [
+  [
+   "workgroup-house",
+   "Soft Hit"
+  ],
+  [
+   "techno-server",
+   "Late Line"
+  ],
+  [
+   "techno-server",
+   "Mild Bottom"
+  ],
+  [
+   "trance-connectivity",
+   "Global Pilot"
+  ],
+  [
+   "trance-connectivity",
+   "Delta Pizz"
+  ],
+  [
+   "trance-connectivity",
+   "Early Basement"
+  ],
+  [
+   "breakbeat-resource",
+   "Spare Halo"
+  ],
+  [
+   "breakbeat-resource",
+   "Sunday Chord"
+  ],
+  [
+   "breakbeat-resource",
+   "Rainy Chord"
+  ],
+  [
+   "breakbeat-resource",
+   "Ivory Hit"
+  ],
+  [
+   "bass-enterprise",
+   "Cathode Sub"
+  ],
+  [
+   "bass-enterprise",
+   "Cold Basement"
+  ],
+  [
+   "bass-enterprise",
+   "Pale Basement"
+  ],
+  [
+   "bass-enterprise",
+   "Lattice Accent"
+  ],
+  [
+   "beat-management",
+   "Upright Thump"
+  ],
+  [
+   "beat-management",
+   "Flute Loop Lead"
+  ],
+  [
+   "beat-management",
+   "Civic Wire"
+  ],
+  [
+   "beat-management",
+   "Daylight Canopy"
+  ],
+  [
+   "beat-management",
+   "Dusk Tremolo"
+  ],
+  [
+   "beat-management",
+   "Wired Swell"
+  ],
+  [
+   "beat-management",
+   "Golden Section"
+  ],
+  [
+   "retro-display",
+   "Mild Pad"
+  ],
+  [
+   "retro-display",
+   "Satin Voice"
+  ],
+  [
+   "retro-display",
+   "Urban Floor"
+  ],
+  [
+   "retro-display",
+   "Night Window Strings"
+  ],
+  [
+   "retro-display",
+   "Coral Section"
+  ],
+  [
+   "retro-display",
+   "Western Violins"
+  ],
+  [
+   "screen-saver",
+   "Midnight Halo"
+  ],
+  [
+   "screen-saver",
+   "Vinyl Aurora"
+  ],
+  [
+   "screen-saver",
+   "Breath Flute"
+  ],
+  [
+   "screen-saver",
+   "Crystal Line"
+  ],
+  [
+   "diagnostics",
+   "Coded Bells"
+  ],
+  [
+   "diagnostics",
+   "Hollow Song"
+  ],
+  [
+   "diagnostics",
+   "Azure Ray"
+  ],
+  [
+   "diagnostics",
+   "Copper Veil"
+  ],
+  [
+   "leisure",
+   "Mint Ballad"
+  ],
+  [
+   "leisure",
+   "Broadcast Section"
+  ],
+  [
+   "leisure",
+   "Lunar Ensemble"
+  ],
+  [
+   "leisure",
+   "Dusty Strings"
+  ],
+  [
+   "workstation-classics",
+   "Lagoon Signal"
+  ],
+  [
+   "workstation-classics",
+   "Sonic Ray"
+  ],
+  [
+   "workstation-classics",
+   "Global Solo"
+  ],
+  [
+   "workstation-classics",
+   "Meadow Low"
+  ],
+  [
+   "workstation-classics",
+   "Washed Pluck"
+  ],
+  [
+   "studio-archive",
+   "Early Felt"
+  ],
+  [
+   "studio-archive",
+   "Steady Etude"
+  ],
+  [
+   "studio-archive",
+   "Ember Chords"
+  ],
+  [
+   "studio-archive",
+   "Wide Hammers"
+  ],
+  [
+   "studio-archive",
+   "Soft Keys"
+  ],
+  [
+   "studio-archive",
+   "Daylight Bows"
+  ],
+  [
+   "studio-archive",
+   "Crystal Legato"
+  ],
+  [
+   "studio-archive",
+   "Humid Swell"
+  ],
+  [
+   "studio-archive",
+   "Swift Fanfare"
+  ],
+  [
+   "studio-archive",
+   "Opal Fanfare"
+  ],
+  [
+   "studio-archive",
+   "Daylight Atrium"
+  ],
+  [
+   "studio-archive",
+   "Vinyl Atrium"
+  ],
+  [
+   "studio-archive",
+   "Crystal Toll"
+  ],
+  [
+   "studio-archive",
+   "Global Glock"
+  ],
+  [
+   "studio-archive",
+   "Basement Chimes"
+  ],
+  [
+   "studio-archive",
+   "Silver Sub"
+  ],
+  [
+   "workgroup-house",
+   "Stone Etude"
+  ],
+  [
+   "techno-server",
+   "Quiet Sub"
+  ],
+  [
+   "techno-server",
+   "Global Glow"
+  ],
+  [
+   "trance-connectivity",
+   "Blue Signal"
+  ],
+  [
+   "breakbeat-resource",
+   "Blue End"
+  ],
+  [
+   "breakbeat-resource",
+   "Lucid Rumble"
+  ],
+  [
+   "breakbeat-resource",
+   "Laser Foundation"
+  ],
+  [
+   "breakbeat-resource",
+   "Lobby Cloud"
+  ],
+  [
+   "breakbeat-resource",
+   "Radiant Accent"
+  ],
+  [
+   "breakbeat-resource",
+   "Blue Accent"
+  ],
+  [
+   "bass-enterprise",
+   "Flat Weight"
+  ],
+  [
+   "bass-enterprise",
+   "Brushed Thump"
+  ],
+  [
+   "bass-enterprise",
+   "Slow Anchor"
+  ],
+  [
+   "bass-enterprise",
+   "Northern Thump"
+  ],
+  [
+   "bass-enterprise",
+   "Broadcast Groove"
+  ],
+  [
+   "beat-management",
+   "Signal Chords"
+  ],
+  [
+   "beat-management",
+   "Cathode Groove"
+  ],
+  [
+   "beat-management",
+   "Yellow Horizon"
+  ],
+  [
+   "beat-management",
+   "Noir Strings"
+  ],
+  [
+   "beat-management",
+   "Hazy Quartet"
+  ],
+  [
+   "beat-management",
+   "Kinetic Strings"
+  ],
+  [
+   "beat-management",
+   "Long Swell"
+  ],
+  [
+   "beat-management",
+   "Folded Swell"
+  ],
+  [
+   "retro-display",
+   "Kinetic Veil"
+  ],
+  [
+   "retro-display",
+   "Western Cellar"
+  ],
+  [
+   "retro-display",
+   "Lagoon Quartet"
+  ],
+  [
+   "retro-display",
+   "Violet Violins"
+  ],
+  [
+   "screen-saver",
+   "Lunar Canopy"
+  ],
+  [
+   "screen-saver",
+   "Global Pad"
+  ],
+  [
+   "screen-saver",
+   "Cathode Halo"
+  ],
+  [
+   "screen-saver",
+   "Water Marimba"
+  ],
+  [
+   "screen-saver",
+   "Sunday Chimes"
+  ],
+  [
+   "diagnostics",
+   "Amber Bells"
+  ],
+  [
+   "diagnostics",
+   "Federal Carillon"
+  ],
+  [
+   "leisure",
+   "Island Marimba"
+  ],
+  [
+   "leisure",
+   "Volcano Strings"
+  ],
+  [
+   "leisure",
+   "White Cellos"
+  ],
+  [
+   "leisure",
+   "Opal Section"
+  ],
+  [
+   "leisure",
+   "Polished Call"
+  ],
+  [
+   "game-port",
+   "Bakelite Bass"
+  ],
+  [
+   "workstation-classics",
+   "Opal Lead"
+  ],
+  [
+   "workstation-classics",
+   "Lucid End"
+  ],
+  [
+   "workstation-classics",
+   "Pearl Glow"
+  ],
+  [
+   "workstation-classics",
+   "Pale Cloud"
+  ],
+  [
+   "workstation-classics",
+   "Flat Salute"
+  ],
+  [
+   "studio-archive",
+   "Solar Recital"
+  ],
+  [
+   "studio-archive",
+   "Harbor Study"
+  ],
+  [
+   "studio-archive",
+   "Indigo Quartet"
+  ],
+  [
+   "studio-archive",
+   "Lagoon Bows"
+  ],
+  [
+   "studio-archive",
+   "Spare Violins"
+  ],
+  [
+   "studio-archive",
+   "Electric Blast"
+  ],
+  [
+   "studio-archive",
+   "Upper Horns"
+  ],
+  [
+   "studio-archive",
+   "Open Fanfare"
+  ],
+  [
+   "studio-archive",
+   "Global Hit"
+  ],
+  [
+   "studio-archive",
+   "Twilight Horns"
+  ],
+  [
+   "studio-archive",
+   "Waxed Aurora"
+  ],
+  [
+   "studio-archive",
+   "Soft Tide"
+  ],
+  [
+   "studio-archive",
+   "Amber Gong"
+  ],
+  [
+   "studio-archive",
+   "Kinetic Peal"
+  ],
+  [
+   "studio-archive",
+   "Signal Bass"
+  ]
+ ],
+ "kept_as_rated": [
+  [
+   "workgroup-house",
+   "Chrome Anchor",
+   5,
+   "keep"
+  ],
+  [
+   "workgroup-house",
+   "Granite Cloud",
+   8.5,
+   "keep"
+  ],
+  [
+   "workgroup-house",
+   "Warm Quartet",
+   7,
+   "keep"
+  ],
+  [
+   "techno-server",
+   "Urban Mist",
+   5.5,
+   "keep"
+  ],
+  [
+   "trance-connectivity",
+   "Paper Brass",
+   5.5,
+   "keep"
+  ],
+  [
+   "leisure",
+   "Late Toll",
+   6,
+   "keep"
+  ],
+  [
+   "workgroup-house",
+   "Steady Rumble",
+   4.5,
+   null
+  ],
+  [
+   "workgroup-house",
+   "Saffron Bloom",
+   5.5,
+   "keep"
+  ],
+  [
+   "workgroup-house",
+   "Sampled Strings Swell",
+   6,
+   "keep"
+  ],
+  [
+   "workgroup-house",
+   "Cathode Strings",
+   5.5,
+   "keep"
+  ],
+  [
+   "techno-server",
+   "Azure Field",
+   5.5,
+   "keep"
+  ],
+  [
+   "trance-connectivity",
+   "Grey Mist",
+   6,
+   "keep"
+  ],
+  [
+   "breakbeat-resource",
+   "Indigo Bottom",
+   5.5,
+   "keep"
+  ]
+ ]
+}

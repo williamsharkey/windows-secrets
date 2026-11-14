@@ -14,8 +14,8 @@ WORK = os.environ.get('LIBBUILD', os.path.expanduser('~/libbuild'))
 # 1.2.1 release machine's (checked), so one renderer serves v2 and v3 presets
 # 15040db adds N (voice modes), S (stacks), D, W time (Wo Wb Wg Wt Wr Wp) and --bpm; its renders of v2 and W/Y DNAs
 # are bit-identical to 4bda617's (checked), so the cached analyses stay valid
-MACHINE = os.path.join(WORK, os.environ.get('LIBBUILD_V3', 'r6'), 'machine')
-RENDER311 = os.path.join(WORK, os.environ.get('LIBBUILD_V3', 'r6'), 'render311')
+MACHINE = os.path.join(WORK, os.environ.get('LIBBUILD_V3', 'r7'), 'machine')
+RENDER311 = os.path.join(WORK, os.environ.get('LIBBUILD_V3', 'r7'), 'render311')
 RECIPE_CLI = os.path.join(WORK, 'bin', 'recipe_cli')
 
 # core/dna.cpp kSoundNames, in index order (XPSOUNDS\X<nn>.WAV on 3.11 is index nn)

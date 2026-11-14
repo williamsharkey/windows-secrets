@@ -1,9 +1,9 @@
 # Breakbeat Resource Kit: "Every break your network will ever need." (library/builder, DNA.md). category <TAB> name <TAB> DNA
-Bass	Blue End	tuba_sus_f1@t2000]+>Q-50;A1D177S30R61V94K41G2
+Bass	Blue End	tuba_sus_f1@t2000]+>Q-50;A1D177S30R61V94K53G2
 Bass	Delta Rumble	ringout@t127]@20[@40]@0CP@0CP@0CP+++C@2X<<<EU2~25Ja0,100.43,40.86,100.129,40.172,100;A0R120K33G-11
 Bass	Indigo Bottom	cello_section_sus_g1@t2500]#8/hwfail#8T-29L40;A0D211S25R52V95K31G12
-Bass	Laser Foundation	marimba_c2+U2~4;A2D159S24R155V77K36G-8
-Bass	Lucid Rumble	piano_upright_cs2@t3000]#8/batlow#8T-11L61;A3D532S25R138V80K37G-4
+Bass	Laser Foundation	marimba_c2+U2~4;A2D159S24R155V77K48G-8
+Bass	Lucid Rumble	piano_upright_cs2@t3000]#8/batlow#8T1L61;A3D532S25R138V80K49G-4
 Bass	Neuro Growl	xpringout@20[@40]@0CP@0CP@0CP+++C@2X<<<#16U2~25Ja0,100.43,40.86,100.129,40.172,100;A0R120K33G4
 Bass	Night End	critstop@t40[+#8/batlow#8T-12L52;A3D402S66R93V92K36G-2
 Bass	Opal Bass	print@15[@50]@0CP@0CP@0CP<<<#8Ja0,100.175,100.185,8.250,8.251,100Wr4t;A0S100R300V80K46G17
@@ -47,11 +47,11 @@ Lead	Velvet Pilot	ems_motor_whine_a4@t3500]@t300[+#12U3~11/batlow#4T21L32;A1D445
 Pad	Cathode Bloom	xpringout@t349]@t99[@0CP@0CP@0CPEE<U2~7;A741D692S83R1420V99K57G7
 Pad	Granite Pad	ringout@t328]@t93[@0CP@0CP@0CP<#13H0,7U2~7/dingxpE#3T-3L15O294Q44;A297D771S97R2096V77K57G-12
 Pad	Ivory Drift	xpringout@t349]@t99[@0CP@0CP@0CPCRP<#13H0,7U2~14/air_duster@t2000]@t500[#3FL17Ja0,100.160,30.609,0;A663D435S77R912V74K57G4
-Pad	Lobby Cloud	cello_section_sus_c3@t7500]@t300[>#11U2~6/chimes>#5T-7L36O350Q21;A585D443S70R1326V89K60G-8
+Pad	Lobby Cloud	cello_section_sus_c3@t7500]@t300[>#11U2~6/chimes>#5T5L36O350Q21;A585D443S70R1326V89K72G-8
 Pad	Mild Cloud	glass_harp@t8000]@t500[<#11H0,12U2~6/xpringout#3T-5L58Q9/batlow#2T16L60;A680D675S92R1285V92K64G-8
 Pad	Modular Haze	xpnotifyE#13H0,12U2~6/xpding#3T-1L32Q34;A1088D571S96R1233V70K70G16
 Pad	Night Bus Pad	logoff<E#10U2~8;A400S90R1200K51G7
-Pad	Spare Halo	cello_section_sus_c3@t7500]@t300[R>U2~16;A1453D482S82R1279V94K60G-8
+Pad	Spare Halo	cello_section_sus_c3@t7500]@t300[R>U2~16;A1453D482S82R1279V94K72G-8
 Perc	Floor Rim	critstop@t400]@t40[<;D160S0R109V77K24G2
 Perc	Glass Tap	chord@t200]<#11U2~10/hwfail#5T-27L31;D136S0R31V85K33G3
 Perc	Inland Clap	ringin@t150]<F;D205S0R32V86G3
@@ -60,17 +60,17 @@ Perc	Plaza Shaker	em_stamp_a;D109S0R149V94G8
 Perc	Shaded Click	light_switch_on#5Q61/infobar#5FL31/balloon#6FL33;D361S0R69V85
 Perc	Sunlit Click	glass_tap<F;D102S0R41V79G1
 Perc	Washed Hat	em_stamp_a;D188S0R42V71G7
-Stab	Blue Accent	trombone_sus_c3@t3000]>#11U2~5/hwfail#5T12L46Q-17;A2D854S60R131V98K60G-9
+Stab	Blue Accent	trombone_sus_c3@t3000]>#11U2~5/hwfail#5T24L46Q-17;A2D854S60R131V98K72G-9
 Stab	Breaker Orchestra Hit	tada@15]+#8H0,12/chord@8]E#4T5L60/organ_hammond_m100_flute_c@t3000]@t300[#4T-12L29Q-21;A0D665S0R200V100K60G1
 Stab	Hazy Chord	critstop@t40[>>+Q51;A49D202S74R303V79K60G1
-Stab	Ivory Hit	trombone_sus_c3@t3000]E>#13H0,-12U2~7/xpding#3T1L32Q-25;A26D566S8R284V98K60G-11
+Stab	Ivory Hit	trombone_sus_c3@t3000]E>#13H0,-12U2~7/xpding#3T13L32Q-25;A26D566S8R284V98K72G-11
 Stab	Northern Hit	trumpet_sus_c4@t3000]+U2~6;A1D754S36R326V76K62G-13
-Stab	Radiant Accent	trombone_sus_c3@t3000]+#11H0,7/xpding#5T-11L32Q-15;A61D220S50R465V93K48G-11
-Stab	Rainy Chord	trombone_sus_c3@t3000]#8/xpding#8T-23L44Q-28;A1D606S21R135V74K48G-6
+Stab	Radiant Accent	trombone_sus_c3@t3000]+#11H0,7/xpding#5T1L32Q-15;A61D220S50R465V93K60G-11
+Stab	Rainy Chord	trombone_sus_c3@t3000]#8/xpding#8T-11L44Q-28;A1D606S21R135V74K60G-6
 Stab	Stadium Riff Stab	tadaxp@15]+++#10H0,12/recycle>@15]#4FL50;A0D300S0R150K60G10
 Stab	Sub Stab Juke	ringout@20[@40]@0CP@0CP@0CP<<@20]#12;A0R60V100K45G-1
 Stab	Sunday Accent	tadaxpE#13H0,-12U2~7/ringout#3T-21L26Q7;A38D268S4R146V71K48G6
-Stab	Sunday Chord	horn_sus_c3@t3000]>#5/marimba_c4#5T12L49Q-8/relay_click>#6FL44;A11D597S19R159V79K60G-7
+Stab	Sunday Chord	horn_sus_c3@t3000]>#5/marimba_c4#5T12L49Q-8/relay_click>#6FL44;A11D597S19R159V79K72G-7
 Stab	Winter Horns	tadaxp+>EU3~13;A5D883S75R311V80K60G3
 Vocal	Inland Vox	notify@0CP#8/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#6T3L35;A10R200K62G4
 Vocal	Robot Workgroup Voice	ems_704_vowel_a3@0CP#8/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#6T-2L35;A10R200K57G-8

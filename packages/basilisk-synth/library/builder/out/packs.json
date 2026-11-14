@@ -438,17 +438,17 @@
   "id": "tape-parlour",
   "name": "Tape Parlour Ensemble",
   "blurb": "Eight seconds of tape behind every key.",
-  "presets": 38,
+  "presets": 37,
   "xp": 0,
-  "w311_badge": 21,
-  "v3": 38,
-  "library": 38,
+  "w311_badge": 17,
+  "v3": 37,
+  "library": 37,
   "categories": {
    "Brass": 6,
-   "Keys": 4,
+   "Keys": 3,
    "Lead": 8,
-   "Organ": 6,
-   "Strings": 7,
+   "Organ": 5,
+   "Strings": 8,
    "Vocal": 7
   },
   "files": {
@@ -460,18 +460,17 @@
   "id": "courtyard-chapel",
   "name": "Courtyard & Chapel",
   "blurb": "Harpsichords in the hall, bells in the tower, harps in the garden.",
-  "presets": 33,
+  "presets": 31,
   "xp": 0,
-  "w311_badge": 26,
-  "v3": 0,
-  "library": 33,
+  "w311_badge": 23,
+  "v3": 23,
+  "library": 31,
   "categories": {
    "Bell": 8,
-   "Drone": 2,
    "FX": 4,
    "Keys": 3,
-   "Mallet": 6,
-   "Pluck": 10
+   "Mallet": 8,
+   "Pluck": 8
   },
   "files": {
    "w311": "w311/courtyard-chapel.tsv",
@@ -523,17 +522,17 @@
   "blurb": "Every keyboard on the shop floor, plugged in at once.",
   "presets": 45,
   "xp": 0,
-  "w311_badge": 40,
-  "v3": 0,
+  "w311_badge": 44,
+  "v3": 9,
   "library": 45,
   "categories": {
-   "Bass": 6,
+   "Bass": 8,
    "Brass": 6,
    "Keys": 8,
    "Lead": 8,
-   "Pad": 9,
+   "Pad": 10,
    "Strings": 2,
-   "Vocal": 6
+   "Vocal": 3
   },
   "files": {
    "w311": "w311/polysynth-showroom.tsv",

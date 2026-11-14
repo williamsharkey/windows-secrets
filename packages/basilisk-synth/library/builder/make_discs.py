@@ -198,6 +198,8 @@ def main():
         files['LIBRARY.TSV'] = (crlf('# name\tcategory\tpath\tseconds\tsource/licence\n' + ''.join(l + '\n' for l in lib_lines)), 'LIBRARY.TSV')
         # the folder copy and the ISO
         root = os.path.join(outdir, label)
+        import shutil
+        shutil.rmtree(root, ignore_errors=True)            # a re-emit leaves no stale presets or sounds behind
         for path, (data, _) in files.items():
             fp = os.path.join(root, *path.split('/'))
             os.makedirs(os.path.dirname(fp), exist_ok=True)

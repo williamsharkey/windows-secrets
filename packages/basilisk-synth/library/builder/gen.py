@@ -542,7 +542,7 @@ def tape_family(prefix):
     return sorted((SRC[n]['root_used'], n) for n in mem)
 
 
-ZONES_OK = False   # Z key zones (PRESET-ENGINE-2 6.1) are phase 4 on 3.11, not built yet: one sample per family until then
+ZONES_OK = True    # Z key zones work on 3.11 (main 9cc155c): one recording per key range
 
 
 def tape_genes(rng, depth=1.0):
@@ -564,8 +564,9 @@ def tape_zone_dna(families, rng, click=None, octave=False, depth=1.0):
         if len(zs) > zmax:   # spread the zones: enough recorders per zone for chords
             idx = sorted({round(i * (len(zs) - 1) / (zmax - 1)) for i in range(zmax)})
             zs = [zs[i] for i in idx]
-        if lo_all is None: lo_all = int(zs[0][0]) - 12
-        if hi_all is None: hi_all = int(zs[-1][0]) + 7
+        # the whole manual, as a tape keyboard: the outer zones reach C2 and C7
+        if lo_all is None: lo_all = min(36, int(zs[0][0]) - 12)
+        if hi_all is None: hi_all = max(96, int(zs[-1][0]) + 7)
         for i, (r, n) in enumerate(zs):
             lo = lo_all if i == 0 else int((zs[i - 1][0] + r) // 2) + 1
             hi = hi_all if i == len(zs) - 1 else int((r + zs[i + 1][0]) // 2)

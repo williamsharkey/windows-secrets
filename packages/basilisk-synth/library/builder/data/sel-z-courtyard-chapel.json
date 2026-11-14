@@ -1,0 +1,1299 @@
+[
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Brass Ballad",
+  "dna": "harpsichord_flemish_c2E#4Z36,54,48/harpsichord_flemish_c3#4Z55,66,60/harpsichord_flemish_c4#4Z67,78,72/harpsichord_flemish_c5#4Z79,96,84;A0D625S16R438V96K60",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-keys-zone00",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "f2f5b7c5697fb57875d3",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.965,
+   "loud": -19.42,
+   "peak_db": -0.4
+  },
+  "novelty": 99.0,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "keys",
+   "echo",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Arctic Salon",
+  "dna": "harpsichord_flemish_hi_cs3#5Z36,72,61/harpsichord_flemish_hi_c5#4Z73,89,84/harpsichord_flemish_hi_c6#5Z90,102,96/dingxpRE#2T-7L17O84Q10;A3D1531S33R417V82K60",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-keys-zone01",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "1a78210f3c0cf1ace9d1",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.955,
+   "loud": -19.81,
+   "peak_db": 0.96
+  },
+  "novelty": 1.81,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "keys",
+   "reversed",
+   "echo",
+   "4 layers",
+   "stereo",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Marble Salon",
+  "dna": "upright_yamaha_c2#4Z36,54,48/upright_yamaha_c3E#4Z55,72,60/upright_yamaha_c5E#4Z73,90,84/upright_yamaha_c6#4Z91,103,96;A2D2267S6R357V95K60",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-keys-zone02",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "0cd435217ef7ba458c87",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.978,
+   "loud": -19.04,
+   "peak_db": 1.76
+  },
+  "novelty": 4.37,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "keys",
+   "echo",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Pluck",
+  "category": "Pluck",
+  "name": "Glass Spool",
+  "dna": "folk_harp_c2#4Z36,54,48/folk_harp_c3#4Z55,65,60/folk_harp_c4E#4Z66,77,72/folk_harp_c5#4Z78,96,84;A0D169S1R254V97K60",
+  "scat": "Plucks/Arps",
+  "kind": "pluck",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-pluck-zone00",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "e5301e81dd4dc81d1c70",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.923,
+   "loud": -19.54,
+   "peak_db": 0.58
+  },
+  "novelty": 3.42,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "pluck",
+   "echo",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Pluck",
+  "category": "Pluck",
+  "name": "Chrome Pick",
+  "dna": "dan_tranh_b1#4Z35,53,47/dan_tranh_b2#4Z54,65,59/dan_tranh_b3#4Z66,76,71/dan_tranh_b4#4Z77,96,83;A2D204S29R71V78K60",
+  "scat": "Plucks/Arps",
+  "kind": "pluck",
+  "lineage": "v3-zone1",
+  "target": "courtyard-chapel-pluck-zone01",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "0d987662ed35a583217b",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 20.0,
+   "pitch_conf": 0.968,
+   "loud": -22.19,
+   "peak_db": 0.18
+  },
+  "novelty": 2.61,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "pluck",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-zone1",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Pluck",
+  "category": "Pluck",
+  "name": "Amber Ticks",
+  "dna": "psaltery_pluck_c4E#8Z36,78,72/psaltery_pluck_c5E#8Z79,96,84;A1D208S7R217V91K60",
+  "scat": "Plucks/Arps",
+  "kind": "pluck",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-pluck-zone04",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "b78f233786f7a39a3368",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.963,
+   "loud": -22.29,
+   "peak_db": -1.06
+  },
+  "novelty": 2.8,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "pluck",
+   "echo",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Pluck",
+  "category": "Pluck",
+  "name": "Floor Harp",
+  "dna": "strumstick_d2#8Z36,52,50/strumstick_g2E#8Z53,96,55;A2D103S2R64V99K60",
+  "scat": "Plucks/Arps",
+  "kind": "pluck",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-pluck-zone05",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "6e0b3bb3547ac036d30c",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.956,
+   "loud": -23.43,
+   "peak_db": -0.71
+  },
+  "novelty": 2.57,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "pluck",
+   "echo",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Pluck",
+  "category": "Pluck",
+  "name": "Humid Spool",
+  "dna": "nyunga_c3#7Z36,66,60/nyunga_c4E#7Z67,96,72/chimesxpRE#2T5L16O21Q6;A0D282S4R215V80K60",
+  "scat": "Plucks/Arps",
+  "kind": "pluck",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-pluck-zone06",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "c8115e3d8ff9dffd8d32",
+  "info": {
+   "tune_cents": 5.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.845,
+   "loud": -23.68,
+   "peak_db": 1.51
+  },
+  "novelty": 2.59,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "pluck",
+   "reversed",
+   "echo",
+   "3 layers",
+   "stereo",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Pluck",
+  "category": "Pluck",
+  "name": "Still Plink",
+  "dna": "dan_tranh_trem_b2#8Z36,64,59/dan_tranh_trem_b3#8Z65,96,71;A1D188S4R243V70K60",
+  "scat": "Plucks/Arps",
+  "kind": "pluck",
+  "lineage": "v3-zone2",
+  "target": "courtyard-chapel-pluck-zone03",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 98.7,
+  "key": "bda12c2c5da6b4a35cb8",
+  "info": {
+   "tune_cents": -10.0,
+   "tune_spread": 20.0,
+   "pitch_conf": 0.848,
+   "loud": -29.0,
+   "peak_db": -5.86
+  },
+  "novelty": 2.23,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "pluck",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-zone2",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Pluck",
+  "category": "Pluck",
+  "name": "Winter Plink",
+  "dna": "dan_tranh_b1#3Z35,53,47/dan_tranh_b2E#3Z54,65,59/dan_tranh_b3#4Z66,76,71/dan_tranh_b4E#4Z77,96,83/printE#2T-10L18O55Q-10;A2D291S4R184V81K60",
+  "scat": "Plucks/Arps",
+  "kind": "pluck",
+  "lineage": "v3-zone2",
+  "target": "courtyard-chapel-pluck-zone01",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 97.8,
+  "key": "00e5a43a7b35eb2f5cca",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 35.0,
+   "pitch_conf": 0.933,
+   "loud": -21.49,
+   "peak_db": 0.09
+  },
+  "novelty": 1.78,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "pluck",
+   "echo",
+   "5 layers",
+   "stereo",
+   "v3"
+  ],
+  "why": "v3-zone2",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Pluck",
+  "category": "Pluck",
+  "name": "Vinyl Pizz",
+  "dna": "kalimba_kenya_b2#6Z34,54,47/kalimba_kenya_cs4#5Z55,64,61/kalimba_kenya_a4#5Z65,96,69;A1D352S2R65V78K60",
+  "scat": "Plucks/Arps",
+  "kind": "pluck",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-pluck-zone09",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 94.3,
+  "key": "0d81af2706212887fec0",
+  "info": {
+   "tune_cents": -8.3,
+   "tune_spread": 56.6,
+   "pitch_conf": 0.939,
+   "loud": -19.45,
+   "peak_db": 1.49
+  },
+  "novelty": 3.27,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "pluck",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Mallet",
+  "category": "Mallet",
+  "name": "Still Carillon",
+  "dna": "vibes_soft_a2#6Z36,58,57/vibes_soft_c3#5Z59,72,60/vibes_soft_c5E#5Z73,96,84;A1D879S20R2144V78K60",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-mallet-zone01",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "2b8b45e442a03d6dd5fd",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.987,
+   "loud": -16.14,
+   "peak_db": -1.24
+  },
+  "novelty": 4.73,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "bell",
+   "mallet",
+   "echo",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Mallet",
+  "category": "Mallet",
+  "name": "Pastel Bell",
+  "dna": "vibes_soft_a2#6Z36,58,57/vibes_soft_c3#5Z59,72,60/vibes_soft_c5#5Z73,96,84;A1D1533S21R605V91K60",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "v3-zone1",
+  "target": "courtyard-chapel-mallet-zone01",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "bb6afd9a3632c4f6e8a5",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.989,
+   "loud": -15.97,
+   "peak_db": -2.2
+  },
+  "novelty": 2.72,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "bell",
+   "mallet",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-zone1",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Mallet",
+  "category": "Mallet",
+  "name": "Frosted Gong",
+  "dna": "vibes_hard_c3E#8Z36,72,60/vibes_hard_c5#8Z73,96,84;A0D2453S0R1611V91K60",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-mallet-zone02",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "9e56d25b31488c153336",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.982,
+   "loud": -19.3,
+   "peak_db": -0.89
+  },
+  "novelty": 2.65,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "bell",
+   "mallet",
+   "echo",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Mallet",
+  "category": "Mallet",
+  "name": "Hotel Mallets",
+  "dna": "vibes_hard_c3E#7Z36,72,60/vibes_hard_c5#7Z73,96,84/print>#2T-22L20O48Q2;A0D1970S9R1419V90K60",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "v3-zone1",
+  "target": "courtyard-chapel-mallet-zone02",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "525b289fbe6fcafdd60f",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.955,
+   "loud": -19.28,
+   "peak_db": -0.8
+  },
+  "novelty": 2.86,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "bell",
+   "mallet",
+   "echo",
+   "3 layers",
+   "stereo",
+   "v3"
+  ],
+  "why": "v3-zone1",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Mallet",
+  "category": "Mallet",
+  "name": "Broadcast Mallets",
+  "dna": "vibes_hard_c3#7Z36,72,60/vibes_hard_c5#7Z73,96,84/chimesxpE#2T5L19O109Q14;A1D642S4R1458V82K60",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "v3-zone2",
+  "target": "courtyard-chapel-mallet-zone02",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "bdcad9008330390c1765",
+  "info": {
+   "tune_cents": -1.0,
+   "tune_spread": 1.1,
+   "pitch_conf": 0.97,
+   "loud": -18.47,
+   "peak_db": -0.2
+  },
+  "novelty": 3.02,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "bell",
+   "mallet",
+   "echo",
+   "3 layers",
+   "stereo",
+   "v3"
+  ],
+  "why": "v3-zone2",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Mallet",
+  "category": "Mallet",
+  "name": "Lucid Carillon",
+  "dna": "kalimba_tanzania_cs3E#3L80Z36,60,49/kalimba_tanzania_cs5#3L80Z61,79,73/kalimba_tanzania_cs6#3L80Z80,96,85/balafon_cs3E#3L55Z36,66,61/balafon_c4#2L55Z67,77,72/balafon_c5#2L55Z78,96,84;A1D2444S24R1014V96K60",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "v3-zone1",
+  "target": "courtyard-chapel-mallet-zone04",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 90.5,
+  "key": "0d5c36d3684a6414a442",
+  "info": {
+   "tune_cents": -2.3,
+   "tune_spread": 41.8,
+   "pitch_conf": 0.838,
+   "loud": -22.78,
+   "peak_db": -1.79
+  },
+  "novelty": 2.19,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "bell",
+   "mallet",
+   "echo",
+   "6 layers",
+   "v3"
+  ],
+  "why": "v3-zone1",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Mallet",
+  "category": "Mallet",
+  "name": "Field Carillon",
+  "dna": "balafon_cs3#6Z36,66,61/balafon_c4E#5Z67,77,72/balafon_c5E#5Z78,96,84;A0D2520S25R1903V75K60",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-mallet-zone00",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 88.9,
+  "key": "551f4a2dbc301b98c5ee",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 15.0,
+   "pitch_conf": 0.845,
+   "loud": -22.79,
+   "peak_db": -3.37
+  },
+  "novelty": 5.06,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "bell",
+   "mallet",
+   "echo",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Mallet",
+  "category": "Mallet",
+  "name": "Hollow Mallets",
+  "dna": "tubular_glock_a0#5Z9,22,21/tubular_glock_c1#4Z23,28,24/tubular_glock_a1#5Z29,96,33/default>#2T-3L11O110Q4;A1D1689S11R1008V80K60",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-mallet-zone03",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 63.9,
+  "key": "950e85b83a6fc2797c83",
+  "info": {
+   "tune_cents": -0.1,
+   "tune_spread": 0.3,
+   "pitch_conf": 0.641,
+   "loud": -32.97,
+   "peak_db": -8.63
+  },
+  "novelty": 3.44,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "bell",
+   "mallet",
+   "4 layers",
+   "stereo",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Bell",
+  "category": "Bell",
+  "name": "Rainy Tower",
+  "dna": "hand_chime_c3#3Z36,66,60/hand_chime_c4#3Z67,78,72/hand_chime_c5E#4Z79,90,84/hand_chime_c6#4Z91,103,96/printRE#2T-10L14O89Q23;A1D880S18R2456V73K60",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-bell-zone01",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "77b3ed423c2db84b3880",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.976,
+   "loud": -15.66,
+   "peak_db": -0.0
+  },
+  "novelty": 2.7,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "bell",
+   "reversed",
+   "echo",
+   "5 layers",
+   "stereo",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Bell",
+  "category": "Bell",
+  "name": "Golden Steeple",
+  "dna": "hand_chime_c3#3Z36,66,60/hand_chime_c4E#3Z67,78,72/hand_chime_c5#4Z79,90,84/hand_chime_c6#4Z91,103,96/chimesxp>#2T-7L21O40Q-15;A0D644S16R1173V98K60",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "v3-zone1",
+  "target": "courtyard-chapel-bell-zone01",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "7b68e8fd4c3ba05c0825",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.975,
+   "loud": -18.35,
+   "peak_db": -2.15
+  },
+  "novelty": 2.21,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "bell",
+   "echo",
+   "5 layers",
+   "stereo",
+   "v3"
+  ],
+  "why": "v3-zone1",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Bell",
+  "category": "Bell",
+  "name": "Orbital Ring",
+  "dna": "hand_chime_c3E#4Z36,66,60/hand_chime_c4#4Z67,78,72/hand_chime_c5#4Z79,90,84/hand_chime_c6#4Z91,103,96;A1D1882S2R1159V75K60",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "v3-zone2",
+  "target": "courtyard-chapel-bell-zone01",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "74bf9253928c5998d8dc",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.977,
+   "loud": -14.99,
+   "peak_db": 0.05
+  },
+  "novelty": 1.83,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "bell",
+   "echo",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-zone2",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Bell",
+  "category": "Bell",
+  "name": "Pewter Gong",
+  "dna": "hand_chime_c3E#3L80Z36,72,60/hand_chime_c5#3L80Z73,90,84/hand_chime_c6#3L80Z91,103,96/tubular_bell_c3#3L55Z36,53,48/tubular_bell_as3#2L55Z54,59,58/tubular_bell_c4#2L55Z60,96,60;A2D655S12R1197V85K60",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "v3-zone0",
+  "target": "courtyard-chapel-bell-zone03",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 98.8,
+  "key": "8717f5f2dc6eb22b0da4",
+  "info": {
+   "tune_cents": 10.0,
+   "tune_spread": 15.0,
+   "pitch_conf": 0.972,
+   "loud": -20.29,
+   "peak_db": -0.31
+  },
+  "novelty": 2.71,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "bell",
+   "echo",
+   "6 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Bell",
+  "category": "Bell",
+  "name": "Faded Gong",
+  "dna": "nepalese_bell_b<<<H0,12;A3D2497S21R946V90K59",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "fill",
+  "target": "courtyard-chapel-bell-003",
+  "target_name": "",
+  "source": "fill",
+  "score": 89.8,
+  "key": "b6779f27f9bfd3df3eb2",
+  "info": {
+   "tune_cents": -25.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.971,
+   "loud": -17.7,
+   "peak_db": 0.16
+  },
+  "novelty": 3.26,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "bell",
+   "slowed",
+   "harmony"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Bell",
+  "category": "Bell",
+  "name": "Felt Vibes",
+  "dna": "vibraslap_ring@t580]EE#8H0,12/nepalese_bell_b#4T-11L20O24Q1/nepalese_bell_b#4T-18L35Q-12;A0D971S17R1377V79K65",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "fill",
+  "target": "courtyard-chapel-bell-005",
+  "target_name": "",
+  "source": "fill",
+  "score": 86.8,
+  "key": "a1cba9240a072da13218",
+  "info": {
+   "tune_cents": -30.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.882,
+   "loud": -19.91,
+   "peak_db": -1.31
+  },
+  "novelty": 2.21,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "bell",
+   "echo",
+   "harmony",
+   "3 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Bell",
+  "category": "Bell",
+  "name": "Satin Bell",
+  "dna": "nepalese_bell_b@t821]E<<<H0,12U2~8;A0D1017S23R1398V73K59",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "fill",
+  "target": "courtyard-chapel-bell-004",
+  "target_name": "",
+  "source": "fill",
+  "score": 83.8,
+  "key": "74cee23f7f70868333c4",
+  "info": {
+   "tune_cents": -35.0,
+   "tune_spread": 20.0,
+   "pitch_conf": 0.946,
+   "loud": -15.34,
+   "peak_db": 2.94
+  },
+  "novelty": 1.92,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "bell",
+   "echo",
+   "slowed",
+   "detuned",
+   "harmony"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "Bell",
+  "category": "Bell",
+  "name": "Laser Steeple",
+  "dna": "vibraslap_ring#8U2~4/nepalese_bell_aRE#4T-8L24O385Q-10/nepalese_bell_bRE#4T-18L30O139Q-57;A5D1320S28R2277V74K65",
+  "scat": "Bells/Mallets",
+  "kind": "bell",
+  "lineage": "fill",
+  "target": "courtyard-chapel-bell-006",
+  "target_name": "",
+  "source": "fill",
+  "score": 82.1,
+  "key": "755fc656b0723e9d0974",
+  "info": {
+   "tune_cents": -37.8,
+   "tune_spread": 8.0,
+   "pitch_conf": 0.914,
+   "loud": -21.17,
+   "peak_db": -0.56
+  },
+  "novelty": 2.47,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "bell",
+   "reversed",
+   "echo",
+   "detuned",
+   "3 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "FX",
+  "category": "FX",
+  "name": "Hotel Uplink",
+  "dna": "cymbal_bowed<#11U2~10Q59/siren_whistle_bR#5T-30L27O292Q38;A4S100R1670V75K49",
+  "scat": "FX/Risers",
+  "kind": "fx",
+  "lineage": "fill",
+  "target": "courtyard-chapel-fx-003",
+  "target_name": "",
+  "source": "fill",
+  "score": 104.0,
+  "key": "b4042e5bb6db8f070513",
+  "info": {
+   "loud": -17.27,
+   "peak_db": 0.28
+  },
+  "novelty": 3.48,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "fx",
+   "reversed",
+   "slowed",
+   "detuned",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "FX",
+  "category": "FX",
+  "name": "Polished Dive",
+  "dna": "dan_tranh_gliss_down<R#11H0,12/flexatone_long>#5T-25L27O194Q28;A525S100R778V87K49",
+  "scat": "FX/Risers",
+  "kind": "fx",
+  "lineage": "fill",
+  "target": "courtyard-chapel-fx-005",
+  "target_name": "",
+  "source": "fill",
+  "score": 104.0,
+  "key": "a8b38dc8b64ee9b8f5f1",
+  "info": {
+   "loud": -36.8,
+   "peak_db": -17.73
+  },
+  "novelty": 3.96,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "fx",
+   "reversed",
+   "slowed",
+   "harmony",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "FX",
+  "category": "FX",
+  "name": "Inland Launch",
+  "dna": "dan_tranh_gliss_down@t3409]<<#8/gong_scrapeR>#8L39O333Q52;A9S100R605V77K37",
+  "scat": "FX/Risers",
+  "kind": "fx",
+  "lineage": "fill",
+  "target": "courtyard-chapel-fx-000",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "948f4de84a282e7502ef",
+  "info": {
+   "loud": -20.86,
+   "peak_db": -3.86
+  },
+  "novelty": 3.16,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "fx",
+   "reversed",
+   "slowed",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "courtyard-chapel",
+  "pack_name": "Courtyard & Chapel",
+  "group": "FX",
+  "category": "FX",
+  "name": "Echo Sweep",
+  "dna": "toy_train_whistle_fall@t841]REU2~7;A3S100R419V79K32",
+  "scat": "FX/Risers",
+  "kind": "fx",
+  "lineage": "fill",
+  "target": "courtyard-chapel-fx-001",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "cbeb2fc7ab4982bfb025",
+  "info": {
+   "loud": -16.05,
+   "peak_db": 0.06
+  },
+  "novelty": 2.82,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "fx",
+   "reversed",
+   "echo",
+   "detuned"
+  ],
+  "why": "fill",
+  "character": ""
+ }
+]

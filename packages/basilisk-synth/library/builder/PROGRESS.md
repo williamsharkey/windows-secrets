@@ -111,3 +111,51 @@ Nothing audio goes in git.
 - Job B: `out/discs311/` holds 18 discs: the 17 packs plus Kit Manager 98 with the packs lane's 39 kits as they are,
   27 for 3.11 and XP and 12 electromech kits XP-only. `DISCS.TSV` indexes them and `XP-ONLY.TSV` lists the 12 kits.
   152 favourites, from the owner's 152 keeps.
+
+## 2026-11-14: packs from the owner's gardens and the research sources (3.11, now SNDWAVE2000)
+
+- **Sources.** `garden_sources.py` writes catalog/garden.json, with 335 sounds converted by build_library.py:
+  - Bele Dance EP (tine, bell, reed) and bass DSP, rendered offline by a private harness.
+  - ghosts.garden drum kits, modal percussion, ROM patches and speech voices (the owner's own renders).
+  - Salamander Grand V3, the exact revision; public domain, CC-BY 3.0 credited.
+  - Paul Chauncy's own sounds: permission from the author via the owner, 2026-11-14; not PD/CC0.
+
+  GENKI is excluded (third-party material). The private repos' code and text are not copied.
+- **Renderer.** Pinned copies of the 3.11 build; my machine copy's L: is extended with the new sounds, and existing
+  DNAs render identically there. The build at 40c7bbb+ (r6) has the V tape genes, and its renders repeat.
+- **Kits:** strip DNAs (Insert File segments, k pad tokens, hat choke), with a probe and a groove from the mapped
+  pads. Cymbals ring out, so kits skip the "still sounding" check.
+- **Tape:** Wm8000, per-key Y, Vw/Vf/Vs and an optional key click (PRESET-ENGINE-2 6.1).
+  - The Z key zones are not built on 3.11 yet (phase 4): a zoned DNA sounds every layer on every note.
+  - So `gen.ZONES_OK = False` for now: one sample per family, two for the paired families.
+- **Octaves.** VSCO/VCSL names follow C3 = middle C. analyze_sources takes the octave from the audio when the
+  named fundamental is absent (154 sounds), and a family takes one shift. 148 shipped presets that lead with such
+  a sound play an octave above the written note; that is with the coordinator.
+- **Packs** (3.11 only; their own sounds on the disc in SOUNDS\ with LIBRARY.TSV; credits in PACK.TXT):
+
+  | Pack | Presets | Maker (packs lane) |
+  |---|---:|---|
+  | Paulywaulophone | 62 | Breakroom Media Group |
+  | Garden Rhythm Works | 56 | Potting Shed Software |
+  | Tape Parlour Ensemble | 38 | Hartwell & Daughters |
+  | Courtyard & Chapel | 33 | Cantiga Early Music Press |
+  | Listening Post | 21 | Fathom Line Scientific Media |
+  | Office Machinery | 27 | Surplus City Computer Liquidators |
+  | Polysynth Showroom | 45 | Neon Keys Music Superstores |
+
+  The library then held 1321 presets in 24 packs.
+- **Pipeline.** make_discs writes the content folders (out/discs311/), and the packs lane builds the final ISOs.
+  The ISOs and disc audio are not in git.
+- **Zones and the octave fix.** Z key zones work on 3.11 (ZONES_OK, outer zones 36..96); the zoned tape and
+  instrument versions are merged: Tape Parlour 37 (zoned), Courtyard & Chapel 31 (23 zoned). The library holds
+  1318 presets in 24 packs. octave_fix.py (the owner's decision): 120 presets whose first sound is named in the
+  C3 = middle C convention now play at the written pitch (K + 12, T + 12 on correctly named layers); 13 the
+  owner rated stay as heard (data/octave-fix.json).
+- **Re-check on SNDWAVE2000 1.3.0 RC (main 37543bc).** recheck.py --check-only: 1306/1318 pass, nothing silent or
+  crashed. 10 stay flagged (check311.ok false): 3 flute or lead probes with a long attack (the 3.11 lane hears all
+  notes; the probe window is early), 4 with W/Y random draws seeded per key, 2 two-layer glock + print, 1 too
+  short. The two tape zone failures were the Y random pitch draw, not the roots: Ballroom Chant and Noble Stops
+  now use Yd2 and pass (zone_fix records the old DNA).
+- **Previews.** previews.py + demophrases.py: one varied phrase per preset (6-10 s melodic, 1-2 bars for kits) on
+  the RC, -16 LUFS, MP3 48 kbps + Opus 24 kbps, manifest.json/index.json in ~/libbuild/previews (not in git), for
+  the site lane's tools/sndrec-demo/sndwave_site.py --previews.

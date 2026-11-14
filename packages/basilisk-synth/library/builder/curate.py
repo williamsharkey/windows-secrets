@@ -142,6 +142,10 @@ def main():
             for r in cs:
                 if r['lin'] == 'w311' and edition(r['dna']) == 'w31' and 'library' not in origins(r['dna']):
                     continue          # the 3.x twins go to the Heritage Edition first (below)
+                if p.get('new'):      # the new packs are 3.11-only: v2 and v3 presets share one count
+                    if n_v2 + n_v3 >= n2 + n3: continue
+                    if take(p['id'], gname, prog_of(gname), r, r['lin']): n_v2 += 1
+                    continue
                 if r.get('v3'):
                     if n_v3 >= n3: continue
                     if take(p['id'], gname, prog_of(gname), r, 'v3 twin'): n_v3 += 1

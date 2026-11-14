@@ -1,0 +1,1506 @@
+[
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Strings",
+  "category": "Strings",
+  "name": "Slow Cellos",
+  "dna": "tape_violins_trem_a3@t40[#7O10Wm8000Yd6l0kVw5,8f2,8s15,80Z36,77,69/tape_violins_trem_d5@t40[#7O20Wm8000Yd6l8kVw5,5f2,12s25,65Z78,96,86/xpstart#2FL25Wm8000;A20D0S100R80V30",
+  "scat": "Strings",
+  "kind": "pad",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-strings-z02",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "fd569705d77fe5a310dc",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 20.0,
+   "pitch_conf": 0.891,
+   "loud": -18.29,
+   "peak_db": 0.2
+  },
+  "novelty": 99.0,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "strings",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Strings",
+  "category": "Strings",
+  "name": "Hollow Legato",
+  "dna": "tape_violas_c2@t40[#6Wm8000Yd3l8kVw8,5f4,12s15,65Z36,58,48/tape_violas_a3@t40[#5Wm8000Yd3l4kVw4,5f2,10s25,65Z59,70,69/tape_violas_c4@t40[#5Wm8000Yd5l8kVw8,7f4,8s15,65Z71,96,72;A20D0S100R150V40",
+  "scat": "Strings",
+  "kind": "pad",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-strings-z03",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "b94fa50c1f0b587841da",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.953,
+   "loud": -12.4,
+   "peak_db": 3.12
+  },
+  "novelty": 2.81,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "strings",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Strings",
+  "category": "Strings",
+  "name": "Amber Strings",
+  "dna": "tape_psaltery_bowed_c4@t40[#6Wm8000Yd5l8kVw6,5f3,8s20,80Z36,78,72/tape_psaltery_bowed_c5@t40[#5Wm8000Yd4l4kVw8,6f3,8s15,50Z79,87,84/tape_psaltery_bowed_fs5@t40[#5Wm8000Yd6l0kVw6,7f4,8s20,80Z88,97,90;A35D0S100R150V30",
+  "scat": "Strings",
+  "kind": "pad",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-strings-z08",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "e897b7b19e12d3a98d7a",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.952,
+   "loud": -18.17,
+   "peak_db": -1.64
+  },
+  "novelty": 3.86,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "strings",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Strings",
+  "category": "Strings",
+  "name": "Northern Strings",
+  "dna": "tape_violins_trem_a3@t40[#3L80O10Wm8000Yd4l0kVw6,8f2,10s15,80Z36,77,69/tape_violins_trem_d5@t40[#3L80O10Wm8000Yd5l8kVw13,6f2,10s15,80Z78,96,86/tape_cellos_c1@t40[#3L55O20Wm8000Yd6l8kVw8,6f3,12s25,50Z24,46,36/tape_cellos_a2@t40[#3L55O20Wm8000Yd6l8kVw8,6f2,12s25,50Z47,65,57/tape_cellos_d4@t40[#2L55O15Wm8000Yd6l8kVw10,8f4,10s15,65Z66,96,74/menu#2FL25Wm8000;A35D0S100R80V40",
+  "scat": "Strings",
+  "kind": "pad",
+  "lineage": "v3-tape-deep",
+  "target": "tape-parlour-strings-z10",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "ccb207300d6caa5ad293",
+  "info": {
+   "tune_cents": -7.5,
+   "tune_spread": 15.0,
+   "pitch_conf": 0.918,
+   "loud": -17.98,
+   "peak_db": -2.12
+  },
+  "novelty": 2.14,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "strings",
+   "6 layers",
+   "v3"
+  ],
+  "why": "v3-tape-deep",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Strings",
+  "category": "Strings",
+  "name": "Northern Bows",
+  "dna": "tape_contrabass_e1@t40[#3L80O15Wm8000Yd3l0kVw5,8f2,8s25,65Z16,30,28/tape_contrabass_a1@t40[#3L80O15Wm8000Yd6l8kVw8,7f4,12s20,80Z31,96,33/tape_cellos_c1@t40[#3L55O20Wm8000Yd5l8kVw5,8f3,10s20,65Z24,46,36/tape_cellos_a2@t40[#3L55O20Wm8000Yd6l4kVw5,5f4,8s25,65Z47,65,57/tape_cellos_d4@t40[#2L55O20Wm8000Yd6l0kVw6,7f3,12s15,50Z66,96,74/menu#2FL25Wm8000;A10D0S100R80V20",
+  "scat": "Strings",
+  "kind": "pad",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-strings-z09",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 95.1,
+  "key": "5271a65f694fc0d9f762",
+  "info": {
+   "tune_cents": -7.5,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.964,
+   "loud": -11.02,
+   "peak_db": 4.74
+  },
+  "novelty": 1.86,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "strings",
+   "6 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Strings",
+  "category": "Strings",
+  "name": "Wired Legato",
+  "dna": "tape_violins_a3@t40[#5O20Wm8000Yd5l0kVw6,6f2,10s20,50Z36,70,69/tape_violins_c4@t40[#5O15Wm8000Yd6l0kVw5,7f4,8s15,65Z71,79,72/tape_violins_d5@t40[#4O20Wm8000Yd6l4kVw4,7f4,8s20,65Z80,96,86/xpstart#2FL18Wm8000;A15D0S100R150V40",
+  "scat": "Strings",
+  "kind": "pad",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-strings-z01",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 91.7,
+  "key": "6c9988c62b262f2d8739",
+  "info": {
+   "tune_cents": 5.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.955,
+   "loud": -16.66,
+   "peak_db": -0.37
+  },
+  "novelty": 2.06,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "strings",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Strings",
+  "category": "Strings",
+  "name": "Vinyl Section",
+  "dna": "tape_contrabass_e1@t40[#7O10Wm8000Yd3l0kVw13,6f2,12s20,50Z16,30,28/tape_contrabass_a1@t40[#7O15Wm8000Yd6l4kVw6,8f4,10s20,50Z31,96,33/menu#2FL14Wm8000;A35D0S100R80V20",
+  "scat": "Strings",
+  "kind": "pad",
+  "lineage": "v3-tape-deep",
+  "target": "tape-parlour-strings-z05",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 86.1,
+  "key": "22149582b590cf0af98a",
+  "info": {
+   "tune_cents": -2.5,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.979,
+   "loud": -9.07,
+   "peak_db": 6.3
+  },
+  "novelty": 3.52,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "strings",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-tape-deep",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Strings",
+  "category": "Strings",
+  "name": "Upper Legato",
+  "dna": "tape_violin_solo_c4@t40[#4O10Wm8000Yd4l0kVw4,5f3,10s25,80Z36,64,60/tape_violin_solo_a4@t40[#4O10Wm8000Yd5l8kVw5,8f2,10s20,65Z65,70,69/tape_violin_solo_c5@t40[#3O20Wm8000Yd3l8kVw6,7f2,8s15,50Z71,76,72/tape_violin_solo_a5@t40[#3O10Wm8000Yd6l4kVw4,6f2,10s15,65Z77,96,81/menu#2FL18Wm8000;A35D0S100R80V40",
+  "scat": "Strings",
+  "kind": "pad",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-strings-z04",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 72.6,
+  "key": "25b440527897318422de",
+  "info": {
+   "tune_cents": 20.7,
+   "tune_spread": 4.8,
+   "pitch_conf": 0.95,
+   "loud": -14.58,
+   "peak_db": 2.36
+  },
+  "novelty": 2.33,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "strings",
+   "5 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Dusk Pilot",
+  "dna": "tape_flute_vib_c4@t40[#4O10Wm8000Yd6l4kVw8,6f3,8s20,80Z36,76,72/tape_flute_vib_a4@t40[#4O10Wm8000Yd6l4kVw8,6f2,12s20,65Z77,82,81/tape_flute_vib_c5@t40[#3O20Wm8000Yd4l0kVw5,5f3,10s15,50Z83,90,84/tape_flute_vib_c6@t40[#3O15Wm8000Yd5l4kVw8,5f3,10s15,65Z91,102,96/menu#2FL18Wm8000;A10D0S100R110V30",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-lead-z00",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "41a130396adc0e35557b",
+  "info": {
+   "tune_cents": -2.5,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.977,
+   "loud": -13.0,
+   "peak_db": -1.99
+  },
+  "novelty": 4.72,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "lead",
+   "5 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Field Song",
+  "dna": "tape_flute_plain_c4@t40[#8Wm8000Yd6l0kVw4,5f3,12s15,50Z36,76,72/tape_flute_plain_a4@t40[#8Wm8000Yd4l8kVw4,5f4,8s20,65Z77,96,81;A20D0S100R110V30",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-lead-z01",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "d6e32a9d3c5dd4b62932",
+  "info": {
+   "tune_cents": -5.9,
+   "tune_spread": 13.4,
+   "pitch_conf": 0.983,
+   "loud": -9.44,
+   "peak_db": -2.15
+  },
+  "novelty": 3.34,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "lead",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Polished Whistle",
+  "dna": "tape_piccolo_g4@t40[#5O15Wm8000Yd3l8kVw5,6f4,10s25,65Z36,81,79/tape_piccolo_c5@t40[#5O20Wm8000Yd5l4kVw6,6f2,8s15,50Z82,87,84/tape_piccolo_g5@t40[#4O10Wm8000Yd4l8kVw6,7f2,10s20,65Z88,97,91/xpstart#2FL12Wm8000;A35D0S100R110V40",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-lead-z02",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "fc040927bc787b86ebf3",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.94,
+   "loud": -12.24,
+   "peak_db": -2.43
+  },
+  "novelty": 2.46,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "lead",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Open Lead",
+  "dna": "tape_recorder_alto_f3@t40[#6Wm8000Yd3l4kVw4,8f4,8s25,50Z36,68,65/tape_recorder_alto_c4@t40[#5Wm8000Yd4l4kVw5,8f3,10s15,65Z69,78,72/tape_recorder_alto_c5@t40[#5Wm8000Yd4l4kVw5,5f2,12s15,80Z79,96,84;A35D0S100R150V15",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-lead-z03",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "baf1260c38ff578a97cf",
+  "info": {
+   "tune_cents": 2.6,
+   "tune_spread": 1.2,
+   "pitch_conf": 0.949,
+   "loud": -10.47,
+   "peak_db": -2.82
+  },
+  "novelty": 2.57,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "lead",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Quiet Whistle",
+  "dna": "tape_recorder_tenor_c3@t40[#5O10Wm8000Yd6l0kVw4,5f4,10s25,50Z36,66,60/tape_recorder_tenor_c4@t40[#5O20Wm8000Yd6l0kVw4,7f4,10s20,80Z67,76,72/tape_recorder_tenor_a4@t40[#4O10Wm8000Yd3l4kVw6,7f3,10s15,65Z77,96,81/menu#2FL25Wm8000;A35D0S100R80V30",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-lead-z04",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "4f3c9e21ffa0f8d73c46",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.965,
+   "loud": -12.46,
+   "peak_db": -2.91
+  },
+  "novelty": 2.06,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "lead",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Quiet Voice",
+  "dna": "tape_recorder_soprano_c5@t40[#7O10Wm8000Yd6l8kVw6,7f4,8s15,50Z36,90,84/tape_recorder_soprano_c6@t40[#7O20Wm8000Yd5l4kVw4,5f2,8s15,50Z91,103,96/xpstart#2FL12Wm8000;A10D0S100R150V40",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-lead-z05",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "e9221a1ad55bd838abfa",
+  "info": {
+   "tune_cents": 3.8,
+   "tune_spread": 14.9,
+   "pitch_conf": 0.937,
+   "loud": -9.27,
+   "peak_db": -3.28
+  },
+  "novelty": 1.87,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "lead",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Federal Spark",
+  "dna": "tape_ocarina_a3@t40[#8Wm8000Yd6l8kVw4,6f2,12s15,65Z36,76,69/tape_ocarina_c5@t40[#8Wm8000Yd4l8kVw4,7f4,10s20,80Z77,96,84;A10D0S100R80V20",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-lead-z07",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "f3282b23db1f36f6c5ad",
+  "info": {
+   "tune_cents": -5.9,
+   "tune_spread": 4.9,
+   "pitch_conf": 0.96,
+   "loud": -11.96,
+   "peak_db": -5.34
+  },
+  "novelty": 3.27,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "lead",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Midnight Song",
+  "dna": "tape_clarinet_d3@t40[#4Wm8000Yd6l8kVw6,5f4,8s15,80Z36,66,62/tape_clarinet_as3@t40[#4Wm8000Yd6l8kVw5,5f4,12s15,80Z67,72,70/tape_clarinet_d4@t40[#4Wm8000Yd4l8kVw6,6f4,8s20,80Z73,78,74/tape_clarinet_as4@t40[#4Wm8000Yd3l4kVw5,6f3,8s15,80Z79,96,82;A35D0S100R150V15",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-lead-z09",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "21dd44006d401d3c433e",
+  "info": {
+   "tune_cents": -4.2,
+   "tune_spread": 0.7,
+   "pitch_conf": 0.978,
+   "loud": -8.36,
+   "peak_db": -1.93
+  },
+  "novelty": 1.98,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "lead",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Vocal",
+  "category": "Vocal",
+  "name": "Modular Chorus",
+  "dna": "choir_full_octave_first_note@t40[#16Wm8000Yd5l4kVw5,7f4,8s15,80Z36,96,60;A10D0S100R80V40",
+  "scat": "Choir/Vox",
+  "kind": "pad",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-vocal-z01",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "6ae09280aee6ccc8e769",
+  "info": {
+   "tune_cents": -7.5,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.884,
+   "loud": -15.93,
+   "peak_db": 0.9
+  },
+  "novelty": 2.37,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "vocal",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Vocal",
+  "category": "Vocal",
+  "name": "Ballroom Chant",
+  "dna": "choir_breathing_pad_c4@t40[#14O20Wm8000Yd4l8kVw8,8f4,12s25,50Z36,96,60/menu#2FL18Wm8000;A10D0S100R80V30",
+  "scat": "Choir/Vox",
+  "kind": "pad",
+  "lineage": "v3-tape-deep",
+  "target": "tape-parlour-vocal-z00",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "cc7478618c258d8f7b97",
+  "info": {
+   "tune_cents": -3.4,
+   "tune_spread": 4.9,
+   "pitch_conf": 0.865,
+   "loud": -17.56,
+   "peak_db": 0.1
+  },
+  "novelty": 2.61,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "vocal",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-tape-deep",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Vocal",
+  "category": "Vocal",
+  "name": "Rapid Choir",
+  "dna": "voice_man_singing_note@t40[#16Wm8000Yd6l4kVw6,6f3,12s20,80Z36,96,58;A10D0S100R150V40",
+  "scat": "Choir/Vox",
+  "kind": "pad",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-vocal-z03",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 85.5,
+  "key": "1d4466c01e2dc9c6cf9b",
+  "info": {
+   "tune_cents": 8.6,
+   "tune_spread": 9.7,
+   "pitch_conf": 0.922,
+   "loud": -15.37,
+   "peak_db": 0.49
+  },
+  "novelty": 2.28,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "vocal",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Vocal",
+  "category": "Vocal",
+  "name": "Saffron Voices",
+  "dna": "choir_aah@t40[#14O15Wm8000Yd3l4kVw6,8f2,12s25,50Z36,96,57/menu#2FL25Wm8000;A10D0S100R150V40",
+  "scat": "Choir/Vox",
+  "kind": "pad",
+  "lineage": "v3-tape-deep",
+  "target": "tape-parlour-vocal-z06",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 77.0,
+  "key": "5ebaf3775a9703c88ddf",
+  "info": {
+   "tune_cents": -2.5,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.877,
+   "loud": -18.91,
+   "peak_db": -1.55
+  },
+  "novelty": 2.76,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "vocal",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-tape-deep",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Vocal",
+  "category": "Vocal",
+  "name": "Woven Chop",
+  "dna": "crowd_sing_aah_f@t40[#14O20Wm8000Yd3l0kVw8,7f3,8s20,50Z36,96,53/menu#2FL25Wm8000;A10D0S100R150V30",
+  "scat": "Choir/Vox",
+  "kind": "pad",
+  "lineage": "v3-tape-deep",
+  "target": "tape-parlour-vocal-z07",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 72.8,
+  "key": "720985ccbb1f4f6ffd66",
+  "info": {
+   "tune_cents": 20.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.812,
+   "loud": -15.84,
+   "peak_db": 0.15
+  },
+  "novelty": 2.62,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "vocal",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-tape-deep",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Vocal",
+  "category": "Vocal",
+  "name": "Upper Murmur",
+  "dna": "choir_marching_drone@t40[#14O20Wm8000Yd6l0kVw4,8f4,12s25,65Z16,96,29/menu#2FL18Wm8000;A10D0S100R150V40",
+  "scat": "Choir/Vox",
+  "kind": "pad",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-vocal-z05",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 70.5,
+  "key": "53bad11ad9cb5f8e861f",
+  "info": {
+   "tune_cents": -32.2,
+   "tune_spread": 13.6,
+   "pitch_conf": 0.754,
+   "loud": -13.48,
+   "peak_db": 3.22
+  },
+  "novelty": 4.43,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "vocal",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Vocal",
+  "category": "Vocal",
+  "name": "Humid Cantor",
+  "dna": "pw_hmm_held@t40[#14O20Wm8000Yd4l4kVw6,6f3,8s25,50Z36,96,60/menu#2FL12Wm8000;A35D0S100R80V20",
+  "scat": "Choir/Vox",
+  "kind": "pad",
+  "lineage": "v3-tape-deep",
+  "target": "tape-parlour-vocal-z08",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 57.4,
+  "key": "dd85a2692476d8a5234c",
+  "info": {
+   "tune_cents": -12.0,
+   "tune_spread": 26.8,
+   "pitch_conf": 0.93,
+   "loud": -9.66,
+   "peak_db": 5.39
+  },
+  "novelty": 6.38,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "vocal",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-tape-deep",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Brass",
+  "category": "Brass",
+  "name": "Northern Salute",
+  "dna": "tape_trumpet_a2@t40[#6Wm8000Yd3l4kVw5,7f4,10s20,80Z36,65,57/tape_trumpet_d4@t40[#5Wm8000Yd5l4kVw8,7f3,10s15,80Z66,77,74/tape_trumpet_a4@t40[#5Wm8000Yd6l4kVw5,6f3,12s20,50Z78,96,81;A35D0S100R110V40",
+  "scat": "Brass/Stabs",
+  "kind": "keys",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-brass-z00",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "c33bc5cd5c971944f950",
+  "info": {
+   "tune_cents": 5.0,
+   "tune_spread": 15.0,
+   "pitch_conf": 0.959,
+   "loud": -13.93,
+   "peak_db": 3.5
+  },
+  "novelty": 2.97,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "stab",
+   "brass",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Brass",
+  "category": "Brass",
+  "name": "Steady Accent",
+  "dna": "tape_trumpet_harmon_c3@t40[#5O10Wm8000Yd3l0kVw8,8f4,10s20,50Z36,67,60/tape_trumpet_harmon_d4@t40[#5O20Wm8000Yd6l0kVw6,6f4,8s20,80Z68,77,74/tape_trumpet_harmon_a4@t40[#4O20Wm8000Yd6l0kVw6,8f4,10s25,65Z78,96,81/menu#2FL18Wm8000;A10D0S100R150V20",
+  "scat": "Brass/Stabs",
+  "kind": "keys",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-brass-z01",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "51363486ff395ab339b9",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.942,
+   "loud": -12.65,
+   "peak_db": 4.71
+  },
+  "novelty": 3.43,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "stab",
+   "brass",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Brass",
+  "category": "Brass",
+  "name": "Pewter Herald",
+  "dna": "tape_horn_a2@t40[#8Wm8000Yd4l8kVw5,8f2,12s25,50Z36,58,57/tape_horn_c3@t40[#8Wm8000Yd4l8kVw4,7f2,12s25,50Z59,96,60;A20D0S100R110V40",
+  "scat": "Brass/Stabs",
+  "kind": "keys",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-brass-z03",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "943a5b90dbee215bd9dd",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.986,
+   "loud": -10.14,
+   "peak_db": 5.38
+  },
+  "novelty": 4.58,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "stab",
+   "brass",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Brass",
+  "category": "Brass",
+  "name": "Office Horns",
+  "dna": "tape_tuba_as0@t40[#7O20Wm8000Yd6l8kVw6,5f3,10s15,65Z22,42,34/tape_tuba_d2@t40[#7O20Wm8000Yd4l8kVw5,5f4,10s15,65Z43,96,50/menu#2FL18Wm8000;A35D0S100R150V20",
+  "scat": "Brass/Stabs",
+  "kind": "keys",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-brass-z04",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "1a874a3a819d1d6ade2a",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.936,
+   "loud": -10.41,
+   "peak_db": 4.55
+  },
+  "novelty": 3.44,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "stab",
+   "brass",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Brass",
+  "category": "Brass",
+  "name": "Gentle Chord",
+  "dna": "tape_saxello_d3@t40[#4Wm8000Yd5l8kVw4,7f4,8s15,80Z36,66,62/tape_saxello_as3@t40[#4Wm8000Yd6l8kVw4,7f3,12s15,50Z67,72,70/tape_saxello_d4@t40[#4Wm8000Yd5l8kVw6,8f4,10s20,80Z73,76,74/tape_saxello_fs4@t40[#4Wm8000Yd3l8kVw6,8f3,8s20,50Z77,96,78;A20D0S100R80V40",
+  "scat": "Brass/Stabs",
+  "kind": "keys",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-brass-z05",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "84c02868f7eb851385a2",
+  "info": {
+   "tune_cents": -1.0,
+   "tune_spread": 13.3,
+   "pitch_conf": 0.967,
+   "loud": -11.49,
+   "peak_db": 3.64
+  },
+  "novelty": 1.9,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "stab",
+   "brass",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Brass",
+  "category": "Brass",
+  "name": "Rapid Brass",
+  "dna": "tape_bassoon_as1@t40[#6Wm8000Yd5l0kVw6,7f2,8s15,80Z34,53,46/tape_bassoon_c3@t40[#5Wm8000Yd6l4kVw4,7f4,10s15,80Z54,64,60/tape_bassoon_a3@t40[#5Wm8000Yd4l0kVw8,5f3,10s15,80Z65,96,69;A10D0S100R110V30",
+  "scat": "Brass/Stabs",
+  "kind": "keys",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-brass-z06",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "51fbe33efcc1db3137cd",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.989,
+   "loud": -9.39,
+   "peak_db": 6.03
+  },
+  "novelty": 3.46,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "stab",
+   "brass",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Organ",
+  "category": "Organ",
+  "name": "Tinted Organ",
+  "dna": "tape_organ_full_c2@t40[#5O15Wm8000Yd4l0kVw8,8f3,10s20,65Z36,54,48/tape_organ_full_c3@t40[#5O15Wm8000Yd6l8kVw13,6f3,12s20,50Z55,66,60/tape_organ_full_c4@t40[#4O10Wm8000Yd3l8kVw10,8f4,8s20,50Z67,96,72/menu#2FL25Wm8000;A25D0S100R110V40",
+  "scat": "Organ",
+  "kind": "keys",
+  "lineage": "v3-tape-deep",
+  "target": "tape-parlour-organ-z01",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "2d155fae309910c98950",
+  "info": {
+   "tune_cents": 5.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.972,
+   "loud": -11.06,
+   "peak_db": 3.67
+  },
+  "novelty": 2.45,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "organ",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-tape-deep",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Organ",
+  "category": "Organ",
+  "name": "Dusk Revival",
+  "dna": "tape_organ_quiet_131@t40[#6Wm8000Yd4l8kVw4,5f4,12s25,65Z33,55,45/tape_organ_quiet_152@t40[#5Wm8000Yd4l8kVw5,8f2,10s15,80Z56,76,66/tape_organ_quiet_173@t40[#5Wm8000Yd4l8kVw8,7f4,12s15,80Z77,96,87;A20D0S100R150V40",
+  "scat": "Organ",
+  "kind": "keys",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-organ-z02",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "372f7a82736dacb67489",
+  "info": {
+   "tune_cents": 3.8,
+   "tune_spread": 14.5,
+   "pitch_conf": 0.959,
+   "loud": -8.61,
+   "peak_db": 4.49
+  },
+  "novelty": 3.07,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "organ",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Organ",
+  "category": "Organ",
+  "name": "Noble Stops",
+  "dna": "tape_organ_8ft_c2@t40[#3L80O20Wm8000Yd5l4kVw6,6f4,10s20,50Z36,60,48/tape_organ_8ft_c4@t40[#3L80O20Wm8000Yd3l8kVw5,8f2,12s25,65Z61,78,72/tape_organ_8ft_c5@t40[#3L80O20Wm8000Yd5l0kVw6,8f3,12s25,65Z79,96,84/tape_recorder_bass_c3@t40[#3L55O20Wm8000Yd6l4kVw5,8f3,8s15,80Z36,66,60/tape_recorder_bass_c4@t40[#2L55O20Wm8000Yd6l8kVw4,6f3,8s15,80Z67,96,72/xpstart#2FL25Wm8000;A10D0S100R110V30",
+  "scat": "Organ",
+  "kind": "keys",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-organ-z04",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "d9c2b63e2c02d7287847",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 15.0,
+   "pitch_conf": 0.944,
+   "loud": -7.25,
+   "peak_db": 6.2
+  },
+  "novelty": 1.78,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "organ",
+   "6 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Organ",
+  "category": "Organ",
+  "name": "Orbital Pipes",
+  "dna": "tape_organ_8ft_c2@t40[#4O10Wm8000Yd5l8kVw6,8f4,12s20,50Z36,54,48/tape_organ_8ft_c3@t40[#4O10Wm8000Yd5l8kVw4,5f2,12s25,65Z55,66,60/tape_organ_8ft_c4@t40[#3O15Wm8000Yd5l8kVw6,6f4,10s20,65Z67,78,72/tape_organ_8ft_c5@t40[#3O20Wm8000Yd3l4kVw8,6f2,12s15,80Z79,96,84/xpstart#2FL25Wm8000;A10D0S100R150V20",
+  "scat": "Organ",
+  "kind": "keys",
+  "lineage": "v3-tape-click",
+  "target": "tape-parlour-organ-z00",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 94.6,
+  "key": "003e7b843c2c1bbcd637",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.965,
+   "loud": -6.12,
+   "peak_db": 6.59
+  },
+  "novelty": 2.0,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "organ",
+   "5 layers",
+   "v3"
+  ],
+  "why": "v3-tape-click",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Organ",
+  "category": "Organ",
+  "name": "Bakelite Stops",
+  "dna": "tape_harmonica_c3@t40[#6Wm8000Yd4l4kVw5,7f3,10s15,65Z36,66,60/tape_harmonica_c4@t40[#5Wm8000Yd6l4kVw5,8f4,10s25,50Z67,78,72/tape_harmonica_c5@t40[#5Wm8000Yd6l4kVw5,8f3,8s25,80Z79,96,84;A25D0S100R110V40",
+  "scat": "Organ",
+  "kind": "keys",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-organ-z03",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 86.7,
+  "key": "58c10eb7c2b9b1e3e117",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.938,
+   "loud": -14.66,
+   "peak_db": 2.17
+  },
+  "novelty": 3.16,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "organ",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Swift Ivories",
+  "dna": "gd_piano_a1@t40[#4Wm8000Yd5l8kVw8,6f2,12s15,65Z20,38,33/gd_piano_a2@t40[#4Wm8000Yd5l8kVw5,7f3,10s25,50Z39,57,45/gd_piano_a4@t40[#4Wm8000Yd3l8kVw4,8f4,10s20,50Z58,75,69/gd_piano_a5@t40[#4Wm8000Yd6l8kVw5,5f2,8s15,65Z76,96,81;A35D0S100R150V40",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-keys-z00",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "4f635b7ecba483f9ddc0",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 15.0,
+   "pitch_conf": 0.966,
+   "loud": -15.61,
+   "peak_db": 1.46
+  },
+  "novelty": 2.42,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "keys",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Woven Chords",
+  "dna": "gd_ep_tine_c2@t40[#4Wm8000Yd4l8kVw4,8f2,12s25,50Z24,42,36/gd_ep_tine_c3@t40[#4Wm8000Yd3l8kVw5,8f2,10s15,80Z43,60,48/gd_ep_tine_c5@t40[#4Wm8000Yd6l0kVw8,6f3,10s25,50Z61,78,72/gd_ep_tine_c6@t40[#4Wm8000Yd4l0kVw4,7f2,8s20,50Z79,96,84;A35D0S100R110V40",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-keys-z01",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "7eecd7e180d4f5237bf8",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.999,
+   "loud": -10.28,
+   "peak_db": 5.34
+  },
+  "novelty": 6.27,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "keys",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ },
+ {
+  "pack": "tape-parlour",
+  "pack_name": "Tape Parlour Ensemble",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Coded Keys",
+  "dna": "gd_ep_reed_c2@t40[#4Wm8000Yd3l0kVw4,6f4,12s15,80Z24,42,36/gd_ep_reed_c3@t40[#4Wm8000Yd5l0kVw4,8f2,8s20,80Z43,60,48/gd_ep_reed_c5@t40[#4Wm8000Yd6l8kVw8,6f2,12s25,80Z61,78,72/gd_ep_reed_c6@t40[#4Wm8000Yd4l4kVw8,5f4,8s15,65Z79,96,84;A20D0S100R80V30",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "v3-tape-plain",
+  "target": "tape-parlour-keys-z02",
+  "target_name": "",
+  "source": "tapefam",
+  "score": 100.0,
+  "key": "e0fbd5065b343d423dba",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.998,
+   "loud": -11.56,
+   "peak_db": 4.85
+  },
+  "novelty": 2.66,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "keys",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-tape-plain",
+  "character": ""
+ }
+]

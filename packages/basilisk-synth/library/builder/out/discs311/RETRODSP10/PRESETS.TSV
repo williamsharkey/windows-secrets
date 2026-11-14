@@ -7,17 +7,17 @@ Bass	Remote Basement	ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<
 Bass	Saffron Rumble	ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+#8Ja0,100.125,100.135,8.250,8.251,100Wr4t;A0S100R40V80K47G1	retro-display	3.11	5	-	BASS\SAFFRONR.BSP
 Bass	Sonic Groove	xpding@20]<<+++#8Ja0,100.91,32.288,0Nm/balloon<#8FL50O13;A0D350S40R80V95K35G9	retro-display	3.11	5	-	BASS\SONICG.BSP
 Bass	Tokyo Slap	xpding@20]<<+++C@50X#5/balloon<#5FL50Ja0,100.32,33.249,0/hwfail#6T-25L68;A0D350S40R80V95K35G1	retro-display	3.11 XP	5	-	BASS\TOKYOS.BSP
-Bass	Urban Floor	contrabass_pizz_e1>#11U2~10/hwfail#5T-20L54;A3D298S72R171V78K40G-3	retro-display	3.11 XP	5	-	BASS\URBANF.BSP
-Bass	Western Cellar	contrabass_sus_d1@t2500]#11H0,12/key_press_down#5FL38;A0D436S69R64V94K26G-4	retro-display	3.11 XP	5	-	BASS\WESTERNC.BSP
+Bass	Urban Floor	contrabass_pizz_e1>#11U2~10/hwfail#5T-8L54;A3D298S72R171V78K52G-3	retro-display	3.11 XP	5	-	BASS\URBANF.BSP
+Bass	Western Cellar	contrabass_sus_d1@t2500]#11H0,12/key_press_down#5FL38;A0D436S69R64V94K38G-4	retro-display	3.11 XP	5	-	BASS\WESTERNC.BSP
 Brass	Azure Chamber	startup@t1690[#14H0,-12U3~11/xpding#2T-32L53;A87S98R1238V93K39	retro-display	3.11 XP	5	-	BRASS\AZUREC.BSP
-Brass	Coral Section	contrabass_sus_d1@t7500]@t200[>>H0,-12U2~12;A409S96R1162V86K50G-14	retro-display	3.11 XP	5	-	BRASS\CORALS.BSP
+Brass	Coral Section	contrabass_sus_d1@t7500]@t200[>>H0,-12U2~12;A409S96R1162V86K62G-14	retro-display	3.11 XP	5	-	BRASS\CORALS.BSP
 Brass	Digital Swell	startup@t1690[E#12U3~17Q-67/batlow#4T-9L31;A338S97R964V98K39G3	retro-display	3.11 XP	5	-	BRASS\DIGITALS.BSP
-Brass	Lagoon Quartet	violin_section_sus_c4#10U2~8/tada<#6T8L30;A250S90R1200K60G-5	retro-display	3.11 XP	5	-	BRASS\LAGOONQ.BSP
-Brass	Night Window Strings	violin_section_sus_c4#10U2~8/logon<#6T4L30;A250S90R1200K60G-4	retro-display	3.11 XP	5	-	BRASS\NIGHTWS.BSP
+Brass	Lagoon Quartet	violin_section_sus_c4#10U2~8/tada<#6T20L30;A250S90R1200K72G-5	retro-display	3.11 XP	5	-	BRASS\LAGOONQ.BSP
+Brass	Night Window Strings	violin_section_sus_c4#10U2~8/logon<#6T16L30;A250S90R1200K72G-4	retro-display	3.11 XP	5	-	BRASS\NIGHTWS.BSP
 Brass	Silver Bows	xpding#12U3~12/organ_pedal_25@t3000]@t300[#4T-1L56;A89S88R1411V74K59G-4	retro-display	3.11 XP	5	-	BRASS\SILVERB.BSP
-Brass	Violet Violins	violin_section_sus_c4@t7500]@t200[#12U3~20/batlow#4T12L32;A494S85R974V95K60G-7	retro-display	3.11	5	-	BRASS\VIOLETV.BSP
+Brass	Violet Violins	violin_section_sus_c4@t7500]@t200[#12U3~20/batlow#4T24L32;A494S85R974V95K72G-7	retro-display	3.11	5	-	BRASS\VIOLETV.BSP
 Brass	Waxed Orchestra	tadaxp>U3~11;A293S98R401V84K60G4	retro-display	3.11 XP	5	-	BRASS\WAXEDO.BSP
-Brass	Western Violins	violin_section_sus_c4@t7500]@t200[#12U3~15/xprecycle#4FL26;A238S88R605V92K60G-8	retro-display	3.11 XP	5	-	BRASS\WESTERNV.BSP
+Brass	Western Violins	violin_section_sus_c4@t7500]@t200[#12U3~15/xprecycle#4FL26;A238S88R605V92K72G-8	retro-display	3.11 XP	5	-	BRASS\WESTERNV.BSP
 FX	Azure Descent	xpdingR#5/hwfail#5T-1L50/glass_pingE#6T-14L37O98Q47;A6S100R1166V94K59G5	retro-display	3.11 XP	5	-	FX\AZURED.BSP
 FX	Dial Swoosh	xprecycle<RE#6/minimize<#6;A200R900G20	retro-display	3.11 XP	5	-	FX\DIALS.BSP
 FX	Laser Grid Sweep	restore<RE#6/minimize<#6;A200R900G22	retro-display	3.11 XP	5	-	FX\LASERGS.BSP
@@ -45,14 +45,14 @@ Lead	Chrome Brass Lead	tadaxp@40[@20]@0CP@0CP@0CP@0CP#10U3~18;A60R350B2K60G7	ret
 Lead	Field Pilot	ems_csirac_pulse_e4E#12U3~13/ui_glass_ping#4T-8L34Q4;A9D65S84R331V71K64G-7	retro-display	3.11 XP	5	-	LEAD\FIELDP.BSP
 Lead	Molten Wire	tadaxp@10[@60]@0CP@0CP#10U2~14;A40R500K84G7	retro-display	3.11 XP	5	-	LEAD\MOLTENW.BSP
 Lead	Rooftop Sax Lead	trumpet_sus_c4+#10;A30R250K62G-6	retro-display	3.11 XP	5	-	LEAD\ROOFTOSL.BSP
-Lead	Satin Voice	flute_vib_c5@t6000]@t300[+<;A2D239S90R249V76K60G-1	retro-display	3.11 XP	5	-	LEAD\SATINV.BSP
+Lead	Satin Voice	flute_vib_c5@t6000]@t300[+<;A2D239S90R249V76K72G-1	retro-display	3.11 XP	5	-	LEAD\SATINV.BSP
 Lead	Still Call	xpringout@t349]@t99[@0CP@0CP@0CP<;A4D239S98R339V86K57G13	retro-display	3.11 XP	5	-	LEAD\STILLC.BSP
 Lead	Sun Glare Lead	print@10[@60]@0CP@0CP#10U2~14;A40R500K82G13	retro-display	3.11 XP	5	-	LEAD\SUNGL.BSP
 Pad	Civic Glow	xpringout@t349]@t99[@0CP@0CP@0CP<#11U2~17/chimes>#5T-3L18O338Q-59;A277D438S79R997V80K57G6	retro-display	3.11 XP	5	-	PAD\CIVICG.BSP
 Pad	Inland Tide	logon@20[@60]<E#10U2~12;A800S95R2500K56G17	retro-display	3.11 XP	5	-	PAD\INLANDT.BSP
-Pad	Kinetic Veil	violin_section_sus_c4@t7500]@t300[E#8U2~9/chimesRE#4T5L25O346Q20/contrabass_sus_d1@t3000]@t200[+#4T22L55;A1569D677S94R1388V91K60G-6	retro-display	3.11 XP	5	-	PAD\KINETICV.BSP
+Pad	Kinetic Veil	violin_section_sus_c4@t7500]@t300[E#8U2~9/chimesRE#4T17L25O346Q20/contrabass_sus_d1@t3000]@t200[+#4T22L55;A1569D677S94R1388V91K72G-6	retro-display	3.11 XP	5	-	PAD\KINETICV.BSP
 Pad	Laser Glow	xpringout@t349]@t99[@0CP@0CP@0CPEE<#10U3~12/dingxp>#3T-22L33O228Q12/xpding#3T-14L39Q26;A579D17S72R2592V96K57G8	retro-display	3.11 XP	5	-	PAD\LASERG.BSP
-Pad	Mild Pad	violin_section_sus_c4@t7500]@t300[E#11U4~16Ja0,0.1464,100.1968,83/dingxpR>#3T-12L18O314Q17/xpding>#2T8L33O110Q35;A604D79S75R2903V74K60G-11	retro-display	3.11 XP	5	-	PAD\MILDPAD.BSP
+Pad	Mild Pad	violin_section_sus_c4@t7500]@t300[E#11U4~16Ja0,0.1464,100.1968,83/dingxpR>#3L18O314Q17/xpding>#2T20L33O110Q35;A604D79S75R2903V74K72G-11	retro-display	3.11 XP	5	-	PAD\MILDPAD.BSP
 Pad	Northern Bloom	startup@10[#8U2~10/print@10[@50]#6T-2U2~8L35;A500S90R1500K56	retro-display	3.11 XP	5	-	PAD\NORTHERB.BSP
 Pad	Shaded Cloud	choir_aah@t6000]@t300[E<H0,12U3~13;A1533D548S88R1177V77K57G-7	retro-display	3.11 XP	5	-	PAD\SHADEDC.BSP
 Perc	Long Block	logon<;D92S0R47V83K32G21	retro-display	3.11 XP	5	-	PERC\LONGB.BSP

@@ -1,0 +1,1881 @@
+[
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Mild Chords",
+  "dna": "fm87_epiano_c1E#4Z12,36,24/fm87_epiano_c3#4Z37,54,48/fm87_epiano_c4#4Z55,72,60/fm87_epiano_c6#4Z73,96,84;A0D625S16R438V96K60",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "v3-zone0",
+  "target": "polysynth-showroom-keys-zone00",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "e82d171b69be3573b46f",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.988,
+   "loud": -19.97,
+   "peak_db": 0.34
+  },
+  "novelty": 99.0,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "keys",
+   "echo",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Stone Parlour",
+  "dna": "fm87_piano_c2#4Z24,48,36/fm87_piano_c4E#4Z49,66,60/fm87_piano_c5E#4Z67,84,72/fm87_piano_c7#4Z85,103,96;A0D1215S20R339V84K60",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "v3-zone0",
+  "target": "polysynth-showroom-keys-zone01",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "730a58ff501bc3ebb7c4",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.972,
+   "loud": -16.16,
+   "peak_db": 0.64
+  },
+  "novelty": 3.95,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "keys",
+   "echo",
+   "4 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Paper Recital",
+  "dna": "fm87_clav_c3E#3Z36,54,48/fm87_clav_c4#3Z55,72,60/fm87_clav_c6#4Z73,86,84/fm87_clav_f6E#4Z87,96,89/dingxpRE#2T-7L20O77Q19;A5D2023S32R612V90K60",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "v3-zone0",
+  "target": "polysynth-showroom-keys-zone02",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "d46ecd67c5bd12f94f65",
+  "info": {
+   "tune_cents": 3.2,
+   "tune_spread": 1.2,
+   "pitch_conf": 0.988,
+   "loud": -18.06,
+   "peak_db": 2.41
+  },
+  "novelty": 2.73,
+  "edition": "xp",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "XP",
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "keys",
+   "reversed",
+   "echo",
+   "5 layers",
+   "stereo",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Solar Etude",
+  "dna": "fm87_epiano_c1E#3L80Z12,36,24/fm87_epiano_c3#3L80Z37,66,48/fm87_epiano_c6#3L80Z67,96,84/fm87_clav_c3E#3L55Z36,60,48/fm87_clav_c5E#2L55Z61,80,72/fm87_clav_f6#2L55Z81,96,89;A1D406S19R298V96K60",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "v3-zone0",
+  "target": "polysynth-showroom-keys-zone03",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "f805b7fbb2e41a9394ed",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.981,
+   "loud": -21.33,
+   "peak_db": -0.01
+  },
+  "novelty": 1.65,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "keys",
+   "echo",
+   "6 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Federal Hammers",
+  "dna": "poly78_roger_piano_c3@t2512]E>#8/mono77_bargain_piano_b2#8T13L61Q-35;A0D1254S16R396V86K60",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "fill",
+  "target": "polysynth-showroom-keys-006",
+  "target_name": "",
+  "source": "fill",
+  "score": 104.0,
+  "key": "77d92cf31a35cf7810e2",
+  "info": {
+   "tune_cents": -5.9,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.982,
+   "loud": -19.22,
+   "peak_db": 0.03
+  },
+  "novelty": 1.78,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "keys",
+   "echo",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Mild Lounge",
+  "dna": "poly82_rich_pluck_c4#5/poly78_roger_piano_c3#5L52Q14/poly82_rich_pluck_c4#6L48Q-36;A0D829S15R472V72K60",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "fill",
+  "target": "polysynth-showroom-keys-010",
+  "target_name": "",
+  "source": "fill",
+  "score": 104.0,
+  "key": "71ee54427e44fb4d13a2",
+  "info": {
+   "tune_cents": -5.9,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.984,
+   "loud": -13.14,
+   "peak_db": 6.95
+  },
+  "novelty": 4.41,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "keys",
+   "3 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Silent Salon",
+  "dna": "poly78_roger_piano_c3>#8U2~3/poly82_rich_pluck_c4#4T24L14O14Q-3/mono77_bargain_piano_b2#4T1L65Q-24;A2D1690S34R383V76K60",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "fill",
+  "target": "polysynth-showroom-keys-004",
+  "target_name": "",
+  "source": "fill",
+  "score": 102.7,
+  "key": "64728cf71a11ae6a5071",
+  "info": {
+   "tune_cents": -5.9,
+   "tune_spread": 29.0,
+   "pitch_conf": 0.982,
+   "loud": -16.02,
+   "peak_db": 5.2
+  },
+  "novelty": 3.36,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "keys",
+   "detuned",
+   "3 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Keys",
+  "category": "Keys",
+  "name": "Stone Piano",
+  "dna": "mono77_bargain_piano_b2@t4398]E>;A2D2492S24R214V99K59",
+  "scat": "Keys",
+  "kind": "keys",
+  "lineage": "fill",
+  "target": "polysynth-showroom-keys-000",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "cfaf0052575287a2d225",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.988,
+   "loud": -14.21,
+   "peak_db": 2.0
+  },
+  "novelty": 2.59,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "keys",
+   "echo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Pad",
+  "category": "Pad",
+  "name": "Clear Canopy",
+  "dna": "poly78_shimmer_c3@t8399]@t2400[@0CP@0CPCRP>#12U3~10/poly82_open_pad_c2#4T12L53;A447D764S93R1121V98K60",
+  "scat": "Pads",
+  "kind": "pad",
+  "lineage": "fill",
+  "target": "polysynth-showroom-pad-004",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "d24ab824ebcddc5d317a",
+  "info": {
+   "tune_cents": 4.4,
+   "tune_spread": 1.3,
+   "pitch_conf": 0.93,
+   "loud": -12.89,
+   "peak_db": 2.81
+  },
+  "novelty": 3.24,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "pad",
+   "reversed",
+   "looped",
+   "detuned",
+   "2 layers"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Pad",
+  "category": "Pad",
+  "name": "Noble Horizon",
+  "dna": "poly85_dark_pad_chorus_c2@t8399]@t2400[@0CP@0CPE>>H0,12U2~9;A797D335S83R1297V92K60",
+  "scat": "Pads",
+  "kind": "pad",
+  "lineage": "fill",
+  "target": "polysynth-showroom-pad-008",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "8244cb38c95efe4de0a0",
+  "info": {
+   "tune_cents": 6.8,
+   "tune_spread": 6.1,
+   "pitch_conf": 0.964,
+   "loud": -5.24,
+   "peak_db": 9.84
+  },
+  "novelty": 3.05,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "pad",
+   "echo",
+   "looped",
+   "detuned",
+   "harmony"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Pad",
+  "category": "Pad",
+  "name": "Folded Atrium",
+  "dna": "poly82_open_pad_c3#11U2~8/poly78_vikings_pad_2_osc_c2E#5T24L30O341Q54;A309D222S74R970V75K48",
+  "scat": "Pads",
+  "kind": "pad",
+  "lineage": "fill",
+  "target": "polysynth-showroom-pad-017",
+  "target_name": "",
+  "source": "fill",
+  "score": 97.4,
+  "key": "17dd85442909601271e2",
+  "info": {
+   "tune_cents": 1.4,
+   "tune_spread": 14.6,
+   "pitch_conf": 0.943,
+   "loud": -12.59,
+   "peak_db": 4.44
+  },
+  "novelty": 2.64,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "pad",
+   "echo",
+   "detuned",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Pad",
+  "category": "Pad",
+  "name": "Flat Haze",
+  "dna": "poly85_dark_pad_chorus_c3@t8399]@t2400[@0CP@0CPEE>#8U2~18/poly85_dark_pad_chorus_c2E#4T36L33O398Q12/poly85_dark_pad_chorus_c2#4T12L32;A282D437S84R1281V77K60",
+  "scat": "Pads",
+  "kind": "pad",
+  "lineage": "fill",
+  "target": "polysynth-showroom-pad-015",
+  "target_name": "",
+  "source": "fill",
+  "score": 94.3,
+  "key": "8676883afe05d409675d",
+  "info": {
+   "tune_cents": 14.1,
+   "tune_spread": 1.2,
+   "pitch_conf": 0.957,
+   "loud": -10.59,
+   "peak_db": 6.01
+  },
+  "novelty": 2.43,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "pad",
+   "echo",
+   "looped",
+   "detuned",
+   "3 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Pad",
+  "category": "Pad",
+  "name": "Late Aurora",
+  "dna": "poly78_sad_wow_c3@t7636]@t2181[@0CP@0CP>#8U2~8/poly78_sad_wow_c3#4L58/poly78_vikings_pad_2_osc_c3R>#4T24L23O216Q43;A717D404S98R955V96K60",
+  "scat": "Pads",
+  "kind": "pad",
+  "lineage": "fill",
+  "target": "polysynth-showroom-pad-016",
+  "target_name": "",
+  "source": "fill",
+  "score": 93.0,
+  "key": "4e218ae101e56bfe38f7",
+  "info": {
+   "tune_cents": -19.6,
+   "tune_spread": 3.0,
+   "pitch_conf": 0.94,
+   "loud": -15.18,
+   "peak_db": 1.2
+  },
+  "novelty": 2.09,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "pad",
+   "reversed",
+   "looped",
+   "detuned",
+   "3 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Pad",
+  "category": "Pad",
+  "name": "Chrome Mist",
+  "dna": "poly83_gasflowers_c1CRP>>>#13H0,12U2~9/poly82_open_pad_c3E#3T31L37O177Q21;A449D279S91R2620V94K60",
+  "scat": "Pads",
+  "kind": "pad",
+  "lineage": "fill",
+  "target": "polysynth-showroom-pad-013",
+  "target_name": "",
+  "source": "fill",
+  "score": 89.8,
+  "key": "311115b6775c9909fd5f",
+  "info": {
+   "tune_cents": 10.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.964,
+   "loud": -15.98,
+   "peak_db": 0.96
+  },
+  "novelty": 2.16,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "pad",
+   "reversed",
+   "echo",
+   "detuned",
+   "harmony",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Pad",
+  "category": "Pad",
+  "name": "Ultra Pad",
+  "dna": "poly83_gasflowers_c1@t4304]@t1229[@0CP@0CP>>#11U2~8/poly85_dark_pad_chorus_c3EER#5T19L16O213Q-11;A930D14S78R1462V80K48",
+  "scat": "Pads",
+  "kind": "pad",
+  "lineage": "fill",
+  "target": "polysynth-showroom-pad-005",
+  "target_name": "",
+  "source": "fill",
+  "score": 88.8,
+  "key": "8b9074f7b48627fc572d",
+  "info": {
+   "tune_cents": 18.2,
+   "tune_spread": 28.8,
+   "pitch_conf": 0.961,
+   "loud": -23.46,
+   "peak_db": -8.5
+  },
+  "novelty": 1.65,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "pad",
+   "reversed",
+   "echo",
+   "looped",
+   "detuned",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Pad",
+  "category": "Pad",
+  "name": "Plaza Halo",
+  "dna": "poly78_sad_wow_c3U2~14;A302D337S85R1263V92K48",
+  "scat": "Pads",
+  "kind": "pad",
+  "lineage": "fill",
+  "target": "polysynth-showroom-pad-014",
+  "target_name": "",
+  "source": "fill",
+  "score": 82.9,
+  "key": "35c96cd7e066f2148d21",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.968,
+   "loud": -15.69,
+   "peak_db": 1.11
+  },
+  "novelty": 2.61,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "pad",
+   "detuned"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Pad",
+  "category": "Pad",
+  "name": "Plaza Field",
+  "dna": "poly78_thick_swishy_c2>>#11U2~6/poly83_slowone_c2#5T24L35Q14;A439D722S73R1176V92K60",
+  "scat": "Pads",
+  "kind": "pad",
+  "lineage": "fill",
+  "target": "polysynth-showroom-pad-000",
+  "target_name": "",
+  "source": "fill",
+  "score": 71.9,
+  "key": "9b1c545305fde1a3a0f4",
+  "info": {
+   "tune_cents": -2.5,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.893,
+   "loud": -23.76,
+   "peak_db": -6.24
+  },
+  "novelty": 1.88,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "pad",
+   "detuned",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Pad",
+  "category": "Pad",
+  "name": "Mint Horizon",
+  "dna": "poly83_gasflowers_c1@t4304]@t1229[@0CP@0CP>>#8U2~13/poly78_shimmer_c3>#4L27O308Q-7/poly78_shimmer_c3R>#4T7L20O213Q18;A343D39S73R1335V70K48",
+  "scat": "Pads",
+  "kind": "pad",
+  "lineage": "fill",
+  "target": "polysynth-showroom-pad-003",
+  "target_name": "",
+  "source": "fill",
+  "score": 63.1,
+  "key": "0a8e9ee7e000e6c589e6",
+  "info": {
+   "tune_cents": 5.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.957,
+   "loud": -22.7,
+   "peak_db": -5.97
+  },
+  "novelty": 1.8,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "pad",
+   "reversed",
+   "looped",
+   "detuned",
+   "3 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Strings",
+  "category": "Strings",
+  "name": "Foggy Section",
+  "dna": "vocoder_strings_c4#4L80Z36,66,60/vocoder_strings_c5#3L80Z67,78,72/vocoder_strings_c6#3L80Z79,96,84/poly83_on_off_strings_c4E#3L55Z36,62,60/poly83_on_off_strings_fs4#3L55Z63,96,66;A569S90R1323V70K60",
+  "scat": "Strings",
+  "kind": "pad",
+  "lineage": "v3-zone1",
+  "target": "polysynth-showroom-strings-zone02",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 100.0,
+  "key": "e561e67526a3e102e3ab",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.932,
+   "loud": -18.76,
+   "peak_db": -2.33
+  },
+  "novelty": 1.78,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "strings",
+   "echo",
+   "5 layers",
+   "v3"
+  ],
+  "why": "v3-zone1",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Strings",
+  "category": "Strings",
+  "name": "Upper Ensemble",
+  "dna": "poly83_on_off_strings_c4#8Z36,62,60/poly83_on_off_strings_fs4#8Z63,96,66;A294S96R462V96K60",
+  "scat": "Strings",
+  "kind": "pad",
+  "lineage": "v3-zone0",
+  "target": "polysynth-showroom-strings-zone00",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 95.8,
+  "key": "ce4834700b5f3ecff382",
+  "info": {
+   "tune_cents": -15.0,
+   "tune_spread": 10.0,
+   "pitch_conf": 0.947,
+   "loud": -15.88,
+   "peak_db": -0.97
+  },
+  "novelty": 1.79,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "strings",
+   "2 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Vocal",
+  "category": "Vocal",
+  "name": "Static Chorus",
+  "dna": "vocoder_choir_male_c3#6Z36,54,48/vocoder_choir_male_c4#5Z55,66,60/vocoder_choir_male_c5#5Z67,96,72;A624D313S75R607V74K60",
+  "scat": "Choir/Vox",
+  "kind": "pad",
+  "lineage": "v3-zone0",
+  "target": "polysynth-showroom-vocal-zone00",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 98.8,
+  "key": "61dd7e76bcda3d468b6f",
+  "info": {
+   "tune_cents": 10.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.948,
+   "loud": -17.31,
+   "peak_db": -1.36
+  },
+  "novelty": 2.91,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "vocal",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Vocal",
+  "category": "Vocal",
+  "name": "Rose Breath",
+  "dna": "vocoder_choir_female_f4E#6Z36,68,65/vocoder_choir_female_c5#5Z69,75,72/vocoder_choir_female_g5#5Z76,96,79;A798D319S94R1170V75K60",
+  "scat": "Choir/Vox",
+  "kind": "pad",
+  "lineage": "v3-zone1",
+  "target": "polysynth-showroom-vocal-zone01",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 98.8,
+  "key": "4d27d71a0e8690d90ec5",
+  "info": {
+   "tune_cents": 10.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.991,
+   "loud": -17.43,
+   "peak_db": -0.84
+  },
+  "novelty": 2.38,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "vocal",
+   "echo",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-zone1",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Vocal",
+  "category": "Vocal",
+  "name": "Field Voices",
+  "dna": "vocoder_choir_female_ens_f5#6Z36,80,77/vocoder_choir_female_ens_c6#5Z81,87,84/vocoder_choir_female_ens_g6#5Z88,98,91;A172D76S76R901V80K60",
+  "scat": "Choir/Vox",
+  "kind": "pad",
+  "lineage": "v3-zone0",
+  "target": "polysynth-showroom-vocal-zone03",
+  "target_name": "",
+  "source": "zonefam",
+  "score": 94.3,
+  "key": "34755fcb98416085ddd3",
+  "info": {
+   "tune_cents": 17.5,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.981,
+   "loud": -16.0,
+   "peak_db": -0.81
+  },
+  "novelty": 2.55,
+  "edition": "w31",
+  "library": true,
+  "v3": true,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11"
+  ],
+  "tags": [
+   "vocal",
+   "3 layers",
+   "v3"
+  ],
+  "why": "v3-zone0",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Brass",
+  "category": "Brass",
+  "name": "Azure Horns",
+  "dna": "poly83_wobble_brass_c2@t4099]+>>U2~6Q-55;A1D513S53R332V95K60",
+  "scat": "Brass/Stabs",
+  "kind": "keys",
+  "lineage": "fill",
+  "target": "polysynth-showroom-brass-004",
+  "target_name": "",
+  "source": "fill",
+  "score": 102.4,
+  "key": "83344085cdc11f0fc3fe",
+  "info": {
+   "tune_cents": -10.7,
+   "tune_spread": 2.4,
+   "pitch_conf": 0.935,
+   "loud": -17.51,
+   "peak_db": 3.37
+  },
+  "novelty": 2.28,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "stab",
+   "brass",
+   "detuned",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Brass",
+  "category": "Brass",
+  "name": "Radiant Salute",
+  "dna": "poly85_synthetic_c3+>H0,7U2~6;A36D305S61R374V88K60",
+  "scat": "Brass/Stabs",
+  "kind": "keys",
+  "lineage": "fill",
+  "target": "polysynth-showroom-brass-000",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "0d7dc8240cc37df56ec5",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.863,
+   "loud": -15.9,
+   "peak_db": 1.58
+  },
+  "novelty": 2.5,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "stab",
+   "brass",
+   "detuned",
+   "harmony"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Brass",
+  "category": "Brass",
+  "name": "Rapid Brass",
+  "dna": "poly85_synthetic_c3@t4792]E>H0,12;A5D779S80R335V95K60",
+  "scat": "Brass/Stabs",
+  "kind": "keys",
+  "lineage": "fill",
+  "target": "polysynth-showroom-brass-005",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "40f4dbb923ac7e4e3bde",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.919,
+   "loud": -19.68,
+   "peak_db": -2.55
+  },
+  "novelty": 2.09,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "stab",
+   "brass",
+   "echo",
+   "harmony"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Brass",
+  "category": "Brass",
+  "name": "Orbital Accent",
+  "dna": "poly83_big_c2@t4561]+>>EH0,7;A7D620S45R144V73K60",
+  "scat": "Brass/Stabs",
+  "kind": "keys",
+  "lineage": "fill",
+  "target": "polysynth-showroom-brass-008",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "cba1371a2da311c99284",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.92,
+   "loud": -7.26,
+   "peak_db": 9.87
+  },
+  "novelty": 2.12,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "stab",
+   "brass",
+   "echo",
+   "harmony"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Brass",
+  "category": "Brass",
+  "name": "Lucid Herald",
+  "dna": "poly85_thin_brassy_c2@t3578]+>>#12U3~10/poly85_thin_brassy_c2#4T24L68Q15;A11D484S75R294V95K60",
+  "scat": "Brass/Stabs",
+  "kind": "keys",
+  "lineage": "fill",
+  "target": "polysynth-showroom-brass-009",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "a5f3db1578b27ce96933",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.959,
+   "loud": -24.1,
+   "peak_db": 3.36
+  },
+  "novelty": 1.94,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "stab",
+   "brass",
+   "detuned",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Brass",
+  "category": "Brass",
+  "name": "Meadow Brass",
+  "dna": "poly83_wobble_brass_c2>>#11H0,7/marimba_c4#5T-24L40Q-8;A32D675S22R271V88K60",
+  "scat": "Brass/Stabs",
+  "kind": "keys",
+  "lineage": "fill",
+  "target": "polysynth-showroom-brass-002",
+  "target_name": "",
+  "source": "fill",
+  "score": 99.5,
+  "key": "a230feba9fb861b8806c",
+  "info": {
+   "tune_cents": -8.8,
+   "tune_spread": 1.6,
+   "pitch_conf": 0.941,
+   "loud": -15.89,
+   "peak_db": 4.99
+  },
+  "novelty": 1.72,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "stab",
+   "brass",
+   "harmony",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Bass",
+  "category": "Bass",
+  "name": "Ivory Low",
+  "dna": "mono77_cream_b0@t4798]>#11U2~6/poly85_slow_bass_d3#5T-27L46;A3D404S56R123V76K35",
+  "scat": "Bass",
+  "kind": "bass",
+  "lineage": "fill",
+  "target": "polysynth-showroom-bass-000",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "d64b542340729e56a863",
+  "info": {
+   "tune_cents": 5.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.955,
+   "loud": -15.54,
+   "peak_db": -0.96
+  },
+  "novelty": 3.22,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "bass",
+   "detuned",
+   "2 layers"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Bass",
+  "category": "Bass",
+  "name": "Silent Rumble",
+  "dna": "poly83_snapbass_c2@t1031]#8/mono79_filter_vel_bass_c3#8T-24L46;A0D455S48R90V77K36",
+  "scat": "Bass",
+  "kind": "bass",
+  "lineage": "fill",
+  "target": "polysynth-showroom-bass-002",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "055be8ef2b59a23a9286",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.968,
+   "loud": -16.37,
+   "peak_db": -4.03
+  },
+  "novelty": 4.88,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "bass",
+   "2 layers"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Bass",
+  "category": "Bass",
+  "name": "Inland Floor",
+  "dna": "poly83_big_c2@t4561]#8/mono77_fm_rings_ds1#8T-3L33;A1D159S37R155V87K36",
+  "scat": "Bass",
+  "kind": "bass",
+  "lineage": "fill",
+  "target": "polysynth-showroom-bass-004",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "6ca2d497fda83ba96c1f",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.914,
+   "loud": -21.37,
+   "peak_db": -12.49
+  },
+  "novelty": 3.04,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "bass",
+   "2 layers"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Bass",
+  "category": "Bass",
+  "name": "Steel Weight",
+  "dna": "poly83_big_c2H0,12;A5D521S58R52V87K36",
+  "scat": "Bass",
+  "kind": "bass",
+  "lineage": "fill",
+  "target": "polysynth-showroom-bass-005",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "bf8a278abf91d11ee767",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.943,
+   "loud": -13.43,
+   "peak_db": -2.51
+  },
+  "novelty": 1.62,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "bass",
+   "harmony"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Bass",
+  "category": "Bass",
+  "name": "Humid Low",
+  "dna": "mono79_filter_vel_bass_c3@t2037];A0D594S42R139V85K48",
+  "scat": "Bass",
+  "kind": "bass",
+  "lineage": "fill",
+  "target": "polysynth-showroom-bass-011",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "7918eb27653207024f2a",
+  "info": {
+   "tune_cents": -5.9,
+   "tune_spread": 2.0,
+   "pitch_conf": 0.97,
+   "loud": -20.66,
+   "peak_db": -3.13
+  },
+  "novelty": 2.96,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "bass"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Bass",
+  "category": "Bass",
+  "name": "Upper Groove",
+  "dna": "poly83_snapbass_c2#8/mono77_cream_b0#8T1L49;A3D861S36R119V97K36",
+  "scat": "Bass",
+  "kind": "bass",
+  "lineage": "fill",
+  "target": "polysynth-showroom-bass-012",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "7bae74d4797181a24632",
+  "info": {
+   "tune_cents": 5.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.965,
+   "loud": -16.17,
+   "peak_db": -4.45
+  },
+  "novelty": 1.72,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "bass",
+   "2 layers"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Bass",
+  "category": "Bass",
+  "name": "Warm Anchor",
+  "dna": "mono79_filter_vel_bass_c3#8/mono77_iee_yah_f1#8T7L44;A5D365S24R141V84K48",
+  "scat": "Bass",
+  "kind": "bass",
+  "lineage": "fill",
+  "target": "polysynth-showroom-bass-013",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "8acee215502e9a696ba2",
+  "info": {
+   "tune_cents": -5.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.902,
+   "loud": -21.8,
+   "peak_db": -3.56
+  },
+  "novelty": 2.52,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "bass",
+   "2 layers"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Bass",
+  "category": "Bass",
+  "name": "Dusty Basement",
+  "dna": "mono77_fm_rings_ds1+#11U2~10/ringout#5T-5L14;A5D230S64R116V97K31",
+  "scat": "Bass",
+  "kind": "bass",
+  "lineage": "fill",
+  "target": "polysynth-showroom-bass-010",
+  "target_name": "",
+  "source": "fill",
+  "score": 89.2,
+  "key": "79f9d08eb82b01b39635",
+  "info": {
+   "tune_cents": -25.4,
+   "tune_spread": 22.6,
+   "pitch_conf": 0.884,
+   "loud": -16.69,
+   "peak_db": 0.08
+  },
+  "novelty": 3.36,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "both",
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "bass",
+   "detuned",
+   "2 layers"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Wired Call",
+  "dna": "poly85_buzzy_lead_c3@t7053]@t2015[@0CP@0CP+>#8/mono77_curious_lead_c3#8T31L38Q-23;A9D462S94R127V81K60",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "fill",
+  "target": "polysynth-showroom-lead-001",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "142150f33945a76ba676",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.965,
+   "loud": -14.81,
+   "peak_db": -2.4
+  },
+  "novelty": 2.71,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "lead",
+   "looped",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Molten Ray",
+  "dna": "poly78_pwm_lady_c4@t8153]@t2329[@0CP@0CPH0,-12U2~7;A2D284S88R125V99K60",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "fill",
+  "target": "polysynth-showroom-lead-005",
+  "target_name": "",
+  "source": "fill",
+  "score": 100.0,
+  "key": "f3529b632f173c14ebbb",
+  "info": {
+   "tune_cents": 5.0,
+   "tune_spread": 5.0,
+   "pitch_conf": 0.933,
+   "loud": -10.62,
+   "peak_db": 2.53
+  },
+  "novelty": 3.56,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "lead",
+   "looped",
+   "detuned",
+   "harmony"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Silent Ray",
+  "dna": "poly78_pwm_lady_c4#8/poly78_pwm_lady_c4#8T24L19O5Q3;A3D207S71R144V97K60",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "fill",
+  "target": "polysynth-showroom-lead-000",
+  "target_name": "",
+  "source": "fill",
+  "score": 98.8,
+  "key": "ed3de1333b2a594ccf77",
+  "info": {
+   "tune_cents": 10.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.963,
+   "loud": -16.24,
+   "peak_db": -5.65
+  },
+  "novelty": 2.93,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "lead",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Washed Song",
+  "dna": "mono77_curious_lead_c3>;A30D70S80R113V78K60",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "fill",
+  "target": "polysynth-showroom-lead-010",
+  "target_name": "",
+  "source": "fill",
+  "score": 96.5,
+  "key": "4c9b04b6330814bd0305",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.887,
+   "loud": -25.22,
+   "peak_db": -4.71
+  },
+  "novelty": 2.18,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "lead"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Sunday Signal",
+  "dna": "poly85_sensitive_square_c3#11H0,7/poly78_res_organ_d4#5T-2L18Q3;A16D2S91R342V76K48",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "fill",
+  "target": "polysynth-showroom-lead-008",
+  "target_name": "",
+  "source": "fill",
+  "score": 94.7,
+  "key": "e99b7609b1b5fba62d59",
+  "info": {
+   "tune_cents": 0.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.949,
+   "loud": -9.18,
+   "peak_db": 1.38
+  },
+  "novelty": 3.4,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "lead",
+   "harmony",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Late Pilot",
+  "dna": "mono77_pulse_2_g2@t7140]@t2040[@0CP@0CPE>H0,12;A4D88S85R256V92K51",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "fill",
+  "target": "polysynth-showroom-lead-011",
+  "target_name": "",
+  "source": "fill",
+  "score": 92.8,
+  "key": "0716c199c6c925a1ee1c",
+  "info": {
+   "tune_cents": 20.0,
+   "tune_spread": 0.0,
+   "pitch_conf": 0.97,
+   "loud": -11.5,
+   "peak_db": -1.1
+  },
+  "novelty": 2.6,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "lead",
+   "echo",
+   "looped",
+   "harmony"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Electric Pilot",
+  "dna": "poly85_sensitive_square_c3@t2209]@t631[@0CP@0CP>EH0,12U4~17Ja0,100.391,56.2154,30;A7D308S75R208V97K60",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "fill",
+  "target": "polysynth-showroom-lead-006",
+  "target_name": "",
+  "source": "fill",
+  "score": 89.9,
+  "key": "331755c44a1cadb6b080",
+  "info": {
+   "tune_cents": -11.9,
+   "tune_spread": 7.2,
+   "pitch_conf": 0.966,
+   "loud": -6.96,
+   "peak_db": 12.03
+  },
+  "novelty": 3.15,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "lead",
+   "echo",
+   "looped",
+   "detuned",
+   "harmony",
+   "drawn envelope"
+  ],
+  "why": "fill",
+  "character": ""
+ },
+ {
+  "pack": "polysynth-showroom",
+  "pack_name": "Polysynth Showroom",
+  "group": "Lead",
+  "category": "Lead",
+  "name": "Spare Signal",
+  "dna": "poly85_sensitive_square_c3@t2209]@t631[@0CP@0CPE#13U4~22/poly83_cease_ds5#3T-3L26Q1;A7D189S75R102V84K48",
+  "scat": "Leads",
+  "kind": "lead",
+  "lineage": "fill",
+  "target": "polysynth-showroom-lead-003",
+  "target_name": "",
+  "source": "fill",
+  "score": 67.4,
+  "key": "6cd55d69cedc6e197601",
+  "info": {
+   "tune_cents": -15.3,
+   "tune_spread": 46.0,
+   "pitch_conf": 0.923,
+   "loud": -7.88,
+   "peak_db": 7.16
+  },
+  "novelty": 2.25,
+  "edition": "w31",
+  "library": true,
+  "v3": false,
+  "origins": [
+   "library"
+  ],
+  "ships": [
+   "3.11",
+   "XP"
+  ],
+  "tags": [
+   "lead",
+   "echo",
+   "looped",
+   "detuned",
+   "2 layers",
+   "stereo"
+  ],
+  "why": "fill",
+  "character": ""
+ }
+]

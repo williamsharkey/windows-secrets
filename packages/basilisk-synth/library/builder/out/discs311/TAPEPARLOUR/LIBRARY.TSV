@@ -1,36 +1,93 @@
 # name	category	path	seconds	source/licence
 choir_breathing_pad_c4	tape	\SOUNDS\CHOIRBRE.WAV	11.99	newlocknew, CC0-1.0
-choir_drone_practice	tape	\SOUNDS\CHOIRDRO.WAV	12.00	Bocafloja_, CC0-1.0
 choir_full_octave_first_note	tape	\SOUNDS\CHOIRFUL.WAV	4.99	BaDoink, CC0-1.0
 choir_marching_drone	tape	\SOUNDS\CHOIRMAR.WAV	12.00	Jim-Bretherick, CC0-1.0
-gd_ep_reed_c4	garden	\SOUNDS\EPREEDC4.WAV	4.07	William Sharkey (rendered from his own instruments); for BASILISK packs
-gd_ep_tine_c4	garden	\SOUNDS\EPTINEC4.WAV	4.15	William Sharkey (rendered from his own instruments); for BASILISK packs
+gd_ep_reed_c2	garden	\SOUNDS\EPREEDC2.WAV	5.09	William Sharkey (rendered from his own instruments); for BASILISK packs
+gd_ep_reed_c3	garden	\SOUNDS\EPREEDC3.WAV	5.07	William Sharkey (rendered from his own instruments); for BASILISK packs
+gd_ep_reed_c5	garden	\SOUNDS\EPREEDC5.WAV	4.02	William Sharkey (rendered from his own instruments); for BASILISK packs
+gd_ep_reed_c6	garden	\SOUNDS\EPREEDC6.WAV	2.57	William Sharkey (rendered from his own instruments); for BASILISK packs
+gd_ep_tine_c2	garden	\SOUNDS\EPTINEC2.WAV	5.18	William Sharkey (rendered from his own instruments); for BASILISK packs
+gd_ep_tine_c3	garden	\SOUNDS\EPTINEC3.WAV	5.15	William Sharkey (rendered from his own instruments); for BASILISK packs
+gd_ep_tine_c5	garden	\SOUNDS\EPTINEC5.WAV	4.12	William Sharkey (rendered from his own instruments); for BASILISK packs
+gd_ep_tine_c6	garden	\SOUNDS\EPTINEC6.WAV	2.63	William Sharkey (rendered from his own instruments); for BASILISK packs
+gd_piano_a1	garden	\SOUNDS\PIANOA1.WAV	8.00	Alexander Holm (Salamander Grand Piano V3); soft layer by William Sharkey, Public domain (author's dedication 2022-03-04) for Salamander Grand Piano V3, sfzinstruments/SalamanderGrandPiano revision 3382bf9496bba2486f5ab0de55a264d1dfc38404; first released CC-BY-3.0 (credited)
+gd_piano_a2	garden	\SOUNDS\PIANOA2.WAV	8.00	Alexander Holm (Salamander Grand Piano V3); soft layer by William Sharkey, Public domain (author's dedication 2022-03-04) for Salamander Grand Piano V3, sfzinstruments/SalamanderGrandPiano revision 3382bf9496bba2486f5ab0de55a264d1dfc38404; first released CC-BY-3.0 (credited)
 gd_piano_a4	garden	\SOUNDS\PIANOA4.WAV	6.53	Alexander Holm (Salamander Grand Piano V3); soft layer by William Sharkey, Public domain (author's dedication 2022-03-04) for Salamander Grand Piano V3, sfzinstruments/SalamanderGrandPiano revision 3382bf9496bba2486f5ab0de55a264d1dfc38404; first released CC-BY-3.0 (credited)
-pw_bee_organ	pauly	\SOUNDS\PWBEEORG.WAV	3.29	Permission from the author, via the owner, 2026-11-14 (not PD/CC0): BASILISK packs, credited "Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)"
+gd_piano_a5	garden	\SOUNDS\PIANOA5.WAV	4.00	Alexander Holm (Salamander Grand Piano V3); soft layer by William Sharkey, Public domain (author's dedication 2022-03-04) for Salamander Grand Piano V3, sfzinstruments/SalamanderGrandPiano revision 3382bf9496bba2486f5ab0de55a264d1dfc38404; first released CC-BY-3.0 (credited)
+pw_hmm_held	pauly	\SOUNDS\PWHMMHEL.WAV	1.86	Permission from the author, via the owner, 2026-11-14 (not PD/CC0): BASILISK packs, credited "Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)"
+tape_bassoon_a3	tape	\SOUNDS\TAPEBASS.WAV	9.40	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_bassoon_as1	tape	\SOUNDS\TAPEBAS1.WAV	5.99	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_bassoon_c3	tape	\SOUNDS\TAPEBAS2.WAV	7.54	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
 tape_cellos_a2	tape	\SOUNDS\TAPECELL.WAV	10.98	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
-tape_clarinet_d3	tape	\SOUNDS\TAPECLAR.WAV	10.64	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_cellos_c1	tape	\SOUNDS\TAPECEL1.WAV	11.45	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_cellos_d4	tape	\SOUNDS\TAPECEL2.WAV	9.37	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_clarinet_as3	tape	\SOUNDS\TAPECLAR.WAV	10.15	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_clarinet_as4	tape	\SOUNDS\TAPECLA1.WAV	10.34	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_clarinet_d3	tape	\SOUNDS\TAPECLA2.WAV	10.64	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_clarinet_d4	tape	\SOUNDS\TAPECLA3.WAV	11.58	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
 tape_contrabass_a1	tape	\SOUNDS\TAPECONT.WAV	10.80	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
-tape_flute_plain_c4	tape	\SOUNDS\TAPEFLUT.WAV	9.39	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
-tape_flute_vib_c4	tape	\SOUNDS\TAPEFLU1.WAV	7.29	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_contrabass_e1	tape	\SOUNDS\TAPECON1.WAV	11.00	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_flute_plain_a4	tape	\SOUNDS\TAPEFLUT.WAV	7.87	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_flute_plain_c4	tape	\SOUNDS\TAPEFLU1.WAV	9.39	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_flute_vib_a4	tape	\SOUNDS\TAPEFLU2.WAV	7.04	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_flute_vib_c4	tape	\SOUNDS\TAPEFLU3.WAV	7.29	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_flute_vib_c5	tape	\SOUNDS\TAPEFLU4.WAV	6.51	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_flute_vib_c6	tape	\SOUNDS\TAPEFLU5.WAV	4.26	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
 tape_harmonica_c3	tape	\SOUNDS\TAPEHARM.WAV	4.60	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
-tape_horn_c3	tape	\SOUNDS\TAPEHORN.WAV	11.72	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_harmonica_c4	tape	\SOUNDS\TAPEHAR1.WAV	4.61	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_harmonica_c5	tape	\SOUNDS\TAPEHAR2.WAV	4.58	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_horn_a2	tape	\SOUNDS\TAPEHORN.WAV	12.00	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_horn_c3	tape	\SOUNDS\TAPEHOR1.WAV	11.72	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
 tape_ocarina_a3	tape	\SOUNDS\TAPEOCAR.WAV	10.31	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
-tape_organ_8ft_c3	tape	\SOUNDS\TAPEORGA.WAV	8.27	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
-tape_organ_full_c3	tape	\SOUNDS\TAPEORG1.WAV	5.63	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
-tape_organ_quiet_152	tape	\SOUNDS\TAPEORG2.WAV	11.99	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
-tape_piccolo_g4	tape	\SOUNDS\TAPEPICC.WAV	7.16	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_ocarina_c5	tape	\SOUNDS\TAPEOCA1.WAV	6.24	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_organ_8ft_c2	tape	\SOUNDS\TAPEORGA.WAV	8.69	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_organ_8ft_c3	tape	\SOUNDS\TAPEORG1.WAV	8.27	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_organ_8ft_c4	tape	\SOUNDS\TAPEORG2.WAV	6.76	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_organ_8ft_c5	tape	\SOUNDS\TAPEORG3.WAV	6.21	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_organ_full_c2	tape	\SOUNDS\TAPEORG4.WAV	6.08	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_organ_full_c3	tape	\SOUNDS\TAPEORG5.WAV	5.63	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_organ_full_c4	tape	\SOUNDS\TAPEORG6.WAV	5.55	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_organ_quiet_131	tape	\SOUNDS\TAPEORG7.WAV	11.56	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_organ_quiet_152	tape	\SOUNDS\TAPEORG8.WAV	11.99	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_organ_quiet_173	tape	\SOUNDS\TAPEORG9.WAV	12.00	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_piccolo_c5	tape	\SOUNDS\TAPEPICC.WAV	8.07	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_piccolo_g4	tape	\SOUNDS\TAPEPIC1.WAV	7.16	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_piccolo_g5	tape	\SOUNDS\TAPEPIC2.WAV	8.20	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
 tape_psaltery_bowed_c4	tape	\SOUNDS\TAPEPSAL.WAV	7.96	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
-tape_recorder_alto_f3	tape	\SOUNDS\TAPERECO.WAV	12.00	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
-tape_recorder_bass_c3	tape	\SOUNDS\TAPEREC1.WAV	5.68	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
-tape_recorder_soprano_c5	tape	\SOUNDS\TAPEREC2.WAV	10.48	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
-tape_recorder_tenor_c3	tape	\SOUNDS\TAPEREC3.WAV	5.50	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
-tape_saxello_d3	tape	\SOUNDS\TAPESAXE.WAV	6.73	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
-tape_trombone_cs3	tape	\SOUNDS\TAPETROM.WAV	10.77	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_psaltery_bowed_c5	tape	\SOUNDS\TAPEPSA1.WAV	5.55	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_psaltery_bowed_fs5	tape	\SOUNDS\TAPEPSA2.WAV	3.97	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_recorder_alto_c4	tape	\SOUNDS\TAPERECO.WAV	8.16	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_recorder_alto_c5	tape	\SOUNDS\TAPEREC1.WAV	12.00	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_recorder_alto_f3	tape	\SOUNDS\TAPEREC2.WAV	12.00	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_recorder_bass_c3	tape	\SOUNDS\TAPEREC3.WAV	5.68	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_recorder_bass_c4	tape	\SOUNDS\TAPEREC4.WAV	6.54	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_recorder_soprano_c5	tape	\SOUNDS\TAPEREC5.WAV	10.48	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_recorder_soprano_c6	tape	\SOUNDS\TAPEREC6.WAV	10.18	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_recorder_tenor_a4	tape	\SOUNDS\TAPEREC7.WAV	4.93	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_recorder_tenor_c3	tape	\SOUNDS\TAPEREC8.WAV	5.50	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_recorder_tenor_c4	tape	\SOUNDS\TAPEREC9.WAV	5.11	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_saxello_as3	tape	\SOUNDS\TAPESAXE.WAV	6.31	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_saxello_d3	tape	\SOUNDS\TAPESAX1.WAV	6.73	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_saxello_d4	tape	\SOUNDS\TAPESAX2.WAV	6.16	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
+tape_saxello_fs4	tape	\SOUNDS\TAPESAX3.WAV	6.55	Versilian Studios LLC / Sam Gossner and contributors (VCSL), CC0-1.0
 tape_trumpet_a2	tape	\SOUNDS\TAPETRUM.WAV	5.40	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
-tape_trumpet_harmon_c3	tape	\SOUNDS\TAPETRU1.WAV	5.73	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
-tape_tuba_d2	tape	\SOUNDS\TAPETUBA.WAV	12.00	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_trumpet_a4	tape	\SOUNDS\TAPETRU1.WAV	8.94	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_trumpet_d4	tape	\SOUNDS\TAPETRU2.WAV	7.27	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_trumpet_harmon_a4	tape	\SOUNDS\TAPETRU3.WAV	4.50	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_trumpet_harmon_c3	tape	\SOUNDS\TAPETRU4.WAV	5.73	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_trumpet_harmon_d4	tape	\SOUNDS\TAPETRU5.WAV	6.50	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_tuba_as0	tape	\SOUNDS\TAPETUBA.WAV	7.45	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_tuba_d2	tape	\SOUNDS\TAPETUB1.WAV	12.00	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
 tape_violas_a3	tape	\SOUNDS\TAPEVIOL.WAV	10.69	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
-tape_violin_solo_c4	tape	\SOUNDS\TAPEVIO1.WAV	12.00	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
-tape_violins_a3	tape	\SOUNDS\TAPEVIO2.WAV	9.18	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
-tape_violins_trem_a3	tape	\SOUNDS\TAPEVIO3.WAV	9.49	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_violas_c2	tape	\SOUNDS\TAPEVIO1.WAV	11.72	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_violas_c4	tape	\SOUNDS\TAPEVIO2.WAV	10.77	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_violin_solo_a4	tape	\SOUNDS\TAPEVIO3.WAV	12.00	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_violin_solo_a5	tape	\SOUNDS\TAPEVIO4.WAV	12.00	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_violin_solo_c4	tape	\SOUNDS\TAPEVIO5.WAV	12.00	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_violin_solo_c5	tape	\SOUNDS\TAPEVIO6.WAV	12.00	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_violins_a3	tape	\SOUNDS\TAPEVIO7.WAV	9.18	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_violins_c4	tape	\SOUNDS\TAPEVIO8.WAV	11.32	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_violins_d5	tape	\SOUNDS\TAPEVIO9.WAV	10.42	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_violins_trem_a3	tape	\SOUNDS\TAPEVI10.WAV	9.49	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
+tape_violins_trem_d5	tape	\SOUNDS\TAPEVI11.WAV	7.48	Versilian Studios LLC / Sam Gossner (VSCO 2 Community Edition), CC0-1.0
 voice_man_singing_note	tape	\SOUNDS\VOICEMAN.WAV	6.04	TheEndOfACycle, CC0-1.0

@@ -2,11 +2,11 @@
 Bass	Dot Sub	ringout@20[@40]@0CP@0CP@0CP<<@15]U2~4;A0S88R40V90K45G-2
 Bass	Elevated Bottom	xpringout@20[@40]@0CP@0CP@0CP<<+#5Ja0,100.30,70.180,30Nmg15/xpstart#5FL30/organ_pedal_25@t3000]@t300[#6T-15L53;A0R70V90K45G2
 Bass	Felt Sub	ringout@20[@40]@0CP@0CP@0CP<<#8;A30D0S100R250V60K45G-2
-Bass	Late Line	contrabass_pizz_e1;A1D242S39R78V84K28G2
-Bass	Mild Bottom	cello_section_sus_g1@t2500]+#11H0,12/xpstart#5FL35;A2D301S29R148V83K31G-1
+Bass	Late Line	contrabass_pizz_e1;A1D242S39R78V84K40G2
+Bass	Mild Bottom	cello_section_sus_g1@t2500]+#11H0,12/xpstart#5FL35;A2D301S29R148V83K43G-1
 Bass	Mild Rumble	xpding+#8/xpstart>#8FL34;A5D718S20R51V74K59G7
 Bass	Quiet Cellar	ringout@20[@40]@0CP@0CP@0CP<<#8Ja0,100.175,100.185,8.250,8.251,100Wr4t;A0D0S100R250V60K45G-2
-Bass	Quiet Sub	tuba_sus_f1@t2000];A1D200S76R77V95K29G-2
+Bass	Quiet Sub	tuba_sus_f1@t2000];A1D200S76R77V95K41G-2
 Bass	Urban Thump	hwfail<Q24;A0D561S23R89V86K36G11
 Bass	Wired Foundation	harp_a2@t2500]EH0,-12Q-29;A2D334S21R55V71K45G-1
 FX	Brass Launch	modem_dialup_a@t9000]@t3000[R#5/hwfail#5L40/chimes#6L43;A8S100R807V82G4
@@ -30,7 +30,7 @@ Pad	Cold Canopy	startup@t1690[R#13U4~21/organ_hammond_m100_flute_c@t3000]@t300[#
 Pad	Cold Wash	choir_aah@t6000]@t300[#6U2~10/hwfail#3T9L65/defaultR#3T30L39O263Q1/soft_wind@t4000]@t1000[#4L22;A376D836S81R1151V93K69G-1
 Pad	Electric Haze	singing_bowl_long@t8000]@t200[R<#8U2~8/defaultEE#4T22L16O383Q-55/batlow#4T13L58;A319D771S91R2276V87K61G-12
 Pad	Fog Chord Pad	logon<E-C@50XU3~12;A1200S90R3000K44G8
-Pad	Global Glow	cello_section_sus_c3@t7500]@t300[<#11U2~8/chimesRE#5T-19L38O182Q-8;A561D463S80R982V91K36G-7
+Pad	Global Glow	cello_section_sus_c3@t7500]@t300[<#11U2~8/chimesRE#5T-7L38O182Q-8;A561D463S80R982V91K48G-7
 Pad	Motor City Strings	startup@20[@50]<C@50X#12U3~14/logon<@20[#4L35;A600S90R1500K56G-3
 Pad	Northern Haze	startup<EH0,12U3~12Ja0,0.969,100.2290,77;A1200S90R3000K44G-2
 Pad	Quiet Wash	ringout@t328]@t93[@0CP@0CP@0CPEU3~12;A287D639S80R2148V81K69G-8

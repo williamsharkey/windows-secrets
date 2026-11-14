@@ -171,7 +171,8 @@
   "Texture": 6
  },
  "polysynth-showroom": {
-  "Strings": 4,
-  "Bass": 2
+  "Keys": 4,
+  "Strings": 6,
+  "Vocal": 6
  }
 }

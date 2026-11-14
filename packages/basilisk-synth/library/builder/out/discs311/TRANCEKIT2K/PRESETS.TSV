@@ -1,5 +1,5 @@
 # SNDWAVE2000 by Algorithmic Industries presets: category	name	DNA	pack	editions	rating	verdict	file
-Bass	Early Basement	tuba_sus_f1@t2000]+;A0D310S41R122V85K29G-3	trance-connectivity	3.11 XP	5	-	BASS\EARLYB.BSP
+Bass	Early Basement	tuba_sus_f1@t2000]+;A0D310S41R122V85K41G-3	trance-connectivity	3.11 XP	5	-	BASS\EARLYB.BSP
 Bass	Empty Foundation	organ_pedal_25@t2500]+<<#11H0,-12/key_press_down#5FL44;A0D275S36R179V71K36G5	trance-connectivity	3.11 XP	5	-	BASS\EMPTYF.BSP
 Bass	Lucid Basement	ringout@20[@40]@0CP@0CP@0CP<<++#8Ja0,100.62,100.72,8.125,8.126,100Wr4t/xpstart#2FL30;A0S100R40V90K45	trance-connectivity	3.11	5	-	BASS\LUCIDB.BSP
 Bass	Northern Pulse	tada@t600]@t190[<<U2~5Q-65;A0D228S64R52V95K40G1	trance-connectivity	3.11 XP	5	-	BASS\NORTHERP.BSP
@@ -20,7 +20,7 @@ Keys	Hollow Salon	print#10/xpding@30]#6T-1L30;A0D2500S20R800K70G12	trance-connec
 Keys	Ocean Parlour	dingxpE<<#11H0,12/glass_ping#5T-12L31O20Q21;A0D1455S4R293V80K55G1	trance-connectivity	3.11 XP	5.5	keep	KEYS\OCEANP.BSP
 Keys	Satin Hammers	default+#11U2~8/glockenspiel_c6#5T-9L18Q33;A3D813S36R305V89K63G3	trance-connectivity	3.11 XP	5	-	KEYS\SATINH.BSP
 Lead	Bakelite Line	logon>#11U2~8/organ_pedal_25@t3000]@t300[#5T-4L33;A1D229S94R244V95K56G4	trance-connectivity	3.11 XP	5	-	LEAD\BAKELITL.BSP
-Lead	Blue Signal	violin_section_sus_c4@t6000]@t200[U2~10;A5D423S93R224V86K60G-3	trance-connectivity	3.11 XP	5	-	LEAD\BLUES.BSP
+Lead	Blue Signal	violin_section_sus_c4@t6000]@t200[U2~10;A5D423S93R224V86K72G-3	trance-connectivity	3.11 XP	5	-	LEAD\BLUES.BSP
 Lead	Broadcast Signal	ems_csirac_pulse_e4#11U2~7/contrabass_sus_d1@t3000]@t200[#5T26L67;A4D586S72R281V70K64G-6	trance-connectivity	3.11 XP	5	-	LEAD\BROADCAS.BSP
 Lead	Cedar Solo	ems_dial_tone@t2800]@t100[#8/start#8FL16;A2D208S94R108V94K69G-5	trance-connectivity	3.11	5.5	keep	LEAD\CEDARS.BSP
 Lead	Crystal Spark	ringout@t328]@t93[@0CP@0CP@0CPE<#13H0,12U2~8/hwfail#3T-3L61;A4D397S74R115V91K57G-7	trance-connectivity	3.11 XP	5	-	LEAD\CRYSTALS.BSP
@@ -30,7 +30,7 @@ Lead	Felt Signal	xpringout@t349]@t99[@0CP@0CP@0CP<H0,7U2~7;A24D408S98R229V85K57G
 Lead	Floor Song	print@t693]@t198[@0CP@0CP#14H0,12U3~19/organ_pedal_25@t3000]@t300[#2T3L51;A1D467S73R106V88K63G2	trance-connectivity	3.11 XP	5	-	LEAD\FLOORS.BSP
 Lead	Frosted Lead	print@t693]@t198[@0CP@0CP#12U3~13/dingxp#4T-4L31O23Q-28;A2D456S91R135V88K63G9	trance-connectivity	3.11	5.5	keep	LEAD\FROSTEDL.BSP
 Lead	Gentle Call	tadaxp@40[@20]@0CP@0CP@0CP@0CP+#11U5~25L114Ja0,100.500,48.1591,23/tadaxp@40[@20]@0CP@0CP@0CP@0CP>#2U1~0L40/crystal_bell_bb5@t2000]#3T-10L37O14Q27;A150S95R600V60K60G-1	trance-connectivity	3.11 XP	5.5	keep	LEAD\GENTLEC.BSP
-Lead	Global Pilot	flute_vib_c5@t6000]@t300[E<#12U3~19/print#4T2L33O21Q-11;A5D468S99R104V89K60G-7	trance-connectivity	3.11 XP	5	-	LEAD\GLOBALP.BSP
+Lead	Global Pilot	flute_vib_c5@t6000]@t300[E<#12U3~19/print#4T14L33O21Q-11;A5D468S99R104V89K72G-7	trance-connectivity	3.11 XP	5	-	LEAD\GLOBALP.BSP
 Lead	Lucid Pilot	ems_motor_whine_a4@t3500]@t300[#14H0,-12U3~12/recycle#2FL31Ja0,100.148,30.352,0;A23D96S78R257V76K69G-17	trance-connectivity	3.11 XP	5	keep	LEAD\LUCIDP.BSP
 Lead	Neon Solo	ems_motor_whine_a4@t3500]@t300[<H0,12;A4D261S71R344V79K57G-10	trance-connectivity	3.11 XP	5	keep	LEAD\NEONSOLO.BSP
 Lead	Opal Ray	ems_motor_whine_a4@t3500]@t300[E<#14H0,12U3~16/contrabass_sus_d1@t3000]@t200[#2T19L60;A1D443S95R196V72K57G-20	trance-connectivity	3.11	5	-	LEAD\OPALRAY.BSP
@@ -46,7 +46,7 @@ Pad	Vinyl Horizon	ems_704_vowel_a3#11U2~9/wind_chime_single@t2000]R#5T-2L34O44Q-
 Pluck	Basement Pick	emh_typewriter_ksE;A0D370S6R109V82K62	trance-connectivity	3.11 XP	5.5	keep	PLUCK\BASEMENP.BSP
 Pluck	Broadcast Harp	xpding+#8/crystal_bell_bb5@t2000]#8T-11L25Q-25;A2D135S6R86V77K59G5	trance-connectivity	3.11 XP	5.5	keep	PLUCK\BROADCAH.BSP
 Pluck	Delta Flick	tadaxp>#11H0,12/default@t300]#5T9L21Q-31;A5D194S1R93V78K60G10	trance-connectivity	3.11 XP	5	-	PLUCK\DELTAF.BSP
-Pluck	Delta Pizz	contrabass_pizz_e1>>>#8U2~4/menu#4FL24/default@t300]#4T13L28Q7;A1D317S7R62V84K64G-3	trance-connectivity	3.11 XP	5	-	PLUCK\DELTAP.BSP
+Pluck	Delta Pizz	contrabass_pizz_e1>>>#8U2~4/menu#4FL24/default@t300]#4T25L28Q7;A1D317S7R62V84K76G-3	trance-connectivity	3.11 XP	5	-	PLUCK\DELTAP.BSP
 Pluck	Echo Plink	xpding#5/relay_click#5FL20/dingxp#6T-1L35Q-13;A1D150S7R119V89K59G9	trance-connectivity	3.11 XP	5	keep	PLUCK\ECHOP.BSP
 Pluck	Echo Pluck 138	default@12]#6U2~8/default@12]<E>#5L40O326Q-40/default@12]<E>#5L22O652Q40;A0D300S0R250V80K75G2	trance-connectivity	3.11 XP	5.5	keep	PLUCK\ECHOP1.BSP
 Pluck	Harbor Steps	default#8/infobar#8FL24;A2D262S2R117V80K63G6	trance-connectivity	3.11 XP	5	-	PLUCK\HARBORS.BSP
