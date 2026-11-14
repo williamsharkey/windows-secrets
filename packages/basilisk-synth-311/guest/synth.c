@@ -2110,6 +2110,8 @@ static void page_close(void)
 static void page_add(HWND w) { if (npg < 64) pgWin[npg++] = w; }
 static void rec_page(int y0);
 static void about_open(void);
+static void splash_close(void);
+static void splash_open(void);
 static void rec_leave(void);
 static void mine_page(int y0);
 static void lib_page(int y0);
@@ -3503,7 +3505,7 @@ static void host_line(char *s)
         else say("hi %d 311 %s", v, assembled ? "ready" : "wait");
     }
     else if (!strcmp(s, "desk")) { if (hMain && assembled) ShowWindow(hMain, atoi(rest) ? SW_MINIMIZE : SW_RESTORE); }
-    else if (!strcmp(s, "go")) { if (!assembled) assemble(); else say("ready"); }
+    else if (!strcmp(s, "go")) { splash_close(); if (!assembled) assemble(); else say("ready"); }
     else if (!strcmp(s, "dna")) build(rest);
     else if (!strcmp(s, "on")) {
         /* on <rec> <rate> <vol> [<pan> [<delay_ms> [<layer> [<from> <to>]]]]: the host waits out delays and sends 0;
@@ -3578,6 +3580,8 @@ static void host_line(char *s)
     }
     else if (!strcmp(s, "user")) rec_user(rest);
     else if (!strcmp(s, "about")) about_open();   /* test aid */
+    else if (!strcmp(s, "showwin")) { HWND x = FindWindow(rest, NULL); if (x) { ShowWindow(x, SW_RESTORE); SetWindowPos(x, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); } say("showwin %d", x != NULL); }   /* test aid */
+    else if (!strcmp(s, "exec")) say("exec %d", WinExec(rest, SW_SHOWNORMAL));   /* test aid: a program, as Program Manager starts it */
     else if (!strcmp(s, "packs")) lib_packs(rest);   /* the inserted discs */
     else if (!strcmp(s, "step")) mine_step(atoi(rest));   /* the sequencer's playhead */
     else if (!strcmp(s, "newgame") && hMine) PostMessage(hMine, WM_KEYDOWN, VK_F2, 0L);   /* the host's Randomize */
@@ -3806,13 +3810,72 @@ static void about_open(void)
     SetWindowPos(hAbout, NULL, 0, 0, 340, y + 70, SWP_NOMOVE | SWP_NOZORDER);
     ShowWindow(hAbout, SW_SHOW);
 }
+/* the title screen (design/brand/sndwave2000/screens/title-640.png as C:\BS\TITLE.BMP, 4-bit): 1:1 pixels, centred */
+static HWND hSplash; static HGLOBAL hSplashDib;
+long FAR PASCAL __export SplashProc(HWND h, UINT m, WPARAM w, LPARAM l)
+{
+    if (m == WM_PAINT) {
+        PAINTSTRUCT ps; HDC dc = BeginPaint(h, &ps);
+        if (hSplashDib) {
+            BYTE FAR *p = (BYTE FAR *)GlobalLock(hSplashDib);
+            BITMAPINFOHEADER FAR *bi = (BITMAPINFOHEADER FAR *)(p + 14);
+            DWORD off = *(DWORD FAR *)(p + 10);
+            SetDIBitsToDevice(dc, 0, 0, (int)bi->biWidth, (int)bi->biHeight, 0, 0, 0, (UINT)bi->biHeight, p + off, (BITMAPINFO FAR *)bi, DIB_RGB_COLORS);
+            GlobalUnlock(hSplashDib);
+        }
+        EndPaint(h, &ps);
+        return 0;
+    }
+    return DefWindowProc(h, m, w, l);
+}
+static void splash_open(void)
+{
+    OFSTRUCT of; HFILE f; long n; BYTE FAR *p; WNDCLASS wc; int w, hgt;
+    f = OpenFile("C:\\BS\\TITLE.BMP", &of, OF_READ);
+    if (f == HFILE_ERROR) return;
+    n = _llseek(f, 0L, 2); _llseek(f, 0L, 0);
+    hSplashDib = GlobalAlloc(GMEM_MOVEABLE, n);
+    if (!hSplashDib) { _lclose(f); return; }
+    p = (BYTE FAR *)GlobalLock(hSplashDib); _hread(f, p, n); _lclose(f);
+    w = (int)((BITMAPINFOHEADER FAR *)(p + 14))->biWidth; hgt = (int)((BITMAPINFOHEADER FAR *)(p + 14))->biHeight;
+    GlobalUnlock(hSplashDib);
+    memset(&wc, 0, sizeof wc); wc.lpfnWndProc = SplashProc; wc.hInstance = hInst; wc.hCursor = LoadCursor(NULL, IDC_WAIT);
+    wc.hbrBackground = GetStockObject(BLACK_BRUSH); wc.lpszClassName = "SndTitle"; RegisterClass(&wc);
+    hSplash = CreateWindow("SndTitle", "", WS_POPUP | WS_BORDER, (GetSystemMetrics(SM_CXSCREEN) - w - 2) / 2,
+                           (GetSystemMetrics(SM_CYSCREEN) - hgt - 2) / 2, w + 2, hgt + 2, NULL, NULL, hInst, NULL);
+    SetWindowPos(hSplash, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW | SWP_NOACTIVATE);
+    UpdateWindow(hSplash);
+}
+static void splash_close(void)
+{
+    if (!hSplash) return;
+    DestroyWindow(hSplash); hSplash = NULL;
+    if (hSplashDib) { GlobalFree(hSplashDib); hSplashDib = NULL; }
+    UpdateWindow(hMain);
+}
 long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
     if (m == WM_SYSCOMMAND && (w & 0xFFF0) == ID_ABOUT) { about_open(); return 0; }
     switch (m) {
     case WM_PAINT: paint(h); return 0;
     case WM_USER + 7: page_values(); scales_values(); return 0;   /* the page's buttons, after a click */
-    case WM_USER + 8: if (assembled && curTab != 4) page_open(4); return 0;   /* a click on the Recorder's wave display */
+    case WM_USER + 8: if (assembled && curTab != 4) page_open(4); return 0;
+    case WM_USER + 9: {   /* a second start: /recorders, /voices, /setup, or a preset file (.BSP: one line, the DNA) */
+        static char a[160]; ATOM at = (ATOM)w;
+        a[0] = 0; GlobalGetAtomName(at, a, sizeof a); GlobalDeleteAtom(at);
+        if (IsIconic(hMain)) ShowWindow(hMain, SW_RESTORE);
+        if (!assembled) return 0;
+        if (!lstrcmpi(a, "/voices")) page_open(1);
+        else if (!lstrcmpi(a, "/recorders")) page_open(0);
+        else if (!lstrcmpi(a, "/setup")) about_open();
+        else if (a[0] && a[0] != '/') {
+            OFSTRUCT of; HFILE f = OpenFile(a, &of, OF_READ); static char d[1100]; int n;
+            if (f != HFILE_ERROR) {
+                n = _lread(f, d, sizeof d - 1); _lclose(f);
+                if (n > 0) { d[n] = 0; while (n && (d[n - 1] == '\r' || d[n - 1] == '\n' || d[n - 1] == ' ')) d[--n] = 0; lstrcpyn(dnaText, d, sizeof dnaText); selLayer = 0; edited(TRUE); }
+            }
+        }
+        return 0; }   /* a click on the Recorder's wave display */
     case WM_LBUTTONDOWN: case WM_LBUTTONDBLCLK: {   /* a dimmed (out-of-scale) key is disabled: its clicks come here */
         int vel; POINT p; p.x = (short)LOWORD(l); p.y = (short)HIWORD(l);
         if (note_at(p.x, p.y, &vel) >= 0) { SetCapture(h); kb_mouse(h, l, 0); return 0; }
@@ -3950,7 +4013,9 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
     pointer_feed();
     logf_("SYNTH up: %d recorders, free resources: user %d%% gdi %d%%", NALL, GetFreeSystemResources(GFSR_USERRESOURCES), GetFreeSystemResources(GFSR_GDIRESOURCES));
     {   /* idle: the engine may freeze the machine here (the snapshot) */
-        WORD z = 0; bs_report(2, &z, 0);
+        WORD z = 0;
+        splash_open();   /* the title screen is what the machine shows when it wakes: it goes at `go` */
+        bs_report(2, &z, 0);
     }
     for (;;) {
         MSG m;

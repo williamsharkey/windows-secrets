@@ -36,38 +36,44 @@ def find(d, name):
     return os.path.join(d, name)
 
 
-def group_file():
+def group_file(items=None):
+    """items: [(name, command, icon path)]; the default is the Help item alone"""
+    items = items or [(ITEM_NAME, ITEM_CMD, ICON_PATH)]
     def sz(s):
         return s.encode('cp1252') + b'\0'
-    n_items = 1
+    n_items = len(items)
     hdr_len = 34 + 2 * n_items
     name_off = hdr_len
     body = bytearray(sz(GROUP_NAME))
-    # one item, then its strings and icon (32x32: AND mask 128 bytes, XOR image 128 bytes at 1 bit per pixel)
-    item_off = hdr_len + len(body)
-    item_len = 24
-    p = item_off + item_len
-    p_name = p; p += len(sz(ITEM_NAME))
-    p_cmd = p; p += len(sz(ITEM_CMD))
-    p_icon = p; p += len(sz(ICON_PATH))
-    if p % 2: p += 1
-    p_hdr = p; p += 12
-    p_and = p; p += 128
-    p_xor = p; p += 128
-    item = struct.pack('<hhHHHHHHHHHH', 21, 0, 0, 12, 128, 128, p_hdr, p_and, p_xor, p_name, p_cmd, p_icon)
-    data = bytearray(item) + sz(ITEM_NAME) + sz(ITEM_CMD) + sz(ICON_PATH)
-    if (item_off + len(data)) % 2: data += b'\0'
-    data += struct.pack('<HHHHHBB', 16, 16, 32, 32, 4, 1, 1)
-    data += b'\0' * 128            # AND mask: all of it drawn
-    data += b'\xff' * 128          # XOR: white (Program Manager replaces it with WINHELP.EXE's icon)
-    body += data
+    if (hdr_len + len(body)) % 2: body += b'\0'
+    offs = []
+    for k, (name, cmd, icon) in enumerate(items):
+        # an item, then its strings and icon (32x32: AND mask 128 bytes, XOR image 128 bytes at 1 bit per pixel)
+        item_off = hdr_len + len(body)
+        offs.append(item_off)
+        p = item_off + 24
+        p_name = p; p += len(sz(name))
+        p_cmd = p; p += len(sz(cmd))
+        p_icon = p; p += len(sz(icon))
+        if p % 2: p += 1
+        p_hdr = p; p += 12
+        p_and = p; p += 128
+        p_xor = p; p += 128
+        x, y = 21 + 75 * (k % 5), 0 + 70 * (k // 5)
+        item = struct.pack('<hhHHHHHHHHHH', x, y, 0, 12, 128, 128, p_hdr, p_and, p_xor, p_name, p_cmd, p_icon)
+        data = bytearray(item) + sz(name) + sz(cmd) + sz(icon)
+        if (item_off + len(data)) % 2: data += b'\0'
+        data += struct.pack('<HHHHHBB', 16, 16, 32, 32, 4, 1, 1)
+        data += b'\0' * 128            # AND mask: all of it drawn
+        data += b'\xff' * 128          # XOR: white (Program Manager replaces it with the icon file's own)
+        body += data
     cb_group = hdr_len + len(body)
     tags = struct.pack('<HHH', 0x8000, 0xFFFF, 10) + b'PMCC' + struct.pack('<HHH', 0xFFFF, 0xFFFF, 0)
     head = b'PMCC' + struct.pack('<HHH', 0, cb_group, 1)          # checksum filled below; nCmdShow SW_SHOWNORMAL
-    head += struct.pack('<hhhh', 60, 60, 420, 220)                # rcNormal
+    head += struct.pack('<hhhh', 60, 60, 460, 260)                # rcNormal
     head += struct.pack('<hh', -1, -1)                            # ptMin: Program Manager places the icon
     head += struct.pack('<HHHBBHH', name_off, 32, 32, 1, 1, 0, n_items)
-    head += struct.pack('<H', item_off)
+    for o in offs: head += struct.pack('<H', o)
     f = bytearray(head + body + tags)
     if len(f) % 2: f += b'\0'
     s = sum(struct.unpack('<%dH' % (len(f) // 2), f)) & 0xFFFF
@@ -120,7 +126,15 @@ def main():
     bs = find(drive, 'BS')
     os.makedirs(bs, exist_ok=True)
     shutil.copyfile(hlp, os.path.join(bs, 'SNDWAVE.HLP'))
-    open(os.path.join(win, GRP), 'wb').write(group_file())
+    items = None
+    if os.path.isfile(find(bs, 'SNDWAVE.ICO')):   # the brand kit's icons (make_machine.py copies them): the whole group
+        items = [('SNDWAVE2000', r'C:\BS\SNDWAVE.EXE', r'C:\BS\SNDWAVE.ICO'),
+                 ('16 Recorders', r'C:\BS\SNDWAVE.EXE /recorders', r'C:\BS\RECORDRS.ICO'),
+                 ('Voice Mixer', r'C:\BS\SNDWAVE.EXE /voices', r'C:\BS\MIXER.ICO'),
+                 ('Read Me', r'NOTEPAD.EXE C:\BS\README.TXT', r'C:\BS\README.ICO'),
+                 ('Setup', r'C:\BS\SNDWAVE.EXE /setup', r'C:\BS\SETUP.ICO'),
+                 (ITEM_NAME, ITEM_CMD, ICON_PATH)]
+    open(os.path.join(win, GRP), 'wb').write(group_file(items))
     edit_progman(find(win, 'PROGMAN.INI'))
     print('install311: SNDWAVE.HLP in %s, group %s' % (bs, GRP))
 

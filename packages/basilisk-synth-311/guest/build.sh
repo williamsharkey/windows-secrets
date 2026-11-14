@@ -29,4 +29,5 @@ segment type code fixed
 segment type data fixed
 LNK
 wlink @synhook.lnk
-wcl -q $CFLAGS16 -bt=windows -l=windows -ml -k16384 -fe=SYNTH.EXE "$HERE/synth.c" mmsystem.lib shell.lib
+wcl -q $CFLAGS16 -bt=windows -l=windows -ml -zm -zc -k16384 -fe=SYNTH.EXE "$HERE/synth.c" mmsystem.lib shell.lib
+wcl -q $CFLAGS16 -bt=windows -l=windows -ms -fe=SNDWAVE.EXE "$HERE/sndwave.c"

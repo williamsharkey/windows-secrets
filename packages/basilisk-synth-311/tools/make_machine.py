@@ -30,6 +30,25 @@ if xpsounds:
     os.makedirs(os.path.join(drive, 'XPSOUNDS'), exist_ok=True)
     for f in sorted(os.listdir(xpsounds)):
         if f.upper().endswith('.WAV'): shutil.copy(os.path.join(xpsounds, f), os.path.join(drive, 'XPSOUNDS', f.upper()))
+# the brand kit (design/brand/sndwave2000): the title screen, the Program Manager icons, the Read Me
+brand = sys.argv[sys.argv.index('--brand') + 1] if '--brand' in sys.argv else os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'design', 'brand', 'sndwave2000')
+if os.path.isdir(brand):
+    from PIL import Image
+    t = Image.open(os.path.join(brand, 'screens', 'title-640.png')).convert('RGB')
+    t.quantize(colors=16, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(drive, 'BS', 'TITLE.BMP'))   # (4 colours: exact)
+    for src, dst in (('sndwave2000', 'SNDWAVE'), ('16-recorders', 'RECORDRS'), ('voice-mixer', 'MIXER'), ('read-me', 'README'), ('setup', 'SETUP')):
+        shutil.copy(os.path.join(brand, 'icons', src + '.ico'), os.path.join(drive, 'BS', dst + '.ICO'))
+    open(os.path.join(drive, 'BS', 'README.TXT'), 'wb').write((
+        'SNDWAVE2000\r\nExecutive Audiophile Edition\r\nVersion 1.00 (Build 0311)\r\n'
+        'Copyright (c) 1993-1995 Algorithmic Industries. All rights reserved.\r\n\r\n'
+        'Total sound solutions for globalized audio.\r\n\r\n'
+        'SNDWAVE2000 is a sixteen-voice synthesizer built from real Sound Recorders. Each voice is its own copy of the\r\n'
+        'recorder that came with your computer, recording and playing back at 22,050 Hz, and sixteen of them play\r\n'
+        'together as one instrument. Install it from diskette or CD-ROM, open it from Program Manager, and play the\r\n'
+        'warm 8-bit sound of 1993 polyphonically.\r\n\r\n'
+        'Press F1 in SNDWAVE2000 for Help.\r\n\r\n'
+        'SNDWAVE2000 and the Grid Sun device are trademarks of Algorithmic Industries. All other product names are\r\n'
+        'the property of their respective owners.\r\n').encode('cp1252'))
 # the help (packages/basilisk-synth/help): C:\BS\SNDWAVE.HLP and a "SNDWAVE2000" group in Program Manager (F1 opens it)
 if helpfile:
     inst = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'basilisk-synth', 'help', 'install', 'install311.py')
@@ -37,7 +56,7 @@ if helpfile:
 # Windows 3.1's CHORD.WAV and TADA.WAV (WfW 3.11's disks dropped them): `chord` and `tada` play their own files
 for f in ('CHORD.WAV', 'TADA.WAV'):
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'machine-extra', f), os.path.join(drive, 'WINDOWS', f))
-for f in ('SYNTH.EXE', 'SYNHOOK.DLL'): shutil.copy(os.path.join(gout, f), os.path.join(drive, 'BS', f))
+for f in ('SYNTH.EXE', 'SYNHOOK.DLL', 'SNDWAVE.EXE'): shutil.copy(os.path.join(gout, f), os.path.join(drive, 'BS', f))
 shutil.copy(os.path.join(gout, 'BSYNTH.DRV'), os.path.join(drive, 'WINDOWS', 'SYSTEM', 'BSYNTH.DRV'))
 
 def edit(path, fn):
@@ -48,6 +67,8 @@ edit(os.path.join(drive, 'WINDOWS', 'SYSTEM.INI'), lambda b: b.replace(b'Wave=sb
 def winini(b):
     import re
     b = re.sub(rb'run=[^\r\n]*', rb'run=C:\\BS\\SYNTH.EXE', b, count=1)
+    if b'bsp=' not in b.lower():   # .BSP presets open in SNDWAVE2000 (File Manager, the pack discs)
+        b = re.sub(rb'(\[Extensions\]\r\n)', rb'\1bsp=C:\\BS\\SNDWAVE.EXE ^.bsp\r\n', b, count=1, flags=re.I)
     if b'[sounds]' not in b:
         b = b.rstrip(b'\r\n\x1a') + (b'\r\n\r\n[sounds]\r\nSystemStart=none,Windows Start\r\nSystemExit=none,Windows Exit\r\n'
              b'SystemDefault=none,Default Beep\r\nSystemAsterisk=none,Asterisk\r\nSystemExclamation=none,Exclamation\r\n'
