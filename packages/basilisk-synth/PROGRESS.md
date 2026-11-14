@@ -286,6 +286,22 @@ no QEMU build of our own is needed.
   (break the assembly).
 - Check: 2 of 4 Windows resumes in the study answered `hi` but never sent `ready` within 90 s. Reproduce with the
   plugin's real COM link (repeated resumes, count hi-without-ready) and fix if real.
+- Site lane's 1.2.2 re-render (tools/sndrec-demo):
+  - Editor open = XP's stream starves: during the editor clips (01:03-01:07, capture every 1/30 s, load ~0.6) the
+    guest logged 35-57 underruns a take while the playout had 0 short blocks: the 10-20 ms cuts around the preset
+    change are inside XP's stream (XP drawing + QEMU's VNC encode share the one TCG thread with the sound; a rebuild
+    draws the most). Measure again with the D-Bus shared-memory display; if still there, lower the guest's drawing
+    cost during a rebuild, or raise srhook's queue while the editor is visible.
+  - Glass Steps 3 of 10 faint (their 4 rounds: 7, 5, 3, 2 heard, load 0.8): not reproduced. Their job
+    (same DNA and MIDI, batch_render offline, warmup 8) on the release DLL: 10/10 at full level in 3 of 3 takes
+    (WSL load 6-8); 1.2.1 in the same runs had one weak note per take. Open: re-render with the release bundle and
+    keep plugin.log if it recurs. Note: their 8 s warmup sends no notes, so XP sleeps after 4 s and wakes for the first
+    note (both their takes and mine).
+  - Click Harp 1/32, Recycle Perc 2/26 faint in every take: the known pre-1.2.2 items above.
+  - Macro Echoes: chords landing while Macro 1 (echo count N) rebuilds are dropped, 3 of 8 in every take. Program
+    changes keep the old sound while rebuilding (1.2.1); macro rebuilds must too.
+  - Preset-change clip's 3 s silence: the choir buffer ending under a held chord (expected), check when the clip is
+    re-rendered.
 
 ## Round 2 status (2026-11-13, before -> after)
 - Assembly, plugin load -> ready: Windows 11.5 s -> 5.6-6.1 s; macOS 11.3 s -> 4.4-4.5 s (1 vCPU, idle patch,
