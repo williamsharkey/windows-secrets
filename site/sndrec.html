@@ -181,6 +181,9 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
       <div class="pxclips" role="group" aria-label="BASILISK SYNTH clip">
         <span class="lbl">BASILISK SYNTH (XP)</span><button type="button" class="chip pxclip" aria-pressed="false">Loading</button><button type="button" class="chip pxclip" aria-pressed="false">Playing</button><button type="button" class="chip pxclip" aria-pressed="false">Preset change</button><button type="button" class="chip pxclip" aria-pressed="false">Macro 1</button>
       </div>
+      <div class="pxclips" role="group" aria-label="Library clip">
+        <span class="lbl">Owner's picks (1.3.0)</span><button type="button" class="chip pxclip" aria-pressed="false">Workgroup House</button><button type="button" class="chip pxclip" aria-pressed="false">More picks</button>
+      </div>
       <div class="pxbox"><canvas width="1024" height="768" data-px="1024x768" data-px-note="hero-note" tabindex="0" aria-label="BASILISK 16"></canvas><button type="button" class="pxbig" aria-label="Play">&#9654;</button><p class="pxstatus" hidden></p></div><script>pxfit.fit(document.querySelector('#hero [data-px]'))</script>
       <div class="pxctl"><button type="button" class="btn pxplay" aria-pressed="false">Play</button><span class="pxtime">0:00</span><input class="pxseek" type="range" min="0" max="15" step="0.001" value="0" aria-label="Position"><label class="pxloop"><input type="checkbox"> Loop</label></div>
       <p class="pxcap note"><b>Loading.</b> Windows for Workgroups 3.11 resumes, its sixteen Sound Recorders lose their title bars and line up, and the first preset plays.</p>
@@ -430,7 +433,12 @@ td, th { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var
     {base: 'sndrec/pxv/xp-change', seconds: 18.7, title: 'A preset change on BASILISK SYNTH: Windows XP rebuilds the recorders',
      caption: '<b>BASILISK SYNTH changing preset</b> (1.2.1). Kalimba Glass becomes Choir Pad mid-phrase. XP rebuilds the recorders with Sound Recorder\'s own commands, Open dialog and all; the notes played while it builds are silent until the new sound is ready. <i>The audio gaps come from the 1.2.1 plugin\'s output and are being fixed.</i>'},
     {base: 'sndrec/pxv/xp-macro', seconds: 10.9, title: 'Macro 1 moving on Macro Swell in BASILISK SYNTH',
-     caption: '<b>BASILISK SYNTH, Macro 1</b> (1.2.1). Automation steps Macro 1 to 35, 70, 100 and 20 % on Macro Swell: XP\'s DNA box and Macros panel follow each step, and ding\'s echo swings from left to right. <i>The audio gaps come from the 1.2.1 plugin\'s output and are being fixed.</i>'}];
+     caption: '<b>BASILISK SYNTH, Macro 1</b> (1.2.1). Automation steps Macro 1 to 35, 70, 100 and 20 % on Macro Swell: XP\'s DNA box and Macros panel follow each step, and ding\'s echo swings from left to right. <i>The audio gaps come from the 1.2.1 plugin\'s output and are being fixed.</i>'},
+    // the owner's picks from the 1.3.0 library (tools/sndrec-demo/videos/lib-*.txt): demo311 on the 1.2.1 machine; these DNAs are v2
+    {base: 'sndrec/pxv/lib-house', seconds: 39.6, title: 'The owner\'s picks from Workgroup House Edition: Shaded End, Granite Cloud and Shaded Tremolo on BASILISK 16',
+     caption: '<b>Workgroup House Edition</b> (coming in 1.3.0). The owner\'s three top-rated presets on BASILISK 16: Shaded End (a bass of XP\'s Ding slowed down, with Battery Low), then Granite Cloud (a flute, trimmed, echoed and slowed, with XP\'s Ringout) and Shaded Tremolo (XP\'s Startup and 3.11\'s Chimes). Between them Windows builds each new sound in view. Played on the 1.2.1 machine.'},
+    {base: 'sndrec/pxv/lib-picks', seconds: 21.8, title: 'Misty Warp and Afterhours Tine on BASILISK 16',
+     caption: '<b>More picks</b> (coming in 1.3.0). Misty Warp (bubbles in water with XP\'s Chimes and Ding) holds two notes, then Afterhours Tine plays chords and a melody. Played on the 1.2.1 machine.'}];
   window.heroPlayer = new PxPlayer(document.getElementById('hero'), clips);
   // the help gallery
   var g = document.getElementById('helpg'), shot = function () { return g.querySelector('[data-px]'); };

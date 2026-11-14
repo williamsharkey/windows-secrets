@@ -245,7 +245,9 @@ int main(int argc, char **argv)
         Dna d = applyMacros(w);
         return sigOf(d) == sigOf(base) ? d : base;
     };
+    float gain = 1.f;   // the DNA's output gain G, applied as the plugin applies it (render311 from 1.2.1 does the same)
     auto adoptAudio = [&](const Dna &d) {
+        gain = (float)std::pow(10.0, d.g.gainDb / 20.0);
         voices.setDna(d, c);
         for (int i = 0; i < kMaxLayers; i++) if (cache[i].known) voices.setLayerInfo(i, cache[i].first, cache[i].count, cache[i].rate, cache[i].frames);
     };
@@ -375,7 +377,7 @@ int main(int argc, char **argv)
         if (rec) {
             for (uint64_t k = anchor + h + kLat; k < need; k++) {
                 const uint32_t j = (uint32_t)(k % BSHM_RING);
-                audio.push_back(S->ring[j * 2]); audio.push_back(S->ring[j * 2 + 1]);
+                audio.push_back(S->ring[j * 2] * gain); audio.push_back(S->ring[j * 2 + 1] * gain);
             }
             for (int tries = 0; tries < 1000; tries++) {
                 const uint32_t s0 = S->vid_seq;

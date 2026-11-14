@@ -1,0 +1,16 @@
+# The owner's picks: Misty Warp (held notes), then Afterhours Tine (chords and melody); v2 DNAs on the 1.2.1 machine
+rec off
+go
+dna bubbles_in_water_burst<#8H0,12/chimesxp#4L27/dingxp#4L54;A14S100R2457V81G-1
+waitfor ready
+waitfor built
+sleep 0.5
+rec on
+sleep 0.3
+midi MID/workgroup-house-misty-warp.mid
+sleep 9.6
+dna xpding@25]#5/print@5[@60]<E#11T1U2~6L50Q-20Ja0,100.302,42.1572,31;A0D1800S30R500V85G13m11L20,90m1=40K59
+waitfor built
+sleep 0.3
+midi MID/workgroup-house-afterhours-tine.mid
+sleep 10.0

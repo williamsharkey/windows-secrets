@@ -1,0 +1,22 @@
+# The owner's picks, Workgroup House Edition (BASILISK 16 1.3.0 library, on the 1.2.1 machine: these DNAs are v2):
+# Shaded End (bassline), then Granite Cloud and Shaded Tremolo (slow chords); each preset change is built in view
+rec off
+go
+dna xpding<<#11H0,12/batlow#5T-13L62;A0D296S19R79V97K35G3
+waitfor ready
+waitfor built
+sleep 0.5
+rec on
+sleep 0.3
+midi MID/workgroup-house-shaded-end.mid
+sleep 6.6
+dna flute_vib_c5@t7500]@t400[E<#14H0,7U3~15/xpringout#2T-9L28Q23;A1260D752S99R1367V70K60G-14
+waitfor built
+sleep 0.3
+midi MID/workgroup-house-granite-cloud.mid
+sleep 10.6
+dna startup<@15[#12U3~14Q-28/chimes>R#4T1L40;A150D800S80R700K44
+waitfor built
+sleep 0.3
+midi MID/workgroup-house-shaded-tremolo.mid
+sleep 11.2
