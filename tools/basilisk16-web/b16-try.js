@@ -1,8 +1,11 @@
-// BASILISK 16, "Try it online" (sndrec.html): Windows for Workgroups 3.11 and its sixteen Sound Recorders, the
+// SNDWAVE2000 (formerly BASILISK 16), "Try it online": Windows for Workgroups 3.11 and its sixteen Sound Recorders, the
 // plugin's own engine compiled to WebAssembly (tools/basilisk16-web). Nothing is fetched until the button is
 // pressed. The machine runs in a worker; the page only forwards the pointer, the keys and MIDI, and watches it.
 (function () {
   'use strict';
+  // the product's names (the UI, the files it saves); files saved under the old name (.b16, BASILISK-SYNTH state,
+  // the plugin's .vstpreset) still open
+  var NAME = 'SNDWAVE2000', FILE = 'SNDWAVE2000', EXT = '.b16';
   var CFG = /*CONFIG*/{"v":"dev","files":[],"lead":2048}/*END*/;
   var DATA = null;   // b16-data.json, fetched on the click: the machine's settings, the library's names, the presets
   var root = document.getElementById('b16try');
@@ -43,7 +46,7 @@
     var c = document.getElementById('b16screen');
     if (c && c !== canvas && c.tagName === 'CANVAS') {
       canvas = c; canvas.tabIndex = 0;
-      canvas.setAttribute('aria-label', 'Windows for Workgroups 3.11 running BASILISK 16. Click to play; the keys go to Windows.');
+      canvas.setAttribute('aria-label', 'Windows for Workgroups 3.11 running ' + NAME + '. Click to play; the keys go to Windows.');
       bindInput(canvas);
     }
     return canvas;
@@ -110,7 +113,7 @@
     var m = e.data;
     if (m.t === 'progress') { bar.style.width = Math.min(100, 100 * m.loaded / Math.max(1, m.total)).toFixed(1) + '%'; if (m.loaded >= m.total) say('Resuming the machine…'); }
     else if (m.t === 'mem') { memMsg = m; api.mem = m; }
-    else if (m.t === 'resumed') { if (building) { over.hidden = true; say(''); stat.textContent = 'Watching Windows build BASILISK 16 from its own parts…'; api.resumedAt = Math.round(performance.now() - tClick); } }
+    else if (m.t === 'resumed') { if (building) { over.hidden = true; say(''); stat.textContent = 'Watching Windows build ' + NAME + ' from its own parts…'; api.resumedAt = Math.round(performance.now() - tClick); } }
     else if (m.t === 'ready') {
       // the sound starts now (not while the machine resumes, which would only be a stretch of silence)
       if (node && memMsg) node.port.postMessage({ t: 'mem', buffer: memMsg.buffer, base: memMsg.base, lay: memMsg.lay, lead: CFG.lead, leadMax: 3584 });
@@ -334,7 +337,7 @@
     if (String.fromCharCode(b[0], b[1], b[2], b[3]) !== 'VST3') throw new Error('not a .vstpreset');
     var s = ''; for (var i = 48; i < b.length; i++) s += String.fromCharCode(b[i]);
     var m = /__dpf_state_begin__[\xff\0]state[\xff\0]([\s\S]*?)[\xff\0]/.exec(s);
-    if (!m) throw new Error('this preset is not BASILISK 16’s');
+    if (!m) throw new Error('this preset is not ' + NAME + '’s');
     return new TextDecoder().decode(latin1(m[1]));
   }
   function readStateFile(file) {
@@ -342,7 +345,7 @@
       var b = new Uint8Array(ab), magic = String.fromCharCode(b[0], b[1], b[2], b[3]);
       if (magic === 'B16S') return decodeB16(b);
       if (magic === 'VST3') return decodeVstPreset(b);
-      throw new Error('not a BASILISK 16 state (.b16 or .vstpreset)');
+      throw new Error('not a ' + NAME + ' state (' + EXT + ', .b16 or .vstpreset)');
     });
   }
   function applyState(text) {
@@ -461,7 +464,7 @@
   api.openFiles = openFiles;
   function buildRow() {
     if (!U || !row) return;
-    var picker = document.createElement('input'); picker.type = 'file'; picker.accept = '.b16,.vstpreset,application/x-basilisk16-state'; picker.hidden = true;
+    var picker = document.createElement('input'); picker.type = 'file'; picker.accept = EXT + ',.b16,.vstpreset,application/x-basilisk16-state'; picker.hidden = true;
     picker.addEventListener('change', function () { openFiles(picker.files); picker.value = ''; });
     row.appendChild(picker);
     B.mic = U.button('', { sprite: 'mic', width: 27, aria: 'Microphone into Sound Recorder' });
@@ -470,8 +473,8 @@
     B.save = U.button('Save', { aria: 'Save the state into the selected slot' });
     B.saveas = U.button('Save As...', { aria: 'Save the state into a new named slot' });
     B.rename = U.button('Rename...'); B.del = U.button('Delete');
-    B.down = U.button('Download', { aria: 'Download the state as a .b16 file' });
-    B.vst = U.button('VST3 Preset', { aria: 'Download the state as a .vstpreset for the BASILISK 16 plugin' });
+    B.down = U.button('Download', { aria: 'Download the state as a ' + EXT + ' file' });
+    B.vst = U.button('VST3 Preset', { aria: 'Download the state as a .vstpreset for the ' + NAME + ' plugin' });
     statusL = U.label('', { max: 360 });
     [B.mic, meterCv, B.open, B.save, B.saveas, B.down, B.vst, B.rename, B.del, statusL].forEach(function (el) { btnsEl.appendChild(el); });
     drawMeter(0);
@@ -502,10 +505,10 @@
       });
     });
     B.down.addEventListener('click', function () {
-      currentOrSelected().then(encodeB16).then(function (b) { download(b, (sel && !ready ? sel : 'BASILISK') + '.b16', 'application/x-basilisk16-state'); }).catch(function (e) { note(e.message); });
+      currentOrSelected().then(encodeB16).then(function (b) { download(b, (sel && !ready ? sel : FILE) + EXT, 'application/x-basilisk16-state'); }).catch(function (e) { note(e.message); });
     });
     B.vst.addEventListener('click', function () {
-      currentOrSelected().then(function (t) { download(encodeVstPreset(t), (sel && !ready ? sel : 'BASILISK 16') + '.vstpreset', 'application/octet-stream'); }).catch(function (e) { note(e.message); });
+      currentOrSelected().then(function (t) { download(encodeVstPreset(t), (sel && !ready ? sel : FILE) + '.vstpreset', 'application/octet-stream'); }).catch(function (e) { note(e.message); });
     });
     B.mic.addEventListener('click', toggleMic);
     showButtons();
@@ -582,7 +585,7 @@
     if (m.state && m.state !== curState) { curState = m.state; curDna = m.dna; autosave(); }
   }
   function onStateIO(m) {   // Windows' own Save state... and Load state... (STATE.md 3): a download, or the file picker
-    if (m.op === 'save') { curState = m.state || curState; encodeB16(stateText()).then(function (b) { download(b, 'BASILISK.b16', 'application/x-basilisk16-state'); }); }
+    if (m.op === 'save') { curState = m.state || curState; encodeB16(stateText()).then(function (b) { download(b, FILE + EXT, 'application/x-basilisk16-state'); }); }
     else if (B.open) B.open.click();
   }
   function onStopped() { stopMic(); showButtons(); }
