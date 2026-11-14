@@ -4,8 +4,6 @@
    load only when played. */
 (function () {
   'use strict';
-  var PLAY = document.documentElement.getAttribute('data-play') === 'live';
-  if (!PLAY) [].forEach.call(document.querySelectorAll('a.playlink'), function (a) { a.href = '/sndrec.html#b16try'; });
   var grid = document.getElementById('grid'), packEl = document.getElementById('pack'), player = document.getElementById('player');
   var gq = document.getElementById('gq'), results = document.getElementById('results');
   var PACKS = [], BY = {}, DATA = {}, playing = null;

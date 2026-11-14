@@ -258,9 +258,6 @@
       pxfit.setImage(shot(), b.getAttribute('data-src'), b.getAttribute('data-size'), b.getAttribute('data-alt'));
     });
   });
-  // until the play page is live, "Try it online" opens the block on the old page
-  if (document.documentElement.getAttribute('data-play') !== 'live')
-    [].forEach.call(document.querySelectorAll('a.playlink'), function (a) { a.href = '/sndrec.html#b16try'; });
 })();
 </script>
 <script src="/sndrec/browser.js"></script>
