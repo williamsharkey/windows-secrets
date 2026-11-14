@@ -529,7 +529,7 @@
     PACKS.forEach(function (p) { grid.appendChild(card(p)); });
     [].forEach.call(grid.querySelectorAll('[data-px]'), function (i) { pxfit.fit(i); });
     $('status').textContent = PACKS.length + ' packs, ' + num(d.total) + ' presets. ' +
-      (d.previews ? 'Every preview was rendered by the real Windows 3.11 machine on the 1.3.0 release build; the few that missed a check are marked with a note. Kit Manager 98\'s kit previews are still to come.' : 'Every disc ships with SNDWAVE2000 1.3.0. Previews of every preset are being rendered on the release build; until then the owner\'s top picks play the demos already made, and the rest say "preview coming".');
+      (d.previews ? 'Every preview was rendered by the real Windows 3.11 machine on the 1.3.0 release build; the few that missed a check are marked with a note.' : 'Every disc ships with SNDWAVE2000 1.3.0. Previews of every preset are being rendered on the release build; until then the owner\'s top picks play the demos already made, and the rest say "preview coming".');
     if (!route(false)) {   // first visit: the pack with the most previews
       var best = PACKS.slice().sort(function (a, b) { return (b.picks || 0) - (a.picks || 0) || b.fav - a.fav; })[0];
       packSel.value = best.id; openPack(best.id);
