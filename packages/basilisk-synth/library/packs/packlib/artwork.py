@@ -28,7 +28,7 @@ BOX_MM = {             # w, h, d in mm (front width, front height, depth)
 def pal_of(p, img=None):
     pal = p['look']['palette']
     if isinstance(pal, str) and pal.startswith('adaptive'):
-        return gfx.adaptive(img, int(pal[8:])) if img is not None else gfx.VGA16
+        return gfx.adaptive(img, int(pal[8:]), p['look'].get('quant')) if img is not None else gfx.VGA16
     return pal
 
 
@@ -425,8 +425,8 @@ def back(p, w, h):
         gfx.text(d, (int(w * .08), y), L.get('bullet', '* ') + ft, fb, ink, aa=aa)
         y += int(fb.size * 1.4)
     y += fb.size
-    req = [L.get('req_head', 'SYSTEM REQUIREMENTS'), brand.SW + ' (16-bit) or', brand.XP + ' (32-bit)',
-           'CD-ROM drive (the plugin provides one)']
+    req = [L.get('req_head', 'SYSTEM REQUIREMENTS')] + (L.get('req') or [brand.SW + ' (16-bit) or', brand.XP + ' (32-bit)',
+                                                         'CD-ROM drive (the plugin provides one)'])
     bh = int(len(req) * fb.size * 1.35 + 12)
     d.rectangle((int(w * .06), y, int(w * .94), y + bh), outline=ink, width=1)
     for i, ln in enumerate(req):
@@ -773,6 +773,17 @@ def icon(p, n):
         d.rectangle(S(0, 20, 31, 31), fill=C[3])
         for y, x0, x1 in ((22, 17, 25), (25, 15, 27), (28, 18, 24)):
             d.line(S(x0, y, x1, y), fill=C[2])
+    elif m == 'ear':         # a carved wooden ear on a honey-pine board (the LISTEN of the WAULOPHONE)
+        d.rounded_rectangle(S(0, 0, 31, 31), radius=int(5 * k), fill=C[0], outline=C[3])
+        for y in (6, 13, 22, 27):
+            d.line(S(2, y, 29, y + 1), fill=C[2])
+        d.ellipse(S(8, 3, 25, 28), fill=C[3])
+        d.ellipse(S(9, 4, 23, 26), fill=C[2])
+        d.rectangle(S(8, 18, 13, 29), fill=C[0])
+        d.ellipse(S(9, 15, 15, 27), fill=C[2])
+        d.arc(S(11, 7, 21, 20), 200, 80, fill=C[1], width=W1 * 2)
+        d.ellipse(S(14, 13, 18, 18), fill=C[1])
+        d.point(S(15, 14), fill='#5ee8b0')
     elif m == 'chip':
         d.rectangle(S(7, 7, 24, 24), fill=C[3], outline=C[1])
         for i in range(8, 24, 3):

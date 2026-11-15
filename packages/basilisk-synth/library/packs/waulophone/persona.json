@@ -1,0 +1,504 @@
+{
+  "id": "waulophone",
+  "category": "WAULOPHONE (library lane; was Paulywaulophone)",
+  "pack": {
+    "plan_id": "waulophone",
+    "library_id": "waulophone",
+    "title": "WAULOPHONE",
+    "subtitle": "Sounds from Paulywaulyton",
+    "edition": "Model PW-62",
+    "version": "1.0",
+    "date": "1993-10-31",
+    "label": "WAULOPHONE",
+    "label_long": "WAULOPHONE PW-62",
+    "sources": {
+      "plan": "paulywaulophone"
+    },
+    "aliases": [
+      "paulywaulophone",
+      "paulyw",
+      "PAULYWAULO"
+    ],
+    "content": "/mnt/c/Users/willi/github/williamsharkey/windows-secrets/packages/basilisk-synth/library/builder/out/discs311/PAULYWAULO",
+    "author_is_maker": true
+  },
+  "maker": {
+    "name": "Paulywaulyton Works",
+    "short": "Paulywaulyton Works",
+    "kind": "instrument workshop",
+    "year": 1993,
+    "place": "Paulywaulyton",
+    "contact": [
+      "Paulywaulyton Works",
+      "The Old Oak, lower root (the small door)",
+      "Paulywaulyton PW1",
+      "Knock on the ear and wait.",
+      "Orders by post. No callers after dusk."
+    ],
+    "people": [
+      [
+        "Paul Chauncy",
+        "sounds (Uncle Homunculus / Paulywauly)"
+      ],
+      [
+        "Paulywauly",
+        "keeps the patches"
+      ]
+    ],
+    "voice": "deadpan small workshop; everything by ear; fairies treated as a practical matter"
+  },
+  "look": {
+    "palette": "adaptive16",
+    "dither": "bayer4",
+    "pixel": 2,
+    "aa": false,
+    "ink": "#3a200c",
+    "paper": "#e2b36c",
+    "accent": "#c8301e",
+    "accent2": "#62883a",
+    "fonts": {
+      "display": "palab.ttf",
+      "body": "pala.ttf",
+      "italic": "palai.ttf",
+      "mono": "cour.ttf",
+      "hand": "segoepr.ttf",
+      "black": "palab.ttf",
+      "type": "cour.ttf"
+    },
+    "art": {
+      "bg": "paulywaulyton/pine.png",
+      "scene": "paulywaulyton/village-gate.png",
+      "back": "paulywaulyton/giant-snail.png",
+      "mark": "paulywaulyton/objects/carved-ear.png",
+      "object": "paulywaulyton/objects/paulywauly.png",
+      "door": "paulywaulyton/objects/fairy-door.png",
+      "ear": "paulywaulyton/objects/carved-ear.png",
+      "ring": "paulywaulyton/dandelion-clock.png",
+      "ears": "paulywaulyton/paulywauly-big-ears.png",
+      "snail": "paulywaulyton/giant-snail.png"
+    },
+    "title": {
+      "style": "shadow",
+      "colors": [
+        "#3a200c",
+        "#9c6127"
+      ],
+      "font": "display",
+      "spacing": 6
+    },
+    "front": [
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0,
+          0,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "pic",
+        "key": "door",
+        "box": [
+          0.035,
+          0.025,
+          0.195,
+          0.2
+        ],
+        "fit": "contain"
+      },
+      {
+        "t": "pic",
+        "key": "ear",
+        "box": [
+          0.825,
+          0.03,
+          0.965,
+          0.2
+        ],
+        "fit": "contain"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.51,
+          0.095
+        ],
+        "size": 0.11,
+        "maxw": 0.6
+      },
+      {
+        "t": "text",
+        "s": "{subtitle}",
+        "font": "italic",
+        "size": 0.036,
+        "pos": [
+          0.51,
+          0.185
+        ],
+        "anchor": "mm",
+        "c": "#3a200c",
+        "maxw": 0.6
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.065,
+          0.235,
+          0.935,
+          0.785
+        ],
+        "c": "#2e1e12"
+      },
+      {
+        "t": "rect",
+        "box": [
+          0.075,
+          0.245,
+          0.925,
+          0.775
+        ],
+        "c": "#9c6127"
+      },
+      {
+        "t": "pic",
+        "key": "scene",
+        "box": [
+          0.085,
+          0.255,
+          0.915,
+          0.765
+        ]
+      },
+      {
+        "t": "pic",
+        "key": "object",
+        "box": [
+          0.73,
+          0.52,
+          0.91,
+          0.76
+        ],
+        "fit": "contain"
+      },
+      {
+        "t": "text",
+        "s": "PLAY IT BY EAR",
+        "font": "display",
+        "size": 0.045,
+        "pos": [
+          0.085,
+          0.835
+        ],
+        "anchor": "lm",
+        "c": "#3a200c",
+        "spacing": 3
+      },
+      {
+        "t": "text",
+        "s": "{edition}  -  {count} presets",
+        "font": "body",
+        "size": 0.03,
+        "pos": [
+          0.085,
+          0.885
+        ],
+        "anchor": "lm",
+        "c": "#3a200c"
+      },
+      {
+        "t": "text",
+        "s": "Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)",
+        "font": "italic",
+        "size": 0.027,
+        "pos": [
+          0.5,
+          0.955
+        ],
+        "anchor": "mm",
+        "c": "#3a200c",
+        "maxw": 0.9
+      }
+    ],
+    "spine_bg": "#9c6127",
+    "spine_ink": "#fff4e4",
+    "spine_title": "#f0cc8a",
+    "back_bg": "#e2b36c",
+    "back_ink": "#3a200c",
+    "back_head": "#c8301e",
+    "back_tint": null,
+    "bullet": "- ",
+    "compat": {
+      "pos": [
+        0.97,
+        0.905
+      ],
+      "anchor": "rb",
+      "size": 0.12
+    },
+    "focus": {
+      "scene": [
+        0.5,
+        0.5
+      ],
+      "back": [
+        0.5,
+        0.62
+      ]
+    },
+    "req_head": "WHAT YOU NEED",
+    "quant": "octree",
+    "req": [
+      "{sw} (Windows 3.11)",
+      "CD-ROM drive (the plugin provides one)"
+    ]
+  },
+  "box": {
+    "type": "jewel",
+    "price": [
+      "7/6",
+      "post free"
+    ],
+    "sticker": {
+      "bg": "#fff4e4",
+      "ink": "#3a200c",
+      "shape": "round",
+      "pos": [
+        0.86,
+        0.3
+      ]
+    },
+    "burst": null,
+    "features": [
+      "{count} presets, each set by ear at the workshop bench",
+      "The Doo, the Hmm, Boop, Barry, the bird glock and the bee organ",
+      "Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)",
+      "A booklet of the stop tabs, and how to listen to them"
+    ],
+    "barcode": true
+  },
+  "disc": {
+    "style": "silk",
+    "base": "#d8d8d8",
+    "label": "full",
+    "front": [
+      {
+        "t": "pic",
+        "key": "bg",
+        "box": [
+          0,
+          0,
+          1,
+          1
+        ]
+      },
+      {
+        "t": "pic",
+        "key": "ring",
+        "box": [
+          0.0,
+          0.5,
+          1,
+          1
+        ],
+        "focus": [
+          0.5,
+          0.55
+        ]
+      },
+      {
+        "t": "rect",
+        "box": [
+          0,
+          0.495,
+          1,
+          0.505
+        ],
+        "c": "#2e1e12"
+      },
+      {
+        "t": "word",
+        "pos": [
+          0.5,
+          0.2
+        ],
+        "size": 0.1,
+        "maxw": 0.62
+      },
+      {
+        "t": "text",
+        "s": "{edition}",
+        "font": "italic",
+        "size": 0.04,
+        "pos": [
+          0.5,
+          0.285
+        ],
+        "anchor": "mm",
+        "c": "#3a200c"
+      },
+      {
+        "t": "pic",
+        "key": "ear",
+        "box": [
+          0.13,
+          0.22,
+          0.25,
+          0.36
+        ],
+        "fit": "contain"
+      },
+      {
+        "t": "pic",
+        "key": "door",
+        "box": [
+          0.75,
+          0.22,
+          0.87,
+          0.36
+        ],
+        "fit": "contain"
+      },
+      {
+        "t": "text",
+        "s": "PAULYWAULYTON WORKS",
+        "font": "display",
+        "size": 0.03,
+        "pos": [
+          0.5,
+          0.33
+        ],
+        "anchor": "mm",
+        "c": "#3a200c",
+        "spacing": 2
+      }
+    ],
+    "ring": "PAULYWAULYTON WORKS  *  WAULOPHONE PW-62  *  SOUNDS BY PAUL CHAUNCY  *  PLAY IT BY EAR  *",
+    "ring_ink": "#fff4e4"
+  },
+  "icon": {
+    "motif": "ear",
+    "colors": [
+      "#e2b36c",
+      "#3a200c",
+      "#d39a4e",
+      "#9c6127"
+    ]
+  },
+  "files": {
+    "readme": "corporate",
+    "readme_txt": true,
+    "license": "LICENCE.TXT",
+    "hlp": "WAULOPHN.HLP",
+    "pdf": "WAULOPHN.PDF",
+    "pdf_size": "A5",
+    "pdf_style": "corporate",
+    "rtf": null,
+    "wri": null,
+    "splash": "WAULOPHN.BMP",
+    "splash_bpp": 8,
+    "splash_size": [
+      640,
+      480
+    ]
+  },
+  "pdf": {
+    "band": "#9c6127",
+    "band2": "#e2b36c",
+    "accent": "#c8301e",
+    "ink": "#3a200c",
+    "line1": "Owner's Book  -  Paulywaulyton Works",
+    "heads": {
+      "Introduction": "From the Workshop",
+      "Getting Started": "Listening",
+      "The Presets": "The Stop Tabs",
+      "License": "Licence"
+    }
+  },
+  "hlp": {
+    "font": "Palatino",
+    "family": "roman",
+    "title_color": "#c8301e"
+  },
+  "text": {
+    "tagline": "Play it by ear.",
+    "credit": "Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)",
+    "blurb": "The WAULOPHONE is made in Paulywaulyton, behind the small door in the root of the old oak. This disc carries {count} of its presets: the Doo, the Hmm, Boop, Barry on the bottom line, the glock that sings like a bird, the bee organ and the tuning fork. Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly).",
+    "intro": [
+      "The WAULOPHONE is made in Paulywaulyton, a village of toadstool houses behind a small door in the root of an old oak. This disc carries {count} of its presets for {sw}.",
+      "Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly). The Doo, Hmm, Boop, bass, sax, glock, flutecorder, flute, tuning fork, guitar pad and bee organ are his recordings, used with his permission. The pianos, tines, voices and kits around them are listed with their own credits in CREDITS.TXT.",
+      "No preset on this disc was set by eye. They were tuned at the bench in the evening, with the lamp off and the door shut. Please use them the same way."
+    ],
+    "install": [
+      "Insert the disc. In the Library tab it appears as WAULOPHONE.",
+      "Open a folder and double-click a preset. Listen to it before you play it.",
+      "If a preset is too bright, turn the tone down until it is not. You will hear when.",
+      "The booklet of stop tabs is WAULOPHN.PDF. The help file is WAULOPHN.HLP."
+    ],
+    "maker_note": [
+      "Every preset here was chosen by ear, in the evening. Where two settings sounded the same we kept the one that was easier to play.",
+      "If you hear something we did not, write and tell us. Letters are read aloud at the Thursday listening.",
+      "Paulywaulyton Works"
+    ],
+    "license": [
+      "PAULYWAULYTON WORKS LICENCE",
+      "You may use the presets on one computer, and use what you play with them in your own music, anywhere, for as long as you like.",
+      "The source recordings by Paul Chauncy (Uncle Homunculus / Paulywauly) are used with his permission. They may not be extracted, sold or given away as a sound collection.",
+      "This disc is guaranteed against faults in manufacture for ninety days from the date of purchase. The guarantee does not cover damp, fairies, or a disc left on a radiator."
+    ],
+    "copyright": "(c) 1993 Paulywaulyton Works. Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly).",
+    "files": {
+      "CARE.TXT": [
+        "|CARE OF YOUR WAULOPHONE DISC\n----------------------------",
+        "Keep the disc in its case, upright, away from the kettle.",
+        "Clean it from the middle outward with a soft dry cloth. Never in circles.",
+        "Honey pine moves with the weather. If the case swells in a wet spring, leave it on a dry shelf for a week. Do not put it near a radiator.",
+        "If the disc sounds wrong, check your ears first. Then check the disc.",
+        "|Paulywaulyton Works"
+      ],
+      "ORDER.TXT": [
+        "|PAULYWAULYTON WORKS - ORDER FORM\n--------------------------------",
+        "Fill in, fold twice and leave under the small door. Orders are collected at dusk.",
+        "|  [ ] WAULOPHONE PW-62 disc (this disc) ............ 7/6\n  [ ] WAULOPHONE PW-36, the honey-pine box ......... ask\n  [ ] GNOME-16, pages of toadstools ................ ask\n  [ ] Spare carved ear (LISTEN), walnut ............ 2/-\n  [ ] Fairy lights, one string, warm ............... 1/6",
+        "|  Name ______________________________________________\n\n  Address ___________________________________________\n\n  Which ear do you listen with?   [ ] left  [ ] right  [ ] both",
+        "Allow one cycle of the moon for delivery."
+      ]
+    }
+  },
+  "booklet": {
+    "mode": "varied",
+    "signature": "Paulywauly",
+    "only_lanes": [
+      "paulywaulyton"
+    ],
+    "lanes": [
+      "paulywaulyton"
+    ],
+    "quotes": {
+      "Vocal": "Doo. Hmm. Boop. Paulywauly keeps the patches.",
+      "Keys": "The front room, the long rug, the lamp off.",
+      "Pad": "Through the small door, and out the other side.",
+      "Bass": "Barry sings the bottom line.",
+      "Bell": "Leave the window open for the glock.",
+      "Kit": "Pages of toadstools.",
+      "Lead": "Steer by ear."
+    },
+    "images": {
+      "Vocal": "paulywaulyton/paulywauly-big-ears.png",
+      "Pad": "paulywaulyton/fairy-ring.png",
+      "Bass": "paulywaulyton/giant-snail.png",
+      "Bell": "paulywaulyton/old-oak.png",
+      "Keys": "paulywaulyton/front-room.png",
+      "Kit": "paulywaulyton/root-tortoise.png",
+      "Lead": "paulywaulyton/dandelion-clock.png"
+    },
+    "subjects": {},
+    "theme": [
+      "paulywaulyton",
+      "fairy",
+      "toadstool"
+    ],
+    "script_font": "segoepr.ttf"
+  }
+}

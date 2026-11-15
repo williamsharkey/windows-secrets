@@ -25,6 +25,7 @@ from . import artwork, gfx
 
 W, H = 384, 288
 LANES = ('aero', 'books', 'global', 'classic', 'newage')
+OWN_LANES = ('paulywaulyton',)   # one pack's own pictures: only a pack that names the lane (booklet.lanes / only_lanes) uses them
 
 SUBJECT = {   # what a category sounds like, in picture words (manifest tags and titles)
     'pad': ['ocean', 'sea', 'beach', 'clouds', 'sky', 'aurora', 'wave', 'horizon', 'mist', 'underwater'],
@@ -85,7 +86,7 @@ def art_index():
     global _INDEX
     if _INDEX is None:
         _INDEX = []
-        for lane in LANES:
+        for lane in LANES + OWN_LANES:
             f = os.path.join(gfx.ART_ROOT, lane, 'manifest.json')
             if not os.path.exists(f):
                 continue
@@ -116,8 +117,11 @@ def pick(p, cat, used, kind=('background',), extra=()):
     r = _rng(p['id'], cat)
     best, bs = None, -1e9
     seen_words = {w for u in used for w in _TITLEW.get(u, ())}
+    only = set(B.get('only_lanes', ()))
     for e in art_index():
         if e['kind'] not in kind or e['path'] in used or _TEXTY(e):
+            continue
+        if (only and e['lane'] not in only) or (e['lane'] in OWN_LANES and e['lane'] not in lanes):
             continue
         s = sum(3 for k in keys if k in e['words']) + sum(2 for k in B.get('theme', []) if k in e['words']) \
             + (2 if e['lane'] in lanes else 0) + r.random() * 2
@@ -151,7 +155,7 @@ def style(p):
 def dither_pic(p, st, img):
     pal = st['pal']
     if isinstance(pal, str) and pal.startswith('adaptive'):
-        pal = gfx.adaptive(img.convert('RGB'), int(pal[8:]))
+        pal = gfx.adaptive(img.convert('RGB'), int(pal[8:]), p['look'].get('quant'))
     k = st['pixel']
     if k > 1:
         img = img.resize((img.width // k, img.height // k), Image.LANCZOS)   # the source picture, before dithering

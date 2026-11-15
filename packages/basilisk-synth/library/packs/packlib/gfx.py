@@ -32,9 +32,9 @@ def palette(spec):
     return np.array([hexrgb(c) for c in spec], dtype=np.float32)
 
 
-def adaptive(img, n):
-    """An n-colour palette from the picture (median cut), as hex strings."""
-    q = img.convert('RGB').quantize(n, method=Image.Quantize.MEDIANCUT)
+def adaptive(img, n, method=None):
+    """An n-colour palette from the picture (median cut; method 'octree' keeps small bright areas such as faces), as hex strings."""
+    q = img.convert('RGB').quantize(n, method=Image.Quantize.FASTOCTREE if method == 'octree' else Image.Quantize.MEDIANCUT)
     p = q.getpalette()[:n * 3]
     return ['#%02x%02x%02x' % tuple(p[i:i + 3]) for i in range(0, len(p), 3)]
 

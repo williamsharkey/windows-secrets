@@ -55,6 +55,11 @@ def export(here, personas, out=None):
              'favourites': meta.get('favourites'), 'sound_credits': meta.get('credits') or ([T['credit']] if T.get('credit') else []),
              'booklet': 'booklet/booklet.json' if os.path.exists(os.path.join(dst, 'booklet', 'booklet.json')) else None,
              'files': files}
+        if meta.get('presets') is not None:     # the persona's {count} placeholders, as on the disc and the box
+            for k in ('blurb', 'tagline', 'subtitle'):
+                j[k] = j[k].replace('{count}', str(meta['presets'])).replace('{sw}', brand.SW)
+        if pk.get('aliases'):
+            j['aliases'] = pk['aliases']
         with open(os.path.join(dst, 'pack.json'), 'w', encoding='utf-8') as f:
             json.dump(j, f, ensure_ascii=False, indent=1)
         allp.append(j)

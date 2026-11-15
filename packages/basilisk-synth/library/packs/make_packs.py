@@ -23,6 +23,7 @@ Needs: Python 3 with Pillow, numpy, reportlab, pycdlib (PYTHONPATH=~/packwork/py
 import datetime
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -182,6 +183,11 @@ def build_pack(p, opt):
         else:
             inf = open(os.path.join(cd_, 'PACK.INF'), encoding='cp1252', errors='replace').read().replace('\r\n', '\n')
             t = inf.replace('[Pack]\n', '%s\n%s\n\nfor %s and %s\n\n' % (pk['title'], '=' * len(pk['title']), brand.SW, brand.XP))
+        if pk.get('author_is_maker'):      # the content still names an earlier maker: this disc's maker is its author
+            t = re.sub(r'(?m)^Author: .*$', 'Author: ' + p['maker']['name'], t)
+            if 'PACK.INF' in files:
+                inf_ = files['PACK.INF'].decode('cp1252', 'replace')
+                files['PACK.INF'] = re.sub(r'(?m)^Author=.*?(\r?)$', lambda m: 'Author=' + p['maker']['name'] + m.group(1), inf_).encode('cp1252')
         files['PACK.TXT'] = texts.enc(t)
         if data.get('credits'):
             files['CREDITS.TXT'] = texts.enc('%s - SOUND CREDITS\n\n%s\n\nAll other material on this disc (c) %d %s.\n'
