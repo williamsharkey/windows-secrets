@@ -2902,6 +2902,11 @@ static int sgN, sgSel, sgPlaying, sgPk = -1, sgEngines; static long sgPosMs, sgL
 static HWND sgList, sgTitleEd, sgInfoTx, sgName, sgSrc, sgPack, sgPre, sgTr, sgTune, sgVol, sgVolTx, sgPan, sgPanTx,
             sgEcho, sgEchoTx, sgVerb, sgVerbTx, sgMute, sgSolo, sgLoudEd, sgCeilEd, sgPos, sgTime, sgStat, sgEng;
 static HFONT sgFixed;
+/* the Notes... event list: one page of the selected track's notes (the host sends 150 at a time) */
+#define NNOTE 150
+static long __far nTick[NNOTE], __far nDur[NNOTE]; static int __far nKey[NNOTE], __far nVel[NNOTE];
+static int nN, nPpq = 480, sgNotesMode, nTrk; static long nFirst, nTotal;
+static HWND sgNotes, sgHead, sgNPos, sgNKey, sgNVel, sgNLen, sgNInfo;
 static BOOL sgFilling;   /* (our own SetWindowText / CB_SETCURSEL: not an edit) */
 #define SGW 964
 #define SGH 480
@@ -3046,6 +3051,8 @@ static int sg_field(char **p, char *out, int n)   /* the next |-separated field 
     *p = e ? e + 1 : *p + lstrlen(*p);
     return L;
 }
+static void sg_notes_fill(void);
+static void sg_note_fields(int k);
 static void song_line(char *rest)
 {
     char f[80]; char *p;
@@ -3083,6 +3090,15 @@ static void song_line(char *rest)
     }
     if (!strncmp(rest, "end", 3)) { if (sgSel < 0 && sgN) sgSel = 0; sg_list(); sg_controls(); return; }
     if (!strncmp(rest, "status ", 7)) { lstrcpyn(sgStatus, rest + 7, sizeof sgStatus); if (sgStat) SetWindowText(sgStat, sgStatus); return; }
+    if (!strncmp(rest, "notes end", 9)) { sg_notes_fill(); return; }
+    if (!strncmp(rest, "notes ", 6)) { int i = 0, pq = 480; long f = 0, t = 0; if (sscanf(rest + 6, "%d %d %ld %ld", &i, &pq, &f, &t) >= 4) { nTrk = i; nPpq = pq > 0 ? pq : 480; nFirst = f; nTotal = t; nN = 0; } return; }
+    if (!strncmp(rest, "note ", 5)) {   /* note <k> <tick>|<key>|<vel>|<dur> */
+        long k = atol(rest + 5); char *q = strchr(rest + 5, ' ');
+        if (q && nN < NNOTE && k == nFirst + nN) { q++; nTick[nN] = atol(q); q = strchr(q, '|'); if (q) { nKey[nN] = atoi(++q); q = strchr(q, '|'); }
+            if (q) { nVel[nN] = atoi(++q); q = strchr(q, '|'); } if (q) nDur[nN] = atol(++q); nN++; }
+        return;
+    }
+    if (!strncmp(rest, "notesel ", 8)) { long k = atol(rest + 8) - nFirst; if (sgNotes && k >= 0 && k < nN) { SendMessage(sgNotes, LB_SETCURSEL, (int)k, 0L); sg_note_fields((int)k); } return; }
     if (!strncmp(rest, "pos ", 4)) {
         long a = 0, b = 0; int c = 0;
         if (sscanf(rest + 4, "%ld %ld %d", &a, &b, &c) >= 2) { sgPosMs = a; sgLenMs = b; sgPlaying = c; }
@@ -3095,6 +3111,7 @@ static void song_closing(void)
     int i;
     if (!hSong) return;
     for (i = 0; i < NDIG; i++) if (hDig[i]) ShowWindow(hDig[i], SW_SHOWNA);
+    sgNotes = sgHead = sgNPos = sgNKey = sgNVel = sgNLen = sgNInfo = NULL; sgNotesMode = 0;
     hSong = sgList = sgTitleEd = sgInfoTx = sgName = sgSrc = sgPack = sgPre = sgTr = sgTune = sgVol = sgVolTx = sgPan = sgPanTx = NULL;
     sgEcho = sgEchoTx = sgVerb = sgVerbTx = sgMute = sgSolo = sgLoudEd = sgCeilEd = sgPos = sgTime = sgStat = sgEng = NULL;
     sgPk = -1;
@@ -3128,8 +3145,10 @@ static void song_page(int y0)
     x += sbtn("Open...", x, y, 3) + 3;
     x += sbtn("Save...", x, y, 4) + 3;
     /* the tracks: one row each (the event-list look of a Windows 3.1 sequencer, in the fixed font) */
-    b = smk("STATIC", " #  Track          Source  Preset (pack:name)                   Tr Tune    Vol  Pan Ech Vrb M S Notes", 0, 6, 32, SGW - 12, 14, -1);
+    sgHead = b = smk("STATIC", " #  Track          Source  Preset (pack:name)                   Tr Tune    Vol  Pan Ech Vrb M S Notes", 0, 6, 32, SGW - 12, 14, -1);
     SendMessage(b, WM_SETFONT, (WPARAM)sgFixed, 0L);
+    sgNotes = smk("LISTBOX", "", WS_BORDER | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT, 6, 48, SGW - 12, 230, ID_SONG + 40);
+    SendMessage(sgNotes, WM_SETFONT, (WPARAM)sgFixed, 0L); ShowWindow(sgNotes, SW_HIDE);
     sgList = smk("LISTBOX", "", WS_BORDER | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT, 6, 48, SGW - 12, 230, ID_SONG + 5);
     SendMessage(sgList, WM_SETFONT, (WPARAM)sgFixed, 0L);
     /* the selected track */
@@ -3174,8 +3193,20 @@ static void song_page(int y0)
     x += slbl("LUFS   Ceiling", x, y);
     sgCeilEd = smk("EDIT", "", WS_BORDER, x, y + 1, 40, 22, ID_SONG + 22); x += 44;
     x += slbl("dB", x, y);
-    smk("STATIC", "Every track plays in its own Windows for Workgroups 3.11, on its own sixteen Sound Recorders. Then the tracks are mixed.", 0, 6, 392, SGW - 12, 16, -1);
-    smk("STATIC", "Render plays them all, offline, as fast as the PC allows. Play and Export use the last render. Echo and reverb are sends.", 0, 6, 410, SGW - 12, 16, -1);
+    x = 6; y = 384;   /* the notes of the selected track (Notes...): position bar:beat:tick, note, velocity, length beat:tick */
+    x += sbtn("Notes...", x, y, 41) + 10;
+    x += slbl("Position", x, y); sgNPos = smk("EDIT", "", WS_BORDER, x, y + 1, 80, 22, ID_SONG + 42); x += 86;
+    x += slbl("Note", x, y); sgNKey = smk("EDIT", "", WS_BORDER, x, y + 1, 44, 22, ID_SONG + 43); x += 50;
+    x += slbl("Velocity", x, y); sgNVel = smk("EDIT", "", WS_BORDER, x, y + 1, 36, 22, ID_SONG + 44); x += 42;
+    x += slbl("Length", x, y); sgNLen = smk("EDIT", "", WS_BORDER, x, y + 1, 60, 22, ID_SONG + 45); x += 70;
+    x += sbtn("Insert", x, y, 46) + 3;
+    x += sbtn("Change", x, y, 47) + 3;
+    x += sbtn("Delete", x, y, 48) + 10;
+    x += sbtn("<<", x, y, 49) + 3;
+    x += sbtn(">>", x, y, 50) + 6;
+    sgNInfo = smk("STATIC", "", 0, x, y + 4, SGW - 6 - x, 16, -1);
+    smk("STATIC", "Every track plays in its own Windows for Workgroups 3.11, on its own sixteen Sound Recorders. Then the tracks are mixed.", 0, 6, 432, SGW - 12, 16, -1);
+    smk("STATIC", "Render plays them all, offline, as fast as the PC allows. Play and Export use the last render. Echo and reverb are sends.", 0, 6, 450, SGW - 12, 16, -1);
     /* the band: the transport, Media Player's buttons */
     x = 8;
     b = mkbtn("Render", x, y0, 24, ID_SONG + 30, &w); page_add(b); x += w + 3;
@@ -3195,6 +3226,73 @@ static void sg_set(const char *key, int v)
 {
     if (sgSel < 0 || sgSel >= sgN || sgFilling) return;
     say("song set %d %s %d", sgSel, (LPSTR)key, v);
+}
+static const char *sgNames[12] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
+static void sg_note_text(int i, char *t)   /* bar:beat:tick  note  velocity  length, one row of the list */
+{
+    long tk = nTick[i], du = nDur[i], bt = (long)nPpq * 4; char nm[8];
+    wsprintf(nm, "%s%d", (LPSTR)sgNames[nKey[i] % 12], nKey[i] / 12 - 1);
+    wsprintf(t, "%5ld %4ld:%ld:%03ld   %-4s %3d   %4d   %3ld:%03ld", nFirst + i + 1, tk / bt + 1, (tk / nPpq) % 4 + 1, tk % nPpq, (LPSTR)nm, nKey[i], nVel[i], du / nPpq, du % nPpq);
+}
+static void sg_notes_fill(void)
+{
+    int i; char t[80];
+    if (!sgNotes) return;
+    SendMessage(sgNotes, WM_SETREDRAW, FALSE, 0L);
+    SendMessage(sgNotes, LB_RESETCONTENT, 0, 0L);
+    for (i = 0; i < nN; i++) { sg_note_text(i, t); SendMessage(sgNotes, LB_ADDSTRING, 0, (LPARAM)(LPSTR)t); }
+    SendMessage(sgNotes, WM_SETREDRAW, TRUE, 0L); InvalidateRect(sgNotes, NULL, TRUE);
+    if (sgNInfo) {
+        if (nTotal) wsprintf(t, "Notes %ld-%ld of %ld", nFirst + 1, nFirst + nN, nTotal); else lstrcpy(t, "No notes yet: Insert adds one.");
+        SetWindowText(sgNInfo, t);
+    }
+}
+static void sg_note_fields(int k)
+{
+    char t[24]; long tk, bt;
+    if (k < 0 || k >= nN || !sgNPos) return;
+    tk = nTick[k]; bt = (long)nPpq * 4;
+    wsprintf(t, "%ld:%ld:%03ld", tk / bt + 1, (tk / nPpq) % 4 + 1, tk % nPpq); SetWindowText(sgNPos, t);
+    wsprintf(t, "%s%d", (LPSTR)sgNames[nKey[k] % 12], nKey[k] / 12 - 1); SetWindowText(sgNKey, t);
+    wsprintf(t, "%d", nVel[k]); SetWindowText(sgNVel, t);
+    wsprintf(t, "%ld:%03ld", nDur[k] / nPpq, nDur[k] % nPpq); SetWindowText(sgNLen, t);
+}
+static BOOL sg_note_read(long *tick, int *key, int *vel, long *dur)   /* the fields back to numbers */
+{
+    char t[24], *p; long a, b, c; int n, oct, sh = 0;
+    GetWindowText(sgNPos, t, sizeof t);
+    a = atol(t); p = strchr(t, ':'); b = p ? atol(p + 1) : 1; p = p ? strchr(p + 1, ':') : NULL; c = p ? atol(p + 1) : 0;
+    if (a < 1 || b < 1 || b > 4 || c < 0) return FALSE;
+    *tick = ((a - 1) * 4 + (b - 1)) * (long)nPpq + c;
+    GetWindowText(sgNKey, t, sizeof t);
+    if (t[0] >= '0' && t[0] <= '9') *key = atoi(t);
+    else {
+        static const int base[7] = {9, 11, 0, 2, 4, 5, 7};   /* A B C D E F G */
+        char c0 = (char)(t[0] & ~0x20);
+        if (c0 < 'A' || c0 > 'G') return FALSE;
+        n = base[c0 - 'A']; p = t + 1;
+        if (*p == '#') { sh = 1; p++; } else if (*p == 'b') { sh = -1; p++; }
+        oct = atoi(p); if (*p == '-') oct = -atoi(p + 1);
+        *key = (oct + 1) * 12 + n + sh;
+    }
+    if (*key < 0 || *key > 127) return FALSE;
+    GetWindowText(sgNVel, t, sizeof t); *vel = atoi(t); if (*vel < 1 || *vel > 127) return FALSE;
+    GetWindowText(sgNLen, t, sizeof t); a = atol(t); p = strchr(t, ':'); b = p ? atol(p + 1) : 0;
+    *dur = a * (long)nPpq + b; if (*dur < 1) return FALSE;
+    return TRUE;
+}
+static void sg_notes_mode(int on)   /* the list shows the selected track's notes, or the tracks */
+{
+    if (!sgNotes) return;
+    sgNotesMode = on && sgSel >= 0;
+    ShowWindow(sgList, sgNotesMode ? SW_HIDE : SW_SHOW); ShowWindow(sgNotes, sgNotesMode ? SW_SHOW : SW_HIDE);
+    if (sgNotesMode) {
+        char t[120], nm[25];
+        lstrcpyn(nm, sgT[sgSel].name, sizeof nm);
+        wsprintf(t, "%s     (track %d: %s; Notes... again for the tracks)", (LPSTR)"    # Position     Note No.    Vel   Length", sgSel + 1, (LPSTR)nm);
+        SetWindowText(sgHead, t);
+        say("song notes %d 0", sgSel);
+    } else SetWindowText(sgHead, " #  Track          Source  Preset (pack:name)                   Tr Tune    Vol  Pan Ech Vrb M S Notes");
 }
 static int sg_int(HWND e) { char t[16]; GetWindowText(e, t, sizeof t); return atoi(t); }
 static void song_command(int k, int code)
@@ -3233,6 +3331,20 @@ static void song_command(int k, int code)
     case 31: if (code == BN_CLICKED) say("song play %ld", (long)GetScrollPos(sgPos, SB_CTL) * 100L); return;
     case 32: if (code == BN_CLICKED) say("song stop"); return;
     case 33: if (code == BN_CLICKED) say("song export"); return;
+    case 40: if (code == LBN_SELCHANGE) { i = (int)SendMessage(sgNotes, LB_GETCURSEL, 0, 0L); if (i >= 0) sg_note_fields(i); } return;
+    case 41: if (code == BN_CLICKED) sg_notes_mode(!sgNotesMode); return;
+    case 46: case 47: case 48:
+        if (code == BN_CLICKED && sgSel >= 0) {
+            long tick, dur; int key, vel, sel = sgNotes ? (int)SendMessage(sgNotes, LB_GETCURSEL, 0, 0L) : -1;
+            if (k != 46 && sel < 0) { SetWindowText(sgNInfo, "Select a note first."); return; }
+            if (k == 48) { say("song notedel %d %ld", sgSel, nFirst + sel); return; }
+            if (!sg_note_read(&tick, &key, &vel, &dur)) { SetWindowText(sgNInfo, "Position bar:beat:tick, note C4 or 60, velocity 1-127, length beats:ticks."); return; }
+            if (k == 46) say("song noteadd %d %ld %d %d %ld", sgSel, tick, key, vel, dur);
+            else say("song noteset %d %ld %ld %d %d %ld", sgSel, nFirst + sel, tick, key, vel, dur);
+            if (!sgNotesMode) sg_notes_mode(1);
+        }
+        return;
+    case 49: case 50: if (code == BN_CLICKED && sgSel >= 0) { long f = nFirst + (k == 49 ? -NNOTE : NNOTE); if (f < 0) f = 0; if (f < nTotal) say("song notes %d %ld", sgSel, f); } return;
     case 35: if (code == CBN_SELCHANGE) { i = (int)SendMessage(sgEng, CB_GETCURSEL, 0, 0L); if (i >= 0) { sgEngines = i + 1; say("song engines %d", i + 1); } } return;
     }
 }

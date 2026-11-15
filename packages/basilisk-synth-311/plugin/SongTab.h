@@ -205,6 +205,8 @@ public:
         if (arg("play")) { play(std::atof(after("play").c_str()) / 1000.0); return true; }
         if (arg("engines")) { engines_ = std::max(1, std::min(8, std::atoi(after("engines").c_str()))); return true; }
         if (busy_) { status("Rendering: stop the render to change the song."); sendAll(); return true; }
+        if (arg("notes")) { std::istringstream in(after("notes")); int i = 0; long first = 0; in >> i >> first; sendNotes(i, first); return true; }
+        if (arg("noteadd") || arg("noteset") || arg("notedel")) { noteEdit(r); return true; }
         {
             std::lock_guard<std::mutex> l(m_);
             if (arg("title")) song_.set("title", after("title"));
@@ -280,6 +282,103 @@ public:
     void loadLater(const std::string &path, std::vector<uint8_t> bytes) { const std::string e = loadFile(path, bytes); if (!e.empty()) status("Not loaded: " + e + "."); }
 
 private:
+    // ---- the Notes... event list: a track's notes (its source's note-ons paired with their note-offs), paged
+    struct NoteRef { size_t ti, on, off; uint64_t tick, dur; int key, vel, ch; };
+    std::vector<NoteRef> notesOf(const SongTrack &t) const   // (m_ held)
+    {
+        std::vector<NoteRef> out; Source src; src.parse(t.src);
+        for (size_t ti = 0; ti < smf_.tracks.size(); ti++) {
+            const auto &ev = smf_.tracks[ti];
+            std::map<int, std::vector<size_t>> open;   // ch*128+key -> note-ons waiting, first in first out
+            for (size_t k = 0; k < ev.size(); k++) {
+                const auto &e = ev[k]; if (e.b.size() < 3 || e.b[0] >= 0xF0) continue;
+                const int st = e.b[0] & 0xF0, ch = e.b[0] & 15;
+                if (!src.match((int)ti, ch)) continue;
+                const int id = ch * 128 + e.b[1];
+                if (st == 0x90 && e.b[2] > 0) open[id].push_back(k);
+                else if ((st == 0x80 || st == 0x90) && !open[id].empty()) {
+                    const size_t on = open[id].front(); open[id].erase(open[id].begin());
+                    out.push_back({ti, on, k, ev[on].tick, e.tick - ev[on].tick, ev[on].b[1], ev[on].b[2], ch});
+                }
+            }
+        }
+        std::stable_sort(out.begin(), out.end(), [](const NoteRef &a, const NoteRef &b) { return a.tick != b.tick ? a.tick < b.tick : a.key < b.key; });
+        return out;
+    }
+    void sendNotes(int i, long first)
+    {
+        if (!send) return;
+        std::vector<std::string> out;
+        {
+            std::lock_guard<std::mutex> l(m_);
+            if (i < 0 || i >= (int)song_.tracks.size()) return;
+            const auto n = notesOf(song_.tracks[i]);
+            const long total = (long)n.size(), page = 150;
+            first = std::max(0L, std::min(first, std::max(0L, total - 1)));
+            char b[120];
+            std::snprintf(b, sizeof b, "song notes %d %d %ld %ld", i, smf_.division, first, total); out.push_back(b);
+            for (long k = first; k < std::min(total, first + page); k++) {
+                std::snprintf(b, sizeof b, "song note %ld %llu|%d|%d|%llu", k, (unsigned long long)n[k].tick, n[k].key, n[k].vel, (unsigned long long)n[k].dur);
+                out.push_back(b);
+            }
+            out.push_back("song notes end");
+        }
+        for (auto &x : out) send(x);
+    }
+    // noteadd <i> <tick> <key> <vel> <dur> | noteset <i> <k> <tick> <key> <vel> <dur> | notedel <i> <k>
+    void noteEdit(const std::string &r)
+    {
+        std::istringstream in(r); std::string op; int i = -1; long k = -1; long long tick = 0, dur = 0; int key = 60, vel = 100;
+        in >> op >> i;
+        if (op != "noteadd") in >> k;
+        if (op != "notedel") in >> tick >> key >> vel >> dur;
+        long show = 0;
+        {
+            std::lock_guard<std::mutex> l(m_);
+            if (i < 0 || i >= (int)song_.tracks.size()) return;
+            if (midi_.empty()) {   // a song without a file yet: one of its own (120 bpm unless the song says)
+                const std::string b = song_.get("bpm"); const double bpm = b.empty() ? 120.0 : std::atof(b.c_str());
+                const uint32_t us = (uint32_t)std::lround(60e6 / std::max(1.0, bpm));
+                smf_ = Smf(); smf_.division = 480; smf_.tracks = {{SmfEvent{0, {0xFF, 0x51, 0x03, (uint8_t)(us >> 16), (uint8_t)(us >> 8), (uint8_t)us}}}};
+                song_.set("midi", "song.mid");
+            }
+            const SongTrack &t = song_.tracks[i];
+            auto n = notesOf(t);
+            if (op != "noteadd") {
+                if (k < 0 || k >= (long)n.size()) return;
+                auto &ev = smf_.tracks[n[k].ti];
+                const size_t a = std::max(n[k].on, n[k].off), b = std::min(n[k].on, n[k].off);
+                ev.erase(ev.begin() + (long)a); ev.erase(ev.begin() + (long)b);
+                show = k;
+            }
+            if (op != "notedel") {
+                key = std::max(0, std::min(127, key)); vel = std::max(1, std::min(127, vel)); tick = std::max(0LL, tick); dur = std::max(1LL, dur);
+                Source src; src.parse(t.src);
+                int ch = !src.chans.empty() ? src.chans[0] : (op == "noteset" ? n[k].ch : 0);
+                size_t ti;
+                if (op == "noteset") ti = n[k].ti;
+                else if (!src.trks.empty()) { ti = (size_t)src.trks[0]; while (smf_.tracks.size() <= ti) smf_.tracks.push_back({}); }
+                else {   // the first file track with this source's events, else a new one
+                    ti = smf_.tracks.size();
+                    for (size_t x = 0; x < smf_.tracks.size() && ti == smf_.tracks.size(); x++)
+                        for (const auto &e : smf_.tracks[x]) if (e.b.size() >= 2 && e.b[0] < 0xF0 && src.match((int)x, e.b[0] & 15)) { ti = x; break; }
+                    if (ti == smf_.tracks.size()) smf_.tracks.push_back({});
+                }
+                if (src.all && op == "noteadd") ch = 0;
+                auto &ev = smf_.tracks[ti];
+                ev.push_back(SmfEvent{(uint64_t)tick, {(uint8_t)(0x90 | ch), (uint8_t)key, (uint8_t)vel}});
+                ev.push_back(SmfEvent{(uint64_t)(tick + dur), {(uint8_t)(0x80 | ch), (uint8_t)key, 0}});
+                std::stable_sort(ev.begin(), ev.end(), [](const SmfEvent &a, const SmfEvent &b) { return a.tick < b.tick; });
+                const auto n2 = notesOf(t);
+                for (size_t q = 0; q < n2.size(); q++) if (n2[q].tick == (uint64_t)tick && n2[q].key == key) { show = (long)q; break; }
+            }
+            midi_ = smf_.write();
+            std::string err; Smf re; if (re.parse(midi_, &err)) smf_ = re;
+        }
+        sendNotes(i, std::max(0L, show - 20));
+        { char b[48]; std::snprintf(b, sizeof b, "song notesel %ld", show); if (send) send(b); }
+        dirty_ = true;   // (the rows: their note counts and ranges)
+    }
     mutable std::mutex m_;
     SongText song_; std::vector<uint8_t> midi_; Smf smf_;
     std::vector<int32_t> mix_; std::string mixKey_, wantKey_;   // the mix as its WAV holds it: 24-bit, rounded half to even

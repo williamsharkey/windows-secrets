@@ -24,6 +24,7 @@
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Using Windows\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Minimizing the Synth to Use Windows}{\v minimize}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb The Panel}{\v menus}\par
+\pard\sa30\li395\ri175\plain\f0\fs20 {\uldb The Song Tab}{\v song}\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Reference\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb DNA Reference}{\v dna_ref}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Glossary}{\v glossary}\par
@@ -372,7 +373,40 @@
 \pard\sa60\li115\ri175\plain\f0\fs20 Clock, at the top right, is Windows' own Clock.\par
 \pard\sa60\li115\ri175\plain\f0\fs20 Each change becomes the plugin's sound, and your project saves it.\par
 \page
-#{\footnote dna_ref}${\footnote DNA Reference}+{\footnote main:180}K{\footnote DNA;reference;steps;genes;globals;syntax;attack;decay;sustain;release;velocity;bend range;root note;gain}
+#{\footnote song}${\footnote The Song Tab}+{\footnote main:180}K{\footnote Song;songs;tracks;MIDI;mix;render;Notes;echo;reverb;export}
+\pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b The Song Tab\par
+\pard\sa60\li115\ri175\plain\f0\fs20 A song is a MIDI file and its tracks. Each track plays its notes in its own Windows for Workgroups 3.11, on its own sixteen Sound Recorders. Then the tracks are mixed.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b To make a song\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 1\tab Click {\b Song} under the DNA box.\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 2\tab Click {\b Import MIDI...} and choose a MIDI file. Each MIDI channel with notes becomes a track. Or click {\b Add track} and write the notes yourself (see below).\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 3\tab Click a track. Choose its {\b Pack} and {\b Preset}, or click {\b Use the DNA} to give it the sound in the DNA box.\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 4\tab Set its volume, pan, echo and reverb.\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 5\tab Click {\b Render}. When the status line says Rendered, click {\b Play}.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b A track\par
+\pard\sa30\li2515\ri175\fi-2400\tx2515\plain\f0\fs20 Track\tab The track's name.\par
+\pard\sa30\li2515\ri175\fi-2400\tx2515\plain\f0\fs20 Source\tab The MIDI channel (ch1 to ch16) or file track (tr0, tr1 ...) it plays, or all.\par
+\pard\sa30\li2515\ri175\fi-2400\tx2515\plain\f0\fs20 Pack, Preset\tab Its sound: a preset of a pack disc.\par
+\pard\sa30\li2515\ri175\fi-2400\tx2515\plain\f0\fs20 Transpose\tab Semitones.\par
+\pard\sa30\li2515\ri175\fi-2400\tx2515\plain\f0\fs20 Tune\tab Cents, through the sound's pitch bend.\par
+\pard\sa30\li2515\ri175\fi-2400\tx2515\plain\f0\fs20 Volume, Pan\tab dB and left to right.\par
+\pard\sa30\li2515\ri175\fi-2400\tx2515\plain\f0\fs20 Echo, Reverb\tab How much goes to the song's echo and reverb.\par
+\pard\sa30\li2515\ri175\fi-2400\tx2515\plain\f0\fs20 Mute, Solo\tab A muted track is not in the mix. With Solo, only the solo tracks are.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b The notes\par
+\pard\sa60\li115\ri175\plain\f0\fs20 Click {\b Notes...} to see the selected track's notes, and again to see the tracks. A note has a position (bar:beat:tick), a note name (C4 is middle C) or number, a velocity (1 to 127) and a length (beats:ticks).\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Click a note to copy it into the boxes.\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab {\b Insert} adds the note in the boxes. {\b Change} replaces the selected note with it. {\b Delete} removes the selected note.\par
+\pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab {\b <<} and {\b >>} show the previous and next 150 notes.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b The master\par
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b Master loudness} is the mix's loudness in LUFS. {\b Ceiling} is the highest peak, in dB. The mix is brought to the loudness and limited to the ceiling.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Render, Play and Export\par
+\pard\sa30\li2515\ri175\fi-2400\tx2515\plain\f0\fs20 Render\tab Plays every track, offline, as fast as the PC allows, and mixes them. A track that has not changed is not played again.\par
+\pard\sa30\li2515\ri175\fi-2400\tx2515\plain\f0\fs20 Play, Stop\tab The last render, through the plugin's output. The bar sets where Play starts.\par
+\pard\sa30\li2515\ri175\fi-2400\tx2515\plain\f0\fs20 Export WAV...\tab The last render as a WAV file (48 kHz, 24-bit).\par
+\pard\sa30\li2515\ri175\fi-2400\tx2515\plain\f0\fs20 Engines\tab How many tracks play at once.\par
+\pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Files\par
+\pard\sa60\li115\ri175\plain\f0\fs20 {\b Save...} writes the song as a .sng file: its text and its MIDI file. {\b Open...} reads a .sng file, a .song file with its MIDI file beside it, or a MIDI file. Your project keeps the song.\par
+\page
+#{\footnote dna_ref}${\footnote DNA Reference}+{\footnote main:190}K{\footnote DNA;reference;steps;genes;globals;syntax;attack;decay;sustain;release;velocity;bend range;root note;gain}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b DNA Reference\par
 \pard\sa60\li115\ri175\plain\f0\fs20 A DNA is: {\i layer} {\f1 /} {\i layer} {\f1 /} ... {\f1 ;} {\i globals}. A layer is a sound name, then steps and genes in any order.\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b Steps (run in order)\par
@@ -410,7 +444,7 @@
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb The DNA}{\v dna}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\uldb Glossary}{\v glossary}\par
 \page
-#{\footnote glossary}${\footnote Glossary}+{\footnote main:190}K{\footnote glossary;terms;definitions}
+#{\footnote glossary}${\footnote Glossary}+{\footnote main:200}K{\footnote glossary;terms;definitions}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Glossary\par
 \pard\sa60\li115\ri175\plain\f0\fs20 Click a term to see what it means.\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\ul breakpoint}{\v term_breakpoint}\par
@@ -441,7 +475,7 @@
 \pard\sa30\li395\ri175\plain\f0\fs20 {\ul unison}{\v term_unison}\par
 \pard\sa30\li395\ri175\plain\f0\fs20 {\ul velocity}{\v term_velocity}\par
 \page
-#{\footnote trouble}${\footnote Troubleshooting}+{\footnote main:200}K{\footnote troubleshooting;problems;no sound;silent;late notes;latency;clicks;Windows looks wrong}
+#{\footnote trouble}${\footnote Troubleshooting}+{\footnote main:210}K{\footnote troubleshooting;problems;no sound;silent;late notes;latency;clicks;Windows looks wrong}
 \pard\keepn\sb120\sa120\li115\ri175\plain\f0\fs24\b Troubleshooting\par
 \pard\sb115\sa25\li115\ri175\plain\f0\fs20\b There is no sound\par
 \pard\sa40\li395\ri175\fi-275\tx395\plain\f0\fs20 \'b7\tab Wait until the recorders have lined up. Notes sound as soon as Windows is ready.\par

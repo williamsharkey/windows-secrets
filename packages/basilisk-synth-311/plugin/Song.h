@@ -78,6 +78,25 @@ struct Smf {
         }
         return sec + (double)(tick - last) * uspq / 1e6 / division;
     }
+    std::vector<uint8_t> write() const   // smf.py Smf.write: format 1 (0 with one track), events stable by tick, end of track
+    {
+        auto vlq = [](std::vector<uint8_t> &o, uint64_t v) { uint8_t b[10]; int n = 0; b[n++] = v & 0x7F; v >>= 7; while (v) { b[n++] = 0x80 | (v & 0x7F); v >>= 7; } while (n) o.push_back(b[--n]); };
+        auto be = [](std::vector<uint8_t> &o, uint32_t v, int n) { for (int k = n - 1; k >= 0; k--) o.push_back((uint8_t)(v >> (8 * k))); };
+        std::vector<uint8_t> o = {'M', 'T', 'h', 'd'}; be(o, 6, 4); be(o, tracks.size() == 1 ? 0 : 1, 2); be(o, (uint32_t)tracks.size(), 2); be(o, (uint32_t)division, 2);
+        for (const auto &tr : tracks) {
+            std::vector<SmfEvent> ev = tr;
+            std::stable_sort(ev.begin(), ev.end(), [](const SmfEvent &a, const SmfEvent &b) { return a.tick < b.tick; });
+            std::vector<uint8_t> body; uint64_t last = 0, end = 0;
+            for (const auto &e : ev) {
+                end = std::max(end, e.tick);
+                if (e.b.size() >= 2 && e.b[0] == 0xFF && e.b[1] == 0x2F) continue;
+                vlq(body, e.tick - last); body.insert(body.end(), e.b.begin(), e.b.end()); last = e.tick;
+            }
+            vlq(body, end - last); body.insert(body.end(), {0xFF, 0x2F, 0x00});
+            o.insert(o.end(), {'M', 'T', 'r', 'k'}); be(o, (uint32_t)body.size(), 4); o.insert(o.end(), body.begin(), body.end());
+        }
+        return o;
+    }
     uint64_t lastTick() const { uint64_t m = 0; for (const auto &tr : tracks) for (const auto &e : tr) m = std::max(m, e.tick); return m; }
     double firstTempoBpm() const { auto tm = tempoMap(); return tm.empty() ? 120.0 : 60e6 / tm[0].second; }
     std::vector<int> channels() const

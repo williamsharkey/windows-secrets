@@ -28,6 +28,7 @@
 + [Minimizing the Synth to Use Windows](minimize)
 :xp + [Menus and Panels](menus)
 :311 + [The Panel](menus)
+:311 + [The Song Tab](song)
 ## Reference
 + [DNA Reference](dna_ref)
 + [Glossary](glossary)
@@ -485,6 +486,42 @@ A sound plays at its own speed on the [root note](!term_root), middle C (60), un
 :311 | Macro 1-4 | The four macros. |
 :311 Clock, at the top right, is Windows' own Clock.
 Each change becomes the plugin's sound, and your project saves it.
+
+:311 %topic song
+:311 %title The Song Tab
+:311 %keys Song;songs;tracks;MIDI;mix;render;Notes;echo;reverb;export
+:311 %map 21
+:311 %col 2400
+:311 A song is a MIDI file and its tracks. Each track plays its notes in its own Windows for Workgroups 3.11, on its own sixteen Sound Recorders. Then the tracks are mixed.
+:311 ## To make a song
+:311 1. Click **Song** under the DNA box.
+:311 2. Click **Import MIDI...** and choose a MIDI file. Each MIDI channel with notes becomes a track. Or click **Add track** and write the notes yourself (see below).
+:311 3. Click a track. Choose its **Pack** and **Preset**, or click **Use the DNA** to give it the sound in the DNA box.
+:311 4. Set its volume, pan, echo and reverb.
+:311 5. Click **Render**. When the status line says Rendered, click **Play**.
+:311 ## A track
+:311 | Track | The track's name. |
+:311 | Source | The MIDI channel (ch1 to ch16) or file track (tr0, tr1 ...) it plays, or all. |
+:311 | Pack, Preset | Its sound: a preset of a pack disc. |
+:311 | Transpose | Semitones. |
+:311 | Tune | Cents, through the sound's pitch bend. |
+:311 | Volume, Pan | dB and left to right. |
+:311 | Echo, Reverb | How much goes to the song's echo and reverb. |
+:311 | Mute, Solo | A muted track is not in the mix. With Solo, only the solo tracks are. |
+:311 ## The notes
+:311 Click **Notes...** to see the selected track's notes, and again to see the tracks. A note has a position (bar:beat:tick), a note name (C4 is middle C) or number, a velocity (1 to 127) and a length (beats:ticks).
+:311 - Click a note to copy it into the boxes.
+:311 - **Insert** adds the note in the boxes. **Change** replaces the selected note with it. **Delete** removes the selected note.
+:311 - **<<** and **>>** show the previous and next 150 notes.
+:311 ## The master
+:311 **Master loudness** is the mix's loudness in LUFS. **Ceiling** is the highest peak, in dB. The mix is brought to the loudness and limited to the ceiling.
+:311 ## Render, Play and Export
+:311 | Render | Plays every track, offline, as fast as the PC allows, and mixes them. A track that has not changed is not played again. |
+:311 | Play, Stop | The last render, through the plugin's output. The bar sets where Play starts. |
+:311 | Export WAV... | The last render as a WAV file (48 kHz, 24-bit). |
+:311 | Engines | How many tracks play at once. |
+:311 ## Files
+:311 **Save...** writes the song as a .sng file: its text and its MIDI file. **Open...** reads a .sng file, a .song file with its MIDI file beside it, or a MIDI file. Your project keeps the song.
 
 %topic dna_ref
 %title DNA Reference
