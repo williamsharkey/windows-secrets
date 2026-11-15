@@ -22,6 +22,7 @@
 #include "UserRec.h"
 #include "V3Seq.h"
 #include "SongSession.h"
+#include "GenePool.h"
 
 #include <atomic>
 #include <chrono>
@@ -335,6 +336,7 @@ protected:
         }
         if (!packs_.empty()) s.extra["packs"] = packs_;   // the Library tab's inserted discs (ids, PRESET-ENGINE-2 16.1)
         song_.stateLines(s.extra);   // the Song tab's song (design/SONG-TAB.md 5)
+        if (std::lock_guard<std::mutex> pl(poolMtx_); !pool_.cards.empty() || !pool_.kept.empty()) { const std::string t = pool_.save(); s.extra["pool"] = bsynth::base64(t.data(), t.size()); }   // GENEPOOL.EXE's table
         {   // the recordings the DNA uses: hash, and the audio while the total stays under 8 MB (RECORDING.md 3.3)
             size_t total = 0;
             for (const auto &n : b16rec::usedNames(dnaText_)) {
@@ -366,6 +368,7 @@ protected:
             setKeyParams(kp);
             { std::lock_guard<std::mutex> l(mtx_); packs_ = s.extra.count("packs") ? s.extra["packs"] : ""; packsDirty_ = true; }
             song_.loadState(s.extra);
+            { std::lock_guard<std::mutex> l(poolMtx_); pool_ = b16pool::Pool(); auto it = s.extra.find("pool"); std::vector<uint8_t> b; if (it != s.extra.end() && bsynth::unbase64(it->second, b)) pool_.load(std::string(b.begin(), b.end())); }
             {   // its recordings (RECORDING.md 3.3): found by hash, the embedded copy saved if this machine lacks it
                 std::lock_guard<std::mutex> l(mtx_);
                 userPin_.clear(); userKept_.clear();
@@ -846,6 +849,7 @@ private:
         recDir_ = tmp_ + "/rec";
         b16rec::makeDir(recDir_);
         myRec_ = b16rec::myRecordingsDir();
+        machineDir_ = machine.substr(0, machine.size() - 1);
         song_.configure(machine.substr(0, machine.size() - 1), machine + coreName, myRec_, tmp_,   // the Song tab's engines
                         [this](const std::string &ln) { sendLine(ln.c_str(), 0, 0); });
         {
@@ -952,6 +956,10 @@ private:
         sendLine(("scala ok " + std::to_string(t.size()) + " " + nm).substr(0, 200).c_str(), 0, 0);
     }
     std::string packs_;                    // inserted pack discs: "id,id" (guarded by mtx_)
+    b16pool::Pool pool_;                   // GENEPOOL.EXE's table (GenePool.h; guarded by poolMtx_)
+    mutable std::mutex poolMtx_;
+    std::string machineDir_;               // the machine folder (the pack discs, for the deck)
+    double auditionAt_ = 0, auditionOff_ = 0;   // GENEPOOL.EXE: a card's note, once its sound is in the recorders (worker)
     b16song::SongTab song_;                // the Song tab (SongTab.h, SongTab.cpp): its own lock and threads
     std::atomic<bool> packsDirty_{true};
     std::string askPath_;   // a Save As waiting for the collision answer
@@ -1086,6 +1094,11 @@ private:
             }
             if (hello && sh_.importReady.exchange(false)) importNow();
             if (hello) song_.poll();
+            if (auditionAt_ > 0 && !building_.load() && !inFlightAtomic() && nowSec() >= auditionAt_) {   // the card's sound is in: its note
+                auditionAt_ = 0; keyFromWindows(0x90, 60, 100); auditionOff_ = nowSec() + 0.9;
+                if (hello) poolStatus("Playing. Double-click to keep it; select two or more and Breed.");
+            }
+            if (auditionOff_ > 0 && nowSec() >= auditionOff_) { auditionOff_ = 0; keyFromWindows(0x80, 60, 0); }
             {   // Windows' clock: today's local time of day, month and day, in 1993 (the year of WfW 3.11 and Sound Recorder).
                 // Only while an editor shows it, and not in an offline render: renders never depend on the wall clock.
                 static thread_local double lastClock = -1e9; static thread_local int lastEditors = 0;
@@ -1247,6 +1260,72 @@ private:
         sendLine(b, 0, 0);
     }
 
+    // GENEPOOL.EXE (GenePool.h): Windows' card table asks, the pool answers with the table
+    void poolSend()
+    {
+        std::vector<std::string> out;
+        {
+            std::lock_guard<std::mutex> l(poolMtx_);
+            out.push_back("pool clear");
+            auto put = [&](const b16pool::Card &c) {
+                std::string par; for (size_t k = 0; k < c.parents.size(); k++) par += (k ? "," : "") + std::to_string(c.parents[k]);
+                char b[200]; std::snprintf(b, sizeof b, "pool card %d|%s|%d|%d|%d|%d|%s|%s", c.id, c.name.c_str(), c.suit, c.rank, c.gen, c.kept ? 1 : 0, par.c_str(),
+                                           bsynth::sha1Hex(c.dna.data(), c.dna.size()).substr(0, 8).c_str());
+                out.push_back(b);
+            };
+            for (auto &c : pool_.cards) put(c);
+            for (auto &c : pool_.kept) put(c);
+            out.push_back("pool end");
+        }
+        for (auto &x : out) sendLine(x.c_str(), 0, 0);
+    }
+    void poolStatus(const std::string &t) { sendLine(("pool status " + t).c_str(), 0, 0); }
+    void poolLine(const std::string &r)
+    {
+        std::istringstream in(r); std::string op; in >> op;
+        std::string dna, status;
+        {
+            std::lock_guard<std::mutex> l(poolMtx_);
+            pool_.loadDeck(machineDir_);
+            if (op == "open") { if (pool_.cards.empty()) { pool_.draw(6); status = "Six cards from the deck. Click one to hear it."; } }
+            else if (op == "draw") { int n = 1; in >> n; n = std::max(1, std::min(10, n)); pool_.draw(n); status = std::to_string(n) + (n == 1 ? " card" : " cards") + " from the deck."; }
+            else if (op == "breed") {
+                std::string ids; in >> ids; std::vector<int> v; std::stringstream ss(ids); std::string x; while (std::getline(ss, x, ',')) if (!x.empty()) v.push_back(std::atoi(x.c_str()));
+                if (v.size() < 2) status = "Select two cards or more to breed.";
+                else { auto made = pool_.breed(v, 6); status = "A new generation: " + std::to_string(made.size()) + " cards."; }
+            }
+            else if (op == "keep") {
+                int id = 0; in >> id; const b16pool::Card *c = pool_.find(id);
+                if (c && !c->kept) {
+                    const std::string name = c->name, d = c->dna;
+                    pool_.keep(id);
+                    std::string dir = myRec_.empty() ? b16rec::myRecordingsDir() : myRec_;   // .../SNDWAVE1993/My Recordings
+                    const size_t sl = dir.find_last_of("/\\"); if (sl != std::string::npos) dir.resize(sl);
+                    dir += "/Kept Sounds"; b16rec::makeDir(dir);
+                    std::string fn; for (char ch : name) fn += (std::isalnum((unsigned char)ch) || ch == ' ' || ch == '-') ? ch : '_';
+                    if (FILE *f = std::fopen((dir + "/" + fn + ".bsp").c_str(), "wb")) { std::fputs((d + "\r\n").c_str(), f); std::fclose(f); }
+                    status = name + " is kept (Kept Sounds\\" + fn + ".BSP).";
+                }
+            }
+            else if (op == "discard") { int id = 0; in >> id; if (pool_.discard(id)) status = "Discarded."; }
+            else if (op == "rate") { int v = 25; in >> v; pool_.rate = std::max(0, std::min(100, v)); }
+            else if (op == "clear") { pool_.cards.clear(); status = "The table is cleared. The kept row stays."; }
+            else if (op == "play") {
+                int id = 0; in >> id;
+                if (const b16pool::Card *c = pool_.find(id)) {
+                    dna = c->dna; status = "Loading " + c->name + " into the recorders...";
+                    std::lock_guard<std::mutex> l2(mtx_);   // its discs go in first, as a Library preset's do
+                    bool more = false;
+                    for (const auto &pk : pool_.packsFor(dna)) if (("," + packs_ + ",").find("," + pk + ",") == std::string::npos) { packs_ += (packs_.empty() ? "" : ",") + pk; more = true; }
+                    if (more) packsDirty_ = true;
+                }
+            }
+        }
+        if (!dna.empty()) { setDna(dna, true); auditionAt_ = nowSec() + 0.3; }
+        if (op != "play" && op != "rate") poolSend();
+        if (!status.empty()) poolStatus(status);
+    }
+
     void onLine(const std::string &line)
     {
         if (line.rfind("keyset ", 0) == 0 || line.rfind("keyopt ", 0) == 0 || line.rfind("keymask ", 0) == 0) {   // the visitor changed the key in Windows
@@ -1262,6 +1341,7 @@ private:
             if (sh_.editors.load() == 0) sendLine("state error open the plugin's editor to save or load a state", 0, 0);
             return;
         }
+        if (line.rfind("pool ", 0) == 0) { poolLine(line.substr(5)); return; }   // GENEPOOL.EXE
         {   // the Song tab
             int req = 0; std::string def;
             if (song_.line(line, req, def)) {

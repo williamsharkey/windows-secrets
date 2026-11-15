@@ -42,7 +42,7 @@ if os.path.isdir(brand):
         from PIL import Image
         t = Image.open(os.path.join(brand, 'screens', 'title-640.png')).convert('RGB')
         t.quantize(colors=16, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(drive, 'BS', 'TITLE.BMP'))   # (4 colours: exact)
-    for src, dst in (('sndwave1993', 'SNDWAVE'), ('16-recorders', 'RECORDRS'), ('voice-mixer', 'MIXER'), ('read-me', 'README'), ('setup', 'SETUP')) + ((('citypop', 'CITYPOP'),) if citypop else ()):
+    for src, dst in (('sndwave1993', 'SNDWAVE'), ('16-recorders', 'RECORDRS'), ('voice-mixer', 'MIXER'), ('read-me', 'README'), ('setup', 'SETUP'), ('genepool', 'GENEPOOL')) + ((('citypop', 'CITYPOP'),) if citypop else ()):
         shutil.copy(os.path.join(brand, 'icons', src + '.ico'), os.path.join(drive, 'BS', dst + '.ICO'))
     open(os.path.join(drive, 'BS', 'README.TXT'), 'wb').write((
         'SNDWAVE1993\r\nExecutive Audiophile Edition\r\nVersion 1.00 (Build 0311)\r\n'
@@ -63,6 +63,7 @@ if helpfile:
 for f in ('CHORD.WAV', 'TADA.WAV'):
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'machine-extra', f), os.path.join(drive, 'WINDOWS', f))
 for f in ('SYNTH.EXE', 'SYNHOOK.DLL', 'SNDWAVE.EXE'): shutil.copy(os.path.join(gout, f), os.path.join(drive, 'BS', f))
+if os.path.exists(os.path.join(gout, 'GENEPOOL.EXE')): shutil.copy(os.path.join(gout, 'GENEPOOL.EXE'), os.path.join(drive, 'BS', 'GENEPOOL.EXE'))   # (the card table)
 if citypop and os.path.exists(os.path.join(gout, 'CITYPOP.EXE')): shutil.copy(os.path.join(gout, 'CITYPOP.EXE'), os.path.join(drive, 'BS', 'CITYPOP.EXE'))   # (the album's player)
 shutil.copy(os.path.join(gout, 'BSYNTH.DRV'), os.path.join(drive, 'WINDOWS', 'SYSTEM', 'BSYNTH.DRV'))
 

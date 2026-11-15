@@ -32,3 +32,4 @@ wlink @synhook.lnk
 wcl -q $CFLAGS16 -bt=windows -l=windows -ml -zm -zc -k16384 -fe=SYNTH.EXE "$HERE/synth.c" mmsystem.lib shell.lib
 wcl -q $CFLAGS16 -bt=windows -l=windows -ms -fe=SNDWAVE.EXE "$HERE/sndwave.c"
 wcl -q $CFLAGS16 -bt=windows -l=windows -ms -fe=CITYPOP.EXE "$HERE/citypop.c"
+wcl -q $CFLAGS16 -bt=windows -l=windows -ms -fe=GENEPOOL.EXE "$HERE/genepool.c"

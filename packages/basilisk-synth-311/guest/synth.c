@@ -900,6 +900,10 @@ static void set_time(int Y, int M, int D, int h, int m, int s)
     union REGS rg;
     rg.h.ah = 0x2B; rg.x.cx = Y; rg.h.dh = (unsigned char)M; rg.h.dl = (unsigned char)D; intdos(&rg, &rg);
     rg.h.ah = 0x2D; rg.h.ch = (unsigned char)h; rg.h.cl = (unsigned char)m; rg.h.dh = (unsigned char)s; rg.h.dl = 0; intdos(&rg, &rg);
+    {   /* DOSBox's DOS ignores 2Dh (set time): the BIOS tick count since midnight is what DOS and Windows' Clock read */
+        long secs = (long)h * 3600L + (long)m * 60L + s, ticks = secs * 18L + secs * 13532L / 65536L;   /* 1193180 / 65536 per second */
+        rg.h.ah = 0x01; rg.x.cx = (unsigned)(ticks >> 16); rg.x.dx = (unsigned)(ticks & 0xFFFF); int86(0x1A, &rg, &rg);
+    }
 }
 
 
@@ -2118,7 +2122,9 @@ static BOOL song_scroll(HWND sb, int code, int pos);
 static void song_line(char *rest);
 static void cp_open(void);
 static void cp_line(char *rest);
-static BOOL cpPending;
+static void gp_open(void);
+static void gp_line(char *rest);
+static BOOL cpPending, gpPending;
 static void rec_page(int y0);
 static void about_open(void);
 static void splash_close(void);
@@ -3381,6 +3387,178 @@ static BOOL song_scroll(HWND sb, int code, int pos)
     }
     return TRUE;
 }
+/* ================================================================ GENEPOOL.EXE: the Gene Pool card table
+   Sounds dealt as playing cards from Windows' own CARDS.DLL (Solitaire's), on a green felt. Each card is a DNA: its
+   suit and rank come from its sound, its name and a barcode of its DNA are written on it. Click a card to hear it (the
+   host loads it into the recorders) and to select it; double-click keeps it. Draw deals from the deck, Breed crosses
+   the selected cards into a new generation, Keep and Discard do what they say. The host keeps the table
+   (plugin/GenePool.h) and the project keeps it too. */
+#define NGP 24
+#define GPW 71
+#define GPH 96
+static int __far gpId[NGP], __far gpSuit[NGP], __far gpRank[NGP], __far gpGen[NGP], __far gpKept[NGP], __far gpSel[NGP], __far gpAnim[NGP];
+static char __far gpName[NGP][32]; static char __far gpCode[NGP][9];
+static int gpN, gpSeen[64], gpNSeen, gpRate = 25;
+static HWND hGene, gpStat, gpRateSb, gpRateTx;
+static HINSTANCE gpCards;
+static BOOL (FAR PASCAL *gpDraw)(HDC, int, int, int, int, DWORD);
+static HFONT gpFont;
+#define GPDECKX 560
+#define GPDECKY 14
+static void gp_slot(int i, int *x, int *y)   /* the table: two rows of six; the kept row below */
+{
+    int t = 0, k = 0, j;
+    for (j = 0; j < i; j++) if (gpKept[j]) k++; else t++;
+    if (gpKept[i]) { *x = 14 + (k % 7) * (GPW + 8); *y = 236 + (k / 7) * 12; }
+    else { *x = 14 + (t % 6) * (GPW + 12); *y = 14 + (t / 6) * (GPH + 10); }
+}
+static void gp_card(HDC dc, int i, int x, int y)
+{
+    RECT r; char t[40]; int b; HFONT of;
+    if (gpDraw) gpDraw(dc, x, y, (gpRank[i] - 1) * 4 + gpSuit[i], gpSel[i] ? 2 : 0, RGB(0, 128, 0));
+    else { SetRect(&r, x, y, x + GPW, y + GPH); FillRect(dc, &r, GetStockObject(WHITE_BRUSH)); FrameRect(dc, &r, GetStockObject(BLACK_BRUSH)); }
+    SetRect(&r, x + 5, y + 50, x + GPW - 5, y + GPH - 6);   /* the label: name, generation, and the DNA's barcode */
+    FillRect(dc, &r, GetStockObject(WHITE_BRUSH)); FrameRect(dc, &r, GetStockObject(GRAY_BRUSH));
+    of = SelectObject(dc, gpFont); SetBkMode(dc, TRANSPARENT); SetTextColor(dc, RGB(0, 0, 0));
+    SetRect(&r, x + 7, y + 51, x + GPW - 7, y + 75);
+    lstrcpyn(t, gpName[i], sizeof t);
+    DrawText(dc, t, -1, &r, DT_CENTER | DT_WORDBREAK | DT_NOPREFIX);
+    for (b = 0; b < 32; b++) {   /* 8 hex digits of the DNA's hash: one bar each bit */
+        int hx = gpCode[i][b / 4], v = hx >= 'a' ? hx - 'a' + 10 : hx - '0';
+        if ((v >> (3 - b % 4)) & 1) { RECT q; SetRect(&q, x + 10 + b * 16 / 10, y + 77, x + 11 + b * 16 / 10, y + 86); FillRect(dc, &q, GetStockObject(BLACK_BRUSH)); }
+    }
+    if (gpGen[i]) { wsprintf(t, "G%d", gpGen[i]); TextOut(dc, x + GPW - 22, y + 77, t, lstrlen(t)); }
+    SelectObject(dc, of);
+}
+static void gp_paint(HWND h)
+{
+    PAINTSTRUCT ps; HDC dc = BeginPaint(h, &ps); RECT r; HBRUSH felt = CreateSolidBrush(RGB(0, 128, 0)); int i, x, y; HFONT of;
+    GetClientRect(h, &r); r.bottom = 360; FillRect(dc, &r, felt); DeleteObject(felt);
+    if (gpDraw) gpDraw(dc, GPDECKX, GPDECKY, 53, 1, RGB(0, 128, 0)); else { SetRect(&r, GPDECKX, GPDECKY, GPDECKX + GPW, GPDECKY + GPH); FillRect(dc, &r, GetStockObject(GRAY_BRUSH)); }
+    of = SelectObject(dc, gpFont); SetBkMode(dc, TRANSPARENT); SetTextColor(dc, RGB(255, 255, 255));
+    TextOut(dc, GPDECKX + 8, GPDECKY + GPH + 4, "The deck", 8);
+    TextOut(dc, 14, 222, "Kept", 4);
+    SelectObject(dc, of);
+    for (i = 0; i < gpN; i++) {
+        gp_slot(i, &x, &y);
+        if (gpAnim[i] > 0) { x = GPDECKX + (x - GPDECKX) * (8 - gpAnim[i]) / 8; y = GPDECKY + (y - GPDECKY) * (8 - gpAnim[i]) / 8; }
+        gp_card(dc, i, x, y);
+    }
+    EndPaint(h, &ps);
+}
+static int gp_hit(int px, int py)
+{
+    int i, x, y;
+    for (i = gpN - 1; i >= 0; i--) { gp_slot(i, &x, &y); if (px >= x && px < x + GPW && py >= y && py < y + (gpKept[i] ? 12 + (i == gpN - 1 ? GPH : 12) : GPH)) return i; }
+    return -1;
+}
+static void gp_line(char *rest)
+{
+    if (!strncmp(rest, "clear", 5)) { gpN = 0; return; }
+    if (!strncmp(rest, "card ", 5) && gpN < NGP) {   /* card <id>|<name>|<suit>|<rank>|<gen>|<kept>|<parents>|<code> */
+        char *p = rest + 5, *f[8]; int k, i = gpN, s, seen = 0;
+        for (k = 0; k < 8; k++) { f[k] = p; p = strchr(p, '|'); if (!p) { k++; break; } *p++ = 0; }
+        if (k < 8) return;
+        gpId[i] = atoi(f[0]); lstrcpyn(gpName[i], f[1], sizeof gpName[0]); gpSuit[i] = atoi(f[2]) & 3; gpRank[i] = atoi(f[3]);
+        if (gpRank[i] < 1 || gpRank[i] > 13) gpRank[i] = 1;
+        gpGen[i] = atoi(f[4]); gpKept[i] = atoi(f[5]); lstrcpyn(gpCode[i], f[7], sizeof gpCode[0]); gpSel[i] = 0;
+        for (s = 0; s < gpNSeen; s++) if (gpSeen[s] == gpId[i]) seen = 1;
+        gpAnim[i] = seen ? 0 : 8;   /* new on the table: dealt from the deck */
+        if (!seen && gpNSeen < 64) gpSeen[gpNSeen++] = gpId[i];
+        gpN++;
+        return;
+    }
+    if (!strncmp(rest, "end", 3) && hGene) { SetTimer(hGene, 1, 40, NULL); InvalidateRect(hGene, NULL, FALSE); return; }
+    if (!strncmp(rest, "status ", 7) && gpStat) SetWindowText(gpStat, rest + 7);
+}
+static void gp_selected(char *out, int n)
+{
+    int i; char t[8]; out[0] = 0;
+    for (i = 0; i < gpN; i++) if (gpSel[i] && !gpKept[i] && lstrlen(out) < n - 8) { wsprintf(t, "%s%d", (LPSTR)(out[0] ? "," : ""), gpId[i]); lstrcat(out, t); }
+}
+long FAR PASCAL __export GeneProc(HWND h, UINT m, WPARAM w, LPARAM l)
+{
+    static char ids[200];
+    int i;
+    switch (m) {
+    case WM_PAINT: gp_paint(h); return 0;
+    case WM_TIMER: {   /* the deal: every new card steps from the deck to its place */
+        BOOL more = FALSE;
+        for (i = 0; i < gpN; i++) if (gpAnim[i] > 0) { gpAnim[i]--; more = TRUE; }
+        if (!more) KillTimer(h, 1);
+        { RECT r; SetRect(&r, 0, 0, 640, 360); InvalidateRect(h, &r, FALSE); }
+        return 0; }
+    case WM_LBUTTONDOWN: case WM_LBUTTONDBLCLK: {
+        int x = LOWORD(l), y = HIWORD(l);
+        if (x >= GPDECKX && x < GPDECKX + GPW && y >= GPDECKY && y < GPDECKY + GPH) { say("pool draw 1"); return 0; }
+        i = gp_hit(x, y);
+        if (i < 0) return 0;
+        if (m == WM_LBUTTONDBLCLK && !gpKept[i]) { say("pool keep %d", gpId[i]); return 0; }
+        if (!gpKept[i]) gpSel[i] = !gpSel[i];
+        say("pool play %d", gpId[i]);
+        InvalidateRect(h, NULL, FALSE);
+        return 0; }
+    case WM_COMMAND:
+        if (HIWORD(l) != BN_CLICKED) return 0;
+        if (w == 1) say("pool draw 3");
+        else if (w == 2) { gp_selected(ids, sizeof ids); say("pool breed %s", (LPSTR)ids); }
+        else if (w == 3 || w == 4) { for (i = 0; i < gpN; i++) if (gpSel[i] && !gpKept[i]) say(w == 3 ? "pool keep %d" : "pool discard %d", gpId[i]); }
+        else if (w == 5) say("pool clear");
+        return 0;
+    case WM_HSCROLL:
+        if ((HWND)HIWORD(l) == gpRateSb) {
+            int v = GetScrollPos(gpRateSb, SB_CTL); char t[16];
+            switch (w) { case SB_LINELEFT: v -= 1; break; case SB_LINERIGHT: v += 1; break; case SB_PAGELEFT: v -= 10; break; case SB_PAGERIGHT: v += 10; break;
+                         case SB_THUMBTRACK: case SB_THUMBPOSITION: v = LOWORD(l); break; }
+            if (v < 0) v = 0; if (v > 100) v = 100;
+            SetScrollPos(gpRateSb, SB_CTL, v, TRUE); wsprintf(t, "%d%%", v); SetWindowText(gpRateTx, t);
+            if (w == SB_ENDSCROLL || w == SB_THUMBPOSITION) { gpRate = v; say("pool rate %d", v); }
+        }
+        return 0;
+    case WM_CTLCOLOR:
+        if (HIWORD(l) == CTLCOLOR_STATIC) { static HBRUSH face; if (!face) face = CreateSolidBrush(GetSysColor(COLOR_BTNFACE)); SetBkColor((HDC)w, GetSysColor(COLOR_BTNFACE)); return (LRESULT)(WORD)face; }
+        break;
+    case WM_CLOSE: DestroyWindow(h); return 0;
+    case WM_DESTROY: KillTimer(h, 1); hGene = gpStat = gpRateSb = gpRateTx = NULL; return 0;
+    }
+    return DefWindowProc(h, m, w, l);
+}
+static void gp_open(void)
+{
+    static BOOL reg; RECT r; int x = 10, w, k; char p[32]; HWND c;
+    static const char *bt[5] = {"Draw", "Breed", "Keep", "Discard", "Clear Table"};
+    if (hGene) { SetWindowPos(hGene, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); say("pool open"); return; }
+    if (!gpCards) {   /* Solitaire's cards */
+        gpCards = LoadLibrary("CARDS.DLL");
+        if ((UINT)gpCards >= 32) {
+            BOOL (FAR PASCAL *init)(int FAR *, int FAR *) = (BOOL (FAR PASCAL *)(int FAR *, int FAR *))GetProcAddress(gpCards, "cdtInit");
+            int dx, dy;
+            gpDraw = (BOOL (FAR PASCAL *)(HDC, int, int, int, int, DWORD))GetProcAddress(gpCards, "cdtDraw");
+            if (init) init(&dx, &dy);
+        } else gpCards = NULL;
+    }
+    if (!gpFont) gpFont = CreateFont(11, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Arial");
+    if (!reg) {
+        WNDCLASS wc; memset(&wc, 0, sizeof wc); wc.style = CS_DBLCLKS; wc.lpfnWndProc = GeneProc; wc.hInstance = hInst; wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+        wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.lpszClassName = "SndGenePool"; RegisterClass(&wc); reg = TRUE;
+    }
+    GetWindowRect(hMain, &r);
+    hGene = CreateWindow("SndGenePool", "Gene Pool", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+                         (r.left + r.right) / 2 - 325, (r.top + r.bottom) / 2 - 245, 650, 450, hMain, NULL, hInst, NULL);
+    for (k = 0; k < 5; k++) {
+        padded(bt[k], p); w = btn_w(bt[k]);
+        c = CreateWindow("BUTTON", p, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, x, 368, w, 24, hGene, (HMENU)(k + 1), hInst, NULL);
+        SendMessage(c, WM_SETFONT, (WPARAM)panelFont, 0L); x += w + (k == 1 ? 12 : 4);
+    }
+    x += 10;
+    c = CreateWindow("STATIC", "Mutation", WS_CHILD | WS_VISIBLE, x, 372, 60, 16, hGene, (HMENU)-1, hInst, NULL); SendMessage(c, WM_SETFONT, (WPARAM)panelFont, 0L); x += 62;
+    gpRateSb = CreateWindow("SCROLLBAR", "", WS_CHILD | WS_VISIBLE | SBS_HORZ, x, 373, 100, 14, hGene, (HMENU)-1, hInst, NULL);
+    SetScrollRange(gpRateSb, SB_CTL, 0, 100, FALSE); SetScrollPos(gpRateSb, SB_CTL, gpRate, FALSE); x += 104;
+    gpRateTx = CreateWindow("STATIC", "25%", WS_CHILD | WS_VISIBLE, x, 372, 40, 16, hGene, (HMENU)-1, hInst, NULL); SendMessage(gpRateTx, WM_SETFONT, (WPARAM)panelFont, 0L);
+    gpStat = CreateWindow("STATIC", "", WS_CHILD | WS_VISIBLE, 10, 400, 620, 16, hGene, (HMENU)-1, hInst, NULL); SendMessage(gpStat, WM_SETFONT, (WPARAM)panelFont, 0L);
+    ShowWindow(hGene, SW_SHOW); UpdateWindow(hGene);
+    say("pool open");
+}
 /* ================================================================ CITYPOP.EXE: the album CITYPOP1993
    A Media Player window of ours (SndCityPop) on SNDWAVE1993's Windows: the twelve tracks, Play, Stop, Previous, Next,
    the playhead and a status line. The host plays the album through this instance: every part on Sound Recorder, a
@@ -4066,6 +4244,7 @@ static void assemble(void)
     }
     say("ready");
     if (cpPending) { cpPending = FALSE; cp_open(); }
+    if (gpPending) { gpPending = FALSE; gp_open(); }
     show_envelope();
     logf_("stages: grow %ld clock %ld recorders %ld envelope %ld panel %ld keys made %ld", stage[0], stage[1], stage[2], stage[3], stage[4], stage[5]);
     logf_("ready: assembled in %ld ms (Windows' clock); free resources user %d%% gdi %d%%", (long)(timeGetTime() - tStart), GetFreeSystemResources(GFSR_USERRESOURCES), GetFreeSystemResources(GFSR_GDIRESOURCES));
@@ -4214,7 +4393,8 @@ static void host_line(char *s)
     else if (!strcmp(s, "exec")) say("exec %d", WinExec(rest, SW_SHOWNORMAL));   /* test aid: a program, as Program Manager starts it */
     else if (!strcmp(s, "packs")) lib_packs(rest);   /* the inserted discs */
     else if (!strcmp(s, "song")) song_line(rest);   /* the Song page (plugin/SongTab.h) */
-    else if (!strcmp(s, "citypop")) cp_line(rest);   /* CITYPOP.EXE's player (plugin/CityPop.h) */
+    else if (!strcmp(s, "citypop")) cp_line(rest);
+    else if (!strcmp(s, "pool")) gp_line(rest);   /* GENEPOOL.EXE's table (plugin/GenePool.h) */   /* CITYPOP.EXE's player (plugin/CityPop.h) */
     else if (!strcmp(s, "step")) mine_step(atoi(rest));   /* the sequencer's playhead */
     else if (!strcmp(s, "newgame") && hMine) PostMessage(hMine, WM_KEYDOWN, VK_F2, 0L);   /* the host's Randomize */
     else if (!strcmp(s, "scala")) {   /* scala ok <steps> <name> | scala error <message> */
@@ -4496,11 +4676,12 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
         static char a[160]; ATOM at = (ATOM)w;
         a[0] = 0; GlobalGetAtomName(at, a, sizeof a); GlobalDeleteAtom(at);
         if (IsIconic(hMain)) ShowWindow(hMain, SW_RESTORE);
-        if (!assembled) { if (!lstrcmpi(a, "/citypop")) cpPending = TRUE; return 0; }   /* (the player opens once the synth is up) */
+        if (!assembled) { if (!lstrcmpi(a, "/citypop")) cpPending = TRUE; if (!lstrcmpi(a, "/genepool")) gpPending = TRUE; return 0; }   /* (the player opens once the synth is up) */
         if (!lstrcmpi(a, "/voices")) page_open(1);
         else if (!lstrcmpi(a, "/recorders")) page_open(0);
         else if (!lstrcmpi(a, "/setup")) about_open();
         else if (!lstrcmpi(a, "/citypop")) cp_open();   /* CITYPOP.EXE: the album's player */
+        else if (!lstrcmpi(a, "/genepool")) gp_open();   /* GENEPOOL.EXE: the card table */
         else if (a[0] && a[0] != '/') {
             OFSTRUCT of; HFILE f = OpenFile(a, &of, OF_READ); static char d[1100]; int n;
             if (f != HFILE_ERROR) {

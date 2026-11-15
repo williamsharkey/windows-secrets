@@ -133,7 +133,7 @@ def main():
                  ('Voice Mixer', r'C:\BS\SNDWAVE.EXE /voices', r'C:\BS\MIXER.ICO'),
                  ('Read Me', r'NOTEPAD.EXE C:\BS\README.TXT', r'C:\BS\README.ICO'),
                  ('Setup', r'C:\BS\SNDWAVE.EXE /setup', r'C:\BS\SETUP.ICO'),
-                 ] + ([('CITYPOP1993', r'C:\BS\CITYPOP.EXE', r'C:\BS\CITYPOP.ICO')] if os.path.isfile(find(bs, 'CITYPOP.ICO')) else []) + [
+                 ] + ([('Gene Pool', r'C:\BS\GENEPOOL.EXE', r'C:\BS\GENEPOOL.ICO')] if os.path.isfile(find(bs, 'GENEPOOL.ICO')) else []) + ([('CITYPOP1993', r'C:\BS\CITYPOP.EXE', r'C:\BS\CITYPOP.ICO')] if os.path.isfile(find(bs, 'CITYPOP.ICO')) else []) + [
                  (ITEM_NAME, ITEM_CMD, ICON_PATH)]
     open(os.path.join(win, GRP), 'wb').write(group_file(items))
     edit_progman(find(win, 'PROGMAN.INI'))
