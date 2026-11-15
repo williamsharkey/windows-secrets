@@ -461,7 +461,7 @@ def main():
             print(f'   ins {i:3d} {m.ins_names.get(i, ""):24s} {n:5d} notes  {min(ns)}-{max(ns)}')
         kc = key_check(ev)
         if kc:
-            print('   key check (shift, corr now, corr shifted):', kc)
+            print('   key check, a hint only; chromatic or swing tunes fool it, so check intervals against the bass (shift, corr now, corr shifted):', kc)
     if a.out:
         cm = write_midi(m, ev, a.out, a.by)
         print('->', a.out, {k: v + 1 for k, v in cm.items()})
