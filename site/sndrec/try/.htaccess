@@ -1,5 +1,5 @@
-# The earlier "Try it online" (BASILISK 16) lived here; it is now SNDWAVE2000 at /sndwave2000/play/.
+# The earlier "Try it online" (BASILISK 16) lived here; it is now SNDWAVE1993 at /sndwave1993/play/.
 # Every old URL goes there; index.html does the same if this is ignored.
 <IfModule mod_alias.c>
-  RedirectMatch 301 ^/sndrec/try/.*$ /sndwave2000/play/
+  RedirectMatch 301 ^/sndrec/try/.*$ /sndwave1993/play/
 </IfModule>

@@ -10,12 +10,12 @@ Every sound comes from the sixteen Sound Recorders through the emulated card, as
 
 ## Where it is served
 
-- **/sndwave2000/play/** (SNDWAVE2000, the current edition): its own page, `index.html` from `play.html` (the site
-  lane's frame: `/sndwave2000/site.css`, mast, foot) around the block in `section.html` (`make_play.py`), with
+- **/sndwave1993/play/** (SNDWAVE1993, the current edition): its own page, `index.html` from `play.html` (the site
+  lane's frame: `/sndwave1993/site.css`, mast, foot) around the block in `section.html` (`make_play.py`), with
   every file next to it and its own `.htaccess` (COOP/COEP on the page, CORP on the files). In git:
-  `site/sndwave2000/play/` (the large files are not).
+  `site/sndwave1993/play/` (the large files are not).
 - **sndrec/try/** (BASILISK 16, the earlier build): retired. Only a redirect is left there (`.htaccess` 301 and an
-  `index.html` meta refresh to /sndwave2000/play/).
+  `index.html` meta refresh to /sndwave1993/play/).
   `insert_section.py` can still put the block into another page.
 
 ## How it runs

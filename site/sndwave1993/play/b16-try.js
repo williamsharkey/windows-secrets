@@ -1,16 +1,16 @@
-// SNDWAVE2000 (formerly BASILISK 16), "Try it online": Windows for Workgroups 3.11 and its sixteen Sound Recorders, the
+// SNDWAVE1993 (formerly BASILISK 16), "Try it online": Windows for Workgroups 3.11 and its sixteen Sound Recorders, the
 // plugin's own engine compiled to WebAssembly (tools/basilisk16-web). Nothing is fetched until the button is
 // pressed. The machine runs in a worker; the page only forwards the pointer, the keys and MIDI, and watches it.
 (function () {
   'use strict';
   // the product's names (the UI, the files it saves); files saved under the old name (.b16, BASILISK-SYNTH state,
   // the plugin's .vstpreset) still open
-  var NAME = 'SNDWAVE2000', FILE = 'SNDWAVE2000', EXT = '.b16';
-  var CFG = /*CONFIG*/{"v":"0b525d5939","files":[{"name":"b16.wasm","size":2688068,"gz":1096821},{"name":"w31web.state","size":6080039,"gz":1440286},{"name":"drive.zip","size":3605805,"gz":3605805}],"lead":2048,"buildFile":{"name":"w31build.state","size":4866610,"gz":990375}}/*END*/;
+  var NAME = 'SNDWAVE1993', FILE = 'SNDWAVE1993', EXT = '.b16';
+  var CFG = /*CONFIG*/{"v":"d7cf1e79f4","files":[{"name":"b16.wasm","size":2688068,"gz":1096821},{"name":"w31web.state","size":6080039,"gz":1440286},{"name":"drive.zip","size":3605805,"gz":3605805}],"lead":2048,"buildFile":{"name":"w31build.state","size":4866610,"gz":990375}}/*END*/;
   var DATA = null;   // b16-data.json, fetched on the click: the machine's settings, the library's names, the presets
   var root = document.getElementById('b16try');
   if (!root) return;
-  var base = (function () { var s = document.currentScript; return s ? s.src.replace(/[^\/]*$/, '') : 'sndrec/try/'; })();
+  var base = (function () { var s = document.currentScript; return s ? s.src.replace(/[^\/]*$/, '') : '/sndwave1993/play/'; })();
   var $ = function (s) { return root.querySelector(s); };
   var over = $('.b16over'), go = $('.b16go'), bar = $('.b16prog i'),
       msg = $('.b16msg'), stopB = $('.b16stop'), midiB = $('.b16midi'), presetS = $('.b16preset'), stat = $('.b16stat');

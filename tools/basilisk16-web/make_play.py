@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The play page, /sndwave2000/play/index.html: play.html (the site's frame) around the "Try it online" block
+"""The play page, /sndwave1993/play/index.html: play.html (the site's frame) around the "Try it online" block
 (section.html), with the block's files next to it.
   make_play.py OUT/index.html VERSION"""
 import os, sys
