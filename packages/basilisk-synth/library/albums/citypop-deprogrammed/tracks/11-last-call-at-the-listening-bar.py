@@ -134,7 +134,7 @@ finish(__file__, S, {
     ('room', 'ch13', 'City Hush', dict(lufs=-36)),
     ('glasses', 'ch7', 'dna:glass_clink#4F;A0R600V80', dict(lufs=-30, pan=36, verb=0.3)),
     ('ep', 'ch1', 'Loft Tine', dict(lufs=-18, pan=-10, verb=0.22, echo=0.05)),
-    ('bass', 'ch2', 'Pluck Avenue', dict(lufs=-20)),
+    ('bass', 'ch2', 'Pluck Avenue', dict(lufs=-20, vel=0.75)),
     ('reed', 'ch3', 'Harbour Reed', dict(lufs=-19, pan=14, verb=0.28, echo=0.12)),
     ('clarinet', 'ch4', 'Clarinet After Hours', dict(lufs=-24, pan=-24, verb=0.3)),
     ('strings', 'ch5', 'studio-archive:Waxed Aurora', dict(lufs=-26, pan=32, verb=0.45)),

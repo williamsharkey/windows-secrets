@@ -163,7 +163,7 @@ function show(i) {
   const t = album.tracks[i];
   [...list.children].forEach((li, k) => { li.classList.toggle('on', k === i); li.setAttribute('aria-current', k === i ? 'true' : 'false'); });
   $('#tno').textContent = String(t.n).padStart(2, '0');
-  $('#ttitle').textContent = t.title; $('#tnote').textContent = t.note;
+  $('#ttitle').textContent = t.title; $('#tnote').textContent = t.pending ? 'In the mastering room. It will be here shortly; the player skips it until then.' : t.note;
   $('#len').textContent = '/ ' + fmt(t.seconds);
   $('#rectitle').textContent = 'Sound Recorder - TRACK' + String(t.n).padStart(2, '0') + '.WAV';
   $('#rlen').textContent = t.seconds.toFixed(2) + ' sec.';
@@ -186,6 +186,7 @@ function prepare(i) {   // the next track into the idle deck
   const a = A[1 - deck]; a.src = src(album.tracks[i]); a.load(); loadedNext = i; loadEvents(i);
 }
 function play(i, from = 0) {
+  if (!ready(i)) { show(i); return; }
   webaudio(); if (ac && ac.state === 'suspended') ac.resume();
   const t = album.tracks[i];
   let a;
@@ -202,15 +203,27 @@ function toggle() {
   if (!a.src) return play(cur);
   if (a.paused) { webaudio(); if (ac) ac.resume(); a.play(); playing(true); } else { a.pause(); playing(false); }
 }
-function step(d) { play((cur + d + album.tracks.length) % album.tracks.length); }
+const ready = (i) => !album.tracks[i].pending;
+function nextReady(i, d) {   // the next track that is out of the mastering room (continuous play never stops on one that isn't)
+  const n = album.tracks.length;
+  for (let k = 1; k <= n; k++) { const j = ((i + d * k) % n + n) % n; if (ready(j)) return j; }
+  return i;
+}
+function step(d) { play(nextReady(cur, d)); }
 A.forEach((a, k) => {
   a.addEventListener('ended', () => { if (k === deck) step(1); });     // continuous play, round the album
   a.addEventListener('timeupdate', () => {
     if (k !== deck) return;
     const t = album.tracks[cur];
-    if (a.currentTime > 20 || a.currentTime > t.seconds * 0.5) prepare((cur + 1) % album.tracks.length);
+    if (a.currentTime > 20 || a.currentTime > t.seconds * 0.5) prepare(nextReady(cur, 1));
   });
 });
+function watch() {
+  const on = document.body.classList.toggle('watch');
+  $('#unhide').hidden = !on;
+  if (!on) $('#hide').focus(); else $('#unhide').focus();
+}
+$('#hide').onclick = watch; $('#unhide').onclick = watch;
 $('#play').onclick = toggle;
 $('#stop').onclick = () => { const a = A[deck]; a.pause(); a.currentTime = 0; playing(false); };
 $('#next').onclick = () => step(1);
@@ -224,6 +237,7 @@ addEventListener('keydown', (e) => {
   else if (k === 'n' || k === 'N') step(1);
   else if (k === 'p' || k === 'P') step(-1);
   else if (k === 's' || k === 'S') $('#stop').onclick();
+  else if (k === 'h' || k === 'H' || (k === 'Escape' && document.body.classList.contains('watch'))) watch();
   else if (k === 'ArrowRight' && e.target.tagName !== 'INPUT') { a.currentTime = Math.min((a.duration || 0) - 0.5, a.currentTime + 10); }
   else if (k === 'ArrowLeft' && e.target.tagName !== 'INPUT') { a.currentTime = Math.max(0, a.currentTime - 10); }
   else if (k === 'ArrowUp') { e.preventDefault(); setVol(+$('#vol').value + 5); }
@@ -240,16 +254,17 @@ fetch('album.json').then((r) => r.json()).then((d) => {
   list.innerHTML = '';
   d.tracks.forEach((t, i) => {
     const li = document.createElement('li'); li.tabIndex = 0;
-    li.innerHTML = `<span class="n">${String(t.n).padStart(2, '0')}</span><span></span><span class="d">${fmt(t.seconds)}</span>`;
+    li.innerHTML = `<span class="n">${String(t.n).padStart(2, '0')}</span><span></span><span class="d">${t.pending ? 'mastering' : fmt(t.seconds)}</span>`;
     li.children[1].textContent = t.title;
+    if (t.pending) { li.classList.add('wait'); li.title = 'In the mastering room.'; li.setAttribute('aria-disabled', 'true'); }
     li.onclick = () => play(i);
     li.onkeydown = (e) => { if (e.key === 'Enter') play(i); };
     list.appendChild(li);
   });
-  const total = d.tracks.reduce((s, t) => s + t.seconds, 0);
-  $('#tnote').textContent = `${d.tracks.length} tracks, ${Math.round(total / 60)} minutes. ` + $('#tnote').textContent.replace(/^Twelve tracks, about 45 minutes\. /, '');
+
   const h = location.hash.match(/^#(\d+)/);
   if (h) { cur = Math.max(0, Math.min(d.tracks.length - 1, +h[1] - 1)); }
+  if (!ready(cur)) cur = nextReady(cur, 1);
   show(cur);
 });
 

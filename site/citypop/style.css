@@ -26,9 +26,11 @@ body { font: 14px/1.45 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; min
   grid-template-columns: minmax(0, 470px) minmax(0, 1fr); grid-template-areas: "player rec" "player ev" "player clock" "notes notes"; align-items: start; }
 #player { grid-area: player; } #rec { grid-area: rec; max-width: 380px; } #ev { grid-area: ev; max-width: 470px; }
 #clock { grid-area: clock; width: 128px; } #notes { grid-area: notes; max-width: 760px; }
-@media (min-width: 1100px) {
-  .desk { grid-template-columns: 470px 1fr 300px; grid-template-areas: "player ev rec" "player ev clock" "player notes notes"; }
-  #rec { max-width: none; } #ev { max-width: none; }
+@media (min-width: 1100px) {   /* the windows keep to the left; the street, the stairs and the moon stay open on the right */
+  .desk { margin: 0; max-width: none; padding-left: 24px; justify-content: start;
+    grid-template-columns: 450px 340px; grid-template-areas: "player rec" "player ev" "player clock" "notes notes"; }
+  #rec, #ev { max-width: none; } #notes { max-width: 806px; }
+  .evlist { height: 216px; }
 }
 @media (max-width: 760px) {
   .desk { grid-template-columns: minmax(0, 1fr); grid-template-areas: "player" "rec" "ev" "notes" "clock"; padding: 30vh 16px 40px; }
@@ -106,3 +108,11 @@ button:focus-visible, input:focus-visible, .list li:focus-visible { outline: 1px
 .text .small { font-size: 12.5px; color: var(--muted); }
 .nos { position: relative; z-index: 1; padding: 16px; }
 @media (prefers-reduced-motion: reduce) { #night { opacity: .9; } }
+
+/* the night alone: H hides the windows */
+.menu .mbtn { display: inline-block; white-space: nowrap; width: auto; height: auto; padding: 0 6px; margin-left: auto; font-size: 13px; box-shadow: none; border: 0; background: transparent; }
+.menu .mbtn:hover { background: var(--sel); color: #fff; }
+body.watch .desk { visibility: hidden; }
+.unhide { position: fixed; z-index: 2; right: 16px; bottom: 16px; width: auto; height: 28px; padding: 0 10px; font-size: 13px; opacity: .55; }
+.unhide:hover, .unhide:focus-visible { opacity: 1; }
+.unhide[hidden] { display: none; }

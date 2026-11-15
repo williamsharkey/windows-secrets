@@ -38,7 +38,7 @@ vinyl       ch14    "Vinyl Dust"                             lufs=-40 hp=150
 cafe        ch12    "Espresso Bar"                           lufs=-30 pan=-35 verb=0.15
 spoon       ch9     "Cup and Spoon"                          lufs=-32 pan=30 verb=0.15
 ep          ch1     "Suitcase Night"                         lufs=-19 pan=-14 verb=0.2
-bass        ch2     "Pluck Avenue"                           lufs=-20
+bass        ch2     "Pluck Avenue"                           lufs=-20 vel=0.75
 flute       ch3     "Night Flute"                            lufs=-20 pan=10 verb=0.3 echo=0.12
 vibes       ch4     "courtyard-chapel:Delta Tower"           lufs=-21 pan=24 verb=0.25 echo=0.1
 horn        ch5     "Harmon Glow"                            lufs=-21 pan=-8 verb=0.3 echo=0.08

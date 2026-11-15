@@ -2,7 +2,7 @@
 
 An album performed on SNDWAVE2000: a theme and eleven variations for a quiet night in a harbour town, about 41
 minutes. Every note is played by the Windows 3.11 Sound Recorders through `render311`
-(`tools/songrender`), one engine per part. Page: williamsharkey.com/citypop-deprogrammed/ (`site/citypop-deprogrammed/`).
+(`tools/songrender`), one engine per part. Page: williamsharkey.com/citypop/ (`site/citypop/`).
 
 | Folder | Contents |
 |---|---|
@@ -22,8 +22,8 @@ for f in tracks/[0-9]*.py; do python3 $f; done
 # render311 with --lookahead 150 (073d464), e.g. a wrapper as SONGRENDER_RENDER311
 SONGRENDER_MACHINE=~/cpd/machine songrender.py tracks/*.song --stems --keep-wav --out-dir ~/cpd/out
 python3 tools/analyze.py ~/cpd/out <slug> --song tracks/<slug>.song
-python3 tools/build_site.py ~/cpd/out site/citypop-deprogrammed --master
-python3 art/make_art.py site/citypop-deprogrammed/art
+python3 tools/build_site.py ~/cpd/out site/citypop --master
+python3 art/make_art.py site/citypop/art
 ```
 
 The compositions and arrangements are CC0. The audio files are not in git; they are on the web host.

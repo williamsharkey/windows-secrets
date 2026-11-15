@@ -87,7 +87,13 @@ def main():
         rep = os.path.join(a.render, slug + '.json')
         wav = os.path.join(a.render, slug + '.wav')
         if not os.path.exists(rep) or not os.path.exists(wav):
-            print('not rendered:', slug); continue
+            if int(nn) not in by or by[int(nn)].get('pending'):
+                song = sr.Song(songf)
+                m = Smf.read(song.midi_path); sec = tempo_map(m)
+                end = max(t for tr in m.tracks for t, e in tr)
+                by[int(nn)] = {'n': int(nn), 'title': song.meta['title'], 'seconds': round(sec(end) + 3, 1),
+                               'note': song.meta.get('note', ''), 'pending': True}
+            print('not rendered (listed as pending):', slug); continue
         r = json.load(open(rep))
         src = wav
         if a.master:

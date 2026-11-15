@@ -158,7 +158,7 @@ finish(__file__, S, {
     ('cafe', 'ch12', 'Espresso Bar', dict(lufs=-30, pan=-35, verb=0.15)),
     ('spoon', 'ch9', 'Cup and Spoon', dict(lufs=-32, pan=30, verb=0.15)),
     ('ep', 'ch1', 'Suitcase Night', dict(lufs=-19, pan=-14, verb=0.2)),
-    ('bass', 'ch2', 'Pluck Avenue', dict(lufs=-20)),
+    ('bass', 'ch2', 'Pluck Avenue', dict(lufs=-20, vel=0.75)),
     ('flute', 'ch3', 'Night Flute', dict(lufs=-20, pan=10, verb=0.3, echo=0.12)),
     ('vibes', 'ch4', 'courtyard-chapel:Delta Tower', dict(lufs=-21, pan=24, verb=0.25, echo=0.1)),
     ('horn', 'ch5', 'Harmon Glow', dict(lufs=-21, pan=-8, verb=0.3, echo=0.08)),

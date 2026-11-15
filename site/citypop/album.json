@@ -1,0 +1,293 @@
+{
+ "tracks": [
+  {
+   "n": 1,
+   "title": "Theme: Rain on the Loft Window",
+   "seconds": 210.43,
+   "note": "The theme, stated plainly in E-flat: A, A, B, A, an electric piano chorus, B, A, ending on the IV. Brushes, fretless, reed lead, muted trumpet, vibraphone answers, the rain before and after.",
+   "bpm": 84.0,
+   "opus": "audio/01.opus?v=52eced01ba",
+   "mp3": "audio/01.mp3?v=52eced01ba",
+   "events": "data/01.json?v=52eced01ba",
+   "presets": [
+    {
+     "part": "rain",
+     "preset": "rainy-loft:Rain on Glass"
+    },
+    {
+     "part": "vinyl",
+     "preset": "rainy-loft:Vinyl Bed"
+    },
+    {
+     "part": "ep",
+     "preset": "rainy-loft:Loft Tine"
+    },
+    {
+     "part": "bass",
+     "preset": "rainy-loft:Fretless Harbour"
+    },
+    {
+     "part": "lead",
+     "preset": "rainy-loft:Harbour Reed"
+    },
+    {
+     "part": "vibes",
+     "preset": "courtyard-chapel:Delta Tower"
+    },
+    {
+     "part": "strings",
+     "preset": "studio-archive:Humid Swell"
+    },
+    {
+     "part": "pad",
+     "preset": "polysynth-showroom:Hotel Wash"
+    },
+    {
+     "part": "bell",
+     "preset": "rainy-loft:Crystal Bb"
+    },
+    {
+     "part": "horn",
+     "preset": "rainy-loft:Harmon Glow"
+    },
+    {
+     "part": "kit",
+     "preset": "rainy-loft:Loft Brushes"
+    },
+    {
+     "part": "perc",
+     "preset": "rainy-loft:Loft Percussion"
+    }
+   ],
+   "lufs": -16.0
+  },
+  {
+   "n": 2,
+   "title": "Var. I: Espresso, Two Sugars",
+   "seconds": 190.88,
+   "note": "The theme in F, as a light shuffle: the motto traded between vibraphone and suitcase piano (once as written, once upside down), the flute an eighth late, muted trumpet on B, two choruses, a stop-time.",
+   "bpm": 96.0,
+   "opus": "audio/02.opus?v=03cb7aaac9",
+   "mp3": "audio/02.mp3?v=03cb7aaac9",
+   "events": "data/02.json?v=03cb7aaac9",
+   "presets": [
+    {
+     "part": "room",
+     "preset": "rainy-loft:City Hush"
+    },
+    {
+     "part": "vinyl",
+     "preset": "rainy-loft:Vinyl Dust"
+    },
+    {
+     "part": "cafe",
+     "preset": "rainy-loft:Espresso Bar"
+    },
+    {
+     "part": "spoon",
+     "preset": "rainy-loft:Cup and Spoon"
+    },
+    {
+     "part": "ep",
+     "preset": "rainy-loft:Suitcase Night"
+    },
+    {
+     "part": "bass",
+     "preset": "rainy-loft:Pluck Avenue"
+    },
+    {
+     "part": "flute",
+     "preset": "rainy-loft:Night Flute"
+    },
+    {
+     "part": "vibes",
+     "preset": "courtyard-chapel:Delta Tower"
+    },
+    {
+     "part": "horn",
+     "preset": "rainy-loft:Harmon Glow"
+    },
+    {
+     "part": "organ",
+     "preset": "tape-parlour:Night Stops"
+    },
+    {
+     "part": "kit",
+     "preset": "rainy-loft:Loft Sticks"
+    },
+    {
+     "part": "perc",
+     "preset": "rainy-loft:Loft Percussion"
+    }
+   ],
+   "lufs": -16.0
+  },
+  {
+   "n": 3,
+   "title": "Var. II: Taxi Lights on Wet Asphalt",
+   "seconds": 213.42,
+   "note": "The theme in G at 104 bpm, every long note pushed a sixteenth early: slap bass, a plucked guitar in sixteenths, synth brass, the reed with a polysynth an octave above; two choruses; up to A-flat at the end.",
+   "bpm": 104.0,
+   "opus": "audio/03.opus?v=6eb0a74c1a",
+   "mp3": "audio/03.mp3?v=6eb0a74c1a",
+   "events": "data/03.json?v=6eb0a74c1a",
+   "presets": [
+    {
+     "part": "street",
+     "preset": "rainy-loft:Wet Traffic"
+    },
+    {
+     "part": "ep",
+     "preset": "rainy-loft:Loft Tine Bright"
+    },
+    {
+     "part": "bass",
+     "preset": "rainy-loft:Rubber Taxi"
+    },
+    {
+     "part": "sax",
+     "preset": "rainy-loft:Harbour Reed"
+    },
+    {
+     "part": "synlead",
+     "preset": "polysynth-showroom:Tropic Signal"
+    },
+    {
+     "part": "brass",
+     "preset": "polysynth-showroom:Signal Stab"
+    },
+    {
+     "part": "strings",
+     "preset": "studio-archive:Daylight Bows"
+    },
+    {
+     "part": "gtr",
+     "preset": "courtyard-chapel:Kinetic Harp"
+    },
+    {
+     "part": "glass",
+     "preset": "rainy-loft:Glass Tine"
+    },
+    {
+     "part": "kit",
+     "preset": "rainy-loft:Loft Sticks"
+    },
+    {
+     "part": "perc",
+     "preset": "rainy-loft:Loft Percussion"
+    }
+   ],
+   "lufs": -16.0
+  },
+  {
+   "n": 4,
+   "title": "Var. III: Elevator to the 23rd Floor",
+   "seconds": 234.5,
+   "note": "A bossa nova in B-flat at 120 bpm with the theme in augmentation (every note twice as long) on flute; a nylon-style guitar on a two-bar pattern, the glass piano on B, the motto traded in double time.",
+   "bpm": 120.0,
+   "opus": "audio/04.opus?v=4f7e925071",
+   "mp3": "audio/04.mp3?v=4f7e925071",
+   "events": "data/04.json?v=4f7e925071",
+   "presets": [
+    {
+     "part": "lobby",
+     "preset": "rainy-loft:City Hush"
+    },
+    {
+     "part": "chime",
+     "preset": "rainy-loft:Single Chime"
+    },
+    {
+     "part": "gtr",
+     "preset": "courtyard-chapel:Faded Pluck"
+    },
+    {
+     "part": "bass",
+     "preset": "rainy-loft:Fretless Harbour"
+    },
+    {
+     "part": "flute",
+     "preset": "rainy-loft:Night Flute"
+    },
+    {
+     "part": "ep",
+     "preset": "rainy-loft:Glass Tine"
+    },
+    {
+     "part": "strings",
+     "preset": "studio-archive:Waxed Aurora"
+    },
+    {
+     "part": "vibes",
+     "preset": "courtyard-chapel:Delta Tower"
+    },
+    {
+     "part": "kit",
+     "preset": "rainy-loft:Loft Brushes"
+    },
+    {
+     "part": "perc",
+     "preset": "rainy-loft:Loft Percussion"
+    }
+   ],
+   "lufs": -16.01
+  },
+  {
+   "n": 5,
+   "title": "Var. IV: Answering Machine, 1:12 a.m.",
+   "seconds": 214.5,
+   "note": "The theme in C minor at 72 bpm, lo-fi: a worn tape electric piano, a close muted trumpet, a far flute, swung drums, vinyl and rain; the phone rings twice, the machine answers, nobody speaks.",
+   "pending": true
+  },
+  {
+   "n": 6,
+   "title": "Var. V: Neon Waltz",
+   "seconds": 201.5,
+   "note": "The theme in waltz time (each bar becomes two) in A-flat at 120: glass piano, folk harp, pizzicato bass, brushes, a music box; a harmonica takes it a tone higher; B on strings.",
+   "pending": true
+  },
+  {
+   "n": 7,
+   "title": "Var. VI: Paganini Takes the Last Train",
+   "seconds": 165.9,
+   "note": "A minor at 112 on a train groove. Opens with the first figure of Paganini's Caprice No. 24 (1817, public domain) and the theme answering in the minor; B in C major; the caprice in the bass turns into the theme's pick-up; ends in A major as the train leaves.",
+   "pending": true
+  },
+  {
+   "n": 8,
+   "title": "Var. VII: The Loft, Inverted",
+   "seconds": 249.3,
+   "note": "The slow heart: the theme inverted in D-flat at 66, re-harmonised; soft piano alone, then violins and cellos, choir and glass piano on the inverted B, a climax a tone higher with horns, the piano alone again.",
+   "pending": true
+  },
+  {
+   "n": 9,
+   "title": "Var. VIII: Couch Fort Disco",
+   "seconds": 185.0,
+   "note": "Four on the floor in E at 118: the theme in diminution (eight bars in four) on polysynth, then at its own speed on the reed; octave bass, clavinet, string runs, claps, congas, a wordless vocoder choir; it fades.",
+   "pending": true
+  },
+  {
+   "n": 10,
+   "title": "Var. IX: Steam and Static",
+   "seconds": 180.0,
+   "note": "The interlude, in G-flat at 60 with no drums: grain clouds made from the steam wand, the rain and the glass piano follow the harmony; the theme crosses once on the crystal bell, every note twice as long.",
+   "pending": true
+  },
+  {
+   "n": 11,
+   "title": "Var. X: Last Call at the Listening Bar",
+   "seconds": 202.8,
+   "note": "Jazz-funk in D-flat at 88, swung: the theme over tritone substitutions, sixteen bars of electric piano, reed and piano trading fours, B on strings, the last A a semitone up; glasses on the counter.",
+   "pending": true
+  },
+  {
+   "n": 12,
+   "title": "Finale: Dawn over the Bay, Deprogrammed",
+   "seconds": 234.2,
+   "note": "The theme comes home in E-flat with the night around it (the inversion as a counter-line, the motto traded, the fast version), the caprice figure as a hinge into F, everything pushed and full, then the motto slowly on the bell; the first track ended on the IV, this one on the I, as the birds start.",
+   "pending": true
+  }
+ ],
+ "title": "CITYPOP DEPROGRAMMED"
+}
