@@ -5,6 +5,7 @@
   'use strict';
   const ORDER = ['sky', 'far', 'mid', 'near', 'fg'];
   const MOODS = ['rain', 'deep', 'predawn', 'dawn'];
+  const PARALLAX_MAX = 10;   // art pixels of slide at depth 1
   const MOOD_TIMES = { rain: 19.5, deep: 24.5, predawn: 27.8, dawn: 29.5 };
   // per-mood light colours for the life lane to tint its sprites with
   const MOOD_COLORS = {
@@ -41,6 +42,7 @@
     };
     ORDER.forEach((n) => { S.par[n] = [0, 0]; });
     if (getComputedStyle(container).position === 'static') container.style.position = 'fixed';
+    container.style.overflow = 'hidden';
 
     // the variant whose whole-number scale covers the screen with the least crop:
     // hd 1920x1080 (1080p at 1x, 4K at 2x, most laptops at 2x), desktop 2560x1440, portrait 1170x2532
@@ -97,21 +99,37 @@
       }
       S.ox = Math.round(clamp(ox, minX, maxX));
       S.oy = Math.round(clamp(oy, minY, maxY));
-      const all = ORDER.map((n) => S.layers[n] && S.layers[n].cv).concat(S.overlays.map((o) => o.cv));
-      for (const cv of all) {
-        if (!cv) continue;
+      // layers are drawn once, oversized by a margin, and slid by the compositor for parallax
+      S.m = Math.ceil(PARALLAX_MAX * s) + 2;
+      const m = S.m, lw = S.dw + 2 * m, lh = S.dh + 2 * m;
+      for (const n of ORDER) {
+        const L = S.layers[n]; if (!L) continue;
+        const cv = L.cv;
+        if (cv.width !== lw || cv.height !== lh) { cv.width = lw; cv.height = lh; }
+        Object.assign(cv.style, { left: (-m / dpr) + 'px', top: (-m / dpr) + 'px', width: (lw / dpr) + 'px', height: (lh / dpr) + 'px' });
+        place(n);
+      }
+      for (const o of S.overlays) {
+        const cv = o.cv;
         if (cv.width !== S.dw || cv.height !== S.dh) { cv.width = S.dw; cv.height = S.dh; }
         cv.style.width = cw + 'px'; cv.style.height = ch + 'px';
       }
+    }
+    // the parallax offset as a whole-device-pixel CSS translate: no redraw
+    function place(n) {
+      const L = S.layers[n]; if (!L) return;
+      const [dx, dy] = S.par[n];
+      const tx = Math.round(dx * S.scale) / S.dpr, ty = Math.round(dy * S.scale) / S.dpr;
+      L.cv.style.transform = (tx || ty) ? 'translate(' + tx + 'px,' + ty + 'px)' : '';
     }
 
     function draw(name) {
       const L = S.layers[name];
       if (!L || !L.src) return;
-      const ctx = L.ctx, s = S.scale, [dx, dy] = S.par[name];
+      const ctx = L.ctx, s = S.scale, m = S.m || 0;
       ctx.imageSmoothingEnabled = false;
-      ctx.clearRect(0, 0, S.dw, S.dh);
-      ctx.drawImage(L.src, 0, 0, S.V.w, S.V.h, S.ox + Math.round(dx * s), S.oy + Math.round(dy * s), Math.round(S.V.w * s), Math.round(S.V.h * s));
+      ctx.clearRect(0, 0, L.cv.width, L.cv.height);
+      ctx.drawImage(L.src, 0, 0, S.V.w, S.V.h, S.ox + m, S.oy + m, Math.round(S.V.w * s), Math.round(S.V.h * s));
     }
     function drawAll() { ORDER.forEach(draw); }
     function changed() { S.listeners.forEach((cb) => { try { cb(api.view()); } catch (e) { console.error(e); } }); }
@@ -162,7 +180,7 @@
           const cv = document.createElement('canvas');
           cv.className = 'scene-layer scene-' + n;
           cv.setAttribute('aria-hidden', 'true');
-          Object.assign(cv.style, { position: 'absolute', left: '0', top: '0', zIndex: String(z * 10), imageRendering: 'pixelated', pointerEvents: 'none' });
+          Object.assign(cv.style, { position: 'absolute', left: '0', top: '0', zIndex: String(z * 10), imageRendering: 'pixelated', pointerEvents: 'none', willChange: 'transform' });
           container.appendChild(cv);
           L = S.layers[n] = { cv, ctx: cv.getContext('2d') };
         }
@@ -211,7 +229,7 @@
     }
 
     // ------------------------------------------------------------ parallax: gentle, pointer only, integer art pixels
-    const MAXP = 10;   // art pixels at depth 1
+    const MAXP = PARALLAX_MAX;   // art pixels at depth 1
     function onPointer(e) {
       if (reduced || S.paused) return;
       S.target.x = clamp((e.clientX / innerWidth) * 2 - 1, -1, 1);
@@ -229,7 +247,7 @@
       for (const n of ORDER) {
         const d = S.V ? S.V.layers[n].depth : 0;
         const nx = -Math.round(S.cur.x * d * MAXP), ny = -Math.round(S.cur.y * d * MAXP * 0.5);
-        if (nx !== S.par[n][0] || ny !== S.par[n][1]) { S.par[n] = [nx, ny]; draw(n); moved = true; }
+        if (nx !== S.par[n][0] || ny !== S.par[n][1]) { S.par[n] = [nx, ny]; place(n); moved = true; }
       }
       if (moved) changed();
       if (Math.abs(S.target.x - S.cur.x) > 0.01 || Math.abs(S.target.y - S.cur.y) > 0.01) S.raf = requestAnimationFrame(stepParallax);

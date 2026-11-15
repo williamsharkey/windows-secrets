@@ -2214,7 +2214,7 @@ def cull_hidden(Ls, order, margin):
     for name in reversed(order):
         L = Ls[name]
         if cover.any():
-            hidden = binary_erosion(cover, iterations=margin, border_value=1)
+            hidden = binary_erosion(cover, iterations=margin, border_value=0)
             L.a &= ~hidden
         cover |= Ls[name].a
 

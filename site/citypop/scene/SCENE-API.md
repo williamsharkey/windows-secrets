@@ -29,7 +29,7 @@ Onomichi after the rain, around 2 a.m. The scene has five layers drawn at device
   - Palette steps are recoloured one layer per frame, and only when the palette has visibly changed (240 steps per mood segment). Calling `setTime` often costs nothing.
   - `c.setMood(t)` takes t from 0 to 1 across the same night. `c.mood()` returns the current t, and `c.time()` returns the hours.
 - `c.pause()`, `c.resume()` and `c.resize()` are available. The scene also listens to resize and devicePixelRatio changes itself. `c.destroy()` removes everything.
-- **CPU:** the scene runs no per-frame loop. Layers redraw only on parallax steps (pointer move, eased at about 15 fps, then idle), on mood steps and on resize. Parallax is off when `reduced` is set.
+- **CPU:** the scene runs no per-frame loop. Each layer is drawn once into an oversized canvas (a margin of `ceil(10*scale)+2` device px on every side, `will-change: transform`). Parallax slides the canvases with a CSS translate snapped to whole device pixels, so a pointer move costs no redraw. Layers redraw only on mood steps and resize. Parallax eases at about 15 fps, then idles, and is off when `reduced` is set.
 
 ## Stacking (life lane)
 - The container holds one `<canvas class="scene-layer scene-{name}">` per layer.
