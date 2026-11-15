@@ -1,4 +1,4 @@
-/* The SNDWAVE2000 Sound Pack Explorer (/sndwave2000/packs/): a Windows 3.1 media player for every preset, the open
+/* The SNDWAVE1993 Sound Pack Explorer (/sndwave1993/packs/): a Windows 3.1 media player for every preset, the open
    pack's box, manual and maker below it, and the shelf of packs. Data: packs.json and data/ID.json, made by
    tools/sndrec-demo/sndwave_site.py. #ID or #ID/SLUG opens a pack (and a preset).
 
@@ -303,15 +303,15 @@
       (x.fl && x.fl.length ? '<span class="fl" title="From the check on the release build">Note: ' + esc(x.fl.join(', ')) + '</span>' : '');
     $('mp-recipe').textContent = recipeLines(x).join('\n'); $('mp-recipe').style.whiteSpace = '';
     $('mp-links').innerHTML = (f.pdf ? '<a href="' + p.id + '/' + esc(f.pdf.name) + '" target="_blank" rel="noopener">Manual</a>' : '') +
-      (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + (f.iso ? '<a href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image</a>' : '') + (EMBED ? '<a href="/sndwave2000/packs/#' + p.id + '" target="_top" class="about">About this pack</a>' : '<a href="#pack" class="about">About this pack</a>');
-    $('mp-title').textContent = 'SNDWAVE2000 Media Player - ' + x.n.toUpperCase();
+      (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + (f.iso ? '<a href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image</a>' : '') + (EMBED ? '<a href="/sndwave1993/packs/#' + p.id + '" target="_top" class="about">About this pack</a>' : '<a href="#pack" class="about">About this pack</a>');
+    $('mp-title').textContent = 'SNDWAVE1993 Media Player - ' + x.n.toUpperCase();
     drawArt(x);
     if (!audioOf(x)) { tEl.textContent = '--:--.-'; lenEl.textContent = 'preview coming'; }
     else if (x !== playingX) { tEl.textContent = fmt(0); lenEl.textContent = fmt(x.sec || 0); }
   }
   function links(p, f) {
     $('mp-links').innerHTML = (f.pdf ? '<a href="' + p.id + '/' + esc(f.pdf.name) + '" target="_blank" rel="noopener">Manual</a>' : '') +
-      (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + (f.iso ? '<a href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image</a>' : '') + (EMBED ? '<a href="/sndwave2000/packs/#' + p.id + '" target="_top" class="about">About this pack</a>' : '<a href="#pack" class="about">About this pack</a>');
+      (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + (f.iso ? '<a href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image</a>' : '') + (EMBED ? '<a href="/sndwave1993/packs/#' + p.id + '" target="_top" class="about">About this pack</a>' : '<a href="#pack" class="about">About this pack</a>');
   }
   // a song: its credits as given (composer, arranger, source, licence, proof), the presets it plays
   function songShow(x, p, f) {
@@ -326,7 +326,7 @@
     $('mp-recipe').textContent = (g.note ? g.note + '\n\n' : '') + recipeLines(x).join('\n');
     $('mp-recipe').style.whiteSpace = 'pre-wrap';
     links(p, f);
-    $('mp-title').textContent = 'SNDWAVE2000 Media Player - ' + x.n.toUpperCase();
+    $('mp-title').textContent = 'SNDWAVE1993 Media Player - ' + x.n.toUpperCase();
     drawArt(x);
     if (x !== playingX) { tEl.textContent = fmt(0); lenEl.textContent = fmt(x.sec || 0); }
   }
@@ -509,7 +509,7 @@
       (f.hlp ? '<a class="btn" href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help file (' + esc(f.hlp.name) + ', ' + f.hlp.kb + ' KB)</a>' : '') +
       (f.readme ? '<a class="btn" href="' + p.id + '/' + esc(f.readme.name) + '" target="_blank" rel="noopener">README.TXT</a>' : '') +
       (f.iso ? '<a class="btn" href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image (' + esc(f.iso.name) + ', ' + (f.iso.kb >= 1024 ? (f.iso.kb / 1024).toFixed(1) + ' MB' : f.iso.kb + ' KB') + ')</a>' : '') + '</p>' +
-      (f.iso ? '<p class="note">The disc is already in SNDWAVE2000 (the Library tab, drive P:). The image is for another machine, or to keep.</p>' : '');
+      (f.iso ? '<p class="note">The disc is already in SNDWAVE1993 (the Library tab, drive P:). The image is for another machine, or to keep.</p>' : '');
     if (p.credits && p.credits.length) t += '<div class="credits"><p class="kicker">Sound credits</p><ul>' + p.credits.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul></div>';
     t += '<div class="credits bcred" id="bcred"></div>';
     if (p.note && p.note.length) t += '<blockquote class="mnote"><p class="kicker">From the maker</p>' + p.note.map(function (s) { return '<p>' + esc(s) + '</p>'; }).join('') + '</blockquote>';
@@ -565,7 +565,7 @@
     PACKS.forEach(function (p) { grid.appendChild(card(p)); });
     [].forEach.call(grid.querySelectorAll('[data-px]'), function (i) { pxfit.fit(i); });
     $('status').textContent = PACKS.length + ' packs, ' + num(d.total) + ' presets. ' +
-      (d.previews ? 'Every preview was rendered by the real Windows 3.11 machine on a release build; the few that missed a check are marked with a note.' : 'Every disc ships with SNDWAVE2000. Previews of every preset are being rendered on the release build; until then the owner\'s top picks play the demos already made, and the rest say "preview coming".');
+      (d.previews ? 'Every preview was rendered by the real Windows 3.11 machine on a release build; the few that missed a check are marked with a note.' : 'Every disc ships with SNDWAVE1993. Previews of every preset are being rendered on the release build; until then the owner\'s top picks play the demos already made, and the rest say "preview coming".');
     if (!route(false)) {   // first visit: the pack with the most previews
       var best = PACKS.slice().sort(function (a, b) { return (b.picks || 0) - (a.picks || 0) || b.fav - a.fav; })[0];
       packSel.value = best.id; openPack(best.id);

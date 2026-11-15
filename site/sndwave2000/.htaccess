@@ -1,0 +1,2 @@
+# SNDWAVE2000 is now SNDWAVE1993: every old address goes to the same place under /sndwave1993/ (the #hash stays)
+RedirectMatch 301 ^/sndwave2000(/.*)?$ /sndwave1993$1

@@ -1,17 +1,17 @@
-/* SNDWAVE2000 by Algorithmic Industries: the site frame (williamsharkey.com/sndwave2000/).
+/* SNDWAVE1993 by Algorithmic Industries: the site frame (williamsharkey.com/sndwave1993/).
    The look is the box's: Technical Book, Stripe. Warm paper, black type, a deep red band down the left edge with a thin
    red rule beside it (the title screen's stripe, 42 : 8 : 3), serif bold italic for the wordmark and headings, and the
    product's own Windows 3.11 windows set into the page like plates in a manual.
-   Shared by /sndwave2000/, /sndwave2000/packs/ and /sndwave2000/play/ (the play page is served with COEP
+   Shared by /sndwave1993/, /sndwave1993/packs/ and /sndwave1993/play/ (the play page is served with COEP
    require-corp, so nothing here loads from another origin). Page frame: <div class="wrap"> <header class="mast">
    <main> <footer class="foot">. The Windows tokens (--face --hi --lo --ink --sel --title) are the Windows 3.1 colours
    the in-page windows, buttons and the Try it online block use; the book's own colours are --bk-*.
-   Brand: design/brand/sndwave2000 (COPY.md, palette.css: ink #141414, paper #f6f3ea, stripe red #8a1c1c, rose #d9b8b0);
+   Brand: design/brand/sndwave1993 (COPY.md, palette.css: ink #141414, paper #f6f3ea, stripe red #8a1c1c, rose #d9b8b0);
    fonts/ is DejaVu Serif and Sans (free licence, LICENSE-DejaVu.txt), subset to Latin-1, italic synthesized as on the box. */
-@font-face { font-family: "SW Serif"; src: url("/sndwave2000/fonts/DejaVuSerif.woff2") format("woff2"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "SW Serif"; src: url("/sndwave2000/fonts/DejaVuSerif-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
-@font-face { font-family: "SW Sans"; src: url("/sndwave2000/fonts/DejaVuSans.woff2") format("woff2"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "SW Sans"; src: url("/sndwave2000/fonts/DejaVuSans-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "SW Serif"; src: url("/sndwave1993/fonts/DejaVuSerif.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "SW Serif"; src: url("/sndwave1993/fonts/DejaVuSerif-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "SW Sans"; src: url("/sndwave1993/fonts/DejaVuSans.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "SW Sans"; src: url("/sndwave1993/fonts/DejaVuSans-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
 :root {
   --bk-paper: #f6f3ea; --bk-card: #fffdf6; --bk-text: #141414; --bk-muted: #5b554b; --bk-rule: #cfc7b5; --bk-accent: #8a1c1c;
   --bk-stripe: #8a1c1c; --bk-link: #8a1c1c; --bk-shade: rgba(20, 20, 20, .22);

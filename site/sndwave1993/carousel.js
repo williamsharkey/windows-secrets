@@ -1,7 +1,7 @@
-/* The sound packs on the home page (/sndwave2000/#packs): a carousel of the packs' boxes (box_small, at whole device
-   pixels), the selected pack's description, counts and files, and the media player (/sndwave2000/packs/?embed=1) in
+/* The sound packs on the home page (/sndwave1993/#packs): a carousel of the packs' boxes (box_small, at whole device
+   pixels), the selected pack's description, counts and files, and the media player (/sndwave1993/packs/?embed=1) in
    a Windows 3.1 window over the page. Data: packs/packs.json (tools/sndrec-demo/sndwave_site.py). The full player
-   stays at /sndwave2000/packs/. */
+   stays at /sndwave1993/packs/. */
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
@@ -77,7 +77,7 @@
     var p = PACKS[cur]; if (!p) return;
     lastFocus = document.activeElement;
     frame.style.height = ''; frame.src = 'packs/?embed=1&autoplay=1&p=' + encodeURIComponent(p.id) + '#' + p.id;
-    $('spx-dtitle').textContent = 'SNDWAVE2000 Media Player - ' + p.title;
+    $('spx-dtitle').textContent = 'SNDWAVE1993 Media Player - ' + p.title;
     dlg.hidden = false; document.documentElement.classList.add('spx-open');
     dlg.querySelector('.spx-close').focus();
   }
