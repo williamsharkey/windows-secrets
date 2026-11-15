@@ -58,7 +58,12 @@ python3 "$PKG/tools/make_presets311.py"
 python3 "$PKG/tools/make_tuning311.py"   # the Song tab's measured tuning (plugin/tuning_gen.h)
 python3 "$PKG/tools/make_pack_aliases.py"   # renamed packs and presets (plugin/pack_aliases_gen.h)
 (cd "$PKG/plugin" && make DPF_PATH="$W/DPF" DPF_TARGET_DIR="$W/win" DPF_BUILD_DIR="$W/obj-win" WINDOWS=true \
-  CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ -j"$(nproc)" vst3 >/dev/null)
+  CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ -j"$(nproc)" vst3 clap >/dev/null)
+# render311.exe, the batch renderer for Windows (README "Batch rendering")
+x86_64-w64-mingw32-gcc -O2 -ffp-contract=off -c -o "$W/engine-w.o" "$PKG/engine/engine.c" -I"$PKG/engine"
+x86_64-w64-mingw32-g++ -std=c++17 -O2 -ffp-contract=off -static -o "$W/win/render311.exe" "$PKG/tools/render311.cpp" "$PKG/../basilisk-synth/core/dna.cpp" \
+  "$PKG/../basilisk-synth/core/voices.cpp" "$PKG/../basilisk-synth/core/dna3.cpp" "$PKG/../basilisk-synth/core/engine3.cpp" "$PKG/../basilisk-synth/core/scales.cpp" \
+  "$PKG/../basilisk-synth/core/userstore.cpp" "$W/engine-w.o" -lwinmm
 M="$W/win/SNDWAVE1993.vst3/Contents/Resources/machine"
 rm -rf "$M"; mkdir -p "$M"
 cp "$W/dbp-win/dosbox_pure_libretro.dll" "$W/machine/w31.conf" "$W/machine/w31.state" "$W/machine/drive.zip" "$M/"

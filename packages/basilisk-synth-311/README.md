@@ -44,6 +44,24 @@ only folder).
 **Projects from BASILISK 16** (the name of versions up to 1.2.1) open as they were: the plugin keeps the same VST3
 class, AU codes and CLAP id, the same state format and `.b16` files.
 
+## What is new in 1.5.0
+
+- **SNDWAVE1993.** The new name, and CITYPOP1993, an album of a theme and eleven variations: double-click CITYPOP1993
+  in Program Manager and it plays on the plugin's own Sound Recorders.
+- **Windows keeps 1993.** While the editor shows the screen, Windows' clock reads today's month, day and time of
+  day, in 1993.
+- **The Steps tab.** A step sequencer drawn like Minesweeper's board: numbers are scale degrees, a bomb holds the
+  note before it, a flag accents a step, arrows move it an octave; a kit has a row per pad. Length 1 to 32, rate,
+  swing, gate, Random Fill. It follows the DAW's transport (or the face runs it), transposes with the note you
+  hold, and the pattern is saved in the DNA.
+- **Gene Pool.** Sounds dealt as playing cards (Program Manager, SNDWAVE1993 group): click to hear one,
+  double-click to keep it, select two or more and Breed. Pack cards carry their pack's name, wild cards (raw
+  sounds with genes of chance) come face down, bred cards show their generation and lineage.
+- **WAULOPHONE**, the renamed Paulywaulophone disc: projects and songs that use the old name or its old preset
+  names still find them.
+- One preset list: the All / W3.11 / XP filter is gone.
+- Fixed: right clicks reach Windows.
+
 ## What is new in 1.4.0
 
 - **The Song tab.** A song is a MIDI file and its tracks. Each track takes its notes from a MIDI channel or file
