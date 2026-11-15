@@ -699,16 +699,20 @@ def draw_shore(L, cam, A, rng, V, lights):
         L.rect(x, int(y0 - h), w, h, col)
         L.rect(x - 1, int(y0 - h - 2), w + 2, 2, mix(col, K['navy0'], 0.5))
         # rows of tiny windows
-        for wy in range(int(y0 - h + 4), int(y0 - 4), 7):
-            for wx in range(x + 3, x + w - 4, 7):
-                if rng.random() < 0.25:
-                    c = [K['warm'], K['cream'], K['tv']][int(rng.random() * 3)]
-                    L.rect(wx, wy, 3, 3, c)
-                    wi = A.win(wx, wy, 3, 3, 1, 1, 'warm', 0, 'plain', 'far', K['glass'])
-                    if L.wid is not None and wx >= 0 and wy >= 0:
-                        L.wid[wy:wy + 3, wx:wx + 3] = wi
-                elif rng.random() < 0.4:
-                    L.rect(wx, wy, 3, 3, K['glass'])
+        for wy in range(int(y0 - h + 3), int(y0 - 4), 5):
+            for wx in range(x + 2, x + w - 3, 5):
+                r_ = rng.random()
+                if r_ < 0.3:
+                    c = [K['warm'], K['cream'], K['tv'], K['warm']][int(rng.random() * 4)]
+                    L.rect(wx, wy, 2, 3, c)
+                    wi = A.win(wx, wy, 2, 3, 1, 1, 'warm', 0, 'plain', 'far', K['glass'])
+                elif r_ < 0.75:
+                    L.rect(wx, wy, 2, 3, K['glass'])
+                    wi = A.win(wx, wy, 2, 3, 1 if rng.random() < 0.3 else 0, 0, 'warm', 0, 'plain', 'far', K['glass'])
+                else:
+                    continue
+                if L.wid is not None and wx >= 0 and wy >= 0:
+                    L.wid[wy:wy + 3, wx:wx + 2] = wi
         if not shop_done and abs(x - cam.cx) < 500 and x > cam.cx - 420:
             # a small lit shop, no brand: a band of cool white with shelves
             sw = 40
@@ -938,9 +942,10 @@ class Town:
         # floors & windows
         floors = max(1, int(hw / 2.7))
         fh = hw / floors
-        ww = (0.8 + rng.random() * 0.6)
-        whh = 0.9 + rng.random() * 0.3
-        nwin = max(1, int((X1 - X0) / 1.7))
+        dense = unit < 24          # far and mid rows: smaller, denser windows
+        ww = (0.55 + rng.random() * 0.25) if dense else (0.8 + rng.random() * 0.6)
+        whh = (0.7 + rng.random() * 0.2) if dense else (0.9 + rng.random() * 0.3)
+        nwin = max(1, int((X1 - X0) / (0.95 if dense else 1.7)))
         lit_p = 0.5
         for fl in range(floors):
             Ewin = Eg + fl * fh + fh * 0.35
@@ -1409,6 +1414,14 @@ def draw_town(Ls, cam, A, rng, V, lights):
                     continue
                 Zp = Zr - 0.5
                 T.add(Zp - 0.01, layer, (lambda L=L, Xp=Xp, Zp=Zp, layer=layer: T.pole(L, Xp, Zp, cam.g(Zp), layer)))
+    # ---------------- two hillside blocks facing the strait, and us: rows and rows of windows
+    Zm0 = zs[0] - 0.6
+    for fx in (0.22, 0.62):
+        Xm = cam.Xat(W * fx, Zm0)
+        if abs(Xm - cam.lane(Zm0)) < 10:
+            Xm += 11 if Xm > cam.lane(Zm0) else -11
+        wM = 12.0 + rng.random() * 3
+        T.add(Zm0, 'mid', (lambda Xm=Xm, wM=wM: T.house(Ls['mid'], Xm - wM / 2, Xm + wM / 2, Zm0, 9.0, 10.5, 'flat', 'mid', wall=mix(K['conc'], K['brn2'], 0.3))))
     # ---------------- low gardens in the kept-clear plots beside the lane: hedges, a stone lantern, a vegetable bed
     for (ra, rb, za, zb) in reserved[2:]:
         Zg = za + 1.0
@@ -1869,7 +1882,7 @@ def draw_lane(T, Ls, Znear, Zfar, Zcut):
         L.px(cx_ + bw * 0.85, cy_ - bh * 1.05, K['navy0'])
         L.px(cx_ + bw * 0.85 + 1, cy_ - bh * 1.05, K['navy0'])
         A.d['cat'] = dict(x=int(cx_ - bw), y=int(cy_ - bh * 2.2), w=int(bw * 2 + bh * 1.6), h=int(bh * 2.2), layer='near', head=[int(cx_ + bw * 0.75), int(cy_ - bh * 1.05)], tail=[int(cx_ - bw * 0.9), int(cy_ - bh * 0.4)])
-    T.add(Zc - 0.3, 'near', cat)
+    T.add(-1.0, 'near', cat)      # last: it sits on top of the wall, nothing nearer should hide it
     # vending machine in a recess on the right
     Zv = T.spots['vend']
     def vend(L=near, Z=Zv):
@@ -2240,9 +2253,10 @@ def mood_palettes(pal, L, img, name, hyf=0.3):
         p = p * (1 + lift * 2.2 * (1 - light[:, None])) + (1 - light[:, None]) * (np.asarray(tint) * lift)
         p = mix(p, p * light_k, light[:, None])
         if sky_dawn and name == 'sky':
-            d = skygrad(meany / hyf)
+            rank = np.argsort(np.argsort(-lum)) / max(1, len(lum) - 1)      # 0 = brightest
+            d = skygrad(0.5 * np.clip(meany / hyf, 0, 1.1) + 0.5 * (1 - rank) * 0.95)
             keep = smooth(0.5, 0.7, lum)[:, None]           # the moon and the stars keep their own light
-            tgt = d * np.clip(0.85 + 0.9 * (lum[:, None] - mlum), 0.55, 1.3)
+            tgt = d * np.clip(0.9 + 0.5 * (lum[:, None] - mlum), 0.7, 1.2)
             p = mix(p, tgt, sky_dawn * (1 - keep))
         return np.clip(p, 0, 1)
     out['rain'] = grade(0.03, (0.30, 0.08, 0.40), 1.05, desat=-0.08)
