@@ -1,5 +1,7 @@
 # CITYPOP1993
 
+(The album was first called CITYPOP DEPROGRAMMED, and this folder keeps that name. SNDWAVE1993 was SNDWAVE2000.)
+
 An album performed on SNDWAVE1993: a theme and eleven variations for a quiet night in a harbour town, about 41
 minutes. Every note is played by the Windows 3.11 Sound Recorders through `render311`
 (`tools/songrender`), one engine per part. Page: williamsharkey.com/citypop/ (`site/citypop/`).
