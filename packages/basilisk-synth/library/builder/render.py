@@ -29,7 +29,7 @@ def score_text(score):
 def key_of(dna, score, tail, bpm=None, grid=None):
     b = ('|bpm%g' % bpm if bpm else '') + ('|grid ' + grid if grid else '')
     # the renderer is part of the key: a cached result from one build never stands in for another
-    r = os.environ.get('LIBBUILD_V3', 'r7')
+    r = os.environ.get('LIBBUILD_V3', 'r140')
     return hashlib.sha1(('%s|%s|%.3f|v1%s|%s' % (dna, score_text(score), tail, b, r)).encode()).hexdigest()[:20]
 
 

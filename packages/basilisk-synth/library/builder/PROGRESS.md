@@ -165,3 +165,8 @@ Nothing audio goes in git.
   1.4 lands:** re-render the 11 kick-fixed kits (packs/kitmgr/KICKFIX.TSV, KITMGR98 in cd70323) and Rainy Loft.
 - **Render cache.** render.key_of includes the renderer build (LIBBUILD_V3). Before that, 9 presets' 1.3.0
   re-check came from older cached renders; re-checked on 1.3.1, all pass with the same scores.
+- **1.4.0 (sndwave2000-v1.4.0).** Rainy Loft (80, the album lane's disc; standalone check 80/80) and all 39 Kit
+  Manager kits (the 11 kick fixes, the 7 sequencer kits on a Mines board) have previews rendered on 1.4.0
+  (~/libbuild/r140: render311 and the 26-disc machine, copied from the 3.11 lane's Linux 1.4 setup). The 1318
+  library clips stay on 1.3.0 RC (same presets; coordinator's call); each manifest entry records its build.
+  Renderers kept: r140 (default now) and rc130 (the full render library, 1288 sounds, for library-only work).
