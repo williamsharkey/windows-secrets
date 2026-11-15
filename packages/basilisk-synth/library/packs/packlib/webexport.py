@@ -1,4 +1,4 @@
-"""Web assets for the site's Sound Pack Explorer (williamsharkey.com/sndwave2000), per pack, at native pixel size:
+"""Web assets for the site's Sound Pack Explorer (williamsharkey.com/sndwave1993), per pack, at native pixel size:
 
     out/web/<id>/front.png   the box (or sleeve, insert, mailer label) front as printed, 5 px per mm
     out/web/<id>/spine.png   the spine, upright

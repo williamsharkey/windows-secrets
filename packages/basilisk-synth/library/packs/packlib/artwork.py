@@ -819,7 +819,7 @@ def floppy(p):
 
 
 def compat_badge(h, aa=False):
-    """The 'Designed for SNDWAVE2000' compatibility badge, h px tall, in the brand's look (design/brand/sndwave2000:
+    """The 'Designed for SNDWAVE1993' compatibility badge, h px tall, in the brand's look (design/brand/sndwave1993:
     paper ground, red stripe on the left, the Grid Sun mark at a whole-number scale, DejaVu type, COPY.md strings)."""
     B = brand.BADGE
     w = int(h * .8)

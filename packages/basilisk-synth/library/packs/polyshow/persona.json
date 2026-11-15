@@ -286,7 +286,7 @@
   },
   "text": {
     "tagline": "The keyboard floor, 1985.",
-    "blurb": "Walk the 1985 keyboard floor again: big polyphonic brass and strings, fat monophonic basses and leads, glassy FM pianos and clavs, and choirs from the vocoder corner. {count} presets for SNDWAVE2000 and BASILISK SYNTH.",
+    "blurb": "Walk the 1985 keyboard floor again: big polyphonic brass and strings, fat monophonic basses and leads, glassy FM pianos and clavs, and choirs from the vocoder corner. {count} presets for {sw} and BASILISK SYNTH.",
     "intro": [
       "Welcome to the Polysynth Showroom, the in-store demo disc of the Neon Keys keyboard department. Every preset recalls a sound from the great showroom floor of the mid-eighties: polyphonic pads and brass, monophonic basses and leads, FM pianos and clavs, vocoder choirs and string machines.",
       "No keyboard was harmed, and none is named: our keyboard specialists rebuilt every sound for the Sound Recorder synthesizer."

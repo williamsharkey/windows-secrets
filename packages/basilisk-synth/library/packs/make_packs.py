@@ -73,7 +73,7 @@ def with_counts(p, data):
     nc = len({x['folder'] for x in data['presets']})
     def sub(v):
         if isinstance(v, str):
-            return v.replace('{count}', str(n)).replace('{count_xp}', str(nx)).replace('{ncat}', str(nc))
+            return v.replace('{count}', str(n)).replace('{count_xp}', str(nx)).replace('{ncat}', str(nc)).replace('{sw}', brand.SW).replace('{xp}', brand.XP)
         if isinstance(v, list):
             return [sub(x) for x in v]
         if isinstance(v, dict):
@@ -192,7 +192,7 @@ def build_pack(p, opt):
         inf = texts.pack_inf(p, data)
         files['PACK.INF'] = texts.enc(inf)
         files['PACK.TXT'] = texts.enc(inf.replace('[Pack]\n', '%s\n%s\n\n' % (pk['title'], '=' * len(pk['title']))))
-        files['PRESETS.TSV'] = texts.enc('# category\tname\tDNA\tpack\teditions (3.11 = SNDWAVE2000, XP = BASILISK SYNTH)\n' + ''.join(
+        files['PRESETS.TSV'] = texts.enc('# category\tname\tDNA\tpack\teditions (3.11 = %s, XP = %s)\n' % (brand.SW, brand.XP) + ''.join(
             '%s\t%s\t%s\t%s\t%s\n' % (x['category'], x['name'], x['dna'], pk.get('plan_id') or pid, ' '.join(x.get('ships', ['3.11', 'XP'])))
             for x in data['presets']), 'utf-8')
         lid = pdata.LIBMAP.get(pid)
@@ -249,7 +249,7 @@ def build_pack(p, opt):
 
     # ---- ISO
     if not opt.get('no_iso'):
-        out = os.path.join(HERE, 'out', os.environ.get('PACK_DISCS', 'discs-1.4'))          # the final disc set: <LABEL>/ folders, <LABEL>.ISO, DISCS.TSV
+        out = os.path.join(HERE, 'out', os.environ.get('PACK_DISCS', 'discs-1.5'))          # the final disc set: <LABEL>/ folders, <LABEL>.ISO, DISCS.TSV
         if pk.get('stage') is False:      # not yet approved for a release: built, but kept out of the set and its index
             out = os.path.join(HERE, 'out', 'held')
         os.makedirs(out, exist_ok=True)
@@ -376,7 +376,7 @@ def main():
     for p in personas(ids):
         results.append(build_pack(p, opt))
     if not opt.get('no_iso') and not opt.get('render_only'):
-        out = os.path.join(HERE, 'out', os.environ.get('PACK_DISCS', 'discs-1.4'))
+        out = os.path.join(HERE, 'out', os.environ.get('PACK_DISCS', 'discs-1.5'))
         write_index(out)
     if book:   # booklet pages for the site's player (packlib/booklet.py), one per category, from the content as built
         from packlib import booklet

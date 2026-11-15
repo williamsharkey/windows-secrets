@@ -179,7 +179,7 @@
       },
       {
         "t": "text",
-        "s": "{count} instruments for SNDWAVE2000",
+        "s": "{count} instruments for {sw}",
         "font": "body",
         "size": 0.03,
         "pos": [

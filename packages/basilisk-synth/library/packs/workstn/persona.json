@@ -259,7 +259,7 @@
     "features": [
       "Leads, basses, pads and plucks",
       "Sounds like the expensive stuff!",
-      "Works with SNDWAVE2000 and BASILISK SYNTH"
+      "Works with {sw} and BASILISK SYNTH"
     ],
     "barcode": true
   },

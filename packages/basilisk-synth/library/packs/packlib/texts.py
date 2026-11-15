@@ -7,7 +7,7 @@ import textwrap
 
 from PIL import Image, ImageDraw
 
-from . import gfx
+from . import brand, gfx
 
 
 def _crlf(s):
@@ -105,7 +105,7 @@ def nfo_style(p, data):
 
     d = date_of(p)
     box('release info', ['title ........ ' + pk['title'], 'group ........ ' + M['name'].lower(),
-                         'date ......... ' + d.strftime('%m/%d/%y'), 'type ......... presets for sndwave2000 / basilisk synth',
+                         'date ......... ' + d.strftime('%m/%d/%y'), 'type ......... presets for %s / %s' % (brand.SW.lower(), brand.XP.lower()),
                          'size ......... %d presets, 1 cd' % len(data['presets']), 'label ........ ' + pk['label']])
     NH = T.get('nfo_heads', {})
     box(NH.get('intro', 'about'), T['intro'])
