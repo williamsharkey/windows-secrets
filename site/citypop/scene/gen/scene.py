@@ -1,4 +1,4 @@
-"""CITYPOP DEPROGRAMMED: Onomichi after the rain, 2 a.m.
+"""CITYPOP1993: Onomichi after the rain, 2 a.m.
 A deterministic procedural night scene, rendered at device-pixel resolution in five layers.
 usage: python3 scene.py [desktop|portrait|all] [--preview DIR]
 """

@@ -1,4 +1,4 @@
-/* CITYPOP DEPROGRAMMED: the night scene. Onomichi after the rain, drawn at device pixels.
+/* CITYPOP1993: the night scene. Onomichi after the rain, drawn at device pixels.
    Five layers (sky, far, mid, near, fg), each an indexed PNG whose palette drifts through the night.
    API: see SCENE-API.md.  window.CityScene (alias window.Scene). No modules, no dependencies. */
 (function () {
