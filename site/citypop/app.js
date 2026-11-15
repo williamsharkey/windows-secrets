@@ -491,7 +491,7 @@ function show(i) {
   const li = list.children[i]; if (li) { const vp = li.parentElement.parentElement; if (li.offsetTop < vp.scrollTop || li.offsetTop + 18 > vp.scrollTop + vp.clientHeight) vp.scrollTop = li.offsetTop - 36; }
   const p = parseTitle(t);
   $('#ttitle').textContent = t.title;
-  $('#tvar').textContent = t.pending ? 'In the mastering room. It will be here shortly; the player skips it until then.' : (t.variation ? t.variation.charAt(0).toUpperCase() + t.variation.slice(1) + '. ' : '') + (t.note || '');
+  $('#tvar').textContent = t.pending ? 'In the mastering room. It will be here shortly; the player skips it until then.' : (t.variation && !(t.note || '').toLowerCase().startsWith(t.variation.toLowerCase()) ? t.variation.charAt(0).toUpperCase() + t.variation.slice(1) + '. ' : '') + (t.note || '');   // no echo when the note opens with the variation
   $('#tvar').title = t.note || '';
   const nn = String(t.n).padStart(2, '0');
   $('#rectitle').textContent = 'Sound Recorder - TRACK' + nn + '.WAV';
