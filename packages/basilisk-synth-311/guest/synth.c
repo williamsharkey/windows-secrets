@@ -535,6 +535,73 @@ static void seek_frac(int r, long num, long den)
     SendMessage(rw[r], WM_HSCROLL, SB_THUMBPOSITION, MAKELPARAM(pos, sb));
     SendMessage(rw[r], WM_HSCROLL, SB_ENDSCROLL, MAKELPARAM(pos, sb));
 }
+/* 1.5: a cut lands on a zero crossing. Delete Before / Delete After cut where the position is; a cut in the middle of
+   a wave leaves the sound starting or ending on a step, which clicks (measured: `ding@30[` started on 47% of its peak).
+   So before a cut the position moves, within 2 ms, to where the sound is nearest zero: Sound Recorder's own Copy puts
+   the sound on the clipboard, the scroll positions nearby are scored by the largest sample at and either side of the
+   one each lands on (Sound Recorder rounds the position to a sample), and the best one under 1/64 of full scale is
+   taken; with none, the position stays. The clipboard's clip (for a later Paste) is put back. Every OS runs the same
+   guest, so every edition cuts at the same sample. */
+static long snap_frame(long p, long N, long range) { return N / range * p + ((N % range) * p + range / 2) / range; }
+static int snap_score(BYTE __huge *d, long N, int bits, int nch, long s)
+{
+    long k; int m = 0, c, v;
+    for (k = s - 1; k <= s + 1; k++) {
+        if (k < 0 || k >= N) continue;
+        for (c = 0; c < nch; c++) {
+            if (bits == 16) v = *(short __huge *)(d + (k * nch + c) * 2); else v = ((int)d[k * nch + c] - 128) * 256;
+            if (v < 0) v = -v;
+            if (v > m) m = v;
+        }
+    }
+    return m;
+}
+static void snap_cut(int r)
+{
+    HWND sb = GetDlgItem(rw[r], SR_SCROLL); int lo, hi, pos, best; HANDLE prev = NULL, h;
+    GetScrollRange(sb, SB_CTL, &lo, &hi); pos = GetScrollPos(sb, SB_CTL); best = pos;
+    if (hi <= lo || pos <= lo || pos >= hi) return;
+    if (OpenClipboard(hMain)) {   /* what the clipboard holds now: a clip a later Paste wants */
+        HANDLE c = GetClipboardData(CF_WAVE);
+        if (c) { DWORD n = GlobalSize(c); prev = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, n); if (prev) { hmemcpy(GlobalLock(prev), GlobalLock(c), n); GlobalUnlock(prev); GlobalUnlock(c); } }
+        CloseClipboard();
+    }
+    menu(r, SR_COPY);
+    if (OpenClipboard(hMain)) {
+        BYTE __huge *w;
+        h = GetClipboardData(CF_WAVE);
+        if (h && (w = (BYTE __huge *)GlobalLock(h)) != NULL) {
+            DWORD sz = GlobalSize(h), off = 12, cl; int nch = 1, bits = 8; long rate = 22050, N = 0; BYTE __huge *d = NULL;
+            while (off + 8 <= sz) {
+                cl = *(DWORD __huge *)(w + off + 4);
+                if (!_fmemcmp((void __far *)(w + off), "fmt ", 4)) { nch = *(WORD __huge *)(w + off + 10); rate = *(DWORD __huge *)(w + off + 12); bits = *(WORD __huge *)(w + off + 22); }
+                else if (!_fmemcmp((void __far *)(w + off), "data", 4)) { d = w + off + 8; if (cl > sz - off - 8) cl = sz - off - 8; N = (long)(cl / ((DWORD)nch * (bits / 8))); break; }
+                off += 8 + cl + (cl & 1);
+            }
+            if (d && N > 4 && nch >= 1 && (bits == 8 || bits == 16)) {
+                long range = hi - lo, win = rate * 2 / 1000, kmax = win * range / N + 1; int p, sc, bs;
+                if (kmax > 2000) kmax = 2000;
+                bs = snap_score(d, N, bits, nch, snap_frame(pos - lo, N, range));
+                if (bs > 0) for (p = 1; p <= kmax; p++) {   /* nearest first, then the other side */
+                    int q, side;
+                    for (side = 0; side < 2; side++) {
+                        q = side ? pos + p : pos - p;
+                        if (q <= lo || q >= hi) continue;
+                        if (labs(snap_frame(q - lo, N, range) - snap_frame(pos - lo, N, range)) > win) continue;
+                        sc = snap_score(d, N, bits, nch, snap_frame(q - lo, N, range));
+                        if (sc < bs) { bs = sc; best = q; }
+                    }
+                }
+                if (bs > 512) best = pos;   /* nothing near zero: the exact point */
+            }
+            GlobalUnlock(h);
+        }
+        EmptyClipboard();
+        if (prev) SetClipboardData(CF_WAVE, prev);
+        CloseClipboard();
+    } else if (prev) GlobalFree(prev);
+    if (best != pos) { SendMessage(rw[r], WM_HSCROLL, SB_THUMBPOSITION, MAKELPARAM(best, sb)); SendMessage(rw[r], WM_HSCROLL, SB_ENDSCROLL, MAKELPARAM(best, sb)); }
+}
 static void seek_ms(int r, int ms, int len_cs)   /* v2: the position slider to ms (clamped to the length) */
 {
     HWND sb = GetDlgItem(rw[r], SR_SCROLL); int lo, hi, pos;
@@ -628,8 +695,8 @@ static int run_steps(int r, LAYER *L)
         case '<': menu(r, SR_SLOWER); break;
         case 'E': menu(r, SR_ECHO); break;
         case 'R': menu(r, SR_REVERSE); break;
-        case '[': menu(r, SR_DELBEFORE); break;
-        case ']': if (field_cs(r, SR_POS) > 0) menu(r, SR_DELAFTER); break;   /* at the start it would delete the whole
+        case '[': snap_cut(r); menu(r, SR_DELBEFORE); break;
+        case ']': if (field_cs(r, SR_POS) > 0) { snap_cut(r); menu(r, SR_DELAFTER); } break;   /* at the start it would delete the whole
                                                                                   sound: refused, like [ at the start (DNA.md 2.1) */
         case 'C': menu(r, SR_COPY); clip = len; break;
         case 'P': menu(r, SR_PASTE); break;
