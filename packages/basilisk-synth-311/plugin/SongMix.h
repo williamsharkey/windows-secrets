@@ -17,6 +17,7 @@ namespace b16song {
 namespace mixd {
 
 constexpr int SR = 48000;
+constexpr double kPi = 3.14159265358979323846;   // (M_PI is not standard C++)
 using Buf = std::vector<double>;
 struct St { Buf l, r; size_t size() const { return l.size(); } void resize(size_t n) { l.assign(n, 0); r.assign(n, 0); } };
 
@@ -38,13 +39,13 @@ inline std::string str(const std::map<std::string, std::string> &m, const char *
 inline void onepole(Buf &x, double fc)   // lfilter([1-a], [1, -a])
 {
     if (fc <= 0 || fc >= SR / 2) return;
-    const double a = std::exp(-2 * M_PI * fc / SR), b = 1 - a; double y = 0;
+    const double a = std::exp(-2 * kPi * fc / SR), b = 1 - a; double y = 0;
     for (double &v : x) { y = b * v + a * y; v = y; }
 }
 struct Biquad { double b0, b1, b2, a1, a2; };
 inline Biquad butter2(double fc, bool hp)   // scipy butter(2, fc, fs=SR): bilinear with prewarping
 {
-    const double K = std::tan(M_PI * fc / SR), q = std::sqrt(2.0), D = 1 + q * K + K * K;
+    const double K = std::tan(kPi * fc / SR), q = std::sqrt(2.0), D = 1 + q * K + K * K;
     Biquad f;
     if (hp) { f.b0 = 1 / D; f.b1 = -2 / D; f.b2 = 1 / D; }
     else { f.b0 = K * K / D; f.b1 = 2 * K * K / D; f.b2 = K * K / D; }
@@ -62,7 +63,7 @@ struct Fft {
     size_t n; std::vector<std::complex<double>> w; std::vector<size_t> rev;
     explicit Fft(size_t N) : n(N), w(N / 2), rev(N)
     {
-        for (size_t k = 0; k < N / 2; k++) w[k] = std::polar(1.0, -2 * M_PI * (double)k / (double)N);   // exact twiddles
+        for (size_t k = 0; k < N / 2; k++) w[k] = std::polar(1.0, -2 * kPi * (double)k / (double)N);   // exact twiddles
         for (size_t i = 1, j = 0; i < N; i++) { size_t bit = N >> 1; for (; j & bit; bit >>= 1) j ^= bit; j ^= bit; rev[i] = j; }
     }
     void run(std::vector<std::complex<double>> &a, bool inv) const
@@ -199,7 +200,7 @@ inline std::vector<double> upFir()
     std::vector<double> h(81); double sum = 0;
     for (int n = 0; n < 81; n++) {
         const double m = n - 40.0, a = 0.25 * m;
-        const double sinc = a == 0 ? 1.0 : std::sin(M_PI * a) / (M_PI * a);
+        const double sinc = a == 0 ? 1.0 : std::sin(kPi * a) / (kPi * a);
         const double r = 2.0 * n / 80.0 - 1.0;
         h[n] = 0.25 * sinc * i0(5.0 * std::sqrt(std::max(0.0, 1 - r * r))) / i0(5.0);
         sum += h[n];
@@ -294,7 +295,7 @@ inline std::vector<double> mixSong(const SongText &song, double bpm, double leng
         if (t.lp > 0) { const auto f = butter2(t.lp, false); biquad(xl, f); biquad(xr, f); }
         if (t.width != 1.0)
             for (size_t i = 0; i < n; i++) { const double mm = (xl[i] + xr[i]) / 2, s = (xl[i] - xr[i]) / 2 * t.width; xl[i] = mm + s; xr[i] = mm - s; }
-        const double th = (std::max(-100.0, std::min(100.0, t.pan)) + 100.0) / 200.0 * M_PI / 2;
+        const double th = (std::max(-100.0, std::min(100.0, t.pan)) + 100.0) / 200.0 * kPi / 2;
         const double gl = std::sqrt(2.0) * std::cos(th), gr = std::sqrt(2.0) * std::sin(th);
         double g = std::pow(10.0, t.vol / 20);
         const double own = lufs(xl, xr);
