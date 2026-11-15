@@ -14,6 +14,7 @@ using namespace b16song;
 struct Lane {
     std::string dna, midi; std::vector<MidiEv> ev;
     b16v3::NoteHost host; bsynth::Dna eff; bsynth3::Dna3 d3; double gain = 1;
+    uint32_t used = 0; int cap = 0;   // the recorders its notes used (bit per recorder)
     std::vector<float> out; double buildWall = 0; long buildGuestMs = -1; size_t ei = 0;
 };
 static double cpuSec() { struct rusage u; getrusage(RUSAGE_SELF, &u); return u.ru_utime.tv_sec + u.ru_stime.tv_sec + (u.ru_utime.tv_usec + u.ru_stime.tv_usec) * 1e-6; }
@@ -35,6 +36,11 @@ int main(int argc, char **argv)
             else if (l.rfind("lane ", 0) == 0) {
                 size_t s = l.find(' ', 5); Lane x; x.midi = l.substr(5, s - 5); x.dna = l.substr(s + 1);
                 if (!readMidi(x.midi, x.ev)) { std::fprintf(stderr, "mtrender: cannot read %s\n", x.midi.c_str()); return 2; }
+                if (a.count("--until")) {   // only the first seconds (profiling); the notes still sounding then get their offs
+                    const double u = std::atof(a["--until"].c_str()); std::vector<MidiEv> k;
+                    for (auto &m : x.ev) if (m.t < u || (m.st & 0xF0) == 0x80 || ((m.st & 0xF0) == 0x90 && m.b == 0)) k.push_back(m.t < u ? m : MidiEv{u, m.st, m.a, m.b});
+                    x.ev = k;
+                }
                 L.push_back(std::move(x));
             }
         }
@@ -70,6 +76,7 @@ int main(int argc, char **argv)
     void *core_h = dlopen(core.c_str(), RTLD_NOW | RTLD_NOLOAD);
     auto readLane = core_h ? (int (*)(int, uint64_t, float *, int))dlsym(core_h, "bsyn_host_read_lane") : nullptr;
     if (!readLane) { std::fprintf(stderr, "mtrender: the core has no lane buses\n"); return 3; }
+    if (!a.count("--video") || a["--video"] != "1") { auto vid = (void (*)(int))dlsym(core_h, "bsyn_host_video"); if (vid) vid(0); }
     const double tBoot = nowSec(), cBoot = cpuSec();
     std::fprintf(stderr, "mtrender: %s (boot %.2f s wall)\n", readyLine.c_str(), tBoot - t0);
     {   std::ifstream in(machine + "/packs/PACKS.TSV"); std::string l, ids;
@@ -84,6 +91,20 @@ int main(int argc, char **argv)
         ln.host.capWin = ln.host.capRate = ln.host.capTape = true;
         ln.gain = std::pow(10.0, ln.eff.g.gainDb / 20.0);
         const std::string pre = "@" + std::to_string(k) + " ";
+        if (a.count("--cap") && a["--cap"] == "1") {   // reclaim: a lane gets the recorders its track can use, no more
+            const double rel = ln.eff.g.release / 1000.0 + 0.05; std::vector<std::pair<double, int>> edges; std::map<int, double> on;
+            for (auto &m : ln.ev) {
+                const int st = m.st & 0xF0;
+                if (st == 0x90 && m.b) on[m.a] = m.t;
+                else if ((st == 0x80 || st == 0x90) && on.count(m.a)) { edges.push_back({on[m.a], 1}); edges.push_back({m.t + rel, -1}); on.erase(m.a); }
+            }
+            for (auto &o : on) { edges.push_back({o.second, 1}); }
+            std::sort(edges.begin(), edges.end()); int cur = 0, peak = 0; for (auto &e : edges) { cur += e.second; peak = std::max(peak, cur); }
+            int need = 0;
+            for (auto &Ly : ln.eff.layers) need += std::min(16, std::max(1, peak) * (int)Ly.harmony.size() * std::max(1, Ly.unison));
+            ln.cap = std::max((int)ln.eff.layers.size(), std::min(16, need));
+            M.send(pre + "cap " + std::to_string(ln.cap));
+        }
         M.send(pre + "dna " + written.canonical);
         char b[160]; bsynth::proto::env(b, sizeof b, ln.eff.g); b[std::strlen(b) - 1] = 0; M.send(pre + b);
         for (bool built = false; !built;) {
@@ -126,7 +147,7 @@ int main(int argc, char **argv)
         if (rt) { const double due = tp0 + (double)h / 48000.0; while (nowSec() < due) std::this_thread::sleep_for(std::chrono::microseconds(300)); }
         for (size_t k = 0; k < L.size(); k++) {
             Lane &ln = L[k]; const std::string pre = "@" + std::to_string(k) + " ";
-            auto sink = [&](const char *line, uint64_t when) { M.send(pre + line, ++M.nextId, when); lines++; };
+            auto sink = [&](const char *line, uint64_t when) { M.send(pre + line, ++M.nextId, when); lines++; if (!std::strncmp(line, "on ", 3)) ln.used |= 1u << (std::atoi(line + 3) & 31); };
             while (ln.ei < ln.ev.size() && (uint64_t)(ln.ev[ln.ei].t * 48000) < blockEnd + look48) {
                 const MidiEv &m = ln.ev[ln.ei++];
                 ln.host.midi(m.st, m.a, m.b, anchor + (uint64_t)(m.t * 48000) + kLat, sink);
@@ -160,7 +181,7 @@ int main(int argc, char **argv)
         for (float &x : ln.out) x *= (float)ln.gain;
         if (!a.count("--stems") || a["--stems"] != "0") writeWavFloat(outDir + "/lane" + std::to_string(k) + ".wav", ln.out);
         for (size_t i = 0; i < mix.size() && i < ln.out.size(); i++) mix[i] += ln.out[i];
-        std::fprintf(stderr, "lane %zu: build %.2f s wall (%ld ms on Windows' clock), %zu events\n", k, ln.buildWall, ln.buildGuestMs, ln.ev.size());
+        std::fprintf(stderr, "lane %zu: build %.2f s wall (%ld ms on Windows' clock), %zu events, %d recorders used (cap %d)\n", k, ln.buildWall, ln.buildGuestMs, ln.ev.size(), __builtin_popcount(ln.used), ln.cap);
     }
     writeWavFloat(outDir + "/mix.wav", mix);
     master.erase(master.begin(), master.begin() + 2 * kLat);

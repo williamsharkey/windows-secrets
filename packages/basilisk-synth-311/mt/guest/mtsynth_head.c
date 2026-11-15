@@ -70,7 +70,8 @@ static long __far lnFrames[NB][NL];
 static char __far lnSig[NB][1400];
 static DWORD slowMax, nPlays;
 static DWORD curId;
-static int lnRel[NB_LANES];   /* each lane's release (env R), ms */
+static int lnRel[NB_LANES];
+static int lnCap[NB_LANES];   /* recorders a lane builds and plays (0: all LANE_RECS) */   /* each lane's release (env R), ms */
 void (FAR PASCAL *HookActive)(BOOL);
 void (FAR PASCAL *HookPending)(LPCSTR);
 static int poll_host(void);

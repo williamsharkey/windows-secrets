@@ -1,0 +1,10 @@
+SNDWAVE2000 multitimbral experiment: DOSBox Pure skips the video frame (scaler and buffer) while the BSYN card says
+nobody watches (bsyn_host_video(0)). Applies on top of ../../dosbox-pure/dosbox-pure.patch.
+--- a/dosbox_pure_libretro.cpp
++++ b/dosbox_pure_libretro.cpp
+@@ bool GFX_StartUpdate(Bit8u*& pixels, Bitu& pitch)
++extern bool BSYN_NoVideo(void);
+ bool GFX_StartUpdate(Bit8u*& pixels, Bitu& pitch)
+ {
+ 	if (dbp_state == DBPSTATE_BOOT) return false;
++	if (BSYN_NoVideo()) { dbp_framecount += 1 + render.frameskip.max; return false; }   /* SNDWAVE2000 mt: nobody watches (a headless engine): no scaling, no frame; the frame still counts (retro_run waits for it) */

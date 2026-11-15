@@ -84,10 +84,12 @@ static void host_line(char *s)
         if (ln < 0 || ln >= NB || !sp) return;
         bank = ln; s = sp + 1;
     } else bank = 0;
+    laneRecs = lnCap[bank] ? lnCap[bank] : LANE_RECS;   /* the lane's own recorder count (cap) */
     a = strchr(s, ' '); rest = a ? a + 1 : "";
     if (a) *a = 0;
     if (!strcmp(s, "hi")) say("hi 3 311 ready win,desk,rate,loop,tape,lanes=%d,recs=%d", NB, laneRecs);
     else if (!strcmp(s, "dna")) build(rest);
+    else if (!strcmp(s, "cap")) { int c = atoi(rest); lnCap[bank] = c >= 1 && c <= LANE_RECS ? c : 0; laneRecs = lnCap[bank] ? lnCap[bank] : LANE_RECS; say("@%d cap %d", bank, laneRecs); }
     else if (!strcmp(s, "on")) {
         long f[8] = {0, 0, 65535, 0, 0, -1, 0, 0}; int nf = 0; char *p = rest;
         while (*p && nf < 8) { f[nf++] = atol(p); p = strchr(p, ' '); if (!p) break; p++; }

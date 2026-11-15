@@ -141,6 +141,9 @@ static Bit64u fnv(const std::vector<Bit8u> &d) { Bit64u h = 1469598103934665603U
 #define BS_LRING 65536
 static float *lring[BS_LANES];              /* each lane's own output (its stem), by DAC sample, once it has sounded */
 static std::vector<float> lout[BS_LANES];
+/* mt: a headless engine asks for no video: DOSBox Pure then skips the scaler and the frame (18% of a 16-lane render) */
+static volatile bool bs_novideo = getenv("BSYN_NOVIDEO") != NULL;   /* (also for an unchanged render311: the environment) */
+bool BSYN_NoVideo(void) { return bs_novideo; }
 bool BSYN_Gated(void) { std::lock_guard<std::mutex> l(bs.mtx); return bs.gate; }
 void BSYN_FrameBoundary(void)
 {
@@ -167,6 +170,7 @@ BSYN_API void bsyn_host_event(const Bit16u *w, int n, Bit32u id, Bit64u at)
 	if (bs.ptr_polled && n >= 3 && (w[0] >> 8) == 6) { bs.ptr_x = w[1]; bs.ptr_y = w[2]; bs.ptr_seq++; return; }
 	for (int i = 0; i < n; i++) (bs.gate ? bs.pend : bs.events).push_back(w[i]);
 }
+BSYN_API void bsyn_host_video(int on) { bs_novideo = !on; }
 BSYN_API void bsyn_host_gate(int on)
 {
 	std::lock_guard<std::mutex> l(bs.mtx);
