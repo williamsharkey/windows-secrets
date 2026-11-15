@@ -1531,6 +1531,10 @@ static void host_line(char *s)
         sscanf(rest, "%d %d %d %d %d %d", &Y, &Mo, &D, &h, &mi, &se);
         r.h.ah = 0x2B; r.x.cx = (unsigned)Y; r.h.dh = (unsigned char)Mo; r.h.dl = (unsigned char)D; intdos(&r, &r);
         r.h.ah = 0x2D; r.h.ch = (unsigned char)h; r.h.cl = (unsigned char)mi; r.h.dh = (unsigned char)se; r.h.dl = 0; intdos(&r, &r);
+        {   /* DOSBox's DOS ignores 2Dh: the BIOS tick count since midnight is what DOS and Clock read (as SYNTH.EXE) */
+            long secs = (long)h * 3600L + (long)mi * 60L + se, ticks = secs * 18L + secs * 13532L / 65536L;
+            r.h.ah = 0x01; r.x.cx = (unsigned)(ticks >> 16); r.x.dx = (unsigned)(ticks & 0xFFFF); int86(0x1A, &r, &r);
+        }
     }
     else if (!strcmp(s, "yield")) yieldMs = atoi(rest) < 0 ? 0 : atoi(rest);
     else if (!strcmp(s, "prof")) prof(atoi(rest));
