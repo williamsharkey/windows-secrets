@@ -4,7 +4,7 @@ import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from _lib import *
 
-PLAN = {2: ('mute', 1, -6, 60, 84, 1.0), 1: ('tine', 2, -6, 50, 72, 0.85), 3: ('bass', 4, 0, 33, 60, 1.0),
+PLAN = {2: ('mute', 1, 0, 60, 84, 1.0), 1: ('tine', 2, 0, 50, 72, 0.85), 3: ('bass', 4, 0, 33, 60, 1.0),
         4: ('kit', 10, 'split', [(38, 36), (40, 38), (127, 42)], 0.85)}
 HEADER = {'title': 'Swingshot', 'pack': 'rainy-loft', 'kind': 'chiptune', 'composer': 'Haley Halcyon',
           'source': 'Swingshot (swing jazz), a FamiTracker module (swing.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/swing.ftm_.7z). Its notes are played here; its chip voices are not used.',
