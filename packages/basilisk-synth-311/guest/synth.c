@@ -3201,6 +3201,7 @@ static void song_command(int k, int code)
 {
     char t[80]; int i;
     if (sgFilling) return;
+    if (code == BN_CLICKED && curTab == 7 && hTab[7]) SendMessage(hTab[7], BM_SETSTATE, TRUE, 0L);   /* (a click elsewhere lets the tab up) */
     switch (k) {
     case 1: if (code == EN_KILLFOCUS) { GetWindowText(sgTitleEd, t, sizeof t); if (lstrcmp(t, sgTitle)) say("song title %s", (LPSTR)t); } return;
     case 2: if (code == BN_CLICKED) say("song import"); return;
