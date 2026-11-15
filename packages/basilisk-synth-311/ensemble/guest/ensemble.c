@@ -721,6 +721,9 @@ static void temp_fields(int r, BOOL on)
     }
 }
 
+static BOOL lnVoiced[NB];          /* the lane has a sound of its own (an empty lane shows "no voice") */
+static void run_pending(void);
+static void grid_dirty(void);
 /* ---------------------------------------------------------------- the launcher: recorders on demand */
 static UINT msgStrip;
 static HANDLE __far gh[3000]; static int ngh;
@@ -751,7 +754,10 @@ static HWND window_of(HINSTANCE hi)
 {
     HWND x;
     for (x = GetWindow(GetDesktopWindow(), GW_CHILD); x; x = GetWindow(x, GW_HWNDNEXT))
-        if (GetWindowWord(x, GWW_HINSTANCE) == (WORD)hi && !GetParent(x)) return x;
+        if (GetWindowWord(x, GWW_HINSTANCE) == (WORD)hi && !GetParent(x)) {
+            char c[16]; GetClassName(x, c, sizeof c);
+            if (!lstrcmp(c, "SoundRec")) return x;   /* (not its OLE server window, SrvrWndClass) */
+        }
     return NULL;
 }
 #define KEEP_WORK 0x8000   /* a worker keeps no control (the card and our own fields stand in) */
@@ -767,6 +773,11 @@ static BOOL launch_rec(int k, int j)
     while (!rw[r] && timeGetTime() - tw < 8000) { pump(); rw[r] = window_of(h); }
     if (!rw[r]) return FALSE;
     rt[r] = GetWindowTask(rw[r]); recRate[r] = hostRate[r] = 22050;
+    {   /* its OLE server window (SrvrWndClass) out of sight too: SW_SHOWNOACTIVATE shows it at 0, 0 */
+        HWND x;
+        for (x = GetWindow(GetDesktopWindow(), GW_CHILD); x; x = GetWindow(x, GW_HWNDNEXT))
+            if (GetWindowWord(x, GWW_HINSTANCE) == (WORD)h && x != rw[r]) SetWindowPos(x, HWND_BOTTOM, -3000, -3000, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_HIDEWINDOW);
+    }
     SetWindowPos(rw[r], HWND_BOTTOM, -3000, -3000, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);   /* shown, out of sight */
     pump();
     if (msgStrip) PostMessage(rw[r], msgStrip, j ? KEEP_WORK : KEEP_LEAD, 0L);
@@ -833,12 +844,14 @@ static void build(const char *dna)   /* the lane `bank`'s DNA, on its recorders,
     for (r = bank * NR; r < bank * NR + NR; r++) hostRate[r] = recRate[r];
     _fstrcpy(lnSig[bank], sigBuf);
     building = FALSE;
+    lnVoiced[bank] = TRUE;
     layer_replies();
     {   /* the lane's waveform: its first recorder plays its new sound once, silently, so the card sees the buffer */
         int a = bank * NR + (nlay ? lay[0].first : 0);
         if (rw[a] && !rplay[a]) { bs_arm2(rt[a], 0, 0, 0, 0, bank * NL); press(a, SR_PLAY); }
     }
     wave_dirty(bank); show_recs(bank);
+    grid_dirty();
     say("@%d built %ld", bank, (long)(timeGetTime() - t0));
     run_pending();
 }
@@ -904,6 +917,16 @@ static void wave_paint(HDC dc, int k, int cw, int ch)
 {
     RECT rc; int i, len, amp; long s = isin(waveAngle[k]), c = icos(waveAngle[k]); int cx = cw / 2, cy = ch / 2;
     SetRect(&rc, 0, 0, cw, ch); FillRect(dc, &rc, hBlack);
+    if (!lnVoiced[k]) {   /* no sound on this lane: the silence line, and "no voice" */
+        SelectObject(dc, hGrey);
+        MoveTo(dc, cx - (int)(icos(waveAngle[k]) * (cw > ch ? cw : ch) / 2 / 16384), cy - (int)(isin(waveAngle[k]) * (cw > ch ? cw : ch) / 2 / 16384));
+        LineTo(dc, cx + (int)(icos(waveAngle[k]) * (cw > ch ? cw : ch) / 2 / 16384), cy + (int)(isin(waveAngle[k]) * (cw > ch ? cw : ch) / 2 / 16384));
+        if (assembled && waveAngle[k] == 900) {
+            HFONT of = SelectObject(dc, hSmall); SetTextColor(dc, RGB(0, 128, 0)); SetBkMode(dc, TRANSPARENT);
+            TextOut(dc, 3, ch / 2 - 20, "no", 2); TextOut(dc, 3, ch / 2 - 6, "voice", 5); SelectObject(dc, of);
+        }
+        return;
+    }
     /* the sound's length and height: the longer side runs along it */
     len = (int)((labs(c) * cw + labs(s) * ch) / 16384); amp = (int)((labs(s) * cw + labs(c) * ch) / 16384) / 2 - 1;
     if (len < 8) len = 8; if (amp < 2) amp = 2;
@@ -936,41 +959,61 @@ long FAR PASCAL __export WaveProc(HWND h, UINT m, WPARAM w, LPARAM l)
     return DefWindowProc(h, m, w, l);
 }
 
-/* the track view (bottom): the last notes of every lane, a row each, scrolling left; the layout of a sequencer's
-   track screen, drawn with Windows 3.11's own pens */
+/* the track view (bottom): every lane's notes as they play, a row each, scrolling left like a sequencer's track
+   screen; within a row the height is the pitch. The names column on the left stays. */
 #define GRIDX 12
 #define GRIDY 520
 #define GRIDW 1000
 #define GRIDH 200
-static int gridHits[NB];
+#define GRIDL 96        /* the names column */
+#define GSTEP 2         /* pixels a tick (50 ms) */
+#define NGN 64
+static int gnLane[NGN], gnNote[NGN], gnVel[NGN], gnN;   /* notes since the last tick */
+static void grid_dirty(void) { if (hGrid) InvalidateRect(hGrid, NULL, FALSE); }
+static void grid_note(int lane, int note, int vel) { if (gnN < NGN) { gnLane[gnN] = lane; gnNote[gnN] = note; gnVel[gnN] = vel; gnN++; } }
+static void grid_names(HDC dc)
+{
+    RECT rc; int k; char t[24]; HFONT of = SelectObject(dc, hSmall);
+    SetRect(&rc, 0, 0, GRIDL, GRIDH); FillRect(dc, &rc, (HBRUSH)GetStockObject(BLACK_BRUSH));
+    SetBkMode(dc, TRANSPARENT);
+    for (k = 0; k < NB; k++) {
+        SetTextColor(dc, lnVoiced[k] ? RGB(0, 255, 0) : RGB(0, 96, 0));
+        wsprintf(t, "%2d %.12s", k + 1, (LPSTR)lnName[k]);
+        TextOut(dc, 3, k * GRIDH / NB + 3, t, lstrlen(t));
+    }
+    SelectObject(dc, hGrey);
+    for (k = 0; k <= NB; k++) { MoveTo(dc, 0, k * GRIDH / NB); LineTo(dc, GRIDW, k * GRIDH / NB); }
+    MoveTo(dc, GRIDL - 1, 0); LineTo(dc, GRIDL - 1, GRIDH);
+    SelectObject(dc, of);
+}
 long FAR PASCAL __export GridProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
     if (m == WM_PAINT) {
-        PAINTSTRUCT ps; RECT rc; HDC dc = BeginPaint(h, &ps); int k, x;
+        PAINTSTRUCT ps; RECT rc; HDC dc = BeginPaint(h, &ps);
         GetClientRect(h, &rc); FillRect(dc, &rc, hBlack);
-        SelectObject(dc, hGrey);
-        for (k = 0; k <= NB; k++) { MoveTo(dc, 0, k * GRIDH / NB); LineTo(dc, rc.right, k * GRIDH / NB); }
-        for (x = 0; x < rc.right; x += 50) { MoveTo(dc, x, 0); LineTo(dc, x, rc.bottom); }
+        grid_names(dc);
         EndPaint(h, &ps); return 0;
     }
     return DefWindowProc(h, m, w, l);
 }
-static void grid_tick(void)   /* every 100 ms: scroll a step, mark the lanes that played */
+static void grid_tick(void)   /* every 50 ms: the notes move a step left; the new ones appear at the right edge */
 {
-    HDC dc; RECT rc; int k, hit = 0;
+    static int col; HDC dc; RECT rc, sc; int k, i;
     if (!hGrid || !assembled) return;
-    for (k = 0; k < NB; k++) if (gridHits[k]) hit = 1;
     dc = GetDC(hGrid);
-    ScrollDC(dc, -5, 0, NULL, NULL, NULL, NULL);
-    SetRect(&rc, GRIDW - 5, 0, GRIDW, GRIDH); FillRect(dc, &rc, hBlack);
-    SelectObject(dc, hGrey); MoveTo(dc, GRIDW - 5, 0);
-    for (k = 0; k <= NB; k++) { MoveTo(dc, GRIDW - 5, k * GRIDH / NB); LineTo(dc, GRIDW, k * GRIDH / NB); }
-    if (hit) for (k = 0; k < NB; k++) if (gridHits[k]) {
-        int y0 = k * GRIDH / NB + 3, y1 = (k + 1) * GRIDH / NB - 3, n = gridHits[k] > 8 ? 8 : gridHits[k];
-        SetRect(&rc, GRIDW - 5, y1 - (y1 - y0) * n / 8, GRIDW - 1, y1);
-        FillRect(dc, &rc, (HBRUSH)GetStockObject(n > 4 ? WHITE_BRUSH : LTGRAY_BRUSH));
-        gridHits[k] = 0;
+    SetRect(&sc, GRIDL, 0, GRIDW, GRIDH);
+    ScrollDC(dc, -GSTEP, 0, &sc, &sc, NULL, NULL);
+    SetRect(&rc, GRIDW - GSTEP, 0, GRIDW, GRIDH); FillRect(dc, &rc, hBlack);
+    SelectObject(dc, hGrey);
+    for (k = 0; k <= NB; k++) { MoveTo(dc, GRIDW - GSTEP, k * GRIDH / NB); LineTo(dc, GRIDW, k * GRIDH / NB); }
+    if (++col % 20 == 0) { MoveTo(dc, GRIDW - 1, 0); LineTo(dc, GRIDW - 1, GRIDH); }   /* a beat line every second */
+    for (i = 0; i < gnN; i++) {   /* a note: a mark at its pitch in its lane's row, brighter when louder */
+        int y0 = gnLane[i] * GRIDH / NB + 1, hh = GRIDH / NB - 3, n = gnNote[i] < 24 ? 24 : gnNote[i] > 107 ? 107 : gnNote[i];
+        int y = y0 + hh - (n - 24) * hh / 84;
+        SetRect(&rc, GRIDW - GSTEP, y - 1, GRIDW, y + 2);
+        FillRect(dc, &rc, (HBRUSH)GetStockObject(gnVel[i] > 90 ? WHITE_BRUSH : LTGRAY_BRUSH));
     }
+    gnN = 0;
     ReleaseDC(hGrid, dc);
 }
 
@@ -1074,7 +1117,7 @@ static void assemble(void)
     assembling = TRUE;
     for (k = 0; k < NB; k++) {   /* each lane's recorder plays its sound once, silently: the card has its waveform */
         int r = k * NR;
-        if (rw[r]) { bs_arm2(rt[r], 0, 0, 0, 0, k * NL); press(r, SR_PLAY); }   /* (it plays out, silent: a Stop pressed at once hangs a stripped recorder) */
+        if (rw[r] && lnVoiced[k]) { bs_arm2(rt[r], 0, 0, 0, 0, k * NL); press(r, SR_PLAY); }   /* (it plays out, silent: a Stop pressed at once hangs a stripped recorder) */
         lead_show(k, TRUE);
     }
     pump();
@@ -1115,9 +1158,9 @@ static void assemble(void)
     }
     strips_final();
     ShowWindow(hGrid, SW_SHOWNA); ShowWindow(hStatus, SW_SHOWNA);
+    assembling = FALSE; assembled = TRUE;
     RedrawWindow(hMain, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
     animMs = timeGetTime() - t0;
-    assembling = FALSE; assembled = TRUE;
     logf_("assembled in %ld ms, %ld frames (%ld ms a frame)", (long)animMs, (long)animFrames, animFrames ? (long)(animMs / animFrames) : 0L);
     say("ready");
     { WORD z = 0; bs_report(1, &z, 0); }   /* the engine: BS_READY */
@@ -1186,10 +1229,12 @@ static void idle_ui(void)   /* when Windows has nothing else to do: waveforms, t
         lastWave = t;
         for (k = 0; k < NB; k++) { int j = (next + k) % NB; if (peaks_read(j) || lnPkDirty[j]) { lnPkDirty[j] = FALSE; InvalidateRect(hWave[j], NULL, FALSE); UpdateWindow(hWave[j]); next = j + 1; break; } }
     }
-    if (t - lastGrid > 100) { lastGrid = t; grid_tick(); }
+    if (t - lastGrid >= 50) { lastGrid = t; grid_tick(); }
     if (t - lastStat > 1000) {
-        char s[160]; int n = 0;
+        char s[160]; int n = 0; HWND x;
         lastStat = t;
+        for (x = GetWindow(GetDesktopWindow(), GW_CHILD); x; x = GetWindow(x, GW_HWNDNEXT))   /* Sound Recorder's OLE server windows, when they appear */
+            if (IsWindowVisible(x)) { char c[16]; GetClassName(x, c, sizeof c); if (!lstrcmp(c, "SrvrWndClass")) SetWindowPos(x, NULL, -3000, -3000, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_HIDEWINDOW); }
         for (k = 0; k < NB; k++) n += nLaneRecs[k];
         wsprintf(s, "%d lanes, %d Sound Recorders. Free resources: user %d%%, gdi %d%%. Free memory %ld KB.", NB, n,
                  GetFreeSystemResources(GFSR_USERRESOURCES), GetFreeSystemResources(GFSR_GDIRESOURCES), GetFreeSpace(0) / 1024);
@@ -1239,7 +1284,7 @@ static void host_line(char *s)
     else if (!strcmp(s, "on")) {
         long f[8] = {0, 0, 65535, 0, 0, -1, 0, 0}; int nf = 0; char *p = rest;
         while (*p && nf < 8) { f[nf++] = atol(p); p = strchr(p, ' '); if (!p) break; p++; }
-        if (f[0] >= 0 && f[0] < laneRecs) { play_rec((int)f[0], curId, (DWORD)f[1], (WORD)f[2], (int)f[3], (int)f[5], f[6]); gridHits[bank]++; }
+        if (f[0] >= 0 && f[0] < laneRecs) { play_rec((int)f[0], curId, (DWORD)f[1], (WORD)f[2], (int)f[3], (int)f[5], f[6]); }
     }
     else if (!strcmp(s, "mod")) {
         int f[9] = {-1, 0, 0, 0, 0, 0, 0, 0, 0}, nf = 0, k; char *p = rest;
@@ -1278,16 +1323,25 @@ static void host_line(char *s)
             bs_lenv(bank * NL + L, kind, n, t, l, loop);
         }
     }
+    else if (!strcmp(s, "note")) { int n = 60, v = 100; sscanf(rest, "%d %d", &n, &v); grid_note(bank, n, v); }   /* the host: a note-on, for the track view */
     else if (!strcmp(s, "name")) {   /* the lane's preset, as the strip shows it */
         lstrcpyn(lnName[bank], rest, sizeof lnName[0]);
         { char *c; for (c = lnName[bank]; *c; c++) if (*c == '_') *c = ' '; }
         if (hName[bank]) SetWindowText(hName[bank], lnName[bank]);
+        if (hGrid) InvalidateRect(hGrid, NULL, FALSE);
     }
     else if (!strcmp(s, "mix")) {   /* mix <level> <pan> <mute> <solo>: the host's values */
         sscanf(rest, "%d %d %d %d", &lnLevel[bank], &lnPan[bank], &lnMute[bank], &lnSolo[bank]);
         if (hLev[bank]) mix_show(bank);
     }
     else if (!strcmp(s, "chan")) { char t[16]; lnChan[bank] = atoi(rest); wsprintf(t, "Ch %d", lnChan[bank]); if (hCh[bank]) SetWindowText(hCh[bank], t); }
+    else if (!strcmp(s, "who")) {   /* who <x> <y>: the window under a screen point (a test aid) */
+        POINT pt; HWND w; char cls[32], txt[32], pc[32];
+        pt.x = atoi(rest); pt.y = atoi(strchr(rest, ' ') ? strchr(rest, ' ') + 1 : "0");
+        w = WindowFromPoint(pt); cls[0] = txt[0] = pc[0] = 0;
+        if (w) { GetClassName(w, cls, sizeof cls); GetWindowText(w, txt, sizeof txt); if (GetParent(w)) GetClassName(GetParent(w), pc, sizeof pc); }
+        say("who %d %d %04x %s id %d '%s' parent %04x %s task %04x", pt.x, pt.y, (WORD)w, (LPSTR)cls, w ? GetDlgCtrlID(w) : 0, (LPSTR)txt, w ? (WORD)GetParent(w) : 0, (LPSTR)pc, w ? (WORD)GetWindowTask(w) : 0);
+    }
     else if (!strcmp(s, "dbg")) { DWORD v = bs_voices(); WORD dacl, dach; DWORD hi, lo = bs_dacnow_lo(&hi); say("dbg voices %08lx dac %lu playing0 %d", v, lo, is_playing(0));
         { WORD w[9]; int i; _disable(); bs_put(0); outpw(BS_CMD, 37); for (i = 0; i < 9; i++) w[i] = bs_get(); _enable();
           say("dbg v0 srate %u rate %u arm %u master %u pos %u q %u paused %u mod %u frames %u", w[0], w[1], w[2], w[3], w[4], w[5], w[6], w[7], w[8]); } }

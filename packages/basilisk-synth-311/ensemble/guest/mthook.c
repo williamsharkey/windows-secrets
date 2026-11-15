@@ -16,6 +16,11 @@ static void strip_in_task(HWND w, WORD mask)
     if (mask & 0x8000) {   /* keep mode: bit k keeps control 200+k; the menu, the frames and the title go */
         HMENU m = GetMenu(w); if (m) { SetMenu(w, NULL); DestroyMenu(m); }
         SetWindowText(w, "");
+        {   /* its OLE server window (SrvrWndClass) is shown at 0, 0 when the recorder starts shown: hidden here, in its task */
+            HWND x; WORD hi = GetWindowWord(w, GWW_HINSTANCE); char cls[16];
+            for (x = GetWindow(GetDesktopWindow(), GW_CHILD); x; x = GetWindow(x, GW_HWNDNEXT))
+                if (x != w && GetWindowWord(x, GWW_HINSTANCE) == hi) { GetClassName(x, cls, sizeof cls); if (!lstrcmp(cls, "SrvrWndClass")) ShowWindow(x, SW_HIDE); }
+        }
         for (c = GetWindow(w, GW_CHILD); c; c = nx) {
             int id = GetDlgCtrlID(c);
             nx = GetWindow(c, GW_HWNDNEXT);

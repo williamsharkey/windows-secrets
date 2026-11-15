@@ -35,11 +35,11 @@ try:
         e.line('@%d cap 8' % i); e.line('@%d dna %s' % (i, d)); e.line('@%d env 0 0 100 300' % i)
     t2 = time.time()
     while time.time() - t2 < 60 and sum(1 for x in e.texts if ' built ' in x) < len([d for d in dnas if d]): e.poll(); time.sleep(0.1)
-    for n in range(12):   # notes on every voiced lane
+    for n in range(40):   # notes on every voiced lane
         for i, d in enumerate(dnas):
-            if d: e.line('@%d on %d 22050 40000 0' % (i, n % 8), id=0, at=0)
-        time.sleep(0.25)
-        if n in (2, 6): e.shot(os.path.join(out, 'c%02d-playing.png' % n))
+            if d: e.line('@%d on %d 22050 40000 0' % (i, n % 8), id=0, at=0); e.line('@%d note %d %d' % (i, 48 + (n * 7 + i * 5) % 36, 60 + (n * 13) % 60))
+        time.sleep(0.15)
+        if n in (6, 30): e.shot(os.path.join(out, 'c%02d-playing.png' % n))
     e.line('stats'); time.sleep(0.5); e.poll()
     e.shot(os.path.join(out, 'd-end.png'))
     for x in e.texts: print(' ', x[:200])
