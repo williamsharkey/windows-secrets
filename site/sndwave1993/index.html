@@ -41,7 +41,7 @@
 <section class="ch" id="demo" aria-labelledby="h-demo">
   <div class="chh"><span class="no">&sect; 1</span><h2 id="h-demo">Getting Started with SNDWAVE1993</h2></div>
   <figure class="tour">
-    <div class="tourbox"><video controls preload="none" playsinline width="1920" height="1080" poster="video/sndwave1993-tour-long-poster.jpg" aria-label="Getting Started with SNDWAVE1993, a home-learning tape from Algorithmic Industries. Captions are part of the picture.">
+    <div class="tourbox"><video controls preload="none" playsinline poster="video/sndwave1993-tour-long-poster.jpg" aria-label="Getting Started with SNDWAVE1993, a home-learning tape from Algorithmic Industries. Captions are part of the picture.">
       <source src="video/sndwave1993-tour-long-web.mp4" type="video/mp4">
       <p>Your browser cannot play this video. <a href="video/sndwave1993-tour-long-web.mp4">Download it (MP4, 19 MB)</a>.</p>
     </video></div>
@@ -50,33 +50,17 @@
 </section>
 
 <section class="ch" id="features" aria-labelledby="h-feat">
-  <div class="chh"><span class="no">§ 2</span><h2 id="h-feat">Features</h2></div>
-  <p>A sound is a <i>DNA</i>, one line of text: layers of Sound Recorder commands, then settings. <code>chimesE+;R900</code> is CHIMES.WAV with Add Echo and Increase Volume, and a 900 ms release. Type one into the editor, pick a preset, or click the Effects buttons.</p>
-  <div class="cols">
-    <div><h3>Layers</h3><p>Up to 8 layers per sound, each on its own recorders, with its own start offset, pan, level, transpose, harmony and unison. One note can sound up to 16 recorders.</p></div>
-    <div><h3>Four macros</h3><p>Automatable from the DAW. The DNA says what each one moves: a layer's level, pan, offset, transpose, unison spread, envelope speed or echo count. The mod wheel adds to Macro 1.</p></div>
-    <div><h3>Envelopes on a real Windows graph</h3><p>Each layer can have drawn volume and pan envelopes of up to 8 points. A seventeenth Sound Recorder draws the selected envelope in its green wave view.</p></div>
-    <div><h3>Keyboard, Mod and Bend</h3><p>Five octaves of Windows push-button keys, Bend and Mod scroll bars, and Hold. Turn on Keys to play from the computer keyboard. Incoming MIDI holds the keys down and moves the wheels.</p></div>
-    <div><h3>Sound you can watch being built</h3><p>A new sound is built in front of you with Sound Recorder's own menus: Increase Speed, Add Echo, Reverse, Insert File, Mix with File, Copy and Paste. The recorder's row lights up and its status line names each command as it runs.</p></div>
-    <div><h3>The library disc</h3><p>510 public-domain and CC0 sounds (pianos, bells, choirs, bowls, birds, weather, machines) on a drive of their own, used by name: <code>marimba_c4E#16</code>. Collages mix and insert them at any time in a sound: <code>ding@t200Mthunder_rumble</code>.</p></div>
-    <div><h3>Presets everywhere</h3><p>76 programs, in your DAW's preset list and in a Preset drop-down inside Windows. Saving a preset saves its DNA, so a sound copied from this site pastes straight into the editor.</p></div>
-    <div><h3>Songs</h3><p>The Song tab plays multi-track songs, each track on its own Windows 3.11 with its own preset, mixed with echo, reverb and a true-peak ceiling. Import a MIDI file, save the song as <code>.sng</code>, export a WAV.</p></div>
-    <div><h3>Batch rendering</h3><p><code>render311</code> renders a DNA plus a MIDI file to a WAV through the real machine, faster than real time and bit-identical on Windows, macOS and Linux. Every preset preview on this site was made with it.</p></div>
-  </div>
-
-  <h3 class="subh">Windows Help, the old way</h3>
-  <p>A help file for Windows 3.11's own help viewer, WINHELP.EXE: a contents page, Search, glossary popups, the strips and panels explained, and a full DNA reference. It is compiled from plain text by a small WinHelp compiler written for this project, without Microsoft's tools. These are screenshots of it in the real Windows 3.11 viewer, taken while the instrument was still called BASILISK 16. It ships in 1.3.0 as SNDWAVE.HLP.</p>
-  <div class="win">
-    <div class="cap"><span class="box"></span><span class="t">Help</span></div>
-    <div class="body">
-      <div class="pxg" id="helpg">
-        <div class="pxclips" role="group" aria-label="Help topic">
-          <button type="button" class="chip" aria-pressed="true" data-src="/sndrec/help/contents.png" data-size="682x500" data-alt="The Help contents in Windows 3.11's WINHELP.EXE: Getting Started, Making Sounds, Using Windows and Reference topics">Contents</button><button type="button" class="chip" aria-pressed="false" data-src="/sndrec/help/strips.png" data-size="682x400" data-alt="The Strips topic: what each column of a Sound Recorder strip shows">The Strips</button><button type="button" class="chip" aria-pressed="false" data-src="/sndrec/help/search.png" data-size="682x420" data-alt="WinHelp's Search dialog listing keywords such as minimize, Mix with File and offsets">Search</button><button type="button" class="chip" aria-pressed="false" data-src="/sndrec/help/minimize.png" data-size="682x400" data-alt="The topic on minimizing the synth to use Windows">Using Windows</button>
-        </div>
-        <div class="pxbox pximg" id="helpbox"><img src="/sndrec/help/contents.png" width="682" height="500" data-px="682x500" data-px-note="help-note" loading="lazy" alt="The Help contents in Windows 3.11's WINHELP.EXE: Getting Started, Making Sounds, Using Windows and Reference topics"></div>
-        <p class="note pxnote" id="help-note"></p><script>pxfit.fit(document.querySelector('#helpbox [data-px]'))</script>
-      </div>
-    </div>
+  <div class="chh"><span class="no">&sect; 2</span><h2 id="h-feat">Features</h2></div>
+  <p>A sound is a <i>DNA</i>, one line of text: layers of Sound Recorder commands, then settings. <code>chimesE+;R900</code> is CHIMES.WAV with Add Echo and Increase Volume, and a 900 ms release. Type one in, pick a preset, or press the Effects buttons. The pictures are from the tour above.</p>
+  <div class="fgrid">
+    <div class="fcard"><img src="video/still-recorders.jpg" width="640" height="360" loading="lazy" alt="Sixteen Sound Recorders in rows, with the DNA line, the panel and a five-octave keyboard of Windows buttons"><h3>Sixteen Sound Recorders</h3><p>Each note presses Play on a real Sound Recorder in Windows for Workgroups 3.11. Up to 8 layers per sound, four automatable macros, drawn volume and pan envelopes, and five octaves of Windows push-button keys with Bend and Mod.</p></div>
+    <div class="fcard"><img src="video/still-packs.jpg" width="640" height="360" loading="lazy" alt="The Library tab: the list of sound-pack discs and the presets on the inserted disc"><h3>26 sound-pack discs</h3><p>1,437 presets on 26 discs, on drive P:. In the Library tab, pick a disc, pick a preset and press Load preset. A preset that needs a disc inserts it by itself.</p></div>
+    <div class="fcard"><img src="video/still-song.jpg" width="640" height="360" loading="lazy" alt="The Song tab: a track list, each track with its preset, and the Render and Export WAV buttons"><h3>The Song tab</h3><p>New in 1.4. Import a MIDI file, give each track a preset and press Render. Every track plays in its own Windows, on its own sixteen Sound Recorders; the mix gets echo, reverb and a loudness target. Export the WAV.</p></div>
+    <div class="fcard"><img src="video/still-kits.jpg" width="640" height="360" loading="lazy" alt="A drum kit with the pad calculator: a Calculator whose keys are the kit&#39;s pads"><h3>Drum kits</h3><p>Kits put a different sound on each key, with a calculator for laying out the pads. Kit Manager 98 has 39 of them.</p></div>
+    <div class="fcard"><img src="video/still-mines.jpg" width="640" height="360" loading="lazy" alt="A Minesweeper board used as the step sequencer"><h3>The Minesweeper sequencer</h3><p>The sequencer is Minesweeper. The board is the pattern and follows your DAW: numbers play, flags accent, and when you lose, those columns go up an octave.</p></div>
+    <div class="fcard"><img src="video/still-recorder.jpg" width="640" height="360" loading="lazy" alt="A take recorded into a Sound Recorder, played back on the recorders"><h3>Recording</h3><p>It records from a stereo sidechain into a real Sound Recorder. Takes go to My Recordings, play on one strip or all sixteen, and travel inside your project.</p></div>
+    <div class="fcard"><h3>Windows Help</h3><p>SNDWAVE.HLP, for Windows 3.11&#39;s own WINHELP.EXE: contents, Search, glossary popups and a full DNA reference, compiled by a small WinHelp compiler written for it.</p></div>
+    <div class="fcard"><img src="video/still-citypop.jpg" width="640" height="360" loading="lazy" alt="The CITYPOP1993 player in Windows, listing the album&#39;s twelve tracks"><h3>Coming in 1.5</h3><p><b>CITYPOP1993.EXE</b> plays the album CITYPOP1993 inside the plugin, every part on its own Sound Recorders. <b>Gene Pool</b> deals sounds as playing cards to keep and breed. And Windows&#39; Clock reads 1993.</p></div>
   </div>
 </section>
 
@@ -206,17 +190,5 @@
   <nav class="sib" aria-label="Related pages"><a href="/windows-secrets.html">Windows Secrets</a><a href="/inside-windows.html">Inside Windows</a><a href="/basilisk.html">BASILISK</a><a href="/basilisk-term.html">BASILISK III</a><a href="/basilisk-31.html">BASILISK 3.11</a><a href="/basilisk-download.html">BASILISK downloads</a></nav>
 </footer>
 </div>
-<script>
-(function () {
-  'use strict';
-  var g = document.getElementById('helpg'), shot = function () { return g.querySelector('[data-px]'); };
-  [].forEach.call(g.querySelectorAll('.chip'), function (b) {
-    b.addEventListener('click', function () {
-      [].forEach.call(g.querySelectorAll('.chip'), function (o) { o.setAttribute('aria-pressed', String(o === b)); });
-      pxfit.setImage(shot(), b.getAttribute('data-src'), b.getAttribute('data-size'), b.getAttribute('data-alt'));
-    });
-  });
-})();
-</script>
 </body>
 </html>

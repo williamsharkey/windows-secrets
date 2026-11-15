@@ -107,10 +107,14 @@ html.spx-open { overflow: hidden; }
 .spx-dwin iframe { display: block; width: 100%; height: min(600px, calc(100vh - 80px)); border: 0; background: var(--face); }
 @media (max-width: 700px) { .spx-dlg { padding: 0; } .spx-dwin { width: 100%; height: 100%; box-shadow: none; } .spx-dwin iframe { height: auto; flex: 1 1 auto; } }
 
-/* the tour video (16:9, poster, no autoplay) */
-.tour { margin: 6px 0 0; }
-.tourbox { position: relative; aspect-ratio: 16 / 9; background: #000; border: 1px solid #000; box-shadow: 0 0 0 3px var(--face), 0 0 0 4px #000, 6px 8px 0 4px var(--bk-shade); margin: 4px; }
-.tourbox video { display: block; width: 100%; height: 100%; background: #000; }
-.tour figcaption { font: 13.5px/1.5 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; color: var(--bk-muted); margin: 12px 4px 0; }
+/* the tour video: as wide as the column (a little wider on big screens), 16:9, poster, no autoplay */
+.tour { margin: 6px 0 0; min-width: 0; }
+.tourbox { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; background: #000; border: 1px solid #000; box-sizing: border-box; }
+.tourbox video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; }
+.tour figcaption { font: 13.5px/1.5 "SW Sans", "DejaVu Sans", Verdana, Arial, sans-serif; color: var(--bk-muted); margin: 10px 0 0; overflow-wrap: anywhere; }
 .tour figcaption a { color: var(--bk-link); }
-@media (max-width: 600px) { .tourbox { margin: 4px 0; box-shadow: none; } }
+/* features: a card per feature, with a still from the tour */
+.fgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 22px 26px; margin-top: 14px; }
+.fcard { min-width: 0; border-top: 1px solid var(--bk-rule); padding-top: 10px; }
+.fcard img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border: 1px solid #000; margin-bottom: 8px; background: #000; }
+.fcard p { font-size: 15px; }
