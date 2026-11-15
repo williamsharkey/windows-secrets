@@ -520,7 +520,17 @@ static void watch_ends(void)
     last = timeGetTime();
     for (r = 0; r < NALL; r++) if (rplay[r] && !is_playing(r)) { rplay[r] = FALSE; say("@%d end %d", r / NR, r % NR); }
 }
-static void idle_ui(void)   /* when Windows has nothing else to do: waveforms, the track view, the status line */
+static DWORD uiMax, uiSlow;   /* the longest idle drawing, ms; how often it took over 10 ms */
+static void idle_ui2(void);
+static void idle_ui(void)
+{
+    DWORD t0 = timeGetTime(), d;
+    idle_ui2();
+    d = timeGetTime() - t0;
+    if (d > uiMax) uiMax = d;
+    if (d > 10) uiSlow++;
+}
+static void idle_ui2(void)   /* when Windows has nothing else to do: waveforms, the track view, the status line */
 {
     static DWORD lastWave, lastGrid, lastStat; static int next; DWORD t = timeGetTime(); int k;
     if (!assembled) return;
@@ -544,13 +554,13 @@ static void idle_ui(void)   /* when Windows has nothing else to do: waveforms, t
 /* ---------------------------------------------------------------- the host's lines */
 /* A lane's sound is built one recorder at a time, and notes are served in between (poll_host); a line that would
    change a lane's sound or settings meanwhile waits here, in order, and goes after the build */
-#define NPEND 24
+#define NPEND 40
 static char __far pendLine[NPEND][1100]; static int pendN;
 static BOOL deferred(const char *s)
 {
     const char *c = s;
     if (*c == '@') { c = strchr(c, ' '); if (!c) return FALSE; c++; }
-    return !strncmp(c, "dna ", 4) || !strncmp(c, "cap ", 4) || !strncmp(c, "env ", 4) || !strncmp(c, "lenv ", 5) || !strncmp(c, "name ", 5) || !strncmp(c, "chan ", 5) || !strncmp(c, "mix ", 4);
+    return !strncmp(c, "dna ", 4);   /* (the rest touch only their own lane's tables, the card or the strip: at once) */
 }
 static void host_line(char *s);
 static void run_pending(void)
@@ -649,7 +659,7 @@ static void host_line(char *s)
     else if (!strcmp(s, "rotbench")) { int k = 0, d = 450, n = 10; sscanf(rest, "%d %d %d", &k, &d, &n); rotbench(k, d, n); }
     else if (!strcmp(s, "stats")) {
         int n = 0, k; for (k = 0; k < NB; k++) n += nLaneRecs[k];
-        say("stats recorders %d plays %ld slowmax %ld user %d gdi %d free %ld anim %ld ms %ld frames", n, (long)nPlays, (long)slowMax,
+        say("stats recorders %d plays %ld slowmax %ld uimax %ld uislow %ld user %d gdi %d free %ld anim %ld ms %ld frames", n, (long)nPlays, (long)slowMax, (long)uiMax, (long)uiSlow,
             GetFreeSystemResources(GFSR_USERRESOURCES), GetFreeSystemResources(GFSR_GDIRESOURCES), GetFreeSpace(0) / 1024, (long)animMs, (long)animFrames);
         slowMax = 0;
     }
