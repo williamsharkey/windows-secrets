@@ -1,4 +1,4 @@
-/* ENSEMBLE.EXE - SNDWAVE2000 Ensemble (design/ENSEMBLE.md), from the multitimbral experiment (design/MULTITIMBRAL-EXPERIMENT.md): one Windows 3.11, NB lanes.
+/* ENSEMBLE.EXE - SNDWAVE1993 Ensemble (design/ENSEMBLE.md), from the multitimbral experiment (design/MULTITIMBRAL-EXPERIMENT.md): one Windows 3.11, NB lanes.
    A lane is one MIDI channel with its own DNA built on its own LANE_RECS Sound Recorders, exactly as SYNTH.EXE builds
    and plays one (the recorder code is copied from guest/synth.c by mt/tools/make_mtsynth.py). No assembly, no strips:
    every recorder is hidden and stripped of what it does not need (MTHOOK.DLL, in its own task); a lane's first

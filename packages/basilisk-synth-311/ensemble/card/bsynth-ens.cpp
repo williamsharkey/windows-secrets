@@ -22,12 +22,14 @@
 #include "pic.h"
 #include "setup.h"
 #include "cpu.h"
+#include "regs.h"
 #include <math.h>
 #include <string.h>
 #include <mutex>
 #include <vector>
 #include <deque>
 #include <map>
+#include <algorithm>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -437,8 +439,12 @@ static void adc_run(Bit64u upto)
 		if (b.filled + fb > b.len) { bs.in.done_ck.push_back(b.cookie); bs.in.done_n.push_back(b.filled); bs.in.q.pop_front(); }
 	}
 }
+/* PROF (39): where the guest's CPU is, sampled every mixer tick (each emulated millisecond): counts by code selector,
+   and how many ticks Windows had idled in (IDLE) - the guest asks for the top selectors and names their modules */
+static bool prof_on; static std::map<Bit32u, Bit32u> prof_cs; static Bit32u prof_idle, prof_n; static bool prof_idled; static double prof_skip;
 static void BSYN_CallBack(Bitu len)
 {
+	if (prof_on) { prof_n++; if (prof_idled) prof_idle++; else prof_cs[((Bit32u)SegValue(cs) << 16) | (reg_ip & 0xFFF0)]++; prof_idled = false; }
 	static std::vector<float> tmp; static std::vector<Bit16s> pcm;
 	if (tmp.size() < len * 2) { tmp.resize(len * 2); pcm.resize(len * 2); }
 	{
@@ -787,9 +793,19 @@ static void command(Bit16u c)
 	case 28: /* IDLE: the synth program has nothing to do: end this millisecond's CPU slice now (like HLT does), so
 	            an idle Windows costs the host almost nothing; time, timers and the DAC go on as before */
 		CPU_IODelayRemoved += CPU_Cycles;
-		CPU_Cycles = 0; CPU_CycleLeft = 0;
+		if (prof_on) prof_skip += (double)CPU_Cycles + (double)CPU_CycleLeft;
+		CPU_Cycles = 0; CPU_CycleLeft = 0; prof_idled = true;
 		bs.args.clear();
 		return;
+	case 39: { /* PROF on -> (on 1: start, counts cleared) | (on 0: stop) -> ticks, thousands of cycles idled away, n, then n x (cs, count) by count */
+		prof_on = arg(0) != 0;
+		std::vector<std::pair<Bit32u, Bit32u>> v; for (auto &e : prof_cs) v.push_back({e.second, e.first});
+		std::sort(v.rbegin(), v.rend()); if (v.size() > 20) v.resize(20);
+		bs.results.push_back((Bit16u)prof_n); bs.results.push_back((Bit16u)(prof_n >> 16)); { const Bit32u skipK = (Bit32u)(prof_skip / 1000.0); bs.results.push_back((Bit16u)skipK); bs.results.push_back((Bit16u)(skipK >> 16)); }
+		bs.results.push_back((Bit16u)v.size());
+		for (auto &e : v) { bs.results.push_back((Bit16u)(e.second >> 16)); bs.results.push_back((Bit16u)e.second); bs.results.push_back((Bit16u)e.first); bs.results.push_back((Bit16u)(e.first >> 16)); }
+		if (prof_on) { prof_cs.clear(); prof_n = prof_idle = 0; prof_skip = 0; }
+		break; }
 	case 24: bs.master = arg32(0) / 65536.f; if (bs.master <= 0) bs.master = 1.f; break;
 	case 25: { /* DACNOW -> 4 words */
 		Bit64u d = bs.dac; for (int i = 0; i < 4; i++) bs.results.push_back((Bit16u)(d >> (16 * i))); break; }

@@ -1,9 +1,9 @@
-// SNDWAVE2000 Ensemble (experiment, design/ENSEMBLE.md): one Windows 3.11, ten lanes, one MIDI channel each.
+// SNDWAVE1993 Ensemble (experiment, design/ENSEMBLE.md): one Windows 3.11, ten lanes, one MIDI channel each.
 #ifndef DISTRHO_PLUGIN_INFO_H_INCLUDED
 #define DISTRHO_PLUGIN_INFO_H_INCLUDED
 
 #define DISTRHO_PLUGIN_BRAND   "Algorithmic Industries"
-#define DISTRHO_PLUGIN_NAME    "SNDWAVE2000 Ensemble"
+#define DISTRHO_PLUGIN_NAME    "SNDWAVE1993 Ensemble"
 #define DISTRHO_PLUGIN_URI     "https://williamsharkey.com/sndwave2000/ensemble"
 #define DISTRHO_PLUGIN_CLAP_ID "com.williamsharkey.sndwave2000-ensemble"
 #define DISTRHO_PLUGIN_BRAND_ID  Wshk

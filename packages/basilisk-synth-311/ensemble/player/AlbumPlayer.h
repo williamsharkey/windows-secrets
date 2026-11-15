@@ -1,4 +1,4 @@
-// SNDWAVE2000 Ensemble: an album on one instance (design/CITYPOP-ENS.md). A schedule (tools/album_ens.py: tracks,
+// SNDWAVE1993 Ensemble: an album on one instance (design/CITYPOP-ENS.md). A schedule (tools/album_ens.py: tracks,
 // segments, notes) plays through one Windows: every lane switches preset when its schedule says, as early as its
 // previous part has rung out, and its notes go to Windows a lookahead before they sound, stamped with their DAC
 // sample. Shared by the native harness (tools/albumrender.cpp) and the web edition's worker (citypop-ens-web).
@@ -39,13 +39,15 @@ class Player {
 public:
     using Send = std::function<void(const std::string &line, uint32_t id, uint64_t at)>;
     std::vector<Track> tracks; std::vector<Seg> segs; std::vector<Note> notes;
-    static constexpr int NB = 10;
+    static constexpr int NB = 16;    // lanes at most (ENSEMBLE.EXE's NB_LANES; the album uses what it needs)
+    double idleTrim = 20;            // seconds: a lane silent at least this long gives its recorders back (trim)
     double lookahead = 0.4;          // seconds: notes go this far ahead of Windows' time
     uint32_t kLat = 2880;            // DAC samples between a note's album time and its stamp (Windows' time to play it)
     double bpm = 120;
 
     bool load(const std::string &text)
     {
+        for (int k = 0; k < NB; k++) { laneCur[k] = building[k] = -1; laneNext[k] = 0; trimmed[k] = false; }
         std::istringstream in(text); std::string l;
         while (std::getline(in, l)) {
             if (l.size() < 2) continue;
@@ -71,6 +73,7 @@ public:
         }
         laneSegs.assign(NB, {});
         for (auto &s : segs) if (s.lane >= 0 && s.lane < NB) laneSegs[s.lane].push_back(s.id);
+        res.assign(tracks.size(), Res());
         return !segs.empty() && !notes.empty();
     }
 
@@ -115,10 +118,20 @@ public:
             const int prev = laneCur[k];
             if (building[k] >= 0) continue;                      // the lane's previous switch is still building
             if (now + 1e-9 < std::max(s.tBuild, 0.0)) continue;
-            if (prev >= 0 && segs[prev].dna == s.dna) { s.state = 3; s.sentAt = s.builtAt = now; laneCur[k] = s.id; mixTo(s, send); laneNext[k]++; continue; }
+            if (prev >= 0 && segs[prev].dna == s.dna && !trimmed[k]) { s.state = 3; s.sentAt = s.builtAt = now; laneCur[k] = s.id; mixTo(s, send); laneNext[k]++; continue; }
             build(s, send, now);
             laneNext[k]++;
         }
+        // idle lanes: a part over and the next far off (or none): its recorders go back to Windows (USER heap, memory)
+        for (int k = 0; k < NB; k++) {
+            if (trimmed[k] || building[k] >= 0 || laneCur[k] < 0) continue;
+            const Seg &c = segs[laneCur[k]];
+            if (now < c.tEnd + 3) continue;
+            const double next = laneNext[k] < (int)laneSegs[k].size() ? segs[laneSegs[k][laneNext[k]]].tBuild : 1e18;
+            if (next - now < idleTrim) continue;
+            send("@" + std::to_string(k) + " trim", 0, 0); trimmed[k] = true; hostHas[k] = false;
+        }
+        if (now - lastRes >= 2) { lastRes = now; send("res", 0, 0); }
         // notes due: a lookahead ahead of Windows' time; a note whose part is not built yet waits
         const double horizon = now + lookahead;
         while (ni < notes.size() && notes[ni].t < horizon) {
@@ -146,6 +159,14 @@ public:
     // Windows' replies (lines)
     void reply(const std::string &l)
     {
+        if (l.rfind("res ", 0) == 0) {   // Windows' resources: res user U gdi G free KB recs N hits H
+            int u = 0, g = 0, n = 0, h = 0; long f = 0;
+            if (std::sscanf(l.c_str(), "res user %d gdi %d free %ld recs %d hits %d", &u, &g, &f, &n, &h) == 5 && curTrack >= 0 && curTrack < (int)res.size()) {
+                Res &r = res[curTrack];
+                if (u < r.user) r.user = u; if (g < r.gdi) r.gdi = g; if (f < r.free) r.free = f; if (n > r.recs) r.recs = n; r.hits = h;
+            }
+            return;
+        }
         if (l.size() < 3 || l[0] != '@') return;
         const int k = std::atoi(l.c_str() + 1); const size_t sp = l.find(' ');
         if (k < 0 || k >= NB || sp == std::string::npos) return;
@@ -171,6 +192,8 @@ public:
     }
 
     // per track: switches, notes that played late because their part was still building, notes of a part being replaced
+    struct Res { int user = 999, gdi = 999, recs = 0, hits = 0; long free = 1L << 30; };
+    std::vector<Res> res;            // per track: Windows' lowest free resources and memory, most recorders, cache hits so far
     struct Stat { int switches = 0, builds = 0, late = 0, underBuild = 0; double buildSecs = 0; };
     std::vector<Stat> stats() const
     {
@@ -187,7 +210,8 @@ public:
 
 private:
     std::vector<std::vector<int>> laneSegs;
-    int laneCur[NB] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, laneNext[NB] = {}, building[NB] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
+    int laneCur[NB], laneNext[NB] = {}, building[NB]; bool trimmed[NB] = {};
+    double lastRes = -1e9;
     b16v3::NoteHost host[NB]; bool hostHas[NB] = {};
     std::vector<std::vector<int>> pendLayers[NB]; std::vector<std::pair<int, std::vector<uint32_t>>> pendSegs[NB];
     std::deque<size_t> held[NB];
@@ -222,7 +246,7 @@ private:
             send(pre + b16v3::lenvLine(i, 'p', Ly ? Ly->envP : none, s.d3, bpm, true), 0, 0);
         }
         pendLayers[k].clear(); pendSegs[k].clear();
-        s.state = 1; s.sentAt = now; building[k] = s.id;
+        s.state = 1; s.sentAt = now; building[k] = s.id; trimmed[k] = false;
     }
     void play(const Note &n, double now, const Send &send)
     {

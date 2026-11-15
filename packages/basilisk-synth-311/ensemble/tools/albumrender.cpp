@@ -1,4 +1,4 @@
-// albumrender: a whole album through one SNDWAVE2000 Ensemble (ENSEMBLE.EXE in the Ensemble machine), offline, with
+// albumrender: a whole album through one SNDWAVE1993 Ensemble (ENSEMBLE.EXE in the Ensemble machine), offline, with
 // the album player of the web edition (player/AlbumPlayer.h). It reports every track's switches, the notes that
 // played late because their preset was still building, and how fast the machine ran.
 //
@@ -7,6 +7,9 @@
 #include "../player/AlbumPlayer.h"
 #include <sys/resource.h>
 #include <map>
+#include <set>
+#include <sys/stat.h>
+#include <dirent.h>
 using namespace b16song;
 
 static double cpuSec() { struct rusage u; getrusage(RUSAGE_SELF, &u); return u.ru_utime.tv_sec + u.ru_stime.tv_sec + (u.ru_utime.tv_usec + u.ru_stime.tv_usec) * 1e-6; }
@@ -33,7 +36,7 @@ int main(int argc, char **argv)
         std::ofstream o(conf); o << s; }
     const double t0 = nowSec(), c0 = cpuSec();
     Machine M; bshm *S = M.S = (bshm *)std::calloc(1, sizeof(bshm));
-    S->magic = BSHM_MAGIC; S->version = BSHM_VERSION; S->rate = 48000; S->ring_len = BSHM_RING; S->lead = 1024; S->offline = 1; S->vid_want = 0;
+    S->magic = BSHM_MAGIC; S->version = BSHM_VERSION; S->rate = 48000; S->ring_len = BSHM_RING; S->lead = 1024; S->offline = 1; S->vid_want = a.count("--video") ? 1 : 0;
     M.e = bs_engine_start(S, core.c_str(), conf.c_str(), (machine + "/w31.state").c_str(), nullptr, a.count("--log") ? a["--log"].c_str() : nullptr);
     while (S->state < BS_RUNNING && S->state != BS_FAILED) M.step(4800);
     if (S->state == BS_FAILED) { std::fprintf(stderr, "albumrender: %s\n", S->error); return 3; }
@@ -45,6 +48,7 @@ int main(int argc, char **argv)
         while (std::getline(in, l)) { const size_t a1 = l.find('\t'), a2 = a1 == std::string::npos ? a1 : l.find('\t', a1 + 1); if (a2 != std::string::npos) ids += (ids.empty() ? "" : ",") + l.substr(a1 + 1, a2 - a1 - 1); }
         M.send("packs " + ids); }
     if (a.count("--colors")) M.send("colors " + a["--colors"]);
+    if (a.count("--guest")) { std::string g = a["--guest"]; size_t p0 = 0, p1; while ((p1 = g.find(';', p0)) != std::string::npos) { M.send(g.substr(p0, p1 - p0)); p0 = p1 + 1; } if (p0 < g.size()) M.send(g.substr(p0)); }
     M.send("go");
     for (bool ready = false; !ready;) { M.step(4800); ls.clear(); M.lines(ls); for (auto &l : ls) if (l == "ready") ready = true; }
     const double tReady = nowSec();
@@ -54,13 +58,20 @@ int main(int argc, char **argv)
     const double tPrepared = nowSec(), cPrepared = cpuSec();
     const uint64_t dac0 = S->dac_w + 4800;
     P.begin(dac0);
-    const double endT = P.tracks[to].end;
+    if (a.count("--prof")) M.send("prof 1");
+    const double endT = a.count("--secs") ? P.tracks[from].start + std::atof(a["--secs"].c_str()) : P.tracks[to].end;
     FILE *wav = nullptr; uint64_t frames = 0;
     if (a.count("--out")) { wav = std::fopen(a["--out"].c_str(), "wb"); std::fseek(wav, 44, SEEK_SET); }
     const uint32_t kBlock = 512; uint64_t h = dac0;
+    const int vfps = a.count("--video-fps") ? std::atoi(a["--video-fps"].c_str()) : 0;
     double lastShow = 0;
     while (P.albumTime(h) < endT) {
         P.tick(S->dac_w, send);
+        if (vfps > 0) {   // the page's way: a frame asked for a few times a second, none in between
+            static uint64_t nextAsk = 0; static uint32_t seqAt = 0; static bool asked = false;
+            if (!asked && S->dac_w >= nextAsk) { S->vid_want = 1; asked = true; seqAt = S->vid_seq; nextAsk = S->dac_w + 48000 / vfps; }
+            else if (asked && S->vid_seq != seqAt && !(S->vid_seq & 1)) { S->vid_want = 0; asked = false; }
+        }
         pump();
         const uint64_t need = h + kBlock;
         S->host_r = h;
@@ -70,8 +81,14 @@ int main(int argc, char **argv)
         if (P.albumTime(h) - lastShow > 30) { lastShow = P.albumTime(h); std::fprintf(stderr, "  %.0f s of album, %.1f s wall, track %d\n", lastShow, nowSec() - tPrepared, P.track() + 1); }
         if (S->state == BS_FAILED) break;
     }
+    if (a.count("--prof")) {   // where the guest's CPU went (the card samples it each emulated millisecond)
+        M.send("prof 0");
+        for (int k = 0; k < 400; k++) { M.step(480); ls.clear(); M.lines(ls); for (auto &l : ls) if (l.rfind("prof", 0) == 0) std::printf("  %s\n", l.c_str()); }
+    }
     const double tEnd = nowSec(), cEnd = cpuSec();
     const uint32_t late = S->sched_late, ontime = S->sched_ontime, latemax = S->sched_latemax;
+    {   long long rb = 0; int nf = 0; if (DIR *d = opendir(recDir.c_str())) { while (dirent *e = readdir(d)) { struct stat sb; if (!stat((recDir + "/" + e->d_name).c_str(), &sb) && S_ISREG(sb.st_mode)) { rb += sb.st_size; nf++; } } closedir(d); }
+        std::printf("albumrender: R: holds %d files, %.1f MB (the sound cache and clones)\n", nf, rb / 1e6); }
     bs_engine_stop(M.e); std::free(S); std::remove(conf.c_str()); b16rec::clearDir(recDir);
     if (wav) {
         const uint32_t data = (uint32_t)(frames * 4); std::fseek(wav, 0, SEEK_SET);
@@ -84,8 +101,10 @@ int main(int argc, char **argv)
     std::printf("albumrender: tracks %d-%d, %.1f s of album; ready %.1f s, first presets %.1f s, play %.1f s wall (%.2fx real time), cpu %.1f s (%.2f of a core per real-time second); card late %u of %u (max %u samples)\n",
                 from + 1, to + 1, audio, tReady - t0, tPrepared - tReady, tEnd - tPrepared, audio / (tEnd - tPrepared), cEnd - cPrepared, (cEnd - cPrepared) / audio, late, late + ontime, latemax);
     auto st = P.stats();
+    auto lanesOf = [&](int t) { std::set<int> l; for (auto &g : P.segs) if (g.track == t) l.insert(g.lane); return (int)l.size(); };
     for (int t = from; t <= to; t++)
-        std::printf("  track %2d %-38.38s switches %2d (builds %2d, %.1f s building), notes late for a switch %d, notes of a part being replaced %d\n",
-                    t + 1, P.tracks[t].title.c_str(), st[t].switches, st[t].builds, st[t].buildSecs, st[t].late, st[t].underBuild);
+        std::printf("  track %2d %-38.38s switches %2d (builds %2d, %.1f s building), late for a switch %d, replaced %d; lanes %d, recorders <= %d, user >= %d%%, gdi >= %d%%, free >= %ld KB, cache hits %d\n",
+                    t + 1, P.tracks[t].title.c_str(), st[t].switches, st[t].builds, st[t].buildSecs, st[t].late, st[t].underBuild,
+                    lanesOf(t), P.res[t].recs, P.res[t].user, P.res[t].gdi, P.res[t].free, P.res[t].hits);
     return 0;
 }

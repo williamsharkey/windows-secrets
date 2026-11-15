@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
-# SNDWAVE2000 Ensemble (DPF). DPF_PATH must point at a DPF checkout with ../../plugin/dpf.patch applied.
-NAME = SNDWAVE2000-Ensemble
+# SNDWAVE1993 Ensemble (DPF). DPF_PATH must point at a DPF checkout with ../../plugin/dpf.patch applied.
+NAME = SNDWAVE1993-Ensemble
 
 FILES_DSP = EnsemblePlugin.cpp EnsSharedCore.cpp EnsSharedCore3Dna.cpp EnsSharedCore3Engine.cpp EnsSharedCore3Recipe.cpp EnsSharedCore3Scales.cpp EnsEngine.c
 FILES_UI  = EnsembleUI.cpp

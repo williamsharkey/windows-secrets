@@ -1,9 +1,9 @@
 /*
- * SNDWAVE2000 Ensemble (experiment, design/ENSEMBLE.md) - the plugin side.
+ * SNDWAVE1993 Ensemble (experiment, design/ENSEMBLE.md) - the plugin side.
  *
  * One Windows for Workgroups 3.11 (DOSBox Pure with the 128-voice BSYN card), ten lanes. MIDI channel k+1 plays lane
- * k: its own preset, built by its own Sound Recorders, its notes chosen by its own copy of SNDWAVE2000's note logic
- * (V3Host.h). Every note is stamped with a DAC sample, as in SNDWAVE2000. The card sums each lane on its own bus; the
+ * k: its own preset, built by its own Sound Recorders, its notes chosen by its own copy of SNDWAVE1993's note logic
+ * (V3Host.h). Every note is stamped with a DAC sample, as in SNDWAVE1993. The card sums each lane on its own bus; the
  * plugin reads the buses, applies each lane's level, pan, mute and solo, and outputs the mix and every lane's pair.
  */
 #include "DistrhoPlugin.hpp"
@@ -152,7 +152,7 @@ public:
     Basilisk16Shared *shared() { return &sh_; }
 
 protected:
-    const char *getLabel() const override { return "SNDWAVE2000 Ensemble"; }
+    const char *getLabel() const override { return "SNDWAVE1993 Ensemble"; }
     const char *getDescription() const override { return "Ten MIDI channels, ten presets, one Windows 3.11. Every note is played by a real Sound Recorder."; }
     const char *getMaker() const override { return "Algorithmic Industries"; }
     const char *getHomePage() const override { return "https://williamsharkey.com/sndwave2000"; }
@@ -254,7 +254,7 @@ protected:
             housekeeping(true);
             waited = true;
         }
-        {   // the host's samples on the card's DAC: an integer anchor (as SNDWAVE2000)
+        {   // the host's samples on the card's DAC: an integer anchor (as SNDWAVE1993)
             const TimePosition &tp = getTimePosition();
             if (tp.bbt.valid && tp.bbt.beatsPerMinute > 1) bpm_ = tp.bbt.beatsPerMinute;
             const double cur = anchor_ < 0 ? -1 : anchor_ + (double)hcount_ * ratio;
@@ -313,7 +313,7 @@ protected:
             if (ready_.load() && !building()) dropSong_++;
         }
         if (ready_.load() && !building()) blocksSong_++;
-        // the lanes' buses, from the card: [first, last] DAC samples this block needs (4-point Hermite, as SNDWAVE2000)
+        // the lanes' buses, from the card: [first, last] DAC samples this block needs (4-point Hermite, as SNDWAVE1993)
         if (readLane_) {
             const int64_t first = (int64_t)std::floor(pos0) - 1, last = (int64_t)std::floor(pos0 + (frames - 1) * ratio) + 2;
             const int n = (int)(last - first + 1);
@@ -461,7 +461,7 @@ private:
     void start()
     {
         const char *res = getResourcePath(getBundlePath());
-        if (!res) { status("SNDWAVE2000 Ensemble: the machine files were not found next to the plugin."); sh_.S->state = BS_FAILED; return; }
+        if (!res) { status("SNDWAVE1993 Ensemble: the machine files were not found next to the plugin."); sh_.S->state = BS_FAILED; return; }
         machine_ = std::string(res) + "/machine";
 #ifdef _WIN32
         const char *coreName = "dosbox_pure_libretro.dll";
@@ -480,7 +480,7 @@ private:
 #else
         mkdir(recDir_.c_str(), 0700);
 #endif
-        if (!copyFile(machine_ + "/" + coreName, coreCopy_)) { status("SNDWAVE2000 Ensemble: cannot copy the emulator core."); sh_.S->state = BS_FAILED; return; }
+        if (!copyFile(machine_ + "/" + coreName, coreCopy_)) { status("SNDWAVE1993 Ensemble: cannot copy the emulator core."); sh_.S->state = BS_FAILED; return; }
         {
             std::ifstream in(machine_ + "/w31.conf"); std::string s((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
             std::string md = machine_, rd = recDir_;
@@ -493,9 +493,9 @@ private:
             while ((p = s.find("@DRIVE@")) != std::string::npos) s.replace(p, 7, "\"" + md + "/drive\"");
             while ((p = s.find("@RECDIR@")) != std::string::npos) s.replace(p, 8, "\"" + rd + "\"");
             while ((p = s.find("@PACKS@")) != std::string::npos) s.replace(p, 7, "\"" + md + "/packs\"");
-            if (!writeText(conf_, s)) { status("SNDWAVE2000 Ensemble: cannot write the machine settings."); sh_.S->state = BS_FAILED; return; }
+            if (!writeText(conf_, s)) { status("SNDWAVE1993 Ensemble: cannot write the machine settings."); sh_.S->state = BS_FAILED; return; }
         }
-        {   // the library's and the packs' sound names, for the DNA parser (as SNDWAVE2000)
+        {   // the library's and the packs' sound names, for the DNA parser (as SNDWAVE1993)
             std::vector<std::string> names; std::string l;
             std::ifstream a(machine_ + "/library.names.txt"); while (std::getline(a, l)) { while (!l.empty() && (l.back() == '\r' || l.back() == ' ')) l.pop_back(); if (!l.empty()) names.push_back(l); }
             std::ifstream b(machine_ + "/packs/packs.names.txt"); while (std::getline(b, l)) { while (!l.empty() && (l.back() == '\r' || l.back() == ' ')) l.pop_back(); if (!l.empty()) names.push_back(l); }

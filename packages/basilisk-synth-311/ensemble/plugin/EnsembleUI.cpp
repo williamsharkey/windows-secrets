@@ -1,5 +1,5 @@
 /*
- * SNDWAVE2000 Ensemble - the editor (from SNDWAVE2000's): Windows for Workgroups 3.11's screen, nothing else. The pointer and the keys go to
+ * SNDWAVE1993 Ensemble - the editor (from SNDWAVE1993's): Windows for Workgroups 3.11's screen, nothing else. The pointer and the keys go to
  * Windows (the guest program moves Windows' pointer to where yours is; the buttons are the emulated mouse's).
  */
 #include <algorithm>

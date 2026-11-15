@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A whole album for one SNDWAVE2000 Ensemble instance: which part plays on which lane in every track, when each lane
+"""A whole album for one SNDWAVE1993 Ensemble instance: which part plays on which lane in every track, when each lane
 switches preset, and every note, on one timeline.   album_ens.py TRACKS_DIR MACHINE MIXDIR BUILDTIMES.json OUT.ens [--lanes 10] [--gap 1.5]
 - Up to 10 lanes a track: parts that never overlap share a lane; then, while there are too many, the quietest ambience
   goes (one ambience stays), then the doublings, then the hand percussion, then the quietest part.
@@ -78,6 +78,66 @@ def cap_of(dna, evs):
         per += (len(h.group(1).split(',')) if h else 1) * (int(u.group(1)) if u else 1)
     return max(len(layers), min(16, max(1, peak) * max(1, per)))
 
+MAXCAP = int(opt('--maxcap', '16'))
+KIT_RING = 1.2   # seconds a drum-kit hit is counted as sounding (one-shots: no note-off)
+def exact_pools(dna, evs):
+    """Each layer's pool cut to what this part plays at most at once (its keys, chords x unison, the pedal, the release
+    tail), never above the pool the preset gives it: (dna with every layer's #N written out, total recorders)."""
+    head, _, g = dna.partition(';')
+    layers = head.split('/')
+    if any(re.search(r'B\d', l) for l in layers) or len(layers) > 8: return dna, cap_of(dna, evs)
+    m = re.search(r'R(\d+)', g); rel = (int(m.group(1)) if m else 120) / 1000.0 + 0.05
+    kit = bool(re.search(r'(^|[^a-z])k\d', g))
+    # the preset's own pools (as the guest's dna_parse gives them out of 16)
+    pools = [int(re.search(r'#(\d+)', l).group(1)) if re.search(r'#(\d+)', l) else 0 for l in layers]
+    left = 16; cnt = [0] * len(layers); nv = len(layers)
+    for k, pl in enumerate(pools):
+        if not pl: continue
+        later = (nv - k - 1) + sum(1 for j in range(k) if not pools[j])
+        give = min(pl, left - later); give = give if give >= 1 else (1 if left > 0 else 0); cnt[k] = give; left -= give
+    free = [k for k in range(nv) if not pools[k]]
+    for i, k in enumerate(free):
+        if left > 0: cnt[k] = left // len(free) + (1 if i < left % len(free) else 0)
+    # the notes' spans, the pedal holding key-ups
+    spans, on, ped, held = [], {}, False, []
+    for t, st, a, b in evs:
+        if st == 0xB0 and a == 64:
+            down = b >= 64
+            if ped and not down:
+                for (n, t0) in held: spans.append((n, t0, t))
+                held = []
+            ped = down
+        elif st == 0x90 and b: on.setdefault(a, []).append(t)
+        elif st in (0x80, 0x90) and on.get(a):
+            t0 = on[a].pop(0)
+            if ped: held.append((a, t0))
+            else: spans.append((a, t0, t))
+    end = evs[-1][0] if evs else 0
+    for a in on:
+        for t0 in on[a]: spans.append((a, t0, end))
+    for (n, t0) in held: spans.append((n, t0, end))
+    out, total = [], 0
+    for k, l in enumerate(layers):
+        z = re.search(r'Z(\d+),(\d+)', l); lo, hi = (int(z.group(1)), int(z.group(2))) if z else (0, 127)
+        h = re.search(r'H([0-9,\-]+)', l); u = re.search(r'U(\d+)', l)
+        per = (len([x for x in h.group(1).split(',') if x != '']) if h else 1) * (int(u.group(1)) if u else 1)
+        ed = []
+        for (n, t0, t1) in spans:
+            if lo <= n <= hi: ed += [(t0, per), ((t0 + max(rel, KIT_RING)) if kit else (t1 + rel), -per)]
+        ed.sort(key=lambda e: (e[0], e[1])); c = pk = 0
+        for _, d in ed: c += d; pk = max(pk, c)
+        want = max(1, min(cnt[k] or 1, pk))
+        l2 = re.sub(r'#\d+', '#%d' % want, l) if '#' in l else l + '#%d' % want
+        out.append(l2); total += want
+    # at most MAXCAP recorders a part (USER's heap holds them all): the biggest pools give, one recorder at a time
+    pools2 = [int(re.search(r'#(\d+)', l).group(1)) for l in out]
+    while sum(pools2) > MAXCAP:
+        i = max(range(len(pools2)), key=lambda j: pools2[j])
+        if pools2[i] <= 1: break
+        pools2[i] -= 1
+    out = [re.sub(r'#\d+', '#%d' % pools2[k], l) for k, l in enumerate(out)]
+    return '/'.join(out) + (';' + g if _ else ''), sum(pools2)
+
 tracks = []
 for sp in sorted(glob.glob(os.path.join(tdir, '[0-9]*.song'))):
     song = sr.Song(sp); num = os.path.basename(sp)[:2]
@@ -93,8 +153,9 @@ for sp in sorted(glob.glob(os.path.join(tdir, '[0-9]*.song'))):
         if not ons: continue
         g = mix.get(j.track.name, {}).get('gain_db', 0.0) - (2.0 if j.track.name in QUIET or j.track.name.startswith(QUIET) else 0.0)
         pk, nm = j.label.split(':', 1) if ':' in j.label else ('', j.label)
-        parts.append(dict(name=j.track.name, pack=pk, label=nm, dna=j.dna, evs=evs, first=min(ons), last=max(e[0] for e in evs),
-                          cap=cap_of(j.dna, evs), gain=g, pan=getattr(j.track, 'pan', 0) or 0, lufs=mix.get(j.track.name, {}).get('lufs', -30)))
+        dna, cap = (j.dna, cap_of(j.dna, evs)) if '--full-pools' in sys.argv else exact_pools(j.dna, evs)
+        parts.append(dict(name=j.track.name, pack=pk, label=nm, dna=dna, evs=evs, first=min(ons), last=max(e[0] for e in evs),
+                          cap=cap, gain=g, pan=getattr(j.track, 'pan', 0) or 0, lufs=mix.get(j.track.name, {}).get('lufs', -30)))
     # parts that share a lane (never at once)
     groups = [[p] for p in parts]
     for a, b in SHARE.get(num, []):
