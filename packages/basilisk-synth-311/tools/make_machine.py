@@ -60,6 +60,11 @@ if helpfile:
 for f in ('CHORD.WAV', 'TADA.WAV'):
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'machine-extra', f), os.path.join(drive, 'WINDOWS', f))
 for f in ('SYNTH.EXE', 'SYNHOOK.DLL', 'SNDWAVE.EXE'): shutil.copy(os.path.join(gout, f), os.path.join(drive, 'BS', f))
+# --run NAME: Windows starts this guest program instead of SYNTH.EXE (SNDWAVE2000 Ensemble: ENSEMBLE.EXE);
+# --guest-extra A,B: more files from the guest build into C:\BS (the default machine is unchanged without them)
+run_exe = sys.argv[sys.argv.index('--run') + 1] if '--run' in sys.argv else 'SYNTH.EXE'
+for f in (sys.argv[sys.argv.index('--guest-extra') + 1].split(',') if '--guest-extra' in sys.argv else []) + ([run_exe] if run_exe != 'SYNTH.EXE' else []):
+    shutil.copy(os.path.join(gout, f), os.path.join(drive, 'BS', f))
 shutil.copy(os.path.join(gout, 'BSYNTH.DRV'), os.path.join(drive, 'WINDOWS', 'SYSTEM', 'BSYNTH.DRV'))
 
 def edit(path, fn):
@@ -69,7 +74,7 @@ def edit(path, fn):
 edit(os.path.join(drive, 'WINDOWS', 'SYSTEM.INI'), lambda b: b.replace(b'Wave=sb16snd.drv\r\n', b'Wave=bsynth.drv\r\n'))
 def winini(b):
     import re
-    b = re.sub(rb'run=[^\r\n]*', rb'run=C:\\BS\\SYNTH.EXE', b, count=1)
+    b = re.sub(rb'run=[^\r\n]*', ('run=C:\\BS\\' + run_exe).encode().replace(b'\\', b'\\\\'), b, count=1)
     if b'bsp=' not in b.lower():   # .BSP presets open in SNDWAVE2000 (File Manager, the pack discs)
         b = re.sub(rb'(\[Extensions\]\r\n)', rb'\1bsp=C:\\BS\\SNDWAVE.EXE ^.bsp\r\n', b, count=1, flags=re.I)
     if b'[sounds]' not in b:
