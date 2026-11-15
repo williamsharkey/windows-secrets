@@ -39,6 +39,17 @@ Nothing is signed with a developer identity. The macOS bundles are ad-hoc signed
 **Projects from BASILISK 16** (the name of versions up to 1.2.1) open as they were: the plugin keeps the same VST3
 class, AU codes and CLAP id, the same state format and `.b16` files.
 
+## What is new in 1.4.0
+
+- **The Song tab.** A song is a MIDI file and its tracks. Each track takes its notes from a MIDI channel or file
+  track, and its sound from a pack disc preset or a DNA. Each track also has transpose, fine tune, volume, pan, and
+  sends to one echo and one reverb. The master has a loudness target and a true-peak ceiling. Render plays every
+  track in its own Windows for Workgroups 3.11, on its own sixteen Sound Recorders, offline, and then mixes them.
+  Play plays the mix through the plugin's output. Export WAV... writes it. Import MIDI..., Open... (`.mid`,
+  `.song`, `.sng`) and Save... (`.sng`) use the host's file dialogs, and the project keeps the song.
+- **Rainy Loft Collection**, the 26th pack disc.
+- **render311 --song** renders a `.song` file (tools/songrender's format) as the Song tab does.
+
 ## What is new in 1.3.1
 
 - **The Library tab** opens the Library page. In 1.3.0 it opened the Save state dialog.
@@ -113,7 +124,8 @@ MIDI -> plugin (voice allocation: packages/basilisk-synth/core, plugin/V3Alloc.h
 ```
 render311 --machine DIR --core FILE --dna "DNA" (--midi in.mid | --score "t:note:vel:dur,...") --out out.wav
           [--tail S] [--bits 32] [--bpm BPM] [--key ..] [--scale ..] [--scala FILE.scl] [--grid "w h state cells"]
-          [--user-dir DIR]
+          [--user-dir DIR] [--lookahead MS]
+render311 --machine DIR --core FILE --song SONG.song --out mix.wav [--jobs N] [--stems DIR] [--lookahead MS]
 python3 tools/batch_render311.py JOBS.json --machine DIR [--render311 EXE] [--parallel K] [--out-dir OUT]
 ```
 
