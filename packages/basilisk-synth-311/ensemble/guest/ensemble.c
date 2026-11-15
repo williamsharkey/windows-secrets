@@ -722,6 +722,7 @@ static void temp_fields(int r, BOOL on)
 }
 
 static BOOL lnVoiced[NB];          /* the lane has a sound of its own (an empty lane shows "no voice") */
+static BOOL lnNamed[NB];           /* the host named a preset for it: its recorder's sound shows until the preset is built */
 static void run_pending(void);
 static void grid_dirty(void);
 /* ---------------------------------------------------------------- the launcher: recorders on demand */
@@ -762,6 +763,12 @@ static HWND window_of(HINSTANCE hi)
 }
 #define KEEP_WORK 0x8000   /* a worker keeps no control (the card and our own fields stand in) */
 #define KEEP_LEAD 0x8008   /* a lane's first recorder keeps its wave display (the assembly shows it) */
+static void hide_srvr(void)   /* Sound Recorder's OLE server windows (SrvrWndClass), out of sight as soon as they exist */
+{
+    HWND x;
+    for (x = GetWindow(GetDesktopWindow(), GW_CHILD); x; x = GetWindow(x, GW_HWNDNEXT))
+        if (IsWindowVisible(x)) { char c[16]; GetClassName(x, c, sizeof c); if (!lstrcmp(c, "SrvrWndClass")) SetWindowPos(x, NULL, -3000, -3000, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_HIDEWINDOW); }
+}
 static BOOL launch_rec(int k, int j)
 {
     int r = k * NR + j; HINSTANCE h; DWORD tw;
@@ -783,6 +790,7 @@ static BOOL launch_rec(int k, int j)
     if (msgStrip) PostMessage(rw[r], msgStrip, j ? KEEP_WORK : KEEP_LEAD, 0L);
     pump();
     if (j) gdi_delete_new();
+    hide_srvr();
     recsUp++;
     return TRUE;
 }
@@ -831,6 +839,7 @@ static void build(const char *dna)   /* the lane `bank`'s DNA, on its recorders,
             int a = bank * NR + r;
             if (!rw[a]) continue;
             stop_rec(a, 0, 1500);
+            hide_srvr();
             rlayer[a] = i;
             temp_fields(a, TRUE);
             if (tmpf[2]) { SendMessage(rw[a], WM_COMMAND, SR_REW, 0L); }   /* (it writes its fields as it rewinds) */
@@ -917,7 +926,7 @@ static void wave_paint(HDC dc, int k, int cw, int ch)
 {
     RECT rc; int i, len, amp; long s = isin(waveAngle[k]), c = icos(waveAngle[k]); int cx = cw / 2, cy = ch / 2;
     SetRect(&rc, 0, 0, cw, ch); FillRect(dc, &rc, hBlack);
-    if (!lnVoiced[k]) {   /* no sound on this lane: the silence line, and "no voice" */
+    if (!lnVoiced[k] && !lnNamed[k]) {   /* no sound on this lane: the silence line, and "no voice" */
         SelectObject(dc, hGrey);
         MoveTo(dc, cx - (int)(icos(waveAngle[k]) * (cw > ch ? cw : ch) / 2 / 16384), cy - (int)(isin(waveAngle[k]) * (cw > ch ? cw : ch) / 2 / 16384));
         LineTo(dc, cx + (int)(icos(waveAngle[k]) * (cw > ch ? cw : ch) / 2 / 16384), cy + (int)(isin(waveAngle[k]) * (cw > ch ? cw : ch) / 2 / 16384));
@@ -1117,7 +1126,7 @@ static void assemble(void)
     assembling = TRUE;
     for (k = 0; k < NB; k++) {   /* each lane's recorder plays its sound once, silently: the card has its waveform */
         int r = k * NR;
-        if (rw[r] && lnVoiced[k]) { bs_arm2(rt[r], 0, 0, 0, 0, k * NL); press(r, SR_PLAY); }   /* (it plays out, silent: a Stop pressed at once hangs a stripped recorder) */
+        if (rw[r] && (lnVoiced[k] || lnNamed[k])) { bs_arm2(rt[r], 0, 0, 0, 0, k * NL); press(r, SR_PLAY); }   /* (it plays out, silent: a Stop pressed at once hangs a stripped recorder) */
         lead_show(k, TRUE);
     }
     pump();
@@ -1241,10 +1250,9 @@ static void idle_ui2(void)   /* when Windows has nothing else to do: waveforms, 
     }
     if (t - lastGrid >= 50) { lastGrid = t; grid_tick(); }
     if (t - lastStat > 1000) {
-        char s[160]; int n = 0; HWND x;
+        char s[160]; int n = 0;
         lastStat = t;
-        for (x = GetWindow(GetDesktopWindow(), GW_CHILD); x; x = GetWindow(x, GW_HWNDNEXT))   /* Sound Recorder's OLE server windows, when they appear */
-            if (IsWindowVisible(x)) { char c[16]; GetClassName(x, c, sizeof c); if (!lstrcmp(c, "SrvrWndClass")) SetWindowPos(x, NULL, -3000, -3000, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_HIDEWINDOW); }
+        hide_srvr();
         for (k = 0; k < NB; k++) n += nLaneRecs[k];
         wsprintf(s, "%d lanes, %d Sound Recorders. Free resources: user %d%%, gdi %d%%. Free memory %ld KB.", NB, n,
                  GetFreeSystemResources(GFSR_USERRESOURCES), GetFreeSystemResources(GFSR_GDIRESOURCES), GetFreeSpace(0) / 1024);
@@ -1336,6 +1344,7 @@ static void host_line(char *s)
     else if (!strcmp(s, "note")) { int n = 60, v = 100; sscanf(rest, "%d %d", &n, &v); grid_note(bank, n, v); }   /* the host: a note-on, for the track view */
     else if (!strcmp(s, "name")) {   /* the lane's preset, as the strip shows it */
         lstrcpyn(lnName[bank], rest, sizeof lnName[0]);
+        lnNamed[bank] = rest[0] != 0;
         { char *c; for (c = lnName[bank]; *c; c++) if (*c == '_') *c = ' '; }
         if (hName[bank]) SetWindowText(hName[bank], lnName[bank]);
         if (hGrid) InvalidateRect(hGrid, NULL, FALSE);
@@ -1352,6 +1361,7 @@ static void host_line(char *s)
         if (w) { GetClassName(w, cls, sizeof cls); GetWindowText(w, txt, sizeof txt); if (GetParent(w)) GetClassName(GetParent(w), pc, sizeof pc); }
         say("who %d %d %04x %s id %d '%s' parent %04x %s task %04x", pt.x, pt.y, (WORD)w, (LPSTR)cls, w ? GetDlgCtrlID(w) : 0, (LPSTR)txt, w ? (WORD)GetParent(w) : 0, (LPSTR)pc, w ? (WORD)GetWindowTask(w) : 0);
     }
+    else if (!strcmp(s, "sb")) { int k = atoi(rest), lo, hi; GetScrollRange(hPan[k], SB_CTL, &lo, &hi); say("sb %d pan %d..%d pos %d en %d style %08lx", k, lo, hi, GetScrollPos(hPan[k], SB_CTL), IsWindowEnabled(hPan[k]), GetWindowLong(hPan[k], GWL_STYLE)); }
     else if (!strcmp(s, "dbg")) { DWORD v = bs_voices(); WORD dacl, dach; DWORD hi, lo = bs_dacnow_lo(&hi); say("dbg voices %08lx dac %lu playing0 %d", v, lo, is_playing(0));
         { WORD w[9]; int i; _disable(); bs_put(0); outpw(BS_CMD, 37); for (i = 0; i < 9; i++) w[i] = bs_get(); _enable();
           say("dbg v0 srate %u rate %u arm %u master %u pos %u q %u paused %u mod %u frames %u", w[0], w[1], w[2], w[3], w[4], w[5], w[6], w[7], w[8]); } }

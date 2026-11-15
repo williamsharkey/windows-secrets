@@ -133,8 +133,9 @@ if library:
     if os.path.exists(names): shutil.copy(names, os.path.join(out, 'library.names.txt'))
 else: subprocess.run([sys.executable, os.path.join(here, 'make_library311.py'), os.path.join(out, 'library.zip'), '--manifest', '/nonexistent'], check=True)
 conf_name = 'w31-folder.conf.in' if folder else 'w31.conf.in'
-conf_in = open(os.path.join(here, '..', 'engine', conf_name)).read()
-shutil.copy(os.path.join(here, '..', 'engine', conf_name), os.path.join(out, 'w31.conf'))
+conf_src = sys.argv[sys.argv.index('--conf') + 1] if '--conf' in sys.argv else os.path.join(here, '..', 'engine', conf_name)   # (Ensemble: its own settings)
+conf_in = open(conf_src).read()
+shutil.copy(conf_src, os.path.join(out, 'w31.conf'))
 run_conf = os.path.join(out, 'make.conf')
 recdir = os.path.join(out, 'recdir'); os.makedirs(recdir, exist_ok=True)   # R:, My Recordings (RECORDING.md 3.2)
 packdir = os.path.join(out, 'packs')                                       # P:, the pack discs (Library tab)

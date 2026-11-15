@@ -138,7 +138,7 @@ public:
             sendLine("stats", 0, 0);
             for (int k = 0; k < 200 && statsLine_.empty(); k++) { sh_.S->grant_until = sh_.S->dac_w + 4800; sh_.S->host_beat++; std::this_thread::sleep_for(std::chrono::milliseconds(5)); }
             char f[600]; std::snprintf(f, sizeof f, "%s/stats-%s.txt", dumpDir_, isProcessingOffline() ? "offline" : "realtime");
-            if (FILE *o = std::fopen(f, "w")) { std::fprintf(o, "late %u ontime %u latemax %u underruns %u\n%s\n", sh_.S->sched_late, sh_.S->sched_ontime, sh_.S->sched_latemax, sh_.S->underruns, statsLine_.c_str()); std::fclose(o); }
+            if (FILE *o = std::fopen(f, "w")) { std::fprintf(o, "late %u ontime %u latemax %u underruns %u (after the builds: %llu of %llu blocks)\n%s\n", sh_.S->sched_late, sh_.S->sched_ontime, sh_.S->sched_latemax, sh_.S->underruns, (unsigned long long)dropSong_, (unsigned long long)blocksSong_, statsLine_.c_str()); std::fclose(o); }
         }
         quit_ = true;
         if (worker_.joinable()) worker_.join();
@@ -308,7 +308,11 @@ protected:
             std::this_thread::sleep_for(std::chrono::microseconds(500));
         }
         if (!offline) S->grant_until = 0;
-        if ((double)S->dac_w < need) S->underruns++;
+        if ((double)S->dac_w < need) {   // a dropout: the machine is behind the host (counted apart once every lane is built)
+            S->underruns++;
+            if (ready_.load() && !building()) dropSong_++;
+        }
+        if (ready_.load() && !building()) blocksSong_++;
         // the lanes' buses, from the card: [first, last] DAC samples this block needs (4-point Hermite, as SNDWAVE2000)
         if (readLane_) {
             const int64_t first = (int64_t)std::floor(pos0) - 1, last = (int64_t)std::floor(pos0 + (frames - 1) * ratio) + 2;
@@ -347,12 +351,14 @@ protected:
     }
 
 private:
-    static constexpr uint32_t kLead = 1024;
+    // the engine keeps kLead DAC samples ahead of the host; notes are stamped kLatency48 ahead (60 ms at 1024).
+    // ENSEMBLE_LEAD (test) trades latency for headroom: what a busy Windows needs to stay ahead of the host
+    const uint32_t kLead = std::getenv("ENSEMBLE_LEAD") ? (uint32_t)std::max(256, std::atoi(std::getenv("ENSEMBLE_LEAD"))) : 1024u;
     uint32_t kLatency48 = kLead + 1536;
     void updateLatency()
     {
         const uint32_t block48 = (uint32_t)std::ceil(getBufferSize() * 48000.0 / getSampleRate());
-        kLatency48 = std::max<uint32_t>(kLead + 1536, block48 + 2 * 672 + 1024);
+        kLatency48 = std::max<uint32_t>(kLead + 1536, block48 + 2 * 672 + kLead);
         setLatency((uint32_t)std::lround(kLatency48 * getSampleRate() / 48000.0));
     }
 
@@ -388,6 +394,7 @@ private:
     const char *dumpDir_ = std::getenv("ENSEMBLE_DUMP_DIR") && *std::getenv("ENSEMBLE_DUMP_DIR") ? std::getenv("ENSEMBLE_DUMP_DIR") : nullptr;
     FILE *dump_[NB] = {};
     std::string statsLine_; FILE *trace_ = nullptr;
+    uint64_t dropSong_ = 0, blocksSong_ = 0;   // blocks the machine was behind in, once built; blocks once built
     uint32_t keyQ_[64]; std::atomic<uint32_t> keyR_{0}, keyW_{0};
 
     // a lane's sound: the cap (its recorders) from what it may play at once, the DNA staged for Windows and the audio
