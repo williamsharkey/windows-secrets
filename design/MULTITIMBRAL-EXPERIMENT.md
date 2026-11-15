@@ -132,6 +132,19 @@ perf of a 16 × 8 render (30 s of the song), normal core:
 - On the songs lane's own render311-la (1.3.1, the wobble track): **40.1 s became 19.7 s**, bit-identical,
   0 late notes.
 
+**Correction (the songs lane's A/B, 47 stems): no-video changes timing.** On a 12,096-note 16th-note arpeggio
+(press-fire-to-calibrate/arp), BSYN_NOVIDEO=1 changed the audio by up to 0.254 and render311 counted 12,092 notes
+instead of 12,096, on both the normal and the dynamic core. The other 46 stems stayed within 1.19e-7.
+
+The cause is how the patch counts frames. It counts the skipped frame at GFX_StartUpdate, not at GFX_EndUpdate. That
+moves the frame boundaries at which the offline gate passes the host's events into Windows. A dense part then arms a
+few notes at a different emulated time. The small 1305/1306 note-count differences in section 3.2 were the same
+effect.
+
+**The dynamic core alone (video on) is bit-identical to stock** on all 47 stems. Until the 3.11 lane's fix keeps the
+frame timing, the safe speed-up is core=dynamic alone, about 1.3x. The no-video figures above are what a correct
+version should approach.
+
 **Determinism.** Two runs of the same configuration give bit-identical stems, for both the normal and the dynamic
 core. Across configurations (video on or off, normal or dynamic, frameskip) stems differ by at most 6e-8 (−144 dBFS).
 The cause is the float summation order in the card's mix: which card channel a voice lands on can change. It is
@@ -259,11 +272,12 @@ Before the fixes, on the loaded PC, the same comparison was 101 s against 393 s 
 
 ## 8. Recommendation
 
-1. **Now (1.4): keep per-track engines, and take the two fixes.**
-   - Apply the no-video patch and core=dynamic to render311 and to the Song tab's engines. They are about 2× faster,
-     need no design change, and their stems match within 1e-7.
-   - Also apply no-video to the plugin's own engine whenever the editor is closed (vid_want = 0).
-   - The songs lane is A/B-testing this on 4 songs.
+1. **Now (1.4): keep per-track engines, and take core=dynamic.**
+   - core=dynamic is bit-identical to the normal core on all 47 of the songs lane's A/B stems. Use it for render311
+     and the Song tab's engines.
+   - Take no-video only once it keeps the frame timing (section 3.2: the experiment's patch moved 4 notes of a 12,096-note
+     arpeggio). The 3.11 lane is fixing it; with it, the two together are about 2× faster.
+   - Then apply no-video to the plugin's own engine whenever the editor is closed (vid_want = 0).
 2. **Later (1.5): a hybrid.**
    - **Light lanes share one Windows.** These are lanes whose track needs few recorders (bass, leads, pads, effects):
      about 61 recorders for a 10-track song, against 165 available. One Windows does them at 6× less CPU than
