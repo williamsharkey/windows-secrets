@@ -20,6 +20,12 @@ import songrender as sr   # noqa: E402
 from smf import Smf   # noqa: E402
 
 FFMPEG = os.path.expanduser('~/.local/bin/ffmpeg')
+VAR = {   # track -> (key, what the variation does to the theme)
+    1: ('E-flat major', 'the theme, stated plainly'), 2: ('F major', 'the motto traded, inverted, an eighth late'),
+    3: ('G major, then A-flat', 'every long note pushed a sixteenth early'), 4: ('B-flat major', 'augmentation: twice as slow'),
+    5: ('C minor', 'the minor mode'), 6: ('A-flat major', 'waltz time'), 7: ('A minor', 'Paganini\'s figure becomes the pick-up'),
+    8: ('D-flat major', 'inversion'), 9: ('E major', 'diminution: twice as fast'), 10: ('G-flat major', 'grains; the theme very slowly'),
+    11: ('D-flat major, then D', 'tritone substitutions'), 12: ('E-flat, then F major', 'the variations return; the I at last')}
 NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 
 
@@ -115,12 +121,14 @@ def main():
         h = hashlib.sha256(open(op, 'rb').read()).hexdigest()[:10]
         by[int(nn)] = {'n': int(nn), 'title': r['title'], 'seconds': r['seconds'], 'note': mm.get('note', ''),
                        'bpm': round(r['bpm'], 1), 'opus': f'audio/{nn}.opus?v={h}', 'mp3': f'audio/{nn}.mp3?v={h}',
-                       'events': f'data/{nn}.json?v={h}', 'presets': pres, 'lufs': r['mix']['lufs']}
+                       'events': f'data/{nn}.json?v={h}', 'presets': pres, 'lufs': r['mix']['lufs'],
+                       'key': VAR[int(nn)][0], 'variation': VAR[int(nn)][1]}
         print(f'{nn} {r["title"]}: {r["seconds"]:.1f} s, {len(ev["ev"])} events')
     album['tracks'] = [by[k] for k in sorted(by)]
     album['title'] = 'CITYPOP DEPROGRAMMED'
     json.dump(album, open(aj, 'w'), indent=1, ensure_ascii=False)
     sources_txt(os.path.join(a.site, 'SOURCES.TXT'))
+    subprocess.run([sys.executable, os.path.join(HERE, 'annotate_presets.py'), aj], check=False)
 
 
 def sources_txt(path):

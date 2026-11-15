@@ -139,7 +139,7 @@ ch = prog(tprog('Cmaj9 | Em7 Fmaj9 | Dm9 G13 | Cmaj9 | Fmaj9 | Cmaj9', K), at=t)
 piano_lh(ch, vel=42)
 play(piano, shift(mel(IA[:5], K), t), vel=60)
 play(piano, shift(mel(IA[:4], K + 12), t + 16), vel=50)
-choir.note(t + 16, pitch('E5') + K, 8, 36); choir.note(t + 16, pitch('G4') + K, 8, 34)
+choir.note(t + 16, pitch('E5') + K, 8, 50); choir.note(t + 16, pitch('G4') + K, 8, 48)
 pedal(t, t + 24)
 t += 24 + 6
 texture(rain, 0, t, note=60, vel=60, bpm=BPM, seconds=26)

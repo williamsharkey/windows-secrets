@@ -51,3 +51,31 @@ FX	Harbour Horn	rl_foghorn#4F;A400R3000V70
 FX	Far Horn	rl_foghorn_far#4F;A200R2000V70
 FX	Bicycle Bell	rl_bicycle_bell#4F;A0R801V80
 FX	Drip	rl_drip#8Yd30;A0R600V85K72
+Mallet	Lobby Vibraphone	vibes_soft_c3#16;A0D2273S21R953V96K60G-4
+Strings	Humid Strings	violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K60G-9
+Pad	Hotel Corridor	poly78_sad_wow_c3>#11U2~9/poly85_dark_pad_chorus_c2#5T36L58Q-24;A738D268S94R1298V96K60G-8
+Organ	Back Room Organ	pw_bee_organ@t40[#14O15Wm8000Yd5l8kVw13,5f2,8s15,50/menu#2FL18Wm8000;A40D0S100R80V20K60G-15
+Lead	Neon Sign Lead	poly78_pwm_lady_c4@t8153]@t2329[@0CP@0CPH0,12;A28D104S99R101V91K60G-6
+Brass	Rooftop Brass	poly83_big_c2@t4561]E>>#10U3~8/poly83_brassy_f1#3T19L48Q29/poly85_thin_brassy_c2#3T24L65Q13;A2D733S26R168V85K60G-12
+Strings	Daylight Strings	violin_section_sus_c4@t7500]@t200[H0,12U2~11;A435S85R766V95K60G-10
+Pluck	Taxi Rhythm Guitar	strumstick_g2#16;A2D155S8R154V96K55
+Pluck	Harbour Harp	folk_harp_c3#16;A2D416S4R83V75K60G-2
+Pad	Velvet Strings	violin_section_sus_c4@t7500]@t300[RU2~6;A504D748S75R2396V94K60G-9
+FX	Telephone, Two Rings	em_fetap_ring#4F;A0R400V80
+FX	Machine Beep	ringout#4;A2R300V60K60
+Strings	Waltz Strings	violin_section_sus_c4@t7500]@t200[#8Vw3,4/cello_section_sus_c3@t7500]@t200[#8T12L70Vw3,4;A240S95R900V70K60
+Lead	Waltz Harmonica	tape_harmonica_c3@t40[#14O10Wm8000Yd3kVw10,7f4,12s20,65/menu#2FL20Wm8000;A10D0S100R150V40K60G-10
+Bell	Music Box at Two	kalimba_kenya_cs4E#16;A1D112S2R172V87K61G-1
+Keys	Felt Upright	gd_piano_a1#4Z0,45,33/gd_piano_a4#7Z46,74,69/gd_piano_a5#5Z75,127,81;A0R600V85
+Strings	Legato Violins	violin_section_sus_c4@t7500]@t200[#10U2~6Nlg70Vw3,4;A260S95R1100V75K60
+Strings	Legato Cellos	cello_section_sus_c3@t7500]@t200[#10U2~6Nlg70Vw3,4;A220S95R1000V75K48
+Brass	Ferry Horns	tape_horn_c3@t40[#16Wm8000Yd4l4kVw5,6f4,10s25,80;A35D0S100R110V20K60G-15
+Lead	Couch Fort Lead	poly78_pwm_lady_c4@t8153]@t2329[@0CP@0CP+H0,7U2~6;A25D349S90R124V94K60G-11
+Keys	Disco Clavinet	fm87_clav_c4#15/chimesxpRE#2T5L12O111Q-8;A3D892S37R329V80K60G-6
+Vocal	Vocoder Chorus	vocoder_choir_female_f4#16;A221D362S78R669V80K65G-7
+Brass	Party Horns	poly85_thin_brassy_c2E>>#11H0,12U2~7/poly85_thin_brassy_c2#3T24L59Q-11/poly85_synthetic_c3#2T24L58Q-26;A4D381S28R455V85K60G-1
+Texture	Radio Static	em_static_elec_loop#4F;A3000R4000V60
+Texture	Glass Cloud	rl_ep_glass_c5#16Gp.35j.15z90~200n22c6e2s.2v4w.7;A1600R3200V60K72
+Texture	Steam Cloud	rl_espresso_wave#16Gp.4j.3z60~140n28c25e2s.3v4w.8;A2000R3000V50K60
+FX	Glasses on the Counter	glass_clink#4F;A0R600V80
+Texture	Dawn Chorus	bird_dawn_chorus_bryce#4F;A4000R4000V70

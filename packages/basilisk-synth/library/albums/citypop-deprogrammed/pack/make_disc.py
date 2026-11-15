@@ -105,7 +105,10 @@ def main():
         src = os.path.join(a.sounds, *r[2].strip('\\').split('\\'))
         dst = os.path.join(a.disc, *r[2].strip('\\').split('\\'))
         os.makedirs(os.path.dirname(dst), exist_ok=True); shutil.copy(src, dst)
-    have = set(r[0] for r in keep) | lib
+    builtin = set('chimes chord ding tada ringin ringout chimesxp chordxp dingxp tadaxp notify recycle start balloon batcrit '
+                  'batlow critstop default xpding error exclaim hwfail hwin hwout infobar logoff logon menu minimize xpnotify '
+                  'popup print xprecycle restore xpringin xpringout shutdown startup xpstart'.split())   # Windows' own (DNA.md 2.4)
+    have = set(r[0] for r in keep) | lib | builtin
     borrowed = []
     for nm in sorted(names - have):
         for d in sorted(os.listdir(a.from_packs)):
