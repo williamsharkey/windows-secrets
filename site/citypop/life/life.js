@@ -147,6 +147,9 @@ function adaptOld(m) {
 function normalize(a) {
   if (!a || a._norm) return a;
   const o = Object.assign({}, a); o._norm = true;
+  // anything the art hides behind something nearer is marked visible:0 by the scene; drop it everywhere
+  const vis = (x) => !(x && typeof x === 'object' && !Array.isArray(x) && (x.visible === 0 || x.visible === false));
+  for (const k of Object.keys(o)) if (Array.isArray(o[k]) && k !== 'windows') o[k] = o[k].filter(vis);
   const rect = (r) => (Array.isArray(r) ? { x: r[0], y: r[1], w: r[2], h: r[3] } : r);
   if (Array.isArray(o.windows) && o.windows.length && Array.isArray(o.windows[0])) {
     const f = o.windowsFields || ['x', 'y', 'w', 'h', 'lit', 'baked', 'hue', 'curtain', 'room', 'layer', 'dark'];
@@ -208,6 +211,15 @@ function create(opts) {
   let actors = [], kinds = new Set();
   const stat = { frames: 0, paints: 0, px: 0, since: performance.now(), fps: 0, pps: 0, pxs: 0 };
 
+  // a palette colour of the scene as the current mood shows it (scene.moodColor), cached per tenth of an hour
+  const moodCache = new Map();
+  function moodRGB(layer, rgb) {
+    if (!scene || typeof scene.moodColor !== 'function') return null;
+    const k = layer + rgb.join() + Math.round(hours * 10);
+    let c = moodCache.get(k);
+    if (c === undefined) { try { c = scene.moodColor(layer, rgb) || null; } catch (e) { c = null; } if (moodCache.size > 4000) moodCache.clear(); moodCache.set(k, c); }
+    return c;
+  }
   /* night curves */
   const deep = () => smooth(19.5, 26.5, hours) * (1 - smooth(27.5, 29.6, hours));     // 0 evening, 1 deepest
   const dawn = () => smooth(28, 29.6, hours);
@@ -656,11 +668,13 @@ function create(opts) {
   function town() {
     const dark = A.windowDark || null;
     (A.windows || []).forEach((w, i) => {
+      if (w.visible === 0 || w.visible === false) return;      // hidden behind something nearer in the art
       const L = w.layer || 'mid', [X, Y] = P(w.x, w.y, L), [X1, Y1] = P(w.x + w.w, w.y + w.h, L), ww = Math.max(U, X1 - X), hh = Math.max(U, Y1 - Y);
       const room = w.room || (hash(i, 1, 200) < 0.12 ? 'tv' : hash(i, 1, 200) < 0.2 ? 'desk' : 'plain');
       const hue = w.hue === 'tv' ? 'plain' : w.hue || 'warm', tv = room === 'tv' || w.hue === 'tv';
       const per = 120 + 520 * hash(i, 2, 200), bias = w.lit ? 0.35 : -0.1, baked = !!w.baked;
-      const darkCol = w.dark ? `rgb(${w.dark[0]},${w.dark[1]},${w.dark[2]})` : dark || C.darker;
+      const darkCol0 = w.dark ? `rgb(${w.dark[0]},${w.dark[1]},${w.dark[2]})` : dark || C.darker;
+      let darkCol = darkCol0;
       // room light: warm lamps mostly; a few cool kitchens, a pink one; values sit in the scene's night, never pastel
       const ROOM = { warm: [['#f0b060', '#c88444'], ['#eaa458', '#b8763c'], ['#f4c070', '#cc8c4c'], ['#e89c5c', '#b06c3c']], cool: [['#a8b4e8', '#7a84c0']], pink: [['#e07aa8', '#a84c80']] };
       const rc = (ROOM[hue] || ROOM.warm)[i % (ROOM[hue] || ROOM.warm).length], big = ww >= 5 * U && hh >= 5 * U;
@@ -687,9 +701,10 @@ function create(opts) {
       };
       a.draw = (g) => {
         const lit = a.k;
+        if (w.dark) darkCol = moodRGB(L, w.dark) || darkCol0;
         if (baked) {      // the art has it lit: we may only darken it, or add a delta
           if (lit >= 1 && !a.tv && a.sil < 0) return;
-          if (lit < 1) { g.globalAlpha = (1 - lit) * 0.9; g.fillStyle = darkCol; g.fillRect(X, Y, ww, hh); g.globalAlpha = 1; }
+          if (lit < 1) { g.globalAlpha = (1 - lit) * 0.9 * (scene && scene.moodColor ? 1 : 1 - 0.8 * smooth(26.5, 28.5, hours)); g.fillStyle = darkCol; g.fillRect(X, Y, ww, hh); g.globalAlpha = 1; }
         } else if (dark && lit < 1) { g.fillStyle = darkCol; g.fillRect(X, Y, ww, hh); }
         if (lit <= 0) return;
         if (!baked) {
@@ -1281,7 +1296,12 @@ function create(opts) {
     pause(auto) { if (!auto) userPaused = true; paused = true; clearTimeout(timer); timer = 0; if (raf) cancelAnimationFrame(raf); raf = 0; },
     resume(auto) { if (!auto) userPaused = false; if (dead || (auto && userPaused) || document.hidden) return; paused = false; wakeAll(); schedule(0); },
     resize() { if (dead) return; computeView(); build(); schedule(0); },
-    setTime(h) { if (typeof h === 'number' && isFinite(h) && Math.abs(h - hours) > 0.01) { hours = clamp(h, 18, 31); wakeAll(); schedule(0); } },
+    setTime(h) {
+      if (typeof h === 'number' && isFinite(h) && Math.abs(h - hours) > 0.01) {
+        const big = Math.round(h * 10) !== Math.round(hours * 10); hours = clamp(h, 18, 31); wakeAll();
+        if (big && A) fullRedraw(); schedule(0);
+      }
+    },
     time() { return hours; },
     onTrack(n, info) { /* a fresh track: a ripple in the nearest puddle, a breath of the moon */ const T = now(); if (A.puddles && A.puddles.length) { onsets.push({ t: T, p: 0, j: 0, x: 0.5, y: 0.5 }); wakeAll(); schedule(0); } },
     onBeat() { lastBeatT = now(); if (!analyser) { bass = Math.min(1, bass + 0.25); setTimeout(() => { bass *= 0.5; }, 200); } },
