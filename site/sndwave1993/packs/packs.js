@@ -546,6 +546,7 @@
   // #ID or #ID/SLUG
   function route(fromHashChange) {
     var h = decodeURIComponent(location.hash.slice(1)), parts = h.split('/'), id = parts[0], slug = parts[1];
+    id = {paulyw: 'waulophone'}[id] || id;   // a pack's old id (Paulywaulophone is WAULOPHONE)
     if (id === 'pack') return;
     if (!BY[id]) return false;
     if (playingX && playingX.pk === id && (!slug || playingX.s === slug)) return true;

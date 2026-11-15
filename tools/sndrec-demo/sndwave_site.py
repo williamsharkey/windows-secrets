@@ -129,6 +129,8 @@ def main():
     # --discs packages/basilisk-synth/library/packs/out/discs-1.4/DISCS.TSV switches the 1.4 set on (disc images from beside it)
     discs = opt('--discs') or os.path.join(LIB, 'packs', 'out', 'discs', 'DISCS.TSV')
     released = {l.split('\t')[0] for l in open(discs) if l.strip() and not l.startswith('#')} if os.path.exists(discs) else None
+    RENAMED = {'paulywaulophone': 'waulophone'}   # a released disc whose pack has a new id since (Paulywaulophone is WAULOPHONE)
+    if released is not None: released |= {RENAMED[k] for k in list(released) if k in RENAMED}
     for pid, P, W, lid, pdir in entries:
         if released is not None and lid not in released:
             print('skip', pid, '(not on a released disc)'); continue
