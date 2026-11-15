@@ -1,0 +1,662 @@
+{
+"006393c606e92d4b": {
+"cents": -32,
+"pack": "rom-reference",
+"name": "Ballroom Prism"
+},
+"02375ab98dc129b1": {
+"cents": -10,
+"pack": "rom-reference",
+"name": "Rapid Drum"
+},
+"0259242b1f469959": {
+"cents": -57,
+"pack": "techno-server",
+"name": "Quiet Cellar"
+},
+"03a3c256bd54db83": {
+"cents": -64,
+"pack": "rom-reference",
+"name": "Signal Strum"
+},
+"05c2678b02869cad": {
+"cents": -14,
+"pack": "paulywaulophone",
+"name": "Rainy Steeple"
+},
+"077e2f945f947ca7": {
+"cents": -21,
+"pack": "workstation-classics",
+"name": "Modular Horns"
+},
+"08ff5dcca45c24d8": {
+"cents": -57,
+"pack": "breakbeat-resource",
+"name": "Rusty Floor"
+},
+"0a0714bf040e0c9b": {
+"cents": -25,
+"pack": "rainy-loft",
+"name": "Back Room Organ"
+},
+"0b5ed5a790141e06": {
+"cents": -11,
+"pack": "bass-enterprise",
+"name": "Ocean Bass"
+},
+"0bbb6f385d0187c4": {
+"cents": 78,
+"pack": "office-machinery",
+"name": "Cedar Hat"
+},
+"0d377c199aafc0cf": {
+"cents": -13,
+"pack": "workgroup-house",
+"name": "Warm Quartet"
+},
+"0e3483ace2f88ce7": {
+"cents": -67,
+"pack": "bass-enterprise",
+"name": "Rubber Thump"
+},
+"11b7e0fc7afa8ec2": {
+"cents": -57,
+"pack": "bass-enterprise",
+"name": "Wobbly Speed Sub"
+},
+"128079d204a95c34": {
+"cents": -12,
+"pack": "retro-display",
+"name": "Quiet End"
+},
+"1551dad56fcf24b3": {
+"cents": -57,
+"pack": "breakbeat-resource",
+"name": "Sub Stab Juke"
+},
+"193be997d4bdf8e8": {
+"cents": -56,
+"pack": "game-port",
+"name": "Pastel Signal"
+},
+"1aebc520182f9299": {
+"cents": -57,
+"pack": "workgroup-house",
+"name": "Pearl End"
+},
+"1f73d8448efc8e0e": {
+"cents": -84,
+"pack": "leisure",
+"name": "Granite Lead"
+},
+"1fd8f087e07669ea": {
+"cents": -20,
+"pack": "studio-archive",
+"name": "Slow Vibes"
+},
+"21eb296fae5ab3f5": {
+"cents": -84,
+"pack": "retro-display",
+"name": "Still Call"
+},
+"23cd477fe0c1b3b0": {
+"cents": -24,
+"pack": "polysynth-showroom",
+"name": "Federal Hammers"
+},
+"244adb6e32f716c2": {
+"cents": -48,
+"pack": "rom-reference",
+"name": "Distant Basement"
+},
+"2453452825158c09": {
+"cents": -83,
+"pack": "workgroup-house",
+"name": "Round Floor Sub"
+},
+"256fc069bbccbf51": {
+"cents": -82,
+"pack": "rainy-loft",
+"name": "Far Horn"
+},
+"29e74bb25614f32c": {
+"cents": -24,
+"pack": "workstation-classics",
+"name": "Chrome Pilot"
+},
+"2b83fe0f9b8166ad": {
+"cents": -57,
+"pack": "techno-server",
+"name": "Felt Sub"
+},
+"2cb1bc926dcf95dd": {
+"cents": -54,
+"pack": "w3x-heritage",
+"name": "Field Floor"
+},
+"2ebb1b3e4e8174ee": {
+"cents": 16,
+"pack": "screen-saver",
+"name": "White Glock"
+},
+"3263aeccd1790c13": {
+"cents": -44,
+"pack": "breakbeat-resource",
+"name": "Delta Rumble"
+},
+"32bd99ff7c1c387a": {
+"cents": -52,
+"pack": "diagnostics",
+"name": "Chrome Voices"
+},
+"34d52332e991b1a4": {
+"cents": -61,
+"pack": "breakbeat-resource",
+"name": "Steady Ray"
+},
+"36814b8477445708": {
+"cents": -82,
+"pack": "bass-enterprise",
+"name": "Ballroom End"
+},
+"37272ec4d567add2": {
+"cents": -56,
+"pack": "w3x-heritage",
+"name": "Slate Pilot"
+},
+"395d68a11469ffef": {
+"cents": -16,
+"pack": "workgroup-house",
+"name": "Slap Disco Bass"
+},
+"3b2035fdb4701e74": {
+"cents": -81,
+"pack": "studio-archive",
+"name": "Coded Line"
+},
+"3c7225d819ca281a": {
+"cents": 41,
+"pack": "lifestyle-aesthetics",
+"name": "Test Pattern Tone"
+},
+"3eb8ddf8fb816b8d": {
+"cents": -13,
+"pack": "garden-rhythm",
+"name": "Rural Brass"
+},
+"3fd1489cc2c1d671": {
+"cents": -45,
+"pack": "rom-reference",
+"name": "Noble Gloss"
+},
+"416827f9e3732894": {
+"cents": -18,
+"pack": "polysynth-showroom",
+"name": "Ultra Pad"
+},
+"443c751681391c5f": {
+"cents": -12,
+"pack": "breakbeat-resource",
+"name": "Swift Bass"
+},
+"44646b501ac032ef": {
+"cents": -57,
+"pack": "beat-management",
+"name": "Elevated Cellar"
+},
+"4f666212c405e705": {
+"cents": -57,
+"pack": "trance-connectivity",
+"name": "Rainy Groove"
+},
+"5158318f0ae18d13": {
+"cents": -57,
+"pack": "game-port",
+"name": "Cobalt Anchor"
+},
+"52709805f9a890b8": {
+"cents": -57,
+"pack": "bass-enterprise",
+"name": "Organ Bass 2-Step"
+},
+"53a9bcbc62ae4c51": {
+"cents": -11,
+"pack": "rainy-loft",
+"name": "Vocoder Chorus"
+},
+"558555b34ee765f6": {
+"cents": 23,
+"pack": "polysynth-showroom",
+"name": "Late Aurora"
+},
+"57501470927da793": {
+"cents": -56,
+"pack": "beat-management",
+"name": "Long Boom Glide"
+},
+"5b46df80a18e0e39": {
+"cents": -20,
+"pack": "retro-display",
+"name": "Violet Chords"
+},
+"5bbd3767df291597": {
+"cents": -15,
+"pack": "workgroup-house",
+"name": "Sunday Cellar"
+},
+"61302f275071ff79": {
+"cents": -57,
+"pack": "rom-reference",
+"name": "Hazy Gamelan"
+},
+"62a335db1c2f30ff": {
+"cents": -89,
+"pack": "breakbeat-resource",
+"name": "Cathode Bloom"
+},
+"6432a80d3f81867e": {
+"cents": -57,
+"pack": "rom-reference",
+"name": "Twilight Floor"
+},
+"68a9a06d85e4f936": {
+"cents": -58,
+"pack": "trance-connectivity",
+"name": "Crystal Spark"
+},
+"6a5667a5f77b853a": {
+"cents": -43,
+"pack": "workstation-classics",
+"name": "Felt Pizz"
+},
+"6a5bb1fd4a15b2db": {
+"cents": -12,
+"pack": "lifestyle-aesthetics",
+"name": "Atrium Keys"
+},
+"6ef6f295768f8a38": {
+"cents": -17,
+"pack": "garden-rhythm",
+"name": "Brushed Chorus"
+},
+"6f7ea63a2072fb27": {
+"cents": -59,
+"pack": "workgroup-house",
+"name": "Amber Ascent"
+},
+"71c6e9784124f3b4": {
+"cents": -17,
+"pack": "beat-management",
+"name": "Study Vibes"
+},
+"75d6b756b472ce36": {
+"cents": 14,
+"pack": "polysynth-showroom",
+"name": "Azure Horns"
+},
+"7682aec326bd5a26": {
+"cents": -57,
+"pack": "beat-management",
+"name": "Dub Cellar Bass"
+},
+"7899b12eeb10ff09": {
+"cents": -57,
+"pack": "workgroup-house",
+"name": "Crystal Vox"
+},
+"7a3eec9a61dd2e55": {
+"cents": -78,
+"pack": "screen-saver",
+"name": "Sunlit Texture"
+},
+"7cddb46fdfc48b49": {
+"cents": -57,
+"pack": "rom-reference",
+"name": "Flat Upright"
+},
+"8003adfb88ba42bf": {
+"cents": 13,
+"pack": "screen-saver",
+"name": "Northern Dormant"
+},
+"80432fe417d82a50": {
+"cents": 22,
+"pack": "tape-parlour",
+"name": "Federal Spark"
+},
+"8480a3e369d63aa6": {
+"cents": -60,
+"pack": "breakbeat-resource",
+"name": "Faded Etude"
+},
+"86052d0c9b1635c1": {
+"cents": 22,
+"pack": "screen-saver",
+"name": "Granite Dormant"
+},
+"8aab48f83697be4d": {
+"cents": -12,
+"pack": "polysynth-showroom",
+"name": "Chrome Mist"
+},
+"8c01fbdcd030897a": {
+"cents": -11,
+"pack": "workgroup-house",
+"name": "Granite Sub"
+},
+"9068dd6b2cb6a694": {
+"cents": -23,
+"pack": "courtyard-chapel",
+"name": "Hotel Uplink"
+},
+"9560b8e5ade98386": {
+"cents": -55,
+"pack": "techno-server",
+"name": "Dot Sub"
+},
+"9a2826d229e0a5b8": {
+"cents": 84,
+"pack": "techno-server",
+"name": "Woven Tap"
+},
+"9a316e2d35f6900d": {
+"cents": -11,
+"pack": "workgroup-house",
+"name": "Midnight Haze"
+},
+"9ae927a834dd7c7f": {
+"cents": -11,
+"pack": "bass-enterprise",
+"name": "Rusty End"
+},
+"a1706522f24ffec8": {
+"cents": -21,
+"pack": "paulywaulophone",
+"name": "Mint Voice"
+},
+"a2f5b8635b9042d6": {
+"cents": -21,
+"pack": "polysynth-showroom",
+"name": "Field Voices"
+},
+"a63c9ce15d573be0": {
+"cents": -59,
+"pack": "lifestyle-aesthetics",
+"name": "Fluorescent Hum"
+},
+"a8a01ec0587cb1c0": {
+"cents": -10,
+"pack": "trance-connectivity",
+"name": "Signal Plink"
+},
+"a9b3bfd230071d96": {
+"cents": -15,
+"pack": "polysynth-showroom",
+"name": "Mint Horizon"
+},
+"adb86d0c07dd22fa": {
+"cents": -53,
+"pack": "workgroup-house",
+"name": "Ember Ascent"
+},
+"adf4f52a4094ff7b": {
+"cents": -57,
+"pack": "bass-enterprise",
+"name": "Kinetic Weight"
+},
+"b0c641d1d60a275a": {
+"cents": 78,
+"pack": "office-machinery",
+"name": "Harbor Snare"
+},
+"b1c97ec5568bc8dd": {
+"cents": -14,
+"pack": "paulywaulophone",
+"name": "Night Ballad"
+},
+"b1d189fe12d83201": {
+"cents": 45,
+"pack": "screen-saver",
+"name": "Frosted Peal"
+},
+"b2af434d98a2ce89": {
+"cents": -31,
+"pack": "w3x-heritage",
+"name": "Gentle Whistle"
+},
+"b3f6813aeb9bf76d": {
+"cents": 22,
+"pack": "listening-post",
+"name": "Saffron Dormant"
+},
+"b4f0340c385d8d58": {
+"cents": -12,
+"pack": "beat-management",
+"name": "Global Felt"
+},
+"b57486547c5941f0": {
+"cents": 12,
+"pack": "polysynth-showroom",
+"name": "Meadow Brass"
+},
+"b85b43760c396e32": {
+"cents": 20,
+"pack": "beat-management",
+"name": "Violet Swoosh"
+},
+"bac6865dd157c64d": {
+"cents": -17,
+"pack": "workgroup-house",
+"name": "Solar Snap"
+},
+"bd9eaf80970536c9": {
+"cents": -39,
+"pack": "breakbeat-resource",
+"name": "Western Breath"
+},
+"be2d50cbd2a24044": {
+"cents": -12,
+"pack": "breakbeat-resource",
+"name": "Laser Foundation"
+},
+"be52c0c5189bdc93": {
+"cents": -10,
+"pack": "garden-rhythm",
+"name": "Lucid Punch"
+},
+"bf16e8877703c52f": {
+"cents": 27,
+"pack": "courtyard-chapel",
+"name": "Lucid Carillon"
+},
+"c0194452713baa4e": {
+"cents": -12,
+"pack": "polysynth-showroom",
+"name": "Static Chorus"
+},
+"c1450db78c2ecf52": {
+"cents": -28,
+"pack": "screen-saver",
+"name": "Zinc Drift"
+},
+"c2420e481b01297a": {
+"cents": -68,
+"pack": "workstation-classics",
+"name": "Matte Floor"
+},
+"c2c68518aa2ce592": {
+"cents": -30,
+"pack": "beat-management",
+"name": "Midnight Piano"
+},
+"c4051aeaecc5e707": {
+"cents": 11,
+"pack": "rainy-loft",
+"name": "Hotel Corridor"
+},
+"c8db09a38bea3289": {
+"cents": 11,
+"pack": "polysynth-showroom",
+"name": "Plaza Halo"
+},
+"ce1b9d3f938b8de9": {
+"cents": -51,
+"pack": "breakbeat-resource",
+"name": "Topaz Foundation"
+},
+"cee8219e28a3658d": {
+"cents": -55,
+"pack": "trance-connectivity",
+"name": "Echo Voice"
+},
+"cf1fb5ade972d645": {
+"cents": -12,
+"pack": "bass-enterprise",
+"name": "Noble Cellar"
+},
+"cf8025c5c3a1cb25": {
+"cents": -50,
+"pack": "w3x-heritage",
+"name": "Western Veil"
+},
+"d3098d7f62d94d47": {
+"cents": -13,
+"pack": "bass-enterprise",
+"name": "Northern Low"
+},
+"d4ed6fd41919b7c5": {
+"cents": -49,
+"pack": "game-port",
+"name": "Cold Voice"
+},
+"d4f18d9dabb4dc3f": {
+"cents": -20,
+"pack": "polysynth-showroom",
+"name": "Late Pilot"
+},
+"df77f7872df52612": {
+"cents": -17,
+"pack": "beat-management",
+"name": "Felt Ding Piano"
+},
+"e1ced14243c89ca7": {
+"cents": -29,
+"pack": "polysynth-showroom",
+"name": "Silent Salon"
+},
+"e223f3b63e2385b3": {
+"cents": 23,
+"pack": "techno-server",
+"name": "Electric Haze"
+},
+"e23c4ab72cac688c": {
+"cents": -84,
+"pack": "workstation-classics",
+"name": "Civic Pilot"
+},
+"e2cca5fe836a677a": {
+"cents": -39,
+"pack": "lifestyle-aesthetics",
+"name": "Glass Keyboard"
+},
+"e57a42e5f0eaf0bf": {
+"cents": -15,
+"pack": "rainy-loft",
+"name": "Neon Sign Lead"
+},
+"e6f1686c8cd26d81": {
+"cents": -22,
+"pack": "rainy-loft",
+"name": "Disco Clavinet"
+},
+"e7ab26ffd601fc75": {
+"cents": -20,
+"pack": "techno-server",
+"name": "Wide Solo"
+},
+"e7acc3da328e65ff": {
+"cents": -58,
+"pack": "game-port",
+"name": "Waxed Line"
+},
+"e82229408fb48168": {
+"cents": -11,
+"pack": "bass-enterprise",
+"name": "Rose Vox"
+},
+"e8a35d3d7235f8ef": {
+"cents": 18,
+"pack": "workgroup-house",
+"name": "Cedar Pulse"
+},
+"eafa7a837ec79fc5": {
+"cents": -57,
+"pack": "lifestyle-aesthetics",
+"name": "Vapor Sub Boom"
+},
+"eca538ace41c2e87": {
+"cents": -57,
+"pack": "workgroup-house",
+"name": "Remote Foundation"
+},
+"ed21acbb9bab5dc9": {
+"cents": -58,
+"pack": "studio-archive",
+"name": "Pale Wash"
+},
+"f02e166e381b5157": {
+"cents": -27,
+"pack": "screen-saver",
+"name": "Quiet Drift"
+},
+"f230df5316e3943d": {
+"cents": -12,
+"pack": "retro-display",
+"name": "Second Ballad"
+},
+"f268887faaaa7a5b": {
+"cents": -12,
+"pack": "tape-parlour",
+"name": "Dusk Pilot"
+},
+"f48f4bb64307339e": {
+"cents": -57,
+"pack": "rom-reference",
+"name": "Blue Market"
+},
+"f82c250f11300215": {
+"cents": -57,
+"pack": "game-port",
+"name": "Zinc Ray"
+},
+"f95e56ff30381288": {
+"cents": -64,
+"pack": "w3x-heritage",
+"name": "Cobalt Veil"
+},
+"fa0fb15c7fb87d40": {
+"cents": 82,
+"pack": "breakbeat-resource",
+"name": "Silver Signal"
+},
+"fadf3d8b21fc727c": {
+"cents": -52,
+"pack": "w3x-heritage",
+"name": "Lobby Low"
+},
+"fb79c784ba775d59": {
+"cents": -11,
+"pack": "polysynth-showroom",
+"name": "Rose Breath"
+},
+"fbebbfc189acebe5": {
+"cents": 11,
+"pack": "polysynth-showroom",
+"name": "Upper Ensemble"
+},
+"fdd32fb2159400df": {
+"cents": 14,
+"pack": "tape-parlour",
+"name": "Pewter Herald"
+}
+}
