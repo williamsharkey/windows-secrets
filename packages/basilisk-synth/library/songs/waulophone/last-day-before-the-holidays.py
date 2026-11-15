@@ -64,25 +64,25 @@ hum.note(t, pitch('F5'), 6, 92); bass.note(t, pitch('F2') + 12, 6, 94); fork.not
 S.humanize(ms=6, vel=5)
 finish(__file__, S, {
     'title': 'Last Day Before the Holidays',
-    'pack': 'paulywaulophone',
+    'pack': 'waulophone', 'credit': 'Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)',
     'kind': 'original',
     'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement); sounds by Paul Chauncy',
     'note': 'An office singalong waltz in F, 3/4: the piano and the bass from Accounts, the hum from the back row, a '
             'doo-doo choir, glockenspiel answers, the sax and the bee-buzzing organ on the middle eight, everyone on '
-            'the last chorus, a tuning fork at each end. Drums: the pack\'s Honey Drift kit.',
+            'the last chorus, a tuning fork at each end. Drums: the pack\'s Honey Pine Kit.',
 }, [
-    ('piano', 'ch1', 'Floor Felt', dict(lufs=-21, pan=-12, verb=0.25)),
-    ('bass', 'ch2', 'Frosted Thump', dict(lufs=-21)),
-    ('hum', 'ch3', 'Electric Vox', dict(lufs=-19, pan=4, verb=0.3)),
-    ('doo', 'ch4', 'Remote Haze', dict(lufs=-25, pan=-6, verb=0.35, width=1.3)),
-    ('glock', 'ch5', 'Orbital Beam', dict(lufs=-24, pan=28, echo=0.2, verb=0.35)),
-    ('sax', 'ch6', 'Dial Beam', dict(lufs=-21, pan=-20, echo=0.1, verb=0.3)),
-    ('organ', 'ch7', 'Mint Voice', dict(lufs=-25, pan=20, verb=0.2)),
-    ('fork', 'ch8', 'Winter Chimes', dict(lufs=-25, verb=0.4)),
-    ('chorus', 'ch9', 'Felt Chorus', dict(lufs=-23, pan=10, verb=0.4)),
-    ('kit', 'ch10', 'Honey Drift', dict(lufs=-21, verb=0.08)),
-    ('boop', 'ch11', 'Humid Chop', dict(lufs=-26, pan=-30, echo=0.25)),
+    ('piano', 'ch1', 'Front Room Upright', dict(lufs=-21, pan=-12, verb=0.25)),
+    ('bass', 'ch2', 'Boop Bass', dict(lufs=-21)),
+    ('hum', 'ch3', 'Hmm Held', dict(lufs=-19, pan=4, verb=0.3)),
+    ('doo', 'ch4', 'Doo Choir', dict(lufs=-25, pan=-6, verb=0.35, width=1.3)),
+    ('glock', 'ch5', 'Glock Bird', dict(lufs=-24, pan=28, echo=0.2, verb=0.35)),
+    ('sax', 'ch6', 'Crooner Sax', dict(lufs=-21, pan=-20, echo=0.1, verb=0.3)),
+    ('organ', 'ch7', 'Bee Organ Lead', dict(lufs=-25, pan=20, verb=0.2)),
+    ('fork', 'ch8', 'Tuning Fork', dict(lufs=-25, verb=0.4)),
+    ('chorus', 'ch9', 'Homunculus Choir', dict(lufs=-23, pan=10, verb=0.4)),
+    ('kit', 'ch10', 'Honey Pine Kit', dict(lufs=-21, verb=0.08)),
+    ('boop', 'ch11', 'Boop Boop', dict(lufs=-26, pan=-30, echo=0.25)),
 ], master={'loudness': -15, 'ceiling': -1.0},
    echo={'time': '1/4', 'feedback': 0.25, 'tone': 3000, 'level': -8},
    reverb={'size': 1.8, 'predelay': 18, 'tone': 5500, 'level': -5})

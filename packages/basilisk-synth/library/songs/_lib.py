@@ -30,6 +30,9 @@ def cap_chords(S, tracks, pack):
             continue
         pk, nm = (preset.split(':', 1) if ':' in preset else (pack, preset))
         dna = P.get(pk, {}).get(nm)
+        if not dna and pk in PACK_ALIASES:
+            old, names = PACK_ALIASES[pk]
+            dna = P.get(old, {}).get(names.get(nm, nm))
         if not dna or re.search(r';.*?(?<![a-z])k\d', dna):   # kits keep every pad
             continue
         k = max(1, MAX_LOAD // _v.per_note(dna))   # (MAX_LOAD set: see chord_cap)
@@ -47,6 +50,26 @@ def cap_chords(S, tracks, pack):
         part.notes = sorted(keep)
 
 
+# packs renamed after release: the new id -> (the id an older machine knows, {new preset name: old name}), so a
+# song names the new presets and still pins the same DNAs from a machine that has the old names
+def _aliases():
+    here = os.path.dirname(os.path.abspath(__file__))
+    out = {}
+    for pid, old, folder in (('waulophone', 'paulywaulophone', 'waulophone'),):
+        f = os.path.join(here, '..', 'packs', folder, 'RENAMES.TSV')
+        names = {}
+        if os.path.exists(f):
+            for l in open(f, encoding='utf-8'):
+                if l.strip() and not l.startswith('#'):
+                    c = l.rstrip('\n').split('\t')
+                    names[c[2]] = c[1]
+        out[pid] = (old, names)
+    return out
+
+
+PACK_ALIASES = _aliases()
+
+
 def finish(script, S, header, tracks, master=None, echo=None, reverb=None):
     base = os.path.splitext(os.path.abspath(script))[0]
     cap_chords(S, tracks, header['pack'])
@@ -59,6 +82,10 @@ def finish(script, S, header, tracks, master=None, echo=None, reverb=None):
     for name, src, preset, kv in tracks:
         if 'tune' not in kv and not preset.startswith('dna:'):
             key = preset if ':' in preset else header['pack'] + ':' + preset
+            pk0, nm0 = key.split(':', 1)
+            if key not in tuning and pk0 in PACK_ALIASES:   # measured under the pack's old id and names
+                old, names = PACK_ALIASES[pk0]
+                key = f'{old}:{names.get(nm0, nm0)}'
             if key in tuning:
                 kv['tune'] = tuning[key]
         fixed.append((name, src, preset, kv))
@@ -80,6 +107,11 @@ def finish(script, S, header, tracks, master=None, echo=None, reverb=None):
             pinned[f'{pk}:{nm}'] = kitfix[f'{pk}:{nm}']
         elif nm in P.get(pk, {}):
             pinned[f'{pk}:{nm}'] = P[pk][nm]
+        elif pk in PACK_ALIASES and PACK_ALIASES[pk][0] in P:   # the machine knows the pack by its old id and names
+            old, names = PACK_ALIASES[pk]
+            dna = P[old].get(names.get(nm, nm))
+            if dna:
+                pinned[f'{pk}:{nm}'] = dna
     _c.write_song(base + '.song', header, tracks, master, echo, reverb, pinned)
     print(base + '.song')
 

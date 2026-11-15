@@ -1,0 +1,55 @@
+# Last Day Before the Holidays: a SNDWAVE1993 song demo (tools/songrender/README.md has the format)
+
+title    = Last Day Before the Holidays
+pack     = waulophone
+credit   = Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE1993)
+licence  = CC0-1.0 (the composition and this arrangement); sounds by Paul Chauncy
+note     = An office singalong waltz in F, 3/4: the piano and the bass from Accounts, the hum from the back row, a doo-doo choir, glockenspiel answers, the sax and the bee-buzzing organ on the middle eight, everyone on the last chorus, a tuning fork at each end. Drums: the pack's Honey Pine Kit.
+midi     = last-day-before-the-holidays.mid
+script   = last-day-before-the-holidays.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 1/4
+feedback = 0.25
+tone     = 3000
+level    = -8
+
+[reverb]
+size     = 1.8
+predelay = 18
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+piano       ch1     "Front Room Upright"                     lufs=-21 pan=-12 verb=0.25
+bass        ch2     "Boop Bass"                              lufs=-21
+hum         ch3     "Hmm Held"                               lufs=-19 pan=4 verb=0.3
+doo         ch4     "Doo Choir"                              lufs=-25 pan=-6 verb=0.35 width=1.3
+glock       ch5     "Glock Bird"                             lufs=-24 pan=28 echo=0.2 verb=0.35
+sax         ch6     "Crooner Sax"                            lufs=-21 pan=-20 echo=0.1 verb=0.3
+organ       ch7     "Bee Organ Lead"                         lufs=-25 pan=20 verb=0.2 tune=-21
+fork        ch8     "Tuning Fork"                            lufs=-25 verb=0.4
+chorus      ch9     "Homunculus Choir"                       lufs=-23 pan=10 verb=0.4
+kit         ch10    "Honey Pine Kit"                         lufs=-21 verb=0.08
+boop        ch11    "Boop Boop"                              lufs=-26 pan=-30 echo=0.25
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"waulophone:Bee Organ Lead" = pw_bee_organ@t2304]@t658[@0CP@0CPH0,12U2~7;A17D434S79R331V87K60G-14
+"waulophone:Boop Bass" = pw_bass_held;A0D274S52R63V87K36G1
+"waulophone:Boop Boop" = pw_boop@t520]@t148[@0CP@0CP>>#8/gd_voice_lpc_aah#8T-16L57;A195D107S73R653V91K56G-3
+"waulophone:Crooner Sax" = pw_sax@t1110]@t317[@0CP@0CP#11H0,12/gd_ep_reed_c5#5T-24L65;A4D177S73R313V89K60G-10
+"waulophone:Doo Choir" = pw_doo_held@t105]@t30[@0CP@0CP@0CPE#8U2~18/pw_hmm_held#4T-12L69/gd_ep_tine_c4R>#4L37O352Q-18;A774D54S99R1115V95K60G-11
+"waulophone:Front Room Upright" = gd_piano_a1>>;A0D472S16R269V90K57G-2
+"waulophone:Glock Bird" = pw_glock<<Q51;A9D399S81R229V77K60G-3
+"waulophone:Hmm Held" = pw_hmm_held#8U2~8/gd_voice_lpc_lala#4T-12L66/gd_voice_klatt_oohR#4T12L30O79Q-10;A232D419S85R1101V93K60G-11
+"waulophone:Homunculus Choir" = gd_voice_klatt_aah@t570]@t163[@0CP@0CPE#8/gd_voice_lpc_dance>#8L36O70Q35;A354D408S95R738V94K60G-8
+"waulophone:Honey Pine Kit" = gd_kit_studio_lowkick@t30000Igd_kit_studio_kick@t30000Igd_kit_studio_rim@t30000Igd_kit_studio_snare@t30000Igd_kit_studio_clap@t30000Igd_kit_studio_loclap@t30000Igd_kit_studio_lorim@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_loconga@t30000Igd_kit_studio_tighthat@t30000Igd_kit_studio_lotom@t30000Igd_kit_studio_openhat@t30000Igd_kit_studio_midtom@t30000Igd_kit_studio_conga@t30000Igd_kit_studio_crash@t30000Igd_kit_studio_hitom@t30000Igd_kit_studio_ride@t30000Igd_kit_studio_cabasa@t30000Igd_kit_studio_tamb@t30000Igd_kit_studio_bell#16;R80V90G-17k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k54j19k56j20
+"waulophone:Tuning Fork" = pw_forkE#8/default#8T9L13Q-3;A1D2132S26R1061V85K60G-7

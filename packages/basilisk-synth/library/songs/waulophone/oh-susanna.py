@@ -1,4 +1,4 @@
-"""Oh! Susanna (Stephen Foster, 1848), arranged for the Paulywaulophone as an office singalong: verse and chorus
+"""Oh! Susanna (Stephen Foster, 1848), arranged for the WAULOPHONE pack as an office singalong: verse and chorus
 six times, the hum from the back row first, then the piano, the bass from Accounts, the kit, the sax, the
 bee-buzzing organ and the doo-doo choir; up a tone for the last two. Sounds by Paul Chauncy."""
 import os, sys
@@ -84,7 +84,7 @@ fork.note(t + 1, 74, 4, 70)
 S.humanize(ms=6, vel=5)
 finish(__file__, S, {
     'title': 'Oh! Susanna',
-    'pack': 'paulywaulophone',
+    'pack': 'waulophone', 'credit': 'Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)',
     'kind': 'world',
     'composer': 'Stephen Foster (1826-1864)',
     'source': 'Oh! Susanna, song (1848): verse and chorus, written out from the song.',
@@ -94,20 +94,20 @@ finish(__file__, S, {
     'arranger': 'Algorithmic Industries house band',
     'note': 'An office singalong at 116 bpm: six rounds of verse and chorus, the hum from the back row, office piano, '
             'the bass from Accounts, guitar, the sax, the bee-buzzing organ, the doo-doo choir, boops, a glockenspiel '
-            'and a tuning fork; up a tone for the last two rounds. Drums: the pack\'s Honey Drift kit.',
+            'and a tuning fork; up a tone for the last two rounds. Drums: the pack\'s Honey Pine Kit.',
 }, [
-    ('hum', 'ch1', 'Electric Vox', dict(lufs=-19, pan=4, verb=0.3)),
-    ('piano', 'ch2', 'Humid Practice', dict(lufs=-21, pan=-14, verb=0.25)),
-    ('bass', 'ch3', 'Wired Anchor', dict(lufs=-20)),
-    ('sax', 'ch4', 'Dial Beam', dict(lufs=-21, pan=-20, echo=0.1, verb=0.3)),
-    ('organ', 'ch5', 'Mint Voice', dict(lufs=-23, pan=20, verb=0.2)),
-    ('doo', 'ch6', 'Remote Haze', dict(lufs=-25, pan=-6, verb=0.35, width=1.3)),
-    ('glock', 'ch7', 'Orbital Beam', dict(lufs=-24, pan=28, echo=0.2, verb=0.35)),
-    ('boop', 'ch8', 'Humid Chop', dict(lufs=-26, pan=-30, echo=0.25)),
-    ('guitar', 'ch9', 'Night Ballad', dict(lufs=-25, pan=32, verb=0.2)),
-    ('kit', 'ch10', 'Honey Drift', dict(lufs=-18, verb=0.08)),
-    ('chorus', 'ch11', 'Felt Chorus', dict(lufs=-22, pan=10, verb=0.4)),
-    ('fork', 'ch12', 'Winter Chimes', dict(lufs=-25, verb=0.4)),
+    ('hum', 'ch1', 'Hmm Held', dict(lufs=-19, pan=4, verb=0.3)),
+    ('piano', 'ch2', 'Kettle On', dict(lufs=-21, pan=-14, verb=0.25)),
+    ('bass', 'ch3', 'Barry Sings Low', dict(lufs=-20)),
+    ('sax', 'ch4', 'Crooner Sax', dict(lufs=-21, pan=-20, echo=0.1, verb=0.3)),
+    ('organ', 'ch5', 'Bee Organ Lead', dict(lufs=-23, pan=20, verb=0.2)),
+    ('doo', 'ch6', 'Doo Choir', dict(lufs=-25, pan=-6, verb=0.35, width=1.3)),
+    ('glock', 'ch7', 'Glock Bird', dict(lufs=-24, pan=28, echo=0.2, verb=0.35)),
+    ('boop', 'ch8', 'Boop Boop', dict(lufs=-26, pan=-30, echo=0.25)),
+    ('guitar', 'ch9', 'OTOLITH Late', dict(lufs=-25, pan=32, verb=0.2)),
+    ('kit', 'ch10', 'Honey Pine Kit', dict(lufs=-18, verb=0.08)),
+    ('chorus', 'ch11', 'Homunculus Choir', dict(lufs=-22, pan=10, verb=0.4)),
+    ('fork', 'ch12', 'Tuning Fork', dict(lufs=-25, verb=0.4)),
 ], master={'loudness': -15, 'ceiling': -1.0},
    echo={'time': '1/8', 'feedback': 0.25, 'tone': 3000, 'level': -7},
    reverb={'size': 1.8, 'predelay': 18, 'tone': 5500, 'level': -5})
