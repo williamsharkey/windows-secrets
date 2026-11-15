@@ -1335,6 +1335,46 @@ def draw_town(Ls, cam, A, rng, V, lights):
                     continue
                 Zp = Zr - 0.5
                 T.add(Zp - 0.01, layer, (lambda L=L, Xp=Xp, Zp=Zp, layer=layer: T.pole(L, Xp, Zp, cam.g(Zp), layer)))
+    # ---------------- low gardens in the kept-clear plots beside the lane: hedges, a stone lantern, a vegetable bed
+    for (ra, rb, za, zb) in reserved[2:]:
+        Zg = za + 1.0
+        while Zg < zb - 0.5:
+            layer = 'mid' if Zg >= Zcut else 'near'
+            L = Ls[layer]
+            def garden(L=L, ra=ra, rb=rb, Zg=Zg, layer=layer):
+                E = cam.g(Zg)
+                unit = cam.f / Zg
+                lx_ = cam.lane(Zg)
+                lo, hi = (ra + 0.4, rb - 1.4) if rb <= lx_ + 0.1 else (ra + 1.4, rb - 0.4)   # keep clear of the lane wall
+                X = lo
+                while X < hi:
+                    r = rng.random()
+                    if r < 0.45:
+                        # a clipped hedge, knee-high
+                        (x0, y0) = cam.P(X, Zg, E + 0.7)
+                        (x1, y1) = cam.P(X + 1.2, Zg, E)
+                        for k in range(int(6 + unit * 0.8)):
+                            L.ellipse(x0 + rng.random() * (x1 - x0), y0 + rng.random() * (y1 - y0) * 0.7, max(1, unit * 0.14), max(1, unit * 0.1),
+                                      fz(mix(K['leaf'], K['leafH'] if rng.random() < 0.4 else K['navy0'], 0.4), Zg))
+                    elif r < 0.6:
+                        # a vegetable bed: rows of little leaves on dark soil
+                        (x0, y0) = cam.P(X, Zg + 1.0, E)
+                        (x1, y1) = cam.P(X + 1.4, Zg, E)
+                        L.rect(x0, y0, x1 - x0, max(1, y1 - y0), fz(K['brn0'], Zg))
+                        for k in range(int(x0), int(x1), max(2, int(unit * 0.25))):
+                            L.px(k, (y0 + y1) / 2, fz(K['moss2'], Zg))
+                            L.px(k, y0 + 1, fz(K['green'] * 0.6, Zg))
+                    elif r < 0.68:
+                        # a small stone lantern
+                        (lx, ly) = cam.P(X + 0.3, Zg, E)
+                        L.rect(lx - unit * 0.12, ly - unit * 0.7, unit * 0.24, unit * 0.7, fz(K['stone'], Zg))
+                        L.rect(lx - unit * 0.22, ly - unit * 0.8, unit * 0.44, max(1, unit * 0.12), fz(K['stoneH'], Zg))
+                        L.rect(lx - unit * 0.06, ly - unit * 0.6, max(1, unit * 0.12), max(1, unit * 0.12), fz(K['navy0'], Zg))
+                    else:
+                        T.plant(L, X + 0.3, Zg, E, Zg, layer, size=0.6 + rng.random() * 0.4)
+                    X += 1.3 + rng.random() * 0.6
+            T.add(Zg + 0.5, layer, garden)
+            Zg += 2.2
     # ---------------- retaining walls (ishigaki) at the front of each row, drawn before the houses of that row
     for Zr in zs:
         layer = 'mid' if Zr >= Zcut else 'near'
