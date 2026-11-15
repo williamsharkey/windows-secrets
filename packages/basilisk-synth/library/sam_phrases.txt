@@ -1,0 +1,130 @@
+# Microsoft Sam phrase script (Windows XP SAPI 5.1, "Microsoft Sam" voice)
+# Speak these inside the emulated XP (Control Panel > Speech, or a small SAPI script) and record them with
+# Sound Recorder at 22050 Hz 16-bit mono. They are our own synthesis, so there is no third-party licence.
+# One phrase per line; lines starting with # are comments. Suggested file names: sam_<NNN>.wav.
+# Tips: commas and full stops change Sam's prosody; "...." stretches a pause; try SAPI rate -3 for gravitas.
+
+# --- core corporate vocabulary ---
+synergy
+new markets
+time zone opportunities
+object-oriented
+global network
+welcome to the portal
+paradigm shift
+leverage
+value added
+best of breed
+mission critical
+scalable solutions
+enterprise ready
+thinking outside the box
+core competencies
+going forward
+win-win
+bandwidth
+mind share
+end to end
+seamless integration
+business intelligence
+knowledge worker
+the information superhighway
+e-commerce
+business to business
+customer relationship management
+total quality management
+just in time
+return on investment
+
+# --- 2000s web portal ---
+you have new mail
+your session has expired
+please wait while we connect you
+click here to continue
+loading, please wait
+welcome back, valued member
+your personalized home page
+check your inbox
+today's top stories
+weather, news, and stock quotes
+sign in to your account
+your password has been changed
+download complete
+this page is best viewed at eight hundred by six hundred
+under construction
+enter the site
+skip intro
+broadband is here
+always on, always connected
+surf the web
+log on to the future
+dot com
+www dot
+member services
+add to favorites
+instant messenger
+buddy list
+you have one new message
+chat room
+search the web
+
+# --- technology and globalism ---
+the global village
+the network is the computer
+twenty four hours a day, seven days a week
+around the world, around the clock
+the sun never sets on our network
+it is now nine a m in Tokyo
+markets are opening in London
+from New York to Singapore
+connecting people
+interconnected world
+the digital economy
+the new economy
+emerging markets
+borderless commerce
+real time
+year two thousand compliant
+millennium ready
+the future is now
+tomorrow's technology, today
+fiber optic
+multimedia experience
+interactive
+cyberspace
+virtual reality
+digital lifestyle
+
+# --- software lecture fragments ---
+encapsulation
+inheritance
+polymorphism
+instantiate the object
+the class hierarchy
+a reusable component
+client server architecture
+distributed computing
+object request broker
+middleware
+extensible markup language
+java enabled
+plug and play
+thin client
+application service provider
+
+# --- soothing system voice ---
+please hold, your call is important to us
+thank you for your patience
+all of our representatives are currently busy
+your estimated wait time is
+relax
+breathe
+water
+crystal clear
+pure
+clarity
+harmony
+serenity
+system ready
+welcome
+goodbye

@@ -144,10 +144,23 @@ def write_wav(path, x, rate, bits):
         w.writeframes(data)
 
 
-def build(e):
+def read_built(path):
+    with wave.open(path) as w:
+        n, ch, bits, rate = w.getnframes(), w.getnchannels(), w.getsampwidth() * 8, w.getframerate()
+        b = w.readframes(n)
+    x = np.frombuffer(b, "<i2" if bits == 16 else np.uint8).astype(float)
+    x = (x / 32768.0) if bits == 16 else (x - 128) / 128.0
+    return x.reshape(-1, ch), rate, ch, bits
+
+
+def build(e, from_files=False):
     rate = int(e.get("rate", 22050))
     ch = int(e.get("channels", 1))
     bits = int(e.get("bits", 16))
+    rel = os.path.join(e["category"], e["id"] + ".wav")
+    if from_files:                                  # the raw download is gone: describe the WAV already built
+        x, rate, ch, bits = read_built(os.path.join(OUT, rel))
+        return describe(e, x, rate, ch, bits, rel)
     maxlen = 15.0 if e.get("tonal") else 30.0
     dur = e.get("dur")
     dur = min(dur, maxlen) if dur else maxlen + 5
@@ -166,8 +179,11 @@ def build(e):
         x[:fi] *= np.linspace(0, 1, fi)[:, None]
     if fo:
         x[-fo:] *= np.linspace(1, 0, fo)[:, None]
-    rel = os.path.join(e["category"], e["id"] + ".wav")
     write_wav(os.path.join(OUT, rel), x, rate, bits)
+    return describe(e, x, rate, ch, bits, rel)
+
+
+def describe(e, x, rate, ch, bits, rel):
     m = dict(file=rel, category=e["category"], description=e.get("description", ""),
              tonal=bool(e.get("tonal")), est_root_note=None, duration=round(len(x) / rate, 3),
              source_url=e["source_url"], author=e.get("author", "unknown"), license=e["license"],
@@ -203,6 +219,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--only")
     ap.add_argument("--no-manifest", action="store_true", help="convert only; leave manifest.json alone")
+    ap.add_argument("--from-files", action="store_true",
+                    help="write manifest.json from the WAVs already in sources/ (no decoding; for raws no longer on disk)")
     a = ap.parse_args()
     entries = []
     for p in sorted(glob.glob(os.path.join(LIB, "catalog", "*.json"))):
@@ -226,7 +244,7 @@ def main():
     out = []
     for e in entries:
         try:
-            out.append(build(e))
+            out.append(build(e, a.from_files))
             m = out[-1]
             print(f"ok  {m['file']:60s} {m['duration']:6.2f}s {m.get('est_root_note') or ''}")
         except Exception as ex:
