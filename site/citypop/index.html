@@ -8,59 +8,100 @@
 <meta property="og:title" content="CITYPOP DEPROGRAMMED">
 <meta property="og:description" content="A theme and eleven variations for a quiet night in a harbour town. Performed on SNDWAVE2000.">
 <meta property="og:image" content="https://williamsharkey.com/citypop/art/cover-640.png">
-<meta name="theme-color" content="#0d1030">
+<meta name="theme-color" content="#07081a">
 <link rel="icon" href="art/icon-32.png">
-<link rel="stylesheet" href="style.css">
+<link rel="preload" href="fonts/DejaVuSans.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/DejaVuSansMono.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
-<canvas id="night" aria-hidden="true"></canvas>
-<main class="desk">
+<div id="scene" aria-hidden="true"><canvas id="night"></canvas></div>
+<div id="life" aria-hidden="true"></div>
 
-  <section class="win" id="player" aria-label="Media Player">
-    <header class="tb"><span class="sys" aria-hidden="true"></span><h1>Media Player - CITYPOP DEPROGRAMMED</h1></header>
-    <div class="menu"><span aria-hidden="true"><u>F</u>ile</span><span aria-hidden="true"><u>D</u>evice</span><button id="hide" class="mbtn" title="Hide the windows and watch the night (H)"><u>H</u>ide windows</button></div>
-    <div class="body">
-      <div class="now">
-        <img class="cover" src="art/cover.png" width="160" height="160" alt="Album cover: a stone stair lane down to a harbour at night, the moon over a long bridge.">
-        <div class="meta">
-          <div class="lcd" aria-live="polite"><span id="tno">--</span><span id="time">00:00</span><span id="len">/ 00:00</span></div>
-          <div id="ttitle" class="ttitle">Press Play.</div>
-          <div id="tnote" class="tnote">A theme and eleven variations, from the evening rain to first light.</div>
+<main id="desk" class="desk">
+
+  <!-- ============================================================ Media Player -->
+  <section class="win" id="player" data-icon="player" data-label="Media Player" aria-label="Media Player">
+    <div class="wi">
+      <div class="tb"><button class="sys" aria-label="Control menu for Media Player" aria-haspopup="menu"></button><h1 class="tt">Media Player - CITYPOP DEPROGRAMMED</h1><button class="mn" aria-label="Minimize Media Player"></button></div>
+      <div class="menu" role="menubar">
+        <button class="mi" data-menu="file"><u>F</u>ile</button>
+        <button class="mi" data-menu="device"><u>D</u>evice</button>
+        <button class="mi" data-menu="help"><u>H</u>elp</button>
+        <button id="hide" class="mi end" title="Hide the windows and watch the night (H)">Hide &#8599;</button>
+      </div>
+      <div class="client">
+        <div class="now">
+          <img class="cover" src="art/cover.png" width="96" height="96" alt="Album cover: a stone stair lane down to a harbour at night, the moon over a long bridge.">
+          <div class="meta">
+            <canvas id="lcd" class="lcd" aria-hidden="true"></canvas>
+            <div id="ttitle" class="ttitle" aria-live="polite">Press Play.</div>
+            <div id="tvar" class="tvar"></div>
+          </div>
+        </div>
+        <div class="trk"><canvas id="pos" class="trackbar" tabindex="0" role="slider" aria-label="Position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></canvas></div>
+        <div class="transport" role="group" aria-label="Transport">
+          <button class="pb" id="play" title="Play / Pause (Space)" aria-label="Play"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><path id="playicon" d="M5 3h1v10H5zM6 4h1v8H6zM7 5h1v6H7zM8 6h1v4H8zM9 7h1v2H9z"/></svg></button>
+          <button class="pb" id="stop" title="Stop (S)" aria-label="Stop"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><path d="M4 4h8v8H4z"/></svg></button>
+          <span class="gap"></span>
+          <button class="pb" id="prev" title="Previous (P)" aria-label="Previous track"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><path d="M3 4h2v8H3zM11 3h1v10h-1zM10 4h1v8h-1zM9 5h1v6H9zM8 6h1v4H8zM7 7h1v2H7z"/></svg></button>
+          <button class="pb" id="next" title="Next (N)" aria-label="Next track"><svg viewBox="0 0 16 16" shape-rendering="crispEdges"><path d="M11 4h2v8h-2zM4 3h1v10H4zM5 4h1v8H5zM6 5h1v6H6zM7 6h1v4H7zM8 7h1v2H8z"/></svg></button>
+          <div class="volbox"><span class="lbl" id="vollbl">Volume</span><canvas id="vol" class="trackbar small" tabindex="0" role="slider" aria-labelledby="vollbl" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80"></canvas></div>
+        </div>
+        <div class="lbhead" aria-hidden="true"><span>No.</span><span>Var.</span><span>Title</span><span>Key</span><span>BPM</span><span>Time</span></div>
+        <div class="lb sv" id="listbox"><div class="vp"><ol id="list" class="list" aria-label="Tracks"></ol></div><div class="sb"></div></div>
+        <div class="status"><span id="stat">Ready</span><span id="stat2"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ Sound Recorder -->
+  <section class="win" id="rec" data-icon="rec" data-label="Sound Recorder" aria-label="Sound Recorder">
+    <div class="wi">
+      <div class="tb"><button class="sys" aria-label="Control menu for Sound Recorder" aria-haspopup="menu"></button><h2 class="tt" id="rectitle">Sound Recorder - (Untitled)</h2><button class="mn" aria-label="Minimize Sound Recorder"></button></div>
+      <div class="menu" role="menubar"><span class="mi off"><u>F</u>ile</span><span class="mi off"><u>E</u>dit</span><span class="mi off">E<u>f</u>fects</span><span class="mi off"><u>H</u>elp</span></div>
+      <div class="client">
+        <div class="recrow">
+          <div class="rlab">Position:<b id="rpos">0.00 sec.</b></div>
+          <div class="wavebox"><canvas id="wave" aria-hidden="true"></canvas></div>
+          <div class="rlab r">Length:<b id="rlen">0.00 sec.</b></div>
+        </div>
+        <div class="hsb" id="rscroll" aria-hidden="true"><span class="ar l"></span><span class="tr"><span class="th"></span></span><span class="ar r"></span></div>
+        <div class="recbtns">
+          <button class="rb" id="rrew" aria-label="Back to the start"><svg viewBox="0 0 22 14" shape-rendering="crispEdges"><path d="M2 2h2v10H2zM10 2h1v10h-1zM9 3h1v8H9zM8 4h1v6H8zM7 5h1v4H7zM6 6h1v2H6zM17 2h1v10h-1zM16 3h1v8h-1zM15 4h1v6h-1zM14 5h1v4h-1zM13 6h1v2h-1z"/></svg></button>
+          <button class="rb" id="rff" aria-label="Next track"><svg viewBox="0 0 22 14" shape-rendering="crispEdges"><path d="M18 2h2v10h-2zM4 2h1v10H4zM5 3h1v8H5zM6 4h1v6H6zM7 5h1v4H7zM8 6h1v2H8zM11 2h1v10h-1zM12 3h1v8h-1zM13 4h1v6h-1zM14 5h1v4h-1zM15 6h1v2h-1z"/></svg></button>
+          <button class="rb" id="rplay" aria-label="Play"><svg viewBox="0 0 22 14" shape-rendering="crispEdges"><path d="M8 1h1v12H8zM9 2h1v10H9zM10 3h1v8h-1zM11 4h1v6h-1zM12 5h1v4h-1zM13 6h1v2h-1z"/></svg></button>
+          <button class="rb" id="rstop" aria-label="Stop"><svg viewBox="0 0 22 14" shape-rendering="crispEdges"><path d="M7 3h8v8H7z"/></svg></button>
+          <button class="rb" id="rrec" aria-label="Record (not available)" aria-disabled="true"><svg viewBox="0 0 22 14" shape-rendering="crispEdges"><path class="red" d="M9 3h4v1h1v1h1v4h-1v1h-1v1H9v-1H8V9H7V5h1V4h1z"/></svg></button>
         </div>
       </div>
-      <div class="seek"><input id="pos" type="range" min="0" max="1000" value="0" aria-label="Position"></div>
-      <div class="transport" role="group" aria-label="Transport">
-        <button id="prev" title="Previous (P)" aria-label="Previous track"><svg viewBox="0 0 16 16"><path d="M3 3h2v10H3zM13 3v10L6 8z"/></svg></button>
-        <button id="play" title="Play / Pause (Space)" aria-label="Play"><svg viewBox="0 0 16 16"><path id="playicon" d="M4 2v12l10-6z"/></svg></button>
-        <button id="stop" title="Stop (S)" aria-label="Stop"><svg viewBox="0 0 16 16"><path d="M3 3h10v10H3z"/></svg></button>
-        <button id="next" title="Next (N)" aria-label="Next track"><svg viewBox="0 0 16 16"><path d="M11 3h2v10h-2zM3 3v10l7-5z"/></svg></button>
-        <label class="vol">Vol <input id="vol" type="range" min="0" max="100" value="80" aria-label="Volume"></label>
-      </div>
-      <ol id="list" class="list" aria-label="Tracks"></ol>
-      <p class="keys">Keys: Space play/pause, N/P next/previous, &larr;/&rarr; 10 seconds, &uarr;/&darr; volume, 1-9 0 - = tracks, H hide the windows.</p>
     </div>
   </section>
 
-  <section class="win" id="rec" aria-label="Sound Recorder">
-    <header class="tb"><span class="sys" aria-hidden="true"></span><h2 id="rectitle">Sound Recorder - (Untitled)</h2></header>
-    <div class="body">
-      <div class="recrow"><span>Position:<br><b id="rpos">0.00 sec.</b></span><canvas id="wave" width="160" height="40" aria-hidden="true"></canvas><span>Length:<br><b id="rlen">0.00 sec.</b></span></div>
+  <!-- ============================================================ Event List -->
+  <section class="win" id="ev" data-icon="ev" data-label="Event List" aria-label="Event List">
+    <div class="wi">
+      <div class="tb"><button class="sys" aria-label="Control menu for Event List" aria-haspopup="menu"></button><h2 class="tt">Event List - <span id="evname">TRACK.MID</span></h2><button class="mn" aria-label="Minimize Event List"></button></div>
+      <div class="evhead" aria-hidden="true"><span class="c1">Bar:Bt</span><span class="c2">Time</span><span class="c3">Part</span><span class="c4">Note</span><span class="c5">Vel</span><span class="c6">Len</span></div>
+      <div class="evbox"><canvas id="evc" aria-hidden="true"></canvas><div class="sb static" id="evsb"></div></div>
+      <div class="status"><span id="evstat">0 events</span><span id="evpart"></span><span class="beats" id="beats" title="Beat"><i></i><i></i><i></i><i></i></span></div>
     </div>
   </section>
 
-  <section class="win" id="ev" aria-label="Event List">
-    <header class="tb"><span class="sys" aria-hidden="true"></span><h2>Event List - <span id="evname">TRACK.MID</span></h2></header>
-    <div class="body"><pre id="evlist" class="evlist" aria-hidden="true"></pre></div>
+  <!-- ============================================================ Clock -->
+  <section class="win" id="clock" data-icon="clock" data-label="Clock" aria-label="Clock">
+    <div class="wi">
+      <div class="tb"><button class="sys" aria-label="Control menu for Clock" aria-haspopup="menu"></button><h2 class="tt" id="clktitle">Clock</h2><button class="mn" aria-label="Minimize Clock"></button></div>
+      <div class="client clk"><canvas id="clk" aria-hidden="true"></canvas></div>
+    </div>
   </section>
 
-  <section class="win" id="clock" aria-label="Clock">
-    <header class="tb"><span class="sys" aria-hidden="true"></span><h2>Clock</h2></header>
-    <div class="body"><canvas id="clk" width="96" height="96" aria-hidden="true"></canvas></div>
-  </section>
-
-  <section class="win" id="notes" aria-label="Liner notes">
-    <header class="tb"><span class="sys" aria-hidden="true"></span><h2>Notepad - LINERS.TXT</h2></header>
-    <div class="body text">
+  <!-- ============================================================ Notepad -->
+  <section class="win" id="notes" data-icon="notes" data-label="LINERS.TXT" aria-label="Liner notes">
+    <div class="wi">
+      <div class="tb"><button class="sys" aria-label="Control menu for Notepad" aria-haspopup="menu"></button><h2 class="tt">Notepad - LINERS.TXT</h2><button class="mn" aria-label="Minimize Notepad"></button></div>
+      <div class="menu" role="menubar"><span class="mi off"><u>F</u>ile</span><span class="mi off"><u>E</u>dit</span><span class="mi off"><u>S</u>earch</span><span class="mi off"><u>H</u>elp</span></div>
+      <div class="sv np" id="npbox"><div class="vp text" tabindex="0">
       <p><b>CITYPOP DEPROGRAMMED</b> is a theme and eleven variations for a quiet night in a harbour town. It starts
       in the evening rain and ends at first light. Put it on after the club, or when friends are still on the couch
       and nobody wants to go home yet.</p>
@@ -97,17 +138,60 @@
         <li>Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly).</li>
         <li>Electric piano and bass: the Bele Dance instruments by William Sharkey.</li>
         <li>Field recordings and instrument samples (CC0, Freesound): <span id="cc0">see SOURCES.TXT</span>.</li>
-        <li>Windows 3.11 and Sound Recorder &copy; Microsoft Corporation. DOSBox Pure (GPL-2.0). Fonts: DejaVu.</li>
+        <li>Windows 3.11 and Sound Recorder &copy; Microsoft Corporation. DOSBox Pure (GPL-2.0). Fonts: DejaVu (free licence, <a href="fonts/LICENSE-DejaVu.txt">LICENSE</a>).</li>
         <li>Paganini, Caprice No. 24 in A minor, Op. 1 (published 1820), public domain.</li>
       </ul>
       <p class="small"><a href="SOURCES.TXT">SOURCES.TXT</a> lists every recording, its author, licence and page. The
       compositions and recordings on this page are CC0. <a href="/sndwave2000/">SNDWAVE2000</a> is free.</p>
+      </div><div class="sb"></div></div>
     </div>
   </section>
 
+  <!-- ============================================================ Control Panel: Desktop -->
+  <section class="win dlg" id="desktop" data-icon="desktop" data-label="Desktop" aria-label="Desktop settings" hidden>
+    <div class="wi">
+      <div class="tb"><button class="sys" aria-label="Control menu for Desktop" aria-haspopup="menu"></button><h2 class="tt">Desktop</h2></div>
+      <div class="client form">
+        <fieldset class="grp"><legend>Time of Night</legend>
+          <label class="rad"><input type="radio" name="tod" value="album"><i></i>Follow the album</label>
+          <label class="rad"><input type="radio" name="tod" value="19.5"><i></i>After the rain, 7:30</label>
+          <label class="rad"><input type="radio" name="tod" value="24"><i></i>Midnight</label>
+          <label class="rad"><input type="radio" name="tod" value="27.5"><i></i>Before dawn, 3:30</label>
+          <label class="rad"><input type="radio" name="tod" value="29.5"><i></i>First light, 5:30</label>
+          <label class="rad"><input type="radio" name="tod" value="clock"><i></i>Same as the Clock</label>
+        </fieldset>
+        <fieldset class="grp"><legend>Windows</legend>
+          <label class="chk"><input type="checkbox" id="optmotion"><i></i>Less motion</label>
+          <label class="chk"><input type="checkbox" id="optremember" checked><i></i>Remember where windows are</label>
+          <div class="row"><button class="push" id="optreset" type="button">Arrange</button></div>
+        </fieldset>
+        <div class="dlgbtns"><button class="push def" id="dok" type="button">OK</button><button class="push" id="dcancel" type="button">Cancel</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ About -->
+  <section class="win dlg" id="about" data-icon="about" data-label="About" aria-label="About" hidden>
+    <div class="wi">
+      <div class="tb"><button class="sys" aria-label="Control menu for About" aria-haspopup="menu"></button><h2 class="tt">About Media Player</h2></div>
+      <div class="client form about">
+        <canvas class="abicon" id="abicon" aria-hidden="true"></canvas>
+        <div>
+          <p><b>CITYPOP DEPROGRAMMED</b><br>Algorithmic Industries<br>Performed on SNDWAVE2000</p>
+          <p class="keys">Space play or pause<br>N / P next or previous<br>&larr; &rarr; 10 seconds<br>&uarr; &darr; volume<br>1&ndash;9, 0, &minus;, = tracks<br>H hide the windows</p>
+        </div>
+        <div class="dlgbtns"><button class="push def" id="aok" type="button">OK</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ Program Manager icons -->
+  <nav class="icons" id="icons" aria-label="Windows"></nav>
 </main>
+
+<div id="menus"></div>
 <button id="unhide" class="unhide" hidden title="Show the windows (H or Esc)">Show windows</button>
 <noscript><p class="nos">The player needs JavaScript. The files are in <a href="audio/">audio/</a>.</p></noscript>
-<script src="app.js"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>
