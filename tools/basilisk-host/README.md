@@ -109,6 +109,12 @@ The tests:
   - `program N`
   - `resize W H`
   - `state` (logs the state's text)
+  - `at S`: wait until S seconds into the render's audio (the WAV's time line)
+  - `glide X Y S`: move the pointer there over S seconds (30 moves a second, eased)
+  - `rec FILE [FPS]` ... `rec off`: record the editor's client area on a thread of its own (PrintWindow) to FILE in
+    the output folder: "BHRC", the render's start time, the size, then per frame its wall-clock time and the rectangle
+    that changed. Once the plugin has caught up after its start, a frame's time minus the start is its place in the
+    render's WAV. `tools/demo-video/bhrc.py` reads it.
 
   Messages are posted with real timing (keys and clicks held 50 ms, 40 ms apart), with real scan codes, and with this
   thread's key state set for modifiers, because an emulated PC reads its keyboard and mouse once a frame. For

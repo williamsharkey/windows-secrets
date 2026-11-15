@@ -8,6 +8,7 @@
 #include <cmath>
 #include <cstdio>
 #include <fstream>
+#include <atomic>
 #include <set>
 #include <thread>
 
@@ -109,6 +110,81 @@ struct EditorRun {
     struct Post { double at; HWND h; UINT m; WPARAM wp; LPARAM lp; };
     std::vector<Post> q;
     double qEnd = 0;   // when the last queued message goes out
+    int mx = 0, my = 0;   // where the last mouse message put the pointer (for glide)
+    // `rec FILE [FPS]` .. `rec off`: the editor's client area captured on a thread of its own, every 1/FPS s of
+    // wall clock, for videos. FILE: "BHRC", the render's start (double, now_s()), width and height (int32); then
+    // per frame its time (double, now_s()) and the rectangle that changed since the last frame (int32 x, y, w, h;
+    // w = 0 when nothing did) followed by its pixels, BGRX rows. A frame's audio is at (time - start) in the WAV.
+    double renderStart = 0;
+    std::thread recT;
+    std::atomic<bool> recOn{false}, recDone{true};
+    void recStart(const std::string &path, double fps)
+    {
+        recStop();
+        recOn = true;
+        recDone = false;
+        recT = std::thread([this, path, fps]() {
+            FILE *f = _wfopen(widen(path).c_str(), L"wb");
+            if (!f) { recDone = true; return; }
+            RECT r;
+            GetClientRect(win, &r);
+            const int W = r.right - r.left, H = r.bottom - r.top;
+            HDC wdc = GetDC(NULL), md = CreateCompatibleDC(wdc);
+            HBITMAP bm = CreateCompatibleBitmap(wdc, W, H);
+            HGDIOBJ ob = SelectObject(md, bm);
+            BITMAPINFOHEADER bi = {sizeof bi, W, -H, 1, 32, BI_RGB};
+            std::vector<uint32_t> cur((size_t)W * H), prev((size_t)W * H, 0x01020304u);
+            fwrite("BHRC", 1, 4, f);
+            fwrite(&renderStart, 8, 1, f);
+            int32_t wh[2] = {W, H};
+            fwrite(wh, 4, 2, f);
+            const double dt = 1.0 / fps;
+            double next = now_s();
+            while (recOn) {
+                double t = now_s();
+                if (t < next) { Sleep(1); continue; }
+                next += dt;
+                if (next < t) next = t + dt;
+                double a = now_s();
+                PrintWindow(win, md, PW_CLIENTONLY | 2);
+                GetDIBits(md, bm, 0, H, cur.data(), (BITMAPINFO *)&bi, DIB_RGB_COLORS);
+                double tm = (a + now_s()) / 2;
+                int x0 = W, y0 = H, x1 = -1, y1 = -1;
+                for (int y = 0; y < H; y++) {
+                    const uint32_t *c = &cur[(size_t)y * W], *p = &prev[(size_t)y * W];
+                    if (!memcmp(c, p, (size_t)W * 4)) continue;
+                    int xa = 0, xb = W - 1;
+                    while (c[xa] == p[xa]) xa++;
+                    while (c[xb] == p[xb]) xb--;
+                    x0 = std::min(x0, xa); x1 = std::max(x1, xb); y0 = std::min(y0, y); y1 = y;
+                }
+                int32_t rc[4] = {0, 0, 0, 0};
+                if (x1 >= 0) { rc[0] = x0; rc[1] = y0; rc[2] = x1 - x0 + 1; rc[3] = y1 - y0 + 1; }
+                fwrite(&tm, 8, 1, f);
+                fwrite(rc, 4, 4, f);
+                for (int y = 0; y < rc[3]; y++) fwrite(&cur[(size_t)(rc[1] + y) * W + rc[0]], 4, rc[2], f);
+                std::swap(cur, prev);
+            }
+            SelectObject(md, ob);
+            DeleteObject(bm);
+            DeleteDC(md);
+            ReleaseDC(NULL, wdc);
+            fclose(f);
+            recDone = true;
+        });
+    }
+    void recStop()
+    {
+        recOn = false;
+        if (!recT.joinable()) return;
+        // PrintWindow on the capture thread waits for this thread to paint: keep pumping until it has finished
+        while (!recDone) {
+            MSG m;
+            while (PeekMessageW(&m, NULL, 0, 0, PM_REMOVE)) { TranslateMessage(&m); DispatchMessageW(&m); }
+            Sleep(1);
+        }
+        recT.join();
+    }
     static constexpr double HOLD = 0.05, GAP = 0.04;
     void post(double after, HWND h, UINT m, WPARAM wp, LPARAM lp)
     {
@@ -154,6 +230,7 @@ struct EditorRun {
 
     void close()
     {
+        recStop();
         if (view) { view->removed(); view->setFrame(nullptr); view = nullptr; }
         if (win) { DestroyWindow(win); win = NULL; }
         if (I) I->onResize = nullptr;
@@ -182,6 +259,7 @@ struct EditorRun {
         POINT p = {x, y};
         HWND h = target(p);
         LPARAM lp = MAKELPARAM(p.x, p.y);
+        mx = x; my = y;
         std::string w = what;
         post(0, h, WM_MOUSEMOVE, 0, lp);
         if (w == "move") return;
@@ -232,6 +310,7 @@ struct EditorRun {
         e["step"] = line;
         int x = 0, y = 0, x2 = 0, y2 = 0;
         if (cmd == "wait") due = std::max(now_s(), qEnd) + atof(rest.c_str());
+        else if (cmd == "at") due = std::max(qEnd, (renderStart > 0 ? renderStart : t0) + atof(rest.c_str()));   // S seconds into the render's audio
         else if (cmd == "shot") {
             std::string f = join(O.outDir, (rest.empty() ? "editor" : rest) + ".bmp");
             bool ok = save_bmp(win, f, true);
@@ -240,6 +319,28 @@ struct EditorRun {
             shots.push(f);
         } else if (cmd == "click" || cmd == "dblclick" || cmd == "rclick" || cmd == "move") {
             if (sscanf(rest.c_str(), "%d %d", &x, &y) == 2) mouse(cmd.c_str(), x, y);
+        } else if (cmd == "rec") {
+            if (rest == "off") recStop();
+            else {
+                char fn[512] = {0};
+                double fps = 30;
+                sscanf(rest.c_str(), "%511s %lf", fn, &fps);
+                std::string f = join(O.outDir, fn);
+                recStart(f, fps);
+                e["file"] = f;
+            }
+        } else if (cmd == "glide") {   // glide X Y S: the pointer moves there over S seconds, 30 moves a second
+            double secs = 0.5;
+            if (sscanf(rest.c_str(), "%d %d %lf", &x, &y, &secs) >= 2) {
+                int n = std::max(1, (int)(secs * 30)), sx = mx, sy = my;
+                for (int k = 1; k <= n; k++) {
+                    double u = (double)k / n, e2 = u * u * (3 - 2 * u);   // smoothstep
+                    POINT p = {sx + (int)std::lround((x - sx) * e2), sy + (int)std::lround((y - sy) * e2)};
+                    HWND h = target(p);
+                    post(k == 1 ? 0 : 1.0 / 30, h, WM_MOUSEMOVE, 0, MAKELPARAM(p.x, p.y));
+                }
+                mx = x; my = y;
+            }
         } else if (cmd == "drag") {
             if (sscanf(rest.c_str(), "%d %d %d %d", &x, &y, &x2, &y2) == 4) {
                 POINT p = {x, y};
@@ -366,6 +467,7 @@ RenderOut render(const RenderSpec &spec, const char *tag)
     size_t mi = 0;
     int64_t pos = 0;
     double start = now_s(), lastPoll = 0;
+    ed.renderStart = start;
     while (pos < total) {
         // the score's messages in this block, at their sample offsets
         while (mi < S.msgs.size()) {
