@@ -68,30 +68,25 @@
   <div class="chh"><span class="no">§ 3</span><h2 id="h-packs">Sound packs</h2></div>
   <p>SNDWAVE1993 ships with a library of 1,437 presets on 26 sound-pack discs, each from an independent publisher: a Reston multimedia house, a Bielefeld studio-equipment maker, a Hsinchu electronics firm, a London garage label turned limited company. Every disc has its box, its manual and its Windows help file, and every disc is in the download, on drive P:. Browse them here, play any pack's presets and songs, or open the full <a href="packs/">Sound Pack Explorer</a>.</p>
   <span id="presets" class="anchor" aria-hidden="true"></span>
-  <div class="win spx" id="spx" aria-roledescription="carousel" aria-label="Sound packs">
+  <div class="win pp" id="pp" aria-label="Sound packs player">
     <div class="cap"><span class="box"></span><span class="t"><img class="pix" src="art/gridsun-16.png" width="16" height="16" alt="">Sound Packs</span></div>
-    <div class="spx-body">
-      <div class="spx-stage">
-        <button type="button" class="mp-b spx-prev" aria-label="Previous pack" title="Previous pack (Left arrow)"><svg viewBox="0 0 16 12"><path d="M11 1v10L4 6z"/></svg></button>
-        <div class="spx-view" tabindex="0" aria-live="polite"><div class="spx-track"></div></div>
-        <button type="button" class="mp-b spx-next" aria-label="Next pack" title="Next pack (Right arrow)"><svg viewBox="0 0 16 12"><path d="M5 1v10l7-5z"/></svg></button>
+    <div class="pp-body">
+      <div class="pp-stage" id="pp-stage">
+        <div class="pp-art"><canvas id="pp-art" width="384" height="288" data-px="384x288" role="img" aria-label="The pack's booklet"></canvas></div>
+        <div class="pp-bar">
+          <div class="pp-row"><button type="button" class="pp-b" id="pp-prevpack" aria-label="Previous pack" title="Previous pack (Left arrow)">&lsaquo;</button><span class="pp-name"><b id="pp-pack">Sound packs</b><span id="pp-maker"></span></span><button type="button" class="pp-b" id="pp-nextpack" aria-label="Next pack" title="Next pack (Right arrow)">&rsaquo;</button></div>
+          <div class="pp-row"><button type="button" class="pp-b" id="pp-prev" aria-label="Previous" title="Previous (Up arrow)"><svg viewBox="0 0 16 12"><path d="M2 1h2v10H2zM14 1v10L5 6z"/></svg></button><button type="button" class="pp-b pp-play" id="pp-play" aria-label="Play" title="Play / Pause (Space)"><svg viewBox="0 0 16 12" class="i-play"><path d="M4 1v10l9-5z"/></svg><svg viewBox="0 0 16 12" class="i-pause"><path d="M4 1h3v10H4zM9 1h3v10H9z"/></svg></button><button type="button" class="pp-b" id="pp-next" aria-label="Next" title="Next (Down arrow)"><svg viewBox="0 0 16 12"><path d="M2 1v10l9-5zM12 1h2v10h-2z"/></svg></button><input type="range" id="pp-seek" min="0" max="1" step="0.001" value="0" aria-label="Position"><span class="pp-time" id="pp-time">0:00</span></div>
+        </div>
       </div>
-      <div class="spx-info">
-        <p class="spx-name"><b id="spx-title">Sound packs</b><span id="spx-maker"></span></p>
-        <p class="spx-desc" id="spx-desc"><noscript>The Sound Pack Explorer needs JavaScript; the packs are listed at <a href="packs/">/sndwave1993/packs/</a>.</noscript></p>
-        <p class="spx-facts" id="spx-facts"></p>
-        <p class="spx-acts"><button type="button" class="btn def" id="spx-play">Play the pack</button><span id="spx-links"></span><a class="btn" id="spx-open" href="packs/">Open in Media Player</a></p>
+      <div class="pp-side">
+        <div class="pp-tabs" role="group" aria-label="Show"><button type="button" id="pp-tp" aria-pressed="true">Presets <span id="pp-np"></span></button><button type="button" id="pp-ts" aria-pressed="false">Songs <span id="pp-ns"></span></button><button type="button" class="pp-fold" id="pp-fold" aria-expanded="true" aria-controls="pp-list">List</button></div>
+        <div class="pp-list" id="pp-list" role="listbox" tabindex="0" aria-label="Presets"></div>
+        <p class="pp-links" id="pp-links"><a href="packs/">Open full player</a></p>
       </div>
     </div>
-    <div class="mp-status"><span id="spx-status">Loading the sound packs&hellip;</span><span id="spx-count"></span></div>
   </div>
-  <div class="spx-dlg" id="spx-dlg" hidden>
-    <div class="win spx-dwin" role="dialog" aria-modal="true" aria-labelledby="spx-dtitle">
-      <div class="cap"><button type="button" class="box spx-close" aria-label="Close" title="Close (Esc)"></button><span class="t" id="spx-dtitle">SNDWAVE1993 Media Player</span></div>
-      <iframe id="spx-frame" title="SNDWAVE1993 Media Player" allow="autoplay" loading="lazy"></iframe>
-    </div>
-  </div>
-  <script src="carousel.js" defer></script>
+  <audio id="pp-audio" preload="none"></audio>
+  <script src="packplayer.js" defer></script>
   <a class="album" href="/citypop1993/">
     <span class="pxbox pximg"><img src="/citypop1993/art/cover.png?v=1993" width="320" height="320" data-px="320x320" loading="lazy" alt="CITYPOP1993: a city at night under a pink sky, performed on SNDWAVE1993"></span>
     <span><span class="kicker">Listen</span><b>CITYPOP1993</b>An album performed on SNDWAVE1993: a theme and eleven variations, about 41 minutes, every note played by its Sound Recorders. Its sounds are on disc 26, Rainy Loft Collection.</span>
