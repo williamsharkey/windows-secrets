@@ -140,8 +140,22 @@ one track at a time. For each track it:
 2. runs `BasiliskHost --test PLUGIN --tests offline --midi TRACK.mid --load-state STATE`;
 3. cuts the host's warmup and the plugin's reported latency off the output.
 
-The mix is the same. `host_song.py` has the details; PROGRESS notes in the songs folder record the comparison with
-render311.
+The mix is the same. `host_song.py` has the details.
+
+The comparison (`compare_engines.py`, Registration Rag, 2026-11-14) put the plugin build in `~/bs311/pbuild/win`
+(SNDWAVE2000.vst3 from 16:00) in BasiliskHost against render311 from main with the same machine:
+
+| Track | Lag | Residual after gain | Correlation |
+|---|---|---|---|
+| righthand | 0 samples | -13.6 dB | 0.978 |
+| snare | 0 samples | -14.7 dB | 0.983 |
+| whistle | 0 samples | -26.3 dB | 0.999 |
+
+- Every note starts on the same sample, and the level is within 2 %.
+- The residual is a steady per-note timbre difference: a snare hit differs by the same 26 % each time. That points to
+  the builds, not to timing. The plugin is an older build with its own core `.dll`; render311 is newer with the RC
+  `.so`.
+- A same-build check (render311 `--song` against standalone render311, by the 3.11 lane) gives byte-identical stems.
 
 ## Arranging aids
 
