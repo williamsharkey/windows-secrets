@@ -77,12 +77,26 @@ def winini(b):
     b = re.sub(rb'run=[^\r\n]*', rb'run=C:\\BS\\SYNTH.EXE', b, count=1)
     if b'bsp=' not in b.lower():   # .BSP presets open in SNDWAVE1993 (File Manager, the pack discs)
         b = re.sub(rb'(\[Extensions\]\r\n)', rb'\1bsp=C:\\BS\\SNDWAVE.EXE ^.bsp\r\n', b, count=1, flags=re.I)
+    if b'iconspacing=' not in b.lower():   # wider icon spacing: the SNDWAVE1993 group's long titles (CITYPOP1993, SNDWAVE1993 Help) do not run together
+        b = re.sub(rb'(\[Desktop\]\r\n)', rb'\1IconSpacing=100\r\n', b, count=1)
     if b'[sounds]' not in b:
         b = b.rstrip(b'\r\n\x1a') + (b'\r\n\r\n[sounds]\r\nSystemStart=none,Windows Start\r\nSystemExit=none,Windows Exit\r\n'
              b'SystemDefault=none,Default Beep\r\nSystemAsterisk=none,Asterisk\r\nSystemExclamation=none,Exclamation\r\n'
              b'SystemHand=none,Critical Stop\r\nSystemQuestion=none,Question\r\n')
     return b
 edit(os.path.join(drive, 'WINDOWS', 'WIN.INI'), winini)
+def group_icon_x(order):   # the minimized groups' icons, 100 apart as IconSpacing now is (their titles ran together at 57)
+    import struct
+    for k, name in enumerate(order):
+        p = os.path.join(drive, 'WINDOWS', name)
+        if not os.path.exists(p): continue
+        b = bytearray(open(p, 'rb').read())
+        if b[:4] != b'PMCC' or struct.unpack_from('<h', b, 18)[0] < 0: continue
+        old = struct.unpack_from('<H', b, 18)[0]; new = 31 + 100 * k
+        struct.pack_into('<H', b, 18, new)
+        struct.pack_into('<H', b, 4, (struct.unpack_from('<H', b, 4)[0] - (new - old)) & 0xFFFF)   # (the words still sum as before)
+        open(p, 'wb').write(bytes(b))
+group_icon_x(['ACCESSOR.GRP', 'NETWORK.GRP', 'GAMES.GRP', 'STARTUP.GRP', 'APPLICAT.GRP', 'AUDIOSOF.GRP'])
 
 # Program Manager rewrites a group file it has not seen before (install311.py writes a minimal one), and on the
 # read-only zip it cannot, so it stops with "write-protected". One boot with C: as a writable folder lets it write

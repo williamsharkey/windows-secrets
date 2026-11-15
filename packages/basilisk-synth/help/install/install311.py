@@ -59,7 +59,7 @@ def group_file(items=None):
         p_hdr = p; p += 12
         p_and = p; p += 128
         p_xor = p; p += 128
-        x, y = 21 + 75 * (k % 5), 0 + 70 * (k // 5)
+        x, y = 26 + 100 * (k % 4), 0 + 72 * (k // 4)   # (4 a row, 100 apart: long titles like CITYPOP1993 and SNDWAVE1993 Help do not touch)
         item = struct.pack('<hhHHHHHHHHHH', x, y, 0, 12, 128, 128, p_hdr, p_and, p_xor, p_name, p_cmd, p_icon)
         data = bytearray(item) + sz(name) + sz(cmd) + sz(icon)
         if (item_off + len(data)) % 2: data += b'\0'
@@ -70,7 +70,7 @@ def group_file(items=None):
     cb_group = hdr_len + len(body)
     tags = struct.pack('<HHH', 0x8000, 0xFFFF, 10) + b'PMCC' + struct.pack('<HHH', 0xFFFF, 0xFFFF, 0)
     head = b'PMCC' + struct.pack('<HHH', 0, cb_group, 1)          # checksum filled below; nCmdShow SW_SHOWNORMAL
-    head += struct.pack('<hhhh', 60, 60, 460, 260)                # rcNormal
+    head += struct.pack('<hhhh', 60, 60, 500, 270)                # rcNormal (four icons a row, two rows)
     head += struct.pack('<hh', -1, -1)                            # ptMin: Program Manager places the icon
     head += struct.pack('<HHHBBHH', name_off, 32, 32, 1, 1, 0, n_items)
     for o in offs: head += struct.pack('<H', o)

@@ -3392,8 +3392,23 @@ static void gp_slot(int i, int *x, int *y)   /* the table: two rows of six; the 
 static void gp_card(HDC dc, int i, int x, int y)
 {
     RECT r; char t[40]; int b; HFONT of;
-    if (gpDraw) gpDraw(dc, x, y, (gpRank[i] - 1) * 4 + gpSuit[i], gpSel[i] ? 2 : 0, RGB(0, 128, 0));
-    else { SetRect(&r, x, y, x + GPW, y + GPH); FillRect(dc, &r, GetStockObject(WHITE_BRUSH)); FrameRect(dc, &r, GetStockObject(BLACK_BRUSH)); }
+    SetTextColor(dc, RGB(0, 0, 0)); SetBkColor(dc, RGB(255, 255, 255));   /* (CARDS.DLL's black pips are monochrome: drawn in the DC's text colour, white after "The deck") */
+    if (gpDraw && gpDraw(dc, x, y, (gpRank[i] - 1) * 4 + gpSuit[i], 0, RGB(0, 128, 0))) {
+        /* selected: inverted, as CARDS.DLL's own highlight looks */
+        if (gpSel[i]) { SetRect(&r, x + 1, y + 1, x + GPW - 1, y + GPH - 1); InvertRect(dc, &r); }
+    } else {
+        /* no CARDS.DLL, or it could not draw (no GDI room for its bitmap): the corner by hand */
+        static const char *rk = "A23456789TJQK"; static HFONT sym; char c[3]; HFONT of2;
+        static int logged;
+        if (gpDraw && !logged) { logged = 1; logf_("genepool: cdtDraw failed (card %d)", (gpRank[i] - 1) * 4 + gpSuit[i]); }
+        SetRect(&r, x, y, x + GPW, y + GPH); FillRect(dc, &r, GetStockObject(gpSel[i] ? BLACK_BRUSH : WHITE_BRUSH)); FrameRect(dc, &r, GetStockObject(BLACK_BRUSH));
+        SetBkMode(dc, TRANSPARENT); SetTextColor(dc, gpSuit[i] == 1 || gpSuit[i] == 2 ? RGB(255, 0, 0) : gpSel[i] ? RGB(255, 255, 255) : RGB(0, 0, 0));
+        if (gpRank[i] == 10) lstrcpy(c, "10"); else { c[0] = rk[gpRank[i] - 1]; c[1] = 0; }
+        of2 = SelectObject(dc, gpFont); TextOut(dc, x + 4, y + 3, c, lstrlen(c));
+        if (!sym) sym = CreateFont(16, 0, 0, 0, FW_NORMAL, 0, 0, 0, SYMBOL_CHARSET, 0, 0, 0, VARIABLE_PITCH, "Symbol");
+        SelectObject(dc, sym); c[0] = (char)(0xA7 + (gpSuit[i] == 0 ? 0 : gpSuit[i] == 1 ? 1 : gpSuit[i] == 2 ? 2 : 3)); c[1] = 0;   /* clubs, diamonds, hearts, spades */
+        TextOut(dc, x + 4, y + 18, c, 1); SelectObject(dc, of2);
+    }
     SetRect(&r, x + 5, y + 50, x + GPW - 5, y + GPH - 6);   /* the label: name, generation, and the DNA's barcode */
     FillRect(dc, &r, GetStockObject(WHITE_BRUSH)); FrameRect(dc, &r, GetStockObject(GRAY_BRUSH));
     of = SelectObject(dc, gpFont); SetBkMode(dc, TRANSPARENT); SetTextColor(dc, RGB(0, 0, 0));
