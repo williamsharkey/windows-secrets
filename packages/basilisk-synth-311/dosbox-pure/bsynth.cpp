@@ -130,6 +130,10 @@ static struct {
 	   DAC only as far as the last boundary. Then a render does not depend on the wall clock. */
 	bool gate; std::deque<Bit16u> pend, rnew; Bit64u pub_dac;
 } bs;
+/* no video: while nobody watches (bsyn_host_video(0): a headless engine, or the plugin with its editor closed; or
+   BSYN_NOVIDEO in the environment) DOSBox Pure skips the frame: no scaler, no buffer. The emulation is unchanged. */
+static volatile bool bs_novideo = getenv("BSYN_NOVIDEO") != NULL;
+bool BSYN_NoVideo(void) { return bs_novideo; }
 bool BSYN_Gated(void) { std::lock_guard<std::mutex> l(bs.mtx); return bs.gate; }
 void BSYN_FrameBoundary(void)
 {
@@ -156,6 +160,7 @@ BSYN_API void bsyn_host_event(const Bit16u *w, int n, Bit32u id, Bit64u at)
 	if (bs.ptr_polled && n >= 3 && (w[0] >> 8) == 6) { bs.ptr_x = w[1]; bs.ptr_y = w[2]; bs.ptr_seq++; return; }
 	for (int i = 0; i < n; i++) (bs.gate ? bs.pend : bs.events).push_back(w[i]);
 }
+BSYN_API void bsyn_host_video(int on) { bs_novideo = !on; }
 BSYN_API void bsyn_host_gate(int on)
 {
 	std::lock_guard<std::mutex> l(bs.mtx);

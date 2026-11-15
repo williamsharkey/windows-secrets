@@ -30,6 +30,7 @@ struct bs_engine {
   void *lib;
   int btn;
   int insrc;                   /* the input source last given to the card (-1: none yet) */
+  int vidon;                   /* video last given to the card (-1: none yet) */
   unsigned char held[512];     /* keys the host holds down (the core checks, and releases keys nobody holds) */
   retro_keyboard_event_t kbcb;
 #ifdef _WIN32
@@ -51,6 +52,7 @@ struct bs_engine {
   void (*h_input)(uint64_t, const float *, int);
   void (*h_insrc)(int);
   void (*h_gate)(int);
+  void (*h_video)(int);
   int (*h_instate)(uint64_t *, uint32_t *, uint32_t *);
 };
 
@@ -168,7 +170,7 @@ bs_engine *bs_engine_new(bshm *S, const char *core, const char *conf, const char
   bs_engine *e = (bs_engine *)calloc(1, sizeof *e);
   char *slash;
   e->S = S;
-  e->insrc = -1;
+  e->insrc = -1; e->vidon = -1;
   snprintf(e->core, sizeof e->core, "%s", core);
   snprintf(e->conf, sizeof e->conf, "%s", conf);
   if (state) snprintf(e->state, sizeof e->state, "%s", state);
@@ -197,6 +199,7 @@ int bs_engine_run(bs_engine *e)
   GET(c_set_env, "retro_set_environment"); GET(c_set_video, "retro_set_video_refresh"); GET(c_set_audio1, "retro_set_audio_sample");
   GET(c_set_audio, "retro_set_audio_sample_batch"); GET(c_set_poll, "retro_set_input_poll"); GET(c_set_state, "retro_set_input_state");
   GET(h_event, "bsyn_host_event"); GET(h_reports, "bsyn_host_reports"); GET(h_dac, "bsyn_host_dac"); GET(h_read, "bsyn_host_read"); GET(h_stats, "bsyn_host_stats");
+  GET(h_video, "bsyn_host_video");   /* optional: no video frames while nobody watches */
   GET(h_gate, "bsyn_host_gate");   /* optional (older cores): offline, the host's traffic passes at frame boundaries */
   GET(h_input, "bsyn_host_input"); GET(h_insrc, "bsyn_host_insrc"); GET(h_instate, "bsyn_host_instate");
   if (!e->c_run || !e->h_event) { fail(e, "the core lacks the BSYN card"); return 4; }
@@ -230,6 +233,7 @@ int bs_engine_run(bs_engine *e)
     int k;
     S->engine_beat++;
     if (e->h_gate) e->h_gate(S->offline ? 1 : 0);   /* offline: the card passes what we give and take at frame boundaries */
+    if (e->h_video && (int)(S->vid_want != 0) != e->vidon) { e->vidon = S->vid_want != 0; e->h_video(e->vidon); }   /* the editor shows the screen: frames; else none */
     while (S->ev_r != S->ev_w) {           /* events in */
       bshm_ev *ev = &S->ev[S->ev_r % BSHM_EV];
       barrier();

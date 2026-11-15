@@ -1,5 +1,5 @@
 diff --git a/dosbox_pure_libretro.cpp b/dosbox_pure_libretro.cpp
-index ea24d45..c76be72 100644
+index ea24d45..94890d6 100644
 --- a/dosbox_pure_libretro.cpp
 +++ b/dosbox_pure_libretro.cpp
 @@ -989,7 +989,13 @@ static DOS_Drive* DBP_Mount(unsigned image_index = 0, bool unmount_existing = tr
@@ -17,7 +17,19 @@ index ea24d45..c76be72 100644
  		if ((boot && letter == 'C') || no_register_just_get_drive) return drive;
  	}
  	else if (!strcasecmp(ext, "IMG") || !strcasecmp(ext, "IMA") || !strcasecmp(ext, "VHD") || !strcasecmp(ext, "JRC"))
-@@ -3619,6 +3625,7 @@ void retro_run(void)
+@@ -1499,9 +1505,11 @@ Bit8u* GFX_GetPixels(Bitu& pitch)
+ 	return (Bit8u*)(buf.video + (buf.width * buf.pad_y + buf.pad_x));
+ }
+ 
++extern bool BSYN_NoVideo(void);
+ bool GFX_StartUpdate(Bit8u*& pixels, Bitu& pitch)
+ {
+ 	if (dbp_state == DBPSTATE_BOOT) return false;
++	if (BSYN_NoVideo()) { dbp_framecount += 1 + render.frameskip.max; return false; } // SNDWAVE2000: nobody watches (a headless engine, or no editor open): no scaling, no frame; the frame still counts (retro_run waits for it)
+ 	DBP_FPSCOUNT(dbp_fpscount_gfxstart)
+ 	Bit32u w = (Bit32u)render.src.width, h = (Bit32u)render.src.height, pad_x = 0, pad_y = 0, pad_offset = 0;
+ 	if (dbp_doublescan)
+@@ -3619,6 +3627,7 @@ void retro_run(void)
  
  	bool skip_emulate = (fpsboost > 1 && (((fpsboost_count++)%fpsboost)!=0)) || DBP_NeedFrameSkip(false);
  	DBP_ThreadControl(skip_emulate ? TCM_PAUSE_FRAME : TCM_FINISH_FRAME);
@@ -25,7 +37,7 @@ index ea24d45..c76be72 100644
  
  	Bit32u tpfActual = 0, tpfTarget = 0, tpfDraws = 0;
  	#ifdef DBP_ENABLE_WAITSTATS
-@@ -3663,6 +3670,11 @@ void retro_run(void)
+@@ -3663,6 +3672,11 @@ void retro_run(void)
  	if (dbp_opengl_draw && voodoo_ogl_mainthread()) { view_width *= voodoo_ogl_scale; view_height *= voodoo_ogl_scale; }
  
  	DBP_ThreadControl(skip_emulate ? TCM_RESUME_FRAME : TCM_NEXT_FRAME);
