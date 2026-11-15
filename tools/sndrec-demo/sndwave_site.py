@@ -26,10 +26,8 @@ REPO = os.path.dirname(os.path.dirname(HERE))
 LIB = os.path.join(REPO, 'packages', 'basilisk-synth', 'library')
 ALIAS = {'electromech': 'electromech-heritage', 'heritage': 'w3x-heritage', 'instruments-archive': 'studio-archive'}
 PRODUCT = 'SNDWAVE2000'
-# known issues in the current release, shown as a note on the preset (the release notes carry the same lines)
-MINES = 'Seven Kit Manager 98 kits that use the step sequencer stay silent until the Mines tab has been opened once.'
-KNOWN = {'kit-manager-' + n: MINES for n in ('shuffle-basement-kit', 'skip-shuffle-kit', 'dusty-crate-kit', 'bedroom-tape-kit',
-                                            'slow-dust-kit', 'swing-pad-kit', 'battle-circle-kit')}
+# known issues in the current release, shown as a note on the preset: slug -> text (none in 1.3.1)
+KNOWN = {}
 
 
 def recipes(cli, dnas):
@@ -198,7 +196,7 @@ def main():
                 q['sec'] = mf.get('seconds')
                 if mf.get('flags'): q['fl'] = mf['flags']
                 if mf.get('ok') is False: q['bad'] = 1
-            if x['slug'] in KNOWN: q['fl'] = q.get('fl', []) + ['1.3.0: ' + KNOWN[x['slug']]]
+            if x['slug'] in KNOWN: q['fl'] = q.get('fl', []) + [KNOWN[x['slug']]]
             if mf: pass
             elif x['dna'] in picks and picks[x['dna']].get('file'):
                 q['a'] = picks[x['dna']]['file']; q['sec'] = picks[x['dna']].get('sec')

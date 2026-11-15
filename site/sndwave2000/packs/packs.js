@@ -506,8 +506,7 @@
       (f.hlp ? '<a class="btn" href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help file (' + esc(f.hlp.name) + ', ' + f.hlp.kb + ' KB)</a>' : '') +
       (f.readme ? '<a class="btn" href="' + p.id + '/' + esc(f.readme.name) + '" target="_blank" rel="noopener">README.TXT</a>' : '') +
       (f.iso ? '<a class="btn" href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image (' + esc(f.iso.name) + ', ' + (f.iso.kb >= 1024 ? (f.iso.kb / 1024).toFixed(1) + ' MB' : f.iso.kb + ' KB') + ')</a>' : '') + '</p>' +
-      // 1.4 update: the Library tab works again; say 'on drive P: (the Library tab)' and drop the known issues on the home page
-      (f.iso ? '<p class="note">The disc is already in SNDWAVE2000 1.3.0, on drive P:; its presets are in the preset list. The image is for another machine, or to keep.</p>' : '');
+      (f.iso ? '<p class="note">The disc is already in SNDWAVE2000 (the Library tab, drive P:). The image is for another machine, or to keep.</p>' : '');
     if (p.credits && p.credits.length) t += '<div class="credits"><p class="kicker">Sound credits</p><ul>' + p.credits.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul></div>';
     t += '<div class="credits bcred" id="bcred"></div>';
     if (p.note && p.note.length) t += '<blockquote class="mnote"><p class="kicker">From the maker</p>' + p.note.map(function (s) { return '<p>' + esc(s) + '</p>'; }).join('') + '</blockquote>';
