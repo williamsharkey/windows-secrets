@@ -107,6 +107,11 @@ struct Seq {
     int len = 0;                          // xl<n> steps used (0: board width)
     int bpm = 120; bool freeRun = false;  // xb<bpm>, xf: run on bpm when the host transport stops
     bool latch = false;                   // xh
+    // the step pattern (1.5: the Steps tab, a 303/808-style sequencer drawn like Minesweeper), one digit per step:
+    std::string mel;                      // xc: 0 rest, 1-8 scale degree, 9 tie (the note before it holds on)
+    std::string mod;                      // xu: 0 none, 1 accent, 2 octave up, 3 octave down, 4 accent + up, 5 accent + down
+    std::vector<std::string> drums;       // xe (repeated): a kit pad row each, ascending pad notes: 0 off, 1 hit, 2 accent
+    bool hasPattern() const { return !mel.empty() || !drums.empty(); }
 };
 // v3 macro parameters (section 2.1): mK L P lo,hi with P one of these letters
 //   W start, E end, Y length (1/1000); P grain position, I spray (1/1000); X grain size (ms); U density (/s);

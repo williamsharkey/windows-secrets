@@ -48,7 +48,8 @@ typedef struct {
      (a host posting clicks, a quick tap) still reach Windows as a click, at its own place */
   volatile uint32_t click_w;
   volatile int32_t click_x[4], click_y[4];
-  uint32_t reserved[16];
+  volatile uint32_t click_b[4]; /* host: the press's button, 1 left, 2 right (0, as a host before 1.5 leaves it: left) */
+  uint32_t reserved[12];
   bshm_ev ev[BSHM_EV];
   volatile uint16_t rep[BSHM_REP];
   float ring[BSHM_RING * 2];

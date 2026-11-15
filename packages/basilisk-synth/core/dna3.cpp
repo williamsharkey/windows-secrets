@@ -260,7 +260,12 @@ static void globalToken(const std::string &s, size_t &p, Globals3 &g)
             case 'p': x.poly = clampi(readInt(s, p, 4), 1, 16); break;
             case 'a': x.autodig = clampi(readInt(s, p, 3), 0, 30); break;
             case 'o': x.octaves = clampi(readInt(s, p, 2), 1, 4); break;
-            case 'l': x.len = clampi(readInt(s, p, 0), 0, 30); break;
+            case 'l': x.len = clampi(readInt(s, p, 0), 0, 32); break;
+            case 'c': case 'u': case 'e': {   // a digit per step (1.5 Steps)
+                size_t q = p; while (q < s.size() && isdigit((unsigned char)s[q]) && q - p < 32) q++;
+                const std::string run = s.substr(p, q - p); p = q;
+                if (k == 'c') x.mel = run; else if (k == 'u') x.mod = run; else if (x.drums.size() < 8) x.drums.push_back(run);
+                break; }
             case 'b': x.bpm = clampi(readInt(s, p, 120), 20, 300); break;
             case 'f': x.freeRun = true; break;
             case 'h': x.latch = true; break;
@@ -503,6 +508,9 @@ std::string Globals3::tokens() const
         if (x.autodig != d.autodig) t += "a" + std::to_string(x.autodig);
         if (x.octaves != d.octaves) t += "o" + std::to_string(x.octaves);
         if (x.len) t += "l" + std::to_string(x.len);
+        if (!x.mel.empty()) t += "c" + x.mel;
+        if (x.mod.find_first_not_of('0') != std::string::npos) t += "u" + x.mod;
+        for (auto &r : x.drums) t += "e" + r;
         if (x.bpm != d.bpm) t += "b" + std::to_string(x.bpm);
         if (x.freeRun) t += "f";
         if (x.latch) t += "h";

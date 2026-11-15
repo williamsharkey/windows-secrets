@@ -104,7 +104,7 @@ static void scales_values(void);
 #define ID_RECPG 1480     /* + 0..11: the Rec page's controls */
 #define ID_LIBPG 1500     /* + 0..7: the Library page's */
 #define ID_SONG 1520      /* + 0..63: the Song page's */
-static const char *tabNames[NTAB] = {"Main", "Voices", "Playback", "Scales", "Rec", "Mines", "Library", "Song"};
+static const char *tabNames[NTAB] = {"Main", "Voices", "Playback", "Scales", "Rec", "Steps", "Library", "Song"};
 static const char *tabIds[NTAB] = {"main", "voices", "play", "scales", "rec", "seq", "lib", "song"};
 static BOOL hostSongs;   /* the host renders songs (`hostcaps song`): the Song tab shows */
 static HWND hTab[NTAB], pgWin[64], pgSb[24], pgVal[24], pgBtn[24];
@@ -2145,7 +2145,6 @@ static void page_open(int t)
     DWORD t0 = timeGetTime();
     if (t < 0 || t >= NTAB) return;
     if (curTab == 4 && t != 4) rec_leave();   /* the Recorder goes back to the header */
-    if (curTab == 5 && t != 5) mine_hide();   /* the game goes out of sight (it keeps the pattern) */
     if (t == 4) rec_open_whole(PANEL + 30);    /* or comes down to the page, whole */
     SendMessage(hMain, WM_SETREDRAW, FALSE, 0L);   /* one repaint at the end, not one per window */
     page_close();
@@ -2166,7 +2165,7 @@ static void page_open(int t)
     }
 
     if (t == 4) rec_page(y0);   /* the Rec page (the Recorder came down before: see above) */
-    else if (t == 5) mine_page(y0);   /* the mine-grid sequencer */
+    else if (t == 5) mine_page(y0);   /* the step sequencer (the Steps tab) */
     else if (t == 6) lib_page(y0);    /* the pack discs */
     else if (t == 7) song_page(y0);   /* the song: tracks, mix, render */
     else if (t == 3) {   /* the Scales page */
@@ -3681,102 +3680,267 @@ static void cp_open(void)
     ShowWindow(hCity, SW_SHOW); UpdateWindow(hCity);
     say("citypop list");
 }
-/* ================================================================ the mine-grid sequencer (PRESET-ENGINE-2 9)
-   The real Minesweeper (WINMINE.EXE) holds the pattern. It runs as itself, an owned window over the strips while
-   the Mines tab is open; its board is read from its own data segment (Win16: the instance handle is the selector;
-   T8: the board at DGROUP:0x440, rows of 32 with a border of 0x10, width 0x3C6, height 0x3C8) 20 times a second,
-   and `grid <w> <h> <state> <cells>` goes to the host when it changes. The host plays it on its transport. After New
-   Game (the smiley, F2, or the host's `newgame`) we dig `xa` safe cells, by posting the clicks a player makes. */
-static HWND hMine, hMinePos; static DWORD mineRepaint;
-#define MINEX 470
-#define MINEY 300
-static int mine_autodig(void)   /* xa<n> in the DNA's globals (3) */
+/* ================================================================ the Steps tab: a step sequencer (1.5)
+   Drawn as Minesweeper is drawn (the grey board, raised and pressed cells, the red LED counters, the face), but a
+   303/808-style sequencer, not the game. The pattern is the DNA's (x gene: plugin/V3Seq.h); this page shows it and
+   sends edits (`seq ...`); the host answers with the pattern (`seqpat`) and the playhead (`step <col>`).
+   Melody (a sound): the Note row holds a scale degree per step (1-8; the bomb ties the note before it on; blank is a
+   rest), the Accent row a flag, the Octave row an arrow up or down. Drums (a kit): a row per pad, a hit or a flag
+   (an accented hit). Left click: the next value; right click: the one before; the number keys type a degree. */
+#define STC 16          /* a cell */
+#define STL 52          /* the row labels */
+#define STX 12
+#define STY 52
+static char __far stRow[8][33]; static char __far stLabel[8][8];
+static int stRows, stLen = 16, stDrums, stCol = -1, stOn, stFree, stSwing, stGate = 80, stSel = -1; static char stRate[8] = "16";
+static DWORD stStepAt;
+static HWND hSteps, stRateCb, stSwingSb, stGateSb, stSwingTx, stGateTx;
+static void mine_poll(void)   /* (the playhead's face: back to a smile when the steps stop coming) */
 {
-    const char *g = strchr(dnaText, ';'), *p;
-    if (g) for (p = g; *p; p++) if (p[0] == 'x' && p[1] == 'a' && p[2] >= '0' && p[2] <= '9') return atoi(p + 2);
-    return 3;
+    static int was;
+    int now = hSteps && stStepAt && timeGetTime() - stStepAt < 600;
+    if (now != was) { was = now; if (!now) stCol = -1; if (hSteps) InvalidateRect(hSteps, NULL, FALSE); }   /* (stopped: no playhead) */
 }
-static void mine_show(void)
+static void st_bevel(HDC dc, int x0, int y0, int x1, int y1, int raised, int w)
 {
-    LONG st;
-    RECT was; BOOL first = !hMine;
-    if (!hMine) {
-        hMine = launch("WINMINE.EXE", SW_SHOWNOACTIVATE);
-        if (!hMine) return;
-        st = GetWindowLong(hMine, GWL_STYLE);
-        SetWindowWord(hMine, GWW_HWNDPARENT, (WORD)hMain);   /* owned: above BASILISK 16 */
-        (void)st;
+    HPEN wp = GetStockObject(WHITE_PEN), gp = CreatePen(PS_SOLID, 1, RGB(128, 128, 128)), op; int k;
+    for (k = 0; k < w; k++) {
+        op = SelectObject(dc, raised ? wp : gp);
+        MoveTo(dc, x0 + k, y1 - 1 - k); LineTo(dc, x0 + k, y0 + k); LineTo(dc, x1 - 1 - k, y0 + k);
+        SelectObject(dc, raised ? gp : wp);
+        MoveTo(dc, x1 - 1 - k, y0 + k); LineTo(dc, x1 - 1 - k, y1 - 1 - k); LineTo(dc, x0 + k, y1 - 1 - k);
+        SelectObject(dc, op);
     }
-    GetWindowRect(hMine, &was);
-    {   POINT o; o.x = MINEX; o.y = MINEY; ClientToScreen(hMain, &o);
-        SetWindowPos(hMine, HWND_TOP, o.x, o.y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW); }
-    if (first) {   /* where it opened (Windows' default place): painted again now, the strips under it included */
-        int r; POINT a, b2; a.x = was.left; a.y = was.top; b2.x = was.right; b2.y = was.bottom;
-        ScreenToClient(hMain, &a); ScreenToClient(hMain, &b2); SetRect(&was, a.x, a.y, b2.x, b2.y);
-        RedrawWindow(hMain, &was, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
-        for (r = 0; r < NR; r++) if (rw[r]) paint_now(rw[r]);
-        if (hEnvRec) paint_now(hEnvRec); if (hRecRec) paint_now(hRecRec);
-        mineRepaint = timeGetTime() | 1;   /* and once more when it has settled (it gives back saved screen bits) */
+    DeleteObject(gp);
+}
+static void st_led(HDC dc, int x, int y, int v)   /* three red seven-segment digits, as Minesweeper's counters */
+{
+    static const BYTE seg[10] = {0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F};
+    RECT r; HBRUSH red = CreateSolidBrush(RGB(255, 0, 0)), dim = CreateSolidBrush(RGB(128, 0, 0)); int d, k, dig[3];
+    SetRect(&r, x, y, x + 41, y + 25); FillRect(dc, &r, GetStockObject(BLACK_BRUSH)); st_bevel(dc, x - 1, y - 1, x + 42, y + 26, 0, 1);
+    if (v < 0) v = 0; if (v > 999) v = 999;
+    dig[0] = v / 100; dig[1] = v / 10 % 10; dig[2] = v % 10;
+    for (d = 0; d < 3; d++) {
+        int ox = x + 2 + d * 13, oy = y + 2; BYTE m = seg[dig[d]];
+        static const int sx[7][4] = {{2,0,9,2},{9,2,11,10},{9,11,11,19},{2,19,9,21},{0,11,2,19},{0,2,2,10},{2,10,9,12}};
+        for (k = 0; k < 7; k++) { SetRect(&r, ox + sx[k][0], oy + sx[k][1], ox + sx[k][2], oy + sx[k][3]); FillRect(dc, &r, (m >> k) & 1 ? red : dim); }
+    }
+    DeleteObject(red); DeleteObject(dim);
+}
+static void st_face(HDC dc, int x, int y, int playing)
+{
+    HBRUSH yel = CreateSolidBrush(RGB(255, 255, 0)), ob; HPEN op; RECT r;
+    SetRect(&r, x, y, x + 26, y + 26); FillRect(dc, &r, GetStockObject(LTGRAY_BRUSH)); st_bevel(dc, x, y, x + 26, y + 26, 1, 2);
+    ob = SelectObject(dc, yel); op = SelectObject(dc, GetStockObject(BLACK_PEN));
+    Ellipse(dc, x + 5, y + 5, x + 22, y + 22);
+    SelectObject(dc, GetStockObject(BLACK_BRUSH));
+    if (playing) { Rectangle(dc, x + 8, y + 10, x + 13, y + 13); Rectangle(dc, x + 14, y + 10, x + 19, y + 13); MoveTo(dc, x + 12, y + 11); LineTo(dc, x + 15, y + 11);   /* sunglasses */
+                   Ellipse(dc, x + 11, y + 15, x + 16, y + 20); }
+    else { Ellipse(dc, x + 9, y + 10, x + 11, y + 12); Ellipse(dc, x + 16, y + 10, x + 18, y + 12); Arc(dc, x + 9, y + 11, x + 18, y + 19, x + 9, y + 16, x + 18, y + 16); }
+    SelectObject(dc, ob); SelectObject(dc, op); DeleteObject(yel);
+}
+static void st_cell(HDC dc, int r, int c)
+{
+    static const COLORREF num[9] = {0, RGB(0, 0, 255), RGB(0, 128, 0), RGB(255, 0, 0), RGB(0, 0, 128), RGB(128, 0, 0), RGB(0, 128, 128), RGB(0, 0, 0), RGB(128, 128, 128)};
+    int x = STX + STL + c * STC, y = STY + 4 + r * STC; RECT q; char v = stRow[r][c], t[2];
+    int on = v != '0' && v != 0, play = c == stCol;
+    SetRect(&q, x, y, x + STC, y + STC);
+    FillRect(dc, &q, GetStockObject(LTGRAY_BRUSH));
+    if (c >= stLen) { FillRect(dc, &q, GetStockObject(GRAY_BRUSH)); return; }   /* past the pattern's length */
+    if (!on && !play) { st_bevel(dc, x, y, x + STC, y + STC, 1, 2); }
+    else { HPEN gp = CreatePen(PS_SOLID, 1, RGB(128, 128, 128)), op = SelectObject(dc, gp); MoveTo(dc, x, y + STC - 1); LineTo(dc, x, y); LineTo(dc, x + STC, y); SelectObject(dc, op); DeleteObject(gp); }
+    if (play) { RECT h; SetRect(&h, x + 1, y + 1, x + STC, y + 3); FillRect(dc, &h, GetStockObject(BLACK_BRUSH)); }   /* the playhead */
+    if (!on) return;
+    if (stDrums || r == 1) {   /* a hit (a mine), or a flag (an accent) */
+        if (v == '2' || (!stDrums && r == 1)) {
+            HBRUSH red = CreateSolidBrush(RGB(255, 0, 0)); POINT tri[3]; HBRUSH ob;
+            tri[0].x = x + 9; tri[0].y = y + 3; tri[1].x = x + 9; tri[1].y = y + 9; tri[2].x = x + 4; tri[2].y = y + 6;
+            ob = SelectObject(dc, red); SelectObject(dc, GetStockObject(NULL_PEN)); Polygon(dc, tri, 3); SelectObject(dc, ob); DeleteObject(red);
+            SelectObject(dc, GetStockObject(BLACK_PEN)); MoveTo(dc, x + 9, y + 3); LineTo(dc, x + 9, y + 12); MoveTo(dc, x + 5, y + 12); LineTo(dc, x + 13, y + 12);
+            if (stDrums) { HBRUSH ob2 = SelectObject(dc, GetStockObject(BLACK_BRUSH)); Ellipse(dc, x + 10, y + 9, x + 14, y + 13); SelectObject(dc, ob2); }
+        } else { HBRUSH ob = SelectObject(dc, GetStockObject(BLACK_BRUSH)); Ellipse(dc, x + 4, y + 4, x + 12, y + 12); SelectObject(dc, ob);
+                 MoveTo(dc, x + 8, y + 2); LineTo(dc, x + 8, y + 14); MoveTo(dc, x + 2, y + 8); LineTo(dc, x + 14, y + 8); }
+        return;
+    }
+    if (r == 2) {   /* the octave: an arrow up or down */
+        POINT tri[3]; HBRUSH ob = SelectObject(dc, GetStockObject(BLACK_BRUSH));
+        if (v == '1') { tri[0].x = x + 8; tri[0].y = y + 3; tri[1].x = x + 3; tri[1].y = y + 11; tri[2].x = x + 13; tri[2].y = y + 11; }
+        else { tri[0].x = x + 8; tri[0].y = y + 12; tri[1].x = x + 3; tri[1].y = y + 4; tri[2].x = x + 13; tri[2].y = y + 4; }
+        Polygon(dc, tri, 3); SelectObject(dc, ob); return;
+    }
+    if (v == '9') {   /* the bomb: the note before it holds on */
+        HBRUSH ob = SelectObject(dc, GetStockObject(BLACK_BRUSH));
+        Ellipse(dc, x + 3, y + 3, x + 13, y + 13);
+        MoveTo(dc, x + 8, y + 1); LineTo(dc, x + 8, y + 15); MoveTo(dc, x + 1, y + 8); LineTo(dc, x + 15, y + 8);
+        SelectObject(dc, GetStockObject(WHITE_BRUSH)); SelectObject(dc, GetStockObject(NULL_PEN)); Rectangle(dc, x + 6, y + 6, x + 8, y + 8); SelectObject(dc, GetStockObject(BLACK_PEN));
+        SelectObject(dc, ob); return;
+    }
+    t[0] = v; t[1] = 0;
+    SetTextColor(dc, num[v - '0']); SetBkMode(dc, TRANSPARENT);
+    { RECT tr; SetRect(&tr, x, y, x + STC, y + STC); DrawText(dc, t, 1, &tr, DT_CENTER | DT_VCENTER | DT_SINGLELINE); }
+}
+static HFONT st_font(void)   /* the numbers' bold face */
+{
+    static HFONT f; if (!f) f = CreateFont(13, 0, 0, 0, FW_BOLD, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Arial");
+    return f;
+}
+static void st_paint(HWND h)
+{
+    PAINTSTRUCT ps; HDC dc = BeginPaint(h, &ps); RECT r; int rr, c, bw = STL + 32 * STC; HFONT of;
+    GetClientRect(h, &r);
+    st_bevel(dc, 0, 0, r.right, r.bottom, 1, 3);
+    st_bevel(dc, STX - 3, 8, STX + bw + 3, STY - 4, 0, 2);   /* the counters' panel */
+    st_led(dc, STX + 4, 12, stCol >= 0 ? stCol + 1 : 0);
+    st_led(dc, STX + bw - 46, 12, stLen);
+    st_face(dc, STX + bw / 2 - 13, 11, stFree || (stStepAt && timeGetTime() - stStepAt < 600));
+    st_bevel(dc, STX - 3, STY + 1, STX + bw + 3, STY + 7 + stRows * STC, 0, 3);   /* the board */
+    of = SelectObject(dc, st_font()); SetBkMode(dc, TRANSPARENT);
+    for (rr = 0; rr < stRows; rr++) {
+        RECT lr; SetRect(&lr, STX, STY + 4 + rr * STC, STX + STL - 4, STY + 4 + (rr + 1) * STC);
+        FillRect(dc, &lr, GetStockObject(LTGRAY_BRUSH)); SetTextColor(dc, RGB(0, 0, 0));
+        DrawText(dc, stLabel[rr], -1, &lr, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
+        for (c = 0; c < 32; c++) st_cell(dc, rr, c);
+    }
+    SelectObject(dc, of);
+    EndPaint(h, &ps);
+}
+static void st_values(void)
+{
+    char t[16]; int i;
+    if (!hSteps) return;
+    { static const char *rv[4] = {"8", "16", "32", "16t"}; for (i = 0; i < 4; i++) if (!lstrcmp(rv[i], stRate)) SendMessage(stRateCb, CB_SETCURSEL, i, 0L); }
+    SetScrollPos(stSwingSb, SB_CTL, stSwing, TRUE); wsprintf(t, "%d%%", stSwing); SetWindowText(stSwingTx, t);
+    SetScrollPos(stGateSb, SB_CTL, stGate, TRUE); wsprintf(t, "%d%%", stGate); SetWindowText(stGateTx, t);
+    InvalidateRect(hSteps, NULL, FALSE);
+}
+static void seq_line(char *rest)   /* seqpat <m|d> <len> <rate> <swing> <gate> <on[f]> <rows> <row[:label]> ... */
+{
+    char *p = rest, *tok; int i, n;
+    tok = strtok(p, " "); if (!tok) return; stDrums = tok[0] == 'd';
+    tok = strtok(NULL, " "); if (tok) stLen = atoi(tok);
+    tok = strtok(NULL, " "); if (tok) lstrcpyn(stRate, tok, sizeof stRate);
+    tok = strtok(NULL, " "); if (tok) stSwing = atoi(tok);
+    tok = strtok(NULL, " "); if (tok) stGate = atoi(tok);
+    tok = strtok(NULL, " "); if (tok) { stOn = tok[0] == '1'; stFree = strchr(tok, 'f') != NULL; }
+    tok = strtok(NULL, " "); n = tok ? atoi(tok) : 0; if (n > 8) n = 8;
+    for (i = 0; i < n; i++) {
+        char *c;
+        tok = strtok(NULL, " "); if (!tok) break;
+        c = strchr(tok, ':'); if (c) { *c = 0; lstrcpyn(stLabel[i], c + 1, sizeof stLabel[0]); }
+        lstrcpyn(stRow[i], tok, sizeof stRow[0]);
+    }
+    stRows = i;
+    if (!stDrums && stRows >= 2) {   /* the melody's second digit row holds accent and octave: two rows on the board */
+        char mod[33]; int c; lstrcpyn(mod, stRow[1], sizeof mod);
+        for (c = 0; c < 32; c++) {
+            char m = mod[c] ? mod[c] : '0';
+            stRow[1][c] = (m == '1' || m == '4' || m == '5') ? '1' : '0';
+            stRow[2][c] = (m == '2' || m == '4') ? '1' : (m == '3' || m == '5') ? '2' : '0';
+        }
+        stRow[1][32] = stRow[2][32] = 0;
+        lstrcpy(stLabel[0], "Note"); lstrcpy(stLabel[1], "Accent"); lstrcpy(stLabel[2], "Octave"); stRows = 3;
+    }
+    st_values();
+}
+static void mine_step(int col)   /* the playhead (the host's `step`) */
+{
+    int was = stCol;
+    stCol = col; stStepAt = timeGetTime() | 1;
+    if (hSteps && was != col) {
+        HDC dc = GetDC(hSteps); int r; HFONT of = SelectObject(dc, st_font());
+        for (r = 0; r < stRows; r++) { if (was >= 0) st_cell(dc, r, was); if (col >= 0) st_cell(dc, r, col); }
+        st_led(dc, STX + 4, 12, col + 1);
+        st_face(dc, STX + (STL + 32 * STC) / 2 - 13, 11, 1);
+        SelectObject(dc, of); ReleaseDC(hSteps, dc);
     }
 }
-static void mine_hide(void) { if (hMine) ShowWindow(hMine, SW_HIDE); }
+long FAR PASCAL __export StepsProc(HWND h, UINT m, WPARAM w, LPARAM l)
+{
+    switch (m) {
+    case WM_PAINT: st_paint(h); return 0;
+    case WM_LBUTTONDOWN: case WM_RBUTTONDOWN: {
+        int x = LOWORD(l), y = HIWORD(l), bw = STL + 32 * STC, fx = STX + bw / 2 - 13, c, r;
+        SetFocus(h);
+        if (x >= fx && x < fx + 26 && y >= 11 && y < 37) { say("seq run"); return 0; }   /* the face: run and stop without the host's transport */
+        c = (x - STX - STL) / STC; r = (y - STY - 4) / STC;
+        if (x < STX + STL || c < 0 || c >= 32 || y < STY + 4 || r < 0 || r >= stRows) return 0;
+        if (c >= stLen) { say("seq len %d", c + 1); return 0; }   /* a cell past the end: the pattern grows to it */
+        if (!stDrums && r == 0) stSel = c;
+        say("seq cell %d %d %d", r, c, m == WM_LBUTTONDOWN ? ((w & MK_SHIFT) ? 0 : 1) : -1);
+        return 0; }
+    case WM_KEYDOWN:
+        if (stSel >= 0 && !stDrums && ((w >= '0' && w <= '9') || (w >= VK_NUMPAD0 && w <= VK_NUMPAD9))) {
+            int d = w >= VK_NUMPAD0 ? w - VK_NUMPAD0 : w - '0';
+            say("seq key %d %d", stSel, d);
+            if (stSel + 1 < stLen) stSel++;   /* the next step: type a line of degrees */
+            return 0;
+        }
+        if (w == VK_DELETE || w == VK_SPACE) { if (stSel >= 0 && !stDrums) { say("seq key %d 0", stSel); if (stSel + 1 < stLen) stSel++; } return 0; }
+        break;
+    case WM_COMMAND: {
+        int id = (int)w;
+        if (id == 1 && HIWORD(l) == BN_CLICKED) say("seq len %d", stLen > 1 ? stLen - 1 : 1);
+        else if (id == 2 && HIWORD(l) == BN_CLICKED) say("seq len %d", stLen < 32 ? stLen + 1 : 32);
+        else if (id == 3 && HIWORD(l) == CBN_SELCHANGE) { static const char *rv[4] = {"8", "16", "32", "16t"}; int i = (int)SendMessage(stRateCb, CB_GETCURSEL, 0, 0L); if (i >= 0) say("seq rate %s", (LPSTR)rv[i]); }
+        else if (id == 4 && HIWORD(l) == BN_CLICKED) say("seq clear");
+        else if (id == 5 && HIWORD(l) == BN_CLICKED) say("seq random");
+        else if (id == 6 && HIWORD(l) == BN_CLICKED) say("seq off");
+        return 0; }
+    case WM_HSCROLL: {
+        HWND sb = (HWND)HIWORD(l); int lo, hi, v; char t[16];
+        if (sb != stSwingSb && sb != stGateSb) return 0;
+        GetScrollRange(sb, SB_CTL, &lo, &hi); v = GetScrollPos(sb, SB_CTL);
+        switch (w) { case SB_LINELEFT: v--; break; case SB_LINERIGHT: v++; break; case SB_PAGELEFT: v -= 10; break; case SB_PAGERIGHT: v += 10; break;
+                     case SB_THUMBTRACK: case SB_THUMBPOSITION: v = LOWORD(l); break; }
+        if (v < lo) v = lo; if (v > hi) v = hi;
+        SetScrollPos(sb, SB_CTL, v, TRUE); wsprintf(t, "%d%%", v); SetWindowText(sb == stSwingSb ? stSwingTx : stGateTx, t);
+        if (w == SB_ENDSCROLL || w == SB_THUMBPOSITION) say(sb == stSwingSb ? "seq swing %d" : "seq gate %d", v);
+        return 0; }
+    case WM_CTLCOLOR:
+        if (HIWORD(l) == CTLCOLOR_STATIC) { static HBRUSH face; if (!face) face = CreateSolidBrush(GetSysColor(COLOR_BTNFACE)); SetBkColor((HDC)w, GetSysColor(COLOR_BTNFACE)); return (LRESULT)(WORD)face; }
+        break;
+    case WM_DESTROY: hSteps = stRateCb = stSwingSb = stGateSb = stSwingTx = stGateTx = NULL; return 0;
+    }
+    return DefWindowProc(h, m, w, l);
+}
+static void mine_hide(void) {}
+static HWND stmk(const char *cls, const char *t, DWORD st, int x, int y, int w, int h, int id)
+{
+    HWND c = CreateWindow(cls, t, WS_CHILD | WS_VISIBLE | st, x, y, w, h, hSteps, (HMENU)id, hInst, NULL);
+    SendMessage(c, WM_SETFONT, (WPARAM)panelFont, 0L); return c;
+}
 static void mine_page(int y0)
 {
-    int w;
-    mine_show();
-    page_add(mklbl("Rows are notes of the scale, columns are steps. Numbers play (1 soft .. 8 loud), flags play loud,", 8, y0 + 4, 16, &w));
-    page_add(mklbl("? holds the note on its left. Click the smiley (or F2) for a new pattern: a few safe cells are dug for you.", 8, y0 + 22, 16, &w));
-    page_add(mklbl("Lose, and the mines' columns jump an octave. Hold a chord: its lowest note is the root.", 8, y0 + 40, 16, &w));
-    if (!hMine) page_add(mk("STATIC", "WINMINE.EXE did not start.", WS_VISIBLE, 8, y0 + 60, 300, 16, -1));
-    hMinePos = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, 8, y0 + 62, 400, 14, -1); page_add(hMinePos);   /* the playhead */
-    SetScrollRange(hMinePos, SB_CTL, 0, 29, FALSE);
-}
-static void mine_step(int col) { if (hMinePos && curTab == 5) SetScrollPos(hMinePos, SB_CTL, col, TRUE); }
-static void mine_dig(int n)   /* n safe cells, clicked as a player clicks */
-{
-    BYTE FAR *ds; int w, h, x, y, k, tries;
-    if (!hMine || n <= 0) return;
-    ds = (BYTE FAR *)MK_FP((WORD)GetWindowWord(hMine, GWW_HINSTANCE), 0);
-    w = *(int FAR *)(ds + 0x3C6); h = *(int FAR *)(ds + 0x3C8);
-    if (w < 1 || w > 30 || h < 1 || h > 24) return;
-    for (k = 0, tries = 0; k < n && tries < 400; tries++) {
-        x = 1 + (int)((timeGetTime() * 7 + tries * 13) % (DWORD)w); y = 1 + (int)((timeGetTime() * 3 + tries * 29) % (DWORD)h);
-        if (ds[0x440 + y * 32 + x] != 0x0F) continue;   /* hidden, no mine */
-        PostMessage(hMine, WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(12 + 16 * (x - 1) + 8, 55 + 16 * (y - 1) + 8));
-        PostMessage(hMine, WM_LBUTTONUP, 0, MAKELPARAM(12 + 16 * (x - 1) + 8, 55 + 16 * (y - 1) + 8));
-        k++;
+    static BOOL reg; int x, w, bw = STL + 32 * STC, wh, i; char p[32]; HWND b;
+    static const char *rn[4] = {"1/8", "1/16", "1/32", "1/16 triplets"};
+    if (!reg) {
+        WNDCLASS wc; memset(&wc, 0, sizeof wc); wc.lpfnWndProc = StepsProc; wc.hInstance = hInst; wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+        wc.hbrBackground = GetStockObject(LTGRAY_BRUSH); wc.lpszClassName = "SndSteps"; RegisterClass(&wc); reg = TRUE;
     }
-}
-static void mine_poll(void)
-{
-    static DWORD last; static char prev[760]; static char buf[760]; static int wasNew;
-    BYTE FAR *ds; int w, h, x, y, n = 0, hidden = 0, open = 0, lost = 0, blankHidden = 0, si; char *o;
-    if (!hMine || timeGetTime() - last < 50) return;
-    last = timeGetTime();
-    if (mineRepaint && last - mineRepaint > 300) { mineRepaint = 0; RedrawWindow(hMain, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN); }
-    if (!IsWindow(hMine)) { hMine = NULL; return; }
-    ds = (BYTE FAR *)MK_FP((WORD)GetWindowWord(hMine, GWW_HINSTANCE), 0);
-    w = *(int FAR *)(ds + 0x3C6); h = *(int FAR *)(ds + 0x3C8);
-    if (w < 1 || w > 30 || h < 1 || h > 24 || ds[0x440] != 0x10) return;   /* (the guard: the bordered grid) */
-    si = wsprintf(buf, "grid %d %d ", w, h);   /* the state goes at buf[si] */
-    buf[si] = '?'; buf[si + 1] = ' '; o = buf + si + 2;
-    for (y = 1; y <= h; y++) for (x = 1; x <= w; x++) {
-        BYTE c = ds[0x440 + y * 32 + x], lo = c & 0x1F; char ch;
-        if (c & 0x40) { ch = (char)('0' + (lo & 0x0F)); open++; }
-        else if (lo == 0x0E) ch = 'F';
-        else if (lo == 0x0D) ch = '?';
-        else if (lo == 0x0A) ch = '*';
-        else if (lo == 0x0C) { ch = 'X'; lost = 1; }
-        else if (lo == 0x0B) ch = 'x';
-        else { ch = '.'; hidden++; if (!(c & 0x80)) blankHidden++; }
-        *o++ = ch; n++;
-    }
-    *o = 0;
-    buf[si] = lost ? 'l' : (blankHidden == 0 && open > 0) ? 'w' : open == 0 ? 'n' : 'p';
-    if (open == 0 && hidden == w * h) {   /* a new board: dig xa safe cells (once) */
-        if (!wasNew) { wasNew = 1; mine_dig(mine_autodig()); }
-    } else wasNew = 0;
-    if (lstrcmp(buf, prev)) { lstrcpy(prev, buf); say("%s", (LPSTR)buf); }
+    wh = STY + 10 + 8 * STC + 66;
+    { POINT pt; pt.x = 966 - (bw + 2 * STX); pt.y = ROW0 + 6; ClientToScreen(hMain, &pt);   /* an owned window over the strips, as Minesweeper was */
+      hSteps = CreateWindow("SndSteps", "", WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN, pt.x, pt.y, bw + 2 * STX, wh, hMain, NULL, hInst, NULL); }
+    page_add(hSteps);
+    x = STX; y0 = wh - 58;
+    padded("<", p); w = btn_w("<"); stmk("BUTTON", p, BS_PUSHBUTTON, x, y0, w, 24, 1); x += w + 2;
+    stmk("STATIC", "Length", 0, x, y0 + 4, 42, 16, -1); x += 44;
+    padded(">", p); w = btn_w(">"); stmk("BUTTON", p, BS_PUSHBUTTON, x, y0, w, 24, 2); x += w + 12;
+    stmk("STATIC", "Rate", 0, x, y0 + 4, 30, 16, -1); x += 32;
+    stRateCb = stmk("COMBOBOX", "", WS_VSCROLL | CBS_DROPDOWNLIST, x, y0 + 1, 100, 100, 3); x += 106;
+    for (i = 0; i < 4; i++) SendMessage(stRateCb, CB_ADDSTRING, 0, (LPARAM)(LPSTR)rn[i]);
+    stmk("STATIC", "Swing", 0, x, y0 + 4, 36, 16, -1); x += 38;
+    stSwingSb = stmk("SCROLLBAR", "", SBS_HORZ, x, y0 + 5, 70, 14, -1); SetScrollRange(stSwingSb, SB_CTL, 0, 75, FALSE); x += 72;
+    stSwingTx = stmk("STATIC", "", 0, x, y0 + 4, 34, 16, -1); x += 36;
+    stmk("STATIC", "Gate", 0, x, y0 + 4, 30, 16, -1); x += 32;
+    stGateSb = stmk("SCROLLBAR", "", SBS_HORZ, x, y0 + 5, 70, 14, -1); SetScrollRange(stGateSb, SB_CTL, 5, 100, FALSE); x += 72;
+    stGateTx = stmk("STATIC", "", 0, x, y0 + 4, 34, 16, -1);
+    x = STX; y0 += 28;
+    padded("Clear", p); w = btn_w("Clear"); stmk("BUTTON", p, BS_PUSHBUTTON, x, y0, w, 24, 4); x += w + 3;
+    padded("Random Fill", p); w = btn_w("Random Fill"); stmk("BUTTON", p, BS_PUSHBUTTON, x, y0, w, 24, 5); x += w + 3;
+    padded("Sequencer Off", p); w = btn_w("Sequencer Off"); stmk("BUTTON", p, BS_PUSHBUTTON, x, y0, w, 24, 6); x += w + 10;
+    b = stmk("STATIC", "Click: next value. Right-click: back. Keys 0-9: degrees. The face: run without the host.", 0, x, y0 + 4, bw + 2 * STX - x - 8, 16, -1); (void)b;
+    st_values();
+    say("seq get");
 }
 /* R: (My Recordings): a new or changed WAV is reported, `rec saved R:\NAME.WAV`, once a second */
 #define NRF 80
@@ -4317,7 +4481,7 @@ static void host_line(char *s)
     }
     else if (!strcmp(s, "desk")) { if (hMain && assembled) ShowWindow(hMain, atoi(rest) ? SW_MINIMIZE : SW_RESTORE); }
     else if (!strcmp(s, "go")) { splash_close(); if (!assembled) assemble(); else say("ready"); }
-    else if (!strcmp(s, "dna")) build(rest);
+    else if (!strcmp(s, "dna")) { build(rest); if (curTab == 5 && hSteps) say("seq get"); }   /* (the Steps tab shows the new DNA's pattern) */
     else if (!strcmp(s, "on")) {
         /* on <rec> <rate> <vol> [<pan> [<delay_ms> [<layer> [<from> <to>]]]]: the host waits out delays and sends 0;
            v3: the window [from, to) in frames of the layer's buffer (0 0: all) */
@@ -4399,7 +4563,7 @@ static void host_line(char *s)
     else if (!strcmp(s, "citypop")) cp_line(rest);
     else if (!strcmp(s, "pool")) gp_line(rest);   /* GENEPOOL.EXE's table (plugin/GenePool.h) */   /* CITYPOP.EXE's player (plugin/CityPop.h) */
     else if (!strcmp(s, "step")) mine_step(atoi(rest));   /* the sequencer's playhead */
-    else if (!strcmp(s, "newgame") && hMine) PostMessage(hMine, WM_KEYDOWN, VK_F2, 0L);   /* the host's Randomize */
+    else if (!strcmp(s, "seqpat")) seq_line(rest);   /* the Steps tab's pattern */
     else if (!strcmp(s, "scala")) {   /* scala ok <steps> <name> | scala error <message> */
         if (!strncmp(rest, "ok ", 3)) { char *n = strchr(rest + 3, ' '), *c; wsprintf(scalaText, "Scala: %s (%d notes)", (LPSTR)(n ? n + 1 : ""), atoi(rest + 3)); for (c = scalaText; *c; c++) if (*c == '_') *c = ' '; }
         else if (!strcmp(rest, "off")) scalaText[0] = 0;

@@ -28,6 +28,7 @@
 + [Minimizing the Synth to Use Windows](minimize)
 :xp + [Menus and Panels](menus)
 :311 + [The Panel](menus)
+:311 + [The Steps Tab](steps)
 :311 + [The Song Tab](song)
 :311 + [CITYPOP1993](citypop)
 :311 + [Gene Pool](genepool)
@@ -524,6 +525,36 @@ Each change becomes the plugin's sound, and your project saves it.
 :311 | Engines | How many tracks play at once. |
 :311 ## Files
 :311 **Save...** writes the song as a .sng file: its text and its MIDI file. **Open...** reads a .sng file, a .song file with its MIDI file beside it, or a MIDI file. Your project keeps the song.
+
+:311 %topic steps
+:311 %title The Steps Tab
+:311 %keys Steps;step sequencer;sequencer;pattern;drum machine;Minesweeper;accent;tie;swing;gate
+:311 %map 24
+:311 %col 2400
+:311 The Steps tab is a step sequencer, drawn the way Minesweeper draws its board. Each column is a step. The pattern plays while your DAW plays, and is saved in the DNA, so a preset keeps its pattern.
+:311 ## To write a pattern
+:311 1. Click **Steps** under the DNA box.
+:311 2. Click a square to give it the next value. Right-click a square to give it the one before. A gray square past the end makes the pattern that long.
+:311 3. Play your DAW, or click the face to run the pattern without it.
+:311 ## A melody
+:311 | Note | A number is a degree of the scale, 1 to 8, counted up from the root. A bomb holds the note before it on (a tie). A blank square is a rest. |
+:311 | Accent | A flag plays the step louder. |
+:311 | Octave | An arrow up or down plays the step an octave higher or lower. |
+:311 Click a square in the Note row and type the degrees, 1 to 8, one after another; 9 is a tie and 0 or Space a rest. The note you hold on the keyboard is the root, and the pattern moves with it; with no note held, the root is the Key under the DNA box. The degrees follow the Scale.
+:311 ## A kit
+:311 When the sound has pads, each pad has a row. A mine is a hit, and a mine with a flag is an accented hit.
+:311 ## The controls
+:311 | Counters | The step playing, at the left, and the pattern's length, at the right. |
+:311 | The face | Runs and stops the pattern while your DAW is stopped. It wears sunglasses while the pattern runs. |
+:311 | Length | 1 to 32 steps. |
+:311 | Rate | 1/8, 1/16, 1/32, or 1/16 triplets. |
+:311 | Swing | Delays every second step, 0 to 75%. |
+:311 | Gate | How long each note sounds, as a part of its step. |
+:311 | Clear | Empties the pattern. |
+:311 | Random Fill | A new pattern from the sound; each press gives another. |
+:311 | Sequencer Off | Notes play as notes again. The pattern is removed. |
+:311 ## See Also
+:311 [DNA Reference](dna_ref)
 
 :311 %topic citypop
 :311 %title CITYPOP1993

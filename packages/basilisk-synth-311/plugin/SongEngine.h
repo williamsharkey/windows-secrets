@@ -368,7 +368,7 @@ inline bool renderTrack(const TrackJob &J, TrackOut &R)
             if (seq.input(m.st, m.a, m.b, d3.g.x)) continue;   // a sequencer DNA: played notes choose its root and notes
             host.midi(m.st, m.a, m.b, at, [&](const char *line, uint64_t when) { M.send(line, ++M.nextId, when); });
         }
-        if (seq.haveGrid())   // the mine-grid sequencer: the transport plays from 0 at --bpm
+        if (seq.haveGrid() || d3.g.x.hasPattern())   // the step sequencer (the DNA's pattern, or a --grid board): the transport plays from 0 at --bpm
             seq.block(host, d3, dna.g.root, anchor + h + kLat, kBlock, true, (double)h / 48000.0 * J.bpm / 60.0, J.bpm,
                       [&](const char *line, uint64_t when) { M.send(line, ++M.nextId, when); },
                       d3.g.scale >= 0 ? d3.g.scale : J.kp.scale, d3.g.rootPc);

@@ -221,12 +221,12 @@ protected:
     {
         if (!sh_ || !sh_->S) return false;
         movePointer(ev.pos.getX(), ev.pos.getY());
-        const uint bit = ev.button == 1 ? 1 : ev.button == 3 ? 2 : 0;
+        const uint bit = ev.button == kMouseButtonLeft ? 1 : ev.button == kMouseButtonRight ? 2 : 0;
         if (!bit) return false;
         if (ev.press) btn_ |= bit; else btn_ &= ~bit;
-        if (ev.press && bit == 1) {   // the click and its place, in case it is let go before Windows' next frame
+        if (ev.press) {   // the click and its place, in case it is let go before Windows' next frame
             bshm *S = sh_->S; const uint32_t w = S->click_w;
-            S->click_x[w % 4] = S->mouse_x; S->click_y[w % 4] = S->mouse_y;
+            S->click_x[w % 4] = S->mouse_x; S->click_y[w % 4] = S->mouse_y; S->click_b[w % 4] = bit;
             __sync_synchronize();
             S->click_w = w + 1;
         }

@@ -519,7 +519,7 @@ protected:
         }
         {   // the mine-grid sequencer (V3Seq.h): its steps on the host's transport, stamped like the notes
             if (gridDirty_.load() && mtx_.try_lock()) { seq_.setGrid(gridLine_); gridDirty_ = false; mtx_.unlock(); }
-            if (d3Audio_.g.x.on && seq_.haveGrid()) {
+            if (d3Audio_.g.x.on && (seq_.haveGrid() || d3Audio_.g.x.hasPattern())) {   // (1.5: the DNA's own pattern, or an old board)
                 const TimePosition &tp = getTimePosition();
                 const uint64_t s0 = (uint64_t)std::floor(anchor_ + (double)hcount_ * ratio) + kLatency48;
                 const uint64_t len = (uint64_t)std::llround(frames * ratio);
@@ -1327,6 +1327,108 @@ private:
         if (!status.empty()) poolStatus(status);
     }
 
+    // ---- the Steps tab (1.5): a 303/808-style step sequencer drawn like Minesweeper. The pattern lives in the DNA's
+    // x gene (xc melody, xu accents and octaves, xe drum rows, xl length, xd rate, xs swing, xg gate, xf free run).
+    static std::string replaceSeq(const std::string &dna, const bsynth3::Seq &x, const std::string &xExtra)
+    {
+        const std::string c = bsynth3::canonical3(dna);
+        const size_t semi = c.find(';');
+        std::string layers = semi == std::string::npos ? c : c.substr(0, semi), g = semi == std::string::npos ? "" : c.substr(semi + 1);
+        bsynth3::Globals3 t; t.x = x; t.xExtra = xExtra;
+        const std::string tok = x.on ? t.tokens() : "";
+        size_t i = g.find('x');
+        if (i != std::string::npos) {
+            size_t j = i + 1;
+            while (j < g.size() && !(std::isupper((unsigned char)g[j]) || g[j] == 'q' || g[j] == 'k' || g[j] == 'm' || g[j] == 'x')) j++;
+            g.replace(i, j - i, tok);
+        } else g += tok;
+        return bsynth3::canonical3(layers + (g.empty() ? "" : ";" + g));
+    }
+    static int seqLen(const bsynth3::Seq &x) { return b16v3::Sequencer::patternLength(x); }
+    std::vector<int> seqPadNotes(const bsynth3::Dna3 &d3) const
+    {
+        std::vector<int> n; for (auto &p : d3.g.pads) if (std::find(n.begin(), n.end(), p.lo) == n.end()) n.push_back(p.lo);
+        std::sort(n.begin(), n.end()); if (n.size() > 8) n.resize(8); return n;
+    }
+    void seqSend()
+    {
+        std::string dna; { std::lock_guard<std::mutex> l(mtx_); dna = dnaText_; }
+        const bsynth3::Dna3 d3 = bsynth3::parse3(dna); const bsynth3::Seq &x = d3.g.x;
+        const bool drums = !d3.g.pads.empty(); const int L = seqLen(x);
+        auto pad = [&](std::string r) { r.resize(32, '0'); for (auto &ch : r) if (ch < '0' || ch > '9') ch = '0'; return r; };
+        std::string line = "seqpat " + std::string(drums ? "d " : "m ") + std::to_string(L) + " " + std::to_string(x.div) + (x.triplet ? "t" : "") + " " +
+                           std::to_string(x.swing) + " " + std::to_string(x.gate) + " " + (x.on ? "1" : "0") + (x.freeRun ? "f" : "");
+        if (drums) {
+            const auto notes = seqPadNotes(d3);
+            line += " " + std::to_string(notes.size());
+            for (size_t r = 0; r < notes.size(); r++) line += " " + pad(r < x.drums.size() ? x.drums[r] : "") + ":" + std::to_string(notes[r]);
+        } else line += " 2 " + pad(x.mel) + " " + pad(x.mod);
+        sendLine(line.c_str(), 0, 0);
+    }
+    void seqLine(const std::string &r)
+    {
+        std::istringstream in(r); std::string op; in >> op;
+        if (op == "get") { seqSend(); return; }
+        std::string dna; { std::lock_guard<std::mutex> l(mtx_); dna = dnaText_; }
+        bsynth3::Dna3 d3 = bsynth3::parse3(dna); bsynth3::Seq x = d3.g.x; const std::string xe = d3.g.xExtra;
+        const bool drums = !d3.g.pads.empty();
+        const int rows = drums ? (int)seqPadNotes(d3).size() : 2;
+        if (!x.on) x.on = true;
+        if (!x.len) x.len = std::max(16, b16v3::Sequencer::patternLength(x));   // (a board starts 16 steps long, as drawn)
+        auto cell = [&](std::string &row, int c) -> char & { if ((int)row.size() <= c) row.resize((size_t)c + 1, '0'); return row[(size_t)c]; };
+        static const int accOf[6] = {0, 1, 0, 0, 1, 1}, octOf[6] = {0, 0, 1, 2, 1, 2};
+        auto modDigit = [](int acc, int oct) { static const char t[2][3] = {{'0', '2', '3'}, {'1', '4', '5'}}; return t[acc][oct]; };
+        if (op == "cell") {   // cell <row> <col> <dir: 1 next, -1 back, 0 clear>
+            int row = 0, col = 0, dir = 1; in >> row >> col >> dir;
+            if (col < 0 || col >= 32) return;
+            if (drums) {
+                if (row < 0 || row >= rows) return;
+                while ((int)x.drums.size() <= row) x.drums.push_back("");
+                char &c = cell(x.drums[(size_t)row], col);
+                int v = c - '0'; v = dir == 0 ? 0 : (v + (dir > 0 ? 1 : 2)) % 3; c = (char)('0' + v);
+            } else if (row == 0) {   // the note: rest, 1..8, tie (the bomb)
+                char &c = cell(x.mel, col);
+                int v = c - '0'; v = dir == 0 ? 0 : (v + (dir > 0 ? 1 : 9)) % 10; c = (char)('0' + v);
+            } else {                  // the accent (flag) and the octave
+                char &c = cell(x.mod, col); int m = c - '0'; if (m < 0 || m > 5) m = 0;
+                int acc = accOf[m], oct = octOf[m];
+                if (row == 1) acc = dir == 0 ? 0 : !acc; else oct = dir == 0 ? 0 : (oct + (dir > 0 ? 1 : 2)) % 3;
+                c = modDigit(acc, oct);
+            }
+        } else if (op == "key") { int col = 0; std::string v; in >> col >> v; if (!drums && col >= 0 && col < 32 && v.size() == 1 && v[0] >= '0' && v[0] <= '9') cell(x.mel, col) = v[0]; }
+        else if (op == "len") { int n = 16; in >> n; x.len = std::max(1, std::min(32, n)); }
+        else if (op == "rate") { std::string v; in >> v; const int d = std::atoi(v.c_str()); x.div = d <= 8 ? 8 : d <= 16 ? 16 : 32; x.triplet = !v.empty() && v.back() == 't'; }
+        else if (op == "swing") { int v = 0; in >> v; x.swing = std::max(0, std::min(75, v)); }
+        else if (op == "gate") { int v = 80; in >> v; x.gate = std::max(5, std::min(100, v)); }
+        else if (op == "run") x.freeRun = !x.freeRun;
+        else if (op == "clear") { x.mel.clear(); x.mod.clear(); x.drums.clear(); }
+        else if (op == "off") x.on = false;   // the sequencer off: notes play as notes again (the pattern is dropped)
+        else if (op == "random") {   // a fill, from the DNA and a counter (the same press, the same pattern)
+            static uint32_t presses = 0; presses++;
+            uint64_t z = 0xcbf29ce484222325ull; for (unsigned char ch : dna) { z ^= ch; z *= 0x100000001b3ull; }   // (FNV-1a: the same on every OS)
+            z ^= 0x9E3779B97F4A7C15ull * presses;
+            auto rnd = [&](int n) { z += 0x9E3779B97F4A7C15ull; uint64_t v = z; v = (v ^ (v >> 30)) * 0xBF58476D1CE4E5B9ull; v = (v ^ (v >> 27)) * 0x94D049BB133111EBull; v ^= v >> 31; return (int)(v % (uint64_t)n); };
+            const int L = seqLen(x);
+            if (drums) {
+                x.drums.assign((size_t)rows, std::string((size_t)L, '0'));
+                for (int c = 0; c < L; c++) for (int rr = 0; rr < rows; rr++) {
+                    const int p = rr == 0 ? (c % 4 == 0 ? 90 : 12) : rr == 1 ? (c % 8 == 4 ? 85 : 8) : rr == 2 ? (c % 2 == 0 ? 70 : 25) : 12;
+                    if (rnd(100) < p) x.drums[(size_t)rr][(size_t)c] = rnd(100) < 25 ? '2' : '1';
+                }
+            } else {
+                static const char deg[] = "11335581246";
+                x.mel.assign((size_t)L, '0'); x.mod.assign((size_t)L, '0');
+                for (int c = 0; c < L; c++) {
+                    const int p = rnd(100);
+                    x.mel[(size_t)c] = p < 55 ? deg[rnd(11)] : p < 68 && c > 0 && x.mel[(size_t)c - 1] != '0' ? '9' : '0';
+                    if (x.mel[(size_t)c] != '0' && x.mel[(size_t)c] != '9') x.mod[(size_t)c] = modDigit(rnd(100) < 22, rnd(100) < 12 ? 1 + rnd(2) : 0);
+                }
+            }
+        } else return;
+        setDna(replaceSeq(dna, x, xe), true);
+        seqSend();
+    }
+
     void onLine(const std::string &line)
     {
         if (line.rfind("keyset ", 0) == 0 || line.rfind("keyopt ", 0) == 0 || line.rfind("keymask ", 0) == 0) {   // the visitor changed the key in Windows
@@ -1343,6 +1445,7 @@ private:
             return;
         }
         if (line.rfind("pool ", 0) == 0) { poolLine(line.substr(5)); return; }   // GENEPOOL.EXE
+        if (line.rfind("seq ", 0) == 0) { seqLine(line.substr(4)); return; }   // the Steps tab
         {   // the Song tab
             int req = 0; std::string def;
             if (song_.line(line, req, def)) {
