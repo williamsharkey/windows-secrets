@@ -800,6 +800,30 @@ static void ensure_recs(int k, int n)   /* lane k gets at least n recorders (lau
     for (j = 0; j < n && j < LANE_RECS; j++) if (!rw[k * NR + j] && !launch_rec(k, j)) break;
     if (j > nLaneRecs[k]) nLaneRecs[k] = j;
 }
+static void show_recs(int k);
+static BOOL CALLBACK no_save(HWND x, LPARAM task)   /* "Save changes?" from a recorder being closed: No */
+{
+    char c[16];
+    if (GetWindowTask(x) == (HTASK)task && IsWindowVisible(x)) { GetClassName(x, c, sizeof c); if (!lstrcmp(c, "#32770")) PostMessage(x, WM_COMMAND, IDNO, 0L); }
+    return TRUE;
+}
+static void trim_recs(int k, int n)   /* lane k keeps n recorders (at least its first): the rest close, so a whole album of
+                                         switches never holds more than the presets now in use (memory, USER heap) */
+{
+    int j, closed = 0;
+    if (n < 1) n = 1;
+    for (j = NR - 1; j >= n; j--) {
+        int r = k * NR + j; DWORD tw; HTASK t = rt[r]; HWND w = rw[r];
+        if (!w || rplay[r] || is_playing(r)) continue;   /* (one still sounding closes at a later switch) */
+        PostMessage(w, WM_CLOSE, 0, 0L);
+        tw = timeGetTime();
+        while (IsWindow(w) && GetWindowTask(w) == t && timeGetTime() - tw < 3000) { pump(); EnumWindows(no_save, (LPARAM)t); }
+        rw[r] = NULL; rt[r] = 0; recsUp--; closed++;
+    }
+    for (j = NR; j > 0 && !rw[k * NR + j - 1]; j--) {}
+    nLaneRecs[k] = j;
+    if (closed) { GlobalCompact(-1L); show_recs(k); }
+}
 
 /* ---------------------------------------------------------------- the build */
 static int layer_len[NL];
@@ -827,6 +851,7 @@ static void build(const char *dna)   /* the lane `bank`'s DNA, on its recorders,
     DWORD t0 = timeGetTime(); int i, r;
     static char mine[1100];
     lstrcpyn(mine, dna, sizeof mine);
+    trim_recs(bank, laneRecs);
     ensure_recs(bank, laneRecs);
     if (nLaneRecs[bank] < laneRecs) laneRecs = nLaneRecs[bank] ? nLaneRecs[bank] : 1;
     dna_parse(mine);
