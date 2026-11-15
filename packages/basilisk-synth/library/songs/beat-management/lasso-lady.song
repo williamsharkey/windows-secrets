@@ -38,7 +38,7 @@ kit         ch10    "kit-manager:Twelve-Bit Crate Kit"       lufs=-19 verb=0.06
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"beat-management:Cathode Groove" = contrabass_pizz_e1><#10Ja0,100.87,100.97,8.125,8.126,100Wr4t;A0D600S100R150K28G2
-"beat-management:Civic Wire" = flute_vib_c5@t6000]@t300[E<H0,-12U3~14;A13D48S71R300V91K60G-8
+"beat-management:Cathode Groove" = contrabass_pizz_e1><#10Ja0,100.87,100.97,8.125,8.126,100Wtr4;A0D600S100R150K40G2
+"beat-management:Civic Wire" = flute_vib_c5@t6000]@t300[E<H0,-12U3~14;A13D48S71R300V91K72G-8
 "beat-management:Study Vibes" = vibraphone_c_low#8Ja0,100.250,70.500,100.750,70.1000,100/chimesEE#8T-7L26O272Q53;A0R900K48G3
 "kit-manager:Twelve-Bit Crate Kit" = ding<<<@35]><#3F/chord>>@15]+E><#4F/ringin>>@12]><#5F/ding>>@4]><#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

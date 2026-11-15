@@ -4,7 +4,6 @@ a church-organ stop and a parlour piano."""
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from _lib import *
-chord_cap(8)   # rendered before render311 --lookahead: chords thinned to 8 recorders an instant (_lib.cap_chords)
 
 S = Score(bpm=84, seed=1967)
 kit = S.part('kit', 10)
@@ -102,16 +101,16 @@ finish(__file__, S, {
             'piano. Drums: Kit Manager 98 (Half-Time Kit).',
 }, [
     ('kit', 'ch10', 'kit-manager:Half-Time Kit', dict(lufs=-19, verb=0.12, lp=9000)),
-    ('flute', 'ch1', 'Digital Call', dict(lufs=-19, pan=-10, verb=0.3)),
-    ('violas', 'ch2', 'Clear Bows', dict(lufs=-23, pan=24, verb=0.35)),
-    ('cellos', 'ch3', 'Rural Cellos', dict(lufs=-24, pan=-26, verb=0.3)),
-    ('bass', 'ch4', 'Lunar Bows', dict(lufs=-21)),
-    ('choir', 'ch5', 'Faded Voices', dict(lufs=-20, pan=6, verb=0.4)),
-    ('saxello', 'ch6', 'Delta Fanfare', dict(lufs=-25, pan=-18, verb=0.25)),
-    ('trumpet', 'ch7', 'Pewter Salute', dict(lufs=-21, pan=14, verb=0.35)),
-    ('recorder', 'ch8', 'Field Line', dict(lufs=-22, pan=30, echo=0.15, verb=0.3)),
-    ('organ', 'ch9', 'Coral Revival', dict(lufs=-26, pan=-6, verb=0.3)),
-    ('piano', 'ch11', 'Lattice Recital', dict(lufs=-23, pan=16, verb=0.25)),
+    ('flute', 'ch1', 'Dusk Pilot', dict(lufs=-19, pan=-10, verb=0.3)),
+    ('violas', 'ch2', 'Hollow Legato', dict(lufs=-23, pan=24, verb=0.35)),
+    ('cellos', 'ch3', 'Wired Legato', dict(lufs=-24, pan=-26, verb=0.3)),
+    ('bass', 'ch4', 'Vinyl Section', dict(lufs=-21)),
+    ('choir', 'ch5', 'Modular Chorus', dict(lufs=-20, pan=6, verb=0.4)),
+    ('saxello', 'ch6', 'Gentle Chord', dict(lufs=-25, pan=-18, verb=0.25)),
+    ('trumpet', 'ch7', 'Northern Salute', dict(lufs=-21, pan=14, verb=0.35)),
+    ('recorder', 'ch8', 'Quiet Voice', dict(lufs=-22, pan=30, echo=0.15, verb=0.3)),
+    ('organ', 'ch9', 'Noble Stops', dict(lufs=-26, pan=-6, verb=0.3)),
+    ('piano', 'ch11', 'Swift Ivories', dict(lufs=-23, pan=16, verb=0.25)),
 ], master={'loudness': -16, 'ceiling': -1.0},
    echo={'time': '1/8', 'feedback': 0.25, 'tone': 2800, 'level': -8},
    reverb={'size': 1.9, 'predelay': 20, 'tone': 4500, 'level': -4})

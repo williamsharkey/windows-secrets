@@ -49,6 +49,6 @@ stab        ch12    "Saffron Stab"                           lufs=-26 pan=-14 ec
 "workstation-classics:Ladder Mono Bass" = ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<+#4/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+#4L50Q-58/ringout@20[@40]@0CP@0CP@0CP<<<#8T2U2~8L60;A0D500S60R100K35G-6
 "workstation-classics:Lobby Song" = tadaxp@40[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP#10;A5R200K59G15
 "workstation-classics:Night Mist" = choir_aah@t6000]@t300[<;A847D341S80R1206V95K57G1
-"workstation-classics:Pale Cloud" = violin_section_sus_c4@t7500]@t300[EU3~13;A366D273S84R1069V80K60G-9
+"workstation-classics:Pale Cloud" = violin_section_sus_c4@t7500]@t300[EU3~13;A366D273S84R1069V80K72G-9
 "workstation-classics:Poly Brass Circuit" = tadaxp@40[@20]@0CP@0CP@0CP@0CP#12U2~12Ja0,0.80,100.400,75;A0R250K60G8
 "workstation-classics:Saffron Stab" = tadaxp@40[@20]@0CP@0CP@0CP@0CP#12H0,4,7,11U2~25Ja0,100.125,100.135,8.250,8.251,100Wr4t;A0S100R300B2K60G7

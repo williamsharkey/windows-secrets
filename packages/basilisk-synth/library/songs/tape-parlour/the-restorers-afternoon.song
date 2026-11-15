@@ -28,27 +28,27 @@ level    = -4
 [tracks]
 # name      source  preset                                  mix
 kit         ch10    "kit-manager:Half-Time Kit"              lufs=-19 verb=0.12 lp=9000
-flute       ch1     "Digital Call"                           lufs=-19 pan=-10 verb=0.3
-violas      ch2     "Clear Bows"                             lufs=-23 pan=24 verb=0.35
-cellos      ch3     "Rural Cellos"                           lufs=-24 pan=-26 verb=0.3
-bass        ch4     "Lunar Bows"                             lufs=-21
-choir       ch5     "Faded Voices"                           lufs=-20 pan=6 verb=0.4
-saxello     ch6     "Delta Fanfare"                          lufs=-25 pan=-18 verb=0.25
-trumpet     ch7     "Pewter Salute"                          lufs=-21 pan=14 verb=0.35
-recorder    ch8     "Field Line"                             lufs=-22 pan=30 echo=0.15 verb=0.3
-organ       ch9     "Coral Revival"                          lufs=-26 pan=-6 verb=0.3
-piano       ch11    "Lattice Recital"                        lufs=-23 pan=16 verb=0.25
+flute       ch1     "Dusk Pilot"                             lufs=-19 pan=-10 verb=0.3 tune=-12
+violas      ch2     "Hollow Legato"                          lufs=-23 pan=24 verb=0.35
+cellos      ch3     "Wired Legato"                           lufs=-24 pan=-26 verb=0.3
+bass        ch4     "Vinyl Section"                          lufs=-21
+choir       ch5     "Modular Chorus"                         lufs=-20 pan=6 verb=0.4
+saxello     ch6     "Gentle Chord"                           lufs=-25 pan=-18 verb=0.25
+trumpet     ch7     "Northern Salute"                        lufs=-21 pan=14 verb=0.35
+recorder    ch8     "Quiet Voice"                            lufs=-22 pan=30 echo=0.15 verb=0.3
+organ       ch9     "Noble Stops"                            lufs=-26 pan=-6 verb=0.3
+piano       ch11    "Swift Ivories"                          lufs=-23 pan=16 verb=0.25
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "kit-manager:Half-Time Kit" = ringout@20[@40]@0CP<<<+Ja0,100.80,50.400,0#3F/recycle@20]+E#4F/xprecycle>>>@40]#5F/critstop<@10]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
-"tape-parlour:Clear Bows" = tape_violas_a3@t40[#16Wm8000Yd3l8kVw6,8f4,8s25,50;A35D0S100R80V40K69G-10
-"tape-parlour:Coral Revival" = tape_organ_8ft_c3@t40[#7L80O10Wm8000Yd3l4kVw6,7f4,8s25,65/tape_recorder_bass_c3@t40[#7L55O15Wm8000Yd6l4kVw4,8f2,8s15,65/xpstart#2FL12Wm8000;A40D0S100R150V30K60G-17
-"tape-parlour:Delta Fanfare" = tape_saxello_d3@t40[#16Wm8000Yd3l4kVw5,8f3,10s25,80;A20D0S100R110V30K62G-14
-"tape-parlour:Digital Call" = tape_flute_vib_c4@t40[#8L80Wm8000Yd3l8kVw4,6f3,8s25,80/tape_clarinet_d3@t40[#8T10L55Wm8000Yd6l4kVw4,8f4,8s25,80;A35D0S100R110V20K72G-9
-"tape-parlour:Faded Voices" = choir_full_octave_first_note@t40[#16Wm8000Yd4l4kVw6,5f3,12s15,50;A10D0S100R120V40K60G-8
-"tape-parlour:Field Line" = tape_recorder_soprano_c5@t40[#16Wm8000Yd5kVw8,7f2,10s15,50;A35D0S100R150V40K84G-8
-"tape-parlour:Lattice Recital" = gd_piano_a4@t40[#16Wm8000Yd6l8kVw5,5f4,8s25,50;A10D0S100R110V20K69G-11
-"tape-parlour:Lunar Bows" = tape_contrabass_a1@t40[#16Wm8000Yd6l4kVw4,6f4,8s20,80;A10D0S100R110V20K45G-14
-"tape-parlour:Pewter Salute" = tape_trumpet_a2@t40[#16Wm8000Yd6l4kVw6,7f2,10s20,50;A35D0S100R110V40K57G-11
-"tape-parlour:Rural Cellos" = tape_violins_a3@t40[#14O20Wm8000Yd5l4kVw6,7f3,10s25,65/xpstart#2FL25Wm8000;A20D0S100R200V30K69G-9
+"tape-parlour:Dusk Pilot" = tape_flute_vib_c4@t40[#4O10Wm8000Yd6l4kVw8,6f3,8s20,80Z36,76,72/tape_flute_vib_a4@t40[#4O10Wm8000Yd6l4kVw8,6f2,12s20,65Z77,82,81/tape_flute_vib_c5@t40[#3O20Wm8000Yd4kVw5,5f3,10s15,50Z83,90,84/tape_flute_vib_c6@t40[#3O15Wm8000Yd5l4kVw8,5f3,10s15,65Z91,102,96/menu#2FL18Wm8000;A10D0S100R110V30G-7
+"tape-parlour:Gentle Chord" = tape_saxello_d3@t40[#4Wm8000Yd5l8kVw4,7f4,8s15,80Z36,66,62/tape_saxello_as3@t40[#4Wm8000Yd6l8kVw4,7f3,12s15,50Z67,72,70/tape_saxello_d4@t40[#4Wm8000Yd5l8kVw6,8f4,10s20,80Z73,76,74/tape_saxello_fs4@t40[#4Wm8000Yd3l8kVw6,8f3,8s20,50Z77,96,78;A20D0S100R80V40G-14
+"tape-parlour:Hollow Legato" = tape_violas_c2@t40[#6Wm8000Yd3l8kVw8,5f4,12s15,65Z36,58,48/tape_violas_a3@t40[#5Wm8000Yd3l4kVw4,5f2,10s25,65Z59,70,69/tape_violas_c4@t40[#5Wm8000Yd5l8kVw8,7f4,8s15,65Z71,96,72;A20D0S100R150V40G-10
+"tape-parlour:Modular Chorus" = choir_full_octave_first_note@t40[#16Wm8000Yd5l4kVw5,7f4,8s15,80Z36,96,60;A10D0S100R80V40G-8
+"tape-parlour:Noble Stops" = tape_organ_8ft_c2@t40[#3L80O20Wm8000Yd2l4kVw6,6f4,10s20,50Z36,60,48/tape_organ_8ft_c4@t40[#3L80O20Wm8000Yd2l8kVw5,8f2,12s25,65Z61,78,72/tape_organ_8ft_c5@t40[#3L80O20Wm8000Yd2kVw6,8f3,12s25,65Z79,96,84/tape_recorder_bass_c3@t40[#3L55O20Wm8000Yd2l4kVw5,8f3,8s15,80Z36,66,60/tape_recorder_bass_c4@t40[#2L55O20Wm8000Yd2l8kVw4,6f3,8s15,80Z67,96,72/xpstart#2FL25Wm8000;A10D0S100R110V30G-15
+"tape-parlour:Northern Salute" = tape_trumpet_a2@t40[#6Wm8000Yd3l4kVw5,7f4,10s20,80Z36,65,57/tape_trumpet_d4@t40[#5Wm8000Yd5l4kVw8,7f3,10s15,80Z66,77,74/tape_trumpet_a4@t40[#5Wm8000Yd6l4kVw5,6f3,12s20,50Z78,96,81;A35D0S100R110V40G-12
+"tape-parlour:Quiet Voice" = tape_recorder_soprano_c5@t40[#7O10Wm8000Yd6l8kVw6,7f4,8s15,50Z36,90,84/tape_recorder_soprano_c6@t40[#7O20Wm8000Yd5l4kVw4,5f2,8s15,50Z91,103,96/xpstart#2FL12Wm8000;A10D0S100R150V40G-9
+"tape-parlour:Swift Ivories" = gd_piano_a1@t40[#4Wm8000Yd5l8kVw8,6f2,12s15,65Z20,38,33/gd_piano_a2@t40[#4Wm8000Yd5l8kVw5,7f3,10s25,50Z39,57,45/gd_piano_a4@t40[#4Wm8000Yd3l8kVw4,8f4,10s20,50Z58,75,69/gd_piano_a5@t40[#4Wm8000Yd6l8kVw5,5f2,8s15,65Z76,96,81;A35D0S100R150V40G-9
+"tape-parlour:Vinyl Section" = tape_contrabass_e1@t40[#7O10Wm8000Yd3kVw13,6f2,12s20,50Z16,30,28/tape_contrabass_a1@t40[#7O15Wm8000Yd6l4kVw6,8f4,10s20,50Z31,96,33/menu#2FL14Wm8000;A35D0S100R80V20G-15
+"tape-parlour:Wired Legato" = tape_violins_a3@t40[#5O20Wm8000Yd5kVw6,6f2,10s20,50Z36,70,69/tape_violins_c4@t40[#5O15Wm8000Yd6kVw5,7f4,8s15,65Z71,79,72/tape_violins_d5@t40[#4O20Wm8000Yd6l4kVw4,7f4,8s20,65Z80,96,86/xpstart#2FL18Wm8000;A15D0S100R150V40G-7

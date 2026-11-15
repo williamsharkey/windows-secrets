@@ -43,7 +43,7 @@ stab        ch9     "Washed Salute"                          lufs=-25 pan=-14 ec
 "kit-manager:Punch Kick Kit" = ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
 "workstation-classics:Elevated Horns" = logon#12U3~11/organ_pedal_25@t3000]@t300[#4T-16L32;A24D539S49R492V78K44G2
 "workstation-classics:Glass Pluck Plus" = default@15]#8H0,12/default@15]<E>#6L35O250;A0D350S0R250K75G6
-"workstation-classics:Global Solo" = flute_vib_c5@t6000]@t300[#13U4~19/ding#3T12L17Q27;A1D14S94R334V81K72G-10
+"workstation-classics:Global Solo" = flute_vib_c5@t6000]@t300[#13U4~19/ding#3T24L17Q27;A1D14S94R334V81K84G-10
 "workstation-classics:Neon Rumble" = xpringout<<#11U2~9/batlow#5T-3L39;A0D558S35R57V71K45G5
 "workstation-classics:Night Mist" = choir_aah@t6000]@t300[<;A847D341S80R1206V95K57G1
 "workstation-classics:Rapid Glow" = xpringout@t349]@t99[@0CP@0CP@0CPE<E#11U2~6/crystal_glass_tapR#5T-2L34O208Q8;A254D195S98R2027V85K57G3

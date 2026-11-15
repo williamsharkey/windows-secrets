@@ -38,7 +38,7 @@ bongo       ch4     "Twilight Tap"                           lufs=-26 pan=30
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"leisure:Island Marimba" = marimba_c4E#10;A0R600K60G1
-"leisure:Polished Call" = flute_vib_c5@t6000]@t300[E<#8/infobar#8FL16;A35D513S86R162V78K60
+"leisure:Island Marimba" = marimba_c4E#10;A0R600K72G1
+"leisure:Polished Call" = flute_vib_c5@t6000]@t300[E<#8/infobar#8FL16;A35D513S86R162V78K72
 "leisure:Soft Bells" = crystal_bell_bb5@t4000]<<#8/chimesR>#8T-2L33O128Q10;A1D1543S1R1143V86K58G-4
 "leisure:Twilight Tap" = glass_harp#8F/ems_typebar>#8FL32;D63S0R40V72G13

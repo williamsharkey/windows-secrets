@@ -88,7 +88,7 @@ GROOVES = {   # 16 steps a bar (sixteenths); x hit, X accent, o ghost
     'techno':   {KICK: 'X...x...x...x...', CHH: '..x...x...x...x.', CLAP: '....x.......x...', RIM: '...x..x....x..x.'},
     'trance':   {KICK: 'X...x...x...x...', OHH: '..x...x...x...x.', CLAP: '....x.......x...', CHH: 'xxxxxxxxxxxxxxxx'},
     'breaks':   {KICK: 'x.........x.....', SNARE: '....x.......x...', CHH: 'x.x.x.x.x.x.x.xx', SNARE2: '.......o.o....o.'},
-    'jungle':   {KICK: 'x.........x.....', SNARE: '....x..o.o..x...', CHH: 'x.xxx.x.x.xxx.x.', RIDE: 'x...x...x...x...'},
+    'jungle':   {KICK: 'x.........x.....', SNARE: '....x..o.o..x...', CHH: 'x.xxx.x.x.xxx.x.', OHH: 'x...x...x...x...'},
     'boombap':  {KICK: 'x......x..x.....', SNARE: '....x.......x...', CHH: 'x.x.x.x.x.x.x.x.'},
     '2step':    {KICK: 'x......x..x.....', SNARE: '....x.......x...', CHH: '..x...x...x.x.x.', RIM: '.o....o..o....o.'},
     'synthpop': {KICK: 'x.......x.x.....', SNARE: '....x.......x...', CHH: 'x.x.x.x.x.x.x.x.'},
@@ -348,6 +348,9 @@ def module_tracks(path, bpm):
     return out
 
 
+GM_FALLBACK = {35: 36, 43: 45, 51: 46, 52: 49, 53: 46, 55: 49, 57: 49, 59: 46}   # (silent pads in the kits, audition.py)
+
+
 def module_song(script, src_name, bpm, plan, header, tracks, master=None, echo=None, reverb=None, cut=None,
                 loops=1, intro=0.0, seed=1, stretch=1.0):
     """plan: {instrument number: (part name, ch, tr, lo, hi, vel_scale)} for tuned parts, or
@@ -385,6 +388,8 @@ def module_song(script, src_name, bpm, plan, header, tracks, master=None, echo=N
                     part.note(b2, pad, min(d, 0.25), int(max(1, min(127, v * spec[4]))))
                 else:
                     tr, lo, hi, vs = spec[2], spec[3], spec[4], spec[5]
+                    if (tr, lo, hi) == (0, 0, 127):   # General MIDI drums onto a kit: pads the kits lack go to near ones
+                        p = GM_FALLBACK.get(p, p)
                     n = p + tr
                     while n < lo:
                         n += 12

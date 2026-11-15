@@ -45,10 +45,10 @@ bird        ch12    "Half-Speed Mockingbird"                 lufs=-28 pan=38 ver
 "leisure:Granite Lead" = xpringout@t367]@t99[@0CP@0CP@0CP<Q-47;A22D326S71R525V70K57G13
 "leisure:Grey Clack" = emh_cardpunch_thumpU2~6;D152S0R121V95G-3
 "leisure:Half-Speed Mockingbird" = bird_american_robin<E#6F;A0R1500
-"leisure:Mint Ballad" = marimba_c4#11U2~4/epiano_bell_c3#5T12L29Q-8;A0D1858S37R276V91K60G-8
-"leisure:Opal Section" = cello_section_sus_c3@t7500]@t200[E>#10U3~15/marimba_c4#3T-12L41Q24/ringout#3T-21L55;A197S96R1086V78K60G-12
+"leisure:Mint Ballad" = marimba_c4#11U2~4/epiano_bell_c3#5T24L29Q-8;A0D1858S37R276V91K72G-8
+"leisure:Opal Section" = cello_section_sus_c3@t7500]@t200[E>#10U3~15/marimba_c4#3T-12L41Q24/ringout#3T-9L55;A197S96R1086V78K72G-12
 "leisure:Soft Bells" = crystal_bell_bb5@t4000]<<#8/chimesR>#8T-2L33O128Q10;A1D1543S1R1143V86K58G-4
 "leisure:Steel Block" = relay_loud_click#8F/air_duster@t2000]@t500[#8FL13Ja0,100.94,30.738,0;D185S0R71V96G4
 "leisure:Tiki Lounge Piano" = harp_c5#10/ding@20]#6T5L30;A0D2000S20R700K72G-1
 "leisure:Twilight Tap" = glass_harp#8F/ems_typebar>#8FL32;D63S0R40V72G13
-"leisure:White Cellos" = cello_section_sus_c3@t7500]@t200[>U2~7;A324S93R1363V71K60G-12
+"leisure:White Cellos" = cello_section_sus_c3@t7500]@t200[>U2~7;A324S93R1363V71K72G-12

@@ -41,10 +41,10 @@ ahh         ch12    "Bakelite Ahh"                           lufs=-21 pan=4 verb
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"diagnostics:Amber Bells" = marimba_c6E#11H0,12/ems_typebar#5FL38;A5D813S17R1306V95K84G-3
+"diagnostics:Amber Bells" = marimba_c6E#11H0,12/ems_typebar#5FL38;A5D813S17R1306V95K96G-3
 "diagnostics:Bakelite Ahh" = crowd_sing_aah_f>#8H0,12Ja0,100.62,100.72,8.125,8.126,100Wr4t/choir_aah>#6T-4L60;A0S100R300K65G-1
 "diagnostics:Broken Music Box" = music_box_note><E#10;A0D3000S0R1500K78G-4
-"diagnostics:Copper Veil" = cello_section_sus_c3@t7500]@t300[>U2~18Q20;A755D624S85R1066V73K60G-11
+"diagnostics:Copper Veil" = cello_section_sus_c3@t7500]@t300[>U2~18Q20;A755D624S85R1066V73K72G-11
 "diagnostics:Coral Clap" = relay_loud_click+#8F/batlow#8L27;D262S0R71V88G1
 "diagnostics:Floppy Seek Perc" = floppy_seek_clunk#8Q30/mouse_click@40]#8;A0D2R80K46G2
 "diagnostics:Glass Click" = critstop@t400]@t40[#8/recycle#8FL11;D86S0R56V94K36G5

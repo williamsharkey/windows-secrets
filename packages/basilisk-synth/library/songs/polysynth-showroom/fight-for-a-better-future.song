@@ -31,20 +31,20 @@ level    = -6
 
 [tracks]
 # name      source  preset                                  mix
-lead        ch1     "Amber Line"                             lufs=-20 pan=4 echo=0.2
-brass       ch2     "Signal Stab"                            lufs=-23 pan=-20
-brass2      ch3     "Metro Chord"                            lufs=-24 pan=20
-bass        ch4     "Broadcast Cellar"                       lufs=-19
-solo        ch5     "Tropic Signal"                          lufs=-22 pan=-8 echo=0.2 tune=-15
-strings     ch6     "Hollow Swell"                           lufs=-25 verb=0.35 tune=-14
+lead        ch1     "Wired Call"                             lufs=-20 pan=4 echo=0.2
+brass       ch2     "Azure Horns"                            lufs=-23 pan=-20 tune=14
+brass2      ch3     "Lucid Herald"                           lufs=-24 pan=20
+bass        ch4     "Ivory Low"                              lufs=-19
+solo        ch5     "Molten Ray"                             lufs=-22 pan=-8 echo=0.2
+strings     ch6     "Foggy Section"                          lufs=-25 verb=0.35
 kit         ch10    "kit-manager:Breaker Box Kit"            lufs=-17 verb=0.15
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
-"polysynth-showroom:Amber Line" = poly85_buzzy_lead_c3@t7053]@t2015[@0CP@0CP>EQ55;A29D320S81R129V87K60G-2
-"polysynth-showroom:Broadcast Cellar" = mono77_cream_b0;A3D242S68R71V85K23G-1
-"polysynth-showroom:Hollow Swell" = vocoder_strings_c4E#15/dingxp>#2T-19L12O98Q-24;A186S95R912V70K60G-3
-"polysynth-showroom:Metro Chord" = poly85_thin_brassy_c2+>>;A3D548S74R194V88K60
-"polysynth-showroom:Signal Stab" = poly83_big_c2@t4561]E>>#10U3~8/poly83_brassy_f1#3T19L48Q29/poly85_thin_brassy_c2#3T24L65Q13;A2D733S26R168V85K60G-12
-"polysynth-showroom:Tropic Signal" = poly78_pwm_lady_c4@t8153]@t2329[@0CP@0CPH0,12;A28D104S99R101V91K60G-6
+"polysynth-showroom:Azure Horns" = poly83_wobble_brass_c2@t4099]+>>U2~6Q-55;A1D513S53R332V95K60G-7
+"polysynth-showroom:Foggy Section" = vocoder_strings_c4#4L80Z36,66,60/vocoder_strings_c5#3L80Z67,78,72/vocoder_strings_c6#3L80Z79,96,84/poly83_on_off_strings_c4E#3L55Z36,62,60/poly83_on_off_strings_fs4#3L55Z63,96,66;A569S90R1323V70K60G-4
+"polysynth-showroom:Ivory Low" = mono77_cream_b0@t4798]>#11U2~6/poly85_slow_bass_d3#5T-27L46;A3D404S56R123V76K35G-5
+"polysynth-showroom:Lucid Herald" = poly85_thin_brassy_c2@t3578]+>>#12U3~10/poly85_thin_brassy_c2#4T24L68Q15;A11D484S75R294V95K60G-1
+"polysynth-showroom:Molten Ray" = poly78_pwm_lady_c4@t8153]@t2329[@0CP@0CPH0,-12U2~7;A2D284S88R125V99K60G-11
+"polysynth-showroom:Wired Call" = poly85_buzzy_lead_c3@t7053]@t2015[@0CP@0CP+>#8/mono77_curious_lead_c3#8T31L38Q-23;A9D462S94R127V81K60G-6

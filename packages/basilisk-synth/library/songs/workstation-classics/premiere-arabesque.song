@@ -47,7 +47,7 @@ kit         ch10    "kit-manager:Punch Kick Kit"             lufs=-19 verb=0.08
 "workstation-classics:Bright Pad" = glass_harp@t8000]@t500[<#11U2~9/xpding#5T5L28Q-7;A306D772S96R1127V82K64G-5
 "workstation-classics:Clear Warp" = bubbles_in_water_burstE#10U3~19/crystal_glass_tap#3L56/print#3L43;A470S100R1320V90G-2
 "workstation-classics:Glass Pluck Plus" = default@15]#8H0,12/default@15]<E>#6L35O250;A0D350S0R250K75G6
-"workstation-classics:Global Solo" = flute_vib_c5@t6000]@t300[#13U4~19/ding#3T12L17Q27;A1D14S94R334V81K72G-10
-"workstation-classics:Meadow Low" = tuba_sus_f1@t2000]E>#8/batlow#8T-7L42;A1D171S57R61V86K41G-2
+"workstation-classics:Global Solo" = flute_vib_c5@t6000]@t300[#13U4~19/ding#3T24L17Q27;A1D14S94R334V81K84G-10
+"workstation-classics:Meadow Low" = tuba_sus_f1@t2000]E>#8/batlow#8T5L42;A1D171S57R61V86K53G-2
 "workstation-classics:Night Mist" = choir_aah@t6000]@t300[<;A847D341S80R1206V95K57G1
-"workstation-classics:Opal Lead" = violin_section_sus_c4@t6000]@t200[#8/hwfail#8L30;A3D373S73R326V73K60G3
+"workstation-classics:Opal Lead" = violin_section_sus_c4@t6000]@t200[#8/hwfail#8T12L30;A3D373S73R326V73K72G3

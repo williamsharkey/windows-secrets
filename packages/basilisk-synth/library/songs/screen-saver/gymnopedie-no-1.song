@@ -43,11 +43,11 @@ bird        ch8     "Thrush Morning"                         lufs=-29 pan=38 ver
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"screen-saver:Breath Flute" = flute_vib_c5#12/recycle>>@8]#4FL30;A40R400K72G2
+"screen-saver:Breath Flute" = flute_vib_c5#12/recycle>>@8]#4FL30;A40R400K84G2
 "screen-saver:Ivory Canopy" = glass_harp@t8000]@t500[E<EU2~10;A306D321S96R1238V98K64G-5
-"screen-saver:Lunar Canopy" = violin_section_sus_c4@t7500]@t300[#12U3~9/xpding#4T-11L68;A367D269S89R941V87K60G-9
+"screen-saver:Lunar Canopy" = violin_section_sus_c4@t7500]@t300[#12U3~9/xpding#4T1L68;A367D269S89R941V87K72G-9
 "screen-saver:Northern Dormant" = singing_bowl_long@t12000]@t200[<U3~11;A1135S100R1548V70K61G2
 "screen-saver:Ocean Shelf" = nps_ocean_waves<#4F;A2000S100R3000G5
-"screen-saver:Sunday Chimes" = glockenspiel_g4<#5/print#5T-3L30Q10/marimba_c4#6T-5L54Q33;A0D697S13R2035V95K55G2
+"screen-saver:Sunday Chimes" = glockenspiel_g4<#5/print#5T9L30Q10/marimba_c4#6T-5L54Q33;A0D697S13R2035V95K67G2
 "screen-saver:Thrush Morning" = bird_hermit_thrushE#8Ja0,100.178,69.2525,5/ringout#8T8L40Q25;K89G13
-"screen-saver:Water Marimba" = marimba_c4#10/drop_single_a#6FL40;A0R900K60G1
+"screen-saver:Water Marimba" = marimba_c4#10/drop_single_a#6FL40;A0R900K72G1

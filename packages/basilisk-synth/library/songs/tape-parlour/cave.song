@@ -31,14 +31,14 @@ level    = -6
 
 [tracks]
 # name      source  preset                                  mix
-bass        ch1     "Lunar Bows"                             lufs=-20
-cellos      ch2     "Warm Legato"                            lufs=-21 pan=-16 verb=0.3
-flute       ch3     "Kinetic Ray"                            lufs=-21 pan=10 verb=0.3
+bass        ch1     "Vinyl Section"                          lufs=-20
+cellos      ch2     "Northern Bows"                          lufs=-21 pan=-16 verb=0.3
+flute       ch3     "Dusk Pilot"                             lufs=-21 pan=10 verb=0.3 tune=-12
 kit         ch10    "kit-manager:Half-Time Kit"              lufs=-21 verb=0.12 lp=8000
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "kit-manager:Half-Time Kit" = ringout@20[@40]@0CP<<<+Ja0,100.80,50.400,0#3F/recycle@20]+E#4F/xprecycle>>>@40]#5F/critstop<@10]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
-"tape-parlour:Kinetic Ray" = tape_flute_vib_c4@t40[#14O15Wm8000Yd3kVw10,8f2,8s15,65/menu#2FL25Wm8000;A20D0S100R150V20K72G-8
-"tape-parlour:Lunar Bows" = tape_contrabass_a1@t40[#16Wm8000Yd6l4kVw4,6f4,8s20,80;A10D0S100R110V20K45G-14
-"tape-parlour:Warm Legato" = tape_cellos_a2@t40[#14O20Wm8000Yd3l4kVw6,5f2,10s15,80/xpstart#2FL12Wm8000;A20D0S100R80V30K57G-10
+"tape-parlour:Dusk Pilot" = tape_flute_vib_c4@t40[#4O10Wm8000Yd6l4kVw8,6f3,8s20,80Z36,76,72/tape_flute_vib_a4@t40[#4O10Wm8000Yd6l4kVw8,6f2,12s20,65Z77,82,81/tape_flute_vib_c5@t40[#3O20Wm8000Yd4kVw5,5f3,10s15,50Z83,90,84/tape_flute_vib_c6@t40[#3O15Wm8000Yd5l4kVw8,5f3,10s15,65Z91,102,96/menu#2FL18Wm8000;A10D0S100R110V30G-7
+"tape-parlour:Northern Bows" = tape_contrabass_e1@t40[#3L80O15Wm8000Yd3kVw5,8f2,8s25,65Z16,30,28/tape_contrabass_a1@t40[#3L80O15Wm8000Yd6l8kVw8,7f4,12s20,80Z31,96,33/tape_cellos_c1@t40[#3L55O20Wm8000Yd5l8kVw5,8f3,10s20,65Z24,46,36/tape_cellos_a2@t40[#3L55O20Wm8000Yd6l4kVw5,5f4,8s25,65Z47,65,57/tape_cellos_d4@t40[#2L55O20Wm8000Yd6kVw6,7f3,12s15,50Z66,96,74/menu#2FL25Wm8000;A10D0S100R80V20G-12
+"tape-parlour:Vinyl Section" = tape_contrabass_e1@t40[#7O10Wm8000Yd3kVw13,6f2,12s20,50Z16,30,28/tape_contrabass_a1@t40[#7O15Wm8000Yd6l4kVw6,8f4,10s20,50Z31,96,33/menu#2FL14Wm8000;A35D0S100R80V20G-15

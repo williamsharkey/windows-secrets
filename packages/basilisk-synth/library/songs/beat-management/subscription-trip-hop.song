@@ -41,12 +41,12 @@ scratch     ch9     "Desk Scratch"                           lufs=-25 pan=-8
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "beat-management:Desk Scratch" = recycle>R#6F/restore>#6;A0R80B12G19
-"beat-management:Dusk Tremolo" = erhu_d3@t4500]@t100[>U3~10;A210S89R1106V76K62G-14
+"beat-management:Dusk Tremolo" = erhu_d3@t4500]@t100[>U3~10;A210S89R1106V76K74G-14
 "beat-management:Dusty Vibes" = vibraphone_c_lowE>>>#5/crystal_bell_bb5@t2000]#5T-5L21Q-24/printR>#6T-5L29O368Q40;A1D802S24R904V98K65G3
 "beat-management:Felt Ding Piano" = xpding@30]<E#10U2~6;A5D2200S25R800V70K47G-1
-"beat-management:Flute Loop Lead" = flute_vib_c5#12/recycle>>@8]#4FL25;A30R250K72G2
+"beat-management:Flute Loop Lead" = flute_vib_c5#12/recycle>>@8]#4FL25;A30R250K84G2
 "beat-management:Long Boom Glide" = balloon<<<+#8/ringout@20[@40]@0CP@0CP@0CP<<<#6L60;A0D3000S40R300K45G6
 "beat-management:Night Choir Pad" = choir_aah<E#10U2~8;A600S90R1800K45G-3
-"beat-management:Noir Strings" = cello_section_sus_c3<E#8/violin_section_sus_c4<#6L60;A400S90R1500K36G-4
+"beat-management:Noir Strings" = cello_section_sus_c3<E#8/violin_section_sus_c4<#6L60;A400S90R1500K48G-4
 "beat-management:Steady Murmur" = floppy_read_write@t8000]C@50X#8U2~13F/chimes#4L43/recycle#4FL11;A113S100R627V89G1
 "kit-manager:Twelve-Bit Crate Kit" = ding<<<@35]><#3F/chord>>@15]+E><#4F/ringin>>@12]><#5F/ding>>@4]><#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

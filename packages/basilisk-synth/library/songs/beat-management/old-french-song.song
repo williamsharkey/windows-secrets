@@ -41,9 +41,9 @@ kit         ch10    "kit-manager:Twelve-Bit Crate Kit"       lufs=-17 verb=0.06
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "beat-management:Cedar Study" = piano_upright_cs4#5/glass_ping#5T-7L20Q-31/epiano_bell_c3#6T25L66Q-8;A0D2251S14R506V70K61G-7
-"beat-management:Civic Wire" = flute_vib_c5@t6000]@t300[E<H0,-12U3~14;A13D48S71R300V91K60G-8
-"beat-management:Golden Section" = violin_section_sus_c4@t7500]@t200[U2~8;A103S92R803V95K60G-6
+"beat-management:Civic Wire" = flute_vib_c5@t6000]@t300[E<H0,-12U3~14;A13D48S71R300V91K72G-8
+"beat-management:Golden Section" = violin_section_sus_c4@t7500]@t200[U2~8;A103S92R803V95K72G-6
 "beat-management:Study Vibes" = vibraphone_c_low#8Ja0,100.250,70.500,100.750,70.1000,100/chimesEE#8T-7L26O272Q53;A0R900K48G3
-"beat-management:Upright Thump" = contrabass_pizz_e1><#10;A0D600S20R150K28G2
+"beat-management:Upright Thump" = contrabass_pizz_e1><#10;A0D600S20R150K40G2
 "beat-management:Wide Flick" = epiano_yamaha_vibe>>;A2D170S6R99V71K60G-1
 "kit-manager:Twelve-Bit Crate Kit" = ding<<<@35]><#3F/chord>>@15]+E><#4F/ringin>>@12]><#5F/ding>>@4]><#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

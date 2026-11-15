@@ -28,25 +28,25 @@ level    = -3
 [tracks]
 # name      source  preset                                  mix
 kit         ch10    "kit-manager:Breaker Box Kit"            lufs=-17 verb=0.2
-fmpiano     ch1     "Broadcast Etude"                        lufs=-21 pan=-14 verb=0.3
-bass        ch2     "Waxed Basement"                         lufs=-20
-pad         ch3     "Tinted Veil"                            lufs=-26 verb=0.4 width=1.3 tune=-18
-vchoir      ch4     "Daylight Vowel"                         lufs=-20 pan=4 verb=0.4 tune=-11
-brass       ch5     "Signal Stab"                            lufs=-22 pan=10 verb=0.3 width=1.2
-lead        ch6     "Violet Pilot"                           lufs=-20 pan=-4 echo=0.2 verb=0.3
-solo        ch7     "Yellow Solo"                            lufs=-20 pan=6 echo=0.25 verb=0.3
-strings     ch8     "Arctic Chamber"                         lufs=-25 pan=-16 verb=0.4 width=1.3 tune=16
-bells       ch9     "Zinc Felt"                              lufs=-26 pan=28 echo=0.3 verb=0.4
+fmpiano     ch1     "Mild Chords"                            lufs=-21 pan=-14 verb=0.3
+bass        ch2     "Inland Floor"                           lufs=-20
+pad         ch3     "Ultra Pad"                              lufs=-26 verb=0.4 width=1.3 tune=-18
+vchoir      ch4     "Rose Breath"                            lufs=-20 pan=4 verb=0.4 tune=-11
+brass       ch5     "Azure Horns"                            lufs=-22 pan=10 verb=0.3 width=1.2 tune=14
+lead        ch6     "Molten Ray"                             lufs=-20 pan=-4 echo=0.2 verb=0.3
+solo        ch7     "Electric Pilot"                         lufs=-20 pan=6 echo=0.25 verb=0.3
+strings     ch8     "Upper Ensemble"                         lufs=-25 pan=-16 verb=0.4 width=1.3 tune=11
+bells       ch9     "Mild Lounge"                            lufs=-26 pan=28 echo=0.3 verb=0.4
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
-"polysynth-showroom:Arctic Chamber" = poly83_on_off_strings_fs4#16;A390S93R885V94K66G-5
-"polysynth-showroom:Broadcast Etude" = fm87_epiano_c4#16;A4D2188S37R474V71K60G-8
-"polysynth-showroom:Daylight Vowel" = vocoder_choir_female_f4E#16;A689D163S79R1639V89K65G-6
-"polysynth-showroom:Signal Stab" = poly83_big_c2@t4561]E>>#10U3~8/poly83_brassy_f1#3T19L48Q29/poly85_thin_brassy_c2#3T24L65Q13;A2D733S26R168V85K60G-12
-"polysynth-showroom:Tinted Veil" = poly83_gasflowers_c1EE>>>#11U4~14/poly82_open_pad_c2#3T12L30/poly78_sad_wow_c3R#2T24L23O99Q-5;A289D466S77R1489V75K60G-4
-"polysynth-showroom:Violet Pilot" = poly78_pwm_lady_c4@t8153]@t2329[@0CP@0CP+H0,7U2~6;A25D349S90R124V94K60G-11
-"polysynth-showroom:Waxed Basement" = poly83_big_c2Q-27;A5D258S54R107V94K36G3
-"polysynth-showroom:Yellow Solo" = mono79_noisy_sqr_filter_vel_c3#13U4~26/poly85_sensitive_square_c3#3T-12L62;A6D105S99R100V75K48G-14
-"polysynth-showroom:Zinc Felt" = poly82_rich_pluck_c4@t838]#5/poly84_simpleton_c3#5T24L50Q38/poly82_rich_pluck_c4#6T12L38Q9;A5D2186S44R515V77K60G-9
+"polysynth-showroom:Azure Horns" = poly83_wobble_brass_c2@t4099]+>>U2~6Q-55;A1D513S53R332V95K60G-7
+"polysynth-showroom:Electric Pilot" = poly85_sensitive_square_c3@t2209]@t631[@0CP@0CP>EH0,12U4~17Ja0,100.391,56.2154,30;A7D308S75R208V97K60G-16
+"polysynth-showroom:Inland Floor" = poly83_big_c2@t4561]#8/mono77_fm_rings_ds1#8T-3L33;A1D159S37R155V87K36G3
+"polysynth-showroom:Mild Chords" = fm87_epiano_c1E#4Z12,36,24/fm87_epiano_c3#4Z37,54,48/fm87_epiano_c4#4Z55,72,60/fm87_epiano_c6#4Z73,96,84;A0D625S16R438V96K60G-4
+"polysynth-showroom:Mild Lounge" = poly82_rich_pluck_c4#5/poly78_roger_piano_c3#5L52Q14/poly82_rich_pluck_c4#6L48Q-36;A0D829S15R472V72K60G-8
+"polysynth-showroom:Molten Ray" = poly78_pwm_lady_c4@t8153]@t2329[@0CP@0CPH0,-12U2~7;A2D284S88R125V99K60G-11
+"polysynth-showroom:Rose Breath" = vocoder_choir_female_f4E#6Z36,68,65/vocoder_choir_female_c5#5Z69,75,72/vocoder_choir_female_g5#5Z76,96,79;A798D319S94R1170V75K60G-7
+"polysynth-showroom:Ultra Pad" = poly83_gasflowers_c1@t4304]@t1229[@0CP@0CP>>#11U2~8/poly85_dark_pad_chorus_c3EER#5T19L16O213Q-11;A930D14S78R1462V80K48
+"polysynth-showroom:Upper Ensemble" = poly83_on_off_strings_c4#8Z36,62,60/poly83_on_off_strings_fs4#8Z63,96,66;A294S96R462V96K60G-3

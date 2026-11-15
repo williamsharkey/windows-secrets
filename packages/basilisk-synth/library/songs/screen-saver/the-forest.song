@@ -38,7 +38,7 @@ chime       ch4     "Frosted Peal"                           lufs=-30 pan=28 ver
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"screen-saver:Breath Flute" = flute_vib_c5#12/recycle>>@8]#4FL30;A40R400K72G2
-"screen-saver:Cathode Halo" = horn_sus_c3@t7500]@t300[#8U3~11/dingxpR#3T-19L33O181Q-13/spirit_breathE#3FL26Ja0,100.124,30.672,0/wind_chime_single@t2000]R#2T1L39O365Q-44;A618D617S73R1993V98K48G-10
+"screen-saver:Breath Flute" = flute_vib_c5#12/recycle>>@8]#4FL30;A40R400K84G2
+"screen-saver:Cathode Halo" = horn_sus_c3@t7500]@t300[#8U3~11/dingxpR#3T-7L33O181Q-13/spirit_breathE#3FL26Ja0,100.124,30.672,0/wind_chime_single@t2000]R#2T13L39O365Q-44;A618D617S73R1993V98K60G-10
 "screen-saver:Frosted Peal" = wind_chime_single@t3000]E#13H0,12U2~3/xpstart#3FL40;A0D744S26R606V89K71G-6
-"screen-saver:Water Marimba" = marimba_c4#10/drop_single_a#6FL40;A0R900K60G1
+"screen-saver:Water Marimba" = marimba_c4#10/drop_single_a#6FL40;A0R900K72G1

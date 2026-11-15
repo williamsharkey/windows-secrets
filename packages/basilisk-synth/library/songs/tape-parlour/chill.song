@@ -31,14 +31,14 @@ level    = -6
 
 [tracks]
 # name      source  preset                                  mix
-flute       ch1     "Digital Call"                           lufs=-19 pan=-8 verb=0.3
-violas      ch2     "Clear Bows"                             lufs=-22 pan=20 verb=0.35
-bass        ch3     "Lunar Bows"                             lufs=-21
+flute       ch1     "Dusk Pilot"                             lufs=-19 pan=-8 verb=0.3 tune=-12
+violas      ch2     "Hollow Legato"                          lufs=-22 pan=20 verb=0.35
+bass        ch3     "Vinyl Section"                          lufs=-21
 kit         ch10    "kit-manager:Half-Time Kit"              lufs=-20 verb=0.12 lp=9000
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "kit-manager:Half-Time Kit" = ringout@20[@40]@0CP<<<+Ja0,100.80,50.400,0#3F/recycle@20]+E#4F/xprecycle>>>@40]#5F/critstop<@10]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
-"tape-parlour:Clear Bows" = tape_violas_a3@t40[#16Wm8000Yd3l8kVw6,8f4,8s25,50;A35D0S100R80V40K69G-10
-"tape-parlour:Digital Call" = tape_flute_vib_c4@t40[#8L80Wm8000Yd3l8kVw4,6f3,8s25,80/tape_clarinet_d3@t40[#8T10L55Wm8000Yd6l4kVw4,8f4,8s25,80;A35D0S100R110V20K72G-9
-"tape-parlour:Lunar Bows" = tape_contrabass_a1@t40[#16Wm8000Yd6l4kVw4,6f4,8s20,80;A10D0S100R110V20K45G-14
+"tape-parlour:Dusk Pilot" = tape_flute_vib_c4@t40[#4O10Wm8000Yd6l4kVw8,6f3,8s20,80Z36,76,72/tape_flute_vib_a4@t40[#4O10Wm8000Yd6l4kVw8,6f2,12s20,65Z77,82,81/tape_flute_vib_c5@t40[#3O20Wm8000Yd4kVw5,5f3,10s15,50Z83,90,84/tape_flute_vib_c6@t40[#3O15Wm8000Yd5l4kVw8,5f3,10s15,65Z91,102,96/menu#2FL18Wm8000;A10D0S100R110V30G-7
+"tape-parlour:Hollow Legato" = tape_violas_c2@t40[#6Wm8000Yd3l8kVw8,5f4,12s15,65Z36,58,48/tape_violas_a3@t40[#5Wm8000Yd3l4kVw4,5f2,10s25,65Z59,70,69/tape_violas_c4@t40[#5Wm8000Yd5l8kVw8,7f4,8s15,65Z71,96,72;A20D0S100R150V40G-10
+"tape-parlour:Vinyl Section" = tape_contrabass_e1@t40[#7O10Wm8000Yd3kVw13,6f2,12s20,50Z16,30,28/tape_contrabass_a1@t40[#7O15Wm8000Yd6l4kVw6,8f4,10s20,50Z31,96,33/menu#2FL14Wm8000;A35D0S100R80V20G-15

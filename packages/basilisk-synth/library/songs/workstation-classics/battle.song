@@ -53,4 +53,4 @@ kit         ch10    "kit-manager:Punch Kick Kit"             lufs=-17 verb=0.06
 "workstation-classics:Ladder Mono Bass" = ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<+#4/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+#4L50Q-58/ringout@20[@40]@0CP@0CP@0CP<<<#8T2U2~8L60;A0D500S60R100K35G-6
 "workstation-classics:Molten Stab" = xpringout<#11U2~6/organ_hammond_m100_flute_c@t3000]@t300[#5T-3L36Q-27;A28D410S75R254V90K57
 "workstation-classics:Orbital Strum" = default@t250]#8/xpding#8T16L42Q1;A0D291S3R61V89K63G7
-"workstation-classics:Pale Cloud" = violin_section_sus_c4@t7500]@t300[EU3~13;A366D273S84R1069V80K60G-9
+"workstation-classics:Pale Cloud" = violin_section_sus_c4@t7500]@t300[EU3~13;A366D273S84R1069V80K72G-9

@@ -46,10 +46,10 @@ shaker      ch11    "Twilight Tap"                           lufs=-29 pan=32
 # the presets' DNA when this song was written (used before the pack discs' own)
 "leisure:Distant Knock" = flute_vib_c5E#8F/batlow#8L44;D60S0R78V83G14
 "leisure:Grey Clack" = emh_cardpunch_thumpU2~6;D152S0R121V95G-3
-"leisure:Island Marimba" = marimba_c4E#10;A0R600K60G1
+"leisure:Island Marimba" = marimba_c4E#10;A0R600K72G1
 "leisure:Late Toll" = glockenspiel_g4EH0,12;A3D827S7R1871V98K67
-"leisure:Opal Section" = cello_section_sus_c3@t7500]@t200[E>#10U3~15/marimba_c4#3T-12L41Q24/ringout#3T-21L55;A197S96R1086V78K60G-12
-"leisure:Polished Call" = flute_vib_c5@t6000]@t300[E<#8/infobar#8FL16;A35D513S86R162V78K60
+"leisure:Opal Section" = cello_section_sus_c3@t7500]@t200[E>#10U3~15/marimba_c4#3T-12L41Q24/ringout#3T-9L55;A197S96R1086V78K72G-12
+"leisure:Polished Call" = flute_vib_c5@t6000]@t300[E<#8/infobar#8FL16;A35D513S86R162V78K72
 "leisure:Soft Bells" = crystal_bell_bb5@t4000]<<#8/chimesR>#8T-2L33O128Q10;A1D1543S1R1143V86K58G-4
 "leisure:Steel Block" = relay_loud_click#8F/air_duster@t2000]@t500[#8FL13Ja0,100.94,30.738,0;D185S0R71V96G4
 "leisure:Tidal Solo" = xpringout@t349]@t99[@0CP@0CP@0CPE<#11H0,12/batlow#5T9L40;A2D421S96R132V78K57G5

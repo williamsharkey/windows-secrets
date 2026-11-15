@@ -41,14 +41,14 @@ piano       ch12    "Velvet Etude"                           lufs=-25 pan=-14 ve
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"studio-archive:Basement Chimes" = glockenspiel_g4<#8/print>#8T-27L37O269Q2;A3D824S26R501V83K55G2
+"studio-archive:Basement Chimes" = glockenspiel_g4<#8/print>#8T-15L37O269Q2;A3D824S26R501V83K67G2
 "studio-archive:Clear Snap" = bubble_pop_a#8/organ_pedal_25@t3000]@t300[#8L52;D90S0R91V82G8
-"studio-archive:Crystal Legato" = cello_section_sus_c3@t7500]@t200[>U3~12;A192S87R1473V84K60G-12
-"studio-archive:Harbor Study" = horn_sus_c3>#8/xpding#8T-11L69Q-36;A3D568S37R192V91K60G-6
-"studio-archive:Humid Swell" = violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K60G-9
-"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K36G-4
-"studio-archive:Swift Fanfare" = horn_sus_c3@t3000]E#12H0,7U3~8/hwfail#2T-12L58/xpding#2T1L35Q-18;A1D895S8R212V86K48G-13
-"studio-archive:Upper Horns" = trombone_sus_c3@t3000]>#8U2~7/vibraphone_c_low#4T19L26Q35/hwfail#4L54;A1D778S47R297V97K60G-9
+"studio-archive:Crystal Legato" = cello_section_sus_c3@t7500]@t200[>U3~12;A192S87R1473V84K72G-12
+"studio-archive:Harbor Study" = horn_sus_c3>#8/xpding#8T1L69Q-36;A3D568S37R192V91K72G-6
+"studio-archive:Humid Swell" = violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K72G-9
+"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K48G-4
+"studio-archive:Swift Fanfare" = horn_sus_c3@t3000]E#12H0,7U3~8/hwfail#2L58/xpding#2T13L35Q-18;A1D895S8R212V86K60G-13
+"studio-archive:Upper Horns" = trombone_sus_c3@t3000]>#8U2~7/vibraphone_c_low#4T31L26Q35/hwfail#4T12L54;A1D778S47R297V97K72G-9
 "studio-archive:Velvet Etude" = piano_upright_cs4#8/ui_glass_ping#8T-11L37O24Q-10;A0D438S2R187V90K61G-1
 "studio-archive:Warm Tap" = ding@t120]#8F/xpding#8L25;D62S0R95V94G13
 "studio-archive:White Stab" = trumpet_sus_c4@t3000]#5/kalimba_c4@t1500]#5T12L57Q14/em_metal_click_a>#6FL41;A1D383S87R144V85K62G-9

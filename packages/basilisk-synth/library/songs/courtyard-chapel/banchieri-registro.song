@@ -31,14 +31,14 @@ level    = -6
 
 [tracks]
 # name      source  preset                                  mix
-psaltery    ch1     "Slate Pick"                             lufs=-20 pan=8 verb=0.32
-harp        ch2     "Faded Pluck"                            lufs=-21 pan=26 verb=0.3
-dantranh    ch3     "Arctic Steps"                           lufs=-21 pan=-18 verb=0.3
-harpsichord ch4     "Soft Etude"                             lufs=-22 pan=-30 verb=0.22
+psaltery    ch1     "Amber Ticks"                            lufs=-20 pan=8 verb=0.32
+harp        ch2     "Glass Spool"                            lufs=-21 pan=26 verb=0.3
+dantranh    ch3     "Chrome Pick"                            lufs=-21 pan=-18 verb=0.3
+harpsichord ch4     "Brass Ballad"                           lufs=-22 pan=-30 verb=0.22
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"courtyard-chapel:Arctic Steps" = dan_tranh_b2#16;A2D201S4R139V84K59
-"courtyard-chapel:Faded Pluck" = folk_harp_c3#16;A2D416S4R83V75K60G-2
-"courtyard-chapel:Slate Pick" = psaltery_pluck_c4#15/defaultRE#2T9L10O53Q26;A2D201S2R136V78K72G-1
-"courtyard-chapel:Soft Etude" = harpsichord_flemish_c3#16;A4D2188S37R474V71K60G-8
+"courtyard-chapel:Amber Ticks" = psaltery_pluck_c4E#8Z36,78,72/psaltery_pluck_c5E#8Z79,96,84;A1D208S7R217V91K60
+"courtyard-chapel:Brass Ballad" = harpsichord_flemish_c2E#4Z36,54,48/harpsichord_flemish_c3#4Z55,66,60/harpsichord_flemish_c4#4Z67,78,72/harpsichord_flemish_c5#4Z79,96,84;A0D625S16R438V96K60G-1
+"courtyard-chapel:Chrome Pick" = dan_tranh_b1#4Z35,53,47/dan_tranh_b2#4Z54,65,59/dan_tranh_b3#4Z66,76,71/dan_tranh_b4#4Z77,96,83;A2D204S29R71V78K60G-2
+"courtyard-chapel:Glass Spool" = folk_harp_c2#4Z36,54,48/folk_harp_c3#4Z55,65,60/folk_harp_c4E#4Z66,77,72/folk_harp_c5#4Z78,96,84;A0D169S1R254V97K60G-2

@@ -39,6 +39,6 @@ kit         ch10    "kit-manager:Half-Time Kit"              lufs=-17 verb=0.05
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "bass-enterprise:Lagoon Section" = tadaxp+>;A5D280S22R269V97K60G12
-"bass-enterprise:Lattice Accent" = trombone_sus_c3@t3000]>U2~6;A11D216S12R154V71K60G-6
+"bass-enterprise:Lattice Accent" = trombone_sus_c3@t3000]>U2~6;A11D216S12R154V71K72G-6
 "bass-enterprise:Wobbly Speed Sub" = ringout@20[@40]@0CP@0CP@0CP++<<<#12Ja0,100.111,30.222,100.333,30.444,100;A0R100K33G-2
 "kit-manager:Half-Time Kit" = ringout@20[@40]@0CP<<<+Ja0,100.80,50.400,0#3F/recycle@20]+E#4F/xprecycle>>>@40]#5F/critstop<@10]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

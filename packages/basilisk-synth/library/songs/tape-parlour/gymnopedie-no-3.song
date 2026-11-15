@@ -30,16 +30,16 @@ level    = -5
 
 [tracks]
 # name      source  preset                                  mix
-flute       ch1     "Digital Call"                           lufs=-19 pan=-8 verb=0.35
-choir       ch2     "Faded Voices"                           lufs=-23 pan=10 verb=0.4
-piano       ch3     "Lattice Recital"                        lufs=-22 pan=16 verb=0.3
-bass        ch4     "Lunar Bows"                             lufs=-22
-organ       ch5     "Coral Revival"                          lufs=-27 pan=-6 verb=0.35
+flute       ch1     "Dusk Pilot"                             lufs=-19 pan=-8 verb=0.35 tune=-12
+choir       ch2     "Modular Chorus"                         lufs=-23 pan=10 verb=0.4
+piano       ch3     "Swift Ivories"                          lufs=-22 pan=16 verb=0.3
+bass        ch4     "Vinyl Section"                          lufs=-22
+organ       ch5     "Noble Stops"                            lufs=-27 pan=-6 verb=0.35
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"tape-parlour:Coral Revival" = tape_organ_8ft_c3@t40[#7L80O10Wm8000Yd3l4kVw6,7f4,8s25,65/tape_recorder_bass_c3@t40[#7L55O15Wm8000Yd6l4kVw4,8f2,8s15,65/xpstart#2FL12Wm8000;A40D0S100R150V30K60G-17
-"tape-parlour:Digital Call" = tape_flute_vib_c4@t40[#8L80Wm8000Yd3l8kVw4,6f3,8s25,80/tape_clarinet_d3@t40[#8T10L55Wm8000Yd6l4kVw4,8f4,8s25,80;A35D0S100R110V20K72G-9
-"tape-parlour:Faded Voices" = choir_full_octave_first_note@t40[#16Wm8000Yd4l4kVw6,5f3,12s15,50;A10D0S100R120V40K60G-8
-"tape-parlour:Lattice Recital" = gd_piano_a4@t40[#16Wm8000Yd6l8kVw5,5f4,8s25,50;A10D0S100R110V20K69G-11
-"tape-parlour:Lunar Bows" = tape_contrabass_a1@t40[#16Wm8000Yd6l4kVw4,6f4,8s20,80;A10D0S100R110V20K45G-14
+"tape-parlour:Dusk Pilot" = tape_flute_vib_c4@t40[#4O10Wm8000Yd6l4kVw8,6f3,8s20,80Z36,76,72/tape_flute_vib_a4@t40[#4O10Wm8000Yd6l4kVw8,6f2,12s20,65Z77,82,81/tape_flute_vib_c5@t40[#3O20Wm8000Yd4kVw5,5f3,10s15,50Z83,90,84/tape_flute_vib_c6@t40[#3O15Wm8000Yd5l4kVw8,5f3,10s15,65Z91,102,96/menu#2FL18Wm8000;A10D0S100R110V30G-7
+"tape-parlour:Modular Chorus" = choir_full_octave_first_note@t40[#16Wm8000Yd5l4kVw5,7f4,8s15,80Z36,96,60;A10D0S100R80V40G-8
+"tape-parlour:Noble Stops" = tape_organ_8ft_c2@t40[#3L80O20Wm8000Yd2l4kVw6,6f4,10s20,50Z36,60,48/tape_organ_8ft_c4@t40[#3L80O20Wm8000Yd2l8kVw5,8f2,12s25,65Z61,78,72/tape_organ_8ft_c5@t40[#3L80O20Wm8000Yd2kVw6,8f3,12s25,65Z79,96,84/tape_recorder_bass_c3@t40[#3L55O20Wm8000Yd2l4kVw5,8f3,8s15,80Z36,66,60/tape_recorder_bass_c4@t40[#2L55O20Wm8000Yd2l8kVw4,6f3,8s15,80Z67,96,72/xpstart#2FL25Wm8000;A10D0S100R110V30G-15
+"tape-parlour:Swift Ivories" = gd_piano_a1@t40[#4Wm8000Yd5l8kVw8,6f2,12s15,65Z20,38,33/gd_piano_a2@t40[#4Wm8000Yd5l8kVw5,7f3,10s25,50Z39,57,45/gd_piano_a4@t40[#4Wm8000Yd3l8kVw4,8f4,10s20,50Z58,75,69/gd_piano_a5@t40[#4Wm8000Yd6l8kVw5,5f2,8s15,65Z76,96,81;A35D0S100R150V40G-9
+"tape-parlour:Vinyl Section" = tape_contrabass_e1@t40[#7O10Wm8000Yd3kVw13,6f2,12s20,50Z16,30,28/tape_contrabass_a1@t40[#7O15Wm8000Yd6l4kVw6,8f4,10s20,50Z31,96,33/menu#2FL14Wm8000;A35D0S100R80V20G-15

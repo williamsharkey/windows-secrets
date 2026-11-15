@@ -40,5 +40,5 @@ thud        ch4     "Echo Click"                             lufs=-21
 # the presets' DNA when this song was written (used before the pack discs' own)
 "diagnostics:Broken Music Box" = music_box_note><E#10;A0D3000S0R1500K78G-4
 "diagnostics:Echo Click" = critstop@t400]@t40[<#8/xprecycle#8L21Ja0,100.46,30.526,0;D108S0R48V95K24G5
-"diagnostics:Hollow Song" = erhu_d3@t4000]>U2~8Q-51;A1D245S89R282V75K62G-7
+"diagnostics:Hollow Song" = erhu_d3@t4000]>U2~8Q-51;A1D245S89R282V75K74G-7
 "diagnostics:Stutter Copy Paste" = tadaxp@30[@4]@0CP@0CP@0CP@0CP@0CP#10;A0R60K60G15

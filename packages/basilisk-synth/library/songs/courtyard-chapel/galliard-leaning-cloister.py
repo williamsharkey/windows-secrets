@@ -4,7 +4,6 @@ bells and a balafon tabor."""
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from _lib import *
-chord_cap(8)   # rendered before render311 --lookahead: chords thinned to 8 recorders an instant (_lib.cap_chords)
 
 BPM = 104
 S = Score(bpm=BPM, seed=7)
@@ -141,14 +140,14 @@ finish(__file__, S, {
     'note': 'A galliard in D Dorian, 3/4, with hemiola cadences: psaltery, harpsichord continuo, folk harp, strumstick, '
             'didgeridoo bourdon, hand-chime and tubular bells, balafon tabor.',
 }, [
-    ('psaltery', 'ch1', 'Slate Pick', dict(lufs=-19, pan=8, echo=0.05, verb=0.32)),
-    ('harpsi', 'ch2', 'Soft Etude', dict(lufs=-22, pan=-28, verb=0.22)),
-    ('harp', 'ch3', 'Faded Pluck', dict(lufs=-24, pan=34, echo=0.12, verb=0.3)),
-    ('strum', 'ch4', 'Kinetic Harp', dict(lufs=-23, pan=-8, verb=0.15)),
-    ('drone', 'ch5', 'White Dormant', dict(lufs=-28, pan=0, verb=0.35)),
-    ('bells', 'ch6', 'Marble Tower', dict(lufs=-24, pan=22, echo=0.15, verb=0.45)),
-    ('tabor', 'ch7', 'Brushed Carillon', dict(lufs=-25, pan=-36, verb=0.25)),
-    ('swoosh', 'ch8', 'Global Swoosh', dict(lufs=-28, pan=0, echo=0.3, verb=0.5)),
+    ('psaltery', 'ch1', 'Amber Ticks', dict(lufs=-19, pan=8, echo=0.05, verb=0.32)),
+    ('harpsi', 'ch2', 'Brass Ballad', dict(lufs=-22, pan=-28, verb=0.22)),
+    ('harp', 'ch3', 'Glass Spool', dict(lufs=-24, pan=34, echo=0.12, verb=0.3)),
+    ('strum', 'ch4', 'Floor Harp', dict(lufs=-23, pan=-8, verb=0.15)),
+    ('drone', 'ch5', 'Hotel Uplink', dict(lufs=-28, pan=0, verb=0.35)),
+    ('bells', 'ch6', 'Pewter Gong', dict(lufs=-24, pan=22, echo=0.15, verb=0.45)),
+    ('tabor', 'ch7', 'Field Carillon', dict(lufs=-25, pan=-36, verb=0.25)),
+    ('swoosh', 'ch8', 'Polished Dive', dict(lufs=-28, pan=0, echo=0.3, verb=0.5)),
 ], master={'loudness': -16, 'ceiling': -1.0},
    echo={'time': '3/8', 'feedback': 0.3, 'tone': 3000, 'level': -4},
    reverb={'size': 2.6, 'predelay': 24, 'tone': 5000, 'level': -3})

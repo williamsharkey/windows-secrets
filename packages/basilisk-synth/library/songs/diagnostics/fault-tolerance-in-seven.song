@@ -44,12 +44,12 @@ block       ch14    "Laser Block"                            lufs=-29 pan=36
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "diagnostics:Broken Music Box" = music_box_note><E#10;A0D3000S0R1500K78G-4
-"diagnostics:Copper Veil" = cello_section_sus_c3@t7500]@t300[>U2~18Q20;A755D624S85R1066V73K60G-11
+"diagnostics:Copper Veil" = cello_section_sus_c3@t7500]@t300[>U2~18Q20;A755D624S85R1066V73K72G-11
 "diagnostics:Digital Veil" = error<<EU2~10Ja0,0.365,100.1446,61Yd10l20q24;A500S90R2000K63G1
 "diagnostics:Echo Click" = critstop@t400]@t40[<#8/xprecycle#8L21Ja0,100.46,30.526,0;D108S0R48V95K24G5
 "diagnostics:Electric Snare" = em_stamp_a>#8/key_press_down>#8FL27;D261S0R74V79G3
 "diagnostics:Floppy Seek Perc" = floppy_seek_clunk#8Q30/mouse_click@40]#8;A0D2R80K46G2
-"diagnostics:Hollow Song" = erhu_d3@t4000]>U2~8Q-51;A1D245S89R282V75K62G-7
+"diagnostics:Hollow Song" = erhu_d3@t4000]>U2~8Q-51;A1D245S89R282V75K74G-7
 "diagnostics:Inland Cantor" = choir_aah@t6000]@t300[E<#8U2~8Q-46/organ_pedal_25@t3000]@t300[#4T-3L54/batlow#4T9L46;A189D40S83R536V75K57G-5
 "diagnostics:Laser Block" = critstop@t400]@t40[#11U2~9F/ems_typebar#5FL27;D248S0R39V99G-2
 "diagnostics:Lunar Tick" = em_stamp_a+F;D123S0R93V94G6

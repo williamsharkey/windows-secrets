@@ -28,29 +28,29 @@ level    = -5
 [tracks]
 # name      source  preset                                  mix
 kit         ch10    "kit-manager:Breaker Box Kit"            lufs=-17 verb=0.12
-bass        ch2     "Broadcast Cellar"                       lufs=-19
-brass       ch3     "Copper Salute"                          lufs=-20 pan=-8 verb=0.2 width=1.2
-fmpiano     ch4     "Empty Hammers"                          lufs=-23 pan=-20 verb=0.25
-clav        ch5     "Distant Parlour"                        lufs=-25 pan=26 tune=-22
-lead        ch6     "Grey Beam"                              lufs=-19 pan=6 echo=0.2 verb=0.25
-solo        ch7     "Amber Line"                             lufs=-20 pan=-4 echo=0.25 verb=0.25
-vstrings    ch8     "Hollow Swell"                           lufs=-24 pan=14 verb=0.35 width=1.3 tune=-14
-vchoir      ch9     "Marble Chorus"                          lufs=-25 pan=-12 verb=0.4 tune=-14
-pad         ch11    "Wide Field"                             lufs=-26 verb=0.35 width=1.3
-ep          ch12    "Broadcast Etude"                        lufs=-25 pan=30 echo=0.3 verb=0.2
-female      ch13    "Broadcast Vox"                          lufs=-23 pan=8 verb=0.4 tune=-11
+bass        ch2     "Ivory Low"                              lufs=-19
+brass       ch3     "Orbital Accent"                         lufs=-20 pan=-8 verb=0.2 width=1.2
+fmpiano     ch4     "Stone Parlour"                          lufs=-23 pan=-20 verb=0.25
+clav        ch5     "Paper Recital"                          lufs=-25 pan=26
+lead        ch6     "Silent Ray"                             lufs=-19 pan=6 echo=0.2 verb=0.25
+solo        ch7     "Wired Call"                             lufs=-20 pan=-4 echo=0.25 verb=0.25
+vstrings    ch8     "Foggy Section"                          lufs=-24 pan=14 verb=0.35 width=1.3
+vchoir      ch9     "Static Chorus"                          lufs=-25 pan=-12 verb=0.4 tune=-12
+pad         ch11    "Plaza Field"                            lufs=-26 verb=0.35 width=1.3
+ep          ch12    "Mild Chords"                            lufs=-25 pan=30 echo=0.3 verb=0.2
+female      ch13    "Rose Breath"                            lufs=-23 pan=8 verb=0.4 tune=-11
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
-"polysynth-showroom:Amber Line" = poly85_buzzy_lead_c3@t7053]@t2015[@0CP@0CP>EQ55;A29D320S81R129V87K60G-2
-"polysynth-showroom:Broadcast Cellar" = mono77_cream_b0;A3D242S68R71V85K23G-1
-"polysynth-showroom:Broadcast Etude" = fm87_epiano_c4#16;A4D2188S37R474V71K60G-8
-"polysynth-showroom:Broadcast Vox" = vocoder_choir_female_f4#16;A221D362S78R669V80K65G-7
-"polysynth-showroom:Copper Salute" = poly83_big_c2>>#11U2~6/poly83_wobble_brass_c2#5T12L43Q-47;A15D362S32R229V81K60G-10
-"polysynth-showroom:Distant Parlour" = fm87_clav_c4#15/chimesxpRE#2T5L12O111Q-8;A3D892S37R329V80K60G-6
-"polysynth-showroom:Empty Hammers" = fm87_piano_c4#15/dingxp>#2T-19L20O92Q6;A3D806S5R374V81K60G-7
-"polysynth-showroom:Grey Beam" = poly78_pwm_lady_c4E#12U3~14/poly78_res_organ_d4#4T10L32O6Q-21;A36D120S82R103V99K60G-9
-"polysynth-showroom:Hollow Swell" = vocoder_strings_c4E#15/dingxp>#2T-19L12O98Q-24;A186S95R912V70K60G-3
-"polysynth-showroom:Marble Chorus" = vocoder_choir_male_c4#16;A534D308S88R1001V92K60G-5
-"polysynth-showroom:Wide Field" = poly78_saxons_pad_c2@t8399]@t2400[@0CP@0CP>>#12U3~14/poly85_dark_pad_chorus_c3#4L50Q15;A398D716S91R1112V94K60G-13
+"polysynth-showroom:Foggy Section" = vocoder_strings_c4#4L80Z36,66,60/vocoder_strings_c5#3L80Z67,78,72/vocoder_strings_c6#3L80Z79,96,84/poly83_on_off_strings_c4E#3L55Z36,62,60/poly83_on_off_strings_fs4#3L55Z63,96,66;A569S90R1323V70K60G-4
+"polysynth-showroom:Ivory Low" = mono77_cream_b0@t4798]>#11U2~6/poly85_slow_bass_d3#5T-27L46;A3D404S56R123V76K35G-5
+"polysynth-showroom:Mild Chords" = fm87_epiano_c1E#4Z12,36,24/fm87_epiano_c3#4Z37,54,48/fm87_epiano_c4#4Z55,72,60/fm87_epiano_c6#4Z73,96,84;A0D625S16R438V96K60G-4
+"polysynth-showroom:Orbital Accent" = poly83_big_c2@t4561]+>>EH0,7;A7D620S45R144V73K60G-16
+"polysynth-showroom:Paper Recital" = fm87_clav_c3E#3Z36,54,48/fm87_clav_c4#3Z55,72,60/fm87_clav_c6#4Z73,86,84/fm87_clav_f6E#4Z87,96,89/dingxpRE#2T-7L20O77Q19;A5D2023S32R612V90K60G-7
+"polysynth-showroom:Plaza Field" = poly78_thick_swishy_c2>>#11U2~6/poly83_slowone_c2#5T24L35Q14;A439D722S73R1176V92K60G-1
+"polysynth-showroom:Rose Breath" = vocoder_choir_female_f4E#6Z36,68,65/vocoder_choir_female_c5#5Z69,75,72/vocoder_choir_female_g5#5Z76,96,79;A798D319S94R1170V75K60G-7
+"polysynth-showroom:Silent Ray" = poly78_pwm_lady_c4#8/poly78_pwm_lady_c4#8T24L19O5Q3;A3D207S71R144V97K60G-2
+"polysynth-showroom:Static Chorus" = vocoder_choir_male_c3#6Z36,54,48/vocoder_choir_male_c4#5Z55,66,60/vocoder_choir_male_c5#5Z67,96,72;A624D313S75R607V74K60G-6
+"polysynth-showroom:Stone Parlour" = fm87_piano_c2#4Z24,48,36/fm87_piano_c4E#4Z49,66,60/fm87_piano_c5E#4Z67,84,72/fm87_piano_c7#4Z85,103,96;A0D1215S20R339V84K60G-7
+"polysynth-showroom:Wired Call" = poly85_buzzy_lead_c3@t7053]@t2015[@0CP@0CP+>#8/mono77_curious_lead_c3#8T31L38Q-23;A9D462S94R127V81K60G-6

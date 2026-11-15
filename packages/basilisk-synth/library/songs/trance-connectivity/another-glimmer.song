@@ -45,7 +45,7 @@ fx          ch9     "Felt Wake"                              lufs=-26 verb=0.4
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "kit-manager:Punch Kick Kit" = ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
-"trance-connectivity:Blue Signal" = violin_section_sus_c4@t6000]@t200[U2~10;A5D423S93R224V86K60G-3
+"trance-connectivity:Blue Signal" = violin_section_sus_c4@t6000]@t200[U2~10;A5D423S93R224V86K72G-3
 "trance-connectivity:Coral Tide" = choir_aah@t6000]@t300[<#11U2~6/wind_chime_single@t2000]>#5T-2L35O50Q20;A754D11S98R1770V91K57G-4
 "trance-connectivity:Echo Pluck 138" = default@12]#6U2~8/default@12]<E>#5L40O326Q-40/default@12]<E>#5L22O652Q40;A0D300S0R250V80K75G2
 "trance-connectivity:Felt Wake" = minimize<#13H0,-12U2~9Q31/xpding>#3T-32L19O248Q-33;A28S100R2235V91K16G17

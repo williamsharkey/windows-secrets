@@ -40,5 +40,5 @@ snap        ch4     "Honey Click"                            lufs=-27 pan=20
 # the presets' DNA when this song was written (used before the pack discs' own)
 "studio-archive:Honey Click" = chord@t200]>#8F/mouse_click@t150]#8FL15;D123S0R77V94G5
 "studio-archive:Mild Ivories" = piano_upright_cs4#11U2~3/ringout#5T-20L55Q18;A2D2460S15R251V83K61G-9
-"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K36G-4
-"studio-archive:Twilight Horns" = trombone_sus_c3@t3000]+>H0,7;A43D860S6R405V72K60G-14
+"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K48G-4
+"studio-archive:Twilight Horns" = trombone_sus_c3@t3000]+>H0,7;A43D860S6R405V72K72G-14

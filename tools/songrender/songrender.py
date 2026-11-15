@@ -25,7 +25,7 @@ from smf import Smf   # noqa: E402
 SR = 48000
 HOME = os.path.expanduser('~')
 DEF_RENDER311 = os.environ.get('SONGRENDER_RENDER311', os.path.join(HOME, 'songs', 'build', 'render311-la'))
-DEF_MACHINE = os.environ.get('SONGRENDER_MACHINE', os.path.join(HOME, 'songs', 'machine'))
+DEF_MACHINE = os.environ.get('SONGRENDER_MACHINE', os.path.join(HOME, 'songs', 'machine131'))
 DEF_CACHE = os.environ.get('SONGRENDER_CACHE', os.path.join(HOME, 'songs', 'cache'))
 MAX_JOBS = 6   # the PC is shared: never more engines than this at once
 

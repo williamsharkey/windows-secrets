@@ -40,9 +40,9 @@ chime       ch6     "Frosted Peal"                           lufs=-30 pan=30 ver
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"screen-saver:Breath Flute" = flute_vib_c5#12/recycle>>@8]#4FL30;A40R400K72G2
-"screen-saver:Cathode Halo" = horn_sus_c3@t7500]@t300[#8U3~11/dingxpR#3T-19L33O181Q-13/spirit_breathE#3FL26Ja0,100.124,30.672,0/wind_chime_single@t2000]R#2T1L39O365Q-44;A618D617S73R1993V98K48G-10
+"screen-saver:Breath Flute" = flute_vib_c5#12/recycle>>@8]#4FL30;A40R400K84G2
+"screen-saver:Cathode Halo" = horn_sus_c3@t7500]@t300[#8U3~11/dingxpR#3T-7L33O181Q-13/spirit_breathE#3FL26Ja0,100.124,30.672,0/wind_chime_single@t2000]R#2T13L39O365Q-44;A618D617S73R1993V98K60G-10
 "screen-saver:Frosted Peal" = wind_chime_single@t3000]E#13H0,12U2~3/xpstart#3FL40;A0D744S26R606V89K71G-6
 "screen-saver:Ivory Canopy" = glass_harp@t8000]@t500[E<EU2~10;A306D321S96R1238V98K64G-5
-"screen-saver:Water Marimba" = marimba_c4#10/drop_single_a#6FL40;A0R900K60G1
+"screen-saver:Water Marimba" = marimba_c4#10/drop_single_a#6FL40;A0R900K72G1
 "screen-saver:Yellow Gong" = dingE<<#5/print#5T-8L13Q-25/mouse_click@t150]#6FL37;A1D1591S12R565V73K55G3

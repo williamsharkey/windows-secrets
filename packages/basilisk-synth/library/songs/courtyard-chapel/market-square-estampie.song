@@ -27,24 +27,23 @@ level    = -3
 
 [tracks]
 # name      source  preset                                  mix
-dantranh    ch1     "Arctic Steps"                           lufs=-19 pan=-14 verb=0.3
-psaltery    ch2     "Slate Pick"                             lufs=-20 pan=14 echo=0.05 verb=0.32
-strumstick  ch3     "Kinetic Harp"                           lufs=-23 pan=-6 verb=0.15
-drone       ch4     "White Dormant"                          lufs=-28 verb=0.35
-tabor       ch5     "Brushed Carillon"                       lufs=-24 pan=-30 verb=0.25
-mbira       ch6     "Daylight Steps"                         lufs=-24 pan=26 echo=0.1 verb=0.3
-kalimba     ch7     "Late Ladder"                            lufs=-26 pan=32 echo=0.2 verb=0.35
-bells       ch8     "Marble Tower"                           lufs=-25 pan=20 echo=0.15 verb=0.45 tune=16
-gong        ch9     "Cathode Bells"                          lufs=-26 verb=0.5 tune=-39
+dantranh    ch1     "Chrome Pick"                            lufs=-19 pan=-14 verb=0.3
+psaltery    ch2     "Amber Ticks"                            lufs=-20 pan=14 echo=0.05 verb=0.32
+strumstick  ch3     "Floor Harp"                             lufs=-23 pan=-6 verb=0.15
+drone       ch4     "Hotel Uplink"                           lufs=-28 verb=0.35 tune=-23
+tabor       ch5     "Field Carillon"                         lufs=-24 pan=-30 verb=0.25
+mbira       ch6     "Vinyl Pizz"                             lufs=-24 pan=26 echo=0.1 verb=0.3
+kalimba     ch7     "Vinyl Pizz"                             lufs=-26 pan=32 echo=0.2 verb=0.35
+bells       ch8     "Pewter Gong"                            lufs=-25 pan=20 echo=0.15 verb=0.45
+gong        ch9     "Faded Gong"                             lufs=-26 verb=0.5
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"courtyard-chapel:Arctic Steps" = dan_tranh_b2#16;A2D201S4R139V84K59
-"courtyard-chapel:Brushed Carillon" = balafon_cs3#16;A1D1290S3R2437V72K61G1
-"courtyard-chapel:Cathode Bells" = gong_mf@t12000]EE>#8U2~3/nepalese_bell_b>#8T-34U2~6L34O196Q54;A0D1045S24R713V90K61G-8
-"courtyard-chapel:Daylight Steps" = mbira_mavembe_c3#16;A1D333S0R102V98K60
-"courtyard-chapel:Kinetic Harp" = strumstick_g2#16;A2D155S8R154V96K55
-"courtyard-chapel:Late Ladder" = kalimba_kenya_cs4E#16;A1D112S2R172V87K61G-1
-"courtyard-chapel:Marble Tower" = hand_chime_c3E#8L80/tubular_bell_c4#8L55;A2D1021S21R795V89K60G-1
-"courtyard-chapel:Slate Pick" = psaltery_pluck_c4#15/defaultRE#2T9L10O53Q26;A2D201S2R136V78K72G-1
-"courtyard-chapel:White Dormant" = didgeridoo_sus_a>>#13U4~18/didgeridoo_phrase#3T-3L41;A769D0S100R836V93K61G-6
+"courtyard-chapel:Amber Ticks" = psaltery_pluck_c4E#8Z36,78,72/psaltery_pluck_c5E#8Z79,96,84;A1D208S7R217V91K60
+"courtyard-chapel:Chrome Pick" = dan_tranh_b1#4Z35,53,47/dan_tranh_b2#4Z54,65,59/dan_tranh_b3#4Z66,76,71/dan_tranh_b4#4Z77,96,83;A2D204S29R71V78K60G-2
+"courtyard-chapel:Faded Gong" = nepalese_bell_b<<<H0,12;A3D2497S21R946V90K59G-5
+"courtyard-chapel:Field Carillon" = balafon_cs3#6Z36,66,61/balafon_c4E#5Z67,77,72/balafon_c5E#5Z78,96,84;A0D2520S25R1903V75K60G2
+"courtyard-chapel:Floor Harp" = strumstick_d2#8Z36,52,50/strumstick_g2E#8Z53,96,55;A2D103S2R64V99K60G1
+"courtyard-chapel:Hotel Uplink" = cymbal_bowed<#11U2~10Q59/siren_whistle_bR#5T-30L27O292Q38;A4S100R1670V75K49G-6
+"courtyard-chapel:Pewter Gong" = hand_chime_c3E#3L80Z36,72,60/hand_chime_c5#3L80Z73,90,84/hand_chime_c6#3L80Z91,103,96/tubular_bell_c3#3L55Z36,53,48/tubular_bell_as3#2L55Z54,59,58/tubular_bell_c4#2L55Z60,96,60;A2D655S12R1197V85K60G-1
+"courtyard-chapel:Vinyl Pizz" = kalimba_kenya_b2#6Z34,54,47/kalimba_kenya_cs4#5Z55,64,61/kalimba_kenya_a4#5Z65,96,69;A1D352S2R65V78K60G-3

@@ -30,20 +30,20 @@ level    = -5
 
 [tracks]
 # name      source  preset                                  mix
-lead        ch1     "Grey Beam"                              lufs=-19 pan=4 echo=0.2 verb=0.3
-solo        ch2     "Amber Line"                             lufs=-20 pan=-6 echo=0.2 verb=0.3
-fmpiano     ch3     "Empty Hammers"                          lufs=-23 pan=-18 verb=0.3
-clav        ch4     "Distant Parlour"                        lufs=-25 pan=24 tune=-22
-bass        ch5     "Dial Bass"                              lufs=-20
-vstrings    ch6     "Hollow Swell"                           lufs=-25 verb=0.4 width=1.3 tune=-14
+lead        ch1     "Silent Ray"                             lufs=-19 pan=4 echo=0.2 verb=0.3
+solo        ch2     "Wired Call"                             lufs=-20 pan=-6 echo=0.2 verb=0.3
+fmpiano     ch3     "Stone Parlour"                          lufs=-23 pan=-18 verb=0.3
+clav        ch4     "Paper Recital"                          lufs=-25 pan=24
+bass        ch5     "Ivory Low"                              lufs=-20
+vstrings    ch6     "Foggy Section"                          lufs=-25 verb=0.4 width=1.3
 kit         ch10    "kit-manager:Breaker Box Kit"            lufs=-18 verb=0.15
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
-"polysynth-showroom:Amber Line" = poly85_buzzy_lead_c3@t7053]@t2015[@0CP@0CP>EQ55;A29D320S81R129V87K60G-2
-"polysynth-showroom:Dial Bass" = mono77_cream_b0#11U2~6/mono77_fm_rings_ds1#5T-16L45;A5D236S61R173V92K23G-5
-"polysynth-showroom:Distant Parlour" = fm87_clav_c4#15/chimesxpRE#2T5L12O111Q-8;A3D892S37R329V80K60G-6
-"polysynth-showroom:Empty Hammers" = fm87_piano_c4#15/dingxp>#2T-19L20O92Q6;A3D806S5R374V81K60G-7
-"polysynth-showroom:Grey Beam" = poly78_pwm_lady_c4E#12U3~14/poly78_res_organ_d4#4T10L32O6Q-21;A36D120S82R103V99K60G-9
-"polysynth-showroom:Hollow Swell" = vocoder_strings_c4E#15/dingxp>#2T-19L12O98Q-24;A186S95R912V70K60G-3
+"polysynth-showroom:Foggy Section" = vocoder_strings_c4#4L80Z36,66,60/vocoder_strings_c5#3L80Z67,78,72/vocoder_strings_c6#3L80Z79,96,84/poly83_on_off_strings_c4E#3L55Z36,62,60/poly83_on_off_strings_fs4#3L55Z63,96,66;A569S90R1323V70K60G-4
+"polysynth-showroom:Ivory Low" = mono77_cream_b0@t4798]>#11U2~6/poly85_slow_bass_d3#5T-27L46;A3D404S56R123V76K35G-5
+"polysynth-showroom:Paper Recital" = fm87_clav_c3E#3Z36,54,48/fm87_clav_c4#3Z55,72,60/fm87_clav_c6#4Z73,86,84/fm87_clav_f6E#4Z87,96,89/dingxpRE#2T-7L20O77Q19;A5D2023S32R612V90K60G-7
+"polysynth-showroom:Silent Ray" = poly78_pwm_lady_c4#8/poly78_pwm_lady_c4#8T24L19O5Q3;A3D207S71R144V97K60G-2
+"polysynth-showroom:Stone Parlour" = fm87_piano_c2#4Z24,48,36/fm87_piano_c4E#4Z49,66,60/fm87_piano_c5E#4Z67,84,72/fm87_piano_c7#4Z85,103,96;A0D1215S20R339V84K60G-7
+"polysynth-showroom:Wired Call" = poly85_buzzy_lead_c3@t7053]@t2015[@0CP@0CP+>#8/mono77_curious_lead_c3#8T31L38Q-23;A9D462S94R127V81K60G-6

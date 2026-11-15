@@ -45,12 +45,12 @@ gong        ch13    "Cedar Gong"                             lufs=-25 verb=0.5
 "leisure:Cedar Gong" = ding<<#8/dingxpRE#8T-12L36O244Q-35;A2D1760S10R1406V86K55G4
 "leisure:Golden Clap" = popupE;D304S0R129V84G17
 "leisure:Half-Speed Mockingbird" = bird_american_robin<E#6F;A0R1500
-"leisure:Island Marimba" = marimba_c4E#10;A0R600K60G1
+"leisure:Island Marimba" = marimba_c4E#10;A0R600K72G1
 "leisure:Mild Rain" = insect_crickets_mojave@t10000]@t1000[<#8/soft_wind@t4000]@t1000[#8FL30;A59S100R1973V85G2
-"leisure:Opal Section" = cello_section_sus_c3@t7500]@t200[E>#10U3~15/marimba_c4#3T-12L41Q24/ringout#3T-21L55;A197S96R1086V78K60G-12
-"leisure:Polished Call" = flute_vib_c5@t6000]@t300[E<#8/infobar#8FL16;A35D513S86R162V78K60
+"leisure:Opal Section" = cello_section_sus_c3@t7500]@t200[E>#10U3~15/marimba_c4#3T-12L41Q24/ringout#3T-9L55;A197S96R1086V78K72G-12
+"leisure:Polished Call" = flute_vib_c5@t6000]@t300[E<#8/infobar#8FL16;A35D513S86R162V78K72
 "leisure:Soft Bells" = crystal_bell_bb5@t4000]<<#8/chimesR>#8T-2L33O128Q10;A1D1543S1R1143V86K58G-4
 "leisure:Steel Block" = relay_loud_click#8F/air_duster@t2000]@t500[#8FL13Ja0,100.94,30.738,0;D185S0R71V96G4
 "leisure:Tiki Lounge Piano" = harp_c5#10/ding@20]#6T5L30;A0D2000S20R700K72G-1
 "leisure:Twilight Tap" = glass_harp#8F/ems_typebar>#8FL32;D63S0R40V72G13
-"leisure:Volcano Strings" = violin_section_sus_c4E#8/cello_section_sus_c3#6L60;A500S90R1500K60
+"leisure:Volcano Strings" = violin_section_sus_c4E#8/cello_section_sus_c3#6L60;A500S90R1500K72

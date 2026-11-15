@@ -44,7 +44,7 @@ arp         ch9     "Violet Chords"                          lufs=-26 pan=24 ech
 "retro-display:Digital Hammers" = print@30]<E#8/default@20]<<#6T-5L40;A20D2000S40R900K46G14
 "retro-display:Laser Glow" = xpringout@t349]@t99[@0CP@0CP@0CPEE<#10U3~12/dingxp>#3T-22L33O228Q12/xpding#3T-14L39Q26;A579D17S72R2592V96K57G8
 "retro-display:Laser Grid Sweep" = restore<RE#6/minimize<#6;A200R900G22
-"retro-display:Night Window Strings" = violin_section_sus_c4#10U2~8/logon<#6T4L30;A250S90R1200K60G-4
+"retro-display:Night Window Strings" = violin_section_sus_c4#10U2~8/logon<#6T16L30;A250S90R1200K72G-4
 "retro-display:Remote Basement" = ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+<#8Ja0,100.80,40.110,0;A0D400S0R40V80K35G6
 "retro-display:Rooftop Sax Lead" = trumpet_sus_c4+#10;A30R250K62G-6
 "retro-display:Sun Glare Lead" = print@10[@60]@0CP@0CP#10U2~14;A40R500K82G13

@@ -41,11 +41,11 @@ ep          ch11    "Wide Flick"                             lufs=-22 pan=-10 ec
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "beat-management:Cedar Study" = piano_upright_cs4#5/glass_ping#5T-7L20Q-31/epiano_bell_c3#6T25L66Q-8;A0D2251S14R506V70K61G-7
-"beat-management:Civic Wire" = flute_vib_c5@t6000]@t300[E<H0,-12U3~14;A13D48S71R300V91K60G-8
+"beat-management:Civic Wire" = flute_vib_c5@t6000]@t300[E<H0,-12U3~14;A13D48S71R300V91K72G-8
 "beat-management:Desk Scratch" = recycle>R#6F/restore>#6;A0R80B12G19
-"beat-management:Golden Section" = violin_section_sus_c4@t7500]@t200[U2~8;A103S92R803V95K60G-6
+"beat-management:Golden Section" = violin_section_sus_c4@t7500]@t200[U2~8;A103S92R803V95K72G-6
 "beat-management:Study Vibes" = vibraphone_c_low#8Ja0,100.250,70.500,100.750,70.1000,100/chimesEE#8T-7L26O272Q53;A0R900K48G3
-"beat-management:Upright Thump" = contrabass_pizz_e1><#10;A0D600S20R150K28G2
+"beat-management:Upright Thump" = contrabass_pizz_e1><#10;A0D600S20R150K40G2
 "beat-management:Wide Flick" = epiano_yamaha_vibe>>;A2D170S6R99V71K60G-1
 "beat-management:Window Rain Room" = rain_on_window<E#4F;A2000S100R3000G5
 "beat-management:Winter Choir" = choir_aah@t6000]@t300[E#11U2~10/dingxpR#5T2L34O74Q16;A93D544S94R1335V78K69G-7

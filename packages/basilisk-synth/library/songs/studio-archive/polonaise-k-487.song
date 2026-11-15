@@ -39,9 +39,9 @@ strings     ch6     "Waxed Aurora"                           lufs=-26 verb=0.4
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"studio-archive:Humid Swell" = violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K60G-9
-"studio-archive:Opal Fanfare" = horn_sus_c3@t3000]E>;A4D271S55R212V72K60G-7
-"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K36G-4
-"studio-archive:Upper Horns" = trombone_sus_c3@t3000]>#8U2~7/vibraphone_c_low#4T19L26Q35/hwfail#4L54;A1D778S47R297V97K60G-9
-"studio-archive:Waxed Aurora" = violin_section_sus_c4@t7500]@t300[RU2~6;A504D748S75R2396V94K60G-9
+"studio-archive:Humid Swell" = violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K72G-9
+"studio-archive:Opal Fanfare" = horn_sus_c3@t3000]E>;A4D271S55R212V72K72G-7
+"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K48G-4
+"studio-archive:Upper Horns" = trombone_sus_c3@t3000]>#8U2~7/vibraphone_c_low#4T31L26Q35/hwfail#4T12L54;A1D778S47R297V97K72G-9
+"studio-archive:Waxed Aurora" = violin_section_sus_c4@t7500]@t300[RU2~6;A504D748S75R2396V94K72G-9
 "studio-archive:White Stab" = trumpet_sus_c4@t3000]#5/kalimba_c4@t1500]#5T12L57Q14/em_metal_click_a>#6FL41;A1D383S87R144V85K62G-9

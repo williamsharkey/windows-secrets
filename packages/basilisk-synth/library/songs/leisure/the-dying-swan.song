@@ -38,8 +38,8 @@ strings     ch5     "Volcano Strings"                        lufs=-25 pan=14 ver
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"leisure:Island Marimba" = marimba_c4E#10;A0R600K60G1
-"leisure:Opal Section" = cello_section_sus_c3@t7500]@t200[E>#10U3~15/marimba_c4#3T-12L41Q24/ringout#3T-21L55;A197S96R1086V78K60G-12
+"leisure:Island Marimba" = marimba_c4E#10;A0R600K72G1
+"leisure:Opal Section" = cello_section_sus_c3@t7500]@t200[E>#10U3~15/marimba_c4#3T-12L41Q24/ringout#3T-9L55;A197S96R1086V78K72G-12
 "leisure:Soft Bells" = crystal_bell_bb5@t4000]<<#8/chimesR>#8T-2L33O128Q10;A1D1543S1R1143V86K58G-4
 "leisure:Tiki Lounge Piano" = harp_c5#10/ding@20]#6T5L30;A0D2000S20R700K72G-1
-"leisure:Volcano Strings" = violin_section_sus_c4E#8/cello_section_sus_c3#6L60;A500S90R1500K60
+"leisure:Volcano Strings" = violin_section_sus_c4E#8/cello_section_sus_c3#6L60;A500S90R1500K72

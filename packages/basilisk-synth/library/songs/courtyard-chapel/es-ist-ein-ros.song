@@ -30,20 +30,20 @@ level    = -5
 
 [tracks]
 # name      source  preset                                  mix
-psaltery    ch1     "Slate Pick"                             lufs=-19 pan=8 verb=0.35
-harp        ch2     "Faded Pluck"                            lufs=-20 pan=24 verb=0.35
-dantranh    ch3     "Arctic Steps"                           lufs=-20 pan=-18 verb=0.3
-harpsichord ch4     "Soft Etude"                             lufs=-23 pan=-28 verb=0.25
-bells       ch5     "Noble Ring"                             lufs=-25 pan=20 verb=0.45 tune=16
-strumstick  ch6     "Kinetic Harp"                           lufs=-23 pan=-6 verb=0.15
-drone       ch7     "White Dormant"                          lufs=-29 verb=0.35
+psaltery    ch1     "Amber Ticks"                            lufs=-19 pan=8 verb=0.35
+harp        ch2     "Glass Spool"                            lufs=-20 pan=24 verb=0.35
+dantranh    ch3     "Chrome Pick"                            lufs=-20 pan=-18 verb=0.3
+harpsichord ch4     "Brass Ballad"                           lufs=-23 pan=-28 verb=0.25
+bells       ch5     "Orbital Ring"                           lufs=-25 pan=20 verb=0.45
+strumstick  ch6     "Floor Harp"                             lufs=-23 pan=-6 verb=0.15
+drone       ch7     "Hotel Uplink"                           lufs=-29 verb=0.35 tune=-23
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"courtyard-chapel:Arctic Steps" = dan_tranh_b2#16;A2D201S4R139V84K59
-"courtyard-chapel:Faded Pluck" = folk_harp_c3#16;A2D416S4R83V75K60G-2
-"courtyard-chapel:Kinetic Harp" = strumstick_g2#16;A2D155S8R154V96K55
-"courtyard-chapel:Noble Ring" = hand_chime_c3#8L80/tubular_bell_c4#8L55;A1D1007S26R2356V83K60G-4
-"courtyard-chapel:Slate Pick" = psaltery_pluck_c4#15/defaultRE#2T9L10O53Q26;A2D201S2R136V78K72G-1
-"courtyard-chapel:Soft Etude" = harpsichord_flemish_c3#16;A4D2188S37R474V71K60G-8
-"courtyard-chapel:White Dormant" = didgeridoo_sus_a>>#13U4~18/didgeridoo_phrase#3T-3L41;A769D0S100R836V93K61G-6
+"courtyard-chapel:Amber Ticks" = psaltery_pluck_c4E#8Z36,78,72/psaltery_pluck_c5E#8Z79,96,84;A1D208S7R217V91K60
+"courtyard-chapel:Brass Ballad" = harpsichord_flemish_c2E#4Z36,54,48/harpsichord_flemish_c3#4Z55,66,60/harpsichord_flemish_c4#4Z67,78,72/harpsichord_flemish_c5#4Z79,96,84;A0D625S16R438V96K60G-1
+"courtyard-chapel:Chrome Pick" = dan_tranh_b1#4Z35,53,47/dan_tranh_b2#4Z54,65,59/dan_tranh_b3#4Z66,76,71/dan_tranh_b4#4Z77,96,83;A2D204S29R71V78K60G-2
+"courtyard-chapel:Floor Harp" = strumstick_d2#8Z36,52,50/strumstick_g2E#8Z53,96,55;A2D103S2R64V99K60G1
+"courtyard-chapel:Glass Spool" = folk_harp_c2#4Z36,54,48/folk_harp_c3#4Z55,65,60/folk_harp_c4E#4Z66,77,72/folk_harp_c5#4Z78,96,84;A0D169S1R254V97K60G-2
+"courtyard-chapel:Hotel Uplink" = cymbal_bowed<#11U2~10Q59/siren_whistle_bR#5T-30L27O292Q38;A4S100R1670V75K49G-6
+"courtyard-chapel:Orbital Ring" = hand_chime_c3E#4Z36,66,60/hand_chime_c4#4Z67,78,72/hand_chime_c5#4Z79,90,84/hand_chime_c6#4Z91,103,96;A1D1882S2R1159V75K60G-4

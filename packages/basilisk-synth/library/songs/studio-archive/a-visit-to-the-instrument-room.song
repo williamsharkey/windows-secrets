@@ -42,15 +42,15 @@ organ       ch13    "Wired Felt"                             lufs=-28 verb=0.35
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"studio-archive:Basement Chimes" = glockenspiel_g4<#8/print>#8T-27L37O269Q2;A3D824S26R501V83K55G2
+"studio-archive:Basement Chimes" = glockenspiel_g4<#8/print>#8T-15L37O269Q2;A3D824S26R501V83K67G2
 "studio-archive:Clear Snap" = bubble_pop_a#8/organ_pedal_25@t3000]@t300[#8L52;D90S0R91V82G8
-"studio-archive:Crystal Legato" = cello_section_sus_c3@t7500]@t200[>U3~12;A192S87R1473V84K60G-12
+"studio-archive:Crystal Legato" = cello_section_sus_c3@t7500]@t200[>U3~12;A192S87R1473V84K72G-12
 "studio-archive:Frosted Salon" = vibraphone_c_low>>>#8/crystal_bell_bb5@t2000]#8T2L17Q20;A1D2036S2R535V83K60G-4
-"studio-archive:Humid Swell" = violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K60G-9
+"studio-archive:Humid Swell" = violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K72G-9
 "studio-archive:Mild Ivories" = piano_upright_cs4#11U2~3/ringout#5T-20L55Q18;A2D2460S15R251V83K61G-9
-"studio-archive:Opal Fanfare" = horn_sus_c3@t3000]E>;A4D271S55R212V72K60G-7
-"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K36G-4
-"studio-archive:Upper Horns" = trombone_sus_c3@t3000]>#8U2~7/vibraphone_c_low#4T19L26Q35/hwfail#4L54;A1D778S47R297V97K60G-9
+"studio-archive:Opal Fanfare" = horn_sus_c3@t3000]E>;A4D271S55R212V72K72G-7
+"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K48G-4
+"studio-archive:Upper Horns" = trombone_sus_c3@t3000]>#8U2~7/vibraphone_c_low#4T31L26Q35/hwfail#4T12L54;A1D778S47R297V97K72G-9
 "studio-archive:Warm Tap" = ding@t120]#8F/xpding#8L25;D62S0R95V94G13
 "studio-archive:White Stab" = trumpet_sus_c4@t3000]#5/kalimba_c4@t1500]#5T12L57Q14/em_metal_click_a>#6FL41;A1D383S87R144V85K62G-9
 "studio-archive:Wired Felt" = organ_hammond_m100_flute_c<U2~8;A0D919S27R222V93K60G-9

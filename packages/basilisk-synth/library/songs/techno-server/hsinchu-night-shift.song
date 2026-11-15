@@ -50,7 +50,7 @@ shaker      ch12    "Vinyl Shaker"                           lufs=-30 pan=20
 "techno-server:Feedback Chain Stab" = xpding@20]E#4H0,3,7,10/xpding@20]EE#4H0,3,7,10L45O375Q-50/xpding@20]EE<>#4H0,3,7,10L28O750Q50/xpding@20]EEE<>#4H0,3,7,10L16O1125Q-30;A0D400S10R1200V70G4m32L0,90m33L0,56m34L0,32m3=50K59
 "techno-server:Granite Line" = ems_morse_cw<H0,12;A2D285S73R257V92K65G-10
 "techno-server:Marble Current" = startupEF;A360S100R622V85G4
-"techno-server:Quiet Sub" = tuba_sus_f1@t2000];A1D200S76R77V95K29G-2
+"techno-server:Quiet Sub" = tuba_sus_f1@t2000];A1D200S76R77V95K41G-2
 "techno-server:Rural Tick" = ems_relay_pull#8F/ding#8;A0R50V100K67G-2
 "techno-server:Spring Tank Hit" = ems_ks_spring_g3EE#8;A0R1500K55G4
 "techno-server:Vinyl Shaker" = start#8F/batlow#8L28;D98S0R83V80G12

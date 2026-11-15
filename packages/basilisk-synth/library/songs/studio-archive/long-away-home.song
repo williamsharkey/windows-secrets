@@ -42,9 +42,9 @@ snap        ch7     "Clear Snap"                             lufs=-29 verb=0.3
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "studio-archive:Clear Snap" = bubble_pop_a#8/organ_pedal_25@t3000]@t300[#8L52;D90S0R91V82G8
-"studio-archive:Crystal Toll" = glockenspiel_g4E<#11H0,7/printR#5T-15L25O92Q28;A0D2595S7R823V78K55G-1
-"studio-archive:Humid Swell" = violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K60G-9
+"studio-archive:Crystal Toll" = glockenspiel_g4E<#11H0,7/printR#5T-3L25O92Q28;A0D2595S7R823V78K67G-1
+"studio-archive:Humid Swell" = violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K72G-9
 "studio-archive:Mild Ivories" = piano_upright_cs4#11U2~3/ringout#5T-20L55Q18;A2D2460S15R251V83K61G-9
-"studio-archive:Opal Fanfare" = horn_sus_c3@t3000]E>;A4D271S55R212V72K60G-7
-"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K36G-4
+"studio-archive:Opal Fanfare" = horn_sus_c3@t3000]E>;A4D271S55R212V72K72G-7
+"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K48G-4
 "studio-archive:Static Swell" = piano_upright_cs4E#11U2~11/hwfail#5T1L43;A147S86R812V83K61G-6

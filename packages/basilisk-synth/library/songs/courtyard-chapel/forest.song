@@ -31,18 +31,18 @@ level    = -6
 
 [tracks]
 # name      source  preset                                  mix
-harp        ch1     "Faded Pluck"                            lufs=-20 pan=20 echo=0.1 verb=0.3
-psaltery    ch2     "Slate Pick"                             lufs=-20 pan=-6 echo=0.05 verb=0.32
-felt        ch3     "Noble Felt"                             lufs=-22 pan=-20 verb=0.25
-harpsichord ch4     "Soft Etude"                             lufs=-22 pan=-30 verb=0.22
-tabor       ch5     "Brushed Carillon"                       lufs=-23 pan=30 verb=0.25
-warp        ch6     "Winter Warp"                            lufs=-27 verb=0.4
+harp        ch1     "Glass Spool"                            lufs=-20 pan=20 echo=0.1 verb=0.3
+psaltery    ch2     "Amber Ticks"                            lufs=-20 pan=-6 echo=0.05 verb=0.32
+felt        ch3     "Arctic Salon"                           lufs=-22 pan=-20 verb=0.25
+harpsichord ch4     "Brass Ballad"                           lufs=-22 pan=-30 verb=0.22
+tabor       ch5     "Field Carillon"                         lufs=-23 pan=30 verb=0.25
+warp        ch6     "Polished Dive"                          lufs=-27 verb=0.4
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"courtyard-chapel:Brushed Carillon" = balafon_cs3#16;A1D1290S3R2437V72K61G1
-"courtyard-chapel:Faded Pluck" = folk_harp_c3#16;A2D416S4R83V75K60G-2
-"courtyard-chapel:Noble Felt" = harpsichord_flemish_hi_cs3E#16;A1D2333S10R445V80K61G-5
-"courtyard-chapel:Slate Pick" = psaltery_pluck_c4#15/defaultRE#2T9L10O53Q26;A2D201S2R136V78K72G-1
-"courtyard-chapel:Soft Etude" = harpsichord_flemish_c3#16;A4D2188S37R474V71K60G-8
-"courtyard-chapel:Winter Warp" = dan_tranh_gliss_down<#8/siren_whistle_b>#8T-35L33O386Q30;A8S100R659V73K49G2
+"courtyard-chapel:Amber Ticks" = psaltery_pluck_c4E#8Z36,78,72/psaltery_pluck_c5E#8Z79,96,84;A1D208S7R217V91K60
+"courtyard-chapel:Arctic Salon" = harpsichord_flemish_hi_cs3#5Z36,72,61/harpsichord_flemish_hi_c5#4Z73,89,84/harpsichord_flemish_hi_c6#5Z90,102,96/dingxpRE#2T-7L17O84Q10;A3D1531S33R417V82K60G-6
+"courtyard-chapel:Brass Ballad" = harpsichord_flemish_c2E#4Z36,54,48/harpsichord_flemish_c3#4Z55,66,60/harpsichord_flemish_c4#4Z67,78,72/harpsichord_flemish_c5#4Z79,96,84;A0D625S16R438V96K60G-1
+"courtyard-chapel:Field Carillon" = balafon_cs3#6Z36,66,61/balafon_c4E#5Z67,77,72/balafon_c5E#5Z78,96,84;A0D2520S25R1903V75K60G2
+"courtyard-chapel:Glass Spool" = folk_harp_c2#4Z36,54,48/folk_harp_c3#4Z55,65,60/folk_harp_c4E#4Z66,77,72/folk_harp_c5#4Z78,96,84;A0D169S1R254V97K60G-2
+"courtyard-chapel:Polished Dive" = dan_tranh_gliss_down<R#11H0,12/flexatone_long>#5T-25L27O194Q28;A525S100R778V87K49G3

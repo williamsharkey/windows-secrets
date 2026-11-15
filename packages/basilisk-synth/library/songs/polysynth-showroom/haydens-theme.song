@@ -31,12 +31,12 @@ level    = -6
 
 [tracks]
 # name      source  preset                                  mix
-fmpiano     ch1     "Violet Keys"                            lufs=-19 pan=-6 echo=0.15 verb=0.3
-brass       ch2     "Metro Chord"                            lufs=-22 pan=14 verb=0.3
-bass        ch3     "Dial Bass"                              lufs=-20
+fmpiano     ch1     "Stone Parlour"                          lufs=-19 pan=-6 echo=0.15 verb=0.3
+brass       ch2     "Lucid Herald"                           lufs=-22 pan=14 verb=0.3
+bass        ch3     "Ivory Low"                              lufs=-20
 
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
-"polysynth-showroom:Dial Bass" = mono77_cream_b0#11U2~6/mono77_fm_rings_ds1#5T-16L45;A5D236S61R173V92K23G-5
-"polysynth-showroom:Metro Chord" = poly85_thin_brassy_c2+>>;A3D548S74R194V88K60
-"polysynth-showroom:Violet Keys" = fm87_piano_c4E#16;A1D2333S10R445V80K60G-8
+"polysynth-showroom:Ivory Low" = mono77_cream_b0@t4798]>#11U2~6/poly85_slow_bass_d3#5T-27L46;A3D404S56R123V76K35G-5
+"polysynth-showroom:Lucid Herald" = poly85_thin_brassy_c2@t3578]+>>#12U3~10/poly85_thin_brassy_c2#4T24L68Q15;A11D484S75R294V95K60G-1
+"polysynth-showroom:Stone Parlour" = fm87_piano_c2#4Z24,48,36/fm87_piano_c4E#4Z49,66,60/fm87_piano_c5E#4Z67,84,72/fm87_piano_c7#4Z85,103,96;A0D1215S20R339V84K60G-7

@@ -41,7 +41,7 @@ kit         ch10    "kit-manager:Punch Kick Kit"             lufs=-16.5 verb=0.0
 [dna]
 # the presets' DNA when this song was written (used before the pack discs' own)
 "kit-manager:Punch Kick Kit" = ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
-"trance-connectivity:Blue Signal" = violin_section_sus_c4@t6000]@t200[U2~10;A5D423S93R224V86K60G-3
+"trance-connectivity:Blue Signal" = violin_section_sus_c4@t6000]@t200[U2~10;A5D423S93R224V86K72G-3
 "trance-connectivity:Breakdown Grand" = harp_c5#10/xpding@30]#6T1L30;A0D2500S20R800K72
 "trance-connectivity:Coral Tide" = choir_aah@t6000]@t300[<#11U2~6/wind_chime_single@t2000]>#5T-2L35O50Q20;A754D11S98R1770V91K57G-4
 "trance-connectivity:Grey Mist" = violin_section_sus_c4@t7500]@t300[R#11U2~9/chimesE#5T17L17O331Q-25;A1217D755S77R1666V76K60G-10
