@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CITYPOP DEPROGRAMMED - Ensemble</title>
+<meta name="description" content="The whole album on one SNDWAVE2000 Ensemble: one Windows 3.11, ten lanes, every note a Sound Recorder, presets switched between parts.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#07081a">
+<link rel="icon" href="/citypop/art/icon-32.png">
+<link rel="stylesheet" href="ens.css?v=@V@">
+<script src="/sndrec/pxfit.js"></script>
+</head>
+<body>
+<div id="scene" aria-hidden="true"></div>
+<div id="life" aria-hidden="true"></div>
+<main class="desk">
+  <section class="win on" id="ens" aria-label="SNDWAVE2000 Ensemble">
+    <div class="wi">
+      <div class="tb"><span class="sys" aria-hidden="true"></span><h1 class="tt">SNDWAVE2000 Ensemble - CITYPOP DEPROGRAMMED</h1><span class="mn" aria-hidden="true"></span></div>
+      <div class="screen"><canvas id="screen" data-px="1024x768" role="img" aria-label="Windows for Workgroups 3.11 running SNDWAVE2000 Ensemble"></canvas></div>
+      <div class="bar">
+        <button class="b" id="play">&#9654; Play</button>
+        <button class="b" id="stop" disabled>&#9632; Stop</button>
+        <select id="track" aria-label="Track"></select>
+        <label class="chk"><input type="checkbox" id="colors"> Rainy Loft colours</label>
+        <span class="st" id="status">One Windows 3.11 plays the whole album. Nothing is downloaded until Play.</span>
+      </div>
+      <div class="stats" id="stats" hidden></div>
+    </div>
+  </section>
+  <section class="win" id="notes" aria-label="Notes">
+    <div class="wi">
+      <div class="tb"><span class="sys" aria-hidden="true"></span><h2 class="tt">Notepad - ENSEMBLE.TXT</h2><span class="mn" aria-hidden="true"></span></div>
+      <div class="txt">
+<p>CITYPOP DEPROGRAMMED, all twelve tracks, played live in this browser by one SNDWAVE2000 Ensemble: one emulated Windows for Workgroups 3.11, ten lanes, each lane its own preset on its own Sound Recorders. Every note is a real SOUNDREC.EXE.</p>
+<p>Between parts, a lane changes preset. Windows builds the next sound with Sound Recorder's own menus while the lane is silent, one recorder at a time, and the strip shows it. Where a part starts before its build is done, its first notes come late. The counts are below the screen while it plays.</p>
+<p>Ten lanes, not sixteen: the quietest ambience and the doubled parts of the bigger tracks are left out. No echo or reverb: the Ensemble mixes level and pan only.</p>
+<p>About 50 MB is downloaded, most of it the Rainy Loft disc, a piece at a time ahead of each track. It wants a recent desktop browser, and about twenty seconds to start: Windows builds the first track's ten sounds before the first note.</p>
+<p><a href="/citypop/">The album as released</a> &middot; <a href="/sndwave2000/">SNDWAVE2000</a></p>
+      </div>
+    </div>
+  </section>
+</main>
+<script type="application/json" id="manifest">@MANIFEST@</script>
+<script src="ens-page.js?v=@V@" defer></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+/* CITYPOP DEPROGRAMMED - Ensemble: the /citypop/ night (its scene and life, loaded from /citypop/) with one Windows 3.11
+   window over it. The colours are /citypop/'s. */
+@font-face { font-family: "CP Sans"; src: url("/citypop/fonts/DejaVuSans.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "CP Sans"; font-weight: 700; src: url("/citypop/fonts/DejaVuSans-Bold.woff2") format("woff2"); font-display: swap; }
+:root {
+  --desk: #07081a; --frame: #34283f; --frame-in: #1f1a2c; --face: #29243f; --hi: #7869ab; --sh: #0e0b20; --blk: #000;
+  --win: #131127; --ink: #e9e2f7; --mut: #a99dcb; --dim: #6c6294; --title: #4b2472; --title-ink: #f7f0ff;
+  --title-off: #221d36; --title-off-ink: #8a7fb2; --sel: #8c3478; --sel-ink: #fff3fb; --amber: #f0d6a0;
+  --sans: "CP Sans", "DejaVu Sans", Verdana, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--desk); color: var(--ink); }
+body { font: 12px/18px var(--sans); min-height: 100vh; overflow-x: hidden; }
+button, select, input { font: inherit; }
+#scene, #life { position: fixed; inset: 0; overflow: hidden; }
+#scene { z-index: 0; background: var(--desk); }
+#life { z-index: 1; pointer-events: none; }
+.desk { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px; }
+.win { border: 1px solid var(--blk); padding: 3px; background: var(--frame-in); max-width: 100%; }
+.win.on { background: var(--frame); }
+.wi { border: 1px solid var(--blk); background: var(--win); }
+.tb { display: flex; height: 21px; border-bottom: 1px solid var(--blk); color: var(--title-off-ink); background: var(--title-off); user-select: none; }
+.win.on .tb { color: var(--title-ink); background: linear-gradient(#6a2a7a, #2c1c5a); }
+.tt { flex: 1; min-width: 0; margin: 0; padding: 0 6px; font: 700 12px/20px var(--sans); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sys, .mn { flex: none; width: 21px; height: 20px; background: var(--face); position: relative; }
+.sys { border-right: 1px solid var(--blk); }
+.sys::after { content: ""; position: absolute; left: 4px; top: 8px; width: 12px; height: 3px; background: var(--ink); border: 1px solid var(--blk); }
+.mn { border-left: 1px solid var(--blk); box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--sh); }
+.screen { background: #000; line-height: 0; }
+#screen { display: block; outline: 0; }
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 6px; border-top: 1px solid var(--blk); background: var(--face); }
+.b { min-width: 72px; height: 24px; padding: 0 10px; color: var(--ink); background: var(--face); border: 1px solid var(--blk);
+     box-shadow: inset 1px 1px 0 var(--hi), inset -2px -2px 0 var(--sh); cursor: default; }
+.b:active:not(:disabled) { box-shadow: inset 1px 1px 0 var(--sh); }
+.b:disabled { color: var(--dim); }
+select { height: 24px; color: var(--ink); background: var(--win); border: 1px solid var(--blk); max-width: 360px; }
+.chk { display: inline-flex; align-items: center; gap: 4px; }
+.st { flex: 1 1 260px; color: var(--mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.stats { padding: 6px 8px; border-top: 1px solid var(--blk); font: 11px/16px "DejaVu Sans Mono", ui-monospace, monospace; color: var(--mut); white-space: pre; overflow-x: auto; }
+#notes { max-width: 560px; }
+.txt { padding: 8px 12px; }
+.txt p { margin: 0 0 8px; }
+a { color: var(--amber); }
+@media (max-width: 960px), (max-height: 580px) { .desk { padding: max(30vh, 160px) 8px 16px; } .st { white-space: normal; } }
