@@ -131,7 +131,7 @@ EMSCRIPTEN_KEEPALIVE void ens_tick()
     const auto send = [](const std::string &l, uint32_t id, uint64_t at) { sendStr(l, id, at); };
     if (hello && ready && playFrom >= 0) {   // a new start: a fresh player from that track
         P.reset(new ensalbum::Player());
-        P->lookahead = 0.6;
+        P->lookahead = 1.0;   // (notes reach Windows a second early: a busy moment in Windows does not make them late)
         if (!P->load(albumText)) P.reset();
         else { if (playFrom >= (int)P->tracks.size()) playFrom = 0; P->prepare(playFrom, send); phase = 1; }
         playFrom = -1;

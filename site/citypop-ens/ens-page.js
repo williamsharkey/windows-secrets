@@ -83,12 +83,15 @@
     case 'error': say('The machine stopped: ' + m.msg); break;
     }
   }
-  let shownTrack = -2, lastTime = 0, gaps0 = -1;   // gaps0: the worklet's gaps before the music (the start is not one)
+  let shownTrack = -2, lastTime = 0, gaps0 = -1, epoch = 0;   // gaps0: the worklet's gaps before the music (the start is not one)
   function onInfo(i) {
     if (!playing) return;
     if (i.phase === 1) { say('Building track ' + (+sel.value + 1) + "'s presets in Sound Recorder..."); return; }
     if (i.phase !== 2) return;
-    if (gaps0 < 0 && audio && i.pos > 1) { gaps0 = audio.gaps; node.port.postMessage({ t: 'reset' }); }
+    if (gaps0 < 0) {   // the first beat of the music: the speakers jump to it (Windows is already seconds ahead)
+      const t0 = TR[Math.max(0, +sel.value)].start, at = Math.min(Math.round(i.dac - (i.emu - t0) * 48000) - 4800, i.dac - 144000);   // (at least 3 s in hand: building the first presets may have left Windows behind)
+      node.port.postMessage({ t: 'flush', at, epoch: ++epoch }); gaps0 = 0; return;
+    }
     if (i.pos >= ALBUM_END) { say('The end of the album.'); return; }
     if (i.track !== shownTrack && i.track >= 0) {
       shownTrack = i.track; sel.value = i.track; store.set('track', i.track);
@@ -106,7 +109,7 @@
     const lines = [];
     const lead = i.phase === 2 ? (i.emu - i.pos) : 0;
     lines.push('Windows ahead of the speakers ' + lead.toFixed(2) + ' s   emulator busy ' + (i.load / 10).toFixed(0) + '%   notes ' + i.notes +
-               '   card late ' + i.late + '   audio gaps ' + (audio && gaps0 >= 0 ? audio.gaps - gaps0 : 0));
+               '   card late ' + i.late + '   audio gaps ' + (audio && gaps0 >= 0 && audio.epoch === epoch ? audio.gaps : 0));
     lines.push('switches ' + i.switches + ' (built in Sound Recorder ' + i.builds + ')   notes late for a switch ' + i.switchLate);
     if (lastStats) {
       lines.push('');
@@ -122,10 +125,10 @@
   playB.onclick = () => {
     if (!started) { start().catch(err => { say('Could not start: ' + (err && err.message || err)); playB.disabled = false; started = false; }); return; }
     if (ac.state !== 'running') ac.resume();
-    W.postMessage({ t: 'play', track: +sel.value }); playing = true; shownTrack = -2; gaps0 = -1; playB.disabled = true; stopB.disabled = false;
+    W.postMessage({ t: 'play', track: +sel.value }); node.port.postMessage({ t: 'flush', at: -1, epoch: ++epoch }); playing = true; shownTrack = -2; gaps0 = -1; playB.disabled = true; stopB.disabled = false;
   };
-  stopB.onclick = () => { if (!W) return; W.postMessage({ t: 'stop' }); playing = false; playB.disabled = false; stopB.disabled = true; say('Stopped. Windows is still running; Play starts the selected track.'); };
-  sel.onchange = () => { store.set('track', sel.value); if (W && playing) { W.postMessage({ t: 'play', track: +sel.value }); shownTrack = -2; gaps0 = -1; } };
+  stopB.onclick = () => { if (!W) return; W.postMessage({ t: 'stop' }); node.port.postMessage({ t: 'flush', at: -1, epoch: ++epoch }); playing = false; playB.disabled = false; stopB.disabled = true; say('Stopped. Windows is still running; Play starts the selected track.'); };
+  sel.onchange = () => { store.set('track', sel.value); if (W && playing) { W.postMessage({ t: 'play', track: +sel.value }); node.port.postMessage({ t: 'flush', at: -1, epoch: ++epoch }); shownTrack = -2; gaps0 = -1; } };
   colors.onchange = () => { store.set('colors', colors.checked ? '1' : '0'); if (W) W.postMessage({ t: 'colors', on: colors.checked }); };
 
   // the pointer: Windows' own (the left button drags windows, the right is the right)

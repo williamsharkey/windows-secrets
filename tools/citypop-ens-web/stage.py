@@ -32,7 +32,7 @@ try: bpm = [t.get('bpm', 100) for t in json.load(open(os.path.join(site, '..', '
 except Exception: pass
 code = md5(os.path.join(out, 'ens-worker.js')) + md5(os.path.join(out, 'audio-worklet.js'))[:4]
 man = dict(v=code, ui='20261114j', base='m/', files=files, disc=dict(url='packs.zip', size=os.path.getsize(disc), v=md5(disc)),
-           tracks=tracks, bpm=bpm, lead=96000, leadMax=288000, master=0.7)
+           tracks=tracks, bpm=bpm, lead=384000, leadMax=470000, master=0.7)
 html = open(os.path.join(site, 'index.html'), encoding='utf-8').read()
 html = html.replace('@MANIFEST@', json.dumps(man, separators=(',', ':'))).replace('ens.css?v=@V@', 'ens.css?v=' + md5(os.path.join(out, 'ens.css'))) \
            .replace('ens-page.js?v=@V@', 'ens-page.js?v=' + md5(os.path.join(out, 'ens-page.js')))

@@ -22,9 +22,7 @@ class B16Out extends AudioWorkletProcessor {
         this.leadIdx = L.lead !== undefined ? (b + L.lead) >> 2 : -1;
         this.lead = this.lead0 = m.lead || 2048; this.leadMax = m.leadMax || 3584; this.pos = -1; this.master = m.master || 1;
         if (this.leadIdx >= 0) this.u32[this.leadIdx] = this.lead;
-      } else if (m.t === 'reset') {   // the music starts: the gaps of the start (Windows building the first presets) do not count
-        this.lead = this.lead0; if (this.leadIdx >= 0) this.u32[this.leadIdx] = this.lead;
-      } else if (m.t === 'tap') this.tap = m.on ? [] : null;   // tests: capture the output
+      } else if (m.t === 'flush') { this.flushTo = m.at; this.flushEpoch = m.epoch || 0; }   // play from DAC frame `at` (forward only; -1: the newest) else if (m.t === 'tap') this.tap = m.on ? [] : null;   // tests: capture the output
     };
   }
   process(inputs, outputs) {
@@ -35,6 +33,13 @@ class B16Out extends AudioWorkletProcessor {
     // start (or jump, after a pause or a long stall) a little behind the newest sample
     if (this.pos < 0 || dac - this.pos > this.lead + 24000) { this.pos = Math.max(2, dac - this.lead);   // (never below 2: the Hermite reads k-1)
       this.fade = 0; this.starved = true; }
+    if (this.flushTo !== undefined) {   // the music starts, stops or changes track: skip what is in hand (the emulator runs
+                                        // seconds ahead), and the gaps of the start (Windows building the first presets) do not count
+      const to = this.flushTo < 0 ? dac - 4800 : this.flushTo;
+      if (to > this.pos) { this.pos = Math.max(2, to); this.fade = 0; this.starved = true; this.gapLen = 0; }
+      this.lead = this.lead0; if (this.leadIdx >= 0) this.u32[this.leadIdx] = this.lead;
+      this.flushTo = undefined; this.epoch = this.flushEpoch; this.gaps = 0; this.short = 0; this.lastReport = -1;   // (counted afresh)
+    }
     const g = f[this.gain] || 1;
     let missing = 0;
     for (let i = 0; i < n; i++) {
@@ -83,7 +88,7 @@ class B16Out extends AudioWorkletProcessor {
     if (this.tap) { this.tap.push(new Float32Array(L), new Float32Array(R)); if (this.tap.length >= 64) { this.port.postMessage({ t: 'tap', d: this.tap }); this.tap = []; } }
     if (currentTime - this.lastReport > 0.5) {
       this.lastReport = currentTime;
-      this.port.postMessage({ t: 'a', blocks: this.blocks, under: this.under, pos: this.pos, dac, gaps: this.gaps, short: this.short, lead: this.lead });
+      this.port.postMessage({ t: 'a', epoch: this.epoch || 0, blocks: this.blocks, under: this.under, pos: this.pos, dac, gaps: this.gaps, short: this.short, lead: this.lead });
       this.blocks = 0; this.under = 0;
     }
     return true;
