@@ -185,7 +185,7 @@ def main():
             rec = recs.get(x['dna']) or {'one': x.get('recipe_one'), 'lines': x.get('recipe')}
             q = {'s': x['slug'], 'n': x['name'], 'c': x['category'], 'd': x['dna'],
                  'r': {k: rec[k] for k in ('one', 'lines', 'kit') if rec.get(k)}, 'ph': x.get('phrase'),
-                 'tags': x.get('tags') or [], 'xp': x['edition'] == 'xp', 'v3': bool(x.get('v3'))}
+                 'tags': x.get('tags') or [], 'v3': bool(x.get('v3'))}   # (no edition label: SNDWAVE2000 plays them all on 3.11)
             if x.get('favourite'): q['fav'] = 1
             if x.get('rating') not in (None, 5): q['rt'] = x['rating']
             mf = manifest.get(x['slug'])

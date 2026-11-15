@@ -131,15 +131,15 @@
   <div class="chh"><span class="no">§ 4</span><h2 id="h-orig">How it works: what is original, what is ours</h2></div>
   <p>The sound of a preset is made by Windows' own programs from Windows' own files. What we added plays those sounds as notes and shapes them.</p>
   <div class="orig">
-    <div><h3><span class="mk m311">3.11</span>Original: the program and its commands</h3>
+    <div><h3>Original: the program and its commands</h3>
       <p>Every DNA step is one of Sound Recorder's own menu commands, run by the real Sound Recorder (SOUNDREC.EXE) in its own process, on its own buffer:</p>
       <ul><li>Increase / Decrease Volume, Increase / Decrease Speed</li><li>Add Echo (Sound Recorder's real echo) and Reverse</li><li>Delete Before / After Current Position</li><li>Copy, Paste Insert, Paste Mix</li><li>Insert File and Mix with File</li></ul>
       <p>Our program in Windows only picks the menu items and moves the position slider; it never edits the samples.</p></div>
-    <div><h3><span class="mk m311">3.11</span><span class="mk m31">3.1</span><span class="mk mxp">XP</span>Original: the sounds</h3>
+    <div><h3>Original: the sounds</h3>
       <p>The Windows sounds are files from the Windows installs themselves:</p>
       <ul><li>CHIMES, DING, RINGIN and RINGOUT from Windows for Workgroups 3.11, plus CHORD and TADA from Windows 3.1 (3.11's disks had dropped them).</li>
       <li>Windows XP's 35 sounds, converted to PCM that Sound Recorder 3.1 opens, in C:\XPSOUNDS. One name means one file: <code>ding</code> is the 3.x recording, <code>ding-xp</code> XP's.</li></ul>
-      <p><span class="mk mcc0">CC0</span> <span class="mk mpd">PD</span> The library disc is added material: CC0 and public-domain recordings, each credited on the disc (hover a badge in the preset list). They are converted to 22050 Hz 16-bit mono so Sound Recorder 3.1 can open them.</p></div>
+      <p>The library disc is added material: CC0 and public-domain recordings, each credited on the disc. They are converted to 22050 Hz 16-bit mono so Sound Recorder 3.1 can open them.</p></div>
     <div><h3>Ours: playing notes</h3>
       <ul><li>The voice allocator: which recorder plays which note</li><li>Note pitch, transpose, harmony and unison voices, velocity, pitch bend</li><li>Layer levels, pan and start offsets, the ADSR and drawn envelopes</li><li>The four macros and the mod wheel</li><li>The assembled screen: our program in Windows strips the real recorders of their menus and title bars, lines them up, and adds panels and a keyboard built from Windows' own controls</li></ul></div>
   </div>
