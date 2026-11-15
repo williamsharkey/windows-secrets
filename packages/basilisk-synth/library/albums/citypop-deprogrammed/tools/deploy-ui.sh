@@ -16,7 +16,16 @@ mine() {   # the files this script owns, relative, ./-prefixed
      ! -name album.json ! -name SOURCES.TXT | sort | grep -Ev '^\./(scene|life)/|^\./art/scene2' || true)
   [ $MODS = 1 ] && (cd "$SRC" && find ./scene ./life ./art -type f \( -path './art/scene2*' -o ! -path './art/*' \) ! -path './scene/gen/*' ! -name .gitignore ! -name '*.md' ! -name 'test*.html' ! -name '*.py' 2>/dev/null | sort) || true
 }
-mine | sort -u > "$TMP/files"
+mine | sort -u > "$TMP/all"
+# other lanes' files (scene/, life/, art/scene2*) go out only as committed: never a half-written working copy
+: > "$TMP/files"
+while read -r f; do
+  case $f in ./scene/*|./life/*|./art/scene2*)
+    g=site/citypop/${f#./}
+    if ! git -C "$REPO" ls-files --error-unmatch "$g" >/dev/null 2>&1 || ! git -C "$REPO" diff --quiet HEAD -- "$g"; then echo "skip (uncommitted): $f"; continue; fi;;
+  esac
+  echo "$f" >> "$TMP/files"
+done < "$TMP/all"
 (cd "$SRC" && xargs md5sum < "$TMP/files") > "$TMP/local.md5"
 $SSH "cd $DST 2>/dev/null && find . -type f | sort | xargs md5sum" > "$TMP/live.md5" || true
 echo "== local vs live (UI files only)"
