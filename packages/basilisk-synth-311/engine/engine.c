@@ -29,6 +29,7 @@ struct bs_engine {
   FILE *log;
   void *lib;
   int btn;
+  int insrc;                   /* the input source last given to the card (-1: none yet) */
   unsigned char held[512];     /* keys the host holds down (the core checks, and releases keys nobody holds) */
   retro_keyboard_event_t kbcb;
 #ifdef _WIN32
@@ -167,6 +168,7 @@ bs_engine *bs_engine_new(bshm *S, const char *core, const char *conf, const char
   bs_engine *e = (bs_engine *)calloc(1, sizeof *e);
   char *slash;
   e->S = S;
+  e->insrc = -1;
   snprintf(e->core, sizeof e->core, "%s", core);
   snprintf(e->conf, sizeof e->conf, "%s", conf);
   if (state) snprintf(e->state, sizeof e->state, "%s", state);
@@ -318,9 +320,8 @@ int bs_engine_run(bs_engine *e)
     }
     if (e->h_stats) { uint32_t a, b, c; e->h_stats(&a, &b, &c); S->sched_ontime = a; S->sched_late = b; S->sched_latemax = c; }
     if (e->h_input) {   /* the host's input to the card's ADC (v2) */
-      static int src = -1;
       uint64_t w = S->in_w, r = S->in_r;
-      if ((int)S->in_src != src) { src = (int)S->in_src; e->h_insrc(src); }
+      if ((int)S->in_src != e->insrc) { e->insrc = (int)S->in_src; e->h_insrc(e->insrc); }   /* per engine: several in one process */
       if (w > r + BSHM_INRING) r = w - BSHM_INRING;
       while (r < w) {
         uint32_t i = (uint32_t)(r % BSHM_INRING); uint64_t n = w - r;

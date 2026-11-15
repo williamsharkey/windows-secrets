@@ -335,4 +335,33 @@ inline int bendRangeOf(const std::string &dna)   // the DNA's B (2 by default): 
     return 2;
 }
 
+
+// songrender plan(): each track's DNA and events, the song's tempo, tail and length. render311 is given the tempo
+// as "%.6f" and the tail as "%g" on its command line, so the engines get those values (the stems stay identical).
+struct PlanTrack { const SongTrack *t = nullptr; std::string dna, label; std::vector<MidiEv> ev; int notes = 0; };
+struct SongPlan { double bpm = 120, engineBpm = 120, tail = 4, engineTail = 4, lengthSec = 0; std::vector<PlanTrack> tracks; };
+inline bool planSong(const SongText &s, const Smf &smf, const std::map<std::string, std::map<std::string, std::string>> &P, SongPlan &out,
+                     std::string &err)
+{
+    out = SongPlan();
+    const std::string b = s.get("bpm"), t = s.get("tail");
+    out.bpm = b.empty() ? smf.firstTempoBpm() : std::atof(b.c_str());
+    out.tail = t.empty() ? 4.0 : std::atof(t.c_str());
+    char buf[64];
+    std::snprintf(buf, sizeof buf, "%.6f", out.bpm); out.engineBpm = std::atof(buf);
+    std::snprintf(buf, sizeof buf, "%g", out.tail); out.engineTail = std::atof(buf);
+    out.lengthSec = smf.seconds(smf.lastTick()) + out.tail;
+    for (const auto &tr : s.tracks) {
+        PlanTrack pt; pt.t = &tr;
+        if (!resolveTrack(s, tr, P, pt.dna, pt.label, err)) return false;
+        const int rng = bendRangeOf(pt.dna);
+        if (std::fabs(tr.tune) > rng * 100) { err = "track " + tr.name + ": tune is past the bend range"; return false; }
+        Source src; src.parse(tr.src);
+        pt.ev = extractTrack(smf, src, tr.tr, tr.vel, tr.tune, rng, &pt.notes);
+        if (!pt.notes) { err = "track " + tr.name + " (" + tr.src + ") has no notes"; return false; }
+        out.tracks.push_back(std::move(pt));
+    }
+    return true;
+}
+
 }  // namespace b16song

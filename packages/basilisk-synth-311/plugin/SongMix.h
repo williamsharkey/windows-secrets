@@ -7,6 +7,7 @@
 #include <cmath>
 #include <complex>
 #include <cstdint>
+#include <atomic>
 #include <deque>
 #include <string>
 #include <vector>
@@ -272,7 +273,7 @@ struct MixStats { std::vector<std::pair<std::string, double>> trackLufs; double 
 
 // songrender mix(): `lengthSec` = the MIDI's last tick in seconds + tail. Returns 48 kHz stereo, interleaved.
 inline std::vector<double> mixSong(const SongText &song, double bpm, double lengthSec, const std::vector<MixIn> &in, MixStats *stats = nullptr,
-                                   const bool *cancel = nullptr)
+                                   const std::atomic<bool> *cancel = nullptr)
 {
     using namespace mixd;
     const size_t n = (size_t)std::max(0.0, lengthSec * SR);

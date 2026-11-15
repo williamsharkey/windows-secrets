@@ -223,6 +223,7 @@ struct TrackJob {
     uint64_t lookahead48 = 0;   // send events this many samples before their block: Windows gets more time for dense chords
     b16v3::KeyParams kp;
     bool verbose = false, setLibrary = true;              // setLibrary: the core's name table (process-wide)
+    bool privateCore = false;   // run a copy of the core of its own (several engines in one process: a copy each)
     const std::atomic<bool> *cancel = nullptr;
     std::function<void(double)> progress;                 // 0..1 while playing
 };
@@ -235,11 +236,12 @@ struct TrackOut {
 inline bool renderTrack(const TrackJob &J, TrackOut &R)
 {
     const double t0 = nowSec();
-    std::string conf, recDir; Machine M; bshm *S = nullptr; bool started = false;
+    std::string conf, recDir, coreCopy; Machine M; bshm *S = nullptr; bool started = false;
     auto finish = [&](bool ok) -> bool {
         if (started) bs_engine_stop(M.e);
         if (S) { R.late = S->sched_late; R.total = S->sched_late + S->sched_ontime; std::free(S); }
         if (!conf.empty()) std::remove(conf.c_str());
+        if (!coreCopy.empty()) std::remove(coreCopy.c_str());   // (after the stop: the library is closed)
         if (!recDir.empty()) b16rec::clearDir(recDir);
         return ok;
     };
@@ -256,6 +258,15 @@ inline bool renderTrack(const TrackJob &J, TrackOut &R)
     // the machine's settings, with its own folder filled in
     // (its own file: batch jobs run side by side on one machine folder)
     conf = tempConf();
+    std::string core = J.core;
+    if (J.privateCore) {   // dlopen of one file twice is one library: its statics would be shared
+        const size_t dot = J.core.find_last_of('.');
+        coreCopy = conf + ".core" + (dot == std::string::npos ? std::string() : J.core.substr(dot));
+        std::ifstream src(J.core, std::ios::binary); std::ofstream dst(coreCopy, std::ios::binary);
+        dst << src.rdbuf();
+        if (!src || !dst) { R.err = "cannot copy the emulator core"; std::remove(coreCopy.c_str()); return false; }
+        core = coreCopy;
+    }
     recDir = conf + ".rec";   // R:, My Recordings (RECORDING.md 3.2): --user-dir's recordings copied in
     b16rec::makeDir(recDir);
     std::vector<std::string> userLines;
@@ -286,7 +297,7 @@ inline bool renderTrack(const TrackJob &J, TrackOut &R)
     S->magic = BSHM_MAGIC; S->version = BSHM_VERSION; S->rate = 48000; S->ring_len = BSHM_RING;
     S->lead = 1024; S->offline = 1; S->vid_want = 0;
     started = true;
-    M.e = bs_engine_start(S, J.core.c_str(), conf.c_str(), state.c_str(), nullptr, J.log.empty() ? nullptr : J.log.c_str());
+    M.e = bs_engine_start(S, core.c_str(), conf.c_str(), state.c_str(), nullptr, J.log.empty() ? nullptr : J.log.c_str());
     while (S->state < BS_RUNNING && S->state != BS_FAILED) { M.step(48000); }
     if (S->state == BS_FAILED) { R.err = S->error; return finish(false); }
 
