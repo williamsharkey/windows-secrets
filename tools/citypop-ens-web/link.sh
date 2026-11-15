@@ -7,8 +7,8 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 SRC=${1:?repo}; OBJ=${2:?obj}; OUT=${3:?out}
 mkdir -p "$OUT"
 P=$SRC/packages/basilisk-synth-311; C=$SRC/packages/basilisk-synth/core
-# a DAC ring of 10.9 s (the plugin's is 1.37 s): the music is known ahead, so the emulator runs seconds ahead of the audio
-RING=-DBSHM_RING=524288
+# a DAC ring of 21.8 s (the plugin's is 1.37 s): the music is known ahead, so the emulator runs seconds ahead of the audio
+RING=-DBSHM_RING=1048576
 CF="-O3 -pthread -fwasm-exceptions $RING -I$P/engine -I$C -I$P/plugin -I$P/ensemble/player"
 emcc $CF -c "$HERE/web_engine.c" -o "$OBJ/web_engine.o"
 em++ $CF -std=c++17 -c "$HERE/ens_host.cpp" -o "$OBJ/ens_host.o"
