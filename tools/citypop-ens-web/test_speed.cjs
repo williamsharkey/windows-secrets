@@ -13,6 +13,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   const al = M.stringToNewUTF8(fs.readFileSync(path.join(outDir, 'album.ens'), 'utf8')); M._ens_album(al);
   M.ccall('ens_start', 'number', ['string', 'string', 'string', 'string', 'number', 'string'], ['/machine/w31.conf', '/machine/w31web.state', '', '', 2048, fs.readFileSync(path.join(outDir, 'names.txt'), 'utf8')]);
   const info = () => JSON.parse(M.UTF8ToString(M._ens_info(0)));
+  if (process.env.NOVID) { const o = M._ens_layout() >> 2, h32 = new Int32Array(M.wasmMemory.buffer); new Uint32Array(M.wasmMemory.buffer)[(M._ens_shm() + h32[o + 10]) >> 2] = 0; }
   const t0 = Date.now(); let tReady = 0, tPlay = 0, startPos = -1;
   M._ens_play(track);
   const cpu0 = process.cpuUsage();

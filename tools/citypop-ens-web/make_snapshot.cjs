@@ -1,9 +1,11 @@
 // The Ensemble album page's snapshot: boot Windows for Workgroups 3.11 with ENSEMBLE.EXE in the web engine itself
 // (ens-worker.js under node), wait until ENSEMBLE has started its ten lanes' first Sound Recorders and settled, and
 // freeze the machine there, before `go`: the page then sees the whole assembly.
-//   node make_snapshot.cjs OUT_DIR MACHINE_DIR LIBRARY.zip PACKS.zip NAMES.txt
+//   node make_snapshot.cjs OUT_DIR MACHINE_DIR LIBRARY.zip PACKS.zip NAMES.txt [ALBUM.ens]
+// With ALBUM.ens: the machine is frozen later, with the album's first track built (assembled, every lane's preset on
+// its Sound Recorders): the page's first note then comes seconds after Play (its builds find the same sounds, built).
 const fs = require('fs'), path = require('path');
-const [outDir, machine, libZip, packsZip, namesPath] = process.argv.slice(2);
+const [outDir, machine, libZip, packsZip, namesPath, albumPath] = process.argv.slice(2);
 const EnsModule = require(path.resolve(outDir, 'ens-worker.js'));
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 (async () => {
@@ -14,7 +16,8 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   M.FS.writeFile('/machine/packs.zip', fs.readFileSync(packsZip));
   M.FS.writeFile('/machine/w31.conf', fs.readFileSync(path.join(outDir, 'w31.conf')));
   const t0 = Date.now();
-  M._ens_quiet(1);
+  if (albumPath) { const a = M.stringToNewUTF8(fs.readFileSync(albumPath, 'utf8')); M._ens_album(a); M._ens_play(0); M._ens_hold(1); }
+  else M._ens_quiet(1);
   M.ccall('ens_start', 'number', ['string', 'string', 'string', 'string', 'number', 'string'],
           ['/machine/w31.conf', '', '/machine/ens.state', '/machine/engine.log', 2048, fs.readFileSync(namesPath, 'utf8')]);
   const info = () => JSON.parse(M.UTF8ToString(M._ens_info(1)));
@@ -22,9 +25,11 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   for (;;) {
     M._ens_grant(48000); M._ens_tick();
     const st = info();
-    for (const l of st.log) { console.log('guest: ' + l); if (l.indexOf('ENSEMBLE up') >= 0) upAt = st.dac; }
+    for (const l of st.log) { console.log('guest: ' + l); if (!albumPath && l.indexOf('ENSEMBLE up') >= 0) upAt = st.dac; }
     if (st.state === 9) throw new Error('engine failed: ' + st.error);
-    if (upAt && !snapAt && st.dac > upAt + 4 * 48000) { M._ens_snapshot(); snapAt = st.dac; }
+    if (albumPath) { if (st.phase === 1 && st.built && !upAt) upAt = st.dac; }   // (built: the clock would start now)
+    if (upAt && !snapAt && st.dac > upAt + (albumPath ? 40 : 4) * 48000) {   // (built: after the lanes' silent first plays have ended: a resumed machine never finishes a play in progress)
+      M._ens_snapshot(); snapAt = st.dac; }
     if (snapAt) { let log = ''; try { log = new TextDecoder().decode(M.FS.readFile('/machine/engine.log')); } catch (e) {} if (log.includes('snapshot')) break; }
     if (Date.now() - t0 > 900000) throw new Error('timed out');
     await sleep(5);

@@ -1,4 +1,4 @@
-// SNDWAVE2000 Ensemble in the browser: the worker that runs the machine (appended to the Emscripten output,
+// SNDWAVE1993 Ensemble in the browser: the worker that runs the machine (appended to the Emscripten output,
 // ens-worker.js, so the engine's own threads load the same file). It fetches the machine, resumes the snapshot, runs
 // the album player's tick, draws Windows' screen and passes the pointer and keys on. The page never waits for it.
 if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (function () {
@@ -43,10 +43,20 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
 
   function info(withLog) { return JSON.parse(M.UTF8ToString(M._ens_info(withLog ? 1 : 0))); }
 
-  let inFlight = false, frames = 0;
+  // Windows' screen, a few times a second: DOSBox renders a frame only when one is asked for (vid_want), so the
+  // emulator does not draw 60 frames a second nobody needs (the scaler costs as much as a third of a busy machine)
+  let inFlight = false, frames = 0, asked = 0;
+  const FRAME_MS = 160;
+  function want(on) { new Uint32Array(M.wasmMemory.buffer)[(S + lay.vid_want) >> 2] = on ? 1 : 0; }
   function draw() {
     if (!running) return;
-    const p = inFlight ? 0 : M._ens_frame();
+    const now = performance.now();
+    const seq = () => new Uint32Array(M.wasmMemory.buffer)[(S + lay.vid_seq) >> 2];
+    if (!asked && now - lastFrame >= FRAME_MS) { want(true); asked = now; seqAsked = seq(); }
+    let p = 0;
+    if (asked && !inFlight && seq() !== seqAsked && !(seq() & 1)) {   // a frame came: take it (if it changed), and no more
+      p = M._ens_frame(); want(false); asked = 0; lastFrame = now;
+    } else if (asked && now - asked > 500) { want(false); asked = 0; lastFrame = now; }
     if (p) {
       const h32 = new Uint32Array(M.wasmMemory.buffer);
       const w = h32[p >> 2], h = h32[(p >> 2) + 1];
@@ -55,8 +65,9 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
       inFlight = true; frames++;
       createImageBitmap(img).then(bm => { inFlight = false; post({ t: 'frame', bitmap: bm }, [bm]); }, () => { inFlight = false; });
     }
-    setTimeout(draw, 33);
+    setTimeout(draw, 20);
   }
+  let lastFrame = 0, seqAsked = 0;
 
   let wantTrack = -1, prefetched = -1, schedule = null;
   function tick() {
@@ -84,7 +95,13 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
     M.FS.mkdir('/machine'); M.FS.mkdir('/machine/rec');
     M.FS.writeFile('/machine/drive.zip', by['drive.zip']);
     M.FS.writeFile('/machine/library.zip', by['library.zip']);
-    M.FS.writeFile('/machine/w31web.state', by['ens.state']);
+    if (by['ens.state.lzma']) {   // the snapshot, packed: unpacked here, in the engine's own memory
+      const z = by['ens.state.lzma'], src = M._malloc(z.length); new Uint8Array(M.wasmMemory.buffer).set(z, src);
+      const n = M._ens_unlzma_size(src), dst = M._malloc(n);
+      const got = M._ens_unlzma(src, z.length, dst, n); M._free(src);
+      if (got !== n) throw new Error('the snapshot did not unpack');
+      M.FS.writeFile('/machine/w31web.state', new Uint8Array(M.wasmMemory.buffer, dst, n).slice()); M._free(dst);
+    } else M.FS.writeFile('/machine/w31web.state', by['ens.state']);
     M.FS.writeFile('/machine/w31.conf', m.conf);
     if (!M._b16_fetchfile(M.stringToNewUTF8('/machine/packs.zip'), M.stringToNewUTF8(m.discUrl), m.discSize, m.discChunk || 262144))
       throw new Error('cannot set up the pack disc');
@@ -118,6 +135,10 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
       w();
     });
     post({ t: 'ready', ms: Math.round(performance.now() - t0) });
+    // Windows' clock: the local time, in 1993 (29 February is the 28th: 1993 has none)
+    const clock = () => { const d = new Date(); let mo = d.getMonth() + 1, da = d.getDate(); if (mo === 2 && da === 29) da = 28;
+      const a = M.stringToNewUTF8(['time 1993', mo, da, d.getHours(), d.getMinutes(), d.getSeconds()].join(' ')); M._ens_line(a); M._free(a); };
+    clock(); setInterval(clock, 60000);
     if (m.play !== false) M._ens_play(m.from || 0);
   }
 
@@ -132,6 +153,7 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
       case 'play': if (M) { prefetched = -1; if (schedule) discWant(schedule.ranges[m.track] || [], true); M._ens_play(m.track); } break;
       case 'stop': if (M) M._ens_stop(); break;
       case 'colors': if (M) M._ens_colors(m.on ? 1 : 0); break;
+      case 'line': if (M) { const a = M.stringToNewUTF8(m.text); M._ens_line(a); M._free(a); } break;
       case 'pause': if (M) M._ens_pause(m.p ? 1 : 0); break;
       case 'stats': if (M) post({ t: 'stats', id: m.id, stats: JSON.parse(M.UTF8ToString(M._ens_stats())), info: info(true) }); break;
       }

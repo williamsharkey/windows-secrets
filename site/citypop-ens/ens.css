@@ -1,7 +1,7 @@
-/* CITYPOP DEPROGRAMMED - Ensemble: the /citypop/ night (its scene and life, loaded from /citypop/) with one Windows 3.11
-   window over it. The colours are /citypop/'s. */
-@font-face { font-family: "CP Sans"; src: url("/citypop/fonts/DejaVuSans.woff2") format("woff2"); font-display: swap; }
-@font-face { font-family: "CP Sans"; font-weight: 700; src: url("/citypop/fonts/DejaVuSans-Bold.woff2") format("woff2"); font-display: swap; }
+/* CITYPOP1993 - Ensemble: the /citypop1993/ night (its scene and life, loaded from /citypop1993/) with one Windows 3.11
+   window over it. The colours are /citypop1993/'s. */
+@font-face { font-family: "CP Sans"; src: url("/citypop1993/fonts/DejaVuSans.woff2") format("woff2"); font-display: swap; }
+@font-face { font-family: "CP Sans"; font-weight: 700; src: url("/citypop1993/fonts/DejaVuSans-Bold.woff2") format("woff2"); font-display: swap; }
 :root {
   --desk: #07081a; --frame: #34283f; --frame-in: #1f1a2c; --face: #29243f; --hi: #7869ab; --sh: #0e0b20; --blk: #000;
   --win: #131127; --ink: #e9e2f7; --mut: #a99dcb; --dim: #6c6294; --title: #4b2472; --title-ink: #f7f0ff;

@@ -1,4 +1,4 @@
-// SNDWAVE2000 Ensemble in the browser (from BASILISK 16's web edition): the audio. It plays the BSYN card's DAC ring (48 kHz stereo float) straight out of
+// SNDWAVE1993 Ensemble in the browser (from BASILISK 16's web edition): the audio. It plays the BSYN card's DAC ring (48 kHz stereo float) straight out of
 // the machine's shared memory (no messages per block), resampled to the AudioContext's rate with the plugin's
 // 4-point Hermite, and writes back how far it has played (host_r) and a beat, which is what paces the emulator (as a
 // DAW's audio thread does).
@@ -22,7 +22,8 @@ class B16Out extends AudioWorkletProcessor {
         this.leadIdx = L.lead !== undefined ? (b + L.lead) >> 2 : -1;
         this.lead = this.lead0 = m.lead || 2048; this.leadMax = m.leadMax || 3584; this.pos = -1; this.master = m.master || 1;
         if (this.leadIdx >= 0) this.u32[this.leadIdx] = this.lead;
-      } else if (m.t === 'flush') { this.flushTo = m.at; this.flushEpoch = m.epoch || 0; }   // play from DAC frame `at` (forward only; -1: the newest) else if (m.t === 'tap') this.tap = m.on ? [] : null;   // tests: capture the output
+      } else if (m.t === 'flush') { this.flushTo = m.at; this.flushEpoch = m.epoch || 0; }   // play from DAC frame `at` (forward only; -1: the newest)
+      else if (m.t === 'tap') this.tap = m.on ? [] : null;   // tests: capture the output
     };
   }
   process(inputs, outputs) {
@@ -38,7 +39,7 @@ class B16Out extends AudioWorkletProcessor {
       const to = this.flushTo < 0 ? dac - 4800 : this.flushTo;
       if (to > this.pos) { this.pos = Math.max(2, to); this.fade = 0; this.starved = true; this.gapLen = 0; }
       this.lead = this.lead0; if (this.leadIdx >= 0) this.u32[this.leadIdx] = this.lead;
-      this.flushTo = undefined; this.epoch = this.flushEpoch; this.gaps = 0; this.short = 0; this.lastReport = -1;   // (counted afresh)
+      this.flushTo = undefined; this.epoch = this.flushEpoch; this.gaps = 0; this.short = 0; this.gapLog = []; this.lastReport = -1;   // (counted afresh)
     }
     const g = f[this.gain] || 1;
     let missing = 0;
@@ -46,7 +47,7 @@ class B16Out extends AudioWorkletProcessor {
       const p = this.pos, k = Math.floor(p), fr = p - k;
       if (k + 2 >= dac) {   // dry: hold the place, fade the last sample out (held, it must still be able to move on:
                             // the emulator runs to host_r + lead, so a hold below `lead` would wait forever)
-        if (!this.starved) { this.starved = true; this.gaps++; this.gapLen = 0; }
+        if (!this.starved) { this.starved = true; this.gaps++; this.gapLen = 0; if ((this.gapLog = this.gapLog || []).length < 8) this.gapLog.push([Math.round(currentTime * 10) / 10, k, dac, this.lead]); }
         this.gapLen++;
         missing++;
         this.fade = Math.max(0, this.fade - 1 / FADE);
@@ -88,7 +89,7 @@ class B16Out extends AudioWorkletProcessor {
     if (this.tap) { this.tap.push(new Float32Array(L), new Float32Array(R)); if (this.tap.length >= 64) { this.port.postMessage({ t: 'tap', d: this.tap }); this.tap = []; } }
     if (currentTime - this.lastReport > 0.5) {
       this.lastReport = currentTime;
-      this.port.postMessage({ t: 'a', epoch: this.epoch || 0, blocks: this.blocks, under: this.under, pos: this.pos, dac, gaps: this.gaps, short: this.short, lead: this.lead });
+      this.port.postMessage({ t: 'a', gapLog: this.gapLog, epoch: this.epoch || 0, blocks: this.blocks, under: this.under, pos: this.pos, dac, gaps: this.gaps, short: this.short, lead: this.lead });
       this.blocks = 0; this.under = 0;
     }
     return true;

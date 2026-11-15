@@ -1,4 +1,4 @@
-// SNDWAVE2000 Ensemble in the browser (/citypop-ens/): the host. One Windows 3.11 (the engine thread and DOSBox Pure
+// SNDWAVE1993 Ensemble in the browser (/citypop-ens/): the host. One Windows 3.11 (the engine thread and DOSBox Pure
 // with the 128-voice lane card, as the plugin), ENSEMBLE.EXE in it, and the album player (ensemble/player/
 // AlbumPlayer.h, the same code as the native albumrender): every lane switches preset as its schedule says, and its
 // notes go to Windows a lookahead before they sound, stamped with their DAC sample.
@@ -7,6 +7,7 @@
 #include "engine.h"
 #include "AlbumPlayer.h"
 #include <emscripten.h>
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
@@ -33,6 +34,7 @@ uint32_t notesSent = 0, linesSent = 0;
 float outGain = 1.f;
 uint32_t *frameBuf = nullptr; uint32_t frameSeq = 0xFFFFFFFF, frameW = 0, frameH = 0;
 int scheme = 0;
+bool hold = false;   // the snapshot maker: the first presets build, the clock does not start
 
 void sendLine(const char *text, uint32_t id = 0, uint64_t at = 0)
 {
@@ -119,12 +121,17 @@ EMSCRIPTEN_KEEPALIVE void ens_colors(int which) { scheme = which; if (hello) sen
 
 static bool quiet = false;   // the snapshot maker: Windows is listened to, but told nothing (no hello, no go)
 EMSCRIPTEN_KEEPALIVE void ens_quiet(int q) { quiet = q != 0; }
+EMSCRIPTEN_KEEPALIVE void ens_hold(int h) { hold = h != 0; }
+// a line for Windows from the page (tests: ui rates and the like)
+EMSCRIPTEN_KEEPALIVE void ens_line(const char *l) { if (S && l) sendLine(l); }
+
 EMSCRIPTEN_KEEPALIVE void ens_tick()
 {
     if (!S) return;
     if (!quiet && !hello && S->state >= BS_RUNNING && S->state != BS_FAILED) {
         hello = true;
         sendLine("packs rainy-loft");
+        sendLine("ui 120 100");   // the strips and the track view drawn less often than in the plugin: drawing is the browser's dearest work
         if (scheme) sendLine("colors 1");
         sendLine("go");
     }
@@ -150,8 +157,10 @@ EMSCRIPTEN_KEEPALIVE void ens_tick()
         i += n;
     }
     words.erase(words.begin(), words.begin() + i);
-    if (P && phase == 1 && P->ready()) {   // the first presets are built: the clock starts a moment after Windows' now
-        dac0 = S->dac_w + 9600;
+    if (P && phase == 1 && P->ready() && !hold) {   // the first presets are built: the clock starts a moment after Windows' now
+        // (and at least 4 s after where the speakers are now: Windows starts that far ahead of them, whatever building
+        // or resuming cost it - the emulator then keeps its lead as it plays)
+        dac0 = std::max<uint64_t>(S->dac_w + 9600, S->host_r + 4 * 48000);
         P->begin(dac0);
         phase = 2;
     }
@@ -222,10 +231,10 @@ EMSCRIPTEN_KEEPALIVE const char *ens_info(int withLog)
         for (auto &st : P->stats()) { sw += st.switches; builds += st.builds; late += st.late; }
     }
     std::snprintf(b, sizeof b, "{\"state\":%u,\"ready\":%d,\"phase\":%d,\"dac\":%llu,\"host\":%llu,\"load\":%u,\"late\":%u,\"ontime\":%u,"
-                  "\"notes\":%u,\"lines\":%u,\"pos\":%.3f,\"emu\":%.3f,\"track\":%d,\"switches\":%d,\"builds\":%d,\"switchLate\":%d,\"lead\":%u,\"under\":%u,",
+                  "\"notes\":%u,\"lines\":%u,\"pos\":%.3f,\"emu\":%.3f,\"track\":%d,\"switches\":%d,\"builds\":%d,\"switchLate\":%d,\"lead\":%u,\"under\":%u,\"built\":%d,",
                   S ? S->state : 0, ready, phase, S ? (unsigned long long)S->dac_w : 0ull, S ? (unsigned long long)S->host_r : 0ull,
                   S ? S->emu_load : 0, S ? S->sched_late : 0, S ? S->sched_ontime : 0, notesSent, linesSent, ens_pos(), ens_emutime(),
-                  track, sw, builds, late, S ? S->lead : 0, S ? S->underruns : 0);
+                  track, sw, builds, late, S ? S->lead : 0, S ? S->underruns : 0, (P && P->ready()) ? 1 : 0);
     s = b;
     s += "\"error\":\"" + jsonEsc(S ? std::string(S->error) : "") + "\",\"log\":[";
     if (withLog) for (size_t k = 0; k < guestLog.size(); k++) s += (k ? ",\"" : "\"") + jsonEsc(guestLog[k]) + "\"";
@@ -237,7 +246,10 @@ EMSCRIPTEN_KEEPALIVE const char *ens_info(int withLog)
 EMSCRIPTEN_KEEPALIVE const char *ens_stats()
 {
     static std::string s; s = "[";
-    if (P) { auto st = P->stats(); for (size_t k = 0; k < st.size(); k++) { char b[160]; std::snprintf(b, sizeof b, "%s[%d,%d,%.2f,%d,%d]", k ? "," : "", st[k].switches, st[k].builds, st[k].buildSecs, st[k].late, st[k].underBuild); s += b; } }
+    if (P) { auto st = P->stats(); for (size_t k = 0; k < st.size(); k++) {
+        const auto &r = P->res[k]; char b[200];
+        std::snprintf(b, sizeof b, "%s[%d,%d,%.2f,%d,%d,%d,%d,%ld]", k ? "," : "", st[k].switches, st[k].builds, st[k].buildSecs, st[k].late, st[k].underBuild,
+                      r.recs, r.user > 100 ? -1 : r.user, r.free > (1L << 29) ? -1L : r.free); s += b; } }
     s += "]";
     return s.c_str();
 }

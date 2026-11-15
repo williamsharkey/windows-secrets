@@ -1,4 +1,4 @@
-# CITYPOP DEPROGRAMMED - Ensemble (/citypop-ens/): the files the page fetches when the button is pressed.
+# CITYPOP1993 - Ensemble (/citypop-ens/): the files the page fetches when the button is pressed.
 # The emulator shares memory between its threads (SharedArrayBuffer), which browsers allow only to a cross-origin
 # isolated page: every file here is served with COOP/COEP and says it may be used so.
 <IfModule mod_headers.c>

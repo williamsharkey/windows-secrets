@@ -1,6 +1,6 @@
-// CITYPOP DEPROGRAMMED - Ensemble: the page. One worker runs Windows 3.11 with SNDWAVE2000 Ensemble and the album
+// CITYPOP1993 - Ensemble: the page. One worker runs Windows 3.11 with SNDWAVE1993 Ensemble and the album
 // player (ens-worker.js); an AudioWorklet plays the lane card's DAC ring out of the worker's shared memory. Nothing of
-// the machine is fetched until Play. The night behind it is /citypop/'s (scene and life).
+// the machine is fetched until Play. The night behind it is /citypop1993/'s (scene and life).
 (function () {
   'use strict';
   const $ = s => document.querySelector(s);
@@ -19,7 +19,7 @@
   colors.checked = store.get('colors', '1') === '1';
   const say = s => { status.textContent = s; };
 
-  // ---------------------------------------------------------------- the night (from /citypop/)
+  // ---------------------------------------------------------------- the night (from /citypop1993/)
   let scene = null, life = null;
   function loadScript(s) { return new Promise((res, rej) => { const e = document.createElement('script'); e.src = s; e.async = true; e.onload = res; e.onerror = rej; document.head.appendChild(e); }); }
   function occlude() {
@@ -29,9 +29,9 @@
   }
   (async () => {
     try {
-      await loadScript('/citypop/scene/scene.js?v=' + MAN.ui);
-      if (window.CityScene) scene = CityScene.start($('#scene'), { dpr: DPR, reduced: reduced(), time: 19.5, base: '/citypop/' });
-      await loadScript('/citypop/life/life.js?v=' + MAN.ui);
+      await loadScript('/citypop1993/scene/scene.js?v=' + MAN.ui);
+      if (window.CityScene) scene = CityScene.start($('#scene'), { dpr: DPR, reduced: reduced(), time: 19.5, base: '/citypop1993/' });
+      await loadScript('/citypop1993/life/life.js?v=' + MAN.ui);
       if (window.CityLife) life = CityLife.start($('#life'), { dpr: DPR, reduced: reduced(), scene, analyser: an || null, seed: (Date.now() / 86400000) | 0 });
       occlude();
     } catch (e) { /* the window works without the night */ }
@@ -76,7 +76,7 @@
     case 'progress': say('Fetching the machine: ' + (m.loaded / 1e6).toFixed(1) + ' of ' + (m.total / 1e6).toFixed(1) + ' MB'); break;
     case 'mem': node.port.postMessage({ t: 'mem', buffer: m.buffer, base: m.base, lay: m.lay, lead: MAN.lead, leadMax: MAN.leadMax, master: MAN.master }); break;
     case 'resumed': tResume = m.ms; say('Windows is up (' + (m.ms / 1000).toFixed(1) + ' s). ENSEMBLE.EXE is getting ready...'); break;
-    case 'ready': tReady = m.ms; say('Building the first presets in Sound Recorder...'); break;
+    case 'ready': tReady = m.ms; { const q = new URLSearchParams(location.search).get('guest'); if (q) q.split(';').forEach(text => W.postMessage({ t: 'line', text })); } say('Building the first presets in Sound Recorder...'); break;
     case 'frame': show(m.bitmap); break;
     case 'hb': lastInfo = m.info; onInfo(m.info); break;
     case 'stats': lastStats = m.stats; drawStats(); break;
@@ -89,14 +89,15 @@
     if (i.phase === 1) { say('Building track ' + (+sel.value + 1) + "'s presets in Sound Recorder..."); return; }
     if (i.phase !== 2) return;
     if (gaps0 < 0) {   // the first beat of the music: the speakers jump to it (Windows is already seconds ahead)
-      const t0 = TR[Math.max(0, +sel.value)].start, at = Math.min(Math.round(i.dac - (i.emu - t0) * 48000) - 4800, i.dac - 144000);   // (at least 3 s in hand: building the first presets may have left Windows behind)
+      const t0 = TR[Math.max(0, +sel.value)].start, at = Math.min(Math.round(i.dac - (i.emu - t0) * 48000) - 4800, i.dac - 192000);   // (at least 4 s in hand: building the first presets, or the resume, may have left Windows behind)
       node.port.postMessage({ t: 'flush', at, epoch: ++epoch }); gaps0 = 0; return;
     }
     if (i.pos >= ALBUM_END) { say('The end of the album.'); return; }
+    if (i.track < 0) { say('Windows is a few seconds ahead of the speakers: ' + TR[+sel.value].title + ' in a moment...'); return; }
     if (i.track !== shownTrack && i.track >= 0) {
       shownTrack = i.track; sel.value = i.track; store.set('track', i.track);
       const t = TR[i.track];
-      document.title = t.title + ' - CITYPOP DEPROGRAMMED - Ensemble';
+      document.title = t.title + ' - CITYPOP1993 - Ensemble';
       if (life && life.onTrack) try { life.onTrack(i.track + 1, { bpm: MAN.bpm[i.track] || 100, title: t.title }); } catch (e) {}
     }
     const t = TR[Math.max(0, i.track)];
@@ -113,9 +114,10 @@
     lines.push('switches ' + i.switches + ' (built in Sound Recorder ' + i.builds + ')   notes late for a switch ' + i.switchLate);
     if (lastStats) {
       lines.push('');
-      lines.push('track                                     switches  builds  building  late  replaced');
+      lines.push('track                                     switches  builds  building  late  recorders  USER free  memory free');
       lastStats.forEach((s, k) => { if (!s[0] && !s[1] && !s[3]) return;
-        lines.push(String(k + 1).padStart(2) + ' ' + TR[k].title.slice(0, 38).padEnd(38) + String(s[0]).padStart(9) + String(s[1]).padStart(8) + (s[2].toFixed(1) + ' s').padStart(10) + String(s[3]).padStart(6) + String(s[4]).padStart(10)); });
+        lines.push(String(k + 1).padStart(2) + ' ' + TR[k].title.slice(0, 38).padEnd(38) + String(s[0]).padStart(9) + String(s[1]).padStart(8) + (s[2].toFixed(1) + ' s').padStart(10) + String(s[3]).padStart(6) +
+                   String(s[5] || '').padStart(11) + (s[6] >= 0 ? s[6] + ' %' : '').padStart(11) + (s[7] >= 0 ? (s[7] / 1024).toFixed(1) + ' MB' : '').padStart(13)); });
     }
     statsEl.textContent = lines.join('\n'); statsEl.hidden = false;
   }
