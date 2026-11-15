@@ -12,7 +12,7 @@
 <link rel="icon" href="art/icon-32.png">
 <link rel="preload" href="fonts/DejaVuSans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/DejaVuSansMono.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 <div id="scene" aria-hidden="true"><canvas id="night"></canvas></div>
@@ -133,12 +133,12 @@
       <h3>Credits</h3>
       <ul id="credits">
         <li>Composed, arranged and performed on SNDWAVE2000 by Algorithmic Industries (William Sharkey).</li>
-        <li>Sound library: Rainy Loft Collection (Harborlight Audio Works Co., Ltd., 1988), with the SNDWAVE2000 pack discs
-          Paulywaulophone, Tape Parlour, Polysynth Showroom, Courtyard Chapel and Studio Archive.</li>
+        <li>Performed on SNDWAVE2000 with the Rainy Loft Collection (Harborlight Audio Works Co., Ltd., 1988) and the SNDWAVE2000 pack discs.</li>
         <li>Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly).</li>
         <li>Electric piano and bass: the Bele Dance instruments by William Sharkey.</li>
         <li>Field recordings and instrument samples (CC0, Freesound): <span id="cc0">see SOURCES.TXT</span>.</li>
         <li>Windows 3.11 and Sound Recorder &copy; Microsoft Corporation. DOSBox Pure (GPL-2.0). Fonts: DejaVu (free licence, <a href="fonts/LICENSE-DejaVu.txt">LICENSE</a>).</li>
+        <li>Soft piano: Salamander Grand Piano V3 by Alexander Holm (public-domain dedication; first released CC-BY 3.0).</li>
         <li>Paganini, Caprice No. 24 in A minor, Op. 1 (published 1820), public domain.</li>
       </ul>
       <p class="small"><a href="SOURCES.TXT">SOURCES.TXT</a> lists every recording, its author, licence and page. The
@@ -159,6 +159,11 @@
           <label class="rad"><input type="radio" name="tod" value="27.5"><i></i>Before dawn, 3:30</label>
           <label class="rad"><input type="radio" name="tod" value="29.5"><i></i>First light, 5:30</label>
           <label class="rad"><input type="radio" name="tod" value="clock"><i></i>Same as the Clock</label>
+        </fieldset>
+        <fieldset class="grp"><legend>Window Size</legend>
+          <label class="rad"><input type="radio" name="scale" value="auto"><i></i>Automatic</label>
+          <label class="rad"><input type="radio" name="scale" value="1"><i></i>Normal</label>
+          <label class="rad"><input type="radio" name="scale" value="2"><i></i>Large (2&times;)</label>
         </fieldset>
         <fieldset class="grp"><legend>Windows</legend>
           <label class="chk"><input type="checkbox" id="optmotion"><i></i>Less motion</label>
@@ -192,6 +197,6 @@
 <div id="menus"></div>
 <button id="unhide" class="unhide" hidden title="Show the windows (H or Esc)">Show windows</button>
 <noscript><p class="nos">The player needs JavaScript. The files are in <a href="audio/">audio/</a>.</p></noscript>
-<script src="app.js?v=2"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>

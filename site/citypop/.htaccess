@@ -6,7 +6,13 @@ AddType font/woff2 .woff2
   <FilesMatch "\.(opus|mp3|png|woff2)$">
     Header set Cache-Control "public, max-age=604800"
   </FilesMatch>
+  <FilesMatch "^(desktop|hd|portrait)-(sky|far|mid|near|fg)\.png$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
   <FilesMatch "\.(html|js|css|json)$">
     Header set Cache-Control "no-cache"
   </FilesMatch>
+</IfModule>
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/json text/javascript application/javascript text/css text/html text/plain
 </IfModule>

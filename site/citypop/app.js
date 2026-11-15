@@ -2,7 +2,7 @@
    Every window is placed on whole device pixels; every canvas is backed at device resolution and drawn in device pixels. */
 (() => {
 'use strict';
-const BUILD = '20261114a';             // cache key for the scene and life modules; bump on each UI deploy
+const BUILD = '20261114c';             // cache key for the scene and life modules; bump on each UI deploy
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const store = {
   get(k, d) { try { const v = localStorage.getItem('cpd:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -10,11 +10,14 @@ const store = {
   del(k) { try { localStorage.removeItem('cpd:' + k); } catch (e) { /* ignore */ } },
 };
 const mqReduced = matchMedia('(prefers-reduced-motion: reduce)');
-const prefs = Object.assign({ tod: 'album', motion: false, remember: true, vol: 80, repeat: false }, store.get('prefs', {}));
+const prefs = Object.assign({ tod: 'album', motion: false, remember: true, vol: 80, repeat: false, scale: 'auto' }, store.get('prefs', {}));
 const savePrefs = () => store.set('prefs', prefs);
 const reduced = () => mqReduced.matches || prefs.motion;
 let DPR = window.devicePixelRatio || 1;
-const snap = (v) => Math.round(v * DPR) / DPR;          // a CSS length that lands on a device pixel
+let S = 1;                                               // UI scale: 1 or 2 whole device pixels per CSS pixel of the windows
+const RR = () => DPR * S;                                // device pixels per CSS pixel inside the desktop
+const snap = (v) => Math.round(v * RR()) / RR();         // a CSS length that lands on a device pixel
+const VW = () => innerWidth / S, VH = () => innerHeight / S;   // the viewport, in the desktop's own CSS pixels
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const fmt = (s) => { s = Math.max(0, s | 0); return String((s / 60) | 0).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
 const BAY = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
@@ -29,7 +32,7 @@ function texture(w, h, fn) {
   return 'url(' + c.toDataURL() + ')';
 }
 function paintTextures() {
-  const R = document.documentElement.style, d = DPR;
+  const R = document.documentElement.style, d = RR();
   // the active caption: magenta at the top settling into deep purple, ordered-dithered one device pixel at a time
   const th = Math.round(20 * d), top = rgb('#6a2a7a'), mid = rgb('#4b2472'), bot = rgb('#2c1c5a');
   R.setProperty('--title-img', texture(4, th, (x, y) => {
@@ -54,8 +57,9 @@ paintTextures();
 
 /* ================================================================== a canvas backed at device resolution */
 const views = [];
+const SOFT = !/[?&]gpucanvas/.test(location.search);   // small canvases redrawn often are cheaper on the CPU than as GPU command streams
 function view(cv, draw) {
-  const v = { cv, ctx: cv.getContext('2d'), w: 0, h: 0, cw: 0, ch: 0, k: DPR, draw };
+  const v = { cv, ctx: cv.getContext('2d', SOFT ? { willReadFrequently: true } : undefined), w: 0, h: 0, cw: 0, ch: 0, k: DPR, draw };
   const ro = new ResizeObserver((es) => {
     for (const e of es) {
       let w, h;
@@ -91,7 +95,8 @@ function openMenu(anchor, items) {
   }
   $('#menus').appendChild(dd);
   const r = anchor.getBoundingClientRect();
-  const x = clamp(r.left, 0, innerWidth - dd.offsetWidth - 2), y = r.bottom + dd.offsetHeight > innerHeight ? Math.max(0, r.top - dd.offsetHeight) : r.bottom;
+  const rl = r.left / S, rt = r.top / S, rb = r.bottom / S;
+  const x = clamp(rl, 0, VW() - dd.offsetWidth - 2), y = rb + dd.offsetHeight > VH() ? Math.max(0, rt - dd.offsetHeight) : rb;
   dd.style.left = snap(x) + 'px'; dd.style.top = snap(y) + 'px';
   anchor.classList.add('open');
   openDD = { dd, anchor };
@@ -110,23 +115,34 @@ const WINS = ['player', 'rec', 'ev', 'clock', 'notes', 'desktop', 'about'];
 const W = {};          // id -> {el, x, y, w, h, min}
 let zTop = 10, wm = false;
 WINS.forEach((id) => { W[id] = { id, el: $('#' + id), min: false }; });
-const isWM = () => innerWidth >= 960 && innerHeight >= 580;
+const isWM = () => VW() >= 960 && VH() >= 580;
+function uiScale() {
+  if (prefs.scale === '1' || prefs.scale === '2') return +prefs.scale;
+  return DPR < 1.5 && innerWidth >= 2200 && innerHeight >= 1160 ? 2 : 1;   // a big screen at one device pixel per CSS pixel: double
+}
+function applyScale() {
+  const s = uiScale();
+  if (s === S && document.body.dataset.scale === String(s)) return;
+  S = s; document.body.dataset.scale = s;
+  [$('#desk'), $('#menus'), $('#unhide')].forEach((el) => { el.style.zoom = s === 1 ? '' : s; });
+  paintTextures(); closeMenu();
+}
 
 function defaults() {
-  const vw = innerWidth, vh = innerHeight, top = 20, L = 20, gap = 12, foot = 76;
+  const vw = VW(), vh = VH(), top = 20, L = 20, gap = 12, foot = 76;
   const pw = 460, cw = vw >= 1700 ? 420 : 372, cx = L + pw + gap;
   const ph = Math.min(vh - top - foot, vw >= 1700 ? 820 : 700);
   if (wm) W.rec.el.style.width = cw + 'px';
   const recH = W.rec.el.offsetHeight || 180;
   const rest = vh - top - foot - recH - gap * 2;
   const evH = Math.max(200, Math.round(rest * 0.56)), nH = Math.max(140, rest - evH);
-  const ck = vw >= 1700 ? 176 : 152;
+  const ck = vw >= 1700 ? 184 : 168;
   return {
     player: { x: L, y: top, w: pw, h: ph },
     rec: { x: cx, y: top, w: cw },
     ev: { x: cx, y: top + recH + gap, w: cw, h: evH },
     notes: { x: cx, y: top + recH + gap + evH + gap, w: cw, h: nH },
-    clock: { x: vw - L - ck, y: top, w: ck, h: ck + 26 },
+    clock: { x: vw - L - ck, y: top, w: ck, h: ck + 10 },
     desktop: { w: 300 }, about: { w: 320 },
   };
 }
@@ -136,8 +152,8 @@ function place(id, g) {
   if (!wm) return;
   const w = o.w ? Math.round(o.w) : el.offsetWidth;
   const h = o.h ? Math.round(o.h) : el.offsetHeight;
-  if (o.x == null) { o.x = (innerWidth - w) / 2; o.y = Math.max(20, (innerHeight - (h || 300)) / 2 - 40); }
-  o.x = clamp(o.x, 60 - w, innerWidth - 60); o.y = clamp(o.y, 0, innerHeight - 24);
+  if (o.x == null) { o.x = (VW() - w) / 2; o.y = Math.max(20, (VH() - (h || 300)) / 2 - 40); }
+  o.x = clamp(o.x, 60 - w, VW() - 60); o.y = clamp(o.y, 0, VH() - 24);
   el.style.left = snap(o.x) + 'px'; el.style.top = snap(o.y) + 'px';
   if (o.w) el.style.width = o.w + 'px';
   if (o.h) el.style.height = o.h + 'px';
@@ -146,14 +162,16 @@ function saveLayout() {
   if (!prefs.remember || !wm) return;
   const L = {};
   ['player', 'rec', 'ev', 'clock', 'notes'].forEach((id) => { const o = W[id]; L[id] = { x: Math.round(o.x), y: Math.round(o.y), min: o.min }; });
-  store.set('layout', { vw: innerWidth, vh: innerHeight, L });
+  store.set('layout', { vw: innerWidth, vh: innerHeight, s: S, L });
 }
 function layout(reset) {
+  applyScale();
   wm = isWM();
   document.body.classList.toggle('wm', wm);
   if (!wm) { WINS.forEach((id) => { const el = W[id].el; el.style.left = el.style.top = el.style.width = el.style.height = ''; }); occlude(); return; }
   const D = defaults();
-  const saved = !reset && prefs.remember ? store.get('layout', null) : null;
+  let saved = !reset && prefs.remember ? store.get('layout', null) : null;
+  if (saved && (saved.s || 1) !== S) saved = null;
   ['rec', 'player', 'ev', 'notes', 'clock'].forEach((id) => {
     const g = Object.assign({}, D[id]);
     if (saved && saved.L && saved.L[id]) { g.x = saved.L[id].x; g.y = saved.L[id].y; setMin(id, !!saved.L[id].min, true); }
@@ -187,7 +205,7 @@ WINS.forEach((id) => {
     e.preventDefault();
     const sx = e.clientX, sy = e.clientY, ox = o.x, oy = o.y;
     tb.setPointerCapture(e.pointerId);
-    const mv = (ev) => { o.x = ox + ev.clientX - sx; o.y = oy + ev.clientY - sy; place(id, {}); };
+    const mv = (ev) => { o.x = ox + (ev.clientX - sx) / S; o.y = oy + (ev.clientY - sy) / S; place(id, {}); };
     const up = () => { tb.removeEventListener('pointermove', mv); tb.removeEventListener('pointerup', up); tb.removeEventListener('pointercancel', up); saveLayout(); occlude(); };
     tb.addEventListener('pointermove', mv); tb.addEventListener('pointerup', up); tb.addEventListener('pointercancel', up);
   });
@@ -308,7 +326,7 @@ function scroller(sv) {
     e.preventDefault(); e.stopPropagation();
     const sy = e.clientY, st = vp.scrollTop, max = vp.scrollHeight - vp.clientHeight, span = tr.clientHeight - 16;
     th.setPointerCapture(e.pointerId);
-    const mv = (ev) => { vp.scrollTop = st + (ev.clientY - sy) / Math.max(1, span) * max; };
+    const mv = (ev) => { vp.scrollTop = st + (ev.clientY - sy) / S / Math.max(1, span) * max; };
     const up = () => { th.removeEventListener('pointermove', mv); th.removeEventListener('pointerup', up); };
     th.addEventListener('pointermove', mv); th.addEventListener('pointerup', up);
   });
@@ -512,9 +530,15 @@ function play(i, from = 0) {
   if (lifeCtl && lifeCtl.onTrack) try { lifeCtl.onTrack(t.n, { bpm: t.bpm, title: t.title }); } catch (e) { /* optional */ }
   pushTime();
 }
-let isPlaying = false;
+let isPlaying = false, lifeDriven = false;
+function driveLife() {   // while the music plays, life draws inside the UI's frames instead of its own
+  const want = !!(lifeCtl && lifeCtl.drive && lifeCtl.frame && isPlaying && !document.hidden && !prefs.motion);
+  if (want === lifeDriven) return;
+  lifeDriven = want;
+  try { lifeCtl.drive(want); } catch (e) { lifeDriven = false; }
+}
 function playing(on) {
-  isPlaying = on;
+  isPlaying = on; driveLife();
   $('#playicon').setAttribute('d', on ? 'M4 3h3v10H4zM9 3h3v10H9z' : 'M5 3h1v10H5zM6 4h1v8H6zM7 5h1v6H7zM8 6h1v4H8zM9 7h1v2H9z');
   $('#play').setAttribute('aria-label', on ? 'Pause' : 'Play');
   $('#stat').textContent = on ? 'Playing' : stopped ? 'Stopped' : 'Paused';
@@ -579,7 +603,7 @@ $('#rrec').onclick = () => { $('#stat').textContent = 'Sound Recorder is in play
 // the Sound Recorder's scroll bar seeks too
 (() => {
   const hsb = $('#rscroll'), tr = $('.tr', hsb);
-  const seek = (e) => { const a = A[deck], r = tr.getBoundingClientRect(); if (durOf(a)) { a.currentTime = clamp((e.clientX - r.left - 8) / (r.width - 17), 0, 1) * durOf(a); evSnap = true; kick(); } };
+  const seek = (e) => { const a = A[deck], r = tr.getBoundingClientRect(); if (durOf(a)) { a.currentTime = clamp(((e.clientX - r.left) / S - 8) / (r.width / S - 17), 0, 1) * durOf(a); evSnap = true; kick(); } };
   tr.addEventListener('pointerdown', (e) => { e.preventDefault(); tr.setPointerCapture(e.pointerId); seek(e); const mv = (ev) => seek(ev); tr.addEventListener('pointermove', mv); tr.addEventListener('pointerup', () => tr.removeEventListener('pointermove', mv), { once: true }); });
   $('.ar.l', hsb).onclick = () => { const a = A[deck]; a.currentTime = Math.max(0, a.currentTime - 5); evSnap = true; kick(); };
   $('.ar.r', hsb).onclick = () => { const a = A[deck]; if (durOf(a)) a.currentTime = Math.min(durOf(a) - 0.5, a.currentTime + 5); evSnap = true; kick(); };
@@ -633,7 +657,8 @@ function openDialog(id) {
 }
 function closeDialog(id) { W[id].el.hidden = true; icons(); }
 function openDesktop() {
-  dlgSaved = { tod: prefs.tod, motion: prefs.motion, remember: prefs.remember };
+  dlgSaved = { tod: prefs.tod, motion: prefs.motion, remember: prefs.remember, scale: prefs.scale };
+  $$('#desktop input[name=scale]').forEach((r) => { r.checked = r.value === String(prefs.scale); });
   $$('#desktop input[name=tod]').forEach((r) => { r.checked = r.value === String(prefs.tod); });
   $('#optmotion').checked = prefs.motion; $('#optremember').checked = prefs.remember;
   openDialog('desktop');
@@ -641,10 +666,11 @@ function openDesktop() {
 function openAbout() { openDialog('about'); }
 $$('#desktop input[name=tod]').forEach((r) => { r.onchange = () => { prefs.tod = r.value; pushTime(true); }; });
 $('#optmotion').onchange = (e) => { prefs.motion = e.target.checked; applyMotion(); };
+$$('#desktop input[name=scale]').forEach((r) => { r.onchange = () => { prefs.scale = r.value; layout(false); focusWin('desktop'); place('desktop', { x: null, y: null }); }; });
 $('#optremember').onchange = (e) => { prefs.remember = e.target.checked; };
 $('#optreset').onclick = () => { store.del('layout'); layout(true); };
 $('#dok').onclick = () => { savePrefs(); if (prefs.remember) saveLayout(); else store.del('layout'); closeDialog('desktop'); };
-$('#dcancel').onclick = () => { Object.assign(prefs, dlgSaved); applyMotion(); pushTime(true); closeDialog('desktop'); };
+$('#dcancel').onclick = () => { const sc = prefs.scale !== dlgSaved.scale; Object.assign(prefs, dlgSaved); applyMotion(); pushTime(true); closeDialog('desktop'); if (sc) layout(false); };
 $('#aok').onclick = () => closeDialog('about');
 
 /* ------------------------------------------------------------------ keys */
@@ -932,13 +958,13 @@ function drawClock(v) {
   $('#clktitle').textContent = 'Clock - ' + (now.getMonth() + 1) + '/' + now.getDate();
 }
 function clockLoop() {
-  if (!document.hidden && !W.clock.min && !document.body.classList.contains('watch')) drawClock(clk);
+  if (!document.hidden && !loopOn && !W.clock.min && !document.body.classList.contains('watch')) drawClock(clk);   // while playing, the frame loop draws it
   setTimeout(clockLoop, 1000 - (Date.now() % 1000) + 5);
 }
 
 /* ================================================================== the frame loop: ~30 fps while playing, nothing while paused or hidden */
-let loopOn = false, lastPush = 0, rTrW = 0, evTrH = 0;
-const FR = +(new URLSearchParams(location.search).get('fr') || 40);   // ms between frames: ~20 fps for the tracker and the wave
+let loopOn = false, lastSec = 0, lastPush = 0, rTrW = 0, evTrH = 0;
+const FR = +(new URLSearchParams(location.search).get('fr') || 166);   // ms between frames: every compositor frame costs, so the tracker, wave, LCD and clock share ~8 a second
 const dom = {}, rposEl = $('#rpos'), rThEl = $('#rscroll .th');
 new ResizeObserver((es) => { for (const e of es) { if (e.target.closest('#rscroll')) rTrW = e.contentRect.width; else evTrH = e.contentRect.height; dom.rth = dom.evth = ''; } }).observe($('#rscroll .tr'));
 function kick() { if (!loopOn && !document.hidden) { loopOn = true; requestAnimationFrame(frame); } }
@@ -960,17 +986,21 @@ function frame(now) {
       if (l !== dom.rth) { dom.rth = l; rThEl.style.left = l; }
     }
     if (!W.ev.min && (live || evDirty || evSnap)) { if (evSnap) evDirty = true; drawEv(now); }
+    const sec = (Date.now() / 1000) | 0;
+    if (live && sec !== lastSec && !W.clock.min) { lastSec = sec; drawClock(clk); }
   } else if (live && evdata[cur] && evdata[cur].ev) {   // the night still hears the beat
     const t = T(), bpm = (t && t.bpm) || 120, b = Math.floor(a.currentTime * 1000 / (60000 / bpm));
     if (b !== beatIdx) { beatIdx = b; if (lifeCtl && lifeCtl.onBeat) try { lifeCtl.onBeat(b % meterOf(t), meterOf(t)); } catch (e) { /* optional */ } }
   }
   if (now - lastPush > 10000) { lastPush = now; pushTime(); }
+  if (lifeDriven && lifeCtl) try { lifeCtl.frame(now); } catch (e) { /* optional */ }
   if (live) {
     const busy = shown && (!W.ev.min || !W.rec.min);   // only the tracker and the wave need a fast frame
     loopOn = true; setTimeout(() => requestAnimationFrame(frame), reduced() ? 160 : busy ? FR : 250);
   }
 }
 document.addEventListener('visibilitychange', () => {
+  driveLife();
   if (!document.hidden) { evSnap = true; kick(); }
   if (sceneCtl) try { document.hidden ? sceneCtl.pause() : sceneCtl.resume(); } catch (e) { /* optional */ }
   if (lifeCtl && !prefs.motion) try { document.hidden ? lifeCtl.pause() : lifeCtl.resume(); } catch (e) { /* optional */ }
@@ -1004,6 +1034,7 @@ function occlude() {
 }
 function applyMotion() {
   if (lifeCtl) try { prefs.motion ? lifeCtl.pause() : lifeCtl.resume(); } catch (e) { /* optional */ }
+  driveLife();
   night.still = reduced();
   drawClock(clk);
 }
@@ -1035,7 +1066,7 @@ async function mountModules() {
       if (an2 && lifeCtl.setAnalyser) lifeCtl.setAnalyser(an2);
       if (prefs.motion) lifeCtl.pause();
       const t = T(); if (t && isPlaying && lifeCtl.onTrack) lifeCtl.onTrack(t.n, { bpm: t.bpm, title: t.title });
-      occlude(); pushTime(true);
+      occlude(); pushTime(true); driveLife();
     } catch (e) { console.warn('life', e); lifeCtl = null; }
   }
   pushTime(true);
@@ -1110,6 +1141,7 @@ async function startNight() {
 buildIcons();
 layout(false);
 focusWin('player');
+if (/[?&]watch\b/.test(location.search)) watch();   // a link straight to the night alone
 let rsT = 0;
 addEventListener('resize', () => { clearTimeout(rsT); rsT = setTimeout(() => { layout(false); if (sceneCtl && sceneCtl.resize) try { sceneCtl.resize(); } catch (e) { /* optional */ } if (lifeCtl && lifeCtl.resize) try { lifeCtl.resize(); } catch (e) { /* optional */ } }, 120); });
 (function watchDPR() {
