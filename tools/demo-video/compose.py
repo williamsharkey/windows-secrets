@@ -326,13 +326,17 @@ def mix(E, out_wav):
             bed[j:j + len(seg)] += seg
     for m in E.spec.get('music', []):
         a = load_audio(os.path.join(ROOT, 'music', m['file']))
-        i0 = int(m.get('src', 0) * SR)
-        n = int(m['len'] * SR)
+        src, at_, ln = m.get('src', 0.0), m['at'], m['len']
+        if src < 0: at_, ln, src = at_ - src, ln + src, 0.0   # the piece starts inside the slot
+        if ln <= 0: continue
+        i0 = int(src * SR)
+        n = int(ln * SR)
         seg = a[i0:i0 + n] * lufs_gain(a, m.get('lufs', -20)) * m.get('gain', 0.5)
-        fi, fo = int(m.get('fin', 1.0) * SR), int(m.get('fout', 1.5) * SR)
+        if not len(seg): continue
+        fi, fo = min(len(seg) // 2, int(m.get('fin', 1.0) * SR)), min(len(seg) // 2, int(m.get('fout', 1.5) * SR))
         if fi: seg[:fi] *= np.linspace(0, 1, fi)[:, None]
         if fo: seg[-fo:] *= np.linspace(1, 0, fo)[:, None]
-        j = int(m['at'] * SR)
+        j = int(at_ * SR)
         bed[j:j + len(seg)] += seg[:N - j]
     for t, lid in E.say:
         a = load_audio(os.path.join(ROOT, 'tts', lid + '.wav'))

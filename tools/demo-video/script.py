@@ -44,8 +44,8 @@ LINES = [
      "Every track plays in its own Windows 3.11, on its own sixteen Sound Recorders. Then they're mixed."),
     ('h_export', 'HOST', "Then... export the WAV.", "Then, export the WAV."),
     ('h_kits', 'HOST', "There are drum kits. With a calculator, for the pads.", None),
-    ('h_mines', 'HOST', "The sequencer is Minesweeper. Numbers play. Flags accent. If you lose... those columns go up an octave. I lose a lot.",
-     "The sequencer is Minesweeper. Numbers play. Flags accent. If you lose, those columns go up an octave. I lose a lot."),
+    ('h_mines', 'HOST', "The Steps tab is a step sequencer... drawn like Minesweeper. Numbers are notes of the scale. Flags accent. There's no game. I checked.",
+     "The Steps tab is a step sequencer, drawn like Minesweeper. Numbers are notes of the scale. Flags accent. There's no game. I checked."),
     ('h_rec', 'HOST', "And it records, into a real Sound Recorder.", None),
     ('h_free', 'HOST', "It's free. Download it, or try it in your web browser, at william sharkey dot com, slash sound wave nineteen ninety-three.",
      "It's free. Download it, or try it in your web browser: williamsharkey.com/sndwave1993"),
@@ -65,9 +65,9 @@ LINES = [
                        "Every track gets its own Windows... and its own sixteen Sound Recorders.",
      "New in 1.4: the Song tab. Import a MIDI file, give each track a preset, and render. "
      "Every track gets its own Windows, and its own sixteen Sound Recorders."),
-    ('s_more', 'HOST', "Drum kits, with a calculator for the pads. A Minesweeper sequencer: numbers play, flags accent. "
+    ('s_more', 'HOST', "Drum kits, with a calculator for the pads. A step sequencer, drawn like Minesweeper. "
                        "And it records... into a real Sound Recorder.",
-     "Drum kits, with a calculator for the pads. A Minesweeper sequencer: numbers play, flags accent. And it records, into a real Sound Recorder."),
+     "Drum kits, with a calculator for the pads. A step sequencer, drawn like Minesweeper. And it records, into a real Sound Recorder."),
     ('s_bye', 'HOST', "Take your time. Windows will wait. I'm Clement Ashby... and this has been Computing at Your Pace.",
      "Take your time. Windows will wait. I'm Clement Ashby, and this has been Computing at Your Pace."),
 ]

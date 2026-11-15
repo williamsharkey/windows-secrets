@@ -79,9 +79,9 @@ def build(cut):
     #    capture of the machine resuming; through the glass into the capture itself
     shot(7.0, {'k': 'seq', 'dir': 'blender/day_px'}, [('ann_open', 1.0)], host=None,
          over=[{'k': 'osd', 'text': 'PLAY \u25b6', 't': (0, 2.6)}])
-    shot(3.4, cap('cold_rt', SRC['asm'] + 7.0, WIDE), host=None, tr=('dissolve', 0.5), mute=True)
+    shot(2.6 if spot else 3.4, cap('cold_rt', SRC['asm'] + 7.0, WIDE), host=None, tr=('dissolve', 0.5), mute=True)
     # 2. title card
-    shot(2.4 if spot else 3.0, {'k': 'card', 'title': 'Getting Started with SNDWAVE1993', 'sub': 'Home Learning Series \u00b7 Tape 1 \u00b7 1993 technology, revisited',
+    shot(2.0 if spot else 3.0, {'k': 'card', 'title': 'Getting Started with SNDWAVE1993', 'sub': 'Home Learning Series \u00b7 Tape 1 \u00b7 1993 technology, revisited',
                'logo': 'title-640.png', 'logo_scale': 2, 'logo_y': 30, 'band_y': 840}, host=None, tr=('star', 0.8))
     # 3. the host arrives over Ding Piano
     ln, d = said('h_hello', 's_what' if spot else 'h_what', 'h_1993')
@@ -94,8 +94,8 @@ def build(cut):
          over=[{'k': 'chapter', 'text': 'LESSON 1 \u00b7 IT REALLY IS WINDOWS', 't': (0.2, 3.6)},
                {'k': 'osd', 'text': '\u25b6\u25b6 x2', 't': (0, 99)}])
     shot(3.0 if spot else 3.6, cap('proof', SRC['sr_menu'], Z(320, 250, 3)), host='corner', mute=True)
-    ln, d = said('s_ver' if spot else 'h_ver', 'h_res', pad=0.5)
-    t_res = ln[1][1]
+    ln, d = said('s_ver', pad=0.5) if spot else said('h_ver', 'h_res', pad=0.5)
+    t_res = ln[1][1] if len(ln) > 1 else d + 1
     shot(d + 0.2, cap('proof', SRC['about'], Z(470, 370, 3), hold=SRC['about'] + 5.0), ln, host='corner', gest=[(0.5, 'point', 3.0)], mute=True,
          over=[{'k': 'panel', 'title': 'C:\\WINDOWS\\SOUNDREC.EXE (its version resource)', 'x': 1290, 'y': 60, 'w': 610, 'col': 190, 'size': 23,
                 'rows': [('Description', 'Sound Recorder accessory'), ('File version', '3.1'),
@@ -116,13 +116,13 @@ def build(cut):
         shot(3.2, cap('packs1', SRC['tremolo'], WIDE), host='side',
              over=[{'k': 'super', 'text': 'Shaded Tremolo', 'sub': "Workgroup House Edition \u00b7 Strings \u00b7 owner's pick", 'x': 1180, 'y': 790}])
     ln, d = said('h_shaded')
-    shot(max(d, 4.2), cap('packs1', SRC['shaded'], WIDE), ln, host='side',
+    if not spot: shot(max(d, 4.2), cap('packs1', SRC['shaded'], WIDE), ln, host='side',
          over=[{'k': 'super', 'text': 'Shaded End', 'sub': "Workgroup House Edition \u00b7 Bass \u00b7 owner's pick", 'x': 1180, 'y': 790}])
     if not spot:
       ln, d = said('h_rounded')
       shot(max(d, 3.2), cap('packs2', SRC['rounded'], WIDE), ln, host='side',
          over=[{'k': 'super', 'text': 'Rounded Corner Chord', 'sub': 'Lifestyle Aesthetics Pack \u00b7 Bell', 'x': 1180, 'y': 790}])
-    if not spot:
+    if False:
         shot(3.0, cap('packs2', SRC['opal'], WIDE), host='side',
              over=[{'k': 'super', 'text': 'Opal Rain', 'sub': 'Techno Server 4.0 \u00b7 Texture', 'x': 1180, 'y': 790}])
         shot(3.0, cap('packs2', SRC['neon'], WIDE), host='side',
@@ -147,10 +147,12 @@ def build(cut):
     shot(a, cap('song', SRC['song_open'], Z(480, 300)), ln, host='corner', tr=('star', 0.7),
          over=[{'k': 'chapter', 'text': 'LESSON 4 \u00b7 THE SONG TAB', 't': (0.2, 3.6)}])
     rs = (SRC['song_done'] + 1 - SRC['song_render']) / 30.0
-    shot(max(rs, d - a + 0.3), cap('song', SRC['song_render'], Z(480, 470), speed=30.0), host='corner',
-         over=[{'k': 'osd', 'text': '\u25b6\u25b6 x30', 't': (0, 99)}], mute=True)
+    rd = max(2.5 if spot else rs, d - a + 0.3)
+    sp = (SRC['song_done'] + 1 - SRC['song_render']) / rd
+    shot(rd, cap('song', SRC['song_render'], Z(480, 470), speed=sp), host='corner',
+         over=[{'k': 'osd', 'text': '\u25b6\u25b6 x%d' % round(sp), 't': (0, 99)}], mute=True)
     ln, d = ([], 0) if spot else said('h_export', lead=1.2)
-    shot(max(d, 4.8 if spot else 7.0), cap('song', SRC['song_play'] + 0.3, WIDE), ln, host='side', mute=True, mark='songplay',
+    shot(max(d, 4.2 if spot else 7.0), cap('song', SRC['song_play'] + 0.3, WIDE), ln, host='side', mute=True, mark='songplay',
          over=[{'k': 'super', 'text': 'Aquarium (Level 3)', 'sub': 'Lifestyle Aesthetics Pack demo song \u00b7 11 tracks \u00b7 rendered on the Song tab',
                 'x': 1180, 'y': 780, 'size': 34}] + ([{'k': 'super', 'text': 'Then: Export WAV...', 'x': 60, 'y': 120, 't': (3.0, 99), 'size': 32}] if spot else []))
     # 8. kits, the mine grid, recording
@@ -159,7 +161,7 @@ def build(cut):
         k1 = ln[0][1] + 2.9
         shot(k1, cap('kits', SRC['kit'], Z(700, 420, 3)), ln, host='corner', tr=('wipe', 0.5),
              over=[{'k': 'chapter', 'text': 'LESSON 5 \u00b7 MORE FEATURES', 't': (0.2, 3.0)}])
-        shot(4.8, cap('mines', SRC['mines'], Z(548, 450, 3)), host='corner', gest=[(0.3, 'point', 2.5)])
+        shot(4.0, cap('mines', SRC['mines'], Z(548, 450, 3)), host='corner', gest=[(0.3, 'point', 2.5)])
         shot(max(2.6, d - k1 - 4.8 + 0.4), cap('rec', SRC['rec'], Z(340, 200, 3)), host='corner')
     else:
         ln, d = said('h_kits', lead=0.2)
