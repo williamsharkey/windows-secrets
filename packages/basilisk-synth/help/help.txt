@@ -531,7 +531,7 @@ Each change becomes the plugin's sound, and your project saves it.
 :311 CITYPOP DEPROGRAMMED is an album for {NAME}: a theme and eleven variations for a quiet night in a harbour town. {NAME} plays it on its own Sound Recorders.
 :311 ## To play the album
 :311 1. Minimize {NAME}, and in Program Manager open the SNDWAVE2000 group.
-:311 2. Double-click **CITYPOP DEPROGRAMMED**.
+:311 2. Double-click **CITYPOP**.
 :311 3. Click **Play**, or double-click a track.
 :311 ## How it plays
 :311 Each track is played the way the Song tab plays a song: every part in its own Windows for Workgroups 3.11, on its own sixteen Sound Recorders, and then mixed. A track is prepared before it plays, and the next track is prepared while it plays. The status line shows how far each part has come.
