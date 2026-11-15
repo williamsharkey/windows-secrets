@@ -67,12 +67,18 @@ def finish(script, S, header, tracks, master=None, echo=None, reverb=None):
     header.setdefault('script', os.path.basename(script))
     import songrender as _sr
     P = _sr.presets(_sr.DEF_MACHINE)
+    # the 11 Kit Manager kits whose kick was nearly silent: their 1.4 DNAs (kitmgr/KITS.TSV, 7d2ea20), the ringout
+    # kick in place of the balloon/drop layer, using only sounds 1.3.1 already has (kitfix.json)
+    kf = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'kitfix.json')
+    kitfix = json.load(open(kf)) if os.path.exists(kf) else {}
     pinned = {}
     for name, src, preset, kv in tracks:
         if preset.startswith('dna:'):
             continue
         pk, nm = preset.split(':', 1) if ':' in preset else (header['pack'], preset)
-        if nm in P.get(pk, {}):
+        if f'{pk}:{nm}' in kitfix:
+            pinned[f'{pk}:{nm}'] = kitfix[f'{pk}:{nm}']
+        elif nm in P.get(pk, {}):
             pinned[f'{pk}:{nm}'] = P[pk][nm]
     _c.write_song(base + '.song', header, tracks, master, echo, reverb, pinned)
     print(base + '.song')

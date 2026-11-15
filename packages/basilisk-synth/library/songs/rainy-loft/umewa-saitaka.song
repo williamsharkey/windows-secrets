@@ -1,0 +1,49 @@
+# Umewa Saitaka: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Umewa Saitaka
+pack     = rainy-loft
+kind     = world
+composer = Traditional (Japan)
+source   = Umewa Saitaka, a shamisen song, from Nagai and Obata, "Seiyo gakufu Nihon zokkyokushu" (Osaka, 1895). Score: The Mutopia Project.
+licence  = The work: traditional, public domain (published 1895). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1762
+arranger = Algorithmic Industries house band
+note     = The song four times at 88 bpm over brushes: the night flute, the harbour reed and the clarinet in turn, chords on the loft tine piano, the pluck bass and velvet strings. Drums: the pack's Loft Brushes kit.
+midi     = umewa-saitaka.mid
+script   = umewa-saitaka.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+
+[echo]
+time     = 3/8
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.2
+predelay = 18
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+flute       ch1     "Night Flute"                            lufs=-19 pan=-6 echo=0.15 verb=0.3
+reed        ch2     "Harbour Reed"                           lufs=-20 pan=8 echo=0.15 verb=0.3
+clarinet    ch6     "Clarinet After Hours"                   lufs=-20 pan=4 verb=0.3
+tine        ch3     "Loft Tine"                              lufs=-22 pan=-18 verb=0.25
+bass        ch4     "Pluck Avenue"                           lufs=-20
+strings     ch5     "Velvet Strings"                         lufs=-27 width=1.3 verb=0.35
+kit         ch10    "Loft Brushes"                           lufs=-21 verb=0.12
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"rainy-loft:Clarinet After Hours" = rl_clarinet_f4#6Nlg40Vw3,5;A35S100R260V70K65
+"rainy-loft:Harbour Reed" = rl_reed_f4#6Nlg45Vw5,5f2,9s10,50Yd3;A30D500S85R260V75K65
+"rainy-loft:Loft Brushes" = gd_kit_tape_kick@t30000Irl_brush_rim@t30000Irl_brush_a@t30000Irl_clap_b@t30000Irl_brush_sw2@t30000Igd_kit_tape_lotom@t30000Igd_kit_tape_tighthat@t30000Igd_kit_tape_hat@t30000Igd_kit_tape_midtom@t30000Igd_kit_tape_openhat@t30000Igd_kit_tape_hitom@t30000Igd_kit_tape_crash@t30000Igd_kit_studio_ride@t30000Irl_brush_sw1#16;R160V100G-6k36j1i90k37j2h92k38j3k39j4i70h96k40j5i80k41j6i70h70k43j6i70t300h80k42j7c1i55h130k44j8c1i50h130k45j9i70h100k47j9i70t200h100k46j10c1i50h130k48j11i70h125k50j11i70t200h125k49j12i60h120k51j13i55h72k35j14
+"rainy-loft:Loft Tine" = rl_ep_loft_c2#1Z0,41,36Vw3,5L42Q-36/rl_ep_loft_c3#4Z42,53,48Vw3,5L42Q-18/rl_ep_loft_c4#5Z54,65,60Vw3,5L42Q0/rl_ep_loft_c5#4Z66,77,72Vw3,5L42Q18/rl_ep_loft_c6#2Z78,127,84Vw3,5L42Q36;A0R420V80
+"rainy-loft:Night Flute" = rl_flute_plain_e4#6Z0,71,64Nlg40Vw3,5/rl_flute_vib_e6#6Z72,127,88Nlg40Vw2,5;A45S100R300V65
+"rainy-loft:Pluck Avenue" = rl_bass_pluck_c1#4Z0,31,24L80/rl_bass_pluck_c2#5Z32,43,36L80/rl_bass_pluck_c3#4Z44,127,48L80/rl_fingerbass_a1#3T3L40;A0D420S40R90V90K36
+"rainy-loft:Velvet Strings" = violin_section_sus_c4@t7500]@t300[RU2~6;A504D748S75R2396V94K60G-9

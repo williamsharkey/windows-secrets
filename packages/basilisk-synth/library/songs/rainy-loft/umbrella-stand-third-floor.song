@@ -1,0 +1,52 @@
+# Umbrella Stand, Third Floor: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Umbrella Stand, Third Floor
+pack     = rainy-loft
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = City pop in F major, 100 bpm: rain on the window, the loft tine piano, the rubber taxi bass, taxi rhythm guitar chops, the Couch Disco kit, the neon sign lead, rooftop brass stabs, the vocoder chorus, a telephone and a passing train.
+midi     = umbrella-stand-third-floor.mid
+script   = umbrella-stand-third-floor.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 1.8
+predelay = 14
+tone     = 5500
+level    = -7
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Neon Sign Lead"                         lufs=-18 pan=-4 echo=0.15 verb=0.2 tune=-15
+tine        ch2     "Loft Tine"                              lufs=-21 pan=-18 verb=0.2
+guitar      ch3     "Taxi Rhythm Guitar"                     lufs=-24 pan=26 verb=0.1
+bass        ch4     "Rubber Taxi"                            lufs=-18
+brass       ch5     "Rooftop Brass"                          lufs=-22 pan=12 verb=0.2
+vocoder     ch6     "Vocoder Chorus"                         lufs=-25 width=1.3 verb=0.3 tune=-11
+rain        ch7     "Rain on the Window"                     lufs=-30 width=1.4
+train       ch8     "Passing Train"                          lufs=-26 width=1.3 verb=0.2
+phone       ch9     "Telephone, Two Rings"                   lufs=-26 pan=-30 verb=0.25
+kit         ch10    "Couch Disco"                            lufs=-18 verb=0.06
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"rainy-loft:Couch Disco" = gd_kit_tape_kick@t30000Irl_rim_b@t30000Igd_kit_studio_snare@t30000Irl_clap_a@t30000Irl_clap_b@t30000Igd_kit_studio_tighthat@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_openhat@t30000Igd_kit_tape_crash@t30000Irl_tamb@t30000Igd_kit_tape_lotom@t30000Igd_kit_tape_midtom@t30000Igd_kit_tape_hitom#16;R140V100G-6k36j1k37j2i80h92k38j3k40j3i55k39j4i85h96k39j5i85h96k42j6c1i60h130k44j7c1i55h130k46j8c1i55h130k49j9i60h120k54j10i70h68k41j11i75h70k45j12i75h100k48j13i75h125
+"rainy-loft:Loft Tine" = rl_ep_loft_c2#1Z0,41,36Vw3,5L42Q-36/rl_ep_loft_c3#4Z42,53,48Vw3,5L42Q-18/rl_ep_loft_c4#5Z54,65,60Vw3,5L42Q0/rl_ep_loft_c5#4Z66,77,72Vw3,5L42Q18/rl_ep_loft_c6#2Z78,127,84Vw3,5L42Q36;A0R420V80
+"rainy-loft:Neon Sign Lead" = poly78_pwm_lady_c4@t8153]@t2329[@0CP@0CPH0,12;A28D104S99R101V91K60G-6
+"rainy-loft:Passing Train" = rl_train_pass#4F;A800R2500V70
+"rainy-loft:Rain on the Window" = rl_rain_window#4F;A2500R3000V70
+"rainy-loft:Rooftop Brass" = poly83_big_c2@t4561]E>>#10U3~8/poly83_brassy_f1#3T19L48Q29/poly85_thin_brassy_c2#3T24L65Q13;A2D733S26R168V85K60G-12
+"rainy-loft:Rubber Taxi" = rl_bass_rubber_c1#4Z0,31,24L80/rl_bass_rubber_c2#6Z32,43,36L80/rl_bass_rubber_c3#6Z44,127,48L80;A0D320S35R70V95K36
+"rainy-loft:Taxi Rhythm Guitar" = strumstick_g2#16;A2D155S8R154V96K55
+"rainy-loft:Telephone, Two Rings" = em_fetap_ring#4F;A0R400V80
+"rainy-loft:Vocoder Chorus" = vocoder_choir_female_f4#16;A221D362S78R669V80K65G-7

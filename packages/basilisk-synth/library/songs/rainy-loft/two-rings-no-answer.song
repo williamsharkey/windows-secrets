@@ -1,0 +1,56 @@
+# Two Rings, No Answer: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Two Rings, No Answer
+pack     = rainy-loft
+kind     = original
+composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+licence  = CC0-1.0 (the composition and this arrangement)
+note     = A ballad in E-flat major, 72 bpm, on the Loft Brushes kit: balcony rain, a cup and spoon, the telephone, the clarinet after hours over the felt upright and the fretless bass, legato cellos, a straight-mute trumpet for the bridge, the music box at two, a far horn.
+tail     = 6
+midi     = two-rings-no-answer.mid
+script   = two-rings-no-answer.py
+
+[master]
+loudness = -17
+ceiling  = -1.0
+fadeout  = 4
+
+[echo]
+time     = 3/8
+feedback = 0.3
+tone     = 3000
+level    = -7
+
+[reverb]
+size     = 2.8
+predelay = 22
+tone     = 5000
+level    = -4
+
+[tracks]
+# name      source  preset                                  mix
+clarinet    ch1     "Clarinet After Hours"                   lufs=-18 pan=-4 verb=0.3
+mute        ch2     "Straight Mute"                          lufs=-19 pan=6 echo=0.15 verb=0.3
+felt        ch3     "Felt Upright"                           lufs=-21 pan=-16 verb=0.25
+bass        ch4     "Fretless Harbour"                       lufs=-20
+cellos      ch5     "Legato Cellos"                          lufs=-25 pan=14 verb=0.35
+musicbox    ch6     "Music Box at Two"                       lufs=-23 pan=24 echo=0.2 verb=0.4
+rain        ch7     "Balcony Rain"                           lufs=-30 width=1.4
+cup         ch8     "Cup and Spoon"                          lufs=-28 pan=-24 verb=0.2
+phone       ch9     "Telephone, Two Rings"                   lufs=-26 pan=30 verb=0.3
+kit         ch10    "Loft Brushes"                           lufs=-22 verb=0.12
+horn        ch11    "Far Horn"                               lufs=-30 verb=0.5 tune=0
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"rainy-loft:Balcony Rain" = rl_rain_balcony#4F;A2500R3000V70
+"rainy-loft:Clarinet After Hours" = rl_clarinet_f4#6Nlg40Vw3,5;A35S100R260V70K65
+"rainy-loft:Cup and Spoon" = rl_cup_stir#4F;A5R800V80
+"rainy-loft:Far Horn" = rl_foghorn_far#4F;A200R2000V70
+"rainy-loft:Felt Upright" = gd_piano_a1#4Z0,45,33/gd_piano_a4#7Z46,74,69/gd_piano_a5#5Z75,127,81;A0R600V85
+"rainy-loft:Fretless Harbour" = rl_bass_round_c1#4Z0,31,24Nlg70Vw4,4L80/rl_bass_round_c2#5Z32,43,36Nlg70Vw4,4L80/rl_bass_round_c3#4Z44,127,48Nlg70Vw4,4L80/rl_fretless_e1#3T8L35Nlg70;A2D700S55R140V85K36
+"rainy-loft:Legato Cellos" = cello_section_sus_c3@t7500]@t200[#10U2~6Nlg70Vw3,4;A220S95R1000V75K48
+"rainy-loft:Loft Brushes" = gd_kit_tape_kick@t30000Irl_brush_rim@t30000Irl_brush_a@t30000Irl_clap_b@t30000Irl_brush_sw2@t30000Igd_kit_tape_lotom@t30000Igd_kit_tape_tighthat@t30000Igd_kit_tape_hat@t30000Igd_kit_tape_midtom@t30000Igd_kit_tape_openhat@t30000Igd_kit_tape_hitom@t30000Igd_kit_tape_crash@t30000Igd_kit_studio_ride@t30000Irl_brush_sw1#16;R160V100G-6k36j1i90k37j2h92k38j3k39j4i70h96k40j5i80k41j6i70h70k43j6i70t300h80k42j7c1i55h130k44j8c1i50h130k45j9i70h100k47j9i70t200h100k46j10c1i50h130k48j11i70h125k50j11i70t200h125k49j12i60h120k51j13i55h72k35j14
+"rainy-loft:Music Box at Two" = kalimba_kenya_cs4E#16;A1D112S2R172V87K61G-1
+"rainy-loft:Straight Mute" = rl_straightmute_g4#6Z0,127,67Nlg35Vw4,6s15,60;A20S100R220V75
+"rainy-loft:Telephone, Two Rings" = em_fetap_ring#4F;A0R400V80

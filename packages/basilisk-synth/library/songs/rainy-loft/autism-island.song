@@ -1,0 +1,43 @@
+# Autism Island: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Autism Island
+pack     = rainy-loft
+kind     = chiptune
+composer = Spring Spring
+source   = Autism Island, a 0CC-FamiTracker module (autism_island.0cc) from OpenGameArt (https://opengameart.org/sites/default/files/autism%20island.zip). Its notes are played here; its chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/autism-island
+arranger = Algorithmic Industries house band
+note     = A NES module (2A03) re-voiced as city pop: pulse 1 on the neon sign lead, pulse 2 on the disco clavinet, the triangle on the rubber taxi bass, the noise channel on the pack's Couch Disco kit.
+midi     = autism-island.mid
+script   = autism-island.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 1.8
+predelay = 14
+tone     = 5500
+level    = -7
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Neon Sign Lead"                         lufs=-19 pan=-6 echo=0.2 verb=0.2 tune=-15
+clav        ch2     "Disco Clavinet"                         lufs=-22 pan=18 verb=0.15 tune=-22
+bass        ch4     "Rubber Taxi"                            lufs=-19
+kit         ch10    "Couch Disco"                            lufs=-19 verb=0.08
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"rainy-loft:Couch Disco" = gd_kit_tape_kick@t30000Irl_rim_b@t30000Igd_kit_studio_snare@t30000Irl_clap_a@t30000Irl_clap_b@t30000Igd_kit_studio_tighthat@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_openhat@t30000Igd_kit_tape_crash@t30000Irl_tamb@t30000Igd_kit_tape_lotom@t30000Igd_kit_tape_midtom@t30000Igd_kit_tape_hitom#16;R140V100G-6k36j1k37j2i80h92k38j3k40j3i55k39j4i85h96k39j5i85h96k42j6c1i60h130k44j7c1i55h130k46j8c1i55h130k49j9i60h120k54j10i70h68k41j11i75h70k45j12i75h100k48j13i75h125
+"rainy-loft:Disco Clavinet" = fm87_clav_c4#15/chimesxpRE#2T5L12O111Q-8;A3D892S37R329V80K60G-6
+"rainy-loft:Neon Sign Lead" = poly78_pwm_lady_c4@t8153]@t2329[@0CP@0CPH0,12;A28D104S99R101V91K60G-6
+"rainy-loft:Rubber Taxi" = rl_bass_rubber_c1#4Z0,31,24L80/rl_bass_rubber_c2#6Z32,43,36L80/rl_bass_rubber_c3#6Z44,127,48L80;A0D320S35R70V95K36

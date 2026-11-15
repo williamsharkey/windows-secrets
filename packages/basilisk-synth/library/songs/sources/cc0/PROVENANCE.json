@@ -736,5 +736,35 @@
   "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
   "sha256_of_module": "3b062cf67d63f066b35a1604328f58bcebce857083fd357103cda387f6d84dae",
   "instruments": []
+ },
+ "pachelbelscanon.notes.mid": {
+  "title_in_file": "Pachelbel's Canon in D",
+  "module": "pachelbelscanon.0cc",
+  "page": "https://opengameart.org/content/8-bit-pachelbels-canon-in-d",
+  "download": "https://opengameart.org/sites/default/files/pachelbelscanon.zip",
+  "author": "ctske",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "37e7f824c9d651ebb264298d962cb93851742a164612b80e15e3eeb929dabca9",
+  "instruments": [
+   "ins   1 Pulse 1 561 notes 42-74",
+   "ins   2 Pulse 2 545 notes 42-74",
+   "ins   3 Triangle 209 notes 50-62",
+   "ins   6 VRC6 Pulse 1 529 notes 42-74"
+  ]
+ },
+ "autism_island.notes.mid": {
+  "title_in_file": "New song",
+  "module": "autism_island.0cc",
+  "page": "https://opengameart.org/content/autism-island",
+  "download": "https://opengameart.org/sites/default/files/autism%20island.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "4b4221789fa12c8b00ea938801fef4205ddfc18208bf33ffa0f753a5b1b8d052",
+  "instruments": [
+   "ins   1 Pulse 1 169 notes 47-78",
+   "ins   2 Pulse 2 210 notes 40-78",
+   "ins   3 Triangle 249 notes 32-71",
+   "ins   4 Noise 520 notes 38-42"
+  ]
  }
 }

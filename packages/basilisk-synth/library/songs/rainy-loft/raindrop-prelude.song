@@ -1,0 +1,46 @@
+# Raindrop Prelude: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Raindrop Prelude
+pack     = rainy-loft
+kind     = world
+composer = Frederic Chopin (1810-1849)
+source   = Prelude in D-flat major, Op. 28 No. 15 (1839), bars 1-27. Score: The Mutopia Project, from Edition Peters.
+licence  = The work: public domain (published 1839; the composer died 1849). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=471
+arranger = Algorithmic Industries house band
+note     = The D-flat section at 60 bpm: the tune on the loft tine piano, the repeated A-flat on the lobby vibraphone, the left hand on the felt upright, a fretless bass under it and the haze strings.
+midi     = raindrop-prelude.mid
+script   = raindrop-prelude.py
+
+[master]
+loudness = -17
+ceiling  = -1.0
+fadeout  = 3
+
+[echo]
+time     = 1/4
+feedback = 0.3
+tone     = 3000
+level    = -7
+
+[reverb]
+size     = 3.2
+predelay = 24
+tone     = 5000
+level    = -4
+
+[tracks]
+# name      source  preset                                  mix
+tine        ch1     "Loft Tine"                              lufs=-18 pan=-6 verb=0.35
+vibes       ch2     "Lobby Vibraphone"                       lufs=-24 pan=18 echo=0.15 verb=0.4
+felt        ch3     "Felt Upright"                           lufs=-22 pan=-16 verb=0.3
+bass        ch4     "Fretless Harbour"                       lufs=-22
+strings     ch5     "Haze Strings"                           lufs=-27 width=1.3 verb=0.4
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"rainy-loft:Felt Upright" = gd_piano_a1#4Z0,45,33/gd_piano_a4#7Z46,74,69/gd_piano_a5#5Z75,127,81;A0R600V85
+"rainy-loft:Fretless Harbour" = rl_bass_round_c1#4Z0,31,24Nlg70Vw4,4L80/rl_bass_round_c2#5Z32,43,36Nlg70Vw4,4L80/rl_bass_round_c3#4Z44,127,48Nlg70Vw4,4L80/rl_fretless_e1#3T8L35Nlg70;A2D700S55R140V85K36
+"rainy-loft:Haze Strings" = violin_section_sus_c4@t7500]@t200[#8U2~9Vw3,4/cello_section_sus_c3@t7500]@t200[#8T12L60;A500S95R1400V55K60
+"rainy-loft:Lobby Vibraphone" = vibes_soft_c3#16;A0D2273S21R953V96K60G-4
+"rainy-loft:Loft Tine" = rl_ep_loft_c2#1Z0,41,36Vw3,5L42Q-36/rl_ep_loft_c3#4Z42,53,48Vw3,5L42Q-18/rl_ep_loft_c4#5Z54,65,60Vw3,5L42Q0/rl_ep_loft_c5#4Z66,77,72Vw3,5L42Q18/rl_ep_loft_c6#2Z78,127,84Vw3,5L42Q36;A0R420V80

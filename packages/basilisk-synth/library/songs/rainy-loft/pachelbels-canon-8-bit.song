@@ -1,0 +1,44 @@
+# Pachelbel's Canon (8-bit): a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Pachelbel's Canon (8-bit)
+pack     = rainy-loft
+kind     = chiptune
+composer = ctske (after Johann Pachelbel)
+source   = Pachelbel's Canon in D, a 0CC-FamiTracker module (pachelbelscanon.0cc) from OpenGameArt (https://opengameart.org/sites/default/files/pachelbelscanon.zip). Its notes are played here; its chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page; the canon itself is public domain). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/8-bit-pachelbels-canon-in-d
+arranger = Algorithmic Industries house band
+note     = A NES module (2A03 + VRC6) re-voiced for a rainy loft at 2 a.m.: the triangle's ground on the fretless bass, the canon's three voices on the loft tine piano, legato violins and the harbour harp, with the haze strings.
+midi     = pachelbels-canon-8-bit.mid
+script   = pachelbels-canon-8-bit.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+fadeout  = 6
+
+[echo]
+time     = 1/4
+feedback = 0.3
+tone     = 3000
+level    = -7
+
+[reverb]
+size     = 2.8
+predelay = 22
+tone     = 5000
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+tine        ch1     "Loft Tine"                              lufs=-20 pan=-14 verb=0.3
+violins     ch2     "Legato Violins"                         lufs=-21 pan=16 verb=0.35
+harp        ch3     "Harbour Harp"                           lufs=-23 pan=28 echo=0.15 verb=0.3
+bass        ch4     "Fretless Harbour"                       lufs=-20
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"rainy-loft:Fretless Harbour" = rl_bass_round_c1#4Z0,31,24Nlg70Vw4,4L80/rl_bass_round_c2#5Z32,43,36Nlg70Vw4,4L80/rl_bass_round_c3#4Z44,127,48Nlg70Vw4,4L80/rl_fretless_e1#3T8L35Nlg70;A2D700S55R140V85K36
+"rainy-loft:Harbour Harp" = folk_harp_c3#16;A2D416S4R83V75K60G-2
+"rainy-loft:Legato Violins" = violin_section_sus_c4@t7500]@t200[#10U2~6Nlg70Vw3,4;A260S95R1100V75K60
+"rainy-loft:Loft Tine" = rl_ep_loft_c2#1Z0,41,36Vw3,5L42Q-36/rl_ep_loft_c3#4Z42,53,48Vw3,5L42Q-18/rl_ep_loft_c4#5Z54,65,60Vw3,5L42Q0/rl_ep_loft_c5#4Z66,77,72Vw3,5L42Q18/rl_ep_loft_c6#2Z78,127,84Vw3,5L42Q36;A0R420V80
