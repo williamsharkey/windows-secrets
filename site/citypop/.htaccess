@@ -1,4 +1,4 @@
-# CITYPOP DEPROGRAMMED: the audio's and fonts' types, and long caching for files whose URLs carry a version (?v=)
+# CITYPOP1993: the audio's and fonts' types, and long caching for files whose URLs carry a version (?v=)
 AddType audio/ogg .opus
 AddType audio/mpeg .mp3
 AddType font/woff2 .woff2
@@ -15,4 +15,10 @@ AddType font/woff2 .woff2
 </IfModule>
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE application/json text/javascript application/javascript text/css text/html text/plain
+</IfModule>
+# the album is CITYPOP1993 now: /citypop/ (this same folder, reached by its old name) moves for good to /citypop1993/
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_URI} ^/citypop/(.*)$
+  RewriteRule ^ /citypop1993/%1 [R=301,L]
 </IfModule>

@@ -1,4 +1,4 @@
-/* CITYPOP DEPROGRAMMED: Windows 3.1 windows, tinted for the night they sit in.
+/* CITYPOP1993: Windows 3.1 windows, tinted for the night they sit in.
    Every size here is a whole CSS pixel; app.js snaps window positions to device pixels and paints
    the dither textures (title bars, frames, scroll tracks) one device pixel at a time. */
 @font-face { font-family: "CP Sans"; src: url(fonts/DejaVuSans.woff2) format("woff2"); font-display: swap; }

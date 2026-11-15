@@ -1,5 +1,5 @@
 #!/bin/bash
-# deploy-ui.sh: the UI lane's half of site/citypop -> williamsharkey.com/citypop/ (docroot ~/html/live on the web host, via sharkey-server).
+# deploy-ui.sh: the UI lane's half of site/citypop -> williamsharkey.com/citypop1993/ (html/live/citypop1993 is a symlink to html/live/citypop) (docroot ~/html/live on the web host, via sharkey-server).
 # Sends the page itself (index.html, style.css, app.js, fonts/, art/, .htaccess, and scene/ + life/ with --modules).
 # Never sends album.json, audio/, data/ or SOURCES.TXT: those are the album lane's (deploy.sh).
 # Dry run shows what differs from the live copy; --go copies only new or changed files, then checks every URL over HTTPS.
@@ -40,7 +40,7 @@ elif [ $GO = 0 ]; then echo "dry run: add --go to copy (and --modules to include
 echo "== check over HTTPS"
 bad=0
 while read -r f; do
-  f=${f#./}; u="https://williamsharkey.com/citypop/$f"; [ "$f" = index.html ] && u="https://williamsharkey.com/citypop/"
+  f=${f#./}; u="https://williamsharkey.com/citypop1993/$f"; [ "$f" = index.html ] && u="https://williamsharkey.com/citypop1993/"
   case $f in *.htaccess) grep -q "$(md5sum < "$SRC/$f" | cut -c1-32)  ./$f" "$TMP/live.md5" && st=ok || { st=DIFF; bad=1; }; echo "$st   (md5 over ssh)  $f"; continue;; esac
   r=$(curl -s -o "$TMP/got" -w '%{http_code} %{content_type}' "$u")
   a=$(md5sum < "$SRC/$f" | cut -c1-32); b=$(md5sum < "$TMP/got" | cut -c1-32)

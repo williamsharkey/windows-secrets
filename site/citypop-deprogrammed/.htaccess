@@ -1,0 +1,2 @@
+# the album is CITYPOP1993 now
+RedirectMatch 301 ^/citypop-deprogrammed/.*$ /citypop1993/
