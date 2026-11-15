@@ -371,8 +371,13 @@ def page_cover(p, st, used):
     d = ImageDraw.Draw(im)
     d.rectangle((0, H - 70, W, H), fill=st['band'])
     f = gfx.fit_font(st['display'], p['pack']['title'], W - 30, 26)
-    gfx.text(d, (14, H - 50), p['pack']['title'], f, st['band_ink'], anchor='lm', aa=st['aa'])
-    gfx.text(d, (14, H - 22), 'Booklet  -  ' + p['maker']['name'], _font(st, 'body', 11), st['band_ink'], anchor='lm', aa=st['aa'])
+    gfx.text(d, (14, H - 54 if p.get('booklet', {}).get('cover_credit') else H - 50), p['pack']['title'], f, st['band_ink'], anchor='lm', aa=st['aa'])
+    by = H - 30 if p.get('booklet', {}).get('cover_credit') else H - 22
+    gfx.text(d, (14, by), 'Booklet  -  ' + p['maker']['name'], _font(st, 'body', 11), st['band_ink'], anchor='lm', aa=st['aa'])
+    cc = p.get('booklet', {}).get('cover_credit')     # a sound credit that must show in the booklet (e.g. Paul Chauncy's)
+    if cc:
+        fc = _font(st, 'italic', 9)
+        gfx.text(d, (W - 10, H - 8), _sp(cc, fc), fc, st['band_ink'], anchor='rb', aa=st['aa'])
     return im, [], e
 
 

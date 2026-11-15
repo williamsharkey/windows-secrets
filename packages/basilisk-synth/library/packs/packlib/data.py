@@ -188,7 +188,9 @@ def load(persona):
                 if l.startswith('#') or len(f) < 5:
                     continue
                 c = f[4].split(';')[0].strip()
-                if c.startswith('William Sharkey'):
+                if 'Paul Chauncy' in f[4]:
+                    c = 'Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly): used by permission of the author'
+                elif c.startswith('William Sharkey'):
                     c = "Rendered from William Sharkey's own instruments"
                 elif 'Freesound' in c:
                     c = c.split(',')[0].rstrip(')') + '), CC0'

@@ -77,10 +77,10 @@
       "ja": "msgothic.ttc"
     },
     "art": {
-      "bg": "/mnt/c/Users/willi/github/williamsharkey/windows-secrets/site/citypop-deprogrammed/art/scene.png",
+      "bg": "/mnt/c/Users/willi/github/williamsharkey/windows-secrets/site/citypop/art/scene.png",
       "back": "global/earth-city-lights-illuminate-the-nil.jpg",
       "mark": "global/marks/mk-ring-10-concentric-circles-in-bla.png",
-      "object": "/mnt/c/Users/willi/github/williamsharkey/windows-secrets/site/citypop-deprogrammed/art/scene.png"
+      "object": "/mnt/c/Users/willi/github/williamsharkey/windows-secrets/site/citypop/art/scene.png"
     },
     "title": {
       "style": "shadow",
@@ -208,8 +208,8 @@
     },
     "burst": null,
     "features": [
-      "{count} presets: keys, bass, reeds, bells and four kits",
-      "Rain, city, vinyl, espresso, trains and foghorns",
+      "{count} presets: keys, strings, brass, organ, bass and reeds",
+      "Bells, four kits, and the weather outside",
       "For after the club"
     ],
     "barcode": true
@@ -282,7 +282,11 @@
       "Keys": "The tine piano by the window.",
       "Bass": "Fretless, unhurried.",
       "Kit": "Brushes, sticks and a couch.",
-      "Lead": "Muted trumpet, two floors down."
+      "Lead": "Muted trumpet, two floors down.",
+      "Strings": "Strings, after the last train.",
+      "Brass": "Horns from the ferry landing.",
+      "Organ": "The back room organ, still warm.",
+      "Mallet": "Vibraphone in the hotel lobby."
     },
     "subjects": {
       "Texture": [
@@ -302,14 +306,15 @@
         "interior",
         "night"
       ]
-    }
+    },
+    "cover_credit": "Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)"
   },
   "text": {
     "tagline": "Sound library for evening production.",
-    "blurb": "Recorded after hours at our Onomichi studio: tine and glass electric pianos, fretless bass, reeds, muted trumpet, bells, four drum kits, and the weather outside. {count} presets for late-evening production.",
+    "blurb": "Recorded after hours at our Onomichi studio: tine and glass electric pianos, a felt upright, strings, horns, organ, fretless bass, reeds, bells, four drum kits, and the weather outside. {count} presets for late-evening production.",
     "intro": [
       "The Rainy Loft Collection is the evening library of Harborlight Audio Works. It was recorded in our Onomichi studio after the day sessions had gone home, with the skylight open to the rain.",
-      "You will find electric pianos, fretless and plucked basses, a reed, flutes, muted trumpets, bells, four drum kits, and the sounds of the town: rain, traffic, records, the espresso machine, trains and the foghorn."
+      "You will find electric pianos and a felt upright, strings and harp, horns and organ, fretless and plucked basses, reeds and flutes, bells and a vibraphone, four drum kits, and the sounds of the town: rain, traffic, records, the espresso machine, trains and the foghorn."
     ],
     "maker_note": [
       "Play them quietly. The best take of the night is usually the last one.",
