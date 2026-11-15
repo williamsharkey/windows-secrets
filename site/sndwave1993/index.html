@@ -7,7 +7,7 @@
 <meta name="description" content="SNDWAVE1993 by Algorithmic Industries, Executive Audiophile Edition: sixteen real Windows 3.11 Sound Recorders played as one instrument in your DAW and in your browser. Browse the 26 sound packs and hear every preset.">
 <meta property="og:title" content="SNDWAVE1993 by Algorithmic Industries">
 <meta property="og:description" content="Total sound solutions for globalized audio. Sixteen real Windows 3.11 Sound Recorders played as one instrument.">
-<meta property="og:image" content="https://williamsharkey.com/sndrec/pxv/b16-play-poster.png">
+<meta property="og:image" content="https://williamsharkey.com/sndwave1993/video/sndwave1993-tour-long-poster.jpg">
 <link rel="icon" type="image/png" sizes="32x32" href="art/gridsun-32.png"><link rel="icon" type="image/png" sizes="16x16" href="art/gridsun-16.png">
 <link rel="preload" href="/sndwave1993/fonts/DejaVuSerif-Bold.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/sndwave1993/fonts/DejaVuSerif.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/sndwave1993/fonts/DejaVuSans-Bold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/sndrec/sndrec.css">
@@ -39,26 +39,14 @@
 </section>
 
 <section class="ch" id="demo" aria-labelledby="h-demo">
-  <div class="chh"><span class="no">§ 1</span><h2 id="h-demo">Demonstration</h2></div>
-  <p>Everything on this page was recorded from the plugin. These are screen captures, every Windows pixel shown as whole device pixels, with the sound the plugin made.</p>
-  <div class="win">
-    <div class="cap"><span class="box"></span><span class="t">SNDWAVE1993 - Demonstration</span></div>
-    <div class="body">
-      <div class="pxp" id="hero">
-        <div class="pxclips" role="group" aria-label="Clip">
-          <span class="lbl">The instrument</span><button type="button" class="chip pxclip" aria-pressed="true">Loading</button><button type="button" class="chip pxclip" aria-pressed="false">Playing</button><button type="button" class="chip pxclip" aria-pressed="false">Preset change</button><button type="button" class="chip pxclip" aria-pressed="false">Mod wheel</button>
-        </div>
-        <div class="pxclips" role="group" aria-label="Library clip">
-          <span class="lbl">Sound packs (1.3.0)</span><button type="button" class="chip pxclip" aria-pressed="false">Workgroup House</button><button type="button" class="chip pxclip" aria-pressed="false">More picks</button>
-        </div>
-        <div class="pxbox"><canvas width="1024" height="768" data-px="1024x768" data-px-note="hero-note" tabindex="0" aria-label="SNDWAVE1993"></canvas><button type="button" class="pxbig" aria-label="Play">&#9654;</button><p class="pxstatus" hidden></p></div><script>pxfit.fit(document.querySelector('#hero [data-px]'))</script>
-        <div class="pxctl"><button type="button" class="btn pxplay" aria-pressed="false">Play</button><span class="pxtime">0:00</span><input class="pxseek" type="range" min="0" max="15" step="0.001" value="0" aria-label="Position"><label class="pxloop"><input type="checkbox"> Loop</label></div>
-        <p class="pxcap note"><b>Loading.</b> Windows for Workgroups 3.11 resumes, its sixteen Sound Recorders lose their title bars and line up, and the first preset plays.</p>
-        <p class="note pxnote" id="hero-note"></p>
-      </div>
-      <p class="note" style="margin:0">The captures were made with 1.2.1, released as BASILISK 16; the instrument is the same, under its new name.</p>
-    </div>
-  </div>
+  <div class="chh"><span class="no">&sect; 1</span><h2 id="h-demo">Getting Started with SNDWAVE1993</h2></div>
+  <figure class="tour">
+    <div class="tourbox"><video controls preload="none" playsinline width="1920" height="1080" poster="video/sndwave1993-tour-long-poster.jpg" aria-label="Getting Started with SNDWAVE1993, a home-learning tape from Algorithmic Industries. Captions are part of the picture.">
+      <source src="video/sndwave1993-tour-long-web.mp4" type="video/mp4">
+      <p>Your browser cannot play this video. <a href="video/sndwave1993-tour-long-web.mp4">Download it (MP4, 19 MB)</a>.</p>
+    </video></div>
+    <figcaption>A Home Learning presentation from Algorithmic Industries. 3 min. Captions are in the picture. <a href="video/sndwave1993-tour-web.mp4">Short version</a> (2 min 23 s).</figcaption>
+  </figure>
 </section>
 
 <section class="ch" id="features" aria-labelledby="h-feat">
@@ -197,6 +185,7 @@
       <p>Windows for Workgroups 3.11, Windows 3.1 and Windows XP, their sounds, and Sound Recorder are &copy; 1985&ndash;2001 Microsoft Corporation. The Windows images came from Windows for Workgroups 3.11 and Windows XP Professional SP3 as preserved by the <a href="https://archive.org/details/wfw311-disk">Internet Archive</a>.</p>
       <p>The library disc's sounds are public domain and CC0; each one's source and licence is listed on the disc (<code>\LIBRARY.TSV</code>) and in <a href="https://github.com/williamsharkey/windows-secrets/tree/main/packages/basilisk-synth/library">packages/basilisk-synth/library</a>.</p>
       <p>The emulator is <a href="https://codeberg.org/schelling/dosbox-pure">DOSBox Pure</a> (GPLv2 or later), with one addition: BSYN, an emulated 32-voice sound card, because Windows 3.11's Sound Blaster driver can only play one sound at a time. The plugin is built with <a href="https://github.com/DISTRHO/DPF">DPF</a>.</p>
+      <p>The tour video: every Windows shot is the plugin itself, recorded in a test host; the desk is a Blender scene; narration by Kokoro-82M; music from the SNDWAVE1993 pack songs (Atrium Level B2, Aquarium (Level 3), Fax Machine Fanfare) and CITYPOP1993 tracks 1 and 12.</p>
       <p>The site and the box are set in DejaVu Serif and DejaVu Sans (<a href="fonts/LICENSE-DejaVu.txt">free licence</a>).</p>
       <div class="media"><img class="pix" src="art/diskette-label-3.5in.png" width="264" height="204" loading="lazy" alt="Diskette label: Algorithmic Industries, SNDWAVE1993, Executive Audiophile Edition, Disk 1 of 7, Program Disk, Setup, Version 1.00 (Build 0311), 3.5-inch 1.44 MB High Density"></div>
     </div>
@@ -217,25 +206,9 @@
   <nav class="sib" aria-label="Related pages"><a href="/windows-secrets.html">Windows Secrets</a><a href="/inside-windows.html">Inside Windows</a><a href="/basilisk.html">BASILISK</a><a href="/basilisk-term.html">BASILISK III</a><a href="/basilisk-31.html">BASILISK 3.11</a><a href="/basilisk-download.html">BASILISK downloads</a></nav>
 </footer>
 </div>
-<script src="/sndrec/pxplayer.js"></script>
 <script>
 (function () {
   'use strict';
-  // the screen captures (tools/sndrec-demo/pxv.py from demo311's lossless frames): exact pixels, audio-clock sync
-  var clips = [
-    {base: '/sndrec/pxv/b16-assembly', seconds: 15.1, title: 'SNDWAVE1993 loading: sixteen Windows 3.11 Sound Recorders assemble into one synthesizer, then play',
-     caption: '<b>Loading.</b> Windows for Workgroups 3.11 resumes, its sixteen Sound Recorders lose their title bars and line up, and the first preset plays.'},
-    {base: '/sndrec/pxv/b16-play', seconds: 9.9, title: 'Glass Piano playing chords and a melody; the keys go down as notes sound',
-     caption: '<b>Playing.</b> Glass Piano: an upright piano and a glass ping on two layers. Each MIDI note presses Play on a recorder, and its key goes down in Windows.'},
-    {base: '/sndrec/pxv/b16-change', seconds: 22.5, title: 'A preset change while playing: Windows rebuilds the recorders one at a time',
-     caption: '<b>Changing preset while playing.</b> Kalimba Glass becomes Choir Pad. Sound Recorder rebuilds the recorders one at a time; the row being built lights yellow, and the old sound keeps playing until the new one is ready.'},
-    {base: '/sndrec/pxv/b16-macro', seconds: 9.8, title: 'The mod wheel moving Macro 1 on Macro Swell',
-     caption: '<b>The mod wheel.</b> On Macro Swell, the wheel (the Mod scroll bar, bottom left) adds to Macro 1, which stretches chord\'s envelope and swings ding\'s echo across the stereo field.'},
-    {base: '/sndrec/pxv/lib-house', seconds: 39.6, title: 'The owner\'s picks from Workgroup House Edition: Shaded End, Granite Cloud and Shaded Tremolo',
-     caption: '<b>Workgroup House Edition</b> (in 1.3.0). The owner\'s three top-rated presets from the pack: Shaded End (a bass of XP\'s Ding slowed down, with Battery Low), then Granite Cloud (a flute, trimmed, echoed and slowed, with XP\'s Ringout) and Shaded Tremolo (XP\'s Startup and 3.11\'s Chimes). Between them Windows builds each new sound in view. Played on the 1.2.1 machine.'},
-    {base: '/sndrec/pxv/lib-picks', seconds: 21.8, title: 'Misty Warp and Afterhours Tine',
-     caption: '<b>More picks</b> (in 1.3.0). Misty Warp (bubbles in water with XP\'s Chimes and Ding) holds two notes, then Afterhours Tine plays chords and a melody. Played on the 1.2.1 machine.'}];
-  window.heroPlayer = new PxPlayer(document.getElementById('hero'), clips);
   var g = document.getElementById('helpg'), shot = function () { return g.querySelector('[data-px]'); };
   [].forEach.call(g.querySelectorAll('.chip'), function (b) {
     b.addEventListener('click', function () {
