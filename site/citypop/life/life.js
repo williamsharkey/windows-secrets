@@ -150,6 +150,7 @@ function normalize(a) {
   // anything the art hides behind something nearer is marked visible:0 by the scene; drop it everywhere
   const vis = (x) => !(x && typeof x === 'object' && !Array.isArray(x) && (x.visible === 0 || x.visible === false));
   for (const k of Object.keys(o)) if (Array.isArray(o[k]) && k !== 'windows') o[k] = o[k].filter(vis);
+  for (const k of Object.keys(o)) if (o[k] && typeof o[k] === 'object' && !Array.isArray(o[k]) && !vis(o[k])) delete o[k];   // singletons: cat, vending, shrine, bench...
   const rect = (r) => (Array.isArray(r) ? { x: r[0], y: r[1], w: r[2], h: r[3] } : r);
   if (Array.isArray(o.windows) && o.windows.length && Array.isArray(o.windows[0])) {
     const f = o.windowsFields || ['x', 'y', 'w', 'h', 'lit', 'baked', 'hue', 'curtain', 'room', 'layer', 'dark'];
