@@ -70,7 +70,7 @@ finish(__file__, S, {
     'title': 'Umbrella Stand, Third Floor',
     'pack': 'rainy-loft',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'City pop in F major, 100 bpm: rain on the window, the loft tine piano, the rubber taxi bass, taxi rhythm '
             'guitar chops, the Couch Disco kit, the neon sign lead, rooftop brass stabs, the vocoder chorus, a telephone '

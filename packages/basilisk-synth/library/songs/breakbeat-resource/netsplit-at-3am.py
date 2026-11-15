@@ -102,7 +102,7 @@ finish(__file__, S, {
     'title': 'Netsplit at 3AM',
     'pack': 'breakbeat-resource',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Jungle in D minor, 170 bpm: night-bus pad, tine chords, chopped breaks, the block-party siren, orchestra '
             'hits, sub and reese, a whistle tune in the half-time break. Breaks: Kit Manager 98 (Breaker Box Kit) '

@@ -114,7 +114,7 @@ finish(__file__, S, {
     'title': 'Friday at Four',
     'pack': 'paulywaulophone',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement); sounds by Paul Chauncy',
     'note': 'An office singalong in G major, 120 bpm, light shuffle: office piano, the bass from Accounts, the hum from '
             'the back row, doo-doo choir, bee-buzzing organ, sax, glockenspiel, boops, guitar, a tuning fork; the last '

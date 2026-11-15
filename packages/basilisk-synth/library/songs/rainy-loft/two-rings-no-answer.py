@@ -72,7 +72,7 @@ finish(__file__, S, {
     'title': 'Two Rings, No Answer',
     'pack': 'rainy-loft',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A ballad in E-flat major, 72 bpm, on the Loft Brushes kit: balcony rain, a cup and spoon, the telephone, '
             'the clarinet after hours over the felt upright and the fretless bass, legato cellos, a straight-mute '

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""songrender: multitrack song demos for SNDWAVE2000, rendered headlessly through the real Windows 3.11 machine.
+"""songrender: multitrack song demos for SNDWAVE1993, rendered headlessly through the real Windows 3.11 machine.
 
     songrender.py SONG.song [SONG.song ...] --out-dir DIR [--render311 EXE] [--machine DIR] [--jobs 6]
                   [--cache DIR] [--stems] [--keep-wav] [--engine render311|host] [--dry]
@@ -505,7 +505,7 @@ def mix(song, jobs, stems_dir=None):
 
 def encode(wav, base, meta):
     tags = []
-    for k, v in (('title', meta.get('title', '')), ('artist', meta.get('artist', 'Algorithmic Industries (SNDWAVE2000)')),
+    for k, v in (('title', meta.get('title', '')), ('artist', meta.get('artist', 'Algorithmic Industries (SNDWAVE1993)')),
                  ('album', meta.get('album', '')), ('comment', meta.get('comment', ''))):
         if v:
             tags += ['-metadata', f'{k}={v}']

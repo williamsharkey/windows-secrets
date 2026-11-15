@@ -84,7 +84,7 @@ finish(__file__, S, {
     'title': 'Nag Screen Blues',
     'pack': 'w3x-heritage',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A 12-bar shuffle blues in G, 96 bpm, four choruses: ding piano boogie and walking ding bass, ding chords on '
             'the off-beats, the ringout whistle and the tada horn trading choruses, chimes on the turnarounds. Only the '

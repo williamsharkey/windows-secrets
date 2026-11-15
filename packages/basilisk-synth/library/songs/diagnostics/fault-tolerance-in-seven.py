@@ -108,7 +108,7 @@ finish(__file__, S, {
     'title': 'Fault Tolerance in Seven',
     'pack': 'diagnostics',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'An IDM study in 7/8 (2+2+3), 120 bpm, A minor: broken music box, a beat of critical-stop thuds, stamp '
             'snares, stamp ticks and floppy seeks, stutters, shattered glass, an erhu line, cello and error pads, '

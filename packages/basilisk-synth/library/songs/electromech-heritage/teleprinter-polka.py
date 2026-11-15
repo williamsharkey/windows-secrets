@@ -56,7 +56,7 @@ finish(__file__, S, {
     'title': 'Teleprinter Polka',
     'pack': 'electromech-heritage',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A polka in B-flat, 2/4: a Ferranti-hoot bass, relay-marimba and sounder-key oom-pah, the CSIRAC pulse and '
             'the typewriter bell on the tune, the exchange ringer and relay mallet on the trio, the teleprinter kit, '

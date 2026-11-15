@@ -1,9 +1,9 @@
-# Brass Room Four: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+# Brass Room Four: a SNDWAVE1993 song demo (tools/songrender/README.md has the format)
 
 title    = Brass Room Four
 pack     = studio-archive
 kind     = original
-composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+composer = Algorithmic Industries house band (an original for SNDWAVE1993)
 licence  = CC0-1.0 (the composition and this arrangement)
 note     = A concert march in B-flat, 112 bpm: a trumpet and horn fanfare, the march on horns and trumpet over trombone off-beats and a marimba bass, a trio for glockenspiel and keys with cellos, the strings on the last strain, snaps and taps for the drum line.
 midi     = brass-room-four.mid

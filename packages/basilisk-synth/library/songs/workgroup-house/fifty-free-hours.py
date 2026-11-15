@@ -97,7 +97,7 @@ finish(__file__, S, {
     'title': 'Fifty Free Hours',
     'pack': 'workgroup-house',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Deep house in F minor, 122 bpm. The modem dials up, a one-finger minor-ninth stab, organ bass stab, '
             'talking-robot hook, choir breakdown. Drums: Kit Manager 98 (Jack Box Kit).',

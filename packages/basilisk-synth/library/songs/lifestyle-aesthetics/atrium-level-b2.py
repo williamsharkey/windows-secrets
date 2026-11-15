@@ -88,7 +88,7 @@ finish(__file__, S, {
     'title': 'Atrium Level B2',
     'pack': 'lifestyle-aesthetics',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'City pop in C major, 96 bpm: escalator, tines, nylon guitar, slow-jam bass, the rounded major-seventh '
             'chord, kalimba and marimba droplets, fountain coins, sparkle, a faraway choir. Drums: Kit Manager 98 '

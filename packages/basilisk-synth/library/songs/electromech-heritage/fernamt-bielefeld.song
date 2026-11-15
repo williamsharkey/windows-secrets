@@ -1,9 +1,9 @@
-# Fernamt Bielefeld: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+# Fernamt Bielefeld: a SNDWAVE1993 song demo (tools/songrender/README.md has the format)
 
 title    = Fernamt Bielefeld
 pack     = electromech-heritage
 kind     = original
-composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+composer = Algorithmic Industries house band (an original for SNDWAVE1993)
 licence  = CC0-1.0 (the composition and this arrangement)
 note     = Electro in A minor, 112 bpm: motor drone, relay rain, dial-tone organ, a Ferranti-hoot sequencer bass, relay-marimba arpeggios, the 1961 vowel, a CSIRAC pulse hook, exchange ringers, a party line and the newsroom teleprinter. Drums: Kit Manager 98 (Exchange).
 midi     = fernamt-bielefeld.mid

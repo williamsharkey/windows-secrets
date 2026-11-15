@@ -71,7 +71,7 @@ finish(__file__, S, {
     'title': 'Keyword: Teamwork',
     'pack': 'workgroup-house',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'French-touch filter house in G minor, 124 bpm: an organ riff, a disco bass, strings, sixteenth plucks, '
             'the robot mouth\'s hook, a choir and tine-EP breakdown, a sweep, the modem in the outro. Drums: Kit Manager '

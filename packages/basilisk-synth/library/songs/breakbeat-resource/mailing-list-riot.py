@@ -74,7 +74,7 @@ finish(__file__, S, {
     'title': 'Mailing List Riot',
     'pack': 'breakbeat-resource',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Big beat in E minor, 124 bpm: a fat break with the pack\'s snare and clap on top, a growling bass riff, the '
             'stadium riff stab, orchestra hits, the block-party siren, a robot voice, a rising synth, a keys '

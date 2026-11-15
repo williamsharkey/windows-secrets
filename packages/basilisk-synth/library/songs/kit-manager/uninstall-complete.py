@@ -84,7 +84,7 @@ finish(__file__, S, {
     'title': 'Uninstall Complete',
     'pack': 'kit-manager',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Drum and bass at 172 bpm, all on Kit Manager 98: breaks on the Breaker Box, Noise Channel and '
             'Twelve-Bit Crate kits, the bass line on Mainframe Hall\'s tuned keys, the tune on Teletype 33\'s, bells '

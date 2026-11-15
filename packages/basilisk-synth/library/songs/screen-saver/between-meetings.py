@@ -71,7 +71,7 @@ finish(__file__, S, {
     'title': 'Between Meetings',
     'pack': 'screen-saver',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Ambient in D major, 72 bpm: ocean waves, a singing-bowl drone, string pad, pipe-organ pad, marimba '
             'ostinato, glockenspiel, a breathy flute tune, a creek and a hermit thrush.',

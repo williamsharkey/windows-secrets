@@ -1,9 +1,9 @@
-# Nag Screen Blues: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+# Nag Screen Blues: a SNDWAVE1993 song demo (tools/songrender/README.md has the format)
 
 title    = Nag Screen Blues
 pack     = w3x-heritage
 kind     = original
-composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+composer = Algorithmic Industries house band (an original for SNDWAVE1993)
 licence  = CC0-1.0 (the composition and this arrangement)
 note     = A 12-bar shuffle blues in G, 96 bpm, four choruses: ding piano boogie and walking ding bass, ding chords on the off-beats, the ringout whistle and the tada horn trading choruses, chimes on the turnarounds. Only the six Windows 3.1 sounds.
 midi     = nag-screen-blues.mid

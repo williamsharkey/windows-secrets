@@ -1,9 +1,9 @@
-# Aquarium (Level 3): a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+# Aquarium (Level 3): a SNDWAVE1993 song demo (tools/songrender/README.md has the format)
 
 title    = Aquarium (Level 3)
 pack     = lifestyle-aesthetics
 kind     = original
-composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+composer = Algorithmic Industries house band (an original for SNDWAVE1993)
 licence  = CC0-1.0 (the composition and this arrangement)
 note     = Slowed mall-pop in D-flat, 74 bpm: tank bubbles, the reef pad, the aquarium screensaver bell, the rounded major-seventh chord, the slow-jam bass, a VHS bell pad, distant hold music, the atrium keys, a reflection ping and the goodbye pad at closing. Drums: Kit Manager 98 (Echo Chamber Kit).
 midi     = aquarium-level-three.mid

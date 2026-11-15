@@ -99,7 +99,7 @@ finish(__file__, S, {
     'title': 'Peckham Quarterly Report',
     'pack': 'bass-enterprise',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'UK garage in G minor, 132 bpm: 2-step beat, parallel minor stabs, organ bass, trombone hook, a bass-guitar '
             'bridge, then speed garage on the wobbling sub. Drums: Kit Manager 98 (Half-Time Kit).',

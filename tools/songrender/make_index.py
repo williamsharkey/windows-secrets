@@ -31,7 +31,7 @@ def main():
     ap.add_argument('dirs', nargs='+')
     ap.add_argument('--dest', required=True)
     ap.add_argument('--base-url', default='')
-    ap.add_argument('--renderer', default='tools/songrender (render311 and the SNDWAVE2000 release machine)')
+    ap.add_argument('--renderer', default='tools/songrender (render311 and the SNDWAVE1993 release machine)')
     a = ap.parse_args()
     titles = pack_titles()
     packs = {}

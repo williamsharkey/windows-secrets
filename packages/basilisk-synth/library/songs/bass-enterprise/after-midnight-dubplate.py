@@ -76,7 +76,7 @@ finish(__file__, S, {
     'title': 'After Midnight Dubplate',
     'pack': 'bass-enterprise',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Dark 2-step in F minor, 134 bpm: the wobbling speed sub over a sub thump, the error growl, the two-step '
             'minor stab, a trombone call, the vowel pad, the still salute, an impact on every section. Drums: Kit '

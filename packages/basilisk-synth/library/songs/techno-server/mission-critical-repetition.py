@@ -96,7 +96,7 @@ finish(__file__, S, {
     'title': 'Mission-Critical Repetition',
     'pack': 'techno-server',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Dub techno in C minor, 126 bpm: one-finger dub chords into a long echo, offbeat sub, Detroit strings, '
             'relay ticks, mains hum and a transmission from Apollo 8. Drums: Kit Manager 98 (Long Boom Kit).',

@@ -69,7 +69,7 @@ finish(__file__, S, {
     'title': 'A Basin Away',
     'pack': 'listening-post',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement); the hydrophone recordings are NOAA PMEL\'s (public domain)',
     'note': 'Deep-ocean ambient in D minor, 60 bpm: the bloop and an iceberg calving, fin-whale and blue-whale drones '
             'in slow chords with a singing bowl, a humpback singing a line, the upsweep, a ship overhead and a tremor.',

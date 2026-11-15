@@ -1,9 +1,9 @@
-# A Basin Away: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+# A Basin Away: a SNDWAVE1993 song demo (tools/songrender/README.md has the format)
 
 title    = A Basin Away
 pack     = listening-post
 kind     = original
-composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+composer = Algorithmic Industries house band (an original for SNDWAVE1993)
 licence  = CC0-1.0 (the composition and this arrangement); the hydrophone recordings are NOAA PMEL's (public domain)
 note     = Deep-ocean ambient in D minor, 60 bpm: the bloop and an iceberg calving, fin-whale and blue-whale drones in slow chords with a singing bowl, a humpback singing a line, the upsweep, a ship overhead and a tremor.
 tail     = 8

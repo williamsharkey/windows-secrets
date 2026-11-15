@@ -88,7 +88,7 @@ finish(__file__, S, {
     'title': 'A Visit to the Instrument Room',
     'pack': 'studio-archive',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A light-orchestral tour in F major, 104 bpm: one tune passed from the upright piano to the violins and '
             'cellos, the horns, trombones and trumpet, the glockenspiel and vibes, then everyone together.',

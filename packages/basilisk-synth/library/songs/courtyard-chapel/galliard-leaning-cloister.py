@@ -135,7 +135,7 @@ finish(__file__, S, {
     'title': 'The Leaning Cloister Galliard',
     'pack': 'courtyard-chapel',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A galliard in D Dorian, 3/4, with hemiola cadences: psaltery, harpsichord continuo, folk harp, strumstick, '
             'didgeridoo bourdon, hand-chime and tubular bells, balafon tabor.',

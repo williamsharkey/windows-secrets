@@ -64,7 +64,7 @@ finish(__file__, S, {
     'title': 'Grid Runner 1985',
     'pack': 'retro-display',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Outrun in A minor, 118 bpm: a driving sixteenth bass, four-on-the-floor gated drums, the laser grid sweep, '
             'the sun-glare lead, digital hammers, kalimba arpeggios, night-window strings and the rooftop sax on the '

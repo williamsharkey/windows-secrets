@@ -70,7 +70,7 @@ finish(__file__, S, {
     'title': 'Lakeport Summer Rave',
     'pack': 'trance-connectivity',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Progressive trance in E minor, 132 bpm: a gated pluck pattern, a rolling bass, plinks, a long breakdown on '
             'the breakdown grand and choir with a riser, then the motor-whine lead with brass chords. Drums: Kit '

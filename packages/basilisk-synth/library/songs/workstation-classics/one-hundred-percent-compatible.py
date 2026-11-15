@@ -93,7 +93,7 @@ finish(__file__, S, {
     'title': '100% Compatible',
     'pack': 'workstation-classics',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Eurodance in D minor, 132 bpm: offbeat mono bass, arena plucks, choir pad, poly-brass stabs, a degaussed '
             'monitor and the chorus lead. Drums: Kit Manager 98 (Punch Kick Kit).',

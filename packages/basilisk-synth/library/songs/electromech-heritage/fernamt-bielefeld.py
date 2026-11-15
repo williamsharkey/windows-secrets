@@ -91,7 +91,7 @@ finish(__file__, S, {
     'title': 'Fernamt Bielefeld',
     'pack': 'electromech-heritage',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Electro in A minor, 112 bpm: motor drone, relay rain, dial-tone organ, a Ferranti-hoot sequencer bass, '
             'relay-marimba arpeggios, the 1961 vowel, a CSIRAC pulse hook, exchange ringers, a party line and the '

@@ -78,7 +78,7 @@ finish(__file__, S, {
     'title': 'Hsinchu Night Shift',
     'pack': 'techno-server',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Minimal techno in A minor, 128 bpm: a morse-code sequence shifting a step every eight bars, a minor-seventh '
             'stab and the feedback chain, an offbeat sub, relay ticks and a shaker, the spring tank, a riser, the '

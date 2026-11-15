@@ -91,7 +91,7 @@ finish(__file__, S, {
     'title': 'Sixteen Colours at Sunset',
     'pack': 'retro-display',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Synthwave in E minor, 100 bpm: gated drums, octave bass in eighths, tine EP, chrome lead, brass swells, '
             'a kalimba arpeggio, a sax solo. Drums: Kit Manager 98 (Echo Chamber Kit) with the pack\'s Yellow Snare.',

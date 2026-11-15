@@ -47,7 +47,7 @@ finish(__file__, S, {
     'title': 'Kiosk at Dawn',
     'pack': 'screen-saver',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Ambient in F Lydian, 64 bpm: crickets, a creek, a hermit thrush, singing bowls, the pipe-organ pad, a '
             'horizon horn\'s long call, glockenspiel, a corner peal, a string pad and choir, then the shopping-centre '

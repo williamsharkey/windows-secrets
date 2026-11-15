@@ -74,7 +74,7 @@ finish(__file__, S, {
     'title': 'Market Square Estampie',
     'pack': 'courtyard-chapel',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A medieval-style estampie in D Mixolydian, 6/8: three puncta each played with open and closed endings, '
             'on dan tranh and psaltery over a didgeridoo bourdon, strumstick, balafon tabor, mbira, kalimba, hand '

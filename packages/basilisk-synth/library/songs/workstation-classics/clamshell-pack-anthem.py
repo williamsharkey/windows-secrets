@@ -65,7 +65,7 @@ finish(__file__, S, {
     'title': 'Clamshell Pack Anthem',
     'pack': 'workstation-classics',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Happy-trance pop in F, 136 bpm: an offbeat bass, glass plucks, a ladder arpeggio, a choir hook, the flute '
             'solo lead on the chorus, arena-pluck chords, a salute stab, a pad. Drums: Kit Manager 98 (Punch Kick Kit).',

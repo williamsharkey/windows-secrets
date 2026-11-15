@@ -62,7 +62,7 @@ finish(__file__, S, {
     'title': 'Brass Room Four',
     'pack': 'studio-archive',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A concert march in B-flat, 112 bpm: a trumpet and horn fanfare, the march on horns and trumpet over '
             'trombone off-beats and a marimba bass, a trio for glockenspiel and keys with cellos, the strings on the '

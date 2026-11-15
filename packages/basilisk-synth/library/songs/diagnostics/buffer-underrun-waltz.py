@@ -75,7 +75,7 @@ finish(__file__, S, {
     'title': 'Buffer Underrun Waltz',
     'pack': 'diagnostics',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A glitch waltz in D minor, 3/4 at 108 bpm: a music-box waltz that drops whole bars where the buffer runs '
             'dry and stutters fill them, a molten glock on the off-beats, Noble Bell doubling, the helium choir stack '

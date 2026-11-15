@@ -70,7 +70,7 @@ finish(__file__, S, {
     'title': 'Session Musician on Call',
     'pack': 'rom-reference',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'New jack swing in G minor, 100 bpm: a swung machine beat, a bouncing bass, brass stabs, an organ bark, the '
             'hook on a lead and the vocal pad, tines, a piano bridge, strings and plinks. Drums: Kit Manager 98 '

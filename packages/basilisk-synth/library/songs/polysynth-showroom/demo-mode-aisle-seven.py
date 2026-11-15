@@ -73,7 +73,7 @@ finish(__file__, S, {
     'title': 'Demo Mode, Aisle 7',
     'pack': 'polysynth-showroom',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A 1985 power ballad in A-flat, 76 bpm: FM piano verses, the female vocoder on the verse, gasflower pads, '
             'big poly brass and a lead on the chorus, string swells, a buzzy solo, the last chorus up a tone. Drums: '

@@ -90,7 +90,7 @@ finish(__file__, S, {
     'title': 'Cover Mount (Issue 14)',
     'pack': 'beat-management',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Lo-fi boom bap, 88 bpm, swung: rain on the window, upright-piano loop, upright bass, vibes, flute hook, '
             'violins, desk scratches, a choir at the end. Drums: Kit Manager 98 (Twelve-Bit Crate Kit).',

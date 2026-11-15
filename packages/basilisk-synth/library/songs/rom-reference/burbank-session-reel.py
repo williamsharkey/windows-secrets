@@ -91,7 +91,7 @@ finish(__file__, S, {
     'title': 'Burbank Session Reel',
     'pack': 'rom-reference',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Late-80s workstation pop-fusion in E-flat, 108 bpm: gamelan pluck and drone, piano, tines, slap bass line, '
             'brass stabs, organ, string swells, a vocal pad, harp runs and a lead. Drums: Kit Manager 98 '

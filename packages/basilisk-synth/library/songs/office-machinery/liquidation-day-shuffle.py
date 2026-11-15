@@ -92,7 +92,7 @@ finish(__file__, S, {
     'title': 'Liquidation Day Shuffle',
     'pack': 'office-machinery',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Machine funk in E minor, 104 bpm, shuffled: hard-disk spin-up, tape-deck start, a spacebar kit and a '
             'PC-speaker kit, floppy reads and latches, an OPL3 snare, keyboard clacks, twelve drives humming the bass, '

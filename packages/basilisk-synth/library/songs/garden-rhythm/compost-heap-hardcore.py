@@ -77,7 +77,7 @@ finish(__file__, S, {
     'title': 'Compost Heap Hardcore',
     'pack': 'garden-rhythm',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Early-90s hardcore in D minor, 150 bpm: taiko on the build, breakbeats from the radio kit with the hands '
             'kit on top, rave-piano fifths, rave-organ bass, the hoover riff, the scream, timpani, a goose-voice chant, '

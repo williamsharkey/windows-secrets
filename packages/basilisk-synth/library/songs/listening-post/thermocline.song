@@ -1,9 +1,9 @@
-# Thermocline: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+# Thermocline: a SNDWAVE1993 song demo (tools/songrender/README.md has the format)
 
 title    = Thermocline
 pack     = listening-post
 kind     = original
-composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+composer = Algorithmic Industries house band (an original for SNDWAVE1993)
 licence  = CC0-1.0 (the composition and this arrangement); the hydrophone recordings are NOAA PMEL's (public domain)
 note     = A slow descent in E minor, 56 bpm: a ship overhead, blue-whale and fin-whale drones settling a fifth lower each section, a humpback line, distant airguns, the white shoreline, the bloop and ice at the bottom.
 tail     = 8

@@ -67,7 +67,7 @@ finish(__file__, S, {
     'title': 'High Score Table',
     'pack': 'game-port',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A chiptune at 144 bpm: a name-entry jingle, then the credits theme in C and a minor-key strain on pulse '
             'leads with a soft echo lead a sixteenth behind, a harmony line, chord arpeggios, an octave bass, noise '

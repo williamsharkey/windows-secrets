@@ -66,7 +66,7 @@ finish(__file__, S, {
     'title': 'Last Day Before the Holidays',
     'pack': 'paulywaulophone',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement); sounds by Paul Chauncy',
     'note': 'An office singalong waltz in F, 3/4: the piano and the bass from Accounts, the hum from the back row, a '
             'doo-doo choir, glockenspiel answers, the sax and the bee-buzzing organ on the middle eight, everyone on '

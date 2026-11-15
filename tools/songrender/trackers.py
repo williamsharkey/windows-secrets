@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """trackers: FastTracker 2 (.xm) and Impulse Tracker (.it) modules -> Standard MIDI Files, for re-voicing on
-SNDWAVE2000 (the notes and timing only; the module's samples are never used).
+SNDWAVE1993 (the notes and timing only; the module's samples are never used).
 
     trackers.py MODULE.xm|.it OUT.mid [--by instrument|channel] [--info]
 

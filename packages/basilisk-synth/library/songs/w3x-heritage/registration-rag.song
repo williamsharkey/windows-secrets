@@ -1,9 +1,9 @@
-# Registration Rag: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+# Registration Rag: a SNDWAVE1993 song demo (tools/songrender/README.md has the format)
 
 title    = Registration Rag
 pack     = w3x-heritage
 kind     = original
-composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+composer = Algorithmic Industries house band (an original for SNDWAVE1993)
 licence  = CC0-1.0 (the composition and this arrangement)
 note     = A piano rag, 92 bpm: intro, A strain in C, B strain in F, A strain, coda. Every sound is one of the six that came with Windows 3.1: a ding piano with a stride left hand, chimes bells, a ringout whistle and lead, a tada fanfare, ding and ringin brushes.
 midi     = registration-rag.mid

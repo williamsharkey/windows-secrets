@@ -95,7 +95,7 @@ finish(__file__, S, {
     'title': 'Sow Your Breaks in Spring',
     'pack': 'garden-rhythm',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Early-90s rave in A minor, 140 bpm: a talking machine says hello, taiko hits, breakbeats from the radio '
             'kit, rave piano, rave-organ bass, the hoover riff, a scream, a steelpan breakdown with a robot choir, '

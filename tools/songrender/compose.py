@@ -268,7 +268,7 @@ class Score:
 
 def write_song(path, header, tracks, master=None, echo=None, reverb=None, pinned=None):
     """the .song file: header {key: value}, tracks [(name, source, preset, {key: value})]"""
-    L = [f'# {header.get("title", "")}: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)', '']
+    L = [f'# {header.get("title", "")}: a SNDWAVE1993 song demo (tools/songrender/README.md has the format)', '']
     for k, v in header.items():
         for line in str(v).split('\n'):
             L.append(f'{k:9s}= {line}')

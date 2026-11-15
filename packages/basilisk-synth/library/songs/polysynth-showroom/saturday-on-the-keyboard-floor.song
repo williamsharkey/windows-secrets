@@ -1,9 +1,9 @@
-# Saturday on the Keyboard Floor: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+# Saturday on the Keyboard Floor: a SNDWAVE1993 song demo (tools/songrender/README.md has the format)
 
 title    = Saturday on the Keyboard Floor
 pack     = polysynth-showroom
 kind     = original
-composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+composer = Algorithmic Industries house band (an original for SNDWAVE1993)
 licence  = CC0-1.0 (the composition and this arrangement)
 note     = 1985 synth-pop in D minor, 120 bpm: poly brass stabs, a cream mono bass in eighths, FM piano and clav, a PWM lead, vocoder strings, male and female vocoder choirs, a buzzy solo, FM EP arpeggios. Drums: Kit Manager 98 (Breaker Box Kit).
 midi     = saturday-on-the-keyboard-floor.mid

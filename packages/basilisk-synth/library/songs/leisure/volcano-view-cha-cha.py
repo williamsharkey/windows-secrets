@@ -70,7 +70,7 @@ finish(__file__, S, {
     'title': 'Volcano View Cha-Cha',
     'pack': 'leisure',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A lounge cha-cha in F, 118 bpm: claves, bongo taps and a scrape on the cha-cha-cha, vibes-bells and '
             'marimba on the tune, the tiki piano montuno, cello bass, strings, a lead in the bridge, a gong and a robin.',

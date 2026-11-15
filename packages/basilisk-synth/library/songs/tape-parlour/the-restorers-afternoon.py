@@ -94,7 +94,7 @@ finish(__file__, S, {
     'title': "The Restorer's Afternoon",
     'pack': 'tape-parlour',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Late-60s chamber pop in D major, 84 bpm, on tape-replay voices: flutes over a descending bass, violas, '
             'cellos, choir, saxello, a trumpet solo, a recorder counter-line, the 8-foot organ stop and a parlour '

@@ -1,9 +1,9 @@
-# Restart Not Required: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+# Restart Not Required: a SNDWAVE1993 song demo (tools/songrender/README.md has the format)
 
 title    = Restart Not Required
 pack     = kit-manager
 kind     = original
-composer = Algorithmic Industries house band (an original for SNDWAVE2000)
+composer = Algorithmic Industries house band (an original for SNDWAVE1993)
 licence  = CC0-1.0 (the composition and this arrangement)
 note     = A drum-kit showcase in C major, 116 bpm, eight kits: Rain Clock, Breaker Box, Half-Time and Twelve-Bit Crate take turns; Calculator Bureau, Signal Bells and Typing Pool play the tune and chords on their tuned keys, Relay Room plays a relay line. Every sound is a Kit Manager 98 kit.
 midi     = restart-not-required.mid

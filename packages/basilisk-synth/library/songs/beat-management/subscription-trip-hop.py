@@ -61,7 +61,7 @@ finish(__file__, S, {
     'title': 'Subscription (Trip-Hop Edition)',
     'pack': 'beat-management',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'Trip-hop in D minor, 82 bpm: a slow heavy break, the long-boom glide bass, noir strings, a tremolo erhu, '
             'felt-ding piano, the flute line, a choir, scratches, a floor murmur and a bell coda. Drums: Kit Manager 98 '

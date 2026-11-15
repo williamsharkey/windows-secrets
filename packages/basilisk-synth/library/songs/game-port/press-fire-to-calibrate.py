@@ -94,7 +94,7 @@ finish(__file__, S, {
     'title': 'Press Fire to Calibrate',
     'pack': 'game-port',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A chiptune in A minor, 150 bpm: the 286 boots, pulse leads with a counter-melody, sixteenth-note chord '
             'arpeggios, an octave-jumping bass, noise drums from the pack\'s percussion, a coin.',

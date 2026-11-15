@@ -60,7 +60,7 @@ finish(__file__, S, {
     'title': 'Wow and Flutter Waltz',
     'pack': 'tape-parlour',
     'kind': 'original',
-    'composer': 'Algorithmic Industries house band (an original for SNDWAVE2000)',
+    'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement)',
     'note': 'A baroque-pop waltz in A minor, 3/4 at 118 bpm, on tape-replay voices: bowed psaltery, a solo violin, '
             'violins, a harmonica-organ waltz, a tuba bass, the ocarina and a horn in the middle, the choir, a parlour '
