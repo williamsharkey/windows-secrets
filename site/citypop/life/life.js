@@ -73,6 +73,8 @@ function softStrip(key, w, h, col, a, seed, lumps) {
   g.globalCompositeOperation = 'destination-in';
   const e = g.createLinearGradient(0, 0, w, 0); e.addColorStop(0, 'rgba(0,0,0,0)'); e.addColorStop(0.15, '#000'); e.addColorStop(0.85, '#000'); e.addColorStop(1, 'rgba(0,0,0,0)');
   g.fillStyle = e; g.fillRect(0, 0, w, h);
+  const v = g.createLinearGradient(0, 0, 0, h); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(0.35, '#000'); v.addColorStop(0.65, '#000'); v.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = v; g.fillRect(0, 0, w, h);
   cache.set(k, cv); return cv;
 }
 
@@ -141,12 +143,60 @@ function adaptOld(m) {
   return a;
 }
 
+/* ------------------------------------------------------------------ scene2.json anchors -> the shapes life reads */
+function normalize(a) {
+  if (!a || a._norm) return a;
+  const o = Object.assign({}, a); o._norm = true;
+  const rect = (r) => (Array.isArray(r) ? { x: r[0], y: r[1], w: r[2], h: r[3] } : r);
+  if (Array.isArray(o.windows) && o.windows.length && Array.isArray(o.windows[0])) {
+    const f = o.windowsFields || ['x', 'y', 'w', 'h', 'lit', 'baked', 'hue', 'curtain', 'room', 'layer', 'dark'];
+    o.windows = o.windows.map((w) => { const r = {}; f.forEach((k, i) => { r[k] = w[i]; }); return r; });
+  }
+  if (o.stars) o.stars = { regions: (o.stars.regions || []).map(rect), points: (o.stars.points || []).map((p) => Array.isArray(p) ? p : [p.x, p.y, p.mag, p.col]) };
+  if (o.water && o.water[0] && o.water[0].moonPath && !o.moonPath) o.moonPath = o.water[0].moonPath;
+  if (o.regions) {
+    const r = Object.assign({}, o.regions);
+    if (r.sky) r.sky = rect(r.sky);
+    if (r.haze) r.haze = r.haze.map((h) => (Array.isArray(h) ? { y0: h[0], y1: h[1] } : h));
+    r.ghost = (r.ghost || r.motes || r.fireflies || []).map(rect);
+    o.regions = r;
+  }
+  if (o.vents) {
+    const bells = o.vents.filter((v) => v.kind === 'windbell');
+    if (bells.length) o.furin = (o.furin || []).concat(bells);
+    o.fans = o.vents.filter((v) => v.kind === 'fan');
+    // a few of the fans are water heaters breathing steam; the rest only hum
+    o.vents = o.vents.filter((v, i) => v.kind === 'steam' || (v.kind === 'fan' && hash(i, 3, 9100) < 0.12) || !v.kind);
+  }
+  if (o.paths) {
+    if (!o.stairs) o.stairs = o.paths.filter((p) => p.kind === 'lane');
+    if (!o.streets) o.streets = o.paths.filter((p) => p.kind === 'road');
+  }
+  if (o.stairs) o.stairs = o.stairs.map((st) => Object.assign({ w0: st.w || 20 }, st));
+  if (o.ferry && o.ferry.path && !o.ferry.pts) o.ferry = Object.assign({}, o.ferry);
+  if (o.shrine && o.shrine.lantern && !o.shrine.hang) o.shrine = Object.assign({}, o.shrine, { hang: [o.shrine.lantern[0], o.shrine.lantern[1] - 16] });
+  if (o.shrine && o.shrine.lantern) o.shrine = Object.assign({}, o.shrine, { x: o.shrine.lantern[0], y: o.shrine.lantern[1] });
+  return o;
+}
+// a point at fraction u along a polyline, by length
+function along(pts, u) {
+  if (pts.length < 2) return pts[0];
+  let L = 0; const seg = [];
+  for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); seg.push(d); L += d; }
+  let t = clamp(u, 0, 1) * L;
+  for (let i = 0; i < seg.length; i++) { if (t <= seg[i] || i === seg.length - 1) { const f = seg[i] ? clamp(t / seg[i], 0, 1) : 0; return [lerp(pts[i][0], pts[i + 1][0], f), lerp(pts[i][1], pts[i + 1][1], f)]; } t -= seg[i]; }
+  return pts[pts.length - 1];
+}
+
 /* ------------------------------------------------------------------ the engine */
 function create(opts) {
   opts = opts || {};
   const reduced = !!opts.reduced || matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const timeScale = opts.timeScale || 1;
-  const t0wall = performance.now(), base = (opts.epoch != null ? opts.epoch : Date.now() / 1000 - 1.7e9);
+  let qs = null; try { qs = new URLSearchParams(location.search); } catch (e) { /* none */ }
+  const timeScale = opts.timeScale || (qs && +qs.get('lifespeed')) || 1;     // ?lifespeed=20 to watch a night go by
+  const ONLY = opts.only || (qs && qs.get('lifeonly') ? qs.get('lifeonly').split(',') : null);
+  const SKIP = qs && qs.get('lifeskip') ? qs.get('lifeskip').split(',') : null;
+  const t0wall = performance.now(), base = (opts.epoch != null ? opts.epoch : 0) || (qs && +qs.get('lifeepoch')) || (Date.now() / 1000 - 1.7e9);
   const now = () => base + (performance.now() - t0wall) / 1000 * timeScale;
 
   let scene = opts.scene || null, A = null, view = null, U = 1;
@@ -156,7 +206,7 @@ function create(opts) {
   let occl = [], paused = false, timer = 0, raf = 0, dead = false;
   const surfaces = new Map(); let top = null;
   let actors = [], kinds = new Set();
-  const stat = { frames: 0, px: 0, since: performance.now(), fps: 0, pxs: 0 };
+  const stat = { frames: 0, paints: 0, px: 0, since: performance.now(), fps: 0, pps: 0, pxs: 0 };
 
   /* night curves */
   const deep = () => smooth(19.5, 26.5, hours) * (1 - smooth(27.5, 29.6, hours));     // 0 evening, 1 deepest
@@ -175,11 +225,13 @@ function create(opts) {
     }
     top = mkSurf(cv, 'top'); return top;
   }
-  function mkSurf(cv, name) { return { cv, ctx: cv.getContext('2d'), name, tiles: null, tw: 0, th: 0, any: false }; }
+  // each canvas repaints at most at its own rate: the far and slow layers less often, so fewer canvases change per frame
+  const RATE = { sky: 4, far: 4, mid: 4, near: 4, fg: 4, top: 4 };
+  function mkSurf(cv, name) { return { cv, ctx: cv.getContext('2d'), name, tiles: null, tw: 0, th: 0, any: false, urgent: false, last: 0, rate: RATE[name] || 6 }; }
   function surf(layer) {
     if (scene && typeof scene.overlay === 'function' && layer && layer !== 'top') {
       let s = surfaces.get(layer);
-      if (!s) { const cv = scene.overlay(layer); s = cv ? mkSurf(cv, layer) : topCanvas(); surfaces.set(layer, s); }
+      if (!s) { let cv = null; try { cv = scene.overlay(layer); } catch (e) { cv = null; } s = cv ? mkSurf(cv, layer) : topCanvas(); if (!s.tiles) sizeSurf(s); surfaces.set(layer, s); }
       return s;
     }
     return topCanvas();
@@ -205,7 +257,7 @@ function create(opts) {
       view = { w: W, h: H, scale, ox: Math.floor((cw - W * scale) / 2), oy: Math.floor((ch - H * scale) * 0.62), parallax: {} };
     }
     // the design unit: one sprite pixel is U device pixels; the 2560-wide art is drawn 1:1 at its design size
-    U = Math.max(1, Math.round(view.scale * A.w / 2560));
+    U = Math.max(1, Math.round(view.scale * (A.design === 320 ? 320 / 2560 : 1)));
   }
   function P(x, y, layer) { const p = (view.parallax && view.parallax[layer]) || [0, 0]; return [Math.round((x + p[0]) * view.scale + view.ox), Math.round((y + p[1]) * view.scale + view.oy)]; }
   const Ls = (v) => Math.max(1, Math.round(v * view.scale));     // an art length in device px
@@ -214,7 +266,7 @@ function create(opts) {
 
   /* -------- dirty tiles */
   function dirty(s, x, y, w, h) {
-    if (w <= 0 || h <= 0) return;
+    if (w <= 0 || h <= 0 || !s.tiles) return;
     for (const o of occl) if (x >= o.x && y >= o.y && x + w <= o.x + o.w && y + h <= o.y + o.h) return;
     const x0 = clamp(Math.floor(x / TILE), 0, s.tw - 1), x1 = clamp(Math.floor((x + w - 1) / TILE), 0, s.tw - 1);
     const y0 = clamp(Math.floor(y / TILE), 0, s.th - 1), y1 = clamp(Math.floor((y + h - 1) / TILE), 0, s.th - 1);
@@ -223,7 +275,7 @@ function create(opts) {
     s.any = true;
   }
   function flush(s) {
-    if (!s.any) return; s.any = false;
+    if (!s.any || !s.tiles) return; s.any = false;
     const g = s.ctx, list = s.list;
     // runs of dirty tiles per row, merged down while identical
     const rects = [];
@@ -269,10 +321,11 @@ function create(opts) {
   let nid = 0;
   function actor(kind, layer, o) {
     const a = Object.assign({ s: surf(layer), kind, id: ++nid * 7919 + kind.length, bx: 0, by: 0, bw: 0, bh: 0, wake: 0, key: undefined, hide: false }, o);
-    if (opts.only && !opts.only.includes(kind)) return a;      // diagnostics: only some kinds
+    if (ONLY && !ONLY.includes(kind)) return a;
+    if (SKIP && SKIP.includes(kind)) return a;      // diagnostics: only some kinds (opts.only, or ?lifeonly=star,window)
     kinds.add(kind); actors.push(a); return a;
   }
-  const FR = 1 / 30, FR15 = 1 / 15, FR8 = 1 / 8, BEAT_SLOW = 6, BEAT_FAST = 15;
+  const FR = 1 / 30, FR15 = 1 / 15, FR8 = 1 / 8, BEAT_IDLE = 3, BEAT_MUSIC = 6, BEAT_FAST = 8;
   const box = (a, x, y, w, h) => { a.bx = x; a.by = y; a.bw = w; a.bh = h; };
 
   /* ================================================================== the things */
@@ -295,7 +348,7 @@ function create(opts) {
     // stars: each twinkles at its own rate; the damp air dims them in slow passing veils
     (st.points || []).forEach((p, i) => {
       const [X, Y] = P(p[0], p[1], 'sky'), mag = p[2] == null ? 0.5 : p[2];
-      const col = C.star[(hash(i, 5, 3) * 4) | 0], rate = 0.35 + hash(i, 6, 3) * 1.2, big = mag > 0.82, s = big ? 2 * U : U;
+      const col = p[3] === 'blue' ? C.star[1] : p[3] === 'warm' ? C.star[2] : p[3] === 'white' ? C.star[0] : C.star[(hash(i, 5, 3) * 4) | 0], rate = 0.35 + hash(i, 6, 3) * 1.2, big = mag > 0.82, s = big ? 2 * U : U;
       const a = actor('star', 'sky', { i, lv: 0 });
       const r = big ? 2 * U + U : U;
       box(a, X - r, Y - r, s + 2 * r, s + 2 * r);
@@ -381,13 +434,13 @@ function create(opts) {
       const b = actor('moonring', 'sky', {}); const RR = Ls(m.r * 5.2);
       box(b, X - RR - 2, Y - RR - 2, 2 * RR + 4, 2 * RR + 4);
       b.upd = (T) => { b.lv = Math.round(wet() * (0.5 + 0.5 * vnoise(106, T / 40)) * 8); b.wake = T + 4; return b.lv; };
-      b.draw = (g) => { if (b.lv < 2) return; g.globalAlpha = b.lv / 8 * 0.07; g.strokeStyle = '#e8dcff'; g.lineWidth = Math.max(U, Ls(m.r * 0.5)); g.beginPath(); g.arc(X, Y, RR, 0, TAU); g.stroke(); };
+      b.draw = (g) => { if (b.lv < 2) return; g.globalAlpha = b.lv / 8 * 0.03; g.strokeStyle = '#e8dcff'; g.lineWidth = Math.max(U, Ls(m.r * 0.7)); g.beginPath(); g.arc(X, Y, RR, 0, TAU); g.stroke(); };
     }
     // thin clouds drifting across, very slowly, thinner as the night dries
     for (let i = 0; i < 4; i++) {
-      const w = Math.round((sx1 - sx0) * (0.25 + 0.2 * hash(i, 1, 107))), h = Math.round((sy1 - sy0) * (0.05 + 0.06 * hash(i, 2, 107)));
+      const w = Math.round((sx1 - sx0) * (0.25 + 0.2 * hash(i, 1, 107))), h = Math.round((sy1 - sy0) * (0.1 + 0.1 * hash(i, 2, 107)));
       const y = Math.round(lerp(sy0, sy1, 0.15 + 0.7 * hash(i, 3, 107))), v = (2 + 3 * hash(i, 4, 107)) * U / 10;   // device px per second
-      const strip = softStrip('cloud' + i, w, h, i % 2 ? '#7a5c98' : '#5a4680', 0.22, 300 + i, 22);
+      const strip = softStrip('cloud' + i, w, h, i % 2 ? '#7a5c98' : '#5a4680', 0.13, 300 + i, 34);
       const span = sx1 - sx0 + w, a = actor('cloud', 'sky', {});
       a.upd = (T) => {
         const x = sx0 - w + Math.floor(((T * v + hash(i, 5, 107) * span) % span));
@@ -417,16 +470,16 @@ function create(opts) {
     const [wx0, wy0] = P(W0.x, W0.y, L), [wx1, wy1] = P(W0.x + W0.w, W0.y + W0.h, L);
     // the moon's path: glints coming and going on the swell, wider toward us
     if (A.moonPath) {
-      const mp = A.moonPath, n = reduced ? 0 : 56;
+      const mp = A.moonPath, n = reduced ? 0 : (A.design === 320 ? 56 : 110);
       for (let i = 0; i < n; i++) {
         const a = actor('glint', L, {});
         const P0 = 0.6 + hash(i, 1, 120) * 1.6;
         a.upd = (T) => {
           const k = Math.floor(T / P0 + hash(i, 2, 120)), f = (T / P0 + hash(i, 2, 120)) - k;
           const v = hash(i, k, 121), yy = mp.y0 + (mp.y1 - mp.y0) * Math.pow(v, 0.8);
-          const spread = mp.w * (0.3 + 0.9 * (yy - mp.y0) / (mp.y1 - mp.y0)) / 2;
+          const dz = (yy - mp.y0) / (mp.y1 - mp.y0), spread = (mp.w0 != null ? lerp(mp.w0, mp.w1, dz) : mp.w * (0.3 + 0.9 * dz)) / 2;
           const xx = mp.x + (hash(i, k, 122) * 2 - 1) * spread * (0.4 + 0.6 * hash(i, k, 123));
-          const [X, Y] = P(xx, yy, L), len = U * (1 + ((hash(i, k, 124) * 3 * (0.5 + v)) | 0));
+          const [X, Y] = P(xx, yy, L), len = U * (1 + ((hash(i, k, 124) * 3 * (0.5 + v) * (A.design === 320 ? 1 : 1 + 2 * dz)) | 0));
           const on = f > 0.2 && f < 0.75; a.lv = on ? (f < 0.35 || f > 0.6 ? 1 : 2) : 0;
           a.X = X; a.Y = Y; a.len = len; box(a, X, Y, len, U);
           a.wake = T + P0 * (f < 0.2 ? 0.2 - f : f < 0.35 ? 0.35 - f : f < 0.6 ? 0.6 - f : f < 0.75 ? 0.75 - f : 1 - f) + 0.001;
@@ -436,9 +489,9 @@ function create(opts) {
       }
     }
     // the swell: long faint lines of light drifting along the strait
-    for (let i = 0; i < (reduced ? 0 : 34); i++) {
+    for (let i = 0; i < (reduced ? 0 : (A.design === 320 ? 34 : 70)); i++) {
       const a = actor('swell', L, {});
-      const yy = W0.y + W0.h * (0.05 + 0.9 * hash(i, 1, 130)), [, Y] = P(0, yy, L), len = Math.round((wx1 - wx0) * (0.01 + 0.03 * hash(i, 2, 130)) * (0.5 + (yy - W0.y) / W0.h));
+      const wh = A.train && A.design !== 320 ? Math.max(40, A.train.path[0][1] - 70 - W0.y) : W0.h, yy = W0.y + wh * (0.02 + 0.96 * Math.pow(hash(i, 1, 130), 1.4)), [, Y] = P(0, yy, L), len = Math.round((wx1 - wx0) * (0.01 + 0.03 * hash(i, 2, 130)) * (0.5 + (yy - W0.y) / wh));
       const v = (0.4 + hash(i, 3, 130)) * U * 0.6 * (hash(i, 4, 130) < 0.5 ? -1 : 1), col = hash(i, 5, 130) < 0.3 ? '#c8a0e0' : '#8e88d8';
       const span = wx1 - wx0 + len;
       a.upd = (T) => {
@@ -449,44 +502,78 @@ function create(opts) {
       a.draw = (g) => { g.globalAlpha = a.lv / 8 * 0.22; g.fillStyle = col; g.fillRect(a.X, Y, len, U); };
     }
     if (reduced) return;
+    // perspective: how big a thing at art-y looks, relative to the dock (1 at the near shore, small at the horizon)
+    const hy = (A.camera && A.camera.hy) || (A.water && A.water[0] ? A.water[0].y : 0), nearY = A.train ? A.train.path[0][1] : A.h;
+    const persp = (y) => (A.design === 320 ? 1 : clamp((y - hy) / Math.max(1, nearY - hy), 0.08, 1.5));
+    const unitAt = (y, base) => Math.max(U, Math.round(U * base * persp(y)));
     // small boats with a masthead light, crossing over minutes; their light trembles on the water below
     (A.boats || []).forEach((b, i) => {
-      const spr = sprite('boat', SPR.boat, SPAL.boat, U), pts = b.path || [[b.x - 30, b.y], [b.x + 30, b.y]];
-      const a = actor('boat', b.layer || L, {}), r = actor('boatlight', b.layer || L, {});
+      const pts = b.path || [[b.x - 30, b.y], [b.x + 30, b.y]], BL = b.layer || L;
+      if (b.kind === 'squid') {
+        // squid boats far out: a row of bright lamps (baked), breathing, their long reflections shivering
+        const [X, Y] = P(b.x, b.y, BL), w = Math.max(3 * U, Ls(b.w || 13)), a = actor('squidboat', BL, {});
+        box(a, X - 2 * U, Y - 3 * U, w + 4 * U, 16 * U);
+        a.upd = (T) => { a.k = Math.floor(T * 2.2 + i); a.dx = Math.round(Math.sin(T / 9 + i * 2) * 1.2) * U; a.wake = T + 1 / 2.2; return a.k * 10 + a.dx; };
+        a.draw = (g) => {
+          g.fillStyle = '#e8fff0';
+          for (let x = 0; x < w; x += 2 * U) { g.globalAlpha = 0.35 + 0.5 * hash(a.k, x, 142); g.fillRect(X + x, Y - U, U, U); }
+          g.fillStyle = '#c8e8ff';
+          for (let j = 1; j < 12; j++) { if (hash(a.k, j, 143) < 0.35) continue; g.globalAlpha = 0.28 * (1 - j / 13); g.fillRect(X + (w >> 1) + a.dx + Math.round((hash(a.k, j, 144) - 0.5) * 3) * U, Y + j * U, U, U); }
+        };
+        return;
+      }
+      if (A.design !== 320) {
+        // this boat is painted at anchor: only its lamp's light trembling on the water is ours
+        const [X, Y] = P(b.x + (b.w || 20) / 2, b.y, BL), m = actor('mooredlight', BL, {}); box(m, X - 3 * U, Y + U, 7 * U, 10 * U);
+        m.upd = (T) => { m.k = Math.floor(T * 2.5 + i); m.wake = T + 0.4; return m.k; };
+        m.draw = (g) => { g.fillStyle = C.amber; for (let j = 0; j < 9; j += 2) { if (hash(m.k, j, 145) < 0.3) continue; g.globalAlpha = 0.35 * (1 - j / 10); g.fillRect(X + Math.round((hash(m.k, j, 146) - 0.5) * 4) * U, Y + 2 * U + j * U, U * (j > 4 ? 2 : 1), U); } };
+        if (i !== 0) return;
+      }
+      // a small boat crossing (in the high-res art, on its own lane nearer the shore than the moored one)
+      const lane = A.design === 320 ? pts : pts.map((q) => [q[0] + (q === pts[0] ? -500 : 300), q[1] + 70]);
+      const a = actor('boat', BL, {}), r = actor('boatlight', BL, {});
       a.upd = (T) => {
-        const e = slotEv(140 + i, T, 300 + 80 * i, 0.7, 210);
+        const e = slotEv(140 + i, T, 360 + 80 * i, 0.7, 260);
         if (!e.on) { a.on = r.on = false; a.wake = e.next; box(a, 0, 0, 0, 0); return 'off'; }
-        const [X, Y] = P(lerp(pts[0][0], pts[1][0], e.u), lerp(pts[0][1], pts[1][1], e.u), b.layer || L);
-        a.on = true; a.X = X - 5 * U; a.Y = Y - 5 * U + (((T * 0.7) | 0) % 2 === 0 ? 0 : 0); box(a, a.X, a.Y, 10 * U, 5 * U);
-        a.wake = T + 0.25; return a.X * 10 + a.Y;
+        const dir = hash(140 + i, e.n, 3) < 0.5, q = along(lane, dir ? e.u : 1 - e.u), [X, Y] = P(q[0], q[1], BL), su = unitAt(q[1], 1.6);
+        a.on = true; a.su = su; a.dir = dir; a.X = X - 5 * su; a.Y = Y - 5 * su; box(a, a.X - 4 * su, a.Y - 5 * su, 18 * su, 10 * su);
+        a.wake = T + 0.25; return a.X * 10 + a.Y * 1e5 + su;
       };
-      a.draw = (g) => { if (!a.on) return; g.drawImage(spr, a.X, a.Y); g.globalAlpha = 0.35; g.drawImage(glow(C.amber, 4 * U), a.X + 4 * U - 4 * U, a.Y - 4 * U); g.globalAlpha = 1; g.fillStyle = C.red; g.fillRect(a.X + U, a.Y + 3 * U, U, U); };
+      a.draw = (g) => {
+        if (!a.on) return; const su = a.su;
+        g.drawImage(sprite('boat' + su, SPR.boat, SPAL.boat, su), a.X, a.Y);
+        g.globalAlpha = 0.3; g.drawImage(glow(C.amber, 4 * su), a.X + 4 * su - 4 * su, a.Y - 4 * su);
+        g.globalAlpha = 0.9; g.fillStyle = a.dir ? C.green : C.red; g.fillRect(a.X + (a.dir ? 8 : 1) * su, a.Y + 3 * su, su, su);
+      };
       r.upd = (T) => {
         if (!a.on) { r.on = false; r.wake = a.wake; box(r, 0, 0, 0, 0); return 'off'; }
-        r.on = true; r.X = a.X + 4 * U; r.Y = a.Y + 6 * U; r.k = Math.floor(T * 3); box(r, r.X - 2 * U, r.Y, 5 * U, 8 * U); r.wake = T + 1 / 3; return r.X * 100 + r.k;
+        const su = a.su; r.on = true; r.su = su; r.X = a.X + 4 * su; r.Y = a.Y + 6 * su; r.k = Math.floor(T * 3); box(r, r.X - 2 * su, r.Y, 5 * su, 9 * su); r.wake = T + 1 / 3; return r.X * 100 + r.k + r.Y * 1e6;
       };
       r.draw = (g) => {
-        if (!r.on) return; g.fillStyle = C.amber;
-        for (let j = 0; j < 7; j += 2) { g.globalAlpha = 0.45 * (1 - j / 8); const o = Math.round((hash(r.k, j, 141) - 0.5) * 3) * U; g.fillRect(r.X + o - (j > 3 ? U : 0), r.Y + j * U, U * (j > 3 ? 3 : 1), U); }
+        if (!r.on) return; const su = r.su; g.fillStyle = C.amber;
+        for (let j = 0; j < 8; j += 2) { g.globalAlpha = 0.45 * (1 - j / 9); const o = Math.round((hash(r.k, j, 141) - 0.5) * 3) * su; g.fillRect(r.X + o - (j > 3 ? su : 0), r.Y + j * su, su * (j > 3 ? 3 : 1), su); }
       };
     });
-    // the late ferry: a row of warm windows, slow
-    if (A.ferry) {
-      const pts = A.ferry.path, spr = sprite('ferry', SPR.ferry, SPAL.ferry, U), a = actor('ferry', A.ferry.layer || L, {}), r = actor('ferrylight', A.ferry.layer || L, {});
+    // the late ferry: leaves its dock, a row of warm windows, out across the strait (and, another time, back)
+    if (A.ferry && (A.ferry.path || []).length > 1) {
+      const pts = A.ferry.path, FL = A.ferry.layer || L, a = actor('ferry', FL, {}), r = actor('ferrylight', FL, {});
       a.upd = (T) => {
-        const e = slotEv(150, T, 720, deep() > 0.85 ? 0.3 : 0.85, 420);
+        const e = slotEv(150, T, 900, deep() > 0.85 ? 0.35 : 0.85, 520);
         if (!e.on) { a.on = r.on = false; a.wake = e.next; box(a, 0, 0, 0, 0); return 'off'; }
-        const [X, Y] = P(lerp(pts[0][0], pts[1][0], e.u), lerp(pts[0][1], pts[1][1], e.u), A.ferry.layer || L);
-        a.on = true; a.X = X - 14 * U; a.Y = Y - 4 * U; box(a, a.X - 2 * U, a.Y - 3 * U, 32 * U, 8 * U); a.wake = T + 0.3; return a.X * 10 + a.Y;
+        const out = hash(150, e.n, 3) < 0.6, u = out ? e.u : 1 - e.u, q = along(pts, smooth(0, 1, u)), [X, Y] = P(q[0], q[1], FL), su = unitAt(q[1], 1.5);
+        a.on = true; a.su = su; a.X = X - 14 * su; a.Y = Y - 4 * su; a.al = Math.round(Math.min(1, (1 - u) * 6 + 0.25, A.design === 320 ? 1 : Math.max(0, (u - 0.04) * 12)) * 8) / 8; if (a.al <= 0) { box(a, 0, 0, 0, 0); a.on = false; a.wake = T + 0.5; return 'dock'; } box(a, a.X - 2 * su, a.Y - 3 * su, 32 * su, 8 * su); a.wake = T + 0.3; return a.X * 10 + a.Y * 1e5 + su + a.al;
       };
-      a.draw = (g) => { if (!a.on) return; g.drawImage(spr, a.X, a.Y); g.fillStyle = C.green; g.globalAlpha = 0.8; g.fillRect(a.X + 27 * U, a.Y + U, U, U); g.fillStyle = C.white; g.fillRect(a.X + 13 * U, a.Y - 2 * U, U, U); };
+      a.draw = (g) => {
+        if (!a.on) return; const su = a.su; g.globalAlpha = a.al; g.drawImage(sprite('ferry' + su, SPR.ferry, SPAL.ferry, su), a.X, a.Y);
+        g.fillStyle = C.green; g.globalAlpha = 0.8 * a.al; g.fillRect(a.X + 27 * su, a.Y + su, su, su); g.fillStyle = C.white; g.fillRect(a.X + 13 * su, a.Y - 2 * su, su, su);
+      };
       r.upd = (T) => {
         if (!a.on) { r.on = false; r.wake = a.wake; box(r, 0, 0, 0, 0); return 'off'; }
-        r.on = true; r.X = a.X; r.Y = a.Y + 5 * U; r.k = Math.floor(T * 2.5); box(r, r.X, r.Y, 28 * U, 7 * U); r.wake = T + 0.4; return r.X * 100 + r.k;
+        r.on = true; r.su = a.su; r.al = a.al; r.X = a.X; r.Y = a.Y + 5 * a.su; r.k = Math.floor(T * 2.5); box(r, r.X, r.Y, 28 * a.su, 7 * a.su); r.wake = T + 0.4; return r.X * 100 + r.k + r.Y * 1e6;
       };
       r.draw = (g) => {
-        if (!r.on) return; g.fillStyle = '#ffd890';
-        for (let x = 3; x < 25; x += 2) for (let j = 0; j < 6; j += 2) { if (hash(r.k, x * 8 + j, 151) < 0.45) continue; g.globalAlpha = 0.3 * (1 - j / 7); g.fillRect(r.X + x * U + Math.round((hash(r.k, x + j, 152) - 0.5) * 2) * U, r.Y + j * U, U, U); }
+        if (!r.on) return; const su = r.su; g.fillStyle = '#ffd890';
+        for (let x = 3; x < 25; x += 2) for (let j = 0; j < 6; j += 2) { if (hash(r.k, x * 8 + j, 151) < 0.45) continue; g.globalAlpha = 0.3 * r.al * (1 - j / 7); g.fillRect(r.X + x * su + Math.round((hash(r.k, x + j, 152) - 0.5) * 2) * su, r.Y + j * su, su, su); }
       };
     }
     // buoys: a green and a red, each with its own patient count
@@ -557,9 +644,10 @@ function create(opts) {
     });
     // the tower tops: aviation red, breathing together
     (B.towers || []).forEach((p, i) => {
-      const [X, Y] = P(p[0] != null ? p[0] : p.x, p[1] != null ? p[1] : p.y, L), a = actor('towerlight', L, {});
+      const crane = p.kind === 'crane', [X, Y] = P(p[0] != null ? p[0] : p.x, p[1] != null ? p[1] : p.y, L), a = actor(crane ? 'cranelight' : 'towerlight', L, {});
+      const per = crane ? 3.3 + i * 0.37 : 2.4, off = crane ? i * 0.9 : 0;
       box(a, X - 4 * U, Y - 4 * U, 9 * U, 9 * U);
-      a.upd = (T) => { const ph = T % 2.4, v = ph < 1.2 ? Math.sin(ph / 1.2 * Math.PI) : 0; a.lv = Math.round(v * 8); a.wake = T + (reduced ? 30 : ph < 1.2 ? 0.1 : 2.4 - ph); return a.lv; };
+      a.upd = (T) => { const ph = (T + off) % per, on = per / 2, v = ph < on ? Math.sin(ph / on * Math.PI) : 0; a.lv = Math.round(v * 8); a.wake = T + (reduced ? 30 : ph < on ? 0.1 : per - ph); return a.lv; };
       a.draw = (g) => { g.globalAlpha = 0.25 + a.lv / 8 * 0.7; g.fillStyle = C.red; g.fillRect(X, Y, U, U); if (a.lv) { g.globalAlpha = a.lv / 8 * 0.4; g.drawImage(glow(C.red, 4 * U), X - 4 * U, Y - 4 * U); } };
     });
   }
@@ -573,7 +661,9 @@ function create(opts) {
       const hue = w.hue === 'tv' ? 'plain' : w.hue || 'warm', tv = room === 'tv' || w.hue === 'tv';
       const per = 120 + 520 * hash(i, 2, 200), bias = w.lit ? 0.35 : -0.1, baked = !!w.baked;
       const darkCol = w.dark ? `rgb(${w.dark[0]},${w.dark[1]},${w.dark[2]})` : dark || C.darker;
-      const warmC = hue === 'pink' ? C.pink : hue === 'cool' ? C.cool[i % 4] : C.warm[i % 5];
+      // room light: warm lamps mostly; a few cool kitchens, a pink one; values sit in the scene's night, never pastel
+      const ROOM = { warm: [['#f0b060', '#c88444'], ['#eaa458', '#b8763c'], ['#f4c070', '#cc8c4c'], ['#e89c5c', '#b06c3c']], cool: [['#a8b4e8', '#7a84c0']], pink: [['#e07aa8', '#a84c80']] };
+      const rc = (ROOM[hue] || ROOM.warm)[i % (ROOM[hue] || ROOM.warm).length], big = ww >= 5 * U && hh >= 5 * U;
       const a = actor('window', L, { i }); box(a, X, Y, ww, hh);
       const canSil = ww >= 3 * U && hh >= 3 * U, canCurt = w.curtain && ww >= 3 * U;
       const litAt = (T) => {     // lit or not in this slot, from the hour, the window's habit and the seed
@@ -599,16 +689,27 @@ function create(opts) {
         const lit = a.k;
         if (baked) {      // the art has it lit: we may only darken it, or add a delta
           if (lit >= 1 && !a.tv && a.sil < 0) return;
-          if (lit < 1) { g.globalAlpha = 1 - lit; g.fillStyle = darkCol; g.fillRect(X, Y, ww, hh); g.globalAlpha = 1; }
+          if (lit < 1) { g.globalAlpha = (1 - lit) * 0.9; g.fillStyle = darkCol; g.fillRect(X, Y, ww, hh); g.globalAlpha = 1; }
         } else if (dark && lit < 1) { g.fillStyle = darkCol; g.fillRect(X, Y, ww, hh); }
         if (lit <= 0) return;
         if (!baked) {
-          g.globalAlpha = lit * 0.92; g.fillStyle = a.desk ? C.warmDim : warmC; g.fillRect(X, Y, ww, hh);
-          if (hh > 2 * U) { g.globalAlpha = lit * 0.35; g.fillStyle = '#fff2d0'; g.fillRect(X, Y + hh - U, ww, U); }   // the sill catches the light
-          if (a.desk) { g.globalAlpha = lit; g.fillStyle = '#fff0c0'; g.fillRect(X + ww - 2 * U < X ? X : X + ww - 2 * U, Y + hh - 2 * U < Y ? Y : Y + hh - 2 * U, U, U); }
-        }
-        if (a.tv) { g.globalAlpha = lit * (0.35 + a.tv * 0.1); g.fillStyle = C.cool[a.tv % 4]; g.fillRect(X, Y, ww, hh); }
-        if (a.cur) { g.globalAlpha = lit * 0.5; g.fillStyle = '#e8c8a8'; g.fillRect(X, Y, U * a.cur + U, hh); }
+          if (a.tv) {           // a dark room lit only by the set: deep blue, its brightness jumping with the cuts
+            g.globalAlpha = lit * (0.32 + a.tv * 0.07); g.fillStyle = a.tv === 5 ? '#8a9ae8' : '#5a68c0'; g.fillRect(X, Y, ww, hh);
+          } else if (a.desk) {  // a desk lamp in a dark room: a dim warm room and one bright corner
+            g.globalAlpha = lit * 0.55; g.fillStyle = '#7a4e34'; g.fillRect(X, Y, ww, hh);
+            const lx = X + Math.max(0, ww - 3 * U), ly = Y + Math.max(0, hh - 3 * U);
+            g.globalAlpha = lit * 0.9; g.fillStyle = '#ffe2a8'; g.fillRect(lx, ly, Math.min(ww, 2 * U), Math.min(hh, 2 * U));
+            if (big) { g.globalAlpha = lit * 0.35; g.fillStyle = '#d89a5c'; g.fillRect(Math.max(X, lx - 2 * U), Math.max(Y, ly - 2 * U), Math.min(ww, 5 * U), Math.min(hh, 4 * U)); }
+          } else {              // a lamp-lit room: darker at the top, brighter where the lamp is
+            g.globalAlpha = lit * 0.82; g.fillStyle = rc[1]; g.fillRect(X, Y, ww, hh);
+            const top = big ? Math.round(hh * 0.35) : 0; g.globalAlpha = lit * 0.85; g.fillStyle = rc[0]; g.fillRect(X, Y + top, ww, hh - top);
+          }
+          if (big) {            // the frame and glazing bars, in the wall's dark, so it reads as a window
+            g.globalAlpha = lit * 0.75; g.fillStyle = darkCol;
+            g.fillRect(X + (ww >> 1), Y, U, hh); if (hh >= 8 * U) g.fillRect(X, Y + Math.round(hh * 0.45), ww, U);
+          }
+        } else if (a.tv) { g.globalAlpha = lit * (0.12 + a.tv * 0.04); g.fillStyle = '#7080e0'; g.fillRect(X, Y, ww, hh); }
+        if (a.cur) { g.globalAlpha = lit * 0.45; g.fillStyle = '#e6c49c'; g.fillRect(X, Y, Math.min(ww, Math.round(ww * 0.3) + U * a.cur), hh); }
         if (a.sil >= 0) {
           const sw = Math.max(U, Math.round(ww * 0.35)), sx = Math.round(X - sw + (ww + sw) * a.sil);
           const x0 = Math.max(X, sx), x1 = Math.min(X + ww, sx + sw);
@@ -619,29 +720,31 @@ function create(opts) {
 
     // neon signs: steady hum, and once in a while a stutter
     (A.signs || []).forEach((s, i) => {
-      const L = s.layer || 'mid', [X, Y] = P(s.x, s.y, L), [X1, Y1] = P(s.x + s.w, s.y + s.h, L), a = actor('neon', L, {});
+      const L = s.layer || 'mid', [X, Y] = P(s.x, s.y, L), [X1, Y1] = P(s.x + s.w, s.y + s.h, L), a = actor(s.neon === false ? 'signlight' : 'neon', L, {});
+      const tube = s.neon === false ? '#fff0d8' : C.pinkHot, halo = s.neon === false ? '#ffe0b0' : C.pink;
       const gw = Math.max(X1 - X, Y1 - Y); box(a, X - gw, Y - gw / 2 | 0, X1 - X + 2 * gw, Y1 - Y + gw);
       a.upd = (T) => {
         let v = 0.82 + 0.1 * vnoise(2100 + i, T * 0.8) + 0.06 * bass;
-        const e = reduced ? { on: false, next: T + 60 } : slotEv(2100 + i, T, 70, 0.35, 1.4);
+        const e = reduced || s.neon === false ? { on: false, next: T + 60 } : slotEv(2100 + i, T, 70, 0.35, 1.4);
         if (e.on) v *= hash(i, Math.floor(e.u * 14), 2101) < 0.45 ? 0.25 : 1;
         a.lv = Math.round(v * 12); a.wake = Math.min(e.on ? T + 0.1 : e.next, T + (reduced ? 30 : 0.5)); return a.lv;
       };
       a.draw = (g) => {
-        g.globalAlpha = a.lv / 12 * 0.18; g.fillStyle = C.pink; g.fillRect(X - U, Y - U, X1 - X + 2 * U, Y1 - Y + 2 * U);
-        g.globalAlpha = a.lv / 12 * 0.75; g.fillStyle = C.pinkHot; g.fillRect(X + ((X1 - X) >> 1) - (U >> 1), Y + U, U, Math.max(U, Y1 - Y - 2 * U));
+        g.globalAlpha = a.lv / 12 * (s.neon === false ? 0.08 : 0.18); g.fillStyle = halo; g.fillRect(X - U, Y - U, X1 - X + 2 * U, Y1 - Y + 2 * U);
+        g.globalAlpha = a.lv / 12 * (s.neon === false ? 0.3 : 0.75); g.fillStyle = tube; g.fillRect(X + ((X1 - X) >> 1) - (U >> 1), Y + U, U, Math.max(U, Y1 - Y - 2 * U));
       };
     });
 
     // lamps: the bulb breathes with the bass; moths keep company with the street lamps
     (A.lamps || []).forEach((l, i) => {
-      const L = l.layer || 'mid', [X, Y] = P(l.x, l.y, L), R = Math.max(3 * U, Ls(l.r || 4)), a = actor('lamp', L, {});
+      const L = l.layer || 'mid', bulb = l.bulb, [X, Y] = bulb ? P(bulb[0], bulb[1], L) : P(l.x, l.y, L), BW = bulb ? Math.max(U, Ls(bulb[2])) : U, BH = bulb ? Math.max(U, Ls(bulb[3])) : U;
+      const R = Math.max(3 * U, Math.round(Ls(l.r || 4) * (bulb ? 0.35 : 1))), gk = bulb ? 0.22 : 0.4, a = actor('lamp', L, {});
       const col = l.kind === 'vending' ? '#d8f0ff' : l.kind === 'lantern' ? '#ffb060' : C.sodium;
       box(a, X - R, Y - R, 2 * R + 1, 2 * R + 1);
       a.upd = (T) => { a.lv = Math.round((0.75 + 0.1 * vnoise(2200 + i, T / 5) + 0.15 * bass) * 20); a.wake = T + (reduced ? 30 : 0.25); return a.lv; };
-      a.draw = (g) => { g.globalAlpha = a.lv / 20 * 0.4; g.drawImage(glow(col, R), X - R, Y - R); g.globalAlpha = a.lv / 20; g.fillStyle = '#fff6e0'; g.fillRect(X, Y, U, U); };
+      a.draw = (g) => { g.globalAlpha = a.lv / 20 * gk; g.drawImage(glow(col, R), X + (BW >> 1) - R, Y + (BH >> 1) - R); g.globalAlpha = a.lv / 20 * 0.9; g.fillStyle = '#fff6e0'; g.fillRect(X, Y, BW, BH); };
       if (reduced || l.kind === 'vending') return;
-      const nm = l.kind === 'street' ? 3 : 1;
+      const nm = l.kind === 'street' ? 3 : l.kind === 'porch' && hash(i, 1, 2290) < 0.6 ? 0 : 1;
       for (let j = 0; j < nm; j++) {
         const m = actor('moth', L, {}), ph = hash(i, j, 2300) * 100;
         m.upd = (T) => {
@@ -657,7 +760,7 @@ function create(opts) {
 
     // the vending machine: a cold steady glow, the selection lamps stepping, the compressor's sigh
     if (A.vending) {
-      const v = A.vending, L = v.layer || 'near', [X, Y] = P(v.x, v.y, L), [X1, Y1] = P(v.x + v.w, v.y + v.h, L), w = X1 - X, h = Y1 - Y;
+      const v = A.vending, L = v.layer || 'near', pr = v.panel || [v.x, v.y, v.w, v.h * 0.55], [X, Y] = P(pr[0], pr[1], L), [X1, Y1] = P(pr[0] + pr[2], pr[1] + pr[3], L), w = X1 - X, h = Math.round((Y1 - Y) / 0.55);
       const a = actor('vending', L, {}); box(a, X - 2 * U, Y - 2 * U, w + 4 * U, h + 4 * U);
       a.upd = (T) => {
         let v2 = 0.9 + 0.05 * Math.sin(T * 0.9);
@@ -666,7 +769,8 @@ function create(opts) {
         a.lv = Math.round(v2 * 16); a.sel = reduced ? 0 : Math.floor(T / 1.6) % 6; a.wake = T + (e.on ? 0.15 : 0.4); return a.lv * 10 + a.sel;
       };
       a.draw = (g) => {
-        g.globalAlpha = a.lv / 16 * 0.28; g.fillStyle = '#d8ecff'; g.fillRect(X, Y, w, Math.round(h * 0.55));
+        if (a.lv < 14) { g.globalAlpha = (14 - a.lv) / 14 * 1.6; g.fillStyle = '#20223a'; g.fillRect(X, Y, w, Math.round(h * 0.55)); }
+        else { g.globalAlpha = (a.lv - 13) / 4 * 0.12; g.fillStyle = '#eef6ff'; g.fillRect(X, Y, w, Math.round(h * 0.55)); }
         const rowY = Y + Math.round(h * 0.6);
         for (let k = 0; k < 6; k++) { const bx = X + U + Math.round(k * (w - 2 * U) / 6); g.globalAlpha = k === a.sel ? 0.9 : 0.25; g.fillStyle = k === a.sel ? '#ff9a60' : '#9fd0ff'; g.fillRect(bx, rowY, U, U); }
       };
@@ -704,7 +808,26 @@ function create(opts) {
     });
 
     // the cat: asleep on the wall, breathing; now and then it wakes, looks about, stretches, and settles again
-    if (A.cat) {
+    if (A.cat && A.cat.head) {
+      const c = A.cat, L = c.layer || 'mid', [HX, HY] = P(c.head[0], c.head[1], L), [TX, TY] = P(c.tail[0], c.tail[1], L), cu = Math.max(U, Ls(1));
+      const a = actor('cat', L, {}); box(a, Math.min(HX, TX) - 8 * cu, Math.min(HY, TY) - 8 * cu, Math.abs(HX - TX) + 16 * cu, Math.abs(HY - TY) + 12 * cu);
+      a.upd = (T) => {
+        const e = reduced ? { on: false, next: T + 300 } : slotEv(2700, T, 240, 0.8, 30);
+        const tw = slotEv(2701, T, 40, 0.6, 0.5);      // an ear twitch, asleep
+        a.eyes = 0; a.tail = 0; a.ear = tw.on ? 1 : 0; let wake = Math.min(e.next, tw.on ? tw.next : tw.next);
+        if (e.on) {
+          const t = e.u * 30; a.ear = 1;
+          a.eyes = t < 1 || t > 27 ? 0 : (((t * 1.7) | 0) % 9 === 4 ? 0 : 1 + ((t / 6) | 0) % 2);   // open, a slow blink, looking left/right
+          a.tail = t > 8 && t < 22 ? 1 + (((t * 1.5) | 0) % 3) : 0; wake = T + 0.2;
+        }
+        a.wake = wake; return a.eyes * 100 + a.tail * 10 + a.ear;
+      };
+      a.draw = (g) => {
+        if (a.ear) { g.globalAlpha = 0.9; g.fillStyle = '#1a1220'; g.fillRect(HX - 2 * cu, HY - 6 * cu, cu, 2 * cu); g.fillRect(HX + 2 * cu, HY - 6 * cu, cu, 2 * cu); }
+        if (a.eyes) { const dx = a.eyes === 2 ? -cu : 0; g.globalAlpha = 0.95; g.fillStyle = '#d8f080'; g.fillRect(HX - 2 * cu + dx, HY - 2 * cu, cu, cu); g.fillRect(HX + cu + dx, HY - 2 * cu, cu, cu); g.globalAlpha = 0.25; g.drawImage(glow('#d8f080', 3 * cu), HX - 3 * cu, HY - 5 * cu); }
+        if (a.tail) { g.globalAlpha = 0.95; g.fillStyle = '#2a1c22'; const k = a.tail; for (let j = 0; j < 5; j++) g.fillRect(TX - j * cu, TY - Math.round(Math.sin(j / 4 * Math.PI * 0.5) * k * 1.5) * cu - j * cu, cu, cu); }
+      };
+    } else if (A.cat) {
       const c = A.cat, L = c.layer || 'mid', [X, Y] = P(c.x, c.y, L), [X1] = P(c.x + c.w, c.y, L);
       const cu = Math.max(U, Math.round((X1 - X) / 12)), a = actor('cat', L, {});
       const fr = {}; for (const k of ['catSleep', 'catBreath', 'catUp', 'catUpBlink', 'catStretch', 'catTail']) fr[k] = sprite(k, SPR[k], SPAL.cat, cu);
@@ -749,6 +872,49 @@ function create(opts) {
       a.upd = (T) => { const k = Math.floor(T / per), f = T / per - k; a.on = hash(i, k, 3301) < 0.55 * wet() && f > 0.3 && f < 0.5; a.wake = T + per * (f < 0.3 ? 0.3 - f : f < 0.5 ? 0.5 - f : 1.3 - f); return a.on ? 1 : 0; };
       a.draw = (g) => { if (a.on) { g.globalAlpha = 0.55; g.fillStyle = C.wet; g.fillRect(X, Y, U, U); } };
     }
+
+    // potted plants on the steps and sills: a wet leaf catching the light now and then, nodding in the breeze
+    (A.plants || []).forEach((pl, i) => {
+      if (reduced) return;
+      const L = pl.layer || 'mid', [X, Y] = P(pl.x, pl.y, L), a = actor('dew', L, {}), per = 5 + 9 * hash(i, 1, 5100);
+      box(a, X - 3 * U, Y - 4 * U, 7 * U, 6 * U);
+      a.upd = (T) => {
+        const k = Math.floor(T / per + hash(i, 2, 5100)), f = T / per + hash(i, 2, 5100) - k, on = hash(i, k, 5101) < 0.35 * (0.4 + 0.6 * wet()) && f > 0.2 && f < 0.45;
+        const b = breeze(T); a.dx = b > 0.55 ? Math.round(Math.sin(T * 2.1 + i)) * U : 0;
+        a.on = on; a.ox = Math.round((hash(i, k, 5102) - 0.5) * 4) * U; a.oy = -Math.round(hash(i, k, 5103) * 3) * U;
+        a.wake = T + (on ? 0.3 : Math.min(0.6, per * (f < 0.2 ? 0.2 - f : 1.2 - f))); return (on ? 1 : 0) + a.dx * 10 + a.ox * 100 + a.oy * 1e4;
+      };
+      a.draw = (g) => { if (!a.on) return; g.globalAlpha = 0.75; g.fillStyle = '#e4f0ff'; g.fillRect(X + a.ox + a.dx, Y + a.oy, U, U); };
+    });
+    // trees: their leaves turn and shine a little when the breeze comes, and drip after
+    (A.trees || []).forEach((t, i) => {
+      if (reduced) return;
+      const L = t.layer || 'mid', [X, Y] = P(t.x, t.y, L), R = Math.max(3 * U, Ls(t.r || 10));
+      for (let j = 0; j < 4; j++) {
+        const a = actor('leaf', L, {}), ang = hash(i, j, 5200) * TAU, rr = R * (0.3 + 0.6 * hash(i, j, 5201));
+        const lx = Math.round(X + Math.cos(ang) * rr), ly = Math.round(Y + Math.sin(ang) * rr * 0.8);
+        box(a, lx - U, ly - U, 3 * U, 3 * U);
+        a.upd = (T) => { const b = breeze(T); a.lv = b > 0.5 ? Math.round(clamp((b - 0.5) * 2 * (0.5 + 0.5 * Math.sin(T * 3.3 + j * 2 + i)), 0, 1) * 4) : 0; a.wake = T + (b > 0.45 ? 0.25 : 1.5); return a.lv; };
+        a.draw = (g) => { if (!a.lv) return; g.globalAlpha = a.lv / 4 * 0.5; g.fillStyle = '#9fb8d8'; g.fillRect(lx, ly, U, U); };
+      }
+      dropper('treedrip', t.x + (hash(i, 1, 5202) - 0.5) * (t.r || 10), t.y + (t.r || 10) * 0.6, L, 5300 + i, 9 + 10 * hash(i, 2, 5202), Math.max(8, (t.r || 10) * 0.9), '#c8d8f8');
+    });
+    // utility poles: a bead of rain on an insulator arm; at first light a small bird perches
+    (A.poles || []).forEach((po, i) => {
+      const L = po.layer || 'mid', arms = po.arms || [[po.x, po.y]];
+      if (!reduced) { const q = arms[(hash(i, 1, 5400) * arms.length) | 0]; dropper('armdrip', q[0], q[1] + 1, L, 5400 + i, 10 + 14 * hash(i, 2, 5400), 14 + 10 * hash(i, 3, 5400), '#d0d8f8'); }
+      const q = arms[(hash(i, 4, 5400) * arms.length) | 0], [X, Y] = P(q[0], q[1], L), a = actor('perch', L, {}), bu = Math.max(U, Ls(1));
+      box(a, X - 3 * bu, Y - 4 * bu, 7 * bu, 4 * bu);
+      a.upd = (T) => { const e = slotEv(5450 + i, T, 120, dawn() > 0.2 ? 0.7 : 0.05, 70); a.on = e.on; a.f = e.on ? (((T * 0.7) | 0) % 5 === 0 ? 1 : 0) : 0; a.wake = e.on ? T + 0.5 : Math.min(e.next, T + 20); return (a.on ? 1 : 0) + a.f * 2; };
+      a.draw = (g) => { if (!a.on) return; g.globalAlpha = 0.95; g.fillStyle = '#1c1624'; g.fillRect(X - bu, Y - 2 * bu, 3 * bu, 2 * bu); g.fillRect(X + (a.f ? 2 : 1) * bu, Y - 3 * bu, bu, bu); g.fillRect(X - 2 * bu, Y - bu, bu, bu); };
+    });
+    // the pagoda on the far hill keeps a small lamp at its foot
+    if (A.shrine_pagoda) {
+      const sp = A.shrine_pagoda, [X, Y] = P(sp.x, (sp.base || sp.y) - 6, 'far'), a = actor('pagodalamp', 'far', {});
+      box(a, X - 6 * U, Y - 6 * U, 13 * U, 13 * U);
+      a.upd = (T) => { a.lv = Math.round((0.7 + 0.3 * vnoise(5500, T * 1.5)) * 6); a.wake = T + (reduced ? 60 : 0.35); return a.lv; };
+      a.draw = (g) => { g.globalAlpha = a.lv / 6 * 0.3; g.drawImage(glow('#ffb860', 6 * U), X - 6 * U, Y - 6 * U); g.globalAlpha = a.lv / 6 * 0.8; g.fillStyle = '#ffd8a0'; g.fillRect(X, Y, U, U); };
+    }
   }
 
   // a breeze shared by everything that sways: mostly still, sometimes a long soft gust
@@ -772,7 +938,7 @@ function create(opts) {
     a.draw = (g) => {
       g.fillStyle = col;
       if (a.st === 0) { g.globalAlpha = a.sz ? 0.85 : 0.45; g.fillRect(X, Y, U, U); if (a.sz) { g.globalAlpha = 0.3; g.fillRect(X, Y + U, U, U); } }
-      else if (a.st === 1) { g.globalAlpha = 0.8; g.fillRect(X, Y + a.dy, U, U); g.globalAlpha = 0.25; g.fillRect(X, Y + a.dy - U, U, U); }
+      else if (a.st === 1) { g.globalAlpha = 0.8; g.fillRect(X, Y + a.dy, U, U); g.globalAlpha = 0.3; g.fillRect(X, Y + a.dy - 3 * U, U, 3 * U); g.globalAlpha = 0.12; g.fillRect(X, Y + a.dy - 6 * U, U, 3 * U); }
       else if (a.st === 2) { g.globalAlpha = 0.5; g.fillRect(X - U, Y + F, U, U); g.fillRect(X + U, Y + F, U, U); g.globalAlpha = 0.3; g.fillRect(X - 2 * U, Y + F + U, U, U); g.fillRect(X + 2 * U, Y + F + U, U, U); }
     };
     return a;
@@ -782,18 +948,21 @@ function create(opts) {
   function street() {
     // drips: eaves and leaf tips
     if (!reduced) {
-      (A.eaves || []).forEach((e, i) => { const n = Math.max(1, Math.round((e.x1 - e.x0) / (A.design === 320 ? 6 : 48))); for (let j = 0; j < n; j++) dropper('eavedrip', e.x0 + (e.x1 - e.x0) * (j + 0.5) / n, e.y, e.layer || 'mid', 3400 + i * 16 + j, 5 + 9 * hash(i, j, 3400), A.design === 320 ? 6 : 40, '#c0c8f0'); });
-      (A.drips || []).forEach((d, i) => dropper('leafdrip', d.x, d.y, d.layer || 'near', 3500 + i, 6 + 12 * hash(i, 1, 3500), A.design === 320 ? 8 : 60, '#d0e0ff'));
+      (A.eaves || []).forEach((e, i) => { if (A.design !== 320 && hash(i, 0, 3399) > 0.62) return; const n = A.design === 320 ? Math.max(1, Math.round((e.x1 - e.x0) / 6)) : 1 + (hash(i, 1, 3399) < 0.25 ? 1 : 0); for (let j = 0; j < n; j++) dropper('eavedrip', e.x0 + (e.x1 - e.x0) * (j + 0.5) / n, e.y, e.layer || 'mid', 3400 + i * 16 + j, 5 + 9 * hash(i, j, 3400), A.design === 320 ? 6 : 40, '#c0c8f0'); });
+      (A.drips || []).forEach((d, i) => (A.design === 320 || hash(i, 0, 3499) < 0.6) && dropper('leafdrip', d.x, d.y, d.layer || 'near', 3500 + i, 6 + 12 * hash(i, 1, 3500), A.design === 320 ? 8 : 60, '#d0e0ff'));
       // raindrops beading on the wires, sliding to the low point, letting go
       (A.wires || []).forEach((w, i) => {
         const pts = w.pts, L = w.layer || 'sky';
         for (let j = 0; j < 3; j++) {
           const a = actor('wirebead', L, {}), per = 14 + 16 * hash(i, j, 3600), seg = (hash(i, j, 3601) * (pts.length - 1)) | 0;
-          const p0 = pts[seg], p1 = pts[seg + 1], down = p1[1] > p0[1] ? 1 : 0, st = down ? p0 : p1, en = down ? p1 : p0;
+          let k0 = seg, dir = pts[Math.min(pts.length - 1, seg + 1)][1] >= pts[seg][1] ? 1 : -1; const sub = [pts[k0]];
+          for (let k = k0 + dir; k >= 0 && k < pts.length && sub.length < 8; k += dir) { if (pts[k][1] < sub[sub.length - 1][1] - 0.01) break; sub.push(pts[k]); }
+          if (sub.length < 2) sub.push([pts[k0][0] + 1, pts[k0][1]]);
+          const st = sub[0], en = sub[sub.length - 1];
           a.upd = (T) => {
             const f = (T / per + hash(i, j, 3602)) % 1;
             if (f > 0.85) { a.on = false; box(a, 0, 0, 0, 0); a.wake = T + (1 - f) * per; return 'off'; }
-            const u = smooth(0, 0.8, f), [X, Y] = P(lerp(st[0], en[0], u * 0.9), lerp(st[1], en[1], u * 0.9) + 0.2, L);
+            const u = smooth(0, 0.8, f), q = along(sub, u * 0.95), [X, Y] = P(q[0], q[1] + 0.2, L);
             a.on = true; a.X = X; a.Y = Y + U; a.lv = f > 0.8 ? 2 : 1; box(a, X, Y + U, U, U); a.wake = T + 0.3; return X * 1e4 + Y * 2 + a.lv;
           };
           a.draw = (g) => { if (a.on) { g.globalAlpha = a.lv === 2 ? 0.9 : 0.55; g.fillStyle = '#dfe4ff'; g.fillRect(a.X, a.Y, U, U); } };
@@ -835,7 +1004,7 @@ function create(opts) {
     // the shrine lantern: hung on its cord, swaying in the breeze, candle-warm
     if (A.shrine) {
       const s = A.shrine, L = s.layer || 'mid', hp = s.hang || [s.x, s.y - 4], [HX, HY] = P(hp[0], hp[1], L), [, LY] = P(s.x, s.y, L);
-      const lu = Math.max(U, Math.round(Ls(A.design === 320 ? 1 : 6) / 2)), spr = sprite('lantern' + lu, SPR.lantern, SPAL.lantern, lu), a = actor('lantern', L, {});
+      const lu = Math.max(U, A.design === 320 ? Math.round(Ls(1) / 2) : Ls(2)), spr = sprite('lantern' + lu, SPR.lantern, SPAL.lantern, lu), a = actor('lantern', L, {});
       const len = Math.max(2 * U, LY - HY);
       box(a, HX - 8 * lu, HY, 16 * lu, len + 9 * lu + 8 * lu);
       a.upd = (T) => {
@@ -854,9 +1023,9 @@ function create(opts) {
     // the night train along the shore: lit windows sliding past, a headlight, the crossing bells' lamps
     if (A.train) {
       const tp = A.train.path, L = A.train.layer || 'mid', [AX, AY] = P(tp[0][0], tp[0][1], L), [BX, BY] = P(tp[tp.length - 1][0], tp[tp.length - 1][1], L);
-      const carW = 46 * U, a = actor('train', L, {fast: true });
+      const carW = A.train.car ? Ls(A.train.car) : 46 * U, TH = A.train.h ? Math.max(3 * U, Ls(A.train.h)) : 5 * U, wh = Math.max(U, Math.round(TH * 0.3)), a = actor('train', L, { fast: true });
       const trainAt = (T) => {
-        const per = 300, prob = hours > 25.3 && hours < 28.6 ? 0.3 : 0.9; const e = slotEv(4000, T, per, prob, 120);
+        const per = 300, prob = hours > 25.3 && hours < 28.6 ? 0.2 : 0.6; const e = slotEv(4000, T, per, prob, 120);
         if (!e.on) return { on: false, next: e.next };
         const cars = 3 + ((hash(4000, e.n, 4) * 4) | 0), dir = hash(4000, e.n, 5) < 0.5, len = cars * carW;
         const x = dir ? lerp(AX - len, BX, e.u) : lerp(BX, AX - len, e.u);
@@ -866,15 +1035,16 @@ function create(opts) {
         const s = trainAt(T); a.tr = s;
         if (!s.on) { box(a, 0, 0, 0, 0); a.wake = s.next; return 'off'; }
         const y = Math.round(lerp(AY, BY, 0.5)); a.y = y;
-        box(a, s.x - 8 * U, y - 7 * U, s.cars * carW + 16 * U, 14 * U); a.wake = T + 120 / Math.max(1, Math.abs(BX - AX) + s.cars * carW); return s.x;
+        box(a, s.x - 8 * U, y - TH - 4 * U, s.cars * carW + 16 * U, TH + 10 * U); a.wake = T + 120 / Math.max(1, Math.abs(BX - AX) + s.cars * carW); return s.x;
       };
       a.draw = (g) => {
         const s = a.tr; if (!s || !s.on) return; const y = a.y;
         for (let c = 0; c < s.cars; c++) {
           const x = s.x + c * carW;
-          g.globalAlpha = 0.95; g.fillStyle = '#100c1c'; g.fillRect(x + U, y - 5 * U, carW - 2 * U, 5 * U);
-          g.fillStyle = '#ffe6b0';
-          for (let k = 3 * U; k < carW - 5 * U; k += 4 * U) { if (hash(s.n, c * 40 + k, 4001) < 0.15) continue; g.globalAlpha = 0.85; g.fillRect(x + k, y - 4 * U, 2 * U, 2 * U); }
+          g.globalAlpha = 0.95; g.fillStyle = '#100c1c'; g.fillRect(x + U, y - TH, carW - 2 * U, TH);
+          g.globalAlpha = 0.5; g.fillStyle = '#3a3050'; g.fillRect(x + U, y - TH, carW - 2 * U, U);      // the roof catches the moon
+          g.fillStyle = '#ffe6b0'; const step = Math.max(3 * U, wh * 2);
+          for (let k = 3 * U; k < carW - 4 * U - wh; k += step) { if (hash(s.n, c * 97 + k, 4001) < 0.15) continue; g.globalAlpha = 0.85; g.fillRect(x + k, y - TH + Math.round(TH * 0.3), wh + U, wh); }
           g.globalAlpha = 0.18; g.fillStyle = '#ffe0a0'; g.fillRect(x + 2 * U, y + U, carW - 4 * U, U);       // the lit windows on the wet ballast
         }
         const hx = s.dir ? s.x + s.cars * carW - U : s.x; g.globalAlpha = 0.9; g.fillStyle = C.white; g.fillRect(hx, y - 2 * U, U, U);
@@ -897,7 +1067,9 @@ function create(opts) {
       }
       // the level crossing's two lamps, alternating while a train is near
       if (A.crossing) {
-        const [X, Y] = P(A.crossing.x, A.crossing.y, L), c = actor('crossing', L, {}); box(c, X - 3 * U, Y - 3 * U, 10 * U, 7 * U);
+        const CL = A.crossing.layer || L, lp = (A.crossing.lamps || [[A.crossing.x, A.crossing.y], [A.crossing.x + 4 / view.scale, A.crossing.y]]).map((q) => P(q[0], q[1], CL));
+        const [X, Y] = lp[0], c = actor('crossing', CL, {}), x0 = Math.min(lp[0][0], lp[1][0]), x1 = Math.max(lp[0][0], lp[1][0]);
+        box(c, x0 - 4 * U, Math.min(lp[0][1], lp[1][1]) - 4 * U, x1 - x0 + 9 * U, Math.abs(lp[0][1] - lp[1][1]) + 9 * U);
         c.upd = (T) => {
           const s = trainAt(T); const near = s.on && X > s.x - 140 * U && X < s.x + s.cars * carW + 140 * U;
           // also ring a little before it arrives
@@ -905,18 +1077,19 @@ function create(opts) {
           c.ph = on ? (((T / 0.55) | 0) % 2) + 1 : 0; c.wake = T + (on ? 0.55 - (T % 0.55) : 1); return c.ph;
         };
         c.draw = (g) => {
-          for (const k of [0, 1]) { const on = c.ph === k + 1; g.globalAlpha = on ? 0.95 : 0.2; g.fillStyle = on ? C.red : C.redDim; g.fillRect(X + k * 4 * U, Y, U, U); if (on) { g.globalAlpha = 0.35; g.drawImage(glow(C.red, 3 * U), X + k * 4 * U - 3 * U, Y - 3 * U); } }
+          for (const k of [0, 1]) { const on = c.ph === k + 1, [lx, ly] = lp[k]; if (!on) continue; g.globalAlpha = 0.95; g.fillStyle = C.red; g.fillRect(lx, ly, 2 * U, 2 * U); g.globalAlpha = 0.35; g.drawImage(glow(C.red, 4 * U), lx + U - 4 * U, ly + U - 4 * U); }
         };
       }
     }
     // a pedestrian signal down the lane, keeping its own time
     if (A.ped) {
-      const L = A.ped.layer || 'near', [X, Y] = P(A.ped.x, A.ped.y, L), a = actor('pedsignal', L, {}); box(a, X - 2 * U, Y - 2 * U, 5 * U, 8 * U);
+      const L = A.ped.layer || 'near', rr = A.ped.red, gr = A.ped.green, [X, Y] = P(A.ped.x, A.ped.y, L), a = actor('pedsignal', L, {});
+      const [RX, RY] = rr ? P(rr[0], rr[1], L) : [X, Y], [GX, GY] = gr ? P(gr[0], gr[1], L) : [X, Y + 2 * U], PS = rr ? Math.max(U, Ls(rr[2])) : U;
+      box(a, Math.min(RX, GX) - 3 * U, Math.min(RY, GY) - 3 * U, PS + 6 * U, Math.abs(GY - RY) + PS + 6 * U);
       a.upd = (T) => { const ph = T % 60; a.st = ph < 34 ? 'r' : ph < 52 ? 'g' : (((ph * 3) | 0) % 2 ? 'g' : 'o'); a.wake = T + (ph < 34 ? 34 - ph : ph < 52 ? 52 - ph : 1 / 3 - (ph % (1 / 3)) + 0.001); return a.st; };
       a.draw = (g) => {
-        g.globalAlpha = a.st === 'r' ? 0.85 : 0.15; g.fillStyle = C.red; g.fillRect(X, Y, U, U);
-        g.globalAlpha = a.st === 'g' ? 0.85 : 0.12; g.fillStyle = '#80ffd0'; g.fillRect(X, Y + 2 * U, U, U);
-        if (a.st === 'g') { g.globalAlpha = 0.2; g.fillRect(X, Y + 5 * U, U, U); } else if (a.st === 'r') { g.globalAlpha = 0.18; g.fillStyle = C.red; g.fillRect(X, Y + 5 * U, U, U); }
+        if (a.st === 'r') { g.globalAlpha = 0.8; g.fillStyle = C.red; g.fillRect(RX, RY, PS, PS); g.globalAlpha = 0.25; g.drawImage(glow(C.red, 3 * U), RX - 3 * U, RY - 3 * U); }
+        if (a.st === 'g') { g.globalAlpha = 0.85; g.fillStyle = '#80ffd0'; g.fillRect(GX, GY, PS, PS); g.globalAlpha = 0.25; g.drawImage(glow('#80ffd0', 3 * U), GX - 3 * U, GY - 3 * U); }
       };
     }
     // a scooter's tail-light far along the shore road
@@ -979,13 +1152,14 @@ function create(opts) {
     if (A.stairs && A.stairs.length && !reduced) {
       const st = A.stairs[0], pts = st.pts, L = st.layer || 'near';
       const walkAt = (T) => slotEv(4500, T, 260, 0.6, 70);
-      const posAt = (u) => { const k = Math.min(pts.length - 2, Math.floor(u * (pts.length - 1))), f = u * (pts.length - 1) - k; return [lerp(pts[k][0], pts[k + 1][0], f), lerp(pts[k][1], pts[k + 1][1], f)]; };
+      const down = pts[0][1] < pts[pts.length - 1][1], posAt = (u) => along(pts, down ? u : 1 - u);     // always going down the steps
+      const hy = (A.camera && A.camera.hy) || 0, sizeAt = (y, rows) => A.design === 320 ? null : Math.max(U, Math.round(0.026 * (y - hy) * view.scale / rows));
       const off = (u, n) => (hash(4500, n, 3) - 0.5) * (st.w0 || 20) * 0.3 + Math.sin(u * 5) * (st.w0 || 20) * 0.04;
       const a = actor('walker', L, {});
       a.upd = (T) => {
         const e = walkAt(T); if (!e.on) { a.on = false; box(a, 0, 0, 0, 0); a.wake = e.next; return 'off'; }
         const u = e.u, [x, y] = posAt(u), [X, Y] = P(x + off(u, e.n), y, L);
-        const su = Math.max(U, Math.round(U * (1 + u * 2) * (A.design === 320 ? 1 : 1.5)));
+        const su = sizeAt(y, 11) || Math.max(U, Math.round(U * (1 + u * 2)));
         a.on = true; a.su = su; a.f = ((T / 0.45) | 0) % 2; a.X = X - 4 * su; a.Y = Y - 11 * su; a.al = Math.min(1, u * 8, (1 - u) * 8) * 0.75;
         a.al = Math.round(a.al * 8) / 8; box(a, a.X, a.Y, 9 * su, 11 * su); a.wake = T + 0.15; return a.X * 1e4 + a.Y * 4 + a.f * 2 + a.al;
       };
@@ -1001,7 +1175,7 @@ function create(opts) {
           const age = tPass < 0 ? 1e9 : T - tPass;
           if (age > 180) { f.on = false; box(f, 0, 0, 0, 0); f.wake = e.on && e.u <= uj ? e.t0 + uj * 70 : Math.min(walkAt(T).next, T + 30); return 'off'; }
           const [x, y] = posAt(uj), [X, Y] = P(x + off(uj, e.n) + ((j % 2) ? 1 : -1) * (A.design === 320 ? 0.6 : 4), y, L);
-          f.on = true; f.X = X; f.Y = Y; f.lv = Math.round((1 - age / 180) * 6); f.su = Math.max(U, Math.round(U * (1 + uj * 1.5))); box(f, X, Y, f.su, 2 * f.su); f.wake = T + 3; return f.lv;
+          f.on = true; f.X = X; f.Y = Y; f.lv = Math.round((1 - age / 180) * 6); f.su = Math.max(U, Math.round((sizeAt(y, 11) || U * (1 + uj * 1.5)) * 0.8)); box(f, X, Y, f.su, 2 * f.su); f.wake = T + 3; return f.lv;
         };
         f.draw = (g) => { if (f.on && f.lv > 0) { g.globalAlpha = f.lv / 6 * 0.3; g.fillStyle = C.wet; g.fillRect(f.X, f.Y, f.su, 2 * f.su); } };
       }
@@ -1016,7 +1190,7 @@ function create(opts) {
     ((A.regions && A.regions.haze) || []).forEach((hz, i) => {
       const [, Y0] = P(0, hz.y0, 'mid'), [, Y1] = P(0, hz.y1, 'mid'), [X0] = P(0, 0, 'mid'), [X1] = P(A.w, 0, 'mid');
       for (let j = 0; j < 2; j++) {
-        const w = Math.round((X1 - X0) * (0.5 + 0.3 * hash(i, j, 4600))), h = Math.max(4, Y1 - Y0), strip = softStrip('mist' + i + j, w, h, '#a898d0', 0.16, 500 + i * 3 + j, 30);
+        const w = Math.round((X1 - X0) * (0.5 + 0.3 * hash(i, j, 4600))), h = Math.max(4, Y1 - Y0), strip = softStrip('mist' + i + j, w, h, '#a898d0', 0.1, 500 + i * 3 + j, 34);
         const v = (1 + 1.5 * hash(i, j, 4601)) * U / 10 * (j ? -1 : 1), span = X1 - X0 + w, a = actor('mist', L, {});
         a.upd = (T) => {
           const x = X0 - w + Math.floor((((T * v + hash(i, j, 4602) * span) % span) + span) % span);
@@ -1058,7 +1232,7 @@ function create(opts) {
     lvlSlow = lvlSlow * 0.9 + l * 0.1; level = l;
     if (l < 0.004) bass *= 0.5;
   }
-  let lastListen = 0;
+  let lastListen = 0, lastBeatT = -1e9;
   function tick() {
     raf = 0; if (paused || dead) return;
     const T = now(); let next = Infinity, nextFast = Infinity;
@@ -1067,20 +1241,28 @@ function create(opts) {
       if (a.wake <= T) {
         const ox = a.bx, oy = a.by, ow = a.bw, oh = a.bh, k = a.upd(T);
         if (k !== a.key) {
-          a.key = k; if (ow) dirty(a.s, ox, oy, ow, oh); markOccluded(a);
+          a.key = k; if (ow) dirty(a.s, ox, oy, ow, oh); markOccluded(a); if (a.fast) a.s.urgent = true;
           if (!a.occluded && a.bw) dirty(a.s, a.bx, a.by, a.bw, a.bh);
         }
         if (!(a.wake > T)) a.wake = T + 1;     // never spin
       }
       if (a.fast) { if (a.wake < nextFast) nextFast = a.wake; } else if (a.wake < next) next = a.wake;
     }
-    for (const s of allSurfs()) flush(s);
-    stat.frames++;
-    const el = performance.now() - stat.since; if (el > 2000) { stat.fps = stat.frames * 1000 / el; stat.pxs = stat.px * 1000 / el; stat.frames = 0; stat.px = 0; stat.since = performance.now(); }
+    let flushed = 0;
+    for (const s of allSurfs()) {
+      if (!s.any) continue; flushed = 1;
+      if (s.urgent || T - s.last >= 1 / s.rate - 0.02) { flush(s); s.last = T; s.urgent = false; }
+      else next = Math.min(next, s.last + 1 / s.rate);
+    }
+    stat.frames++; stat.paints += flushed;
+    const el = performance.now() - stat.since; if (el > 2000) { stat.fps = stat.frames * 1000 / el; stat.pps = stat.paints * 1000 / el; stat.paints = 0; stat.pxs = stat.px * 1000 / el; stat.frames = 0; stat.px = 0; stat.since = performance.now(); }
     if (analyser) next = Math.min(next, T + 0.1);
-    // frames fall on a shared grid: ambient things on a 6 fps beat, fast movers (a train, a satellite) on 15 fps,
+    // frames fall on a shared grid: ambient things on a 3 fps beat (6 while music plays), fast movers (a train, a satellite) on 8 fps,
     // so the two never interleave into more frames than the faster beat
-    next = Math.ceil(Math.max(next, T + 0.001) * BEAT_SLOW) / BEAT_SLOW;
+    // while music plays the page is repainting anyway, so life can afford a quicker beat
+    const music = (analyser && level > 0.01) || now() - lastBeatT < 2.5, BEAT = music ? BEAT_MUSIC : BEAT_IDLE;
+    for (const s of allSurfs()) s.rate = BEAT;
+    next = Math.ceil(Math.max(next, T + 0.001) * BEAT) / BEAT;
     if (nextFast < Infinity) next = Math.min(next, Math.ceil(Math.max(nextFast, T + 0.001) * BEAT_FAST) / BEAT_FAST);
     schedule((next - now()) / timeScale);
   }
@@ -1102,24 +1284,30 @@ function create(opts) {
     setTime(h) { if (typeof h === 'number' && isFinite(h) && Math.abs(h - hours) > 0.01) { hours = clamp(h, 18, 31); wakeAll(); schedule(0); } },
     time() { return hours; },
     onTrack(n, info) { /* a fresh track: a ripple in the nearest puddle, a breath of the moon */ const T = now(); if (A.puddles && A.puddles.length) { onsets.push({ t: T, p: 0, j: 0, x: 0.5, y: 0.5 }); wakeAll(); schedule(0); } },
-    onBeat() { if (!analyser) { bass = Math.min(1, bass + 0.25); setTimeout(() => { bass *= 0.5; }, 200); } },
+    onBeat() { lastBeatT = now(); if (!analyser) { bass = Math.min(1, bass + 0.25); setTimeout(() => { bass *= 0.5; }, 200); } },
     setOccluders(list) {
       const dpr = opts.dpr || window.devicePixelRatio || 1;
       occl = (list || []).map((r) => ({ x: Math.round(r.x * dpr), y: Math.round(r.y * dpr), w: Math.round(r.w * dpr), h: Math.round(r.h * dpr) }));
       for (const a of actors) markOccluded(a); fullRedraw();
     },
-    stats() { return { fps: +stat.fps.toFixed(1), actors: actors.length, kinds: kinds.size, kindList: [...kinds], drawnPxPerSec: Math.round(stat.pxs), U, hours }; },
+    stats() { return { fps: +stat.fps.toFixed(1), paintsPerSec: +stat.pps.toFixed(1), actors: actors.length, kinds: kinds.size, kindList: [...kinds], drawnPxPerSec: Math.round(stat.pxs), U, hours }; },
     destroy() { dead = true; ctl.pause(); removeEventListener('resize', onResize); document.removeEventListener('visibilitychange', onVis); for (const s of allSurfs()) s.ctx.clearRect(0, 0, s.cv.width, s.cv.height); if (opts._own) opts._own.remove(); },
     get ready() { return !!A; },
   };
   let rz = 0; const onResize = () => { clearTimeout(rz); rz = setTimeout(() => ctl.resize(), 150); };
 
   async function init() {
-    if (scene && scene.anchors) A = scene.anchors;
-    else if (opts.anchors) A = opts.anchors;
+    if (scene && scene.ready && typeof scene.ready.then === 'function') { try { await scene.ready; } catch (e) { scene = null; } }
+    if (scene && !scene.anchors) scene = null;      // no scene after all: the old night, on our own canvas
+    if (scene && scene.anchors) {
+      const v = typeof scene.view === 'function' ? scene.view() : {};
+      A = normalize(Object.assign({ w: v.w || 2560, h: v.h || 1440 }, scene.anchors));
+    }
+    else if (opts.anchors) A = normalize(opts.anchors);
     else { const r = await fetch(opts.oldScene || 'art/scene.json'); A = adaptOld(await r.json()); }
     if (A.seed != null) SEED = A.seed | 0; if (opts.seed != null) SEED = opts.seed | 0;
-    if (scene && typeof scene.onChange === 'function') scene.onChange(() => ctl.resize());
+    // the scene's transform changes on resize and, eased in a few steps, on pointer parallax: rebuild once it settles
+    let chT = 0; if (scene && typeof scene.onChange === 'function') scene.onChange(() => { clearTimeout(chT); chT = setTimeout(() => ctl.resize(), 120); });
     if (scene && typeof scene.onMood === 'function' && opts.followSceneMood) scene.onMood((t) => ctl.setTime(19.5 + 10 * t));
     computeView(); build();
     addEventListener('resize', onResize); document.addEventListener('visibilitychange', onVis);

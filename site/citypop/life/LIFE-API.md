@@ -65,9 +65,16 @@ Every anchor is optional. A missing one just means fewer things.
 
 ## Cost
 
-Frames fall on a shared grid: ambient things on a 6 fps beat, fast movers (a train, a satellite) on 15 fps. Life is idle between changes.
+Frames fall on a shared grid: ambient things on a 3 fps beat when idle and 6 fps while music plays (the page is repainting then anyway), and fast movers (a train, a satellite) on 8 fps. Life is idle between changes.
 For the measured numbers, see the commit log and the report to the coordinator.
 
 ## Testing
 
 `life/test.html?speed=20&h=26&reduced=0&only=star,window&off=1&hud=0`: the old scene with life over it. `speed` multiplies time, and `only` limits life to the listed kinds.
+
+The same switches work on the album page itself, through its URL:
+- `?lifespeed=20` makes the night run 20 times faster.
+- `?lifeepoch=100000` fixes the clock, for repeatable measurements.
+- `?lifeonly=star,window` keeps only the listed kinds.
+- `?lifeskip=mist,cloud` leaves out the listed kinds.
+`stats().kindList` names every kind.
