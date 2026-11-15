@@ -712,7 +712,7 @@ const menus = {
       { label: 'Save Track as MP3…', href: t && !t.pending ? t.mp3 : undefined, download: t ? `CITYPOP1993 ${String(t.n).padStart(2, '0')} ${t.title.replace(/[:/\\?*"<>|]/g, '')}.mp3` : '', disabled: !t || t.pending },
       { label: 'Cover Art (640 px)', href: 'art/cover-640.png?v=1993', blank: true },
       { label: 'SOURCES.TXT', href: 'SOURCES.TXT', blank: true },
-      '-', { label: 'SNDWAVE1993 Home', href: '/sndwave2000/' },
+      '-', { label: 'SNDWAVE1993 Home', href: '/sndwave1993/' },
     ];
   },
   device() {
