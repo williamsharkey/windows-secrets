@@ -220,7 +220,7 @@ def to_lin(c):
     return np.where(c <= 0.04045, c / 12.92, ((c + 0.055) / 1.055) ** 2.4).astype(F)
 
 
-def quantize(rgb, alpha, K=40, seed=1, fixed=None, penalty=2.0, order=None):
+def quantize(rgb, alpha, K=40, seed=1, fixed=None, penalty=1.0, order=None):
     """ordered-dither 'two nearest along a line' quantiser (Yliluoma-ish).
     returns (index image uint8 with 0 = transparent, palette (K,3) float)"""
     H, W = alpha.shape

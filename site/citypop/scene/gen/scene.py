@@ -29,7 +29,7 @@ VARIANTS = {
 # ------------------------------------------------------------------ colours
 K = dict(
     sky0=C('#04051a'), sky1=C('#0b0d33'), sky2=C('#191a4c'), sky3=C('#2e2163'), sky4=C('#4a2670'), sky5=C('#6a2c76'),
-    haze=C('#1d1a48'), hazeW=C('#3b2a68'),
+    haze=C('#221a40'), hazeW=C('#3b2a68'),
     moon=C('#f4f0fb'), moonM=C('#cdc5e6'), halo=C('#a89cd8'), halo2=C('#c06a9a'),
     star=C('#e8e6ff'), starW=C('#ffe6c8'), starB=C('#b8c8ff'),
     navy0=C('#06071a'), navy1=C('#0c0f2e'), navy2=C('#161a44'), ind=C('#22215a'),
@@ -152,7 +152,7 @@ def draw_sky(L, cam, A, rng, V):
     ring = np.exp(-((d - mr * 4.6) / (mr * 0.35)) ** 2) * 0.10
     rgb = 1 - (1 - rgb) * (1 - ring[..., None] * K['halo'])
     # horizon glow: the town's light in the haze (warm-magenta, low)
-    hg = np.exp(-((Y - hy) / (hy * 0.16)) ** 2) * 0.22
+    hg = np.exp(-((Y - hy) / (hy * 0.2)) ** 2) * 0.4
     rgb = 1 - (1 - rgb) * (1 - hg[..., None] * K['pink'])
     # cloud wisps: anisotropic noise, lit near the moon
     n = vnoise((H // 3 + 2, W // 14 + 2), 22, rng, octaves=4)
@@ -380,7 +380,7 @@ def draw_far(L, cam, A, rng, V):
     xa_s, xb_s = V['bridge']
     ZA, ZB = cam.Zs + 25.0, Zi - 5.0
     XA, XB = cam.Xat(xa_s, ZA), cam.Xat(xb_s, ZB)
-    Ed = Esea + 28.0
+    Ed = Esea + 18.0
     bcol = mix(K['navy1'], K['ind'], 0.35)
     bhi = mix(K['ind'], K['halo'], 0.4)
     ax_, az_ = XA, ZA
@@ -397,6 +397,13 @@ def draw_far(L, cam, A, rng, V):
         X = XA + ux * t + nx * off
         Z = ZA + uz * t + nz * off
         return cam.P(X, Z, Esea + e)
+    # a band of moonlit mist low on the island, so the bridge reads against it
+    yy_ = np.arange(H, dtype=F)[:, None]
+    band = np.exp(-((yy_ - (yis - 26)) / 26.0) ** 2) * np.clip(1 - np.abs(Xs[None, :] - (xb_s * 0.5)) / (W * 0.6), 0, 1)
+    mm = L.a & (yy_ < yis + 4) & (band > 0.02)
+    L.rgb[mm] = mix(L.rgb[mm], mix(K['plum'], K['halo'], 0.25), (band[mm] * 0.75)[:, None])
+    tcol = mix(K['ind'], K['halo'], 0.28)
+    tsh = mix(K['navy1'], K['ind'], 0.5)
     # piers first (they stand in the water)
     for t in np.arange(30.0, Lb, 55.0):
         (x0, y0) = BP(t, 0, -1.5)
@@ -415,25 +422,28 @@ def draw_far(L, cam, A, rng, V):
         (_, yb) = BP(t, 0, -2.6)
         (_, yr) = BP(t, 0, 1.2)
         L.rect(x0, yr, 1.2, yb - yr + 1, bcol)
+        L.rect(x0, yr, 1.2, max(1, (yb - yr) * 0.45), mix(K['ind'], K['halo'], 0.22))
         L.px(x0, yr, bhi)
         L.px(x0, yb, mix(bcol, K['navy0'], 0.5))
+        if (t % 5.0) < 0.25:
+            L.px(x0, yr + max(1, (yb - yr) * 0.25), mix(K['amber'], K['ind'], 0.35))
     towers = []
     for tf in V['towers']:
         t = tf * Lb
         Z = ZA + uz * t
-        top_e = 62.0
+        top_e = 54.0
         legs = []
         for side in (-1, 1):
             (x0, y0) = BPs(t, side * 9.0, 0)
             (x1, y1) = BP(t, side * 1.2, top_e - 28.0)
             legs.append(((x0, y0), (x1, y1)))
             lw = max(2, cam.f * 1.8 / Z)
-            L.poly([(x0 - lw / 2, y0), (x0 + lw / 2, y0), (x1 + lw / 3, y1), (x1 - lw / 3, y1)], bcol)
-            L.lines([(x0 + lw / 2, y0), (x1 + lw / 3, y1)], bhi)
+            L.poly([(x0 - lw / 2, y0), (x0 + lw / 2, y0), (x1 + lw / 3, y1), (x1 - lw / 3, y1)], tcol if side > 0 else tsh)
+            L.lines([(x0 + lw / 2, y0), (x1 + lw / 3, y1)], mix(K['halo'], K['cream'], 0.3))
         (cx0, cy0) = BP(t, 0, top_e - 28.0)
         (cx1, cy1) = BP(t, 0, top_e)
         lw = max(2, cam.f * 2.0 / Z)
-        L.rect(cx1 - lw / 2, cy1, lw, cy0 - cy1, bcol)
+        L.rect(cx1 - lw / 2, cy1, lw, cy0 - cy1, tcol)
         L.rect(cx1 + lw / 2 - 1, cy1, 1, cy0 - cy1, bhi)
         # cross beam below the deck
         (b0x, b0y) = BP(t, -8.0, -4.0)
@@ -443,14 +453,14 @@ def draw_far(L, cam, A, rng, V):
         A.d['bridge']['towers'].append(dict(x=int(cx1), y=int(cy1) - 1, kind='tower'))
         towers.append((t, Z))
     # stay cables: two fans per tower, both planes of cables
-    ccol = mix(K['navy2'], K['halo'], 0.22)
+    ccol = mix(K['ind'], K['halo'], 0.5)
     for (t, Z) in towers:
         for side in (-1, 1):
             for i in range(1, 9):
                 d = side * (8 + i * 11.0)
                 if not (0 < t + d < Lb):
                     continue
-                e_top = 60.0 - 2.0 - i * 2.2
+                e_top = 52.0 - i * 2.6
                 p0 = BP(t, 0, e_top)
                 p1 = BP(t + d, 0, 0.8)
                 # cables are thin: draw them as a sparse dotted line so they shimmer, not cage
@@ -462,10 +472,12 @@ def draw_far(L, cam, A, rng, V):
                 A.d['bridge']['cables'].append([int(p0[0]), int(p0[1]), int(p1[0]), int(p1[1])])
     # deck lights along both rails (fixtures dim; bright bulbs are the life lane's)
     bl = []
-    for t in np.arange(4.0, Lb, 16.0):
+    for t in np.arange(4.0, Lb, 8.0):
         for side in (-1,):
             (x, y) = BP(t, side * 7.5, 1.6)
-            L.px(int(x), int(y), mix(K['amber'], K['navy1'], 0.2))
+            L.px(int(x), int(y), K['amber'])
+            (x2, y2) = BP(t + 4.0, 7.5, 1.6)
+            L.px(int(x2), int(y2), mix(K['cream'], K['amber'], 0.4))
             bl.append([int(x), int(y)])
             (_, ys) = BPs(t, side * 7.5, 0)
             Z = ZA + uz * t
@@ -503,15 +515,73 @@ def draw_far(L, cam, A, rng, V):
                 L.px(int(x0 + wb * 0.1), yy, mix(L.rgb[yy, int(x0 + wb * 0.1)], K['warm'], 0.4 * (1 - k / 14)))
         boats.append(dict(x=int(x0), y=int(y0), w=int(wb * 2), path=[[int(x0 - 400), int(y0)], [int(x0 + 400), int(y0)]]))
     A.d['boats'] = boats
+    # current lines: long faint seams where the tide runs, and the town's magenta glow on the near water
+    yshore = cam.P(0, cam.Zs + 2, cam.g(cam.Zs))[1]
+    for i in range(int(W / 70)):
+        y0 = hy + 4 + (rng.random() ** 0.8) * (yshore - hy - 10)
+        x0 = rng.random() * W
+        ln = 120 + rng.random() * 500 * (y0 - hy) / max(1, yshore - hy)
+        amp = 2 + rng.random() * 6
+        ph = rng.random() * 6
+        cc = mix(K['water1'], K['halo'], 0.25 + 0.15 * rng.random())
+        for k in range(int(ln)):
+            if (k // 3) % 3 == 2:
+                continue
+            x = int(x0 + k)
+            y = int(y0 + amp * math.sin(k / ln * 6.28 + ph))
+            if 0 <= x < W and 0 <= y < H and not land[y, x]:
+                L.rgb[y, x] = mix(L.rgb[y, x], cc, 0.55)
+    glowband = np.exp(-((np.arange(H, dtype=F)[:, None] - yshore) / 60.0) ** 2) * 0.35
+    gm = L.a & ~land & (np.arange(H)[:, None] < yshore + 6)
+    L.rgb[gm] = 1 - (1 - L.rgb[gm]) * (1 - (np.broadcast_to(glowband, (H, W))[gm])[:, None] * K['mag2'])
+    # buoys (red to port, green to starboard) and moored skiffs with a lamp
+    buoys = []
+    for i in range(10 if W > 2000 else 6):
+        Zb_ = cam.Zs + 30 + rng.random() * 170
+        x = rng.random() * W
+        (bx, by) = cam.P(cam.Xat(x, Zb_), Zb_, Esea)
+        bx, by = int(bx), int(by)
+        if not (0 <= bx < W and 0 <= by < H) or land[by, bx]:
+            continue
+        col = K['redL'] if i % 2 else C('#5adc8a')
+        L.rect(bx - 1, by - 3, 3, 3, mix(col, K['navy0'], 0.55))
+        L.px(bx, by - 4, col)
+        for k in range(8):
+            if by + 1 + k * 2 < H:
+                L.px(bx, by + 1 + k * 2, mix(L.rgb[by + 1 + k * 2, bx], col, 0.35 * (1 - k / 8)))
+        buoys.append(dict(x=bx, y=by - 4, kind='buoy', color='red' if i % 2 else 'green'))
+    for i in range(6 if W > 2000 else 3):
+        Zb_ = cam.Zs + 15 + rng.random() * 110
+        x = rng.random() * W
+        (bx, by) = cam.P(cam.Xat(x, Zb_), Zb_, Esea)
+        s_ = 220 / Zb_
+        if not (0 <= bx < W and 0 <= by < H) or land[int(by), int(bx)] or abs(bx - mx) < 60:
+            continue
+        hw_ = 14 * s_
+        L.poly([(bx - hw_, by - 3 * s_), (bx + hw_, by - 3 * s_), (bx + hw_ * 0.8, by + 1), (bx - hw_ * 0.85, by + 1)], mix(K['brn1'], K['navy0'], 0.3))
+        L.rect(bx - hw_, by - 3 * s_, 2 * hw_, 1, mix(K['brn3'], K['halo'], 0.2))
+        L.rect(bx - hw_ * 0.2, by - 7 * s_, hw_ * 0.5, 4 * s_, mix(K['brn2'], K['halo'], 0.1))
+        L.px(bx + hw_ * 0.1, by - 6 * s_, K['warm'])
+        for k in range(10):
+            yy = int(by + 2 + k * 2)
+            if yy < H:
+                L.px(bx + hw_ * 0.1, yy, mix(L.rgb[yy, int(bx + hw_ * 0.1)], K['warm'], 0.4 * (1 - k / 10)))
+        boats.append(dict(x=int(bx), y=int(by), w=int(2 * hw_), kind='skiff', path=[[int(bx - 6), int(by)], [int(bx + 6), int(by)]]))
+    A.d['buoys'] = buoys
     # oyster rafts: dark lattices low on the water, a marker light at a corner
-    for i in range(7 if W > 2000 else 4):
+    for i in range(22 if W > 2000 else 12):
         Zr = cam.Zs + 40 + rng.random() * 150
         Xc = cam.Xat(rng.random() * W, Zr)
         wX, wZ = 14 + rng.random() * 14, 8 + rng.random() * 8
         c0 = cam.P(Xc, Zr, Esea + 0.3)
-        if not (0 <= c0[0] < W) or land[int(min(H - 1, c0[1])), int(c0[0])] or abs(c0[0] - mx) < 160:
+        if not (0 <= c0[0] < W) or land[int(min(H - 1, c0[1])), int(c0[0])] or abs(c0[0] - mx) < 120:
             continue
-        rc = mix(K['navy0'], K['brn0'], 0.4)
+        rc = mix(K['brn1'], K['navy0'], 0.35)
+        for k in range(7):
+            for j in range(9):
+                fx, fy = cam.P(Xc + wX * j / 8, Zr + wZ * k / 6, Esea + 0.35)
+                if (j + k) % 2 == 0:
+                    L.px(fx, fy, mix(K['brn3'], K['halo'], 0.35))
         for k in range(7):
             z = Zr + wZ * k / 6
             L.lines([cam.P(Xc, z, Esea + 0.3), cam.P(Xc + wX, z, Esea + 0.3)], rc)
@@ -536,6 +606,7 @@ def draw_far(L, cam, A, rng, V):
                 L.px(x + int(math.sin(k) * 2), yy, mix(L.rgb[yy, x], K['fluo'], 0.5 * (1 - k / 30)))
         boats.append(dict(x=x, y=y, w=13, kind='squid', path=[[x, y], [x + 30, y]]))
     # ferry path: from our shore pier to the island
+    A.d['boats'] = boats
     return yis, land
 
 
@@ -811,11 +882,12 @@ class Town:
         dl = min(abs(X0 - Xl_), abs(X1 - Xl_)) if not (X0 < Xl_ < X1) else 0.0
         Eg = cam.g(Zf) - min(5.0, 0.22 * max(0.0, dl - 2.5)) * clamp(1.2 - Zf / 90.0)
         P = cam.P
-        wall = wall if wall is not None else [K['plaster'], K['plaster2'], K['conc'], K['brn1'], K['brn2'], K['mortar']][int(rng.random() * 6)]
+        WALLS = [K['plaster'], K['plaster2'], K['conc'], K['brn1'], K['brn2'], K['brn3'] * 0.8, K['mortar'], C('#4a2a22'), C('#3a2420')]
+        wall = wall if wall is not None else WALLS[int(rng.choice(9, p=[0.13, 0.1, 0.1, 0.17, 0.15, 0.08, 0.1, 0.09, 0.08]))]
         wallc = fz(wall, Z)
         unit = cam.f / Zf               # px per metre at the front face
         # side walls first (seen from the lane / the eye)
-        hr = {'gable': 1.6 + rng.random() * 0.8, 'hip': 1.4 + rng.random() * 0.6, 'flat': 0.0, 'shed': 0.8}[roof]
+        hr = {'gable': 1.2 + rng.random() * 0.7, 'hip': 1.1 + rng.random() * 0.5, 'flat': 0.0, 'shed': 0.8}[roof]
         o = 0.45
         side_col = fz(mix(wall, K['navy0'], 0.35), Z)
         lit_side = fz(mix(wall, K['halo'], 0.12), Z)
@@ -937,11 +1009,11 @@ class Town:
                 (sx1, sy1) = P(Xs_ + 1.0, Zf - 0.2, Eg)
                 for k in range(int(sy0), int(sy1)):
                     L.rect(sx0 + (k - sy0) * 0.1, k, sx1 - sx0, 1, fz(mix(K['brn3'], K['brn1'], (k % 2) * 0.6), Z))
-            if rng.random() < 0.08 and unit > 10:
+            if rng.random() < 0.14 and unit > 10:
                 # a small shop sign, unreadable glyphs
                 (sx0, sy0) = P(X0 + 0.3, Zf - 0.15, Eg + hw - 0.3)
                 sw, sh = unit * 0.45, unit * 1.3
-                sc = [K['cream'], K['pinkL'], K['amber']][int(rng.random() * 3)]
+                sc = [K['cream'], K['pinkL'], K['pinkL'], C('#e060c0'), K['amber']][int(rng.random() * 5)]
                 L.rect(sx0, sy0, sw, sh, mix(sc, K['navy0'], 0.15))
                 for k in range(4):
                     gy = sy0 + 2 + k * (sh - 3) / 4
@@ -1246,7 +1318,7 @@ def draw_town(Ls, cam, A, rng, V, lights):
         def gcol(X, Y, yA=yA):
             v = np.clip((Y - yA) / max(1, H - yA), 0, 1)
             n = gn[int(Y[0, 0]):int(Y[-1, 0]) + 1, int(X[0, 0]):int(X[0, -1]) + 1]
-            c = mix(K['navy1'], K['brn1'], (n * 0.5)[..., None])
+            c = mix(K['brn0'], K['brn1'], (n * 0.7)[..., None])
             c = mix(c, K['moss'], (smooth(0.62, 0.75, n) * 0.6)[..., None])
             return c * (0.8 + 0.25 * v)[..., None]
         L.rect(-2, yA, W + 4, H - yA + 2, gcol)
@@ -1268,7 +1340,7 @@ def draw_town(Ls, cam, A, rng, V, lights):
     Z = Zfar
     while Z > Znear - 9:
         zs.append(Z)
-        Z -= 6.5 + rng.random() * 3.0 * (Z / 60)
+        Z -= 8.0 + rng.random() * 3.5 * (Z / 60)
     for Zr in zs:
         layer = 'mid' if Zr >= Zcut else 'near'
         L = Ls[layer]
@@ -1306,6 +1378,8 @@ def draw_town(Ls, cam, A, rng, V, lights):
             hw = (2.6 if rng.random() < (0.55 if Zr > 45 else 0.8) else 5.4) + rng.random() * 0.8
             if rng.random() < 0.08 and Zr > 45:
                 hw = 8.4 + rng.random()        # a small apartment block
+            if rng.random() < 0.10 and Zr > 75 and b - a > 6:
+                hw = 10.0 + rng.random() * 3.0  # a mansion block: a grid of windows facing the strait... and us
             r = rng.random()
             roof = 'gable' if r < 0.55 else ('hip' if r < 0.8 else ('flat' if r < 0.9 else 'shed'))
             if hw > 8:
@@ -2271,7 +2345,7 @@ def build(variant, preview_dir=None):
         Ls[n].own = None
     cull_hidden(Ls, order, margin=14)
     os.makedirs(OUT_IMG, exist_ok=True)
-    Kq = dict(sky=40, far=48, mid=56, near=64, fg=32)
+    Kq = dict(sky=18, far=30, mid=34, near=42, fg=22)
     layers = {}
     depth = dict(sky=0.0, far=0.12, mid=0.3, near=0.55, fg=1.0)
     flat = np.zeros((H, W, 3), np.uint8)
