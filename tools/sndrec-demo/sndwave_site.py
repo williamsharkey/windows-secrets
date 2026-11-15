@@ -194,6 +194,7 @@ def main():
                     f = os.path.join(prev, x['slug'] + '.' + ext)
                     if os.path.exists(f): copy(f, os.path.join(out, 'audio', x['slug'] + '.' + ext)); q[ext] = 1
                 q['sec'] = mf.get('seconds')
+                if mf.get('phrase') and not q.get('ph'): q['ph'] = mf['phrase']   # what the preview plays (kits: from the manifest)
                 if mf.get('flags'): q['fl'] = mf['flags']
                 if mf.get('ok') is False: q['bad'] = 1
             if x['slug'] in KNOWN: q['fl'] = q.get('fl', []) + [KNOWN[x['slug']]]
