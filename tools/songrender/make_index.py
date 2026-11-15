@@ -10,7 +10,8 @@ Copies each song's .ogg and .mp3 into DIR/<pack>/ and writes DIR/index.json:
 import argparse, hashlib, json, os, shutil
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DISCS = os.path.join(HERE, '..', '..', 'packages', 'basilisk-synth', 'library', 'packs', 'out', 'discs', 'DISCS.TSV')
+_PK = os.path.join(HERE, '..', '..', 'packages', 'basilisk-synth', 'library', 'packs', 'out')
+DISCS = next(p for p in (os.path.join(_PK, 'discs-1.4', 'DISCS.TSV'), os.path.join(_PK, 'discs', 'DISCS.TSV')) if os.path.exists(p))
 KIND_ORDER = {'original': 0, 'world': 1, 'classical': 1, 'chiptune': 2}
 
 
@@ -30,6 +31,7 @@ def main():
     ap.add_argument('dirs', nargs='+')
     ap.add_argument('--dest', required=True)
     ap.add_argument('--base-url', default='')
+    ap.add_argument('--renderer', default='tools/songrender (render311 and the SNDWAVE2000 release machine)')
     a = ap.parse_args()
     titles = pack_titles()
     packs = {}
@@ -66,7 +68,7 @@ def main():
             p['songs'] = [x for x in p['songs'] if x['slug'] != slug] + [song]
     for p in packs.values():
         p['songs'].sort(key=lambda x: (KIND_ORDER.get(x['kind'], 9), x['title']))
-    out = {'format': 'sndwave2000-songs 1', 'renderer': 'tools/songrender (render311, SNDWAVE2000 1.3.0 machine)',
+    out = {'format': 'sndwave2000-songs 1', 'renderer': a.renderer,
            'packs': dict(sorted(packs.items()))}
     json.dump(out, open(os.path.join(a.dest, 'index.json'), 'w'), indent=1, ensure_ascii=False)
     print(sum(len(p['songs']) for p in packs.values()), 'songs in', len(packs), 'packs ->', os.path.join(a.dest, 'index.json'))

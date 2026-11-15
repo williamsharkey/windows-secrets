@@ -3,6 +3,7 @@
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from _lib import *
+chord_cap(8)   # pads on many-voice DNAs: at most 8 recorders an instant (songqa found late notes)
 
 ROLES = {'leads': ['humpback'], 'inner': 'bowl', 'lh': 'fin', 'pad': 'blue'}
 HEADER = {'title': "Aase's Death", 'pack': 'listening-post', 'kind': 'world', 'composer': 'Edvard Grieg (1843-1907)', 'source': "Aase's Death, Peer Gynt Suite No. 1, Op. 46 No. 2 (1875), piano version. Score: The Mutopia Project, from Kunkel Brothers (1891).", 'licence': 'The work: public domain (composed 1875; the composer died 1907). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.', 'proof': 'https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=246', 'arranger': 'Algorithmic Industries house band', 'note': 'Slowly, at 52 bpm, in the deep ocean: a humpback on the tune, a singing bowl on the inner voices, fin-whale drones on the bass line, blue-whale drones holding the chords.'}

@@ -4,6 +4,7 @@ mouth-kit, the timpani, a goose-voice chant and the crystal-fantasia pad in the 
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from _lib import *
+chord_cap(8)   # pads on many-voice DNAs: at most 8 recorders an instant (songqa found late notes)
 
 S = Score(bpm=150, seed=1993)
 kit = S.part('kit', 10)
