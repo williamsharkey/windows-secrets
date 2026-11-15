@@ -106,6 +106,7 @@ static void scales_values(void);
 #define ID_SONG 1520      /* + 0..63: the Song page's */
 static const char *tabNames[NTAB] = {"Main", "Voices", "Playback", "Scales", "Rec", "Mines", "Library", "Song"};
 static const char *tabIds[NTAB] = {"main", "voices", "play", "scales", "rec", "seq", "lib", "song"};
+static BOOL hostSongs;   /* the host renders songs (`hostcaps song`): the Song tab shows */
 static HWND hTab[NTAB], pgWin[64], pgSb[24], pgVal[24], pgBtn[24];
 static int curTab, npg, npgSb, npgBtn;
 static const COLORREF layerColor[NL] = {RGB(0, 128, 0), RGB(0, 0, 160), RGB(160, 0, 0), RGB(128, 0, 128),
@@ -1801,6 +1802,7 @@ static void panel_create(int group)
                 mkbtn("Load...", xs, PANEL + 1, 24, ID_STATELOAD, &w4);
             }
             for (k = 0; k < NTAB; k++) { int w2; hTab[k] = mkbtn(tabNames[k], x3, PANEL + 1, 24, ID_TAB + k, &w2); x3 += w2 + 1; }
+            if (!hostSongs) ShowWindow(hTab[7], SW_HIDE);   /* the Song tab: only when the host renders songs (`hostcaps song`) */
             SendMessage(hTab[0], BM_SETSTATE, TRUE, 0L);
         }
         {   /* Key [C v] Scale [Major v]: the key and scale new notes use (PRESET-ENGINE-2 18.2) */
@@ -4392,6 +4394,7 @@ static void host_line(char *s)
     else if (!strcmp(s, "showwin")) { HWND x = FindWindow(rest, NULL); if (x) { ShowWindow(x, SW_RESTORE); SetWindowPos(x, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); } say("showwin %d", x != NULL); }   /* test aid */
     else if (!strcmp(s, "exec")) say("exec %d", WinExec(rest, SW_SHOWNORMAL));   /* test aid: a program, as Program Manager starts it */
     else if (!strcmp(s, "packs")) lib_packs(rest);   /* the inserted discs */
+    else if (!strcmp(s, "hostcaps")) { if (strstr(rest, "song")) { hostSongs = TRUE; if (hTab[7]) ShowWindow(hTab[7], SW_SHOWNA); } }   /* what the host can do */
     else if (!strcmp(s, "song")) song_line(rest);   /* the Song page (plugin/SongTab.h) */
     else if (!strcmp(s, "citypop")) cp_line(rest);
     else if (!strcmp(s, "pool")) gp_line(rest);   /* GENEPOOL.EXE's table (plugin/GenePool.h) */   /* CITYPOP.EXE's player (plugin/CityPop.h) */

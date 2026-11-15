@@ -1073,6 +1073,7 @@ private:
 #else
                 localtime_r(&t, &lt);
 #endif
+                sendLine("hostcaps song citypop genepool", 0, 0);   // the guest shows the Song tab (a host without these hides it)
                 trimSend(std::strcpy(b, "hi 3"));   // DNA v3: the guest answers with its caps (v2 guests answer hi 2)
                 proto::time(b, sizeof b, lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday, lt.tm_hour, lt.tm_min, lt.tm_sec); trimSend(b);
                 proto::go(b, sizeof b); trimSend(b);
