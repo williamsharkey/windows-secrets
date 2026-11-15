@@ -159,8 +159,9 @@ Nothing audio goes in git.
 - **Previews.** previews.py + demophrases.py: one varied phrase per preset (6-10 s melodic, 1-2 bars for kits) on
   the RC, -16 LUFS, MP3 48 kbps + Opus 24 kbps, manifest.json/index.json in ~/libbuild/previews (not in git), for
   the site lane's tools/sndrec-demo/sndwave_site.py --previews.
-- **Kit Manager 98 previews** (previews.py --kits): 39 kits. 7 use the x step sequencer, which in 1.3.0 played
-  nothing until a Mines board existed (fixed in 7c81ca5, ships in 1.4). Their clips play the pads straight, with
-  a note. **When 1.4 lands:** pin it and re-render those 7 with a board (render311 --grid "8 8 p <64 cells>",
-  steps follow --bpm) so they play the sequenced pattern, then drop the note. Also re-render the 11 kick-fixed
-  kits (packs/kitmgr/KICKFIX.TSV, KITMGR98 for 1.4 in cd70323): their previews still play the 1.3.0 kick.
+- **Kit Manager 98 previews** (previews.py --kits): 39 kits. The 7 step-sequencer kits played nothing in 1.3.0
+  until a Mines board existed; 1.3.1 plays them straight without a board (7c81ca5), and their previews are now
+  rendered on 1.3.1 with their own DNA (no note). Their sequenced pattern needs a board (render311 --grid). **When
+  1.4 lands:** re-render the 11 kick-fixed kits (packs/kitmgr/KICKFIX.TSV, KITMGR98 in cd70323) and Rainy Loft.
+- **Render cache.** render.key_of includes the renderer build (LIBBUILD_V3). Before that, 9 presets' 1.3.0
+  re-check came from older cached renders; re-checked on 1.3.1, all pass with the same scores.
