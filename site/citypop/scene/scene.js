@@ -262,6 +262,22 @@
         return out;
       },
       onMood(cb) { S.moodListeners.push(cb); },
+      // the current (mood-drifted) css colour of the palette entry nearest to rgb in that layer's night palette
+      moodColor(layer, rgb) {
+        const L = S.layers[layer || 'near'];
+        if (!L || !L.meta) return 'rgb(' + rgb.join(',') + ')';
+        const pal = L.meta.palette;
+        let j = 0, bd = 1e9;
+        for (let q = 0; q < pal.length; q++) { const d = (pal[q][0] - rgb[0]) ** 2 + (pal[q][1] - rgb[1]) ** 2 + (pal[q][2] - rgb[2]) ** 2; if (d < bd) { bd = d; j = q; } }
+        return api.paletteColor(layer, j + 1);
+      },
+      // idx is 1-based, as in the PNG (0 = transparent)
+      paletteColor(layer, idx) {
+        const L = S.layers[layer || 'near'];
+        if (!L || !L.meta || idx < 1) return 'rgba(0,0,0,0)';
+        const m = hoursToMood(S.hours), A = L.meta.moods[m.a][idx - 1], B = L.meta.moods[m.b][idx - 1];
+        return 'rgb(' + A.map((v, i) => Math.round(lerp(v, B[i], m.t))).join(',') + ')';
+      },
       onChange(cb) { S.listeners.push(cb); },
       view() {
         const par = {};

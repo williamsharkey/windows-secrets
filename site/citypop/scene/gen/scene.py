@@ -4,9 +4,12 @@ usage: python3 scene.py [desktop|portrait|all] [--preview DIR]
 """
 import json, math, os, sys, zlib, time
 import numpy as np
+import kit
 from kit import Layer, C, mix, vnoise, quantize, save_indexed, bayer, F
 
 SEED = 20261114
+PENDING = []
+DBG = []
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT_IMG = os.path.normpath(os.path.join(HERE, '..', 'img'))
 OUT_JSON = os.path.normpath(os.path.join(HERE, '..', '..', 'art', 'scene2.json'))
@@ -88,17 +91,38 @@ def fz(col, Z, extra=0.0):
 
 
 # ------------------------------------------------------------------ anchors
+class GList(list):
+    def append(self, x):
+        if isinstance(x, dict) and 'layer' in x:
+            x['_g'] = kit.GROUP[0]
+        super().append(x)
+
+
+class GDict(dict):
+    def __setitem__(self, k, v):
+        if isinstance(v, list) and not isinstance(v, GList) and k not in ('windows', 'far', 'windowsFields'):
+            v = GList(v)
+        if isinstance(v, dict) and 'layer' in v and not isinstance(v, GDict):
+            v['_g'] = kit.GROUP[0]
+        super().__setitem__(k, v)
+
+
 class Anchors:
     def __init__(s):
-        s.d = dict(windows=[], lamps=[], puddles=[], water=[], stars=dict(regions=[], points=[]), moon=None,
+        s.d = GDict()
+        s.d.update(dict(windows=[], lamps=[], puddles=[], water=[], stars=dict(regions=[], points=[]), moon=None,
                    bridge=dict(lights=[], towers=[], cables=[], deck=None), train=None, boats=[], ferry=None,
                    far=[], drips=[], cat=None, vending=None, shrine=None, mailbox=None, bikes=[], wires=[],
                    vents=[], laundry=[], signs=[], stairs=[], paths=[], ac=[], eaves=[], bench=None, shop=None,
-                   crossing=None, regions=dict(sky=None, haze=[], motes=[]), plants=[], poles=[], trees=[])
+                   crossing=None, regions=dict(sky=None, haze=[], motes=[]), plants=[], poles=[], trees=[]))
+        for k, v in list(s.d.items()):
+            if isinstance(v, list) and k not in ('windows', 'far'):
+                dict.__setitem__(s.d, k, GList(v))
 
     def win(s, x, y, w, h, lit, baked, hue, curtain, room, layer, dark):
         s.d['windows'].append([int(x), int(y), int(w), int(h), int(lit), int(baked), hue, int(curtain), room,
                                layer, [int(v * 255) for v in dark]])
+        return len(s.d['windows'])
 
 
 HUES = ['warm', 'cool', 'tv', 'pink']
@@ -609,7 +633,9 @@ def draw_shore(L, cam, A, rng, V, lights):
                 if rng.random() < 0.25:
                     c = [K['warm'], K['cream'], K['tv']][int(rng.random() * 3)]
                     L.rect(wx, wy, 3, 3, c)
-                    A.win(wx, wy, 3, 3, 1, 1, 'warm', 0, 'plain', 'far', K['glass'])
+                    wi = A.win(wx, wy, 3, 3, 1, 1, 'warm', 0, 'plain', 'far', K['glass'])
+                    if L.wid is not None and wx >= 0 and wy >= 0:
+                        L.wid[wy:wy + 3, wx:wx + 3] = wi
                 elif rng.random() < 0.4:
                     L.rect(wx, wy, 3, 3, K['glass'])
         if not shop_done and abs(x - cam.cx) < 500 and x > cam.cx - 420:
@@ -773,7 +799,9 @@ class Town:
             L.rect(x, y, w, h, col)
             if w >= 5:
                 L.rect(x + w // 2, y, 1, h, fr)
-        s.A.win(x, y, w, h, 1 if lit else 0, 1 if baked else 0, hue, curtain, room, layer, dark)
+        wid = s.A.win(x, y, w, h, 1 if lit else 0, 1 if baked else 0, hue, curtain, room, layer, dark)
+        if L.wid is not None:
+            L.wid[max(0, y):max(0, y + h), max(0, x):max(0, x + w)] = wid
 
     # -------------------------------------------- a house
     def house(s, L, X0, X1, Z, D, hw, roof, layer, wall=None, rkind='tile'):
@@ -801,6 +829,24 @@ class Town:
             L.poly(q, side_col)
             if roof == 'gable':
                 L.poly([P(X0, Zf, Eg + hw), P(X0, Zb, Eg + hw), P(X0, Zm, Eg + hw + hr)], side_col)
+        # windows on the visible side wall, in perspective
+        Xs_ = X1 if X1 < 0 else (X0 if X0 > 0 else None)
+        if Xs_ is not None and unit > 6:
+            nfl = max(1, int(hw / 2.7))
+            for fl in range(nfl):
+                Ew = Eg + fl * (hw / nfl) + 0.9
+                for k in range(max(1, int(D / 3.2))):
+                    if rng.random() < 0.35:
+                        continue
+                    Zc = Zf + (k + 0.5) * D / max(1, int(D / 3.2))
+                    q = [P(Xs_, Zc - 0.4, Ew + 1.0), P(Xs_, Zc + 0.4, Ew + 1.0), P(Xs_, Zc + 0.4, Ew), P(Xs_, Zc - 0.4, Ew)]
+                    lit = rng.random() < 0.4
+                    col = mix(K['warm'], K['warm3'], rng.random() * 0.5) * (0.6 + 0.3 * rng.random()) if lit else fz(K['glass'], Z)
+                    L.poly(q, col)
+                    L.lines([q[0], q[1], q[2], q[3], q[0]], fz(K['frame'], Z))
+                    xs_ = [p_[0] for p_ in q]; ys_ = [p_[1] for p_ in q]
+                    if lit:
+                        L.lock[int(max(0, min(ys_))):int(max(0, max(ys_))), int(max(0, min(xs_))):int(max(0, max(xs_)))] = True
         # front wall
         (x0, yb), (x1, yt) = P(X0, Zf, Eg), P(X1, Zf, Eg + hw)
         grime = s.rng.random() * 0.4
@@ -1210,6 +1256,13 @@ def draw_town(Ls, cam, A, rng, V, lights):
     lt, lv = cam.lane(SP['torii']), cam.lane(SP['vend'])
     reserved = [(lt - 1.6 - 7.0, lt - 1.6 + 0.2, SP['torii'] - 2.5, SP['torii'] + 8.0),
                 (lv + 1.6 - 0.2, lv + 1.6 + 3.6, SP['vend'] - 1.5, SP['vend'] + 1.5)]
+    # keep the line of sight to the lane's inhabitants clear: nothing tall nearer than them beside the lane
+    for key, side in (('cat', -1), ('mail', -1), ('torii', -1), ('vend', 1)):
+        Zk = SP[key]
+        lk = cam.lane(Zk)
+        edge = lk + side * 1.6
+        reserved.append((min(edge, edge + side * 5.0), max(edge, edge + side * 5.0), Zk - 10.0, Zk + 0.5))
+    T.reserved = reserved
     # ---------------- rows of houses
     zs = []
     Z = Zfar
@@ -1234,9 +1287,9 @@ def draw_town(Ls, cam, A, rng, V, lights):
         for (a, b) in xs:
             if b > Xlane - lane_half - 1.0 and a < Xlane + lane_half + 1.0:
                 # trim to the lane's walls
-                if a < Xlane - lane_half - 1.0 - 3:
+                if a < Xlane - lane_half - 1.0 - 2.2:
                     blocks.append((a, Xlane - lane_half - 1.2))
-                if b > Xlane + lane_half + 1.0 + 3:
+                if b > Xlane + lane_half + 1.0 + 2.2:
                     blocks.append((Xlane + lane_half + 1.2, b))
                 continue
             blocks.append((a, b))
@@ -1270,13 +1323,15 @@ def draw_town(Ls, cam, A, rng, V, lights):
             if g1 - g0 > 2.0 and rng.random() < 0.75:
                 Xt = (g0 + g1) / 2
                 Zt = Zr + 2 + rng.random() * 3
+                if any(ra - 2 < Xt < rb + 2 and za - 3 < Zt < zb for (ra, rb, za, zb) in reserved):
+                    continue
                 kind = 'pine' if rng.random() < 0.3 else 'round'
                 T.add(Zt, layer, (lambda L=L, Xt=Xt, Zt=Zt, kind=kind, layer=layer: T.tree(L, Xt, Zt, cam.g(Zt), layer, h=3 + rng.random() * 4, kind=kind)))
         # utility poles along each row, wires between them
         if rng.random() < 0.7:
             for k in range(int(1 + (Xmax - Xmin) / 70)):
                 Xp = Xmin + rng.random() * (Xmax - Xmin)
-                if abs(Xp - Xlane) < 3:
+                if abs(Xp - Xlane) < 3 or any(ra - 1 < Xp < rb + 1 and za - 2 < Zr < zb for (ra, rb, za, zb) in reserved):
                     continue
                 Zp = Zr - 0.5
                 T.add(Zp - 0.01, layer, (lambda L=L, Xp=Xp, Zp=Zp, layer=layer: T.pole(L, Xp, Zp, cam.g(Zp), layer)))
@@ -1316,6 +1371,7 @@ def draw_town(Ls, cam, A, rng, V, lights):
     # ---------------- run everything far to near
     T.ops.sort(key=lambda o: -o[0])
     for Z, layer, fn in T.ops:
+        kit.GROUP[0] += 1
         fn()
     return T
 
@@ -1835,6 +1891,8 @@ def draw_lane(T, Ls, Znear, Zfar, Zcut):
     for k in range(60):
         Zp = Znear + 1 + (rng.random() ** 1.6) * (Zfar - Znear - 30)
         side = -1 if rng.random() < 0.5 else 1
+        if any(abs(Zp - T.spots[n]) < 2.5 for n in ('cat', 'mail', 'vend', 'torii')):
+            continue
         layer = 'mid' if Zp >= Zcut else 'near'
         T.add(Zp - 0.05, layer, (lambda L=Ls[layer], Zp=Zp, side=side, layer=layer: T.plant(L, cam.lane(Zp) + side * (half - 0.25), Zp, cam.g(Zp), Zp, layer, size=0.5 + rng.random() * 0.6)))
     # a little neon sign of a snack bar at the bottom of the lane
@@ -2032,7 +2090,7 @@ def cull_hidden(Ls, order, margin):
         cover |= Ls[name].a
 
 
-def mood_palettes(pal, L, img, name):
+def mood_palettes(pal, L, img, name, hyf=0.3):
     """four time-of-night palettes per layer: rain, deep (as drawn), predawn, dawn.
     roles are measured from the pixels that use each entry: mean height, emissive share."""
     H, W = img.shape
@@ -2068,15 +2126,15 @@ def mood_palettes(pal, L, img, name):
         p = p * (1 + lift * 2.2 * (1 - light[:, None])) + (1 - light[:, None]) * (np.asarray(tint) * lift)
         p = mix(p, p * light_k, light[:, None])
         if sky_dawn and name == 'sky':
-            d = skygrad(meany * 1.0)
-            keep = smooth(0.7, 0.9, lum)[:, None]           # the moon and the stars keep their own light
+            d = skygrad(meany / hyf)
+            keep = smooth(0.5, 0.7, lum)[:, None]           # the moon and the stars keep their own light
             tgt = d * np.clip(0.85 + 0.9 * (lum[:, None] - mlum), 0.55, 1.3)
             p = mix(p, tgt, sky_dawn * (1 - keep))
         return np.clip(p, 0, 1)
     out['rain'] = grade(0.03, (0.30, 0.08, 0.40), 1.05, desat=-0.08)
     out['deep'] = pal.copy()
-    out['predawn'] = grade(0.10, (0.04, 0.12, 0.40), 0.7, sky_dawn=0.45, desat=0.3)
-    out['dawn'] = grade(0.28, (0.10, 0.16, 0.34), 0.35, sky_dawn=0.95, desat=0.4)
+    out['predawn'] = grade(0.05, (0.02, 0.08, 0.30), 0.75, sky_dawn=0.45, desat=0.25)
+    out['dawn'] = grade(0.14, (0.05, 0.09, 0.22), 0.4, sky_dawn=0.95, desat=0.3)
     return {k: (np.round(v * 255).astype(int)).tolist() for k, v in out.items()}
 
 
@@ -2090,6 +2148,9 @@ def build(variant, preview_dir=None):
     Ls = {n: Layer(n, W, H) for n in order}
     for n in order:
         Ls[n].lock = np.zeros((H, W), bool)
+        Ls[n].wid = np.zeros((H, W), np.int32)
+        Ls[n].own = np.zeros((H, W), np.int32)
+    kit.GROUP[0] = 1
     lights = []
     draw_sky(Ls['sky'], cam, A, rng_for('sky', variant), V)
     print(variant, 'sky', round(time.time() - t0, 1)); sys.stdout.flush()
@@ -2098,9 +2159,76 @@ def build(variant, preview_dir=None):
     print(variant, 'far', round(time.time() - t0, 1)); sys.stdout.flush()
     draw_town(Ls, cam, A, rng_for('town', variant), V, lights)
     print(variant, 'town', round(time.time() - t0, 1)); sys.stdout.flush()
+    kit.GROUP[0] += 1
     draw_fg(Ls['fg'], cam, A, rng_for('fg', variant), V)
     apply_lights(Ls, lights, order)
     print(variant, 'lights', round(time.time() - t0, 1)); sys.stdout.flush()
+    # keep only windows that still show >= 90% of their own pixels in the final stack
+    upper = {}
+    acc = np.zeros((H, W), bool)
+    for name in reversed(order):
+        upper[name] = acc.copy()
+        acc |= Ls[name].a
+    kept, dropped = [], 0
+    for i, w_ in enumerate(A.d['windows']):
+        x, y, ww, hh, ln = w_[0], w_[1], w_[2], w_[3], w_[9]
+        x0, y0, x1, y1 = max(0, x), max(0, y), min(W, x + ww), min(H, y + hh)
+        if x1 <= x0 or y1 <= y0:
+            dropped += 1
+            continue
+        own = (Ls[ln].wid[y0:y1, x0:x1] == i + 1) & ~upper[ln][y0:y1, x0:x1]
+        if os.environ.get('SCENE_DEBUG'):
+            o1 = float((Ls[ln].wid[y0:y1, x0:x1] == i + 1).mean()); o2 = float(upper[ln][y0:y1, x0:x1].mean())
+            DBG.append((ln, o1, o2, x, y, ww, hh))
+        if own.sum() >= 0.9 * ww * hh:
+            kept.append(w_)
+        else:
+            dropped += 1
+    A.d['windows'] = kept
+    print(variant, 'windows kept', len(kept), 'dropped', dropped)
+    # every other anchor: visible only if nothing drawn later (same layer) or nearer (upper layers) covers it
+    def vis(ln, g, x0, y0, x1, y1):
+        x0, y0 = int(max(0, x0)), int(max(0, y0))
+        x1, y1 = int(min(W, max(x1, x0 + 1))), int(min(H, max(y1, y0 + 1)))
+        if x1 <= x0 or y1 <= y0:
+            return 0.0
+        ok = (Ls[ln].own[y0:y1, x0:x1] <= g) & ~upper[ln][y0:y1, x0:x1]
+        return float(ok.mean())
+
+    def test(a):
+        if not isinstance(a, dict) or '_g' not in a or a.get('layer') not in Ls:
+            return True
+        ln, g = a['layer'], a.pop('_g')
+        if 'arms' in a:
+            a['arms'] = [p for p in a['arms'] if vis(ln, g, p[0] - 1, p[1] - 1, p[0] + 2, p[1] + 2) >= 0.9]
+        if 'bulb' in a:
+            b_ = a['bulb']
+            return vis(ln, g, b_[0], b_[1], b_[0] + b_[2], b_[1] + b_[3]) >= 0.9
+        if 'w' in a and 'h' in a and 'x' in a:
+            return vis(ln, g, a['x'], a['y'], a['x'] + a['w'], a['y'] + a['h']) >= 0.9
+        if 'x0' in a:
+            return vis(ln, g, a['x0'], a['y'] - 1, a['x1'], a['y'] + 1) >= 0.9
+        if 'pts' in a:
+            return True
+        if 'x' in a:
+            return vis(ln, g, a['x'] - 1, a['y'] - 1, a['x'] + 2, a['y'] + 2) >= 0.9
+        return True
+    stats = {}
+    for k in list(A.d.keys()):
+        v = A.d[k]
+        if isinstance(v, list) and k not in ('windows', 'far'):
+            keep = [a for a in v if test(a)]
+            stats[k] = (len(keep), len(v))
+            dict.__setitem__(A.d, k, list(keep))
+        elif isinstance(v, dict) and '_g' in v:
+            if not test(v):
+                v['visible'] = 0
+                stats[k] = 'hidden'
+            dict.__setitem__(A.d, k, dict(v))
+    print(variant, 'anchor visibility', stats)
+    for n in order:
+        Ls[n].wid = None
+        Ls[n].own = None
     cull_hidden(Ls, order, margin=14)
     os.makedirs(OUT_IMG, exist_ok=True)
     Kq = dict(sky=40, far=48, mid=56, near=64, fg=32)
@@ -2113,11 +2241,12 @@ def build(variant, preview_dir=None):
         img, pal = quantize(L.rgb, L.a, K=Kq[n], seed=7 + z)
         fn = f'{variant}-{n}.png'
         path = os.path.join(OUT_IMG, fn)
-        plist = save_indexed(path, img, pal)
+        plist = save_indexed(path + '.tmp', img, pal)
+        PENDING.append((path + '.tmp', path))
         palq = np.array(plist, float) / 255.0
-        sz = os.path.getsize(path)
+        sz = os.path.getsize(path + '.tmp')
         total += sz
-        moods = mood_palettes(palq, L, img, n)
+        moods = mood_palettes(palq, L, img, n, cam.hy / H)
         moods['deep'] = plist
         layers[n] = dict(src=f'scene/img/{fn}', depth=depth[n], z=z, bytes=sz, palette=plist, moods=moods)
         pl = np.array([[0, 0, 0]] + plist, np.uint8)
@@ -2150,8 +2279,12 @@ def main():
             pass
     for v in vs:
         doc['variants'][v], _ = build(v, pdir)
-    with open(OUT_JSON, 'w') as fh:
+    # images first, the anchors last, each by rename: a page never pairs new anchors with old art
+    for tmp, final in PENDING:
+        os.replace(tmp, final)
+    with open(OUT_JSON + '.tmp', 'w') as fh:
         json.dump(doc, fh, separators=(',', ':'))
+    os.replace(OUT_JSON + '.tmp', OUT_JSON)
     print('wrote', OUT_JSON, os.path.getsize(OUT_JSON))
 
 

@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image, ImageDraw
 
 F = np.float32
+GROUP = [0]   # draw-group counter: later groups are nearer; used for anchor occlusion tests
 
 
 def C(h, a=None):
@@ -37,6 +38,8 @@ class Layer:
         self.rgb = np.zeros((H, W, 3), F)
         self.a = np.zeros((H, W), bool)
         self.lock = None  # optional bool mask of pixels that are "emissive" (exempt from glow/grade)
+        self.wid = None   # optional int32 id-buffer: which window still owns each pixel
+        self.own = None   # optional int32 buffer: the draw group that last painted each pixel
 
     # ---- core: paint a local mask with a colour (const, (h,w,3) array, or callable(X,Y)->...)
     def paint(self, x0, y0, mask, col, alpha=True):
@@ -61,6 +64,10 @@ class Layer:
                 c = np.broadcast_to(c, (Y1 - Y0, X1 - X0, 3))
         reg = self.rgb[Y0:Y1, X0:X1]
         reg[m] = c[m]
+        if self.wid is not None:
+            self.wid[Y0:Y1, X0:X1][m] = 0
+        if self.own is not None:
+            self.own[Y0:Y1, X0:X1][m] = GROUP[0]
         if alpha:
             self.a[Y0:Y1, X0:X1][m] = True
 
@@ -269,5 +276,5 @@ def save_indexed(path, img, pal):
     im = Image.fromarray(img, 'P')
     n = len(pal) + 1
     im.putpalette(pl[:n].flatten().tolist())
-    im.save(path, optimize=True, transparency=0)
+    im.save(path, format='PNG', optimize=True, transparency=0)
     return pl[1:n].astype(int).tolist()
