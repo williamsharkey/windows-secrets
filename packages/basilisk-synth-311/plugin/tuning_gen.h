@@ -3,6 +3,137 @@
 #include <cstdint>
 struct TuningRow { uint64_t dna; int16_t cents; };
 static const TuningRow kTuning[] = {
-    {0, 0},
+    {0x006393c606e92d4bull, -32},   // rom-reference:Ballroom Prism
+    {0x02375ab98dc129b1ull, -10},   // rom-reference:Rapid Drum
+    {0x0259242b1f469959ull, -57},   // techno-server:Quiet Cellar
+    {0x03a3c256bd54db83ull, -64},   // rom-reference:Signal Strum
+    {0x05c2678b02869cadull, -14},   // paulywaulophone:Rainy Steeple
+    {0x077e2f945f947ca7ull, -21},   // workstation-classics:Modular Horns
+    {0x08ff5dcca45c24d8ull, -57},   // breakbeat-resource:Rusty Floor
+    {0x0a0714bf040e0c9bull, -25},   // rainy-loft:Back Room Organ
+    {0x0b5ed5a790141e06ull, -11},   // bass-enterprise:Ocean Bass
+    {0x0bbb6f385d0187c4ull, 78},   // office-machinery:Cedar Hat
+    {0x0d377c199aafc0cfull, -13},   // workgroup-house:Warm Quartet
+    {0x0e3483ace2f88ce7ull, -67},   // bass-enterprise:Rubber Thump
+    {0x11b7e0fc7afa8ec2ull, -57},   // bass-enterprise:Wobbly Speed Sub
+    {0x128079d204a95c34ull, -12},   // retro-display:Quiet End
+    {0x1551dad56fcf24b3ull, -57},   // breakbeat-resource:Sub Stab Juke
+    {0x193be997d4bdf8e8ull, -56},   // game-port:Pastel Signal
+    {0x1aebc520182f9299ull, -57},   // workgroup-house:Pearl End
+    {0x1f73d8448efc8e0eull, -84},   // leisure:Granite Lead
+    {0x1fd8f087e07669eaull, -20},   // studio-archive:Slow Vibes
+    {0x21eb296fae5ab3f5ull, -84},   // retro-display:Still Call
+    {0x23cd477fe0c1b3b0ull, -24},   // polysynth-showroom:Federal Hammers
+    {0x244adb6e32f716c2ull, -48},   // rom-reference:Distant Basement
+    {0x2453452825158c09ull, -83},   // workgroup-house:Round Floor Sub
+    {0x256fc069bbccbf51ull, -82},   // rainy-loft:Far Horn
+    {0x29e74bb25614f32cull, -24},   // workstation-classics:Chrome Pilot
+    {0x2b83fe0f9b8166adull, -57},   // techno-server:Felt Sub
+    {0x2cb1bc926dcf95ddull, -54},   // w3x-heritage:Field Floor
+    {0x2ebb1b3e4e8174eeull, 16},   // screen-saver:White Glock
+    {0x3263aeccd1790c13ull, -44},   // breakbeat-resource:Delta Rumble
+    {0x32bd99ff7c1c387aull, -52},   // diagnostics:Chrome Voices
+    {0x34d52332e991b1a4ull, -61},   // breakbeat-resource:Steady Ray
+    {0x36814b8477445708ull, -82},   // bass-enterprise:Ballroom End
+    {0x37272ec4d567add2ull, -56},   // w3x-heritage:Slate Pilot
+    {0x395d68a11469ffefull, -16},   // workgroup-house:Slap Disco Bass
+    {0x3b2035fdb4701e74ull, -81},   // studio-archive:Coded Line
+    {0x3c7225d819ca281aull, 41},   // lifestyle-aesthetics:Test Pattern Tone
+    {0x3eb8ddf8fb816b8dull, -13},   // garden-rhythm:Rural Brass
+    {0x3fd1489cc2c1d671ull, -45},   // rom-reference:Noble Gloss
+    {0x416827f9e3732894ull, -18},   // polysynth-showroom:Ultra Pad
+    {0x443c751681391c5full, -12},   // breakbeat-resource:Swift Bass
+    {0x44646b501ac032efull, -57},   // beat-management:Elevated Cellar
+    {0x4f666212c405e705ull, -57},   // trance-connectivity:Rainy Groove
+    {0x5158318f0ae18d13ull, -57},   // game-port:Cobalt Anchor
+    {0x52709805f9a890b8ull, -57},   // bass-enterprise:Organ Bass 2-Step
+    {0x53a9bcbc62ae4c51ull, -11},   // rainy-loft:Vocoder Chorus
+    {0x558555b34ee765f6ull, 23},   // polysynth-showroom:Late Aurora
+    {0x57501470927da793ull, -56},   // beat-management:Long Boom Glide
+    {0x5b46df80a18e0e39ull, -20},   // retro-display:Violet Chords
+    {0x5bbd3767df291597ull, -15},   // workgroup-house:Sunday Cellar
+    {0x61302f275071ff79ull, -57},   // rom-reference:Hazy Gamelan
+    {0x62a335db1c2f30ffull, -89},   // breakbeat-resource:Cathode Bloom
+    {0x6432a80d3f81867eull, -57},   // rom-reference:Twilight Floor
+    {0x68a9a06d85e4f936ull, -58},   // trance-connectivity:Crystal Spark
+    {0x6a5667a5f77b853aull, -43},   // workstation-classics:Felt Pizz
+    {0x6a5bb1fd4a15b2dbull, -12},   // lifestyle-aesthetics:Atrium Keys
+    {0x6ef6f295768f8a38ull, -17},   // garden-rhythm:Brushed Chorus
+    {0x6f7ea63a2072fb27ull, -59},   // workgroup-house:Amber Ascent
+    {0x71c6e9784124f3b4ull, -17},   // beat-management:Study Vibes
+    {0x75d6b756b472ce36ull, 14},   // polysynth-showroom:Azure Horns
+    {0x7682aec326bd5a26ull, -57},   // beat-management:Dub Cellar Bass
+    {0x7899b12eeb10ff09ull, -57},   // workgroup-house:Crystal Vox
+    {0x7a3eec9a61dd2e55ull, -78},   // screen-saver:Sunlit Texture
+    {0x7cddb46fdfc48b49ull, -57},   // rom-reference:Flat Upright
+    {0x8003adfb88ba42bfull, 13},   // screen-saver:Northern Dormant
+    {0x80432fe417d82a50ull, 22},   // tape-parlour:Federal Spark
+    {0x8480a3e369d63aa6ull, -60},   // breakbeat-resource:Faded Etude
+    {0x86052d0c9b1635c1ull, 22},   // screen-saver:Granite Dormant
+    {0x8aab48f83697be4dull, -12},   // polysynth-showroom:Chrome Mist
+    {0x8c01fbdcd030897aull, -11},   // workgroup-house:Granite Sub
+    {0x9068dd6b2cb6a694ull, -23},   // courtyard-chapel:Hotel Uplink
+    {0x9560b8e5ade98386ull, -55},   // techno-server:Dot Sub
+    {0x9a2826d229e0a5b8ull, 84},   // techno-server:Woven Tap
+    {0x9a316e2d35f6900dull, -11},   // workgroup-house:Midnight Haze
+    {0x9ae927a834dd7c7full, -11},   // bass-enterprise:Rusty End
+    {0xa1706522f24ffec8ull, -21},   // paulywaulophone:Mint Voice
+    {0xa2f5b8635b9042d6ull, -21},   // polysynth-showroom:Field Voices
+    {0xa63c9ce15d573be0ull, -59},   // lifestyle-aesthetics:Fluorescent Hum
+    {0xa8a01ec0587cb1c0ull, -10},   // trance-connectivity:Signal Plink
+    {0xa9b3bfd230071d96ull, -15},   // polysynth-showroom:Mint Horizon
+    {0xadb86d0c07dd22faull, -53},   // workgroup-house:Ember Ascent
+    {0xadf4f52a4094ff7bull, -57},   // bass-enterprise:Kinetic Weight
+    {0xb0c641d1d60a275aull, 78},   // office-machinery:Harbor Snare
+    {0xb1c97ec5568bc8ddull, -14},   // paulywaulophone:Night Ballad
+    {0xb1d189fe12d83201ull, 45},   // screen-saver:Frosted Peal
+    {0xb2af434d98a2ce89ull, -31},   // w3x-heritage:Gentle Whistle
+    {0xb3f6813aeb9bf76dull, 22},   // listening-post:Saffron Dormant
+    {0xb4f0340c385d8d58ull, -12},   // beat-management:Global Felt
+    {0xb57486547c5941f0ull, 12},   // polysynth-showroom:Meadow Brass
+    {0xb85b43760c396e32ull, 20},   // beat-management:Violet Swoosh
+    {0xbac6865dd157c64dull, -17},   // workgroup-house:Solar Snap
+    {0xbd9eaf80970536c9ull, -39},   // breakbeat-resource:Western Breath
+    {0xbe2d50cbd2a24044ull, -12},   // breakbeat-resource:Laser Foundation
+    {0xbe52c0c5189bdc93ull, -10},   // garden-rhythm:Lucid Punch
+    {0xbf16e8877703c52full, 27},   // courtyard-chapel:Lucid Carillon
+    {0xc0194452713baa4eull, -12},   // polysynth-showroom:Static Chorus
+    {0xc1450db78c2ecf52ull, -28},   // screen-saver:Zinc Drift
+    {0xc2420e481b01297aull, -68},   // workstation-classics:Matte Floor
+    {0xc2c68518aa2ce592ull, -30},   // beat-management:Midnight Piano
+    {0xc4051aeaecc5e707ull, 11},   // rainy-loft:Hotel Corridor
+    {0xc8db09a38bea3289ull, 11},   // polysynth-showroom:Plaza Halo
+    {0xce1b9d3f938b8de9ull, -51},   // breakbeat-resource:Topaz Foundation
+    {0xcee8219e28a3658dull, -55},   // trance-connectivity:Echo Voice
+    {0xcf1fb5ade972d645ull, -12},   // bass-enterprise:Noble Cellar
+    {0xcf8025c5c3a1cb25ull, -50},   // w3x-heritage:Western Veil
+    {0xd3098d7f62d94d47ull, -13},   // bass-enterprise:Northern Low
+    {0xd4ed6fd41919b7c5ull, -49},   // game-port:Cold Voice
+    {0xd4f18d9dabb4dc3full, -20},   // polysynth-showroom:Late Pilot
+    {0xdf77f7872df52612ull, -17},   // beat-management:Felt Ding Piano
+    {0xe1ced14243c89ca7ull, -29},   // polysynth-showroom:Silent Salon
+    {0xe223f3b63e2385b3ull, 23},   // techno-server:Electric Haze
+    {0xe23c4ab72cac688cull, -84},   // workstation-classics:Civic Pilot
+    {0xe2cca5fe836a677aull, -39},   // lifestyle-aesthetics:Glass Keyboard
+    {0xe57a42e5f0eaf0bfull, -15},   // rainy-loft:Neon Sign Lead
+    {0xe6f1686c8cd26d81ull, -22},   // rainy-loft:Disco Clavinet
+    {0xe7ab26ffd601fc75ull, -20},   // techno-server:Wide Solo
+    {0xe7acc3da328e65ffull, -58},   // game-port:Waxed Line
+    {0xe82229408fb48168ull, -11},   // bass-enterprise:Rose Vox
+    {0xe8a35d3d7235f8efull, 18},   // workgroup-house:Cedar Pulse
+    {0xeafa7a837ec79fc5ull, -57},   // lifestyle-aesthetics:Vapor Sub Boom
+    {0xeca538ace41c2e87ull, -57},   // workgroup-house:Remote Foundation
+    {0xed21acbb9bab5dc9ull, -58},   // studio-archive:Pale Wash
+    {0xf02e166e381b5157ull, -27},   // screen-saver:Quiet Drift
+    {0xf230df5316e3943dull, -12},   // retro-display:Second Ballad
+    {0xf268887faaaa7a5bull, -12},   // tape-parlour:Dusk Pilot
+    {0xf48f4bb64307339eull, -57},   // rom-reference:Blue Market
+    {0xf82c250f11300215ull, -57},   // game-port:Zinc Ray
+    {0xf95e56ff30381288ull, -64},   // w3x-heritage:Cobalt Veil
+    {0xfa0fb15c7fb87d40ull, 82},   // breakbeat-resource:Silver Signal
+    {0xfadf3d8b21fc727cull, -52},   // w3x-heritage:Lobby Low
+    {0xfb79c784ba775d59ull, -11},   // polysynth-showroom:Rose Breath
+    {0xfbebbfc189acebe5ull, 11},   // polysynth-showroom:Upper Ensemble
+    {0xfdd32fb2159400dfull, 14},   // tape-parlour:Pewter Herald
 };
-static const unsigned kTuningCount = 0;
+static const unsigned kTuningCount = 132;
