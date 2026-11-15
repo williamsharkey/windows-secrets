@@ -214,7 +214,9 @@ def main():
             for ext in ('ogg', 'mp3'):
                 if g.get(ext) and os.path.exists(os.path.join(songsdir, g[ext])):
                     d2 = os.path.join(out, 'songs', os.path.dirname(g[ext])); os.makedirs(d2, exist_ok=True)
-                    copy(os.path.join(songsdir, g[ext]), os.path.join(out, 'songs', g[ext])); q['au'][ext] = 'songs/' + g[ext]
+                    copy(os.path.join(songsdir, g[ext]), os.path.join(out, 'songs', g[ext]))
+                    v = ((g.get('sha256') or {}).get(ext) or '')[:8]   # a new file gets a new URL (no stale copy from a cache)
+                    q['au'][ext] = 'songs/' + g[ext] + ('?v=' + v if v else '')
             presets.insert(nsongs, q); nsongs += 1
         json.dump({'id': pid, 'presets': presets}, open(os.path.join(out, 'data', pid + '.json'), 'w'), separators=(',', ':'))
         W = W or {}
