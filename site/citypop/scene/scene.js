@@ -65,7 +65,7 @@
       for (const v of ['hd', 'desktop']) {
         const V = vs[v]; if (!V) continue;
         const f = fitScale(V, dw, dh, dpr);
-        const c = 1 - Math.min(1, (dw * dh) / (V.w * f.s * V.h * f.s)) + (Number.isInteger(f.s) ? 0 : 0.08);
+        const c = 1 - Math.min(1, (dw * dh) / (V.w * f.s * V.h * f.s)) + (Number.isInteger(f.s) ? 0 : 0.2);
         if (c < cost) { cost = c; best = v; }
       }
       return best || (vs.desktop ? 'desktop' : Object.keys(vs)[0]);
