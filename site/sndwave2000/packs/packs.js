@@ -318,7 +318,7 @@
     var g = x.song, url = function (u, t) { return u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(t || u) + '</a>' : ''; };
     $('mp-cdna').hidden = true;
     $('mp-now').innerHTML = '<b class="nm">' + esc(x.n) + '</b>' +
-      '<span>Song, ' + esc(g.length || fmt(x.sec)) + (g.bpm ? ', ' + Math.round(g.bpm) + ' bpm' : '') + '</span>' +
+      '<span>' + ({original: 'Original song', world: 'Traditional or classical piece', chiptune: 'Chiptune'}[g.kind] || 'Song') + ', ' + esc(g.length || fmt(x.sec)) + (g.bpm ? ', ' + Math.round(g.bpm) + ' bpm' : '') + '</span>' +
       (g.composer ? '<span class="mk">Music: ' + esc(g.composer) + '</span>' : '') + (g.arranger ? '<span class="mk">Arranged by ' + esc(g.arranger) + '</span>' : '') +
       (g.source ? '<span class="mk">Source: ' + esc(g.source) + '</span>' : '') + (g.licence ? '<span class="mk">Licence: ' + esc(g.licence) + '</span>' : '') +
       (g.proof ? '<span class="mk">' + url(g.proof, 'Source page') + '</span>' : '') + (g.credits ? '<span class="mk">' + esc(g.credits) + '</span>' : '') +
