@@ -3,6 +3,7 @@ beguine on claves and bongo taps, marimba, vibes-bells, lounge piano, strings an
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from _lib import *
+chord_cap(8)   # rendered before render311 --lookahead: chords thinned to 8 recorders an instant (_lib.cap_chords)
 
 S = Score(bpm=96, seed=1956)
 flute = S.part('flute', 1)

@@ -1,0 +1,46 @@
+# Fire Level: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Fire Level
+pack     = retro-display
+kind     = chiptune
+composer = Spring Spring
+source   = Fire_Level, a Standard MIDI File (Fire_Level.mid) from OpenGameArt (https://opengameart.org/sites/default/files/Fire%20Level.mid). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/fire-level
+arranger = Algorithmic Industries house band
+source_sha256= d2162064a0a20cdcd60d7b1e0d849d91c644c79ad99e1076c0d1f64e3ac162fd
+note     = The MIDI file's 2A03 and VRC6 lines on the sun-glare lead, a pilot lead, kalimba chords and the basement bass, the noise channel on Kit Manager 98 (Echo Chamber Kit).
+midi     = fire-level.mid
+script   = fire-level.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Sun Glare Lead"                         lufs=-20 pan=4 echo=0.2 verb=0.25
+lead2       ch2     "Field Pilot"                            lufs=-23 pan=-16
+arp         ch3     "Violet Chords"                          lufs=-24 pan=24 echo=0.3 tune=-20
+bass        ch4     "Remote Basement"                        lufs=-19
+kit         ch10    "kit-manager:Echo Chamber Kit"           lufs=-17 verb=0.12
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Echo Chamber Kit" = ringout@20[@40]@0CP@0CP@0CP<<<Ja0,100.80,40.300,0#3F/xpstart>EE#4F/xprecycle>>>@40]#5F/balloon<E#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"retro-display:Field Pilot" = ems_csirac_pulse_e4E#12U3~13/ui_glass_ping#4T-8L34Q4;A9D65S84R331V71K64G-7
+"retro-display:Remote Basement" = ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+<#8Ja0,100.80,40.110,0;A0D400S0R40V80K35G6
+"retro-display:Sun Glare Lead" = print@10[@60]@0CP@0CP#10U2~14;A40R500K82G13
+"retro-display:Violet Chords" = kalimba_c4U2~5;A2D641S43R688V77K60G-5

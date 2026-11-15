@@ -1,0 +1,44 @@
+# Cave: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Cave
+pack     = tape-parlour
+kind     = chiptune
+composer = Wolfgang_
+source   = Cave, a FamiTracker module (Cave.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/cave_1.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/8-bit-cave-loop
+arranger = Algorithmic Industries house band
+source_sha256= be13735b4e5e625568dbb03b72750d9fb6802cb946fd74e3afd23e2c9b31f6af
+note     = Played twice through on tape-replay voices: the NES module's pulse 1 on the contrabass, pulse 2 on the cellos, the triangle on the flute, the noise on Kit Manager 98 (Half-Time Kit).
+midi     = cave.mid
+script   = cave.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+bass        ch1     "Lunar Bows"                             lufs=-20
+cellos      ch2     "Warm Legato"                            lufs=-21 pan=-16 verb=0.3
+flute       ch3     "Kinetic Ray"                            lufs=-21 pan=10 verb=0.3
+kit         ch10    "kit-manager:Half-Time Kit"              lufs=-21 verb=0.12 lp=8000
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Half-Time Kit" = ringout@20[@40]@0CP<<<+Ja0,100.80,50.400,0#3F/recycle@20]+E#4F/xprecycle>>>@40]#5F/critstop<@10]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"tape-parlour:Kinetic Ray" = tape_flute_vib_c4@t40[#14O15Wm8000Yd3kVw10,8f2,8s15,65/menu#2FL25Wm8000;A20D0S100R150V20K72G-8
+"tape-parlour:Lunar Bows" = tape_contrabass_a1@t40[#16Wm8000Yd6l4kVw4,6f4,8s20,80;A10D0S100R110V20K45G-14
+"tape-parlour:Warm Legato" = tape_cellos_a2@t40[#14O20Wm8000Yd3l4kVw6,5f2,10s15,80/xpstart#2FL12Wm8000;A20D0S100R80V30K57G-10

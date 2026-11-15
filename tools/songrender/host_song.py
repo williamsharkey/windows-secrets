@@ -47,7 +47,8 @@ class HostArgs:
 
 def state_blob(dna, packs):
     text = 'BASILISK-SYNTH 1\ndna ' + dna + '\nreference 0\n' + (f'packs {packs}\n' if packs else '')
-    return b'__dpf_state_begin__\xffstate\xff' + text.encode() + b'\xff__dpf_state_end__\xff'
+    # DPF's VST3 state stream: NUL-separated keys and values between the state markers, 0xFE at the end
+    return b'__dpf_state_begin__\0state\0' + text.encode() + b'\0__dpf_state_end__\0\xfe'
 
 
 def render_track(ha, dna, mid, wav_out, tail):

@@ -1,0 +1,50 @@
+# On Again Off Again: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = On Again Off Again
+pack     = techno-server
+kind     = chiptune
+composer = Chance de la Soul
+source   = On Again Off Again, a FamiTracker module (On_Again_Off_Again.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/on_again_off_again_nsf_ftm.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/nes-on-again-off-again
+arranger = Algorithmic Industries house band
+source_sha256= 41e4465d5fc5f7337a2df1dd0af0bad05f9b03e017621a8419c01976d80e6123
+note     = Played twice through as techno: the NES module's pulses and VRC6 lines on a CSIRAC-pulse lead, a hit, morse blips and horns, the VRC6 saw on the sub, its triangle on relay ticks, DPCM and noise on Kit Manager 98 (Long Boom Kit).
+midi     = on-again-off-again.mid
+script   = on-again-off-again.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Folded Call"                            lufs=-21 pan=6 echo=0.3
+stab        ch2     "Lattice Hit"                            lufs=-24 pan=-12 echo=0.4
+morse       ch3     "Granite Line"                           lufs=-24 pan=-20 echo=0.35
+chords      ch4     "Waxed Horns"                            lufs=-25 pan=18 verb=0.25
+sub         ch5     "Felt Sub"                               lufs=-19 tune=-57
+tick        ch6     "Rural Tick"                             lufs=-29 pan=28
+kit         ch10    "kit-manager:Long Boom Kit"              lufs=-17 verb=0.04
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Long Boom Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.900,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"techno-server:Felt Sub" = ringout@20[@40]@0CP@0CP@0CP<<#8;A30D0S100R250V60K45G-2
+"techno-server:Folded Call" = ems_csirac_pulse_e4EU2~7;A5D481S74R275V93K64G-3
+"techno-server:Granite Line" = ems_morse_cw<H0,12;A2D285S73R257V92K65G-10
+"techno-server:Lattice Hit" = tadaxp@t130[>#8/relay_click>#8FL42;A6D201S89R275V95K60G3
+"techno-server:Rural Tick" = ems_relay_pull#8F/ding#8;A0R50V100K67G-2
+"techno-server:Waxed Horns" = logon+>Q-41;A4D233S31R233V94K56G12

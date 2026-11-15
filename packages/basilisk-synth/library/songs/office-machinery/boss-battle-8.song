@@ -1,0 +1,50 @@
+# Boss Battle 8: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Boss Battle 8
+pack     = office-machinery
+kind     = chiptune
+composer = nene
+source   = boss_battle_08, a Standard MIDI File (boss_battle_08.mid) from OpenGameArt (https://opengameart.org/sites/default/files/boss_battle_08.mid). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/boss-battle-8-retro
+arranger = Algorithmic Industries house band
+source_sha256= 52da0aa33ad0a76eaa47b2135f6de4cd5da9c4dbd4b9d1b4b80a568f52b365d1
+note     = Played twice through on office machinery: the MIDI file's lead on the civil-defence bugle, its rhythm lines on PC-speaker beeps and the low bugle, its bass on twelve drives, its strings on a hard-disk inductor, its General MIDI drums on the spacebar kit.
+midi     = boss-battle-8.mid
+script   = boss-battle-8.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+bugle       ch1     "Signal Uplink"                          lufs=-20 pan=-4 verb=0.3
+beep        ch2     "Cedar Hat"                              lufs=-24 pan=16 tune=78
+lowbugle    ch3     "White Dive"                             lufs=-23 pan=-18 verb=0.3
+drives      ch4     "Ocean Crowd"                            lufs=-19
+beep2       ch5     "Harbor Snare"                           lufs=-26 pan=24 tune=78
+inductor    ch6     "Steady Texture"                         lufs=-26 pan=-24
+kit         ch10    "Rubber Canopy"                          lufs=-17 verb=0.06
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"office-machinery:Cedar Hat" = pc_pc_speaker_error_beepEF;D327S0R61V95G-4
+"office-machinery:Harbor Snare" = pc_pc_speaker_error_beep@t348]F;D89S0R39V79G-3
+"office-machinery:Ocean Crowd" = pc_computer_12_drives<#11U2~19/pc_hdd_maxtor_10kE#5T-4L23O111Q-24;A52S100R1557V76K29G1
+"office-machinery:Rubber Canopy" = key_spacebar@t30000Iem_selectric_key_a@t30000Ikey_mechanical_hard@t30000Iem_typewriter_key_a@t30000Iem_selectric_key_b@t30000Ikey_press_down@t30000Ikey_press_single_a@t30000Iem_typewriter_return_a@t30000Ikey_press_single_b@t30000Iem_stamp_b@t30000Iem_typewriter_bell_a#16;R300V80G-2k36j1k37j2k38j3k39j4k40j5k42j6k44j7k45j8k46j9k47j10k49j11
+"office-machinery:Signal Uplink" = bugle_attentionE#11U2~8/bugle_drill_call#5T-15L62;A384S100R2059V93K74G-5
+"office-machinery:Steady Texture" = pc_hdd_inductor_mic@t7268]#8/pc_fan_coil_whine#8L23;A31S100R1786V81K45G6
+"office-machinery:White Dive" = bugle_attention<<#5/pc_crt_degauss#5FL12Ja0,100.98,30.890,0/pc_cd_seek_mouse#6L26Ja0,100.175,30.802,0;A71S100R1901V91K50G-2

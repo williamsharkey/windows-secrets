@@ -24,7 +24,7 @@ from smf import Smf   # noqa: E402
 
 SR = 48000
 HOME = os.path.expanduser('~')
-DEF_RENDER311 = os.environ.get('SONGRENDER_RENDER311', os.path.join(HOME, 'songs', 'build', 'render311'))
+DEF_RENDER311 = os.environ.get('SONGRENDER_RENDER311', os.path.join(HOME, 'songs', 'build', 'render311-la'))
 DEF_MACHINE = os.environ.get('SONGRENDER_MACHINE', os.path.join(HOME, 'songs', 'machine'))
 DEF_CACHE = os.environ.get('SONGRENDER_CACHE', os.path.join(HOME, 'songs', 'cache'))
 MAX_JOBS = 6   # the PC is shared: never more engines than this at once
@@ -238,9 +238,10 @@ def write_wav24(path, x):
 
 
 class StemJob:
-    def __init__(self, song, track, dna, label, midi_bytes, key, tail, bpm, cache):
+    def __init__(self, song, track, dna, label, midi_bytes, key, tail, bpm, cache, lookahead=0.0):
         self.song, self.track, self.dna, self.label = song, track, dna, label
         self.midi_bytes, self.key, self.tail, self.bpm = midi_bytes, key, tail, bpm
+        self.lookahead = lookahead
         self.path = os.path.join(cache, key[:2], key + '.flac')
         self.log = ''
         self.seconds = 0.0
@@ -261,6 +262,8 @@ def render_stem(job, render311, machine, engine, host_args):
         if engine == 'render311':
             cmd = ['nice', '-n', '10', render311, '--machine', machine, '--core', os.path.join(machine, 'dosbox_pure_libretro.so'),
                    '--dna', job.dna, '--midi', mid, '--out', wav, '--tail', f'{job.tail:g}', '--bpm', f'{job.bpm:.6f}']
+            if job.lookahead:   # each event sent this many ms early, its stamp unchanged: dense chords arm on time
+                cmd += ['--lookahead', f'{job.lookahead:g}']
             env = dict(os.environ, TMPDIR=tmp)
             r = subprocess.run(cmd, capture_output=True, text=True, env=env)
             job.log = (r.stderr or '').strip().splitlines()[-1:] and r.stderr.strip().splitlines()[-1]
@@ -338,18 +341,31 @@ def echo_ir(sec, bpm):
     return h
 
 
+def splitmix_gauss(seed, n):
+    """n Gaussian-ish samples, bit-exact anywhere: SplitMix64 from `seed` (state x; each output: x += 0x9E3779B97F4A7C15,
+    z = x, z = (z ^ z>>30) * 0xBF58476D1CE4E5B9, z = (z ^ z>>27) * 0x94D049BB133111EB, z ^= z>>31), uniform
+    u = (z >> 11) * 2^-53; sample i = (u[4i] + u[4i+1] + u[4i+2] + u[4i+3] - 2) * sqrt(3) (Irwin-Hall of 4)"""
+    with np.errstate(over='ignore'):
+        k = np.arange(1, 4 * n + 1, dtype=np.uint64)
+        z = np.uint64(seed) + k * np.uint64(0x9E3779B97F4A7C15)
+        z = (z ^ (z >> np.uint64(30))) * np.uint64(0xBF58476D1CE4E5B9)
+        z = (z ^ (z >> np.uint64(27))) * np.uint64(0x94D049BB133111EB)
+        z = z ^ (z >> np.uint64(31))
+    u = (z >> np.uint64(11)).astype(np.float64) * (2.0 ** -53)
+    return (u.reshape(n, 4).sum(axis=1) - 2.0) * math.sqrt(3.0)
+
+
 def reverb_ir(sec):
     rt = num(sec.get('size'), 2.0)        # seconds to -60 dB
     pre = num(sec.get('predelay'), 18) / 1000.0
     tone = num(sec.get('tone'), 5500)
     seed = int(num(sec.get('seed'), 3110))
-    rng = np.random.default_rng(seed)
     L = int((rt * 1.2 + pre) * SR)
     t = np.arange(L) / SR
     h = np.zeros((L, 2))
     P = int(pre * SR)
     for c in range(2):
-        nz = rng.standard_normal(L)
+        nz = splitmix_gauss(seed * 2 + c, L)   # one stream per channel (portable: the Song tab draws the same)
         lo = onepole_lp(onepole_lp(nz, tone), tone)
         hi = nz - onepole_lp(nz, tone)
         env_lo = np.exp(-6.9078 * t / rt)
@@ -551,8 +567,9 @@ def plan(song, args):
             if ex.note_count() == 0:
                 raise SystemExit(f'{song.path}: track {t.name} ({t.src}) has no notes in {song.meta["midi"]}')
             b = ex.to_bytes_for(os.path.join(tmpdir, 'x.mid'))
-            key = hashlib.sha256(f'{eid}\n{dna}\n{tail:g}\n{song.bpm:.6f}\n'.encode() + b).hexdigest()[:32]
-            jobs.append(StemJob(song, t, dna, label, b, key, tail, song.bpm, args.cache))
+            la = getattr(args, 'lookahead', 0.0) if args.engine == 'render311' else 0.0
+            key = hashlib.sha256(f'{eid}\n{dna}\n{tail:g}\n{song.bpm:.6f}\n'.encode() + (f'la{la:g}\n'.encode() if la else b'') + b).hexdigest()[:32]
+            jobs.append(StemJob(song, t, dna, label, b, key, tail, song.bpm, args.cache, la))
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
     return jobs
@@ -566,6 +583,8 @@ def main():
     ap.add_argument('--machine', default=DEF_MACHINE)
     ap.add_argument('--cache', default=DEF_CACHE)
     ap.add_argument('--jobs', type=int, default=MAX_JOBS)
+    ap.add_argument('--lookahead', type=float, default=150.0,
+                    help='render311 --lookahead MS (dense chords arm on time; 0 for a render311 without it)')
     ap.add_argument('--stems', action='store_true', help='also write each track\'s mixed stem')
     ap.add_argument('--keep-wav', action='store_true', help='keep the master WAV (default: kept; --no-wav drops it)')
     ap.add_argument('--no-wav', action='store_true', help='delete the master WAV after encoding')

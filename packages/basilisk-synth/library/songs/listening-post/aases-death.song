@@ -1,0 +1,43 @@
+# Aase's Death: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Aase's Death
+pack     = listening-post
+kind     = world
+composer = Edvard Grieg (1843-1907)
+source   = Aase's Death, Peer Gynt Suite No. 1, Op. 46 No. 2 (1875), piano version. Score: The Mutopia Project, from Kunkel Brothers (1891).
+licence  = The work: public domain (composed 1875; the composer died 1907). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=246
+arranger = Algorithmic Industries house band
+note     = Slowly, at 52 bpm, in the deep ocean: a humpback on the tune, a singing bowl on the inner voices, fin-whale drones on the bass line, blue-whale drones holding the chords.
+midi     = aases-death.mid
+script   = aases-death.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+humpback    ch1     "Ocean Shoreline"                        lufs=-20 pan=4 echo=0.2 verb=0.5
+bowl        ch2     "Saffron Dormant"                        lufs=-26 pan=-14 verb=0.5 tune=22
+fin         ch3     "Dial Depth"                             lufs=-23 pan=-10 verb=0.45
+blue        ch4     "Lattice Dormant"                        lufs=-25 pan=12 verb=0.45
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"listening-post:Dial Depth" = pmel_atlantic_fin@t10500]@t3000[@0CP@0CP>>#14H0,7U3~15/pmel_earthquake_pioneer#2T14L55;A1089S100R2735V83K55G-5
+"listening-post:Lattice Dormant" = pmel_blue_south_pacificE>#12H0,12U3~9/pmel_atlantic_blueR#2T19L25O327Q0/pmel_challenger_deep_modem#2T-7L69;A921S100R2733V92K60G-8
+"listening-post:Ocean Shoreline" = pmel_humpback_ship_sbnms#8U2~16/pmel_harmonic_tremor#4L54/pmel_sound_source#4L52;A105S100R1094V91G-10
+"listening-post:Saffron Dormant" = singing_bowl_long@t12000]@t200[CRP#13U4~23/pmel_upsweep#3FL11;A847S100R2911V96K73G-14

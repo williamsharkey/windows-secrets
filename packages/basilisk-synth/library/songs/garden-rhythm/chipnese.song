@@ -1,0 +1,50 @@
+# Chipnese: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Chipnese
+pack     = garden-rhythm
+kind     = chiptune
+composer = Spring Spring
+source   = Chipnese, a 0CC-FamiTracker module (chipnese.0cc) from OpenGameArt (https://opengameart.org/sites/default/files/chipnese_0.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/chipnese
+arranger = Algorithmic Industries house band
+source_sha256= 1f247922c637e7bf001ca2c06c6350ab5f96c39493ac8fc364ad6a46f08d35a0
+note     = Played twice through: the NES module's VRC6 lines on the steelpan and marimbas, the triangle on the rave-organ bass, pulse 2 on a rave chord, pulse 1 on a steelpan peal, the VRC6 saw on the hoover, the noise on the radio kit.
+midi     = chipnese.mid
+script   = chipnese.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+steelpan    ch1     "Digital Tower"                          lufs=-20 pan=12 echo=0.25 verb=0.3
+mallets     ch2     "Lagoon Mallets"                         lufs=-22 pan=-22 verb=0.3
+organbass   ch3     "Molten Brass"                           lufs=-20
+stab        ch4     "Winter Salute"                          lufs=-24 pan=20
+pan2        ch5     "Brass Peal"                             lufs=-25 pan=-12 echo=0.2
+hoover      ch6     "Lagoon Stab"                            lufs=-23 width=1.2
+kit         ch10    "Humid Haze"                             lufs=-19 verb=0.05
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"garden-rhythm:Brass Peal" = gd_steelpan_tenth#10H0,12,24/gd_steelpan_tenor>#3T16L23O266Q35/gd_marimba_sixth>#3T7L38O114Q8;A0D628S1R847V74K76G4
+"garden-rhythm:Digital Tower" = gd_steelpan_octave<#8H0,12/gd_steelpan_octave#4T7L29O21Q15/gd_steelpan_octave#4T-12L38Q9;A1D885S3R513V82K60G-3
+"garden-rhythm:Humid Haze" = gd_kit_radio_lowkick@t30000Igd_kit_radio_bkick@t30000Igd_kit_radio_click@t30000Igd_kit_radio_ksnare@t30000Igd_kit_radio_kesnare@t30000Igd_kit_radio_pfsnare@t30000Igd_kit_radio_tightkick@t30000Igd_kit_radio_tshat@t30000Igd_kit_radio_dumm@t30000Igd_kit_radio_that@t30000Igd_kit_radio_dum@t30000Igd_kit_radio_opents@t30000Igd_kit_radio_dom@t30000Igd_kit_radio_pfrim@t30000Igd_kit_radio_psh@t30000Igd_kit_radio_hum@t30000Igd_kit_radio_kh@t30000Igd_kit_radio_double@t30000Igd_kit_radio_tchhat@t30000Igd_kit_radio_wub#16;R220V90G-20k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k53j19k55j20
+"garden-rhythm:Lagoon Mallets" = gd_marimba_octave@t1254]#11U2~9/gd_marimba_third#5T20L38Q7;A1D625S28R1331V76K72G-5
+"garden-rhythm:Lagoon Stab" = gd_rave_hoover_c2+>>#5/gd_rave_piano_c4#5L34Q-37/gd_rave_reese_c2#6T24L48Q-33;A7D548S53R404V70K60G-5
+"garden-rhythm:Molten Brass" = gd_rave_organ_c2@t3199]>>#12U3~9/gd_rave_reese_c6#4T-12L54Q3;A3D711S12R148V79K60G-10
+"garden-rhythm:Winter Salute" = gd_rave_chord_c4E#8H0,7/gd_rave_organ_c6#4T-24L45Q22/gd_rave_piano_c2#4T12L37;A62D708S52R319V77K60G-5

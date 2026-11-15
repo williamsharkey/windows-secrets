@@ -1,0 +1,47 @@
+# Good King Wenceslas: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Good King Wenceslas
+pack     = w3x-heritage
+kind     = world
+composer = Traditional (Piae Cantiones, 1582)
+source   = Good King Wenceslas: the 1582 spring carol "Tempus adest floridum" with J. M. Neale's 1853 words. Score: The Mutopia Project.
+licence  = The work: public domain (melody 1582; words 1853). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=905
+arranger = Algorithmic Industries house band
+note     = Three verses on the six Windows 3.1 sounds: the ding piano, the ringout whistle and the tada horn take the tune in turn, ding chords, a ding bass, a ringout pad.
+midi     = good-king-wenceslas.mid
+script   = good-king-wenceslas.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+piano       ch1     "Still Upright"                          lufs=-19 pan=6 verb=0.25
+whistle     ch2     "Gentle Whistle"                         lufs=-20 pan=14 echo=0.15 verb=0.3 tune=-31
+horn        ch3     "Indigo Wire"                            lufs=-20 pan=-12 verb=0.3
+chords      ch4     "Western Chords"                         lufs=-24 pan=-16 verb=0.2
+bass        ch5     "Field Bass"                             lufs=-20 verb=0.15
+pad         ch6     "Honey Haze"                             lufs=-29 verb=0.4
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"w3x-heritage:Field Bass" = ding<<<+#8/ringout@20[@40]@0CP@0CP@0CP<<<#6L60;A0D3000S40R300K43
+"w3x-heritage:Gentle Whistle" = ringout@t328]@t93[@0CP@0CP@0CP<#8/ding#8T-10L32Q3;A10D146S73R303V82K57
+"w3x-heritage:Honey Haze" = ringout@t328]@t93[@0CP@0CP@0CPE<#11U2~10/chimesRE#5T14L32O124Q57;A939D734S71R1710V97K57G-4
+"w3x-heritage:Indigo Wire" = tada@40[@20]@0CP@0CP@0CP@0CP#6U3~20/tada@40[@20]@0CP@0CP@0CP@0CP>#4L40/tada@40[@20]@0CP@0CP@0CP@0CP#4T7L30;A10R300K60G-1
+"w3x-heritage:Still Upright" = ding@10]#6U2~6Q-20/ding@5[@60]#6T12U2~6L60Q20;A0D2500S25R600V85K79G-1
+"w3x-heritage:Western Chords" = dingE<<#8/ding#8L35O17Q15;A0D750S26R222V93K55G3

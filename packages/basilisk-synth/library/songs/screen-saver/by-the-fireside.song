@@ -1,0 +1,45 @@
+# By the Fireside (January): a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = By the Fireside (January)
+pack     = screen-saver
+kind     = world
+composer = Pyotr Ilyich Tchaikovsky (1840-1893)
+source   = The Seasons, Op. 37a: January, "By the Fireside" (1876): the first section. Score: The Mutopia Project, from Rob. Forberg, Leipzig.
+licence  = The work: public domain (published 1876; the composer died 1893). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1171
+arranger = Algorithmic Industries house band
+note     = The first section at 72 bpm: the breathy flute on the tune, the glass harp on the inner voices, the marimba on the left hand, a singing-bowl bass, a string pad.
+midi     = by-the-fireside.mid
+script   = by-the-fireside.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+flute       ch1     "Breath Flute"                           lufs=-20 pan=4 echo=0.15 verb=0.45
+glass       ch2     "Ivory Canopy"                           lufs=-24 pan=-14 verb=0.4
+marimba     ch3     "Water Marimba"                          lufs=-24 pan=22 echo=0.2 verb=0.35
+bowl        ch4     "Northern Dormant"                       lufs=-25 verb=0.3 tune=13
+pad         ch5     "Global Pad"                             lufs=-26 verb=0.45 width=1.4
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"screen-saver:Breath Flute" = flute_vib_c5#12/recycle>>@8]#4FL30;A40R400K72G2
+"screen-saver:Global Pad" = violin_section_sus_c4@t7500]@t300[CRPU4~15;A688D595S80R2338V74K60G-15
+"screen-saver:Ivory Canopy" = glass_harp@t8000]@t500[E<EU2~10;A306D321S96R1238V98K64G-5
+"screen-saver:Northern Dormant" = singing_bowl_long@t12000]@t200[<U3~11;A1135S100R1548V70K61G2
+"screen-saver:Water Marimba" = marimba_c4#10/drop_single_a#6FL40;A0R900K60G1

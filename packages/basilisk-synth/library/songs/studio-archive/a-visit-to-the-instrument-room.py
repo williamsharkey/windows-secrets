@@ -3,6 +3,7 @@ piano to the strings, the brass, the bells and vibes, then everyone together."""
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from _lib import *
+chord_cap(8)   # rendered before render311 --lookahead: chords thinned to 8 recorders an instant (_lib.cap_chords)
 
 S = Score(bpm=104, seed=1995)
 piano = S.part('piano', 1)

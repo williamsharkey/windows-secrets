@@ -1,0 +1,47 @@
+# Polonaise (K. 487 No. 4): a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Polonaise (K. 487 No. 4)
+pack     = studio-archive
+kind     = world
+composer = Wolfgang Amadeus Mozart (1756-1791)
+source   = Twelve Duets, K. 487: No. 4, Polonaise (1786), for two horns. Score: The Mutopia Project.
+licence  = The work: public domain (18th century). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=393
+arranger = Algorithmic Industries house band
+note     = The horn duet three times for the studio's brass and strings: the first horn part on horns, trumpet and violins in turn, the second on trombones, a marimba bass on the chord roots, a string pad.
+midi     = polonaise-k-487.mid
+script   = polonaise-k-487.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+horns       ch1     "Opal Fanfare"                           lufs=-20 pan=10 verb=0.4
+trumpet     ch2     "White Stab"                             lufs=-21 pan=-6 verb=0.35
+violins     ch3     "Humid Swell"                            lufs=-20 pan=-22 verb=0.4
+trombones   ch4     "Upper Horns"                            lufs=-23 pan=24 verb=0.3
+bass        ch5     "Signal Bass"                            lufs=-22
+strings     ch6     "Waxed Aurora"                           lufs=-26 verb=0.4
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"studio-archive:Humid Swell" = violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K60G-9
+"studio-archive:Opal Fanfare" = horn_sus_c3@t3000]E>;A4D271S55R212V72K60G-7
+"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K36G-4
+"studio-archive:Upper Horns" = trombone_sus_c3@t3000]>#8U2~7/vibraphone_c_low#4T19L26Q35/hwfail#4L54;A1D778S47R297V97K60G-9
+"studio-archive:Waxed Aurora" = violin_section_sus_c4@t7500]@t300[RU2~6;A504D748S75R2396V94K60G-9
+"studio-archive:White Stab" = trumpet_sus_c4@t3000]#5/kalimba_c4@t1500]#5T12L57Q14/em_metal_click_a>#6FL41;A1D383S87R144V85K62G-9

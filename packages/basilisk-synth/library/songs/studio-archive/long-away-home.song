@@ -1,0 +1,50 @@
+# Long Away Home: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Long Away Home
+pack     = studio-archive
+kind     = chiptune
+composer = nene
+source   = Long_Away_Home, a Standard MIDI File (Long_Away_Home.mid) from OpenGameArt (https://opengameart.org/sites/default/files/Long%20Away%20Home.mid). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/long-away-home-8bit
+arranger = Algorithmic Industries house band
+source_sha256= a43e1a05f9f9b0ede3270bf62d395658cdae01d39184ed642d009c9dec622161
+note     = The MIDI file on the studio's strings, violas, horns, marimba bass, glockenspiel and piano, its percussion on a soft snap.
+midi     = long-away-home.mid
+script   = long-away-home.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+strings     ch1     "Humid Swell"                            lufs=-22 pan=-22 verb=0.4
+violas      ch2     "Static Swell"                           lufs=-25 pan=18 verb=0.35
+horn        ch3     "Opal Fanfare"                           lufs=-20 pan=8 verb=0.4
+bass        ch4     "Signal Bass"                            lufs=-21
+bells       ch5     "Crystal Toll"                           lufs=-25 pan=28 verb=0.4
+piano       ch6     "Mild Ivories"                           lufs=-23 pan=-12 verb=0.3
+snap        ch7     "Clear Snap"                             lufs=-29 verb=0.3
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"studio-archive:Clear Snap" = bubble_pop_a#8/organ_pedal_25@t3000]@t300[#8L52;D90S0R91V82G8
+"studio-archive:Crystal Toll" = glockenspiel_g4E<#11H0,7/printR#5T-15L25O92Q28;A0D2595S7R823V78K55G-1
+"studio-archive:Humid Swell" = violin_section_sus_c4@t7500]@t200[EU3~12;A148S93R1033V88K60G-9
+"studio-archive:Mild Ivories" = piano_upright_cs4#11U2~3/ringout#5T-20L55Q18;A2D2460S15R251V83K61G-9
+"studio-archive:Opal Fanfare" = horn_sus_c3@t3000]E>;A4D271S55R212V72K60G-7
+"studio-archive:Signal Bass" = marimba_c2;A2D502S69R130V74K36G-4
+"studio-archive:Static Swell" = piano_upright_cs4E#11U2~11/hwfail#5T1L43;A147S86R812V83K61G-6

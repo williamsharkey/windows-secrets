@@ -1,4 +1,154 @@
 {
+ "8bitMelody.notes.mid": {
+  "title_in_file": "",
+  "module": "8bitMelody.xm",
+  "page": "https://opengameart.org/content/dark-8bit-song",
+  "download": "https://opengameart.org/sites/default/files/dark_8_bit_melody_sources.zip",
+  "author": "qubodup",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "52ee4abbded7d457abed7bbe1c9c7ee2981ac88b6cad0d1b300e6471908ee636",
+  "instruments": []
+ },
+ "Banchieri_-_Reg_1.mid": {
+  "title_in_file": "Banchieri_-_Reg_1",
+  "module": "Banchieri_-_Reg_1.mid",
+  "page": "https://opengameart.org/content/nes-or-gameboy-banchieri-reg-1",
+  "download": "https://opengameart.org/sites/default/files/NES%20-%20Banchieri.zip",
+  "author": "TheOuterLinux",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "d638e2bb7c08a37883c2a7c2d49e5df68b06c6343b75df16dec28770986b27a0",
+  "instruments": []
+ },
+ "BattleTheme.notes.mid": {
+  "title_in_file": "",
+  "module": "BattleTheme.ftm",
+  "page": "https://opengameart.org/content/8-bit-battle-loop",
+  "download": "https://opengameart.org/sites/default/files/BattleLoop.zip",
+  "author": "Wolfgang_",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "e1c26821ab1a95919ee160da81b7d098fa2b09ae5af63f0bf324e4b68a1644f2",
+  "instruments": []
+ },
+ "Boss_Battle_6.mid": {
+  "title_in_file": "Boss_Battle_6",
+  "module": "Boss_Battle_6.mid",
+  "page": "https://opengameart.org/content/boss-battle-6-8-bit",
+  "download": "https://opengameart.org/sites/default/files/Boss%20Battle%206.mid",
+  "author": "nene",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "059a90730a4ebcb73662d4827564c47bc80581579dbc0e70f903840eb51a4c74",
+  "instruments": []
+ },
+ "Cave.notes.mid": {
+  "title_in_file": "",
+  "module": "Cave.ftm",
+  "page": "https://opengameart.org/content/8-bit-cave-loop",
+  "download": "https://opengameart.org/sites/default/files/cave_1.zip",
+  "author": "Wolfgang_",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "be13735b4e5e625568dbb03b72750d9fb6802cb946fd74e3afd23e2c9b31f6af",
+  "instruments": []
+ },
+ "Coding_Pirates_Showcase_OST_2_FDS.notes.mid": {
+  "title_in_file": "Test",
+  "module": "Coding_Pirates_Showcase_OST_2_FDS.0cc",
+  "page": "https://opengameart.org/content/fdsnamco-pwm-demonstation",
+  "download": "https://opengameart.org/sites/default/files/Coding%20Pirates%20Showcase%20OST%202%20FDS.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "76cf086c2afa31f872eac88adad781a2e7b29efad9ffe733e23c36c7e332051f",
+  "instruments": []
+ },
+ "Coding_Pirates_Showcase_OST_3_2a03.notes.mid": {
+  "title_in_file": "Tank 3001",
+  "module": "Coding_Pirates_Showcase_OST_3_2a03.0cc",
+  "page": "https://opengameart.org/content/guropper",
+  "download": "https://opengameart.org/sites/default/files/Guropper.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "5cfdc3475f49dc5d3f352a9a6be67d21dd4209d35ddb7077c85fe7e3769f1ace",
+  "instruments": []
+ },
+ "DuelTime.notes.mid": {
+  "title_in_file": "",
+  "module": "DuelTime.ftm",
+  "page": "https://opengameart.org/content/8-bit-duel-theme",
+  "download": "https://opengameart.org/sites/default/files/DuelTime.zip",
+  "author": "Wolfgang_",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "ebe917f826746dea7b5015ef1a56318254ee248283101b5d295bdcbbe1ae7bfa",
+  "instruments": []
+ },
+ "Fire_Level.mid": {
+  "title_in_file": "Fire_Level",
+  "module": "Fire_Level.mid",
+  "page": "https://opengameart.org/content/fire-level",
+  "download": "https://opengameart.org/sites/default/files/Fire%20Level.mid",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "d2162064a0a20cdcd60d7b1e0d849d91c644c79ad99e1076c0d1f64e3ac162fd",
+  "instruments": []
+ },
+ "Long_Away_Home.mid": {
+  "title_in_file": "Long_Away_Home",
+  "module": "Long_Away_Home.mid",
+  "page": "https://opengameart.org/content/long-away-home-8bit",
+  "download": "https://opengameart.org/sites/default/files/Long%20Away%20Home.mid",
+  "author": "nene",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "a43e1a05f9f9b0ede3270bf62d395658cdae01d39184ed642d009c9dec622161",
+  "instruments": []
+ },
+ "Map.notes.mid": {
+  "title_in_file": "",
+  "module": "Map.ftm",
+  "page": "https://opengameart.org/content/nes-shooter-music-5-tracks-3-jingles",
+  "download": "https://opengameart.org/sites/default/files/FTM.zip",
+  "author": "SketchyLogic",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "6c80bb930bf50df4b1747a6c490970e41e5d4faa92a5081f46bdd7a6751d1e45",
+  "instruments": []
+ },
+ "On_Again_Off_Again.notes.mid": {
+  "title_in_file": "",
+  "module": "On_Again_Off_Again.ftm",
+  "page": "https://opengameart.org/content/nes-on-again-off-again",
+  "download": "https://opengameart.org/sites/default/files/on_again_off_again_nsf_ftm.zip",
+  "author": "Chance de la Soul",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "41e4465d5fc5f7337a2df1dd0af0bad05f9b03e017621a8419c01976d80e6123",
+  "instruments": []
+ },
+ "RPGBattleTheme-Min.notes.mid": {
+  "title_in_file": "",
+  "module": "RPGBattleTheme-Min.ftm",
+  "page": "https://opengameart.org/content/8-bit-rpg-battleencounter-theme",
+  "download": "https://opengameart.org/sites/default/files/RPGBattleTheme.zip",
+  "author": "Wolfgang_",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "e5e33b5969a1b02fd90d74a5eed4de32690e407c45f94a1f9b2e3e5598fadc2a",
+  "instruments": []
+ },
+ "TheForest.notes.mid": {
+  "title_in_file": "",
+  "module": "TheForest.ftm",
+  "page": "https://opengameart.org/content/8-bit-forest-theme",
+  "download": "https://opengameart.org/sites/default/files/TheForest.zip",
+  "author": "Wolfgang_",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "7db40d51ccd13b769a2a4da4b4f0b0d2786b749d204155302c7bf7eba5c4c07e",
+  "instruments": []
+ },
+ "Theme_Song_8_bit.mid": {
+  "title_in_file": "Theme_Song_8_bit",
+  "module": "Theme_Song_8_bit.mid",
+  "page": "https://opengameart.org/content/theme-song-8-bit",
+  "download": "https://opengameart.org/sites/default/files/Theme%20Song%20%5B8-bit%5D.zip",
+  "author": "nene",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "4c7f57cf0212d3a21ace15dd54cdd73769a7519bf4d4bb096d9311bd2f69fbbb",
+  "instruments": []
+ },
  "battleCLEAN.notes.mid": {
   "title_in_file": "",
   "module": "battleCLEAN.it",
@@ -42,6 +192,26 @@
    "ins   6 Ride Cymbal                156 notes  71-71"
   ]
  },
+ "boss_battle_08.mid": {
+  "title_in_file": "boss_battle_08",
+  "module": "boss_battle_08.mid",
+  "page": "https://opengameart.org/content/boss-battle-8-retro",
+  "download": "https://opengameart.org/sites/default/files/boss_battle_08.mid",
+  "author": "nene",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "52da0aa33ad0a76eaa47b2135f6de4cd5da9c4dbd4b9d1b4b80a568f52b365d1",
+  "instruments": []
+ },
+ "chipnese.notes.mid": {
+  "title_in_file": "",
+  "module": "chipnese.0cc",
+  "page": "https://opengameart.org/content/chipnese",
+  "download": "https://opengameart.org/sites/default/files/chipnese_0.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "1f247922c637e7bf001ca2c06c6350ab5f96c39493ac8fc364ad6a46f08d35a0",
+  "instruments": []
+ },
  "doggoCLEAN.notes.mid": {
   "title_in_file": "",
   "module": "doggoCLEAN.it",
@@ -58,6 +228,16 @@
    "ins   5 ohgully2_24                 63 notes  38-57",
    "ins   6 basset                     187 notes  38-57"
   ]
+ },
+ "fight_for_better_future.mid": {
+  "title_in_file": "fight_for_better_future",
+  "module": "fight_for_better_future.mid",
+  "page": "https://opengameart.org/content/fight-for-better-future-rockmetal",
+  "download": "https://opengameart.org/sites/default/files/fight_for_better_future.mid",
+  "author": "nene",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "939a374f1f892f60bdf2cdf1380af32b7bda344a072a0865a7de4c0983862e43",
+  "instruments": []
  },
  "forestCLEAN.notes.mid": {
   "title_in_file": "",
@@ -99,6 +279,16 @@
    "ins   2                           1459 notes  35-49",
    "ins   3 Basset                     612 notes  22-51"
   ]
+ },
+ "headinthesand.notes.mid": {
+  "title_in_file": "",
+  "module": "headinthesand.ftm",
+  "page": "https://opengameart.org/content/head-in-the-sand-seamless-loop",
+  "download": "https://opengameart.org/sites/default/files/headinthesand.zip",
+  "author": "congusbongus",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "e775a237c9830e416380ce0bae63a167faa2d782164d4060171adcb4a56c2ec1",
+  "instruments": []
  },
  "headspin.notes.mid": {
   "title_in_file": "Headspin",
@@ -143,6 +333,26 @@
    "ins  10 Rendered Sample 19          20 notes  57-91",
    "ins  11                             18 notes  67-88"
   ]
+ },
+ "lassolady.notes.mid": {
+  "title_in_file": "",
+  "module": "lassolady.ftm",
+  "page": "https://opengameart.org/content/lasso-lady-seamless-loop",
+  "download": "https://opengameart.org/sites/default/files/lassolady_1.zip",
+  "author": "congusbongus",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "cb6bb1ceaa607e02ee74f099fb30876338423413a411285715bed7656e21494f",
+  "instruments": []
+ },
+ "leap.mid": {
+  "title_in_file": "leap",
+  "module": "leap.mid",
+  "page": "https://opengameart.org/content/leap-8bit",
+  "download": "https://opengameart.org/sites/default/files/leap.mid",
+  "author": "nene",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "c6d21f3d5416168c75f2f9cc1913d7293b4ac3e86f8aabee5939ec1f2346fc29",
+  "instruments": []
  },
  "midnight_drive.notes.mid": {
   "title_in_file": "Midnight Drive",
@@ -353,6 +563,16 @@
    "ins   4 Noise                       81 notes  38-38"
   ]
  },
+ "nrom_level0.notes.mid": {
+  "title_in_file": "",
+  "module": "nrom_level0.ftm",
+  "page": "https://opengameart.org/content/nes-level-0",
+  "download": "https://opengameart.org/sites/default/files/nrom_level0_famitracker.zip",
+  "author": "controllerhead",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "1d2b56cdf317107b38ba7b9d8083741c39e4e2199e5a1ecb0d106d0c9e7b36a8",
+  "instruments": []
+ },
  "prisonCLEAN.notes.mid": {
   "title_in_file": "Prison Ship",
   "module": "prisonCLEAN.it",
@@ -372,6 +592,16 @@
    "ins   8 Rendered Sample 11          12 notes  59-66",
    "ins   9 Rendered Sample 13         120 notes  49-73"
   ]
+ },
+ "puppy.notes.mid": {
+  "title_in_file": "",
+  "module": "puppy.0cc",
+  "page": "https://opengameart.org/content/puppy-playing-in-the-garden",
+  "download": "https://opengameart.org/sites/default/files/puppy.zip",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "27a14bd6089e8612a5cd10da1cd3b31db096d129753d17c265e53f61b9e63370",
+  "instruments": []
  },
  "puppylandCLEAN.notes.mid": {
   "title_in_file": "",
@@ -422,6 +652,16 @@
   "author": "northivanastan",
   "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
   "sha256_of_module": "c37e73690ce553261a794f70a1ec1aed3d6bac82e91c32e9826486e9c1683c55",
+  "instruments": []
+ },
+ "short_theme_melon_midi.mid": {
+  "title_in_file": "short_theme_melon_midi",
+  "module": "short_theme_melon_midi.mid",
+  "page": "https://opengameart.org/content/the-war-over-a-melon-field-themes-and-jingles",
+  "download": "https://opengameart.org/sites/default/files/short%20theme%20melon%20midi.mid",
+  "author": "Spring Spring",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "74d7759d269e816a43e58a550764d1bb93ecb22b3b470b6783b16e008083c11d",
   "instruments": []
  },
  "subterrain.notes.mid": {
@@ -486,5 +726,15 @@
    "ins   8 Rendered Sample 14          40 notes  59-59",
    "ins   9 Rendered Sample 20          36 notes  61-61"
   ]
+ },
+ "victoryloop.notes.mid": {
+  "title_in_file": "",
+  "module": "victoryloop.ftm",
+  "page": "https://opengameart.org/content/8-bit-victory-loop",
+  "download": "https://opengameart.org/sites/default/files/victory.zip",
+  "author": "Wolfgang_",
+  "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
+  "sha256_of_module": "3b062cf67d63f066b35a1604328f58bcebce857083fd357103cda387f6d84dae",
+  "instruments": []
  }
 }

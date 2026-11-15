@@ -1,0 +1,44 @@
+# Banchieri, Registro 1 (chip arrangement): a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Banchieri, Registro 1 (chip arrangement)
+pack     = courtyard-chapel
+kind     = chiptune
+composer = TheOuterLinux
+source   = Banchieri_-_Reg_1, a Standard MIDI File (Banchieri_-_Reg_1.mid) from OpenGameArt (https://opengameart.org/sites/default/files/NES%20-%20Banchieri.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/nes-or-gameboy-banchieri-reg-1
+arranger = Algorithmic Industries house band
+source_sha256= d638e2bb7c08a37883c2a7c2d49e5df68b06c6343b75df16dec28770986b27a0
+note     = An NES and Game Boy arrangement of Adriano Banchieri's organ registro (1605) played on the courtyard's plucked strings: psaltery, folk harp, dan tranh and harpsichord, the composer's voices kept apart.
+midi     = banchieri-registro.mid
+script   = banchieri-registro.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+psaltery    ch1     "Slate Pick"                             lufs=-20 pan=8 verb=0.32
+harp        ch2     "Faded Pluck"                            lufs=-21 pan=26 verb=0.3
+dantranh    ch3     "Arctic Steps"                           lufs=-21 pan=-18 verb=0.3
+harpsichord ch4     "Soft Etude"                             lufs=-22 pan=-30 verb=0.22
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"courtyard-chapel:Arctic Steps" = dan_tranh_b2#16;A2D201S4R139V84K59
+"courtyard-chapel:Faded Pluck" = folk_harp_c3#16;A2D416S4R83V75K60G-2
+"courtyard-chapel:Slate Pick" = psaltery_pluck_c4#15/defaultRE#2T9L10O53Q26;A2D201S2R136V78K72G-1
+"courtyard-chapel:Soft Etude" = harpsichord_flemish_c3#16;A4D2188S37R474V71K60G-8

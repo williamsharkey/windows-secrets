@@ -1,0 +1,49 @@
+# Pineapple Rag: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Pineapple Rag
+pack     = workgroup-house
+kind     = world
+composer = Scott Joplin (1868-1917)
+source   = Pineapple Rag (1908): the introduction and first strains. Score: The Mutopia Project, from Seminary Music Co. (1908).
+licence  = The work: public domain (published 1908; the composer died 1917). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1899
+arranger = Algorithmic Industries house band
+note     = Filtered house at 124 bpm, twice: the rag on the warehouse piano and then an organ, the inner voices on an upright, the left hand on a tine EP, the slap disco bass, a pad. Drums: Kit Manager 98 (Jack Box Kit).
+midi     = pineapple-rag.mid
+script   = pineapple-rag.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+piano       ch1     "Warehouse Piano Stack"                  lufs=-19 pan=-6 echo=0.12 verb=0.2
+organ       ch2     "Humid Organ"                            lufs=-21 pan=12 verb=0.15
+upright     ch3     "Cable Upright"                          lufs=-24 pan=18 verb=0.2
+keys        ch4     "Coral Ballad"                           lufs=-24 pan=-20 verb=0.25
+bass        ch5     "Slap Disco Bass"                        lufs=-19 tune=-16
+pad         ch6     "Midnight Haze"                          lufs=-26 verb=0.35 width=1.3 tune=-11
+kit         ch10    "kit-manager:Jack Box Kit"               lufs=-17 verb=0.05
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Jack Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.60,70.350,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"workgroup-house:Cable Upright" = piano_upright_cs4Q45;A2D536S18R317V99K61G2
+"workgroup-house:Coral Ballad" = epiano_yamaha_vibeE>>#8/print#8T-3L31O20Q-28;A5D421S26R460V80K60G-4
+"workgroup-house:Humid Organ" = ems_ferranti_hoot_c4#14H0,12,19U2~2/menu#2FL36;A9S100R209V96K60G-18
+"workgroup-house:Midnight Haze" = crowd_sing_aah_f@t7500]@t500[CRP>EH0,12U2~10;A646D872S78R1010V82K65G-13
+"workgroup-house:Slap Disco Bass" = xpding@30]<<++#8/balloon<@30]#4FL60;A0D300S50R80V95K35G5
+"workgroup-house:Warehouse Piano Stack" = chord@5[@40]#10H0,12/ding@15]#6L35;A0D1100S20R250V70K57G-3

@@ -1,0 +1,49 @@
+# Kontakion of Christmas: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Kontakion of Christmas
+pack     = trance-connectivity
+kind     = world
+composer = Dmitry Bortniansky (1751-1825)
+source   = Kontakion of Christmas, for four voices: the first section. Score: The Mutopia Project.
+licence  = The work: public domain (the composer died 1825). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1323
+arranger = Algorithmic Industries house band
+note     = Trance at 136 bpm, twice: the Russian Orthodox hymn's top voice on the lead and then a violin lead, the inner voices on a choir, the lower voices on the breakdown grand, a bass, a pad. Drums: Kit Manager 98 (Punch Kick Kit).
+midi     = kontakion-of-christmas.mid
+script   = kontakion-of-christmas.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Neon Solo"                              lufs=-19 pan=4 echo=0.25 verb=0.3
+violin      ch2     "Blue Signal"                            lufs=-20 pan=-6 echo=0.15 verb=0.35
+choir       ch3     "Coral Tide"                             lufs=-24 verb=0.45 width=1.3
+piano       ch4     "Breakdown Grand"                        lufs=-22 pan=-4 verb=0.4
+bass        ch5     "Waxed Weight"                           lufs=-19
+pad         ch6     "Grey Mist"                              lufs=-25 verb=0.4 width=1.4
+kit         ch10    "kit-manager:Punch Kick Kit"             lufs=-16.5 verb=0.05
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Punch Kick Kit" = ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"trance-connectivity:Blue Signal" = violin_section_sus_c4@t6000]@t200[U2~10;A5D423S93R224V86K60G-3
+"trance-connectivity:Breakdown Grand" = harp_c5#10/xpding@30]#6T1L30;A0D2500S20R800K72
+"trance-connectivity:Coral Tide" = choir_aah@t6000]@t300[<#11U2~6/wind_chime_single@t2000]>#5T-2L35O50Q20;A754D11S98R1770V91K57G-4
+"trance-connectivity:Grey Mist" = violin_section_sus_c4@t7500]@t300[R#11U2~9/chimesE#5T17L17O331Q-25;A1217D755S77R1666V76K60G-10
+"trance-connectivity:Neon Solo" = ems_motor_whine_a4@t3500]@t300[<H0,12;A4D261S71R344V79K57G-10
+"trance-connectivity:Waxed Weight" = batlow+#8/spirit_breath#8FL24;A5D463S65R91V75K36G-5

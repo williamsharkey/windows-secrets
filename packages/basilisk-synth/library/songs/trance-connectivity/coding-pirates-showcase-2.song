@@ -1,0 +1,50 @@
+# Showcase 2: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Showcase 2
+pack     = trance-connectivity
+kind     = chiptune
+composer = Spring Spring
+source   = Test, a 0CC-FamiTracker module (Coding_Pirates_Showcase_OST_2_FDS.0cc) from OpenGameArt (https://opengameart.org/sites/default/files/Coding%20Pirates%20Showcase%20OST%202%20FDS.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/fdsnamco-pwm-demonstation
+arranger = Algorithmic Industries house band
+source_sha256= 76cf086c2afa31f872eac88adad781a2e7b29efad9ffe733e23c36c7e332051f
+note     = Played twice through as trance: the module's VRC6 and FDS-style lines on a lead, plucks, a saw line and a harp arpeggio, pulse 1 on the bass, the triangle on a pad, the noise on Kit Manager 98 (Punch Kick Kit).
+midi     = coding-pirates-showcase-2.mid
+script   = coding-pirates-showcase-2.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Velvet Solo"                            lufs=-20 pan=4 echo=0.25 verb=0.3
+pluck       ch2     "Woven Snap"                             lufs=-23 pan=-18 echo=0.3
+saw         ch3     "Bakelite Line"                          lufs=-23 pan=16 verb=0.2
+arp         ch4     "Rainy Harp"                             lufs=-25 pan=-26 echo=0.3
+bass        ch5     "Rainy Groove"                           lufs=-19 tune=-57
+pad         ch6     "Paper Halo"                             lufs=-25 verb=0.4 width=1.3
+kit         ch10    "kit-manager:Punch Kick Kit"             lufs=-17 verb=0.05
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Punch Kick Kit" = ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"trance-connectivity:Bakelite Line" = logon>#11U2~8/organ_pedal_25@t3000]@t300[#5T-4L33;A1D229S94R244V95K56G4
+"trance-connectivity:Paper Halo" = xpringout@t349]@t99[@0CP@0CP@0CPEE<#12U3~12/printRE#4T-13L25O172Q40;A265D244S97R976V86K57G4
+"trance-connectivity:Rainy Groove" = ringout@20[@40]@0CP@0CP@0CP<<++#8Ja0,100.87,62.571,0Nmg30/xpstart#8FL30;A0D7R40V90K45
+"trance-connectivity:Rainy Harp" = logon>;A1D306S7R207V78K56G12
+"trance-connectivity:Velvet Solo" = xpringout@t349]@t99[@0CP@0CP@0CPEU2~13Q-58;A39D260S86R199V76K69G10
+"trance-connectivity:Woven Snap" = logon+>#5/xylophone_c5#5T3L27O8Q21/xpding#6T-15L38Q-10;A0D112S8R228V94K56G10

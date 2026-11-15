@@ -1,0 +1,44 @@
+# Head in the Sand: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Head in the Sand
+pack     = leisure
+kind     = chiptune
+composer = congusbongus
+source   = Head in the Sand, a FamiTracker module (headinthesand.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/headinthesand.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/head-in-the-sand-seamless-loop
+arranger = Algorithmic Industries house band
+source_sha256= e775a237c9830e416380ce0bae63a167faa2d782164d4060171adcb4a56c2ec1
+note     = Played three times through as exotica: the NES module's triangle on the marimba, pulse 1 on the lounge flute, pulse 2 on the vibes-bells, the noise on a bongo tap.
+midi     = head-in-the-sand.mid
+script   = head-in-the-sand.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+marimba     ch1     "Island Marimba"                         lufs=-20 pan=-12 verb=0.3
+flute       ch2     "Polished Call"                          lufs=-20 pan=6 echo=0.15 verb=0.35
+bells       ch3     "Soft Bells"                             lufs=-23 pan=22 echo=0.2 verb=0.4
+bongo       ch4     "Twilight Tap"                           lufs=-26 pan=30
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"leisure:Island Marimba" = marimba_c4E#10;A0R600K60G1
+"leisure:Polished Call" = flute_vib_c5@t6000]@t300[E<#8/infobar#8FL16;A35D513S86R162V78K60
+"leisure:Soft Bells" = crystal_bell_bb5@t4000]<<#8/chimesR>#8T-2L33O128Q10;A1D1543S1R1143V86K58G-4
+"leisure:Twilight Tap" = glass_harp#8F/ems_typebar>#8FL32;D63S0R40V72G13

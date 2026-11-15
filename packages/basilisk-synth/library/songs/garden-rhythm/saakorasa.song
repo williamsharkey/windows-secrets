@@ -1,0 +1,47 @@
+# Saakorasa: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Saakorasa
+pack     = garden-rhythm
+kind     = world
+composer = Japanese traditional
+source   = Saakorasa, as printed for shamisen in Nagai and Obata, "Seiyo gakufu Nihon zokkyokushu" (Osaka: Miki Shoten, 1895). Score: The Mutopia Project.
+licence  = The work: traditional, public domain; the source was printed in 1895. The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1764
+arranger = Algorithmic Industries house band
+note     = Early-90s rave, six times through: the shamisen tune on the steelpan, the marimba and the hoover in turn, a rave-organ bass on the chord roots, the organ pad, breakbeats on the radio kit. All from the pack.
+midi     = saakorasa.mid
+script   = saakorasa.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+steelpan    ch1     "Digital Tower"                          lufs=-20 pan=12 echo=0.3 verb=0.3
+mallets     ch2     "Lagoon Mallets"                         lufs=-21 pan=-22 echo=0.2 verb=0.3
+hoover      ch3     "Lagoon Stab"                            lufs=-21 width=1.2 verb=0.15
+organbass   ch4     "Molten Brass"                           lufs=-20
+pad         ch5     "Bakelite Bloom"                         lufs=-26 verb=0.35 width=1.4
+kit         ch10    "Second Bloom"                           lufs=-17 verb=0.05
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"garden-rhythm:Bakelite Bloom" = gd_rave_organ_c2@t5599]@t1599[@0CP@0CP>>U3~15Q-29;A1001D823S81R1214V79K60G-5
+"garden-rhythm:Digital Tower" = gd_steelpan_octave<#8H0,12/gd_steelpan_octave#4T7L29O21Q15/gd_steelpan_octave#4T-12L38Q9;A1D885S3R513V82K60G-3
+"garden-rhythm:Lagoon Mallets" = gd_marimba_octave@t1254]#11U2~9/gd_marimba_third#5T20L38Q7;A1D625S28R1331V76K72G-5
+"garden-rhythm:Lagoon Stab" = gd_rave_hoover_c2+>>#5/gd_rave_piano_c4#5L34Q-37/gd_rave_reese_c2#6T24L48Q-33;A7D548S53R404V70K60G-5
+"garden-rhythm:Molten Brass" = gd_rave_organ_c2@t3199]>>#12U3~9/gd_rave_reese_c6#4T-12L54Q3;A3D711S12R148V79K60G-10
+"garden-rhythm:Second Bloom" = gd_kit_radio_lowkick@t30000Igd_kit_radio_bkick@t30000Igd_kit_radio_click@t30000Igd_kit_radio_ksnare@t30000Igd_kit_radio_kesnare@t30000Igd_kit_radio_pfsnare@t30000Igd_kit_radio_tightkick@t30000Igd_kit_radio_tshat@t30000Igd_kit_radio_dumm@t30000Igd_kit_radio_that@t30000Igd_kit_radio_dum@t30000Igd_kit_radio_opents@t30000Igd_kit_radio_dom@t30000Igd_kit_radio_pfrim@t30000Igd_kit_radio_psh@t30000Igd_kit_radio_hum@t30000Igd_kit_radio_kh@t30000Igd_kit_radio_double@t30000Igd_kit_radio_tchhat@t30000Igd_kit_radio_wub<#16;R300V100G-20k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k53j19k55j20

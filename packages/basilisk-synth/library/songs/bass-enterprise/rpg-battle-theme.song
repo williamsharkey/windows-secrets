@@ -1,0 +1,44 @@
+# RPG Battle Theme: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = RPG Battle Theme
+pack     = bass-enterprise
+kind     = chiptune
+composer = Wolfgang_
+source   = RPG Battle Theme, a FamiTracker module (RPGBattleTheme-Min.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/RPGBattleTheme.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/8-bit-rpg-battleencounter-theme
+arranger = Algorithmic Industries house band
+source_sha256= e5e33b5969a1b02fd90d74a5eed4de32690e407c45f94a1f9b2e3e5598fadc2a
+note     = Played twice through: the NES module's pulse 1 on the trombone, pulse 2 on a brass section, the triangle on the wobbling speed sub, the noise on Kit Manager 98 (Half-Time Kit).
+midi     = rpg-battle-theme.mid
+script   = rpg-battle-theme.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+horn        ch1     "Lattice Accent"                         lufs=-20 pan=12 echo=0.2
+chord       ch2     "Lagoon Section"                         lufs=-22 pan=-16 verb=0.2
+wobble      ch3     "Wobbly Speed Sub"                       lufs=-19 tune=-57
+kit         ch10    "kit-manager:Half-Time Kit"              lufs=-17 verb=0.05
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"bass-enterprise:Lagoon Section" = tadaxp+>;A5D280S22R269V97K60G12
+"bass-enterprise:Lattice Accent" = trombone_sus_c3@t3000]>U2~6;A11D216S12R154V71K60G-6
+"bass-enterprise:Wobbly Speed Sub" = ringout@20[@40]@0CP@0CP@0CP++<<<#12Ja0,100.111,30.222,100.333,30.444,100;A0R100K33G-2
+"kit-manager:Half-Time Kit" = ringout@20[@40]@0CP<<<+Ja0,100.80,50.400,0#3F/recycle@20]+E#4F/xprecycle>>>@40]#5F/critstop<@10]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

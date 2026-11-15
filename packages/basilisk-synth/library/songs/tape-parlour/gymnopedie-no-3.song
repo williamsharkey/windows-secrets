@@ -1,0 +1,45 @@
+# Gymnopedie No. 3: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Gymnopedie No. 3
+pack     = tape-parlour
+kind     = world
+composer = Erik Satie (1866-1925)
+source   = Gymnopedie No. 3 for piano (1888). Score: The Mutopia Project, typeset from the Dover edition.
+licence  = The work: public domain (published 1888; the composer died 1925). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=39
+arranger = Algorithmic Industries house band
+note     = The whole piece at 66 bpm on tape-replay voices: the tune on the flute, the chords on choir and parlour piano, a contrabass, the 8-foot organ stop.
+midi     = gymnopedie-no-3.mid
+script   = gymnopedie-no-3.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+flute       ch1     "Digital Call"                           lufs=-19 pan=-8 verb=0.35
+choir       ch2     "Faded Voices"                           lufs=-23 pan=10 verb=0.4
+piano       ch3     "Lattice Recital"                        lufs=-22 pan=16 verb=0.3
+bass        ch4     "Lunar Bows"                             lufs=-22
+organ       ch5     "Coral Revival"                          lufs=-27 pan=-6 verb=0.35
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"tape-parlour:Coral Revival" = tape_organ_8ft_c3@t40[#7L80O10Wm8000Yd3l4kVw6,7f4,8s25,65/tape_recorder_bass_c3@t40[#7L55O15Wm8000Yd6l4kVw4,8f2,8s15,65/xpstart#2FL12Wm8000;A40D0S100R150V30K60G-17
+"tape-parlour:Digital Call" = tape_flute_vib_c4@t40[#8L80Wm8000Yd3l8kVw4,6f3,8s25,80/tape_clarinet_d3@t40[#8T10L55Wm8000Yd6l4kVw4,8f4,8s25,80;A35D0S100R110V20K72G-9
+"tape-parlour:Faded Voices" = choir_full_octave_first_note@t40[#16Wm8000Yd4l4kVw6,5f3,12s15,50;A10D0S100R120V40K60G-8
+"tape-parlour:Lattice Recital" = gd_piano_a4@t40[#16Wm8000Yd6l8kVw5,5f4,8s25,50;A10D0S100R110V20K69G-11
+"tape-parlour:Lunar Bows" = tape_contrabass_a1@t40[#16Wm8000Yd6l4kVw4,6f4,8s20,80;A10D0S100R110V20K45G-14

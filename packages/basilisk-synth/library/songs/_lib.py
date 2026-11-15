@@ -7,10 +7,18 @@ from compose import *   # noqa: F401,F403,E402
 import compose as _c   # noqa: E402
 
 
-MAX_LOAD = 8   # recorders one instant may start on one engine: more and Windows arms some notes late (measured)
+MAX_LOAD = None   # thin chords to this many recorders per instant (None: no thinning; render311 --lookahead arms dense chords on time)
+
+
+def chord_cap(n):
+    """songs rendered before render311 had --lookahead were thinned to n recorders per instant: this keeps their MIDI"""
+    global MAX_LOAD
+    MAX_LOAD = n
 
 
 def cap_chords(S, tracks, pack):
+    if MAX_LOAD is None:
+        return
     """thin each tuned track's chords so notes-at-once x recorders-per-note stays within MAX_LOAD: the top and
     bottom notes are kept first, then the inner ones from the top"""
     import songrender as _sr, voices as _v
@@ -24,7 +32,7 @@ def cap_chords(S, tracks, pack):
         dna = P.get(pk, {}).get(nm)
         if not dna or re.search(r';.*?(?<![a-z])k\d', dna):   # kits keep every pad
             continue
-        k = max(1, MAX_LOAD // _v.per_note(dna))
+        k = max(1, MAX_LOAD // _v.per_note(dna))   # (MAX_LOAD set: see chord_cap)
         part = bych[int(m.group(1))]
         groups = {}
         for n in part.notes:
@@ -301,9 +309,23 @@ def arrange(src, a, b, at, lead=None, inner=None, lh=None, bass=None, pad=None, 
 
 # ---- re-voicing a CC0 module (tools/songrender/trackers.py made the notes MIDI; one track per instrument)
 def module_tracks(path, bpm):
-    """[(track name, [(beat, pitch, dur, vel)])] at `bpm` (the notes MIDI runs at 120 bpm: a beat there is 0.5 s)"""
+    """[(track name, [(beat, pitch, dur, vel)])] at `bpm`: every event goes through the file's own tempo map to
+    seconds, then to beats at `bpm`"""
     m = _Smf.read(path)
-    k = bpm / 120.0
+    import struct as _st
+    tm = sorted((t, _st.unpack('>I', b'\x00' + e[3:6])[0]) for tr in m.tracks for t, e in tr if e[:2] == b'\xff\x51')
+    marks, sec, last, uspq = [], 0.0, 0, 500000
+    for t, u in tm:
+        sec += (t - last) * uspq / 1e6 / m.division; last, uspq = t, u
+        marks.append((t, sec, u))
+
+    def beat_of(tick):
+        s0, t0, u0 = 0.0, 0, 500000
+        for t, s_, u in marks:
+            if t > tick:
+                break
+            s0, t0, u0 = s_, t, u
+        return (s0 + (tick - t0) * u0 / 1e6 / m.division) * bpm / 60.0
     out = []
     for tr in m.tracks:
         name = ''
@@ -317,7 +339,8 @@ def module_tracks(path, bpm):
             elif st == 0x80 or (st == 0x90 and e[2] == 0):
                 if on.get(e[1]):
                     t0, v = on[e[1]].pop(0)
-                    notes.append((t0 / m.division * k, e[1], (t - t0) / m.division * k, v))
+                    b0 = beat_of(t0)
+                    notes.append((b0, e[1], beat_of(t) - b0, v))
         if notes:
             if not name.startswith(('ins ', 'chan ')):
                 name = f'ins {len(out) + 1} {name}'.strip()   # a plain MIDI file: its tracks in order
@@ -370,3 +393,93 @@ def module_song(script, src_name, bpm, plan, header, tracks, master=None, echo=N
                     part.note(b2, n, d, int(max(1, min(127, v * vs))))
     finish(script, S, header, tracks, master, echo, reverb)
     return S
+
+
+def world_song(script, src_name, bpm, header, roles, tracks, a=0.0, b=None, passes=2, tr=0, groove_name=None,
+               ranges=None, master=None, echo=None, reverb=None, seed=1, end_chord=True, intro_pass=True,
+               up_tracks=None, low_tracks=None):
+    """a public-domain score arranged in passes: pass 1 is the tune (roles['leads'][0]) with the left hand only (unless
+    intro_pass=False); later passes rotate the lead and add the inner voices, bass, pad and drums.
+    roles: {'leads': [part, ...], 'inner': part, 'lh': part, 'bass': part, 'pad': part, 'kit': part} (part names;
+    channels follow `tracks`). ranges: {role: (lo, hi)}. Score tracks: the upper half are the right hand."""
+    here = os.path.dirname(os.path.abspath(script))
+    src = Source(os.path.join(here, '..', 'sources', src_name))
+    b = b if b is not None else src.bars() * src.bar
+    S = Score(bpm=bpm, seed=seed)
+    chans = {t[0]: int(t[1][2:]) for t in tracks}
+    parts = {}
+
+    def P(name):
+        if name not in parts:
+            parts[name] = S.part(name, chans[name])
+        return parts[name]
+    rg = {'lead': (60, 86), 'inner': (52, 77), 'lh': (45, 69), 'bass': (31, 52), 'pad': (53, 70)}
+    rg.update(ranges or {})
+    n = len(src.tracks)
+    ui = up_tracks if up_tracks is not None else list(range(max(1, (n + 1) // 2)))
+    li = low_tracks if low_tracks is not None else list(range(max(1, (n + 1) // 2), n))
+    up = sorted(x for i in ui for x in src.tracks[i])
+    low = sorted(x for i in li for x in src.tracks[i])
+    L = b - a
+    t = 0.0
+    for i in range(passes):
+        rh = beats(up, a, b, t); lh = beats(low, a, b, t)
+        top = skyline(rh)
+        tops = {(round(x, 3), p) for x, p, d, v in top}
+        lead = roles['leads'][i % len(roles['leads'])]
+        put(P(lead), top, tr, None, lo=rg['lead'][0], hi=rg['lead'][1])
+        first = i == 0 and intro_pass
+        if roles.get('lh') and lh:
+            put(P(roles['lh']), [x for x in lh if x not in floor(lh)] if not first and roles.get('bass') else lh, tr, None,
+                lo=rg['lh'][0], hi=rg['lh'][1])
+        if not first:
+            if roles.get('inner'):
+                put(P(roles['inner']), [x for x in rh if (round(x[0], 3), x[1]) not in tops], tr, None, lo=rg['inner'][0], hi=rg['inner'][1])
+            if roles.get('bass') and lh:
+                put(P(roles['bass']), floor(lh), tr, None, lo=rg['bass'][0], hi=rg['bass'][1])
+            elif roles.get('bass'):   # a single melody line: the bass walks the chord roots
+                step = src.bar if src.bar >= 3 else src.bar * 2
+                for k, sy in enumerate(chords_of(rh, t, t + L, step)):
+                    r = root_of(_transpose_sym(sy, tr), 2)
+                    while r < rg['bass'][0]:
+                        r += 12
+                    P(roles['bass']).note(t + k * step, r, step * 0.6, 90); P(roles['bass']).note(t + k * step + step / 2, r + 7 if r + 7 <= rg['bass'][1] else r - 5, step * 0.4, 80)
+            if roles.get('pad'):
+                syms = chords_of(rh + lh, t, t + L, src.bar if src.bar >= 3 else src.bar * 2)
+                step = src.bar if src.bar >= 3 else src.bar * 2
+                prev = None
+                for k, sy in enumerate(syms):
+                    ns = voice_lead(prev, [x + tr for x in chord(sy, 4)], rg['pad'][0], rg['pad'][1]); prev = ns
+                    for x in ns:
+                        P(roles['pad']).note(t + k * step, x, step * 0.97, 56)
+            if roles.get('kit'):
+                kit = P(roles['kit'])
+                if src.bar in (3.0, 1.5) or groove_name == 'waltz':
+                    for k in range(int(L // src.bar)):
+                        x = t + k * src.bar
+                        kit.note(x, KICK, 0.3, 90)
+                        for j in range(1, int(src.bar)):
+                            kit.note(x + j, CHH, 0.2, 58)
+                        if k % 2 == 1:
+                            kit.note(x + 1, SNARE, 0.3, 70)
+                else:
+                    nb = int(L // 4)
+                    groove(kit, groove_name or 'synthpop', t, max(1, nb - 1)); groove(kit, groove_name or 'synthpop', t + 4 * (nb - 1), 1, fill=True)
+        t += L
+    if end_chord:
+        syms = chords_of(src.all, b - src.bar, b, src.bar)
+        last = syms[-1]
+        for name in [roles.get('pad'), roles.get('lh'), roles['leads'][0]]:
+            if name:
+                P(name).chords(_transpose_sym(last, tr) + ':4', at=t, style='pad', vel=66, lo=55, hi=72)
+        if roles.get('bass'):
+            P(roles['bass']).note(t, root_of(_transpose_sym(last, tr), 2) + 12, 4, 90)
+    S.humanize(ms=5, vel=4)
+    finish(script, S, header, tracks, master, echo, reverb)
+    return S
+
+
+def _transpose_sym(sym, n):
+    names = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B']
+    m = re.match(r'^([A-G][b#]?)(.*)$', sym)
+    return names[(pitch(m.group(1) + '4') + n) % 12] + m.group(2)

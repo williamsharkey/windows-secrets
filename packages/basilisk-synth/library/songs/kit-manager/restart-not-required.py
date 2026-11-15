@@ -4,6 +4,7 @@ FM register bell, the signal bells, the typing-pool bell) and a relay line."""
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from _lib import *
+chord_cap(8)   # rendered before render311 --lookahead: chords thinned to 8 recorders an instant (_lib.cap_chords)
 
 S = Score(bpm=116, seed=98)
 rain = S.part('rainclock', 1)

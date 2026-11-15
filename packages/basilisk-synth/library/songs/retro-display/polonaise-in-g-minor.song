@@ -1,0 +1,49 @@
+# Polonaise in G minor: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Polonaise in G minor
+pack     = retro-display
+kind     = world
+composer = attributed to Johann Sebastian Bach
+source   = Polonaise in G minor, BWV Anh. 119, from the Notebook for Anna Magdalena Bach (1725). Score: The Mutopia Project, from the Bach-Gesellschaft Ausgabe.
+licence  = The work: public domain (18th century). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1016
+arranger = Algorithmic Industries house band
+note     = Five times through as a synthwave waltz: the chrome lead, the rooftop sax and a kalimba line take turns, tine EP on the left hand, brass swells, the rumble bass, a pad. Drums: Kit Manager 98 (Echo Chamber Kit).
+midi     = polonaise-in-g-minor.mid
+script   = polonaise-in-g-minor.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Chrome Brass Lead"                      lufs=-19 pan=4 echo=0.2 verb=0.3
+sax         ch2     "Rooftop Sax Lead"                       lufs=-20 pan=-6 echo=0.2 verb=0.35
+arp         ch3     "Violet Chords"                          lufs=-22 pan=22 echo=0.3 tune=-20
+ep          ch4     "Shiny Tine Plaza"                       lufs=-24 pan=-18 verb=0.25
+bass        ch6     "Saffron Rumble"                         lufs=-19
+pad         ch7     "Northern Bloom"                         lufs=-27 verb=0.4 width=1.4
+kit         ch10    "kit-manager:Echo Chamber Kit"           lufs=-18 verb=0.12
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Echo Chamber Kit" = ringout@20[@40]@0CP@0CP@0CP<<<Ja0,100.80,40.300,0#3F/xpstart>EE#4F/xprecycle>>>@40]#5F/balloon<E#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"retro-display:Chrome Brass Lead" = tadaxp@40[@20]@0CP@0CP@0CP@0CP#10U3~18;A60R350B2K60G7
+"retro-display:Northern Bloom" = startup@10[#8U2~10/print@10[@50]#6T-2U2~8L35;A500S90R1500K56
+"retro-display:Rooftop Sax Lead" = trumpet_sus_c4+#10;A30R250K62G-6
+"retro-display:Saffron Rumble" = ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+#8Ja0,100.125,100.135,8.250,8.251,100Wr4t;A0S100R40V80K47G1
+"retro-display:Shiny Tine Plaza" = default@10]#6U2~6Q-20/print@5[@60]#6T5U2~6L60Q20;A0D2500S25R600V85K75G4
+"retro-display:Violet Chords" = kalimba_c4U2~5;A2D641S43R688V77K60G-5

@@ -1,0 +1,45 @@
+# The Liberty Bell: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = The Liberty Bell
+pack     = office-machinery
+kind     = world
+composer = John Philip Sousa (1854-1932)
+source   = The Liberty Bell, march (1893), piano edition: the introduction and first strains. Score: The Mutopia Project, from The John Church Company.
+licence  = The work: public domain (published 1893; the composer died 1932). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=625
+arranger = Algorithmic Industries house band
+note     = A march in 6/8 for the computer room, twice: the civil-defence bugle and then the PC speaker on the tune, the low bugle on the accompaniment, twelve drives on the bass, a spacebar kit.
+midi     = the-liberty-bell.mid
+script   = the-liberty-bell.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+bugle       ch1     "Signal Uplink"                          lufs=-19 pan=-4 verb=0.3
+beep        ch2     "Cedar Hat"                              lufs=-22 pan=16 echo=0.15 tune=78
+lowbugle    ch3     "White Dive"                             lufs=-23 pan=-18 verb=0.3
+drives      ch4     "Ocean Crowd"                            lufs=-20
+kit         ch10    "Solar Haze"                             lufs=-18 verb=0.08
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"office-machinery:Cedar Hat" = pc_pc_speaker_error_beepEF;D327S0R61V95G-4
+"office-machinery:Ocean Crowd" = pc_computer_12_drives<#11U2~19/pc_hdd_maxtor_10kE#5T-4L23O111Q-24;A52S100R1557V76K29G1
+"office-machinery:Signal Uplink" = bugle_attentionE#11U2~8/bugle_drill_call#5T-15L62;A384S100R2059V93K74G-5
+"office-machinery:Solar Haze" = key_spacebar@t30000Iem_selectric_key_a@t30000Ikey_mechanical_hard@t30000Iem_typewriter_key_a@t30000Iem_selectric_key_b@t30000Ikey_press_down@t30000Ikey_press_single_a@t30000Iem_typewriter_return_a@t30000Ikey_press_single_b@t30000Iem_stamp_b@t30000Iem_typewriter_bell_a<#16;R120V100G-3k36j1k37j2k38j3k39j4k40j5k42j6k44j7k45j8k46j9k47j10k49j11
+"office-machinery:White Dive" = bugle_attention<<#5/pc_crt_degauss#5FL12Ja0,100.98,30.890,0/pc_cd_seek_mouse#6L26Ja0,100.175,30.802,0;A71S100R1901V91K50G-2

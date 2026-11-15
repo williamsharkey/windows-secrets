@@ -1,0 +1,45 @@
+# The Dying Swan: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = The Dying Swan
+pack     = leisure
+kind     = world
+composer = Louis Moreau Gottschalk (1829-1869)
+source   = The Dying Swan, Op. 100, for piano. Score: The Mutopia Project, from Kunkel Brothers (1870).
+licence  = The work: public domain (published 1870; the composer died 1869). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=942
+arranger = Algorithmic Industries house band
+note     = A lounge reading at 84 bpm: vibes-bells on the tune, marimba on the inner voices, the lounge piano on the left hand, cello bass, strings.
+midi     = the-dying-swan.mid
+script   = the-dying-swan.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+bells       ch1     "Soft Bells"                             lufs=-20 pan=8 echo=0.2 verb=0.4
+marimba     ch2     "Island Marimba"                         lufs=-25 pan=-24 verb=0.3
+piano       ch3     "Tiki Lounge Piano"                      lufs=-23 pan=-14 verb=0.3
+cello       ch4     "Opal Section"                           lufs=-22 verb=0.15
+strings     ch5     "Volcano Strings"                        lufs=-25 pan=14 verb=0.4 width=1.3
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"leisure:Island Marimba" = marimba_c4E#10;A0R600K60G1
+"leisure:Opal Section" = cello_section_sus_c3@t7500]@t200[E>#10U3~15/marimba_c4#3T-12L41Q24/ringout#3T-21L55;A197S96R1086V78K60G-12
+"leisure:Soft Bells" = crystal_bell_bb5@t4000]<<#8/chimesR>#8T-2L33O128Q10;A1D1543S1R1143V86K58G-4
+"leisure:Tiki Lounge Piano" = harp_c5#10/ding@20]#6T5L30;A0D2000S20R700K72G-1
+"leisure:Volcano Strings" = violin_section_sus_c4E#8/cello_section_sus_c3#6L60;A500S90R1500K60

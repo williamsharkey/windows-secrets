@@ -1,0 +1,48 @@
+# Duel Time: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Duel Time
+pack     = game-port
+kind     = chiptune
+composer = Wolfgang_
+source   = Duel Time, a FamiTracker module (DuelTime.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/DuelTime.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/8-bit-duel-theme
+arranger = Algorithmic Industries house band
+source_sha256= ebe917f826746dea7b5015ef1a56318254ee248283101b5d295bdcbbe1ae7bfa
+note     = Played three times through: the NES module's pulses on two Game Port leads, the VRC6 pulses on an arpeggio and a warm lead, the triangle on the sub, the noise on Kit Manager 98 (Noise Channel Kit).
+midi     = duel-time.mid
+script   = duel-time.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Lucid Line"                             lufs=-20 pan=-8 echo=0.12
+lead2       ch2     "Harbor Whistle"                         lufs=-23 pan=20
+bass        ch3     "Saffron Sub"                            lufs=-19
+arp         ch4     "Zinc Ray"                               lufs=-25 pan=-24 tune=-57
+vrc         ch5     "Warm Lead"                              lufs=-24 pan=24
+kit         ch10    "kit-manager:Noise Channel Kit"          lufs=-19 verb=0.05
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"game-port:Harbor Whistle" = print@t693]@t198[@0CP@0CPE#8/menu#8FL32;A11D311S87R102V85K58G16
+"game-port:Lucid Line" = popup@t116]@t33[@0CP@0CP@0CPE#13H0,12U2~6/hwfail#3L38;A2D235S93R312V86G20
+"game-port:Saffron Sub" = ringout@20[@40]@0CP@0CP@0CP<<#8Ja0,100.62,100.72,8.125,8.126,100Wr4t/infobar#8FL21;A0S100R20V0K45G-1
+"game-port:Warm Lead" = ringout@t328]@t93[@0CP@0CP@0CPH0,7;A2D349S70R240V88K69G-4
+"game-port:Zinc Ray" = ringout@t328]@t93[@0CP@0CP@0CP<#8/relay_click>#8FL32;A14D72S83R150V91K57G2
+"kit-manager:Noise Channel Kit" = ding<<<@35]#3F/ringin<@20]+#4F/ringin>>@12]#5F/ding>>@5]#4;R100V100k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

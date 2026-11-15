@@ -1,0 +1,47 @@
+# Fugue on B-A-C-H: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Fugue on B-A-C-H
+pack     = diagnostics
+kind     = world
+composer = Nikolai Rimsky-Korsakov (1844-1908)
+source   = Fugue on the name B-A-C-H, for piano: the exposition. Score: The Mutopia Project.
+licence  = The work: public domain (the composer died 1908). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1271
+arranger = Algorithmic Industries house band
+note     = The exposition twice over broken beats: the subject on the broken music box and then the erhu, the inner voices on Noble Bell, the left hand on the cello pad, an error pad. Drums: Kit Manager 98 (Noise Channel Kit).
+midi     = fugue-on-b-a-c-h.mid
+script   = fugue-on-b-a-c-h.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+musicbox    ch1     "Broken Music Box"                       lufs=-19 pan=-8 echo=0.25 verb=0.3
+erhu        ch2     "Hollow Song"                            lufs=-20 pan=10 echo=0.15 verb=0.35
+bells       ch3     "Noble Bell"                             lufs=-24 pan=22 echo=0.3 verb=0.4
+cello       ch4     "Copper Veil"                            lufs=-23 pan=-14 verb=0.3
+errorpad    ch5     "Digital Veil"                           lufs=-28 verb=0.4 width=1.4
+kit         ch10    "kit-manager:Noise Channel Kit"          lufs=-19 verb=0.08
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"diagnostics:Broken Music Box" = music_box_note><E#10;A0D3000S0R1500K78G-4
+"diagnostics:Copper Veil" = cello_section_sus_c3@t7500]@t300[>U2~18Q20;A755D624S85R1066V73K60G-11
+"diagnostics:Digital Veil" = error<<EU2~10Ja0,0.365,100.1446,61Yd10l20q24;A500S90R2000K63G1
+"diagnostics:Hollow Song" = erhu_d3@t4000]>U2~8Q-51;A1D245S89R282V75K62G-7
+"diagnostics:Noble Bell" = ems_fm_register_bell_c6H0,12;A0D1038S10R1301V71K84G-9
+"kit-manager:Noise Channel Kit" = ding<<<@35]#3F/ringin<@20]+#4F/ringin>>@12]#5F/ding>>@5]#4;R100V100k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

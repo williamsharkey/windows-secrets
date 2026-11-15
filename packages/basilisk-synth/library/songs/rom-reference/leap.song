@@ -1,0 +1,50 @@
+# Leap: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Leap
+pack     = rom-reference
+kind     = chiptune
+composer = nene
+source   = leap, a Standard MIDI File (leap.mid) from OpenGameArt (https://opengameart.org/sites/default/files/leap.mid). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/leap-8bit
+arranger = Algorithmic Industries house band
+source_sha256= c6d21f3d5416168c75f2f9cc1913d7293b4ac3e86f8aabee5939ec1f2346fc29
+note     = The MIDI file's lead guitar, keyboards, strings, bass and rhythm guitar on workstation voices, its General MIDI drums on Kit Manager 98 (Breaker Box Kit).
+midi     = leap.mid
+script   = leap.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Cathode Lead"                           lufs=-19 pan=4 echo=0.2 verb=0.3
+keys        ch2     "Lagoon Piano"                           lufs=-22 pan=-16 verb=0.3
+keys2       ch3     "Jade Tines"                             lufs=-25 pan=18
+strings     ch4     "Blue Swell"                             lufs=-25 verb=0.4
+bass        ch5     "Neon Basement"                          lufs=-19
+gtr         ch6     "Floor Pluck"                            lufs=-26 pan=-26
+kit         ch10    "kit-manager:Breaker Box Kit"            lufs=-17 verb=0.1
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"rom-reference:Blue Swell" = logoff@25[#10U3~12/shutdown@30[<#6U2~8L50;A250S95R1500K39G15
+"rom-reference:Cathode Lead" = ringout@20[@40]>U2~6Ja0,100.221,77.1072,7;A60S100R300B12K81G1
+"rom-reference:Floor Pluck" = chord@t352]@20[@30]@0CP@0CP@0CP++U6~25Q33;A0D300S0R400K45G-12
+"rom-reference:Jade Tines" = xpding@20]#9H0,24U2~4/ringout@25[@35]#2L70/logoff@30[C@50X#5U2~10L50;A0D1500S40R1350V100K63G2
+"rom-reference:Lagoon Piano" = xpding@20]#11H0,12U2~6Ja0,100.480,51.2902,5/ringout@25[@35]#3L80/kalimba_c4@t1500]#2T-13L35Q28;A0D1800S30R500K59G2
+"rom-reference:Neon Basement" = hwin<@10[@40]+++#8/hwout<@10[@40]++#8L80;A0D200S50R80K43G8

@@ -1,0 +1,50 @@
+# Theme Song (8-bit): a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Theme Song (8-bit)
+pack     = workstation-classics
+kind     = chiptune
+composer = nene
+source   = Theme_Song_8_bit, a Standard MIDI File (Theme_Song_8_bit.mid) from OpenGameArt (https://opengameart.org/sites/default/files/Theme%20Song%20%5B8-bit%5D.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/theme-song-8-bit
+arranger = Algorithmic Industries house band
+source_sha256= 4c7f57cf0212d3a21ace15dd54cdd73769a7519bf4d4bb096d9311bd2f69fbbb
+note     = The MIDI file's lead and rhythm guitars, bass, strings and sawtooth on workstation leads, a strum, the mono bass, a pad and a call lead, its General MIDI drums on Kit Manager 98 (Punch Kick Kit).
+midi     = theme-song-8-bit.mid
+script   = theme-song-8-bit.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Chrome Pilot"                           lufs=-20 pan=4 echo=0.2 tune=-24
+lead2       ch2     "Arctic Signal"                          lufs=-25 pan=-16
+pluck       ch3     "Orbital Strum"                          lufs=-24 pan=22
+bass        ch4     "Ladder Mono Bass"                       lufs=-19
+pad         ch5     "Pale Cloud"                             lufs=-26 verb=0.35
+saw         ch6     "Remote Call"                            lufs=-24 pan=-24 echo=0.2
+kit         ch10    "kit-manager:Punch Kick Kit"             lufs=-17 verb=0.06
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Punch Kick Kit" = ringout@20[@40]@0CP<<<+Ja0,100.40,70.300,0#3F/recycle>>@50]E#4F/xprecycle>>@60]#5F/xpstart>#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"workstation-classics:Arctic Signal" = ems_motor_whine_a4@t3500]@t300[#12U3~14/mouse_click@t150]#4FL41;A18D181S96R254V90K69G-12
+"workstation-classics:Chrome Pilot" = xpringout@t349]@t99[@0CP@0CP@0CP<#11H0,12/xylophone_c5#5T-3L26Q12;A3D447S78R231V71K57G6
+"workstation-classics:Ladder Mono Bass" = ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<<+#4/ringout@t150[@t20]@20]@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP@0CP<+#4L50Q-58/ringout@20[@40]@0CP@0CP@0CP<<<#8T2U2~8L60;A0D500S60R100K35G-6
+"workstation-classics:Orbital Strum" = default@t250]#8/xpding#8T16L42Q1;A0D291S3R61V89K63G7
+"workstation-classics:Pale Cloud" = violin_section_sus_c4@t7500]@t300[EU3~13;A366D273S84R1069V80K60G-9
+"workstation-classics:Remote Call" = tadaxp@40[@20]@0CP@0CP@0CP@0CP#6U3~20/tadaxp@40[@20]@0CP@0CP@0CP@0CP>#4L40/tadaxp@40[@20]@0CP@0CP@0CP@0CP#4T7L30;A10R300K60G7

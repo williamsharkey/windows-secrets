@@ -1,0 +1,47 @@
+# Yanreso Hoi: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Yanreso Hoi
+pack     = game-port
+kind     = world
+composer = Japanese traditional
+source   = Yanreso Hoi, as printed for shamisen in Nagai and Obata, "Seiyo gakufu Nihon zokkyokushu" (Osaka: Miki Shoten, 1895). Score: The Mutopia Project.
+licence  = The work: traditional, public domain; the source was printed in 1895. The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1760
+arranger = Algorithmic Industries house band
+note     = Six times through as a chiptune: the shamisen tune on three pulse leads in turn, a pulse bass on the chord roots, held chords on a pulse, the noise-channel kit.
+midi     = yanreso-hoi.mid
+script   = yanreso-hoi.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Midnight Signal"                        lufs=-20 pan=-8 echo=0.12
+lead2       ch2     "Second Ray"                             lufs=-21 pan=20 echo=0.12
+lead3       ch3     "Ivory Signal"                           lufs=-21 pan=-20 echo=0.12
+bass        ch4     "Waxed Line"                             lufs=-19 tune=-58
+arp         ch5     "Lucid Line"                             lufs=-26 pan=24
+kit         ch10    "kit-manager:Noise Channel Kit"          lufs=-19 verb=0.05
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"game-port:Ivory Signal" = popup@t116]@t33[@0CP@0CP@0CP+#14H0,7U4~16/organ_pedal_25@t3000]@t300[#2L35;A4D282S93R260V87G5
+"game-port:Lucid Line" = popup@t116]@t33[@0CP@0CP@0CPE#13H0,12U2~6/hwfail#3L38;A2D235S93R312V86G20
+"game-port:Midnight Signal" = ems_csirac_pulse_e4EU3~16;A1D528S93R309V72K64G-8
+"game-port:Second Ray" = ding#8/dingxp#8T19L37Q-33;A3D349S71R84V71K79G3
+"game-port:Waxed Line" = ringout@20[@40]@0CP@0CP@0CP<<#8Yd4l22t10;A0R20V0K45G1
+"kit-manager:Noise Channel Kit" = ding<<<@35]#3F/ringin<@20]+#4F/ringin>>@12]#5F/ding>>@5]#4;R100V100k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

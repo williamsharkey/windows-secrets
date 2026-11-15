@@ -1,0 +1,44 @@
+# Lasso Lady: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Lasso Lady
+pack     = beat-management
+kind     = chiptune
+composer = congusbongus
+source   = Lasso Lady, a FamiTracker module (lassolady.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/lassolady_1.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/lasso-lady-seamless-loop
+arranger = Algorithmic Industries house band
+source_sha256= cb6bb1ceaa607e02ee74f099fb30876338423413a411285715bed7656e21494f
+note     = Played twice through: the NES module's pulse 1 on the flute, pulse 2 on the upright bass, the triangle on vibes, the noise on Kit Manager 98 (Twelve-Bit Crate Kit).
+midi     = lasso-lady.mid
+script   = lasso-lady.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+flute       ch1     "Civic Wire"                             lufs=-20 pan=6 echo=0.2 verb=0.3
+bass        ch2     "Cathode Groove"                         lufs=-19
+vibes       ch3     "Study Vibes"                            lufs=-24 pan=24 verb=0.3 tune=-17
+kit         ch10    "kit-manager:Twelve-Bit Crate Kit"       lufs=-19 verb=0.06
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"beat-management:Cathode Groove" = contrabass_pizz_e1><#10Ja0,100.87,100.97,8.125,8.126,100Wr4t;A0D600S100R150K28G2
+"beat-management:Civic Wire" = flute_vib_c5@t6000]@t300[E<H0,-12U3~14;A13D48S71R300V91K60G-8
+"beat-management:Study Vibes" = vibraphone_c_low#8Ja0,100.250,70.500,100.750,70.1000,100/chimesEE#8T-7L26O272Q53;A0R900K48G3
+"kit-manager:Twelve-Bit Crate Kit" = ding<<<@35]><#3F/chord>>@15]+E><#4F/ringin>>@12]><#5F/ding>>@4]><#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7

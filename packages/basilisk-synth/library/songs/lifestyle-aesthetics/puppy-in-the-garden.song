@@ -1,0 +1,46 @@
+# Puppy Playing in the Garden: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Puppy Playing in the Garden
+pack     = lifestyle-aesthetics
+kind     = chiptune
+composer = Spring Spring
+source   = Puppy Playing in the Garden, a 0CC-FamiTracker module (puppy.0cc) from OpenGameArt (https://opengameart.org/sites/default/files/puppy.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/puppy-playing-in-the-garden
+arranger = Algorithmic Industries house band
+source_sha256= 27a14bd6089e8612a5cd10da1cd3b31db096d129753d17c265e53f61b9e63370
+note     = Played twice through: the NES module's VRC6 pulse on the kalimba, the pulses on tines and marimba, the triangle on the slow-jam bass, DPCM and noise on Kit Manager 98 (Echo Chamber Kit).
+midi     = puppy-in-the-garden.mid
+script   = puppy-in-the-garden.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+kalimba     ch1     "Hydro Kalimba"                          lufs=-20 pan=10 echo=0.25 verb=0.3
+keys        ch2     "Midnight Tines"                         lufs=-22 pan=-14 verb=0.3
+marimba     ch3     "Atrium Marimba"                         lufs=-23 pan=24 verb=0.3
+bass        ch4     "Slow Jam Bass"                          lufs=-20
+kit         ch10    "kit-manager:Echo Chamber Kit"           lufs=-19 verb=0.1
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Echo Chamber Kit" = ringout@20[@40]@0CP@0CP@0CP<<<Ja0,100.80,40.300,0#3F/xpstart>EE#4F/xprecycle>>>@40]#5F/balloon<E#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"lifestyle-aesthetics:Atrium Marimba" = xpding;A0D700S0R400V90K59G8
+"lifestyle-aesthetics:Hydro Kalimba" = kalimba_c4#10/droplet_soft#4FL45O5;A0D900S0R500G2
+"lifestyle-aesthetics:Midnight Tines" = xpding@20]#5U2~10/ringout@25[@35]><#5T2U2~12L70/recycle<<<#3FL10/xpringout#3T2L52Q-13;A5D2000S30R700V80K59G1
+"lifestyle-aesthetics:Slow Jam Bass" = error<<@30]+#4;A2D500S60R180V80K63G-3

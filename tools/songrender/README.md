@@ -14,7 +14,7 @@ and the reverb are convolutions of the rendered stems.
 
 ```
 songrender.py SONG.song [SONG.song ...] [--out-dir DIR] [--jobs 6] [--stems] [--no-wav] [--dry]
-              [--render311 EXE] [--machine DIR] [--cache DIR]
+              [--render311 EXE] [--machine DIR] [--cache DIR] [--lookahead 150] [--drop-stems] [--cache-gb 1.5]
 songrender.py SONG.song --engine host --host BasiliskHost.exe --plugin SNDWAVE2000.vst3   (through the real plugin)
 ```
 
@@ -30,7 +30,12 @@ The command writes these files to `DIR`:
 Several songs in one call share one pool of engines. Never more than 6 run at once, at `nice -n 10`, because the PC
 is shared.
 
-Defaults: `render311` is `~/songs/build/render311`, the machine is `~/songs/machine` (a copy of a release's
+`--lookahead MS` (default 150) is passed to render311 (main 073d464 and later). render311 sends each event that many
+ms early; its stamp is unchanged. Dense chords then arm on time: without it, an instant that starts more than about
+8 recorders (notes x the DNA's harmony and unison voices) arms some of them up to 50 ms late. A render with no late
+notes is byte-identical either way. Pass 0 for an older render311.
+
+Defaults: `render311` is `~/songs/build/render311-la` (built from main with `--lookahead`), the machine is `~/songs/machine` (a copy of a release's
 `Contents/Resources/machine`), and the stem cache is `~/songs/cache`. The environment variables
 `SONGRENDER_RENDER311`, `SONGRENDER_MACHINE` and `SONGRENDER_CACHE` override them.
 
@@ -63,12 +68,12 @@ pingpong = yes
 level    = 0        # dB, the return
 lowcut   = 180
 
-[reverb]            # one shared reverb (a seeded, decaying noise impulse response: deterministic)
+[reverb]            # one shared reverb: a decaying noise impulse response from SplitMix64 (portable, bit-exact)
 size     = 2.0      # seconds to -60 dB
 predelay = 18       # ms
 tone     = 5500
 level    = -6
-seed     = 3110
+seed     = 3110     # channel c draws stream seed*2+c (songrender.splitmix_gauss)
 
 [tracks]
 # name   source  preset                 mix
@@ -77,6 +82,15 @@ bass     ch4     "Kinetic Harp"         vol=-5 tr=-12
 kit      ch10    "kit-manager:Card Room" vol=-6
 pad      ch2+ch3 'dna:chimesE+;R900'    vol=-10 mute
 ```
+
+A `[dna]` section, written by the song scripts, pins the DNA of every preset the song names:
+
+```
+[dna]
+"courtyard-chapel:Slate Pick" = psaltery_pluck_c4#15/defaultRE#2T9L10O53Q26;A2D201S2R136V78K72G-1
+```
+
+A pinned DNA is used before the pack discs' own, so a song renders the same after its pack changes.
 
 A track line has three columns, then any number of `key=value` settings:
 
@@ -134,6 +148,12 @@ render311.
 - `audition.py` measures every preset of the pack discs: the pitch heard at C3, C4 and C5 against the note asked,
   the level, the attack, and how much is left after 300 ms and 1 s; kits get each pad's level. The results go to
   `~/songs/audition/<pack>.json`. A song uses `tune=` from these numbers.
+- `compare_engines.py` renders a song's tracks with render311 and through the plugin in BasiliskHost (`--engine host`)
+  and compares the stems.
+- `trackers.py` turns FastTracker 2, Impulse Tracker and FamiTracker modules into notes-only MIDI. `make_index.py`
+  writes the site's song list. `songqa.py` flags silent stems and late notes.
+- Song scripts written before `--lookahead` call `chord_cap(8)`. It thins each chord to 8 recorders an instant, which
+  keeps their MIDI as it was rendered. Newer songs don't need it.
 - `compose.py` is a small Python toolkit for writing the MIDI: a melody notation, chord symbols with voice leading,
   bass patterns, drum grids, and seeded humanising. The songs in `packages/basilisk-synth/library/songs/<pack>/`
   are each one script that writes its `.mid` and `.song`.

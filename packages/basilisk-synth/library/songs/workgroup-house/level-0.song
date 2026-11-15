@@ -1,0 +1,44 @@
+# Level 0: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Level 0
+pack     = workgroup-house
+kind     = chiptune
+composer = controllerhead
+source   = Level 0, a FamiTracker module (nrom_level0.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/nrom_level0_famitracker.zip). Its notes are played here; its samples or chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/nes-level-0
+arranger = Algorithmic Industries house band
+source_sha256= 1d2b56cdf317107b38ba7b9d8083741c39e4e2199e5a1ecb0d106d0c9e7b36a8
+note     = Played twice through as house: the NES module's pulse 1 on an organ, pulse 2 on a stab, the triangle on the bass, the noise on Kit Manager 98 (Jack Box Kit).
+midi     = level-0.mid
+script   = level-0.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3500
+level    = -6
+
+[reverb]
+size     = 2.0
+predelay = 16
+tone     = 5500
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+organ       ch1     "Gentle Revival"                         lufs=-21 pan=-8 echo=0.15
+stab        ch2     "Rainy Accent"                           lufs=-22 pan=14 echo=0.2
+bass        ch3     "Remote Foundation"                      lufs=-19 tune=-57
+kit         ch10    "kit-manager:Jack Box Kit"               lufs=-17 verb=0.05
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Jack Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.60,70.350,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"workgroup-house:Gentle Revival" = ems_ferranti_hoot_c4;A2S100R98V75K60G-13
+"workgroup-house:Rainy Accent" = chordxpU2~5;A1D261S36R449V72K55
+"workgroup-house:Remote Foundation" = ringout@20[@40]@0CP@0CP@0CP<<#6/balloon<<@40]#2FL35;A0D450S35R120V90K45G3

@@ -1,0 +1,49 @@
+# Doumka: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Doumka
+pack     = polysynth-showroom
+kind     = world
+composer = Pyotr Ilyich Tchaikovsky (1840-1893)
+source   = Doumka, Op. 59 (1886): the opening section. Score: The Mutopia Project.
+licence  = The work: public domain (published 1886; the composer died 1893). The edition used: public domain (Mutopia). This arrangement: CC0-1.0.
+proof    = https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=341
+arranger = Algorithmic Industries house band
+note     = The opening twice as 1985 synth-pop: a PWM lead then the buzzy lead on the tune, an FM piano on the inner voices, a clav on the left hand, the cream mono bass, vocoder strings. Drums: Kit Manager 98 (Breaker Box Kit).
+midi     = doumka.mid
+script   = doumka.py
+
+[master]
+loudness = -15
+ceiling  = -1.0
+
+[echo]
+time     = 3/16
+feedback = 0.3
+tone     = 3200
+level    = -6
+
+[reverb]
+size     = 2.4
+predelay = 20
+tone     = 5500
+level    = -5
+
+[tracks]
+# name      source  preset                                  mix
+lead        ch1     "Grey Beam"                              lufs=-19 pan=4 echo=0.2 verb=0.3
+solo        ch2     "Amber Line"                             lufs=-20 pan=-6 echo=0.2 verb=0.3
+fmpiano     ch3     "Empty Hammers"                          lufs=-23 pan=-18 verb=0.3
+clav        ch4     "Distant Parlour"                        lufs=-25 pan=24 tune=-22
+bass        ch5     "Dial Bass"                              lufs=-20
+vstrings    ch6     "Hollow Swell"                           lufs=-25 verb=0.4 width=1.3 tune=-14
+kit         ch10    "kit-manager:Breaker Box Kit"            lufs=-18 verb=0.15
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"kit-manager:Breaker Box Kit" = ringout@20[@40]@0CP<<<Ja0,100.100,60.700,0#3F/recycle>@30]+#4F/xprecycle>>>@40]#5F/default>@8]#4;R200V90k36k35i80k38l2k39l2s.3i90k40l2t40k42l3e.12c1k44l3e.05i70c1k46l3c1k37l4k41,50l4r45p100w7
+"polysynth-showroom:Amber Line" = poly85_buzzy_lead_c3@t7053]@t2015[@0CP@0CP>EQ55;A29D320S81R129V87K60G-2
+"polysynth-showroom:Dial Bass" = mono77_cream_b0#11U2~6/mono77_fm_rings_ds1#5T-16L45;A5D236S61R173V92K23G-5
+"polysynth-showroom:Distant Parlour" = fm87_clav_c4#15/chimesxpRE#2T5L12O111Q-8;A3D892S37R329V80K60G-6
+"polysynth-showroom:Empty Hammers" = fm87_piano_c4#15/dingxp>#2T-19L20O92Q6;A3D806S5R374V81K60G-7
+"polysynth-showroom:Grey Beam" = poly78_pwm_lady_c4E#12U3~14/poly78_res_organ_d4#4T10L32O6Q-21;A36D120S82R103V99K60G-9
+"polysynth-showroom:Hollow Swell" = vocoder_strings_c4E#15/dingxp>#2T-19L12O98Q-24;A186S95R912V70K60G-3
