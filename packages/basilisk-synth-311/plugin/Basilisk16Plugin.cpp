@@ -22,6 +22,7 @@
 #include "UserRec.h"
 #include "V3Seq.h"
 #include "SongSession.h"
+#include "PackAlias.h"
 #include "GenePool.h"
 
 #include <atomic>
@@ -366,7 +367,7 @@ protected:
             if (s.extra.count("keymask")) kp.readLine("keymask " + s.extra["keymask"]);
             if (s.extra.count("tuning")) kp.readLine("tuning " + s.extra["tuning"]);
             setKeyParams(kp);
-            { std::lock_guard<std::mutex> l(mtx_); packs_ = s.extra.count("packs") ? s.extra["packs"] : ""; packsDirty_ = true; }
+            { std::lock_guard<std::mutex> l(mtx_); packs_ = s.extra.count("packs") ? b16pack::packIdsNow(s.extra["packs"]) : ""; packsDirty_ = true; }   // (renamed packs: their ids now)
             song_.loadState(s.extra);
             { std::lock_guard<std::mutex> l(poolMtx_); pool_ = b16pool::Pool(); auto it = s.extra.find("pool"); std::vector<uint8_t> b; if (it != s.extra.end() && bsynth::unbase64(it->second, b)) pool_.load(std::string(b.begin(), b.end())); }
             {   // its recordings (RECORDING.md 3.3): found by hash, the embedded copy saved if this machine lacks it

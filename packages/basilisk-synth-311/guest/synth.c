@@ -1190,7 +1190,7 @@ static void keyboard_show(void)     /* part of the assembly: wheels and switches
 #define ID_ENVNEXT 1148
 #define ID_ENVADD 1149
 #define ID_ENVDEL 1150
-#define ID_FILTER 1157     /* + 0 All, 1 W3.11, 2 XP: which presets the browser lists */
+/* (1157-1159 were the preset filter, All / W3.11 / XP, until 1.5) */
 #define ID_KEYROOT 1153    /* the key and scale (PRESET-ENGINE-2 18.2): Key [C v] Scale [Major v] in the DNA row */
 #define ID_KEYSCALE 1154
 #define ID_PRESETPREV 1155
@@ -1212,7 +1212,7 @@ static SLIDER sliders[] = {
 #define SL_ELEVEL 11
 #define SL_MACRO 12
 #define NSL (sizeof sliders / sizeof sliders[0])
-static HWND hSb[NSL], hVal[NSL], hLayerLbl, hHarm, hPreset, hLibrary, hEnvLbl, hFilter[3], hKeyRoot, hKeyScale;
+static HWND hSb[NSL], hVal[NSL], hLayerLbl, hHarm, hPreset, hLibrary, hEnvLbl, hKeyRoot, hKeyScale;
 /* the host's scale library (`scale <id> <category> <label>` lines, sent once) and its key (`key ...`) */
 #define NSCALE 64
 static int nScale, scaleId[NSCALE]; static char scaleLbl[NSCALE][28], scaleCat[NSCALE][24];
@@ -1243,7 +1243,6 @@ static void key_boxes(void)
     for (i = 0; i < n; i++) if ((int)SendMessage(hKeyScale, CB_GETITEMDATA, i, 0L) == keyScale) { SendMessage(hKeyScale, CB_SETCURSEL, i, 0L); break; }
     keyQuiet = FALSE;
 }
-static int presetFilter;   /* 0 All, 1 W3.11 (no XP file), 2 XP (uses one) */
 static int harmIdx, envPt;
 
 /* the span of layer i in dnaText (or of the globals, i = -1) */
@@ -1460,11 +1459,13 @@ static void panel_refresh(void)
     sprintf(t, "Layer %d of %d", selLayer + 1, nlay);
     SetWindowText(hLayerLbl, t);
 }
+static void st_dna_changed(void);
 static void edited(BOOL rebuild)
 {
     static char line[1200];
     sprintf(line, "edit %s", dnaText);
     bs_line(line);
+    st_dna_changed();   /* (after the edit: the host answers with the new DNA's pattern) */
     if (rebuild) build(dnaText);
     else {
         envA = global_value('A', 0); envD = global_value('D', 0); envS = global_value('S', 100); envR = global_value('R', 120);
@@ -1518,29 +1519,11 @@ static void read_lines_now(const char *path, void (*fn)(char *line, long off))
     if (m) { ln[m] = 0; fn(ln, start); }
     _lclose(f);
 }
-/* does a DNA use an XP file? (its sources and its I/M sounds; DNA.md 2.4: everything but the six 3.x files) */
-static int uses_xp(const char *d)
-{
-    const char *p = d; int start = 1;
-    while (*p && *p != ';') {
-        if (start || ((*p == 'I' || *p == 'M') && isname(p[1]))) {
-            const char *q = start ? p : p + 1, *e = q; int i;
-            while (isname(*e)) e++;
-            i = sound_index(q, (int)(e - q));
-            if (i == 3 || i == 4 || i == 7 || i >= 9) return 1;
-            p = e; start = 0; continue;
-        }
-        if (*p == '/') start = 1;
-        p++;
-    }
-    return 0;
-}
 static void add_preset(char *ln, long off)    /* category TAB name TAB DNA -> "Category: Name" (its DNA is re-read when picked) */
 {
     char *a = strchr(ln, '\t'), *b, t[80]; int i;
     if (!a || ln[0] == '#') return;
     *a = 0; b = strchr(a + 1, '\t'); if (!b) return; *b = 0;
-    if (presetFilter && uses_xp(b + 1) != (presetFilter == 2)) return;
     sprintf(t, "%.30s: %.44s", ln, a + 1);
     i = (int)SendMessage(hPreset, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t);
     if (i >= 0) SendMessage(hPreset, CB_SETITEMDATA, i, off);
@@ -1564,10 +1547,8 @@ static void add_sound(char *ln, long off)     /* name TAB category ... -> "categ
 }
 static void preset_list(void)
 {
-    int i;
     SendMessage(hPreset, CB_RESETCONTENT, 0, 0L);
     read_lines("L:\\PRESETS.TSV", add_preset);
-    for (i = 0; i < 3; i++) if (hFilter[i]) SendMessage(hFilter[i], BM_SETSTATE, i == presetFilter, 0L);   /* pushed in */
 }
 static void panel_lists(void)
 {
@@ -1631,7 +1612,6 @@ static void panel_command(int id, int code)
         }
         return;
     }
-    if (id >= ID_FILTER && id < ID_FILTER + 3) { presetFilter = id - ID_FILTER; preset_list(); return; }
     if (building) return;
     if (id == ID_PRESETPREV || id == ID_PRESETNEXT) {
         int n = (int)SendMessage(hPreset, CB_GETCOUNT, 0, 0L), i = (int)SendMessage(hPreset, CB_GETCURSEL, 0, 0L);
@@ -1847,14 +1827,10 @@ static void panel_create(int group)
         }
         break;
     case 4:   /* the header: preset browser and every sound; pan, offset and the drawn envelope's points */
-        {   /* the preset browser's filter (all, Windows 3.x sounds only, or XP's), its list and previous / next; the
-               library's sounds */
+        {   /* the preset browser (every preset, one list: 1.5 dropped the All / W3.11 / XP filter), previous / next;
+               the library's sounds */
             int w, wp, wn;
             x = 406;
-            hFilter[0] = mkbtn("All", x, 3, 21, ID_FILTER, &w); x += w + 1;
-            hFilter[1] = mkbtn("W3.11", x, 3, 21, ID_FILTER + 1, &w); x += w + 1;
-            SetWindowText(hFilter[1], "  W3.11");   /* its 1's wide right bearing: one more space on the left centres the ink (8x crop) */
-            hFilter[2] = mkbtn("XP", x, 3, 21, ID_FILTER + 2, &w); x += w + 3;
             wp = btn_w("<"); wn = btn_w(">");
             hPreset = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, x, 3, 714 - wp - wn - 3 - x, 320, ID_PRESET);
             x = 714 - wp - wn - 1;
@@ -2106,7 +2082,7 @@ static void page_values(void)   /* the controls show the selected layer's tokens
     }
 }
 static void song_closing(void);
-static BOOL sgStrips; static HWND hSong;
+static BOOL sgStrips, stStrips; static HWND hSong;   /* (stStrips: the Steps board was over the strips) */
 static HWND recAsk[2], recStatus, recList, recSlotBtn;
 static HWND hLibDiscs, hLibPre, hLibInfo;   /* the Library page's lists */   /* the Rec page's collision Yes / No, status and list */
 static void page_close(void)
@@ -2203,8 +2179,8 @@ static void page_open(int t)
     }
     SendMessage(hMain, WM_SETREDRAW, TRUE, 0L);
     if (hSong) RedrawWindow(hSong, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);   /* (over the strips) */
-    if (sgStrips && !hSong) {   /* the Song page went: the strips again */
-        RECT rs; int r2; sgStrips = FALSE;
+    if ((sgStrips && !hSong) || (stStrips && t != 5)) {   /* the Song page or the Steps board went: the strips again */
+        RECT rs; int r2; sgStrips = stStrips = FALSE;
         SetRect(&rs, 0, ROW0 - 14, 970, ROW0 + 480);
         RedrawWindow(hMain, &rs, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
         for (r2 = 0; r2 < NR; r2++) if (rw[r2]) paint_now(rw[r2]);
@@ -3813,6 +3789,7 @@ static void st_values(void)
     SetScrollPos(stGateSb, SB_CTL, stGate, TRUE); wsprintf(t, "%d%%", stGate); SetWindowText(stGateTx, t);
     InvalidateRect(hSteps, NULL, FALSE);
 }
+static void st_fit(void);
 static void seq_line(char *rest)   /* seqpat <m|d> <len> <rate> <swing> <gate> <on[f]> <rows> <row[:label]> ... */
 {
     char *p = rest, *tok; int i, n;
@@ -3840,6 +3817,7 @@ static void seq_line(char *rest)   /* seqpat <m|d> <len> <rate> <swing> <gate> <
         stRow[1][32] = stRow[2][32] = 0;
         lstrcpy(stLabel[0], "Note"); lstrcpy(stLabel[1], "Accent"); lstrcpy(stLabel[2], "Octave"); stRows = 3;
     }
+    st_fit();
     st_values();
 }
 static void mine_step(int col)   /* the playhead (the host's `step`) */
@@ -3904,10 +3882,34 @@ long FAR PASCAL __export StepsProc(HWND h, UINT m, WPARAM w, LPARAM l)
     return DefWindowProc(h, m, w, l);
 }
 static void mine_hide(void) {}
+#define ST_H(rows) (STY + 10 + (rows) * STC + 66)   /* the window's height for a board of that many rows */
+static HWND stCtl[24]; static int stCtlY[24], nStCtl, stShownRows;
 static HWND stmk(const char *cls, const char *t, DWORD st, int x, int y, int w, int h, int id)
 {
     HWND c = CreateWindow(cls, t, WS_CHILD | WS_VISIBLE | st, x, y, w, h, hSteps, (HMENU)id, hInst, NULL);
-    SendMessage(c, WM_SETFONT, (WPARAM)panelFont, 0L); return c;
+    SendMessage(c, WM_SETFONT, (WPARAM)panelFont, 0L);
+    if (nStCtl < 24) { stCtl[nStCtl] = c; stCtlY[nStCtl++] = y - ST_H(8); }   /* (kept from the bottom: the board's rows move them) */
+    return c;
+}
+static void st_dna_changed(void) { if (curTab == 5 && hSteps) say("seq get"); }   /* the Steps tab shows the new DNA's pattern */
+static void st_fit(void)   /* the window as tall as its board: the controls follow the last row */
+{
+    RECT r, rm; POINT p; int rows = stRows < 1 ? 1 : stRows, i, wh = ST_H(rows), oldh;
+    if (!hSteps || rows == stShownRows) return;
+    stShownRows = rows;
+    GetWindowRect(hSteps, &r); oldh = r.bottom - r.top;
+    SetWindowPos(hSteps, NULL, 0, 0, r.right - r.left, wh, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+    for (i = 0; i < nStCtl; i++) {
+        RECT c; GetWindowRect(stCtl[i], &c); p.x = c.left; p.y = c.top; ScreenToClient(hSteps, &p);
+        SetWindowPos(stCtl[i], NULL, p.x, wh + stCtlY[i], 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+    }
+    RedrawWindow(hSteps, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+    if (wh < oldh) {   /* what it uncovered: the strips paint themselves only when asked (paint_now) */
+        p.x = r.left; p.y = r.top + wh; ScreenToClient(hMain, &p);
+        SetRect(&rm, p.x, p.y, p.x + (r.right - r.left), p.y + oldh - wh);
+        RedrawWindow(hMain, &rm, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+        for (i = 0; i < NR; i++) if (rw[i]) paint_now(rw[i]);
+    }
 }
 static void mine_page(int y0)
 {
@@ -3917,7 +3919,7 @@ static void mine_page(int y0)
         WNDCLASS wc; memset(&wc, 0, sizeof wc); wc.lpfnWndProc = StepsProc; wc.hInstance = hInst; wc.hCursor = LoadCursor(NULL, IDC_ARROW);
         wc.hbrBackground = GetStockObject(LTGRAY_BRUSH); wc.lpszClassName = "SndSteps"; RegisterClass(&wc); reg = TRUE;
     }
-    wh = STY + 10 + 8 * STC + 66;
+    wh = ST_H(8); nStCtl = 0; stShownRows = 8; stStrips = TRUE;
     { POINT pt; pt.x = 966 - (bw + 2 * STX); pt.y = ROW0 + 6; ClientToScreen(hMain, &pt);   /* an owned window over the strips, as Minesweeper was */
       hSteps = CreateWindow("SndSteps", "", WS_POPUP | WS_VISIBLE | WS_CLIPCHILDREN, pt.x, pt.y, bw + 2 * STX, wh, hMain, NULL, hInst, NULL); }
     page_add(hSteps);
@@ -4481,7 +4483,7 @@ static void host_line(char *s)
     }
     else if (!strcmp(s, "desk")) { if (hMain && assembled) ShowWindow(hMain, atoi(rest) ? SW_MINIMIZE : SW_RESTORE); }
     else if (!strcmp(s, "go")) { splash_close(); if (!assembled) assemble(); else say("ready"); }
-    else if (!strcmp(s, "dna")) { build(rest); if (curTab == 5 && hSteps) say("seq get"); }   /* (the Steps tab shows the new DNA's pattern) */
+    else if (!strcmp(s, "dna")) { build(rest); st_dna_changed(); }   /* (the Steps tab shows the new DNA's pattern) */
     else if (!strcmp(s, "on")) {
         /* on <rec> <rate> <vol> [<pan> [<delay_ms> [<layer> [<from> <to>]]]]: the host waits out delays and sends 0;
            v3: the window [from, to) in frames of the layer's buffer (0 0: all) */

@@ -12,6 +12,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "PackAlias.h"
 #include "SongEngine.h"
 
 namespace b16song {
@@ -341,9 +342,11 @@ inline bool resolveTrack(const SongText &s, const SongTrack &t, const std::map<s
     std::string pk = s.get("pack"), name = t.preset;
     const size_t c = name.find(':'); if (c != std::string::npos) { pk = name.substr(0, c); name = name.substr(c + 1); }
     for (const auto &p : s.pinned) if (p.first == pk + ":" + name) { dna = p.second; label = p.first; return true; }
+    pk = b16pack::packIdNow(pk);   // (a renamed pack, and its renamed presets: old songs keep playing)
     auto it = P.find(pk);
     if (it == P.end()) { err = "no pack \"" + pk + "\""; return false; }
     auto jt = it->second.find(name);
+    if (jt == it->second.end()) { name = b16pack::presetNameNow(pk, name); jt = it->second.find(name); }
     if (jt == it->second.end()) { err = "track " + t.name + ": no preset \"" + name + "\" in " + pk; return false; }
     dna = jt->second; label = pk + ":" + name; return true;
 }
