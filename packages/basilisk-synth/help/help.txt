@@ -30,6 +30,7 @@
 :311 + [The Panel](menus)
 :311 + [The Song Tab](song)
 :311 + [CITYPOP1993](citypop)
+:311 + [Gene Pool](genepool)
 ## Reference
 + [DNA Reference](dna_ref)
 + [Glossary](glossary)
@@ -537,6 +538,26 @@ Each change becomes the plugin's sound, and your project saves it.
 :311 Each track is played the way the Song tab plays a song: every part in its own Windows for Workgroups 3.11, on its own sixteen Sound Recorders, and then mixed. A track is prepared before it plays, and the next track is prepared while it plays. The status line shows how far each part has come.
 :311 Track 1 was prepared at the factory, by the same Sound Recorders, so the album starts at once. Prepared tracks are kept in My Recordings, in the folder CITYPOP1993, and play at once the next time.
 :311 **Discard Renders** deletes the prepared tracks. After that, every track is prepared on your computer, track 1 too.
+
+:311 %topic genepool
+:311 %title Gene Pool
+:311 %keys Gene Pool;cards;breed;mutation;keep;GENEPOOL.EXE
+:311 %map 23
+:311 Gene Pool deals sounds as playing cards. Every card is a DNA; you keep the ones you like and breed new ones from them.
+:311 ## To start
+:311 1. Minimize {NAME}, and in Program Manager open the SNDWAVE1993 group.
+:311 2. Double-click **Gene Pool**. Six cards are dealt from the deck.
+:311 ## The cards
+:311 | Click a card | Loads its sound into the recorders and plays it. The card is selected (or no longer selected). |
+:311 | Double-click | Keeps the card. |
+:311 | The deck | Click it for one more card. |
+:311 | Draw | Three cards from the deck: pack presets, and raw sounds of the library and the pack discs with genes of chance. |
+:311 | Breed | The selected cards have six children. Each child takes its layers and genes from its parents; kits keep their pads together. |
+:311 | Mutation | How much a child changes: transpose, level, a new sound, one of Sound Recorder's effects, the envelope. |
+:311 | Keep | The selected cards go to the kept row, and each is saved as a .BSP preset in Documents\SNDWAVE1993\Kept Sounds. |
+:311 | Discard | The selected cards leave the table. |
+:311 | Clear Table | Every card leaves the table; the kept row stays. |
+:311 A card's suit and rank come from its sound, the label shows its name and generation (G1, G2 ...), and the barcode is drawn from its DNA. The table is saved with your project, and the same seed always deals the same cards.
 
 %topic dna_ref
 %title DNA Reference
