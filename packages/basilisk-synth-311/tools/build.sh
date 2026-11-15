@@ -47,6 +47,7 @@ BS311_ENGINE="$W/engine" BS311_OFFS="$W/offs" python3 "$PKG/tools/make_machine.p
 
 # --- the Windows plugin (its program list: tools/make_presets311.py)
 python3 "$PKG/tools/make_presets311.py"
+python3 "$PKG/tools/make_tuning311.py"   # the Song tab's measured tuning (plugin/tuning_gen.h)
 (cd "$PKG/plugin" && make DPF_PATH="$W/DPF" DPF_TARGET_DIR="$W/win" DPF_BUILD_DIR="$W/obj-win" WINDOWS=true \
   CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ -j"$(nproc)" vst3 >/dev/null)
 M="$W/win/SNDWAVE2000.vst3/Contents/Resources/machine"

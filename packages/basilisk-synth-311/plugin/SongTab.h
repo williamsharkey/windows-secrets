@@ -20,6 +20,7 @@
 #include <mutex>
 #include <thread>
 #include "SongMix.h"
+#include "tuning_gen.h"
 #include "../../basilisk-synth/core/userstore.h"
 #ifdef _WIN32
 #include <windows.h>
@@ -32,6 +33,15 @@
 #endif
 
 namespace b16song {
+
+inline uint64_t fnv1a64(const std::string &s) { uint64_t h = 0xcbf29ce484222325ull; for (unsigned char c : s) { h ^= c; h *= 0x100000001b3ull; } return h; }
+// a preset's measured tuning (cents to apply; tools/make_tuning311.py), 0 when it was not measured or is in tune
+inline int measuredTune(const std::string &dna)
+{
+    const uint64_t h = fnv1a64(dna); unsigned lo = 0, hi = kTuningCount;
+    while (lo < hi) { const unsigned m = (lo + hi) / 2; if (kTuning[m].dna < h) lo = m + 1; else hi = m; }
+    return lo < kTuningCount && kTuning[lo].dna == h ? kTuning[lo].cents : 0;
+}
 
 inline void lowerThreadPriority()   // the engines give way to the host (and to the instance's own Windows)
 {
@@ -226,7 +236,11 @@ public:
                 SongTrack &t = song_.tracks[i]; const double x = std::atof(v.c_str());
                 if (k == "name") t.name = v.empty() ? t.name : v;
                 else if (k == "src") { Source s; if (s.parse(v)) t.src = v; }
-                else if (k == "preset") { t.dna.clear(); t.preset = v; }
+                else if (k == "preset") {   // a pack preset: its measured tuning comes with it (the Tune column; the user may change it)
+                    t.dna.clear(); t.preset = v;
+                    std::string dna, label, err;
+                    if (resolveTrack(song_, t, loadPresets(machine), dna, label, err)) t.tune = measuredTune(dna);
+                }
                 else if (k == "dna") { t.preset.clear(); t.dna = v; }
                 else if (k == "usedna") { t.preset.clear(); t.dna = defaultDna; }   // the instance's sound
                 else if (k == "tr") t.tr = std::max(-48, std::min(48, std::atoi(v.c_str())));
