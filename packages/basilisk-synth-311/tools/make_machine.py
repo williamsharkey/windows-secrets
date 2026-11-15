@@ -30,6 +30,9 @@ if xpsounds:
     os.makedirs(os.path.join(drive, 'XPSOUNDS'), exist_ok=True)
     for f in sorted(os.listdir(xpsounds)):
         if f.upper().endswith('.WAV'): shutil.copy(os.path.join(xpsounds, f), os.path.join(drive, 'XPSOUNDS', f.upper()))
+# --no-citypop: no CITYPOP1993 (CITYPOP.EXE, its icon and group item, the album): a machine without the plugin's
+# album player (the web edition)
+citypop = '--no-citypop' not in sys.argv
 # the brand kit (design/brand/sndwave1993): the title screen, the Program Manager icons, the Read Me
 brand = sys.argv[sys.argv.index('--brand') + 1] if '--brand' in sys.argv else os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', '..', 'design', 'brand', 'sndwave1993')
 if os.path.isdir(brand):
@@ -39,7 +42,7 @@ if os.path.isdir(brand):
         from PIL import Image
         t = Image.open(os.path.join(brand, 'screens', 'title-640.png')).convert('RGB')
         t.quantize(colors=16, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(drive, 'BS', 'TITLE.BMP'))   # (4 colours: exact)
-    for src, dst in (('sndwave1993', 'SNDWAVE'), ('16-recorders', 'RECORDRS'), ('voice-mixer', 'MIXER'), ('read-me', 'README'), ('setup', 'SETUP'), ('citypop', 'CITYPOP')):
+    for src, dst in (('sndwave1993', 'SNDWAVE'), ('16-recorders', 'RECORDRS'), ('voice-mixer', 'MIXER'), ('read-me', 'README'), ('setup', 'SETUP')) + ((('citypop', 'CITYPOP'),) if citypop else ()):
         shutil.copy(os.path.join(brand, 'icons', src + '.ico'), os.path.join(drive, 'BS', dst + '.ICO'))
     open(os.path.join(drive, 'BS', 'README.TXT'), 'wb').write((
         'SNDWAVE1993\r\nExecutive Audiophile Edition\r\nVersion 1.00 (Build 0311)\r\n'
@@ -60,7 +63,7 @@ if helpfile:
 for f in ('CHORD.WAV', 'TADA.WAV'):
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'machine-extra', f), os.path.join(drive, 'WINDOWS', f))
 for f in ('SYNTH.EXE', 'SYNHOOK.DLL', 'SNDWAVE.EXE'): shutil.copy(os.path.join(gout, f), os.path.join(drive, 'BS', f))
-if os.path.exists(os.path.join(gout, 'CITYPOP.EXE')): shutil.copy(os.path.join(gout, 'CITYPOP.EXE'), os.path.join(drive, 'BS', 'CITYPOP.EXE'))   # (the album's player)
+if citypop and os.path.exists(os.path.join(gout, 'CITYPOP.EXE')): shutil.copy(os.path.join(gout, 'CITYPOP.EXE'), os.path.join(drive, 'BS', 'CITYPOP.EXE'))   # (the album's player)
 shutil.copy(os.path.join(gout, 'BSYNTH.DRV'), os.path.join(drive, 'WINDOWS', 'SYSTEM', 'BSYNTH.DRV'))
 
 def edit(path, fn):
@@ -136,7 +139,7 @@ recdir = os.path.join(out, 'recdir'); os.makedirs(recdir, exist_ok=True)   # R:,
 packdir = os.path.join(out, 'packs')                                       # P:, the pack discs (Library tab)
 # the album CITYPOP1993 for CITYPOP.EXE (plugin/CityPop.h): its .song and MIDI files, in the machine folder
 album = sys.argv[sys.argv.index('--album') + 1] if '--album' in sys.argv else os.path.join(here, '..', '..', 'basilisk-synth', 'library', 'albums', 'citypop-deprogrammed', 'tracks')
-if os.path.isdir(album):
+if citypop and os.path.isdir(album):
     cdir = os.path.join(out, 'citypop'); shutil.rmtree(cdir, ignore_errors=True); os.makedirs(cdir)
     for f in sorted(os.listdir(album)):
         if re.match(r'\d\d-.*\.(song|mid)$', f): shutil.copy(os.path.join(album, f), os.path.join(cdir, f))
