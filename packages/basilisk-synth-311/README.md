@@ -53,7 +53,7 @@ class, AU codes and CLAP id, the same state format and `.b16` files.
   correction.
 - **Rainy Loft Collection**, the 26th pack disc (80 presets).
 - **Faster.** While no editor shows the screen, Windows' frames are not drawn (the emulation is unchanged). Offline
-  renders take about half the time they did.
+  renders are up to twice as fast.
 - **One machine for every computer.** Linux, Windows and macOS (Apple silicon and Intel) resume the same snapshot
   and render the same bytes.
 - **render311 --song** renders a `.song` file (tools/songrender's format) as the Song tab does.
