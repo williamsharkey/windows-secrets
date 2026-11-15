@@ -99,7 +99,7 @@ static void page_add(HWND w);
 static void scales_values(void);
 /* the tabs and pages (PRESET-ENGINE-2 section 8) */
 #define NTAB 7
-#define ID_TAB 1390
+#define ID_TAB 1370      /* + tab: (1390 + 6 was ID_STATESAVE: a click on Library asked to save the state, 1.3.0) */
 #define ID_PG 1400
 #define ID_RECPG 1480     /* + 0..11: the Rec page's controls */
 #define ID_LIBPG 1500     /* + 0..7: the Library page's */

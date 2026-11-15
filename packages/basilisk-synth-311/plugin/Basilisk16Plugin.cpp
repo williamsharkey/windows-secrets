@@ -230,7 +230,7 @@ protected:
     const char *getMaker() const override { return "Algorithmic Industries"; }
     const char *getHomePage() const override { return "https://williamsharkey.com/sndwave2000"; }
     const char *getLicense() const override { return "GPL-2.0-or-later"; }
-    uint32_t getVersion() const override { return d_version(1, 2, 1); }
+    uint32_t getVersion() const override { return d_version(1, 3, 1); }
 
     void initParameter(uint32_t i, Parameter &p) override
     {

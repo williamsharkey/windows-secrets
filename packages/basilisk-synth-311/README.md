@@ -39,6 +39,12 @@ Nothing is signed with a developer identity. The macOS bundles are ad-hoc signed
 **Projects from BASILISK 16** (the name of versions up to 1.2.1) open as they were: the plugin keeps the same VST3
 class, AU codes and CLAP id, the same state format and `.b16` files.
 
+## What is new in 1.3.1
+
+- **The Library tab** opens the Library page. In 1.3.0 it opened the Save state dialog.
+- **Sequencer kits** sound before the Mines tab has been opened. In 1.3.0, seven Kit Manager 98 kits that use the
+  step sequencer stayed silent until then.
+
 ## What is new in 1.3.0
 
 - **The name.** BASILISK 16 is now SNDWAVE2000. The title screen, the Program Manager group (SNDWAVE2000, 16
