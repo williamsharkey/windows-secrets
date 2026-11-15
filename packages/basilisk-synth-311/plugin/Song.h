@@ -1,4 +1,4 @@
-// SNDWAVE2000: songs (design/SONG-TAB.md). The .song text (tools/songrender/README.md: the exact format
+// SNDWAVE1993: songs (design/SONG-TAB.md). The .song text (tools/songrender/README.md: the exact format
 // songrender.py reads), Standard MIDI Files, and the split of a file into one track's events, done exactly as
 // songrender.py + render311 do it, so a track rendered here and a stem rendered there are the same bytes.
 #pragma once

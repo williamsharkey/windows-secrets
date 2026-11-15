@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # BASILISK 16 (DPF). DPF_PATH must point at a DPF checkout (see ../tools/build.sh).
-NAME = SNDWAVE2000
+NAME = SNDWAVE1993
 
 FILES_DSP = Basilisk16Plugin.cpp SharedCore.cpp SharedCore3Dna.cpp SharedCore3Engine.cpp SharedCore3Recipe.cpp SharedCore3Scales.cpp SharedUserstore.cpp SongTab.cpp Engine.c
 FILES_UI  = Basilisk16UI.cpp

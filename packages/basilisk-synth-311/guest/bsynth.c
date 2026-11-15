@@ -188,7 +188,7 @@ DWORD FAR PASCAL __loadds __export widMessage(UINT dev, UINT msg, DWORD user, DW
         WAVEINCAPS FAR *c = (WAVEINCAPS FAR *)p1;
         WAVEINCAPS w;
         w.wMid = 1; w.wPid = 0xB6; w.vDriverVersion = 0x0100;
-        lstrcpy(w.szPname, "SNDWAVE2000 Input");
+        lstrcpy(w.szPname, "SNDWAVE1993 Input");
         w.dwFormats = 0xFFF; w.wChannels = 2;
         _fmemcpy(c, &w, (UINT)p2 < sizeof w ? (UINT)p2 : sizeof w);
         return 0; }
@@ -257,7 +257,7 @@ DWORD FAR PASCAL __loadds __export wodMessage(UINT dev, UINT msg, DWORD user, DW
         WAVEOUTCAPS FAR *c = (WAVEOUTCAPS FAR *)p1;
         WAVEOUTCAPS w;
         w.wMid = 1; w.wPid = 0xB5; w.vDriverVersion = 0x0100;
-        lstrcpy(w.szPname, "SNDWAVE2000 Wave");
+        lstrcpy(w.szPname, "SNDWAVE1993 Wave");
         w.dwFormats = 0xFFF; w.wChannels = 2;
         w.dwSupport = WAVECAPS_VOLUME | WAVECAPS_LRVOLUME | WAVECAPS_PLAYBACKRATE;
         _fmemcpy(c, &w, (UINT)p2 < sizeof w ? (UINT)p2 : sizeof w);

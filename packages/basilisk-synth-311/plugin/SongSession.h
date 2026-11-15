@@ -1,4 +1,4 @@
-// SNDWAVE2000: the Song tab as the plugin sees it (the session itself is SongTab.h, built in SongTab.cpp).
+// SNDWAVE1993: the Song tab as the plugin sees it (the session itself is SongTab.h, built in SongTab.cpp).
 // SongTab.cpp is compiled without -ffast-math (DPF's default): the song's timing, the engines' event stamps and
 // the mix must come out exactly as render311 and songrender compute them.
 #pragma once

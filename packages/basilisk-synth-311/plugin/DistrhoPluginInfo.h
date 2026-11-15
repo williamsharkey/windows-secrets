@@ -3,7 +3,7 @@
 #define DISTRHO_PLUGIN_INFO_H_INCLUDED
 
 #define DISTRHO_PLUGIN_BRAND   "Algorithmic Industries"
-#define DISTRHO_PLUGIN_NAME    "SNDWAVE2000"
+#define DISTRHO_PLUGIN_NAME    "SNDWAVE1993"
 #define DISTRHO_PLUGIN_URI     "https://williamsharkey.com/sndwave2000"
 // The ids below never change: projects and presets saved with BASILISK 16 (its name until 1.3.0) find the plugin by
 // them (the VST3 class id is made from BRAND_ID and the unique id, the AU from the type, subtype and manufacturer).

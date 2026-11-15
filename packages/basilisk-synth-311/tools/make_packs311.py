@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The pack discs for SNDWAVE2000's Library tab (PRESET-ENGINE-2 16.3): drive P: of the machine.
+"""The pack discs for SNDWAVE1993's Library tab (PRESET-ENGINE-2 16.3): drive P: of the machine.
 
     make_packs311.py DISCS_DIR OUT_DIR
 

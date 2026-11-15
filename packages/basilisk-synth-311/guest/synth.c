@@ -3381,8 +3381,8 @@ static BOOL song_scroll(HWND sb, int code, int pos)
     }
     return TRUE;
 }
-/* ================================================================ CITYPOP.EXE: the album CITYPOP DEPROGRAMMED
-   A Media Player window of ours (SndCityPop) on SNDWAVE2000's Windows: the twelve tracks, Play, Stop, Previous, Next,
+/* ================================================================ CITYPOP.EXE: the album CITYPOP1993
+   A Media Player window of ours (SndCityPop) on SNDWAVE1993's Windows: the twelve tracks, Play, Stop, Previous, Next,
    the playhead and a status line. The host plays the album through this instance: every part on Sound Recorder, a
    track rendered before it plays, the next one while it plays (plugin/CityPop.h). */
 #define NCP 16
@@ -3483,9 +3483,9 @@ static void cp_open(void)
         wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.lpszClassName = "SndCityPop"; RegisterClass(&wc); reg = TRUE;
     }
     GetWindowRect(hMain, &r);
-    hCity = CreateWindow("SndCityPop", "CITYPOP DEPROGRAMMED - Media Player", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+    hCity = CreateWindow("SndCityPop", "CITYPOP1993 - Media Player", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
                          (r.left + r.right) / 2 - 230, (r.top + r.bottom) / 2 - 240, 460, 410, hMain, NULL, hInst, NULL);
-    cmk("STATIC", "CITYPOP DEPROGRAMMED. A theme and eleven variations, played on Sound Recorder.", 0, 10, 8, 430, 16, -1);
+    cmk("STATIC", "CITYPOP1993. A theme and eleven variations, played on Sound Recorder.", 0, 10, 8, 430, 16, -1);
     cpList = cmk("LISTBOX", "", WS_BORDER | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT, 10, 28, 430, 210, 1);
     padded("Play", p); w = btn_w("Play"); cmk("BUTTON", p, BS_PUSHBUTTON, x, 246, w, 24, 2); x += w + 3;
     padded("Stop", p); w = btn_w("Stop"); cmk("BUTTON", p, BS_PUSHBUTTON, x, 246, w, 24, 3); x += w + 10;
@@ -4358,12 +4358,12 @@ static void paint(HWND h)
         if (!hgt) for (hgt = 26; hgt > 12; hgt--) {
             f = CreateFont(hgt, 0, 0, 0, FW_BOLD, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Arial");
             o2 = SelectObject(dc, f);
-            if ((int)LOWORD(GetTextExtent(dc, "SNDWAVE2000", 11)) <= ENVX - 16) { SelectObject(dc, o2); DeleteObject(f); break; }
+            if ((int)LOWORD(GetTextExtent(dc, "SNDWAVE1993", 11)) <= ENVX - 16) { SelectObject(dc, o2); DeleteObject(f); break; }
             SelectObject(dc, o2); DeleteObject(f);
         }
         f = CreateFont(hgt, 0, 0, 0, FW_BOLD, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Arial");
         o2 = SelectObject(dc, f);
-        TextOut(dc, 10, 10 + (26 - hgt) / 2, "SNDWAVE2000", 11);
+        TextOut(dc, 10, 10 + (26 - hgt) / 2, "SNDWAVE1993", 11);
         SelectObject(dc, o2); DeleteObject(f);
     }
     SelectObject(dc, sm);
@@ -4397,7 +4397,7 @@ static void strip_picked(int r)   /* the last strip clicked: To slot N's N */
     lastStrip = r;
     if (recSlotBtn && curTab == 4) { wsprintf(t, "To slot %X", r); SetWindowText(recSlotBtn, t); }
 }
-/* About SNDWAVE2000 (design/brand/sndwave2000/COPY.md): from the window's system menu. Modeless, a popup of our own:
+/* About SNDWAVE1993 (design/brand/sndwave2000/COPY.md): from the window's system menu. Modeless, a popup of our own:
    a modal box would stop the notes while it is open. The free memory and resources are the machine's own. */
 #define ID_ABOUT 0x0F10
 #define ID_ABOUTOK 1490
@@ -4412,15 +4412,15 @@ long FAR PASCAL __export AboutProc(HWND h, UINT m, WPARAM w, LPARAM l)
 }
 static void about_open(void)
 {
-    static const char *ln[] = {"SNDWAVE2000", "Executive Audiophile Edition", "Version 1.00 (Build 0311)",
-        "Copyright \xA9 1993-1995 Algorithmic Industries", "", "This product is licensed to:", "Valued Customer", "",
+    static const char *ln[] = {"SNDWAVE1993", "Executive Audiophile Edition", "Version 1.00 (Build 0311)",
+        "Copyright \xA9 1993 Algorithmic Industries", "", "This product is licensed to:", "Valued Customer", "",
         "Voices:", "Sample rate:", "Free Memory:", "System Resources:"};
     char t[64]; int i, y = 12; WNDCLASS wc; RECT r; HFONT bold;
     if (hAbout) { SetWindowPos(hAbout, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); return; }
     memset(&wc, 0, sizeof wc); wc.lpfnWndProc = AboutProc; wc.hInstance = hInst; wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.lpszClassName = "SndAbout"; RegisterClass(&wc);
     GetWindowRect(hMain, &r);
-    hAbout = CreateWindow("SndAbout", "About SNDWAVE2000", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_DLGFRAME,
+    hAbout = CreateWindow("SndAbout", "About SNDWAVE1993", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_DLGFRAME,
                           (r.left + r.right) / 2 - 170, (r.top + r.bottom) / 2 - 150, 340, 300, hMain, NULL, hInst, NULL);
     bold = CreateFont(16, 0, 0, 0, FW_BOLD, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Arial");
     for (i = 0; i < 12; i++) {
@@ -4586,7 +4586,7 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
 {
     WNDCLASS wc; HINSTANCE hk; int r; HWND pm;
     hInst = hi;
-    if (!bs_present()) { MessageBox(NULL, "The SNDWAVE2000 card is not here.", "SNDWAVE2000", MB_OK); return 1; }
+    if (!bs_present()) { MessageBox(NULL, "The SNDWAVE1993 card is not here.", "SNDWAVE1993", MB_OK); return 1; }
     hk = LoadLibrary("C:\\BS\\SYNHOOK.DLL");
     if ((UINT)hk < 32) { logf_("no SYNHOOK.DLL"); return 1; }
     HookActive = (void (FAR PASCAL *)(BOOL))GetProcAddress(hk, "HOOKACTIVE");
@@ -4601,12 +4601,12 @@ int PASCAL WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cmd, int show)
     wc.hIcon = ExtractIcon(hi, "C:\\WINDOWS\\SOUNDREC.EXE", 0);   /* minimized, BASILISK 16 is Sound Recorder's icon */
     if ((UINT)wc.hIcon <= 1) wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
     RegisterClass(&wc);
-    hMain = CreateWindow("Basilisk16", "SNDWAVE2000 - [Untitled]", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN,
+    hMain = CreateWindow("Basilisk16", "SNDWAVE1993 - [Untitled]", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN,
                          0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), NULL, NULL, hi, NULL);
 
-    {   /* the system menu's last item: About SNDWAVE2000... (COPY.md) */
+    {   /* the system menu's last item: About SNDWAVE1993... (COPY.md) */
         HMENU sm = GetSystemMenu(hMain, FALSE);
-        AppendMenu(sm, MF_SEPARATOR, 0, NULL); AppendMenu(sm, MF_STRING, ID_ABOUT, "&About SNDWAVE2000...");
+        AppendMenu(sm, MF_SEPARATOR, 0, NULL); AppendMenu(sm, MF_STRING, ID_ABOUT, "&About SNDWAVE1993...");
     }
     /* the desktop as the visitor first sees it: Program Manager out of the way, a clock, sixteen recorders */
     pm = FindWindow("Progman", NULL);

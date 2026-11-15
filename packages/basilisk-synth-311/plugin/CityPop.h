@@ -1,8 +1,8 @@
-// SNDWAVE2000: CITYPOP.EXE, the album CITYPOP DEPROGRAMMED played on this instance (packages/basilisk-synth/library/
+// SNDWAVE1993: CITYPOP.EXE, the album CITYPOP1993 played on this instance (packages/basilisk-synth/library/
 // albums/citypop-deprogrammed). The album's twelve .song files and their MIDI files are in the machine folder
 // (machine/citypop/); every part is played by Sound Recorder through the Song tab's engines (one Windows 3.11 per
 // part, renderStems), mixed by SongMix.h, and played through the plugin's output. A track is rendered before it plays;
-// the next one renders while it plays. Renders are kept in My Recordings/CITYPOP DEPROGRAMMED, so a replay is at once.
+// the next one renders while it plays. Renders are kept in My Recordings/CITYPOP1993, so a replay is at once.
 //
 // Track 1 comes prepared at the factory (machine/citypop/factory-01.wav, tools/make_citypop_factory.py: the same engines,
 // 16-bit) so the album starts at once; `citypop clear` discards the renders, and from then on track 1 renders here too.
@@ -31,7 +31,7 @@ namespace b16song {
 
 class CityPop {
 public:
-    std::string machine, core, userDir, tmpDir, cacheDir;   // set by the plugin (cacheDir: My Recordings/CITYPOP DEPROGRAMMED)
+    std::string machine, core, userDir, tmpDir, cacheDir;   // set by the plugin (cacheDir: My Recordings/CITYPOP1993)
     std::function<void(const std::string &)> send;
     std::function<void()> lowerPriority;
     int engines = 4;
@@ -140,7 +140,7 @@ private:
     std::string cachePath(int i) const
     {
         const std::string s = slurp(dir() + "/" + files_[i]); SongText t; std::string err; t.parse(s, &err);
-        const std::string k = s + slurp(dir() + "/" + t.get("midi")) + "SNDWAVE2000 1.5 render";
+        const std::string k = s + slurp(dir() + "/" + t.get("midi")) + "SNDWAVE1993 1.5 render";
         std::string name = files_[i].substr(0, files_[i].size() - 5);
         return cacheDir + "/" + name + "-" + bsynth::sha1Hex(k.data(), k.size()).substr(0, 8) + ".wav";
     }

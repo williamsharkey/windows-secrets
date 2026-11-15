@@ -1,4 +1,4 @@
-// SNDWAVE2000: the headless track renderer, shared by tools/render311.cpp and the Song tab (design/SONG-TAB.md 3).
+// SNDWAVE1993: the headless track renderer, shared by tools/render311.cpp and the Song tab (design/SONG-TAB.md 3).
 #pragma once
 #include "../engine/engine.h"
 #include "../../basilisk-synth/core/dna.h"

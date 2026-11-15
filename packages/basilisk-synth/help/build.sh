@@ -2,7 +2,7 @@
 # Builds the two help files from help.txt (Python 3 only; no Microsoft tools).
 #   build.sh [OUTDIR]     default: out/
 #   BSYNTH.HLP   for Windows XP  (winhlp32.exe), BASILISK SYNTH
-#   SNDWAVE.HLP  for Windows 3.11 (WINHELP.EXE), SNDWAVE2000
+#   SNDWAVE.HLP  for Windows 3.11 (WINHELP.EXE), SNDWAVE1993
 # Also writes bsynth.rtf, basil16.rtf (the topic files), helpmap.txt ([MAP] for hlpc) and helpids.h (for the guests).
 set -e
 HERE=$(cd "$(dirname "$0")" && pwd)

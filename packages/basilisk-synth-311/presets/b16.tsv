@@ -1,21 +1,21 @@
-# category	name	DNA (packages/basilisk-synth/DNA.md). SNDWAVE2000's own programs, first in its program list and in \PRESETS.TSV;
+# category	name	DNA (packages/basilisk-synth/DNA.md). SNDWAVE1993's own programs, first in its program list and in \PRESETS.TSV;
 # then packages/basilisk-synth/library/presets/*.tsv. The NAMEs chimes, ding, ringin, ringout are C:\WINDOWS's; others are library sounds.
-SNDWAVE2000	Ding Piano	ding#16;R250
-SNDWAVE2000	Chime Octaves	chimesH0,12;R500
-SNDWAVE2000	Telephone Choir	ringinU3~12;A60S90R700
-SNDWAVE2000	Reverse Ding Swell	dingR;A10R300
-SNDWAVE2000	Echo Bells	chimesE+;R900
-SNDWAVE2000	Slow Ring Pad	ringout<<E;A400D300S80R1500
-SNDWAVE2000	Fifth Stack	dingH0,7,12;R300
-SNDWAVE2000	Major Ding	dingH0,4,7;R250
-SNDWAVE2000	Ding and Chimes	ding#8/chimes#8T12;R350
-SNDWAVE2000	Chopped Ring	ringin@50]>;R120
-SNDWAVE2000	Insert and Mix	dingIchimesMringin;R300
-SNDWAVE2000	Triple Echo Reverse	chimesEEER-;A20R1000
-SNDWAVE2000	Bass Ding	ding<T-12;R250
-SNDWAVE2000	Detuned Unison	dingU4~25;R300
-SNDWAVE2000	Ring Out Octaves	ringout>H0,12,24;R160
-SNDWAVE2000	Copy Paste Stutter	ding@30]CPPP;R160
+SNDWAVE1993	Ding Piano	ding#16;R250
+SNDWAVE1993	Chime Octaves	chimesH0,12;R500
+SNDWAVE1993	Telephone Choir	ringinU3~12;A60S90R700
+SNDWAVE1993	Reverse Ding Swell	dingR;A10R300
+SNDWAVE1993	Echo Bells	chimesE+;R900
+SNDWAVE1993	Slow Ring Pad	ringout<<E;A400D300S80R1500
+SNDWAVE1993	Fifth Stack	dingH0,7,12;R300
+SNDWAVE1993	Major Ding	dingH0,4,7;R250
+SNDWAVE1993	Ding and Chimes	ding#8/chimes#8T12;R350
+SNDWAVE1993	Chopped Ring	ringin@50]>;R120
+SNDWAVE1993	Insert and Mix	dingIchimesMringin;R300
+SNDWAVE1993	Triple Echo Reverse	chimesEEER-;A20R1000
+SNDWAVE1993	Bass Ding	ding<T-12;R250
+SNDWAVE1993	Detuned Unison	dingU4~25;R300
+SNDWAVE1993	Ring Out Octaves	ringout>H0,12,24;R160
+SNDWAVE1993	Copy Paste Stutter	ding@30]CPPP;R160
 B16 Layers	Glass Piano	piano_upright_cs4#10T-1Q-20/glass_ping#6T12O15Q40L50;R400
 B16 Layers	Bowl Swell	singing_bowl_commons_2#8Ja0,0.300,100.4000,50Q-50/singing_bowl_commons_2#8T12O250Q50L60Ja0,0.800,100.4000,40;R1500
 B16 Layers	Marimba Echo	marimba_c4#10/marimba_c4E#6O180Q60L50;R300

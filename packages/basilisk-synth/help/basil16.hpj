@@ -1,8 +1,8 @@
 ; BASILISK 16 Help (Windows 3.11 edition). Built by build.sh: mkrtf.py makes basil16.rtf from help.txt,
-; hlpc.py compiles this project to out/SNDWAVE.HLP (the program is SNDWAVE2000; BASILISK 16 until 1.3.0).
+; hlpc.py compiles this project to out/SNDWAVE.HLP (the program is SNDWAVE1993; BASILISK 16 until 1.3.0).
 [OPTIONS]
-TITLE=SNDWAVE2000 Help
-COPYRIGHT=SNDWAVE2000 Executive Audiophile Edition by Algorithmic Industries. Windows 3.11 and Sound Recorder are Microsoft's.
+TITLE=SNDWAVE1993 Help
+COPYRIGHT=SNDWAVE1993 Executive Audiophile Edition by Algorithmic Industries. Windows 3.11 and Sound Recorder are Microsoft's.
 CONTENTS=contents
 
 [FILES]

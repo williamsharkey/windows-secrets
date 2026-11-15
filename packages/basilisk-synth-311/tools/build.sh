@@ -42,7 +42,7 @@ sh "$PKG/../basilisk-synth/help/build.sh"   # the help: SNDWAVE.HLP
 # the pack discs (drive P:, the Library tab): the packs lane's final set (PACKS_DIR, default its out/discs)
 python3 "$PKG/tools/make_packs311.py" "${PACKS_DIR:-$PKG/../basilisk-synth/library/packs/out/discs}" "$W/packs"
 # the brand kit (title screen, Program Manager icons); TITLE.BMP made here (the Mac may lack Pillow)
-rm -rf "$W/brand"; cp -r "$REPO/design/brand/sndwave2000" "$W/brand"
+rm -rf "$W/brand"; cp -r "$REPO/design/brand/sndwave1993" "$W/brand"
 python3 -c "from PIL import Image;import sys;Image.open(sys.argv[1]).convert('RGB').quantize(colors=16,dither=0).save(sys.argv[2])" "$W/brand/screens/title-640.png" "$W/brand/TITLE.BMP"
 BS311_ENGINE="$W/engine" BS311_OFFS="$W/offs" python3 "$PKG/tools/make_machine.py" "$W/wfw" "$W/gout" "$W/dosbox-pure/dosbox_pure_libretro.so" "$W/machine" --library "$W/library.zip" --xpsounds "$W/xpsounds" --packs "$W/packs" --brand "$W/brand" --help "$PKG/../basilisk-synth/help/out/SNDWAVE.HLP"
 # CITYPOP.EXE's track 1, prepared at the factory: render311 (Linux) renders it on this machine, every part on Sound
@@ -58,7 +58,7 @@ python3 "$PKG/tools/make_presets311.py"
 python3 "$PKG/tools/make_tuning311.py"   # the Song tab's measured tuning (plugin/tuning_gen.h)
 (cd "$PKG/plugin" && make DPF_PATH="$W/DPF" DPF_TARGET_DIR="$W/win" DPF_BUILD_DIR="$W/obj-win" WINDOWS=true \
   CC=x86_64-w64-mingw32-gcc CXX=x86_64-w64-mingw32-g++ -j"$(nproc)" vst3 >/dev/null)
-M="$W/win/SNDWAVE2000.vst3/Contents/Resources/machine"
+M="$W/win/SNDWAVE1993.vst3/Contents/Resources/machine"
 rm -rf "$M"; mkdir -p "$M"
 cp "$W/dbp-win/dosbox_pure_libretro.dll" "$W/machine/w31.conf" "$W/machine/w31.state" "$W/machine/drive.zip" "$M/"
 cp "$W/machine/library.zip" "$W/machine/library.names.txt" "$M/"; cp -r "$W/machine/packs" "$M/"; cp -r "$W/machine/citypop" "$M/"   # (CITYPOP.EXE's album)

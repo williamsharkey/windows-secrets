@@ -33,7 +33,7 @@ WORDS = {
            'NPRESETS': '39', 'LAT': '100 ms', 'KEYS': '37 keys, C3 to C6', 'PCKEYS': 'PC keys',
            'SYNTHDIR': 'C:\\synth', 'OTHER': 'BASILISK 16, the Windows 3.11 edition',
            'LIBDRIVE': 'the CD drive', 'VIEWER': 'Windows Help (winhlp32.exe)'},
-    '311': {'NAME': 'SNDWAVE2000', 'WIN': 'Windows 3.11', 'SR': 'SOUNDREC.EXE', 'HLP': 'SNDWAVE.HLP',
+    '311': {'NAME': 'SNDWAVE1993', 'WIN': 'Windows 3.11', 'SR': 'SOUNDREC.EXE', 'HLP': 'SNDWAVE.HLP',
             'NPRESETS': '71', 'LAT': '60 ms', 'KEYS': 'five octaves, C2 to C7', 'PCKEYS': 'Keys',
             'SYNTHDIR': 'C:\\BS', 'OTHER': 'the Windows XP edition',
             'LIBDRIVE': 'drive L:', 'VIEWER': 'Windows Help (WINHELP.EXE)'},

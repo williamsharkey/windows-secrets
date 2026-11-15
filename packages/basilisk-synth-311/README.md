@@ -1,8 +1,8 @@
-# SNDWAVE2000
+# SNDWAVE1993
 
 **Executive Audiophile Edition.** Total sound solutions for globalized audio.
 
-SNDWAVE2000 by William Sharkey is a sixteen-voice synthesizer built from real Sound Recorders. It is a VST3 and
+SNDWAVE1993 by William Sharkey is a sixteen-voice synthesizer built from real Sound Recorders. It is a VST3 and
 CLAP instrument for Windows and macOS, and an Audio Unit for macOS. Each instance runs its own Windows for
 Workgroups 3.11, and every note is played by a real SOUNDREC.EXE in it.
 
@@ -23,18 +23,23 @@ Workgroups 3.11, and every note is played by a real SOUNDREC.EXE in it.
 Nothing is signed with a developer identity. The macOS bundles are ad-hoc signed; the Windows files are unsigned.
 
 **Windows**
-- Copy `SNDWAVE2000.vst3` (the whole folder) to `C:\Program Files\Common Files\VST3`.
-- For CLAP hosts, also copy `SNDWAVE2000.clap` to `C:\Program Files\Common Files\CLAP`. The CLAP uses the machine
-  inside the installed `SNDWAVE2000.vst3`, so install both.
-- Rescan plugins. It appears as an instrument, "SNDWAVE2000" by Algorithmic Industries.
+- Copy `SNDWAVE1993.vst3` (the whole folder) to `C:\Program Files\Common Files\VST3`.
+- For CLAP hosts, also copy `SNDWAVE1993.clap` to `C:\Program Files\Common Files\CLAP`. The CLAP uses the machine
+  inside the installed `SNDWAVE1993.vst3`, so install both.
+- Rescan plugins. It appears as an instrument, "SNDWAVE1993" by Algorithmic Industries.
 
 **macOS**
-- Copy `SNDWAVE2000.vst3` to `~/Library/Audio/Plug-Ins/VST3` (always: it carries the machine).
-- Copy `SNDWAVE2000.component` to `~/Library/Audio/Plug-Ins/Components` and, for CLAP hosts, `SNDWAVE2000.clap` to
+- Copy `SNDWAVE1993.vst3` to `~/Library/Audio/Plug-Ins/VST3` (always: it carries the machine).
+- Copy `SNDWAVE1993.component` to `~/Library/Audio/Plug-Ins/Components` and, for CLAP hosts, `SNDWAVE1993.clap` to
   `~/Library/Audio/Plug-Ins/CLAP`.
 - Because the bundles are not notarized, run once in Terminal:
-  `xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/*/SNDWAVE2000.*`
+  `xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/*/SNDWAVE1993.*`
 - Restart the DAW. In Logic, the AU is under AU Instruments > Algorithmic Industries.
+
+**From SNDWAVE2000 (1.4 and earlier):** SNDWAVE1993 is the same plugin under its new name, with the same IDs. Remove
+SNDWAVE2000.vst3 (and .component and .clap on macOS) before installing, so the host does not see two plugins with one
+ID. Projects open as they were, and your recordings stay where they are (Documents/SNDWAVE2000 is used while it is the
+only folder).
 
 **Projects from BASILISK 16** (the name of versions up to 1.2.1) open as they were: the plugin keeps the same VST3
 class, AU codes and CLAP id, the same state format and `.b16` files.
@@ -67,7 +72,7 @@ class, AU codes and CLAP id, the same state format and `.b16` files.
 
 ## What is new in 1.3.0
 
-- **The name.** BASILISK 16 is now SNDWAVE2000. The title screen, the Program Manager group (SNDWAVE2000, 16
+- **The name.** BASILISK 16 is now SNDWAVE1993. The title screen, the Program Manager group (SNDWAVE1993, 16
   Recorders, Voice Mixer, Read Me, Setup, Help), the About box (the window's system menu) and the help
   (C:\BS\SNDWAVE.HLP, F1) carry it.
 - **Tabs** under the DNA line: Main, Voices, Playback, Scales, Rec, Mines and Library.
@@ -79,7 +84,7 @@ class, AU codes and CLAP id, the same state format and `.b16` files.
   for remaps and tunings that are not 12-note.
 - **Recording.** The plugin has a stereo sidechain input. The Recorder (an eighteenth Sound Recorder, in the header
   and on the Rec page) records it, or the synth's own output; File > Save As keeps the take in
-  Documents/SNDWAVE2000/My Recordings, where every instance and project can use it (`u_name`). To slot N, To all
+  Documents/SNDWAVE1993/My Recordings, where every instance and project can use it (`u_name`). To slot N, To all
   16, per-strip takes (Record on a strip), Export and Import WAV. Projects carry the recordings they use (up to
   8 MB) and restore them by hash.
 - **The mine-grid sequencer.** The Mines tab runs the real Minesweeper. Its board is the pattern: rows are notes of
@@ -170,14 +175,14 @@ tools/mac_build.sh WORKDIR    # on a Mac: universal VST3, AU and CLAP, snapshots
 | `engine/` | the engine thread and the shared-memory block |
 | `plugin/` | the DPF plugin and editor; `dpf.patch` against `DPF_UPSTREAM.txt` |
 | `tools/` | build scripts, test rigs, `render311.cpp`, `make_library311.py`, `make_packs311.py`, `make_presets311.py` |
-| `presets/` | `b16.tsv`, SNDWAVE2000's own programs |
+| `presets/` | `b16.tsv`, SNDWAVE1993's own programs |
 | `machine-extra/` | Windows 3.1's CHORD.WAV and TADA.WAV, copied into C:\WINDOWS |
 
 ## Licences
 
 | Part | Licence |
 |---|---|
-| SNDWAVE2000 (this plugin, the guest programs, the card) | GPL-2.0-or-later. SNDWAVE2000 by William Sharkey. |
+| SNDWAVE1993 (this plugin, the guest programs, the card) | GPL-2.0-or-later. SNDWAVE1993 by William Sharkey. |
 | DOSBox Pure | GPL-2.0-or-later. Source: https://codeberg.org/schelling/dosbox-pure, at the commit in `dosbox-pure/UPSTREAM.txt`, with `dosbox-pure.patch` and `bsynth.cpp`. |
 | DPF | ISC |
 | Windows for Workgroups 3.11, Windows 3.1's CHORD.WAV and TADA.WAV, Windows XP's sounds (C:\XPSOUNDS, extracted at build time) | Copyright © Microsoft Corporation. |

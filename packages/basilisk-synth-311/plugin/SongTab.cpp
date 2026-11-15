@@ -1,4 +1,4 @@
-// SNDWAVE2000: the Song tab's session, in a translation unit of its own (see SongSession.h).
+// SNDWAVE1993: the Song tab's session, in a translation unit of its own (see SongSession.h).
 #include "SongSession.h"
 #include "SongTab.h"
 #include "CityPop.h"
@@ -10,7 +10,7 @@ void SongTab::configure(const std::string &machine, const std::string &core, con
                         std::function<void(const std::string &)> send)
 {
     s_->machine = machine; s_->core = core; s_->userDir = userDir; s_->tmpDir = tmpDir; s_->send = send;
-    c_->machine = machine; c_->core = core; c_->userDir = userDir; c_->tmpDir = tmpDir; c_->cacheDir = userDir + "/CITYPOP DEPROGRAMMED";
+    c_->machine = machine; c_->core = core; c_->userDir = userDir; c_->tmpDir = tmpDir; c_->cacheDir = userDir + "/CITYPOP1993";
     c_->send = std::move(send); c_->lowerPriority = lowerThreadPriority;
     { const unsigned hc = std::thread::hardware_concurrency(); c_->engines = (int)std::max(1u, std::min(8u, hc > 2 ? hc - 2 : 1u)); }   // (a user's explicit request: cores - 2, up to 8, below normal priority)
     if (const char *e = std::getenv("BASILISK16_CITYPOP_ENGINES")) if (std::atoi(e) > 0) c_->engines = std::min(8, std::atoi(e));

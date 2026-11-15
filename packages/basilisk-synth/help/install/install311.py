@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Install SNDWAVE2000 Help on a Windows for Workgroups 3.11 C: drive (a folder), before the machine is packed.
+"""Install SNDWAVE1993 Help on a Windows for Workgroups 3.11 C: drive (a folder), before the machine is packed.
 
     install311.py DRIVE [HLP]        HLP defaults to ../out/SNDWAVE.HLP
 
 It does what Setup programs of 1993 did, but from the host, so it needs no run inside Windows:
   - copies the help file to DRIVE\\BS\\SNDWAVE.HLP (beside SYNTH.EXE);
-  - writes a Program Manager group, DRIVE\\WINDOWS\\SNDWAVE.GRP, "SNDWAVE2000", with one item,
-    "SNDWAVE2000 Help" = WINHELP.EXE C:\\BS\\SNDWAVE.HLP, with WINHELP.EXE's own icon;
+  - writes a Program Manager group, DRIVE\\WINDOWS\\SNDWAVE.GRP, "SNDWAVE1993", with one item,
+    "SNDWAVE1993 Help" = WINHELP.EXE C:\\BS\\SNDWAVE.HLP, with WINHELP.EXE's own icon;
   - adds it to PROGMAN.INI ([Groups] GroupN=, [Settings] Order=), so Program Manager shows it.
 Running it again replaces the files and does not add a second group.
 
@@ -21,8 +21,8 @@ import shutil
 import struct
 import sys
 
-GROUP_NAME = 'SNDWAVE2000'
-ITEM_NAME = 'SNDWAVE2000 Help'
+GROUP_NAME = 'SNDWAVE1993'
+ITEM_NAME = 'SNDWAVE1993 Help'
 ITEM_CMD = r'WINHELP.EXE C:\BS\SNDWAVE.HLP'
 ICON_PATH = r'C:\WINDOWS\WINHELP.EXE'
 GRP = 'SNDWAVE.GRP'
@@ -128,12 +128,12 @@ def main():
     shutil.copyfile(hlp, os.path.join(bs, 'SNDWAVE.HLP'))
     items = None
     if os.path.isfile(find(bs, 'SNDWAVE.ICO')):   # the brand kit's icons (make_machine.py copies them): the whole group
-        items = [('SNDWAVE2000', r'C:\BS\SNDWAVE.EXE', r'C:\BS\SNDWAVE.ICO'),
+        items = [('SNDWAVE1993', r'C:\BS\SNDWAVE.EXE', r'C:\BS\SNDWAVE.ICO'),
                  ('16 Recorders', r'C:\BS\SNDWAVE.EXE /recorders', r'C:\BS\RECORDRS.ICO'),
                  ('Voice Mixer', r'C:\BS\SNDWAVE.EXE /voices', r'C:\BS\MIXER.ICO'),
                  ('Read Me', r'NOTEPAD.EXE C:\BS\README.TXT', r'C:\BS\README.ICO'),
                  ('Setup', r'C:\BS\SNDWAVE.EXE /setup', r'C:\BS\SETUP.ICO'),
-                 ] + ([('CITYPOP', r'C:\BS\CITYPOP.EXE', r'C:\BS\CITYPOP.ICO')] if os.path.isfile(find(bs, 'CITYPOP.ICO')) else []) + [
+                 ] + ([('CITYPOP1993', r'C:\BS\CITYPOP.EXE', r'C:\BS\CITYPOP.ICO')] if os.path.isfile(find(bs, 'CITYPOP.ICO')) else []) + [
                  (ITEM_NAME, ITEM_CMD, ICON_PATH)]
     open(os.path.join(win, GRP), 'wb').write(group_file(items))
     edit_progman(find(win, 'PROGMAN.INI'))

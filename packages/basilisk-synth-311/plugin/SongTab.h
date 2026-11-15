@@ -1,4 +1,4 @@
-// SNDWAVE2000: the Song tab's host side (design/SONG-TAB.md). The song (the .song text and its MIDI file), the
+// SNDWAVE1993: the Song tab's host side (design/SONG-TAB.md). The song (the .song text and its MIDI file), the
 // render (one engine per track on worker threads, render311's loop), the stems kept between renders, the mix
 // (SongMix.h) and its playback through the plugin's output. Windows shows it and edits it with `song ...` lines.
 //

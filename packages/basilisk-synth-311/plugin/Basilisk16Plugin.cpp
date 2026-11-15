@@ -158,7 +158,7 @@ static void sweepTemp(const std::string &tmp)
 #endif
 
 // Where the machine is: the bundle's Resources (VST3, AU, a macOS CLAP bundle); a Windows .clap is one file, so it
-// uses the machine of the SNDWAVE2000.vst3 installed beside it or in the standard place
+// uses the machine of the SNDWAVE1993.vst3 installed beside it or in the standard place
 static bool hasMachine(const std::string &res)
 {
     if (res.empty()) return false;
@@ -171,12 +171,12 @@ static std::string machineResources(const char *bundle)
     const char *res = bundle ? getResourcePath(bundle) : nullptr;
     if (res && hasMachine(res)) return res;
     std::vector<std::string> c;
-    if (bundle) { std::string d = bundle; const size_t s = d.find_last_of("/\\"); if (s != std::string::npos) { d.resize(s); c.push_back(d + "/SNDWAVE2000.vst3/Contents/Resources"); c.push_back(d + "/../VST3/SNDWAVE2000.vst3/Contents/Resources"); } }
+    if (bundle) { std::string d = bundle; const size_t s = d.find_last_of("/\\"); if (s != std::string::npos) { d.resize(s); c.push_back(d + "/SNDWAVE1993.vst3/Contents/Resources"); c.push_back(d + "/../VST3/SNDWAVE1993.vst3/Contents/Resources"); } }
 #ifdef _WIN32
-    if (const char *pf = std::getenv("CommonProgramFiles")) c.push_back(std::string(pf) + "\\VST3\\SNDWAVE2000.vst3\\Contents\\Resources");
+    if (const char *pf = std::getenv("CommonProgramFiles")) c.push_back(std::string(pf) + "\\VST3\\SNDWAVE1993.vst3\\Contents\\Resources");
 #else
-    if (const char *h = std::getenv("HOME")) c.push_back(std::string(h) + "/Library/Audio/Plug-Ins/VST3/SNDWAVE2000.vst3/Contents/Resources");
-    c.push_back("/Library/Audio/Plug-Ins/VST3/SNDWAVE2000.vst3/Contents/Resources");
+    if (const char *h = std::getenv("HOME")) c.push_back(std::string(h) + "/Library/Audio/Plug-Ins/VST3/SNDWAVE1993.vst3/Contents/Resources");
+    c.push_back("/Library/Audio/Plug-Ins/VST3/SNDWAVE1993.vst3/Contents/Resources");
 #endif
     for (const auto &d : c) if (hasMachine(d)) return d;
     return res ? std::string(res) : std::string();
@@ -223,7 +223,7 @@ public:
     Basilisk16Shared *shared() { return &sh_; }
 
 protected:
-    const char *getLabel() const override { return "SNDWAVE2000"; }
+    const char *getLabel() const override { return "SNDWAVE1993"; }
     const char *getDescription() const override
     {
         return "Sixteen Windows 3.11 Sound Recorders assembled into one instrument. The sound is Sound Recorder's own, "
@@ -375,7 +375,7 @@ protected:
                     const bool ok = !recDir_.empty() && b16rec::recall(myRec_, recDir_, v, name, sha, line, pinned);
                     if (name.empty()) continue;
                     userKept_[name] = v;
-                    if (!ok) { std::fprintf(stderr, "SNDWAVE2000: missing recording %s (%s)\n", name.c_str(), sha.c_str()); continue; }
+                    if (!ok) { std::fprintf(stderr, "SNDWAVE1993: missing recording %s (%s)\n", name.c_str(), sha.c_str()); continue; }
                     if (pinned) { userPin_[name] = sha; userLines_.push_back(line); pendingUser_.push_back(line); noteHostFiles(); }
                     if (std::find(userNames_.begin(), userNames_.end(), name) == userNames_.end()) userNames_.push_back(name);
                 }
@@ -824,7 +824,7 @@ private:
     {
         const std::string resDir = machineResources(getBundlePath());
         const char *res = resDir.empty() ? nullptr : resDir.c_str();
-        if (!res) { status("SNDWAVE2000: the machine files were not found next to the plugin."); sh_.S->state = BS_FAILED; return; }
+        if (!res) { status("SNDWAVE1993: the machine files were not found next to the plugin."); sh_.S->state = BS_FAILED; return; }
         std::string machine = std::string(res) + "/machine/";
 #ifdef _WIN32
         const char *coreName = "dosbox_pure_libretro.dll";
@@ -858,10 +858,10 @@ private:
 #ifdef _WIN32
         for (auto &ch : recDir_) if (ch == '/') ch = '\\';
 #endif
-        if (!copyFile(machine + coreName, coreCopy_)) { status("SNDWAVE2000: cannot copy the emulator core."); sh_.S->state = BS_FAILED; return; }
+        if (!copyFile(machine + coreName, coreCopy_)) { status("SNDWAVE1993: cannot copy the emulator core."); sh_.S->state = BS_FAILED; return; }
         {
             FILE *f = std::fopen((machine + "w31.conf").c_str(), "rb");
-            if (!f) { status("SNDWAVE2000: cannot read the machine settings."); sh_.S->state = BS_FAILED; return; }
+            if (!f) { status("SNDWAVE1993: cannot read the machine settings."); sh_.S->state = BS_FAILED; return; }
             std::string out;
             char line[1024];
             std::string mdir = machine.substr(0, machine.size() - 1);
@@ -881,7 +881,7 @@ private:
                 out += s;
             }
             std::fclose(f);
-            if (!writeText(conf_, out)) { status("SNDWAVE2000: cannot write the machine settings."); sh_.S->state = BS_FAILED; return; }
+            if (!writeText(conf_, out)) { status("SNDWAVE1993: cannot write the machine settings."); sh_.S->state = BS_FAILED; return; }
         }
         const char *logEnv = std::getenv("BASILISK16_LOG");
         status("Starting Windows for Workgroups 3.11...");
@@ -1086,6 +1086,25 @@ private:
             }
             if (hello && sh_.importReady.exchange(false)) importNow();
             if (hello) song_.poll();
+            {   // Windows' clock: today's local time of day, month and day, in 1993 (the year of WfW 3.11 and Sound Recorder).
+                // Only while an editor shows it, and not in an offline render: renders never depend on the wall clock.
+                static thread_local double lastClock = -1e9; static thread_local int lastEditors = 0;
+                const int ed = sh_.editors.load(); const double t = nowSec();
+                if (hello && ed > 0 && !offlineNow_.load() && (lastEditors == 0 || t - lastClock > 60.0)) {
+                    lastClock = t;
+                    const std::time_t now = std::time(nullptr); std::tm lt{};
+#ifdef _WIN32
+                    localtime_s(&lt, &now);
+#else
+                    localtime_r(&now, &lt);
+#endif
+                    int mon = lt.tm_mon + 1, day = lt.tm_mday;
+                    if (mon == 2 && day == 29) day = 28;   // (1993 is not a leap year)
+                    char b[64]; std::snprintf(b, sizeof b, "time 1993 %d %d %d %d %d", mon, day, lt.tm_hour, lt.tm_min, lt.tm_sec);
+                    sendLine(b, 0, 0);
+                }
+                lastEditors = ed;
+            }
             if (hello && sh_.songReady.exchange(false)) {   // the editor read a MIDI file or a song
                 std::vector<uint8_t> b; std::string p;
                 { std::lock_guard<std::mutex> l(sh_.fileMtx); b.swap(sh_.fileBytes); p = sh_.fileName; }

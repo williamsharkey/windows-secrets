@@ -30,7 +30,7 @@ c++ -std=c++17 -O2 -ffp-contract=off -arch x86_64 -arch arm64 -mmacosx-version-m
   basilisk-synth/core/dna.cpp basilisk-synth/core/voices.cpp basilisk-synth/core/dna3.cpp basilisk-synth/core/engine3.cpp basilisk-synth/core/scales.cpp basilisk-synth/core/userstore.cpp "$W/engine-r.o"
 codesign --force -s - "$W/render311"
 cd "$W/out"
-for b in SNDWAVE2000.vst3 SNDWAVE2000.component; do
+for b in SNDWAVE1993.vst3 SNDWAVE1993.component; do
   M="$b/Contents/Resources/machine"
   rm -rf "$M"; mkdir -p "$M"
   cp "$W/dosbox_pure_libretro.dylib" "$M/"
@@ -39,5 +39,5 @@ for b in SNDWAVE2000.vst3 SNDWAVE2000.component; do
   cp -R "$W/machine/packs" "$W/machine/citypop" "$M/"
   codesign --force --deep -s - "$b"
 done
-codesign --force --deep -s - SNDWAVE2000.clap   # (the CLAP uses the machine of the SNDWAVE2000.vst3 installed beside it)
+codesign --force --deep -s - SNDWAVE1993.clap   # (the CLAP uses the machine of the SNDWAVE1993.vst3 installed beside it)
 ls -la "$W/out"

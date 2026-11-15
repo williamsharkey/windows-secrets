@@ -1,4 +1,4 @@
-// SNDWAVE2000: the song mixer, a port of tools/songrender/songrender.py mix() (design/SONG-TAB.md §5). The same
+// SNDWAVE1993: the song mixer, a port of tools/songrender/songrender.py mix() (design/SONG-TAB.md §5). The same
 // steps in the same order on the same 24-bit stems: DC, track filters, width, pan, volume, loudness, the echo and
 // reverb sends (FFT convolution), the 25 Hz high-pass, the fade, the master loudness and the 4x true-peak limiter.
 // The result matches songrender's WAV to within 1 LSB at 24 bits (FFT and summation order differ, nothing else).
