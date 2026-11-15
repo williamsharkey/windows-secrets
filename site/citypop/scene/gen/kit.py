@@ -124,7 +124,7 @@ class Layer:
         self.paint(x0, y0, m, col)
 
     def catenary(self, x0, y0, x1, y1, sag, col, width=1, n=None):
-        n = n or max(4, int(abs(x1 - x0) / 6))
+        n = n or max(4, int(max(abs(x1 - x0), abs(y1 - y0)) / 6))
         t = np.linspace(0, 1, n + 1)
         xs = x0 + (x1 - x0) * t
         ys = y0 + (y1 - y0) * t + sag * 4 * t * (1 - t)

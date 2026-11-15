@@ -2093,9 +2093,11 @@ def draw_fg(L, cam, A, rng, V):
     # wires: from the insulators out of frame and down to the town
     wires = []
     for j, (ix, iy) in enumerate(arms[:5]):
-        tx = int(W * (0.60 + 0.045 * j))
-        ty_ = int(H * (0.66 + 0.02 * j))
-        sag = 30 + 15 * (j % 3)
+        # the lines run down the hill to the next pole, below and in front of the frame:
+        # they leave through the bottom edge (with bleed), never ending in mid-air
+        tx = int(W * (0.44 + 0.05 * j))
+        ty_ = int(H + 160 + 40 * j)
+        sag = 40 + 15 * (j % 3)
         pts = L.catenary(ix, iy, tx, ty_, sag, mix(K['navy0'], K['navy1'], 0.5), width=2 if j < 5 else 1)
         wires.append(dict(pts=[[int(x), int(y)] for x, y in pts[::4]], layer='fg', kind='power'))
     # service drops toward the right edge

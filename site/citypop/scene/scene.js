@@ -44,6 +44,17 @@
 
     // the variant whose whole-number scale covers the screen with the least crop:
     // hd 1920x1080 (1080p at 1x, 4K at 2x, most laptops at 2x), desktop 2560x1440, portrait 1170x2532
+    // scale that covers dw x dh with variant V: whole multiples where the crop stays modest,
+    // else nearest-neighbour cover at a fractional scale (on HiDPI screens the uneven columns are invisible)
+    function fitScale(V, dw, dh, dpr) {
+      const pad = V.pad || 16;
+      let s = Math.max(dw / (V.w - 2 * pad), dh / (V.h - 2 * pad));
+      if (s <= 1) return { s: 1, tight: false };
+      if (s <= 1.06) return { s: 1, tight: true };            // nearly exact: spend the parallax margin instead
+      const k = Math.ceil(s);
+      if (k / s <= (dpr >= 1.75 ? 1.15 : 1.45)) return { s: k, tight: false };
+      return { s, tight: false };
+    }
     function pickVariant() {
       if (opts.variant) return opts.variant;
       const vs = (S.doc && S.doc.variants) || {};
@@ -53,14 +64,9 @@
       let best = null, cost = 1e9;
       for (const v of ['hd', 'desktop']) {
         const V = vs[v]; if (!V) continue;
-        const pad = V.pad || 16;
-        for (let k = 1; k <= 4; k++) {
-          if ((V.w - 2 * pad) * k >= dw && (V.h - 2 * pad) * k >= dh) {
-            const c = 1 - (dw * dh) / (V.w * k * V.h * k);
-            if (c < cost) { cost = c; best = v; }
-            break;
-          }
-        }
+        const f = fitScale(V, dw, dh, dpr);
+        const c = 1 - Math.min(1, (dw * dh) / (V.w * f.s * V.h * f.s)) + (Number.isInteger(f.s) ? 0 : 0.08);
+        if (c < cost) { cost = c; best = v; }
       }
       return best || (vs.desktop ? 'desktop' : Object.keys(vs)[0]);
     }
@@ -74,19 +80,23 @@
       S.dw = Math.max(1, Math.round(cw * dpr)); S.dh = Math.max(1, Math.round(ch * dpr));
       if (!S.V) return;
       const { w, h } = S.V, pad = S.V.pad || 16;
-      let s = Math.max(S.dw / (w - 2 * pad), S.dh / (h - 2 * pad));
-      let tight = false;
-      if (s <= 1) s = 1;                                    // one art pixel per device pixel, cropped
-      else if (s <= 1.06) { s = 1; tight = true; }          // nearly exact fit: spend the parallax margin instead
-      else if (Math.ceil(s) / s <= 1.45) s = Math.ceil(s);  // whole multiples where the crop is modest
-      // (else: a fractional nearest-neighbour scale; only on screens larger than the art)
+      const fit = fitScale(S.V, S.dw, S.dh, dpr);
+      const s = fit.s, tight = fit.tight;
       S.scale = s;
       const fx = S.V.focus ? S.V.focus[0] : 0.5, fy = S.V.focus ? S.V.focus[1] : 0.5;
       const pd = tight ? 0 : pad;
       const minX = Math.min(0, S.dw - (w - pd) * s), maxX = -pd * s;
       const minY = Math.min(0, S.dh - (h - pd) * s), maxY = -pd * s;
-      S.ox = Math.round(clamp(S.dw / 2 - fx * w * s, minX, maxX));
-      S.oy = Math.round(clamp(S.dh / 2 - fy * h * s, minY, maxY));
+      let ox = S.dw / 2 - fx * w * s, oy = S.dh / 2 - fy * h * s;
+      // never crop the moon: keep it and its glow inside the frame when the crop is tight
+      const mo = S.V.anchors && S.V.anchors.moon;
+      if (mo) {
+        const top = mo.y - mo.r * 2.2, right = mo.x + mo.r * 2.2, left = mo.x - mo.r * 2.2;
+        oy = Math.max(oy, -top * s);
+        ox = Math.min(Math.max(ox, -left * s), S.dw - right * s);
+      }
+      S.ox = Math.round(clamp(ox, minX, maxX));
+      S.oy = Math.round(clamp(oy, minY, maxY));
       const all = ORDER.map((n) => S.layers[n] && S.layers[n].cv).concat(S.overlays.map((o) => o.cv));
       for (const cv of all) {
         if (!cv) continue;
