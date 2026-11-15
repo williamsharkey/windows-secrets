@@ -35,6 +35,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', default=os.path.expanduser('~/libbuild/previews')); ap.add_argument('--parallel', type=int, default=4)
     ap.add_argument('--build', default=os.environ.get('SNDWAVE_BUILD', '?'))
+    ap.add_argument('--strip-seq', action='store_true', help='builds before 1.3.1: play step-sequencer kits without the sequencer')
     ap.add_argument('--kits', action='store_true', help="add Kit Manager 98's kits (packs/kitmgr/KITS.TSV) to the list")
     ap.add_argument('--disc', action='append', default=[], help="add a pack disc's presets (DIR with PACK.TXT and PRESETS.TSV); "
                     "render with a machine that has the disc installed")
@@ -44,11 +45,11 @@ def main():
     if a.kits:
         pk, kits = kit_manager()
         for k in kits:
-            # the x step sequencer steps through a Mines board; with none (1.3.0 played nothing, fixed in 7c81ca5, ships in 1.4) the clip
-            # plays the kit's pads straight and says so
-            if re.search(r';[^/]*x[a-z]', k['dna']):
+            # before 1.3.1 a kit with the x step sequencer played nothing until a Mines board existed (7c81ca5):
+            # --strip-seq renders those kits' pads straight, with a note, for such builds
+            if a.strip_seq and re.search(r';[^/]*x[a-z]', k['dna']):
                 k = dict(k, dna=re.sub(r'(;[^/]*?)x[a-z][a-z0-9]*?(?=k\d)', r'\1', k['dna']),
-                         preview_note='preview without the step sequencer (render311 has no host clock)')
+                         preview_note='pads played straight: the step sequencer pattern needs a Mines board')
             L.append(dict(k, category='Kit', kind='kit', dna_final=k['dna'], pack_name=pk['name'], edition=' '.join(k['ships']),
                           v3=False, recipe_one=None, recipe=None))
     for D in a.disc:
@@ -77,7 +78,7 @@ def main():
                       'mp3': p['slug'] + '.mp3', 'ogg': p['slug'] + '.ogg', 'seconds': dur, 'peak_dbfs': pk, 'lufs': I,
                       'phrase': label, 'phrase_id': pid, 'heard': r.get('heard'), 'onsets': r.get('onsets'),
                       'ok': c.get('ok', True), 'flags': c.get('why', []) + ([p['preview_note']] if p.get('preview_note') else []), 'rating': rat.get('rating'), 'verdict': rat.get('verdict'),
-                      'edition': p['edition'], 'v3': p['v3'], 'tags': p.get('tags', [])})
+                      'edition': p['edition'], 'v3': p['v3'], 'tags': p.get('tags', []), 'build': a.build})
     doc = {'build': a.build, 'renderer': 'render311 (%s)' % a.build, 'lufs_target': -16, 'mp3': '48 kHz mono 48 kbps',
            'ogg': 'Opus mono 24 kbps', 'fade_s': 0.2, 'phrases': 'demophrases.py (original phrases, per role, pack mood and envelope)',
            'presets': index}
@@ -85,6 +86,7 @@ def main():
         old = json.load(open(os.path.join(a.out, 'manifest.json')))
         new = {e['slug']: e for e in index}
         doc['presets'] = [new.pop(e['slug'], e) for e in old['presets']] + list(new.values())
+        doc['build'] = old.get('build'); doc['renderer'] = old.get('renderer')   # the main pass's; entries carry their own
         index = doc['presets']
     for f in ('manifest.json', 'index.json'):
         json.dump(doc, open(os.path.join(a.out, f), 'w'), indent=1)

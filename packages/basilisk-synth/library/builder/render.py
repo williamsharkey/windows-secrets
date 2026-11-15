@@ -28,7 +28,9 @@ def score_text(score):
 
 def key_of(dna, score, tail, bpm=None):
     b = '|bpm%g' % bpm if bpm else ''
-    return hashlib.sha1(('%s|%s|%.3f|v1%s' % (dna, score_text(score), tail, b)).encode()).hexdigest()[:20]
+    # the renderer is part of the key: a cached result from one build never stands in for another
+    r = os.environ.get('LIBBUILD_V3', 'r7')
+    return hashlib.sha1(('%s|%s|%.3f|v1%s|%s' % (dna, score_text(score), tail, b, r)).encode()).hexdigest()[:20]
 
 
 def _pids(add=None, rm=None):

@@ -146785,7 +146785,7 @@
   "canonical": "gd_steelpan_tenth@t766]EE<H0,12,24U2~7;A0D1843S28R1549V83K64",
   "recipe_ok": true,
   "check311": {
-   "build": "SNDWAVE2000 1.3.0 RC (main 37543bc)",
+   "build": "SNDWAVE2000 1.3.1 (sndwave2000-v1.3.1)",
    "ok": true,
    "why": [],
    "score": 100.0
@@ -152328,7 +152328,7 @@
   "canonical": "gd_marimba_third@t1768]E#8/gd_marimba_bass#8T28L29Q-23;A0D760S9R1091V90K64",
   "recipe_ok": true,
   "check311": {
-   "build": "SNDWAVE2000 1.3.0 RC (main 37543bc)",
+   "build": "SNDWAVE2000 1.3.1 (sndwave2000-v1.3.1)",
    "ok": true,
    "why": [],
    "score": 100.0
@@ -152562,7 +152562,7 @@
   "canonical": "gd_timpani_g3@t482]E#8H0,12/gd_marimba_sixth#4T-2L32Q22/gd_marimba_fifthhiR#4L19O370Q53;A0D1085S19R1949V89K55",
   "recipe_ok": true,
   "check311": {
-   "build": "SNDWAVE2000 1.3.0 RC (main 37543bc)",
+   "build": "SNDWAVE2000 1.3.1 (sndwave2000-v1.3.1)",
    "ok": true,
    "why": [],
    "score": 100.0
@@ -155426,7 +155426,7 @@
   "canonical": "pmel_iceberg_calving@t12000]<;A63S100R641V84K17",
   "recipe_ok": true,
   "check311": {
-   "build": "SNDWAVE2000 1.3.0 RC (main 37543bc)",
+   "build": "SNDWAVE2000 1.3.1 (sndwave2000-v1.3.1)",
    "ok": true,
    "why": [],
    "score": 100.0
@@ -164566,7 +164566,7 @@
   "canonical": "psaltery_pluck_c4E#8Z36,78,72/psaltery_pluck_c5E#8Z79,96,84;A1D208S7R217V91K60",
   "recipe_ok": true,
   "check311": {
-   "build": "SNDWAVE2000 1.3.0 RC (main 37543bc)",
+   "build": "SNDWAVE2000 1.3.1 (sndwave2000-v1.3.1)",
    "ok": true,
    "why": [],
    "score": 100.0
@@ -167349,7 +167349,7 @@
   "canonical": "dan_tranh_gliss_down@t3409]<<#8/gong_scrapeR>#8L39O333Q52;A9S100R605V77K37",
   "recipe_ok": true,
   "check311": {
-   "build": "SNDWAVE2000 1.3.0 RC (main 37543bc)",
+   "build": "SNDWAVE2000 1.3.1 (sndwave2000-v1.3.1)",
    "ok": true,
    "why": [],
    "score": 100.0
@@ -169204,7 +169204,7 @@
   "canonical": "poly83_gasflowers_c1@t4304]@t1229[@0CP@0CP>>#11U2~8/poly85_dark_pad_chorus_c3EER#5T19L16O213Q-11;A930D14S78R1462V80K48",
   "recipe_ok": true,
   "check311": {
-   "build": "SNDWAVE2000 1.3.0 RC (main 37543bc)",
+   "build": "SNDWAVE2000 1.3.1 (sndwave2000-v1.3.1)",
    "ok": true,
    "why": [],
    "score": 88.8
@@ -171587,7 +171587,7 @@
   "canonical": "mono79_filter_vel_bass_c3#8/mono77_iee_yah_f1#8T7L44;A5D365S24R141V84K48",
   "recipe_ok": true,
   "check311": {
-   "build": "SNDWAVE2000 1.3.0 RC (main 37543bc)",
+   "build": "SNDWAVE2000 1.3.1 (sndwave2000-v1.3.1)",
    "ok": true,
    "why": [],
    "score": 100.0
@@ -172151,7 +172151,7 @@
   "canonical": "mono77_curious_lead_c3>;A30D70S80R113V78K60",
   "recipe_ok": true,
   "check311": {
-   "build": "SNDWAVE2000 1.3.0 RC (main 37543bc)",
+   "build": "SNDWAVE2000 1.3.1 (sndwave2000-v1.3.1)",
    "ok": true,
    "why": [],
    "score": 96.5
