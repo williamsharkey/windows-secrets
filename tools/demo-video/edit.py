@@ -6,6 +6,7 @@ are seconds from its start; `src` is seconds into a capture's audio (shoot.py's 
 import json, os
 
 ROOT = os.environ.get('DEMO_ROOT', '.')
+WEB0 = int(os.environ.get('WEB0', 0))   # the web capture's frame where the keys play
 
 # where things happen in the captures (shoot.py's scripts)
 SRC = {
@@ -15,8 +16,10 @@ SRC = {
     'rounded': 22.0, 'opal': 38.0, 'neon': 54.0, 'crystal': 70.0, 'loft': 86.0,
     'vibe': float(os.environ.get('VIBE', 25.8)), 'kit': 25.0, 'mines': 23.3, 'rec': 25.0, 'rec_play': 36.0,
     'song_open': 15.0, 'song_render': 26.0, 'song_done': 118.0, 'song_play': float(os.environ.get('SONG_PLAY', 130.0)),
-    'citypop': 15.5,
+    'citypop': 20.0,
 }
+
+SCR_X, SCR_Y = 88, 92   # compose.py's wide layout
 
 PLACES = {   # x, y, scale of the host's box (428 x 574 at scale 1)
     'side': (1356, 150, 1.0),
@@ -72,9 +75,11 @@ def build(cut):
         s.update(kw)
         S.append(s)
 
-    # 1. cold open: the machine resumes and the recorders assemble
-    shot(8.2, cap('cold', SRC['asm'], WIDE, speed=1.25), [('ann_open', 1.6)], host=None,
+    # 1. cold open: the desk in 1993 (Blender, scene1993.py), the camera pushing into the CRT, which shows the real
+    #    capture of the machine resuming; through the glass into the capture itself
+    shot(7.0, {'k': 'seq', 'dir': 'blender/day_px'}, [('ann_open', 1.0)], host=None,
          over=[{'k': 'osd', 'text': 'PLAY \u25b6', 't': (0, 2.6)}])
+    shot(3.4, cap('cold', SRC['asm'] + 7.0, WIDE), host=None, tr=('dissolve', 0.5))
     # 2. title card
     shot(2.4 if spot else 3.0, {'k': 'card', 'title': 'Getting Started with SNDWAVE1993', 'sub': 'Home Learning Series \u00b7 Tape 1 \u00b7 1993 technology, revisited',
                'logo': 'title-640.png', 'logo_scale': 2, 'logo_y': 30, 'band_y': 840}, host=None, tr=('star', 0.8))
@@ -168,31 +173,41 @@ def build(cut):
         shot(max(d, 3.5), cap('rec', SRC['rec'], Z(340, 200, 3)), ln, host='corner')
         shot(4.0, cap('rec', SRC['rec_play'], Z(340, 200, 3)), host='corner',
              over=[{'k': 'super', 'text': 'The take, played back', 'x': 60, 'y': 120}])
-    # 9. free
+    # 9. free: the web edition, then the box
     ln, d = said('h_free')
-    shot(d + 0.6, {'k': 'art', 'items': [{'path': 'box-3d-render.png', 'x': 560, 'y': 470, 'scale': 2, 'pixel': True}],
+    shot(3.6, {'k': 'seq', 'dir': 'web/frames', 'start': WEB0}, ln, mark='free', host='corner', tr=('star', 0.8),
+         over=[{'k': 'super', 'text': 'Try it in your browser', 'sub': 'williamsharkey.com/sndwave1993/play', 'x': 60, 'y': 820, 'size': 36}])
+    shot(max(2.5, d - 3.6 + 0.6), {'k': 'art', 'items': [{'path': 'box-3d-render.png', 'x': 560, 'y': 470, 'scale': 2, 'pixel': True}],
                    'text': [{'s': 'FREE', 'x': 1080, 'y': 250, 'size': 120, 'fill': (255, 230, 80), 'stroke': 4},
                             {'s': 'VST3 \u00b7 AU \u00b7 CLAP', 'x': 1086, 'y': 400, 'size': 48},
                             {'s': 'Windows and macOS', 'x': 1086, 'y': 470, 'size': 48},
                             {'s': 'williamsharkey.com/sndwave1993', 'x': 1086, 'y': 570, 'size': 40, 'fill': (180, 240, 255)}]},
-         ln, host='corner', tr=('star', 0.8), gest=[(0.5, 'disk', 3.5)])
-    # 10. CITYPOP1993
+         host='corner', tr=('wipe', 0.5), gest=[(0.2, 'disk', 2.5)])
+    # 10. CITYPOP1993: Program Manager, the icon, the player (wide), then up close as it plays
     ln, d = said('h_citypop') if spot else said('h_citypop', 'h_citypop2')
-    shot(max(d + 1.2, 7.5), cap('citypop', SRC['citypop'], [(0, 1, 512, 384), (4.0, 2, 508, 370)]), ln, host='side', tr=('iris', 0.7), gain=1.0,
-         over=[{'k': 'super', 'text': 'CITYPOP1993', 'sub': 'an album made on it \u00b7 williamsharkey.com/citypop1993', 'x': 1180, 'y': 770, 'size': 40},
-               {'k': 'super', 'text': 'CITYPOP1993.EXE: coming in 1.5', 'sub': 'the album, on the plugin\'s own desktop (test build shown)', 'x': 1180, 'y': 900, 'size': 28, 't': (1.0, 99)}])
+    D = max(d + 1.2, 7.5)
+    shot(3.5, cap('citypop', SRC['citypop'], WIDE), ln, host='side', tr=('iris', 0.7),
+         over=[{'k': 'box', 'r': (SCR_X + 104, SCR_Y + 208, SCR_X + 150, SCR_Y + 256), 't': (0.3, 2.2)}])
+    shot(D - 3.5, cap('citypop', SRC['citypop'] + 3.5, Z(515, 330)), host='corner', gain=1.0,
+         over=[{'k': 'super', 'text': 'CITYPOP1993', 'sub': 'an album made on it \u00b7 williamsharkey.com/citypop1993', 'x': 60, 'y': 120, 'size': 40},
+               {'k': 'super', 'text': 'CITYPOP1993.EXE: coming in 1.5', 'sub': "the album, on the plugin's own desktop (test build shown)", 'x': 60, 'y': 250, 'size': 28, 't': (0.6, 99)}])
     # 11. sign-off: the host up close, then the end card
     ln, d = said('h_bye')
-    shot(d + 0.8, {'k': 'art', 'items': [], 'text': [{'s': 'Please be kind. Rewind.', 'x': 960, 'y': 1000, 'size': 30,
-                                                      'fill': (200, 220, 255), 'anchor': 'mm'}]}, ln, host='big', tr=('page', 0.7),
+    shot(max(d + 0.8, 4.5), {'k': 'seq', 'dir': 'blender/night_px', 'mark': 1, 'speed': 210 / (30 * max(d + 0.8, 4.5))}, ln, host='side', tr=('page', 0.7),
          gest=[(0.3, 'wave', 2.2)])
     ln, d = said('ann_tag', lead=0.4)
     shot(d + 1.2, {'k': 'card', 'title': 'williamsharkey.com/sndwave1993', 'sub': None,
                    'logo': 'title-640.png', 'logo_scale': 2, 'logo_y': 30, 'band_y': 840}, ln, host=None, tr=('star', 0.7), swoop=0.6)
     music = []
     total = sum(s['dur'] for s in S)
-    t_free = sum(s['dur'] for s in S[:-3])
-    music.append({'file': 'atrium-level-b2.mp3', 'at': 0.0, 'src': 0.0, 'len': 10.5, 'gain': 0.45, 'fin': 0.5, 'fout': 1.5})
-    music.append({'file': 'atrium-level-b2.mp3', 'at': t_free - S[-4]['dur'], 'src': 30.0, 'len': S[-4]['dur'] + 0.6, 'gain': 0.5})
-    music.append({'file': 'citypop-12.mp3', 'at': total - S[-1]['dur'] - S[-2]['dur'], 'src': 0.0, 'len': S[-1]['dur'] + S[-2]['dur'], 'gain': 0.5, 'fin': 0.6, 'fout': 2.0})
+    at = lambda i: sum(x['dur'] for x in S[:i])
+    i_free = next(i for i, x in enumerate(S) if x.get('mark') == 'free')
+    i_city = next(i for i, x in enumerate(S) if x['v'].get('scene') == 'citypop')
+    i_bye = next(i for i, x in enumerate(S) if x['v'].get('mark'))
+    music.append({'file': 'atrium-level-b2.mp3', 'at': 0.0, 'src': 0.0, 'len': 12.5, 'gain': 0.45, 'fin': 0.5, 'fout': 1.5})
+    music.append({'file': 'atrium-level-b2.mp3', 'at': at(i_free), 'src': 30.0, 'len': at(i_city) - at(i_free) + 0.6, 'gain': 0.5})
+    music.append({'file': 'citypop-12.mp3', 'at': at(i_bye), 'src': 0.0, 'len': total - at(i_bye), 'gain': 0.5, 'fin': 0.6, 'fout': 2.0})
+    t_proof = next(sum(x['dur'] for x in S[:k]) for k, x in enumerate(S) if x['v'].get('scene') == 'proof')
+    t_after = next(sum(x['dur'] for x in S[:k]) for k, x in enumerate(S) if k and S[k - 1]['v'].get('scene') == 'proof' and x['v'].get('scene') != 'proof')
+    music.append({'file': 'fax-machine-fanfare.mp3', 'at': t_proof, 'src': 2.0, 'len': t_after - t_proof, 'gain': 0.4, 'fin': 0.8, 'fout': 1.0})
     return {'shots': S, 'music': music, 'places': PLACES}

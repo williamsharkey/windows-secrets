@@ -14,7 +14,7 @@ cp "$R"/design/brand/sndwave1993/fonts/DejaVuSans*.ttf $T/fonts/
 cp /usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf $T/fonts/
 cp "$R"/design/brand/sndwave1993/screens/title-640.png "$R"/design/brand/sndwave1993/box/box-3d-render.png \
    "$R"/design/brand/sndwave1993/album/citypop1993-lockup-horizontal.png "$R"/design/brand/sndwave1993/album/citypop1993-lockup-stacked.png $T/art/
-cp ~/songs/site/songs/lifestyle-aesthetics/atrium-level-b2.mp3 $T/music/
+cp ~/songs/site/songs/lifestyle-aesthetics/atrium-level-b2.mp3 ~/songs/site/songs/office-machinery/fax-machine-fanfare.mp3 $T/music/
 cp "$R"/site/citypop/audio/12.mp3 $T/music/citypop-12.mp3
 cp -r ~/video/work/tts $T/tts
 ssh $H "mkdir -p ~/$D/cap"

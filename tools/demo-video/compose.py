@@ -41,7 +41,8 @@ _cache = {}
 def background():
     if 'bg' in _cache: return _cache['bg']
     if STYLE == 'ai':
-        im = Image.open(os.path.join(ROOT, 'grok', 'bg_grid.png')).convert('RGB').resize((W, H), Image.LANCZOS)
+        im = Image.open(os.path.join(ROOT, 'grok', 'px', 'bg_grid.png')).convert('RGB')   # pixel art (pixel_ai.py): 6x
+        im = im.resize((im.width * (W // im.width), im.height * (W // im.width)), Image.NEAREST).crop((0, 0, W, H))
         _cache['bg'] = np.asarray(im).copy()
         return _cache['bg']
     y = np.linspace(0, 1, H)[:, None, None]
@@ -148,9 +149,8 @@ class HostBox:
             key = ('ai', name, bob)
             im = self.cache.get(key)
             if im is None:
-                src = Image.open(os.path.join(ROOT, 'grok', name)).convert('RGB')
-                sq = src.width
-                crop = src.crop((int(sq * (1 - PW / PH) / 2), 0, int(sq * (1 + PW / PH) / 2), sq)).resize((PW, PH), Image.LANCZOS)
+                src = Image.open(os.path.join(ROOT, 'grok', 'px', name)).convert('RGB')   # 140 x 157 pixel art: 3x
+                crop = src.resize((src.width * 3, src.height * 3), Image.NEAREST).crop((0, 0, PW, PH))
                 pic = Image.new('RGB', (PW, PH)); pic.paste(crop, (0, -bob))
                 im = self.frame.copy(); im.paste(pic, (4, 31)); self.cache[key] = im
             return im
@@ -521,6 +521,14 @@ class Pictures:
             return crop.repeat(scale, 0).repeat(scale, 1)
         if k == 'card':
             return self.card(v, lt, s['dur'])
+        if k == 'seq':      # a folder of 1920x1080 PNG frames at 30 fps (the Blender shots, the web capture)
+            d = os.path.join(ROOT, v['dir'])
+            files = self.imgs.get(d)
+            if files is None: files = self.imgs[d] = sorted(f for f in os.listdir(d) if f.endswith('.png'))
+            n = min(len(files) - 1, max(0, int(v.get('start', 0) + lt * FPS * v.get('speed', 1.0))))
+            im = Image.open(os.path.join(d, files[n])).convert('RGB')
+            if im.size != (W, H): im = im.resize((W, H), Image.NEAREST)
+            return np.asarray(im)
         if k == 'art':
             out = Image.fromarray(background())
             for it in v['items']:

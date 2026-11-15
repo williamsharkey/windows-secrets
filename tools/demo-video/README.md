@@ -15,13 +15,22 @@ invented retiree drawn from code. Two cuts come from the same edit list: `spot` 
 | `edit.py` | The edit list: shots, narration placement, the host's position, overlays, music. |
 | `compose.py` | Renders the edit: frames (Windows screen at whole-number scales, nearest neighbour), the host box with its motion trail (16 copies kept, the 17th cleared), wipes (star, iris, page, blinds), tinted bars, captions; the mix (ducked under the voice, -14 LUFS, -1 dBTP); the `.srt`. |
 | `stage.sh` | Copies the inputs to the machine that renders (`~/sw2000-video`). |
-| `webcap.js` | Captures the web edition in headless Chromium (playwright-core). |
+| `webcap.js` | Captures the web edition (williamsharkey.com/sndwave1993/play/) in headless Chromium (playwright-core), recorded to video. |
+| `scene1993.py`, `dump_frames.py`, `post1993.py` | The establishing shot: an early-90s desk built in Blender from code (generic shapes, no badges), the camera pushing into the CRT, whose screen shows the real capture (`dump_frames.py`); `--night --reverse` for the sign-off. `post1993.py` gives it the period look: one 128-colour palette per sequence, 4x4 ordered dither, 3x nearest-neighbour upscale. |
+| `pixelize.py` | Pixel art from a picture with Pillow/numpy: box downscale, VGA16 / Windows 256 / brand / adaptive palettes, Floyd-Steinberg or Bayer dither, outline, whole-number upscale. |
+| `pixel_ai.py` | The Grok stills as pixel art with PixelOE (github.com/KohakuBlueleaf/PixelOE, Apache-2.0), 24 colours. Compared on the host still with `pixelize.py` and pyxelate (github.com/sedthh/pyxelate, MIT): PixelOE's contrast-aware downscale kept the face cleanest. |
 
 ```
 # Windows side (WSL): BasiliskHost.exe and the plugin bundle in SW (default /mnt/c/Users/willi/video-sw93)
 python3 tools/demo-video/shoot.py cold proof packs1 packs2 vibe kits mines rec song citypop
 ~/video/kvenv/bin/python tools/demo-video/tts.py ~/video/work/tts          # venv: kokoro, soundfile, torch (CPU)
 tools/demo-video/stage.sh primary-mac cold proof packs1 packs2 vibe kits mines rec song citypop
+# the establishing shots (Blender 5.x)
+python3 tools/dump_frames.py cap/cold/cap.bhrc blender/scr_day 0 7.5; python3 tools/dump_frames.py cap/citypop/cap.bhrc blender/scr_night 40 7.5
+Blender -b -P tools/scene1993.py -- --screen blender/scr_day --out blender/day --frames 210
+Blender -b -P tools/scene1993.py -- --screen blender/scr_night --out blender/night --frames 210 --night --reverse
+python3 tools/post1993.py blender/day blender/day_px --colors 128; python3 tools/post1993.py blender/night blender/night_px --colors 128
+# the web edition: node tools/webcap.js web; ffmpeg -ss 38 -i web/*.webm -vf fps=30 web/frames/%05d.png  (WEB0=90)
 # the renderer (any machine with python3 + numpy, pillow, soundfile, and ffmpeg)
 DEMO_ROOT=~/sw2000-video python3 tools/compose.py ~/sw2000-video out/sndwave1993-tour.mp4 --cut spot --jobs 10
 DEMO_ROOT=~/sw2000-video python3 tools/compose.py ~/sw2000-video out/sndwave1993-tour-long.mp4 --cut long --jobs 10
@@ -29,8 +38,9 @@ DEMO_ROOT=~/sw2000-video python3 tools/compose.py ~/sw2000-video out/sndwave1993
 #   HOST_STYLE=ai                           the alternative take with the Grok Imagine stills (grok/; see below)
 ```
 
-Credits. All footage is the real plugin in BasiliskHost. Music: SNDWAVE pack demo songs (Atrium Level B2, Aquarium
-(Level 3)) and CITYPOP1993 track 12, all made on the plugin. Voices: Kokoro-82M. Fonts: DejaVu. The host, cards and
+Credits. All plugin footage is the real plugin in BasiliskHost (CITYPOP1993.EXE: a 1.5 test build, labelled so), and
+the web edition in Chromium. The desk is a Blender scene made by `scene1993.py`. Music: SNDWAVE1993 pack demo songs
+(Atrium Level B2, Aquarium (Level 3), Fax Machine Fanfare) and CITYPOP1993 tracks 1 and 12, all made on the plugin. Voices: Kokoro-82M. Fonts: DejaVu. The host, cards and
 transitions are drawn by these scripts. In the `HOST_STYLE=ai` take only, the host stills and the backdrop were made
 with Grok Imagine (image_gen / image_edit) from text prompts describing an invented character; the prompts are in
 `grok/manifest.txt` beside the files.
