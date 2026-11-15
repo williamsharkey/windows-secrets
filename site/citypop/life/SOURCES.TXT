@@ -1,0 +1,6 @@
+life/ - sources
+
+Everything drawn by life.js is original, made for this album in code: the pixel sprites (cat, walker with umbrella,
+shrine lantern, boat, ferry, birds, wind chime, scooter), the glows, mist and cloud strips, and every light.
+No third-party sprites, images or fonts are used, and no AI image services.
+Author: Algorithmic Industries (William Sharkey). Licence: CC0, like the rest of the album.
