@@ -13,6 +13,18 @@ from recheck import encode
 from make_discs import kit_manager, ratings
 
 
+def _board():
+    """a 16 x 8 game in progress: the numbers are the sequencer's notes (row = scale degree, number = velocity)"""
+    g = [['.'] * 16 for _ in range(8)]
+    for c in (0, 3, 8, 11): g[0][c] = '3'
+    for c in (4, 12): g[1][c] = '4'
+    for c in range(0, 16, 2): g[3][c] = '1'
+    for c in (7, 15): g[5][c] = '2'
+    return '16 8 p ' + ''.join(''.join(r) for r in g)
+
+
+SEQ_BOARD = _board()
+
 KIND = {'Keys': 'keys', 'Organ': 'keys', 'Stab': 'keys', 'Chord': 'keys', 'Brass': 'keys', 'Bass': 'bass', 'Sub': 'bass',
         'Pad': 'pad', 'Vocal': 'pad', 'Strings': 'pad', 'Lead': 'lead', 'FX': 'fx', 'Texture': 'fx', 'Bell': 'bell',
         'Mallet': 'bell', 'Pluck': 'pluck', 'Arp': 'pluck', 'Perc': 'perc', 'Kit': 'kit', 'Drone': 'drone'}
@@ -62,11 +74,16 @@ def main():
         pads = phrases.kit_pads(dna) if p['category'] == 'Kit' else None
         m = re.search(r';[^;]*?A(\d+)', dna)
         notes, tail, label, pid = demophrases.phrase_for(p, pads, bool(m and int(m.group(1)) >= 250))
-        jobs.append(dict(dna=dna, score=notes, tail=tail, kind=p['kind'], keep=True)); meta.append((p, label, pid))
+        j = dict(dna=dna, score=notes, tail=tail, kind=p['kind'], keep=True)
+        if p['category'] == 'Kit' and re.search(r';[^/]*x[a-z]', dna):
+            # the step sequencer runs on a Mines board (1.3.1+): hold the kit's root pad for two bars at 96 bpm
+            j.update(score=[(0.0, 36, 100, 5.0)], tail=1.0, bpm=96, grid=SEQ_BOARD)
+            label, pid = 'step sequencer on a Mines board (16 x 8), 2 bars at 96 bpm', 'kit-seq-board'
+        jobs.append(j); meta.append((p, label, pid))
     res = render.render_all(jobs, a.parallel, progress=True)
     index = []
     for (p, label, pid), j, r in zip(meta, jobs, res):
-        wav = render.wav_path(j['dna'], j['score'], j['tail'])
+        wav = render.wav_path(j['dna'], j['score'], j['tail'], j.get('bpm'), j.get('grid'))
         if not r.get('ok') or not os.path.exists(wav):
             print('no render:', p['slug']); continue
         I, dur, pk = encode(wav, os.path.join(a.out, p['slug']))

@@ -26,8 +26,8 @@ def score_text(score):
     return ','.join('%.4f:%d:%d:%.4f' % tuple(n) for n in score)
 
 
-def key_of(dna, score, tail, bpm=None):
-    b = '|bpm%g' % bpm if bpm else ''
+def key_of(dna, score, tail, bpm=None, grid=None):
+    b = ('|bpm%g' % bpm if bpm else '') + ('|grid ' + grid if grid else '')
     # the renderer is part of the key: a cached result from one build never stands in for another
     r = os.environ.get('LIBBUILD_V3', 'r7')
     return hashlib.sha1(('%s|%s|%.3f|v1%s|%s' % (dna, score_text(score), tail, b, r)).encode()).hexdigest()[:20]
@@ -42,9 +42,9 @@ def _pids(add=None, rm=None):
         open(p, 'w').write('\n'.join(sorted(s)) + '\n')
 
 
-def run_render(dna, score, tail, out, bpm=None):
+def run_render(dna, score, tail, out, bpm=None, grid=None):
     args = ['nice', '-n', '10', RENDER311, '--machine', MACHINE, '--core', os.path.join(MACHINE, 'dosbox_pure_libretro.so'),
-            '--dna', dna, '--score', score_text(score), '--out', out, '--tail', '%.3f' % tail, '--bits', '32'] + (['--bpm', '%g' % bpm] if bpm else [])
+            '--dna', dna, '--score', score_text(score), '--out', out, '--tail', '%.3f' % tail, '--bits', '32'] + (['--bpm', '%g' % bpm] if bpm else []) + (['--grid', grid] if grid else [])
     t0 = time.time()
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     _pids(add=p.pid)
@@ -58,13 +58,13 @@ def run_render(dna, score, tail, out, bpm=None):
 
 
 def job(j):
-    k = key_of(j['dna'], j['score'], j['tail'], j.get('bpm'))
+    k = key_of(j['dna'], j['score'], j['tail'], j.get('bpm'), j.get('grid'))
     cp = os.path.join(CACHE, k + '.json')
     wav = os.path.join(WAVS, k + '.wav')
     if os.path.exists(cp) and (not j.get('keep') or os.path.exists(wav)):
         r = json.load(open(cp)); r['cached'] = True; return r
     out = wav if j.get('keep') else os.path.join(TMP, k + '.wav')
-    rc, log, wall = run_render(j['dna'], j['score'], j['tail'], out, j.get('bpm'))
+    rc, log, wall = run_render(j['dna'], j['score'], j['tail'], out, j.get('bpm'), j.get('grid'))
     r = {'key': k, 'dna': j['dna'], 'kind': j.get('kind'), 'wall': round(wall, 2), 'log': log}
     if rc != 0 or not os.path.exists(out):
         r['ok'] = False
@@ -109,5 +109,5 @@ def render_all(jobs, parallel=8, progress=None):
     return res
 
 
-def wav_path(dna, score, tail, bpm=None):
-    return os.path.join(WAVS, key_of(dna, score, tail, bpm) + '.wav')
+def wav_path(dna, score, tail, bpm=None, grid=None):
+    return os.path.join(WAVS, key_of(dna, score, tail, bpm, grid) + '.wav')
