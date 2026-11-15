@@ -45,6 +45,13 @@ python3 "$PKG/tools/make_packs311.py" "${PACKS_DIR:-$PKG/../basilisk-synth/libra
 rm -rf "$W/brand"; cp -r "$REPO/design/brand/sndwave2000" "$W/brand"
 python3 -c "from PIL import Image;import sys;Image.open(sys.argv[1]).convert('RGB').quantize(colors=16,dither=0).save(sys.argv[2])" "$W/brand/screens/title-640.png" "$W/brand/TITLE.BMP"
 BS311_ENGINE="$W/engine" BS311_OFFS="$W/offs" python3 "$PKG/tools/make_machine.py" "$W/wfw" "$W/gout" "$W/dosbox-pure/dosbox_pure_libretro.so" "$W/machine" --library "$W/library.zip" --xpsounds "$W/xpsounds" --packs "$W/packs" --brand "$W/brand" --help "$PKG/../basilisk-synth/help/out/SNDWAVE.HLP"
+# CITYPOP.EXE's track 1, prepared at the factory: render311 (Linux) renders it on this machine, every part on Sound
+# Recorder, and the mix goes into machine/citypop/factory-01.wav (16-bit)
+gcc -O2 -ffp-contract=off -c -o "$W/engine-r.o" "$PKG/engine/engine.c" -I"$PKG/engine"
+g++ -std=c++17 -O2 -ffp-contract=off -o "$W/render311" "$PKG/tools/render311.cpp" "$PKG/../basilisk-synth/core/dna.cpp" "$PKG/../basilisk-synth/core/voices.cpp" \
+  "$PKG/../basilisk-synth/core/dna3.cpp" "$PKG/../basilisk-synth/core/engine3.cpp" "$PKG/../basilisk-synth/core/scales.cpp" "$PKG/../basilisk-synth/core/userstore.cpp" "$W/engine-r.o" -ldl -lpthread
+cp "$W/dosbox-pure/dosbox_pure_libretro.so" "$W/machine/"
+python3 "$PKG/tools/make_citypop_factory.py" "$W/render311" "$W/machine" --jobs 4
 
 # --- the Windows plugin (its program list: tools/make_presets311.py)
 python3 "$PKG/tools/make_presets311.py"

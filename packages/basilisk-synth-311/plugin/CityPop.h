@@ -4,7 +4,10 @@
 // part, renderStems), mixed by SongMix.h, and played through the plugin's output. A track is rendered before it plays;
 // the next one renders while it plays. Renders are kept in My Recordings/CITYPOP DEPROGRAMMED, so a replay is at once.
 //
-// Windows -> host: citypop list | citypop play <i> | citypop stop | citypop next | citypop prev
+// Track 1 comes prepared at the factory (machine/citypop/factory-01.wav, tools/make_citypop_factory.py: the same engines,
+// 16-bit) so the album starts at once; `citypop clear` discards the renders, and from then on track 1 renders here too.
+//
+// Windows -> host: citypop list | citypop play <i> | citypop stop | citypop next | citypop prev | citypop clear
 // host -> Windows: citypop trk <i> <title>|<seconds> | citypop end | citypop now <i> <playing> <ms> <length ms>
 //                  citypop status <text>
 #pragma once
@@ -52,6 +55,7 @@ public:
         if (r.rfind("play", 0) == 0) { const int i = r.size() > 5 ? std::atoi(r.c_str() + 5) : std::max(0, cur_.load()); play(i); return true; }
         if (r == "next") { play(std::min((int)titles_.size() - 1, cur_ + 1)); return true; }
         if (r == "prev") { play(std::max(0, cur_ - 1)); return true; }
+        if (r == "clear") { clear(); return true; }
         return true;
     }
     void process(float *L, float *R, uint32_t frames, double sr)
@@ -115,6 +119,7 @@ private:
             files_.push_back(f); titles_.push_back(s.get("title", f));
             lengths_.push_back(smf.seconds(smf.lastTick()) + (t.empty() ? 4.0 : std::atof(t.c_str())));
         }
+        seedFactory();
         for (size_t i = 0; i < files_.size(); i++) if (fileExists(cachePath((int)i))) ready_.insert((int)i);
         th_ = std::thread([this] { if (lowerPriority) lowerPriority(); worker(); });
     }
@@ -193,7 +198,8 @@ private:
                 { std::lock_guard<std::mutex> l(pm_); mix_.swap(m); pos_ = 0; }
                 want_ = -1; playing_ = true;
                 { std::lock_guard<std::mutex> l2(m_); pendParts_ = "-"; }
-                char b[200]; std::snprintf(b, sizeof b, "Now playing: %d. %s", job + 1, titles_[job].c_str()); statusLater(b);
+                char b[240]; std::snprintf(b, sizeof b, "Now playing: %d. %s%s", job + 1, titles_[job].c_str(),
+                                            job == 0 && fileExists(cacheDir + "/FACTORY-01") ? "  (Track 1 was prepared at the factory.)" : ""); statusLater(b);
             }
         }
     }
@@ -259,6 +265,28 @@ private:
         writeMixWav(part, y);
         std::remove(out.c_str());
         return std::rename(part.c_str(), out.c_str()) == 0;
+    }
+    // the factory's track 1 into the cache, once (not after `clear`: then every track is prepared here)
+    void seedFactory()
+    {
+        if (files_.empty() || fileExists(cacheDir + "/NOFACTORY") || fileExists(cachePath(0))) return;
+        const std::string b = slurp(dir() + "/factory-01.wav");
+        if (b.size() < 44 || b.compare(0, 4, "RIFF") || (uint8_t)b[34] != 16) return;
+        std::vector<double> y((b.size() - 44) / 2);
+        for (size_t j = 0; j < y.size(); j++) y[j] = (double)(int16_t)((uint8_t)b[44 + 2 * j] | (uint8_t)b[45 + 2 * j] << 8) / 32768.0;
+        makeDir(cacheDir);
+        writeMixWav(cachePath(0), y);
+        if (FILE *f = std::fopen((cacheDir + "/FACTORY-01").c_str(), "wb")) { std::fputs("Track 1 was prepared at the factory.\n", f); std::fclose(f); }
+    }
+    void clear()   // every render discarded; track 1 is prepared here from now on
+    {
+        { std::lock_guard<std::mutex> l(m_); cancel_ = true; }
+        for (size_t i = 0; i < files_.size(); i++) std::remove(cachePath((int)i).c_str());
+        std::remove((cacheDir + "/FACTORY-01").c_str());
+        makeDir(cacheDir);
+        if (FILE *f = std::fopen((cacheDir + "/NOFACTORY").c_str(), "wb")) { std::fputs("Every track is prepared on this computer.\n", f); std::fclose(f); }
+        { std::lock_guard<std::mutex> l(m_); ready_.clear(); }
+        status("The renders are discarded. Every track will be prepared on this computer.");
     }
     static void makeDir(const std::string &d)
     {

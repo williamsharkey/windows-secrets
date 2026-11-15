@@ -3458,6 +3458,7 @@ long FAR PASCAL __export CityProc(HWND h, UINT m, WPARAM w, LPARAM l)
         else if (w == 3 && HIWORD(l) == BN_CLICKED) say("citypop stop");
         else if (w == 4 && HIWORD(l) == BN_CLICKED) say("citypop prev");
         else if (w == 5 && HIWORD(l) == BN_CLICKED) say("citypop next");
+        else if (w == 6 && HIWORD(l) == BN_CLICKED) say("citypop clear");
         return 0;
     case WM_CTLCOLOR:
         if (HIWORD(l) == CTLCOLOR_STATIC) {
@@ -3475,7 +3476,7 @@ long FAR PASCAL __export CityProc(HWND h, UINT m, WPARAM w, LPARAM l)
 static void cp_open(void)
 {
     static BOOL reg; RECT r; int x = 10, w;
-    char p[16];
+    char p[32];
     if (hCity) { SetWindowPos(hCity, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); say("citypop list"); return; }
     if (!reg) {
         WNDCLASS wc; memset(&wc, 0, sizeof wc); wc.lpfnWndProc = CityProc; wc.hInstance = hInst; wc.hCursor = LoadCursor(NULL, IDC_ARROW);
@@ -3483,14 +3484,15 @@ static void cp_open(void)
     }
     GetWindowRect(hMain, &r);
     hCity = CreateWindow("SndCityPop", "CITYPOP DEPROGRAMMED - Media Player", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
-                         (r.left + r.right) / 2 - 230, (r.top + r.bottom) / 2 - 205, 460, 410, hMain, NULL, hInst, NULL);
+                         (r.left + r.right) / 2 - 230, (r.top + r.bottom) / 2 - 240, 460, 410, hMain, NULL, hInst, NULL);
     cmk("STATIC", "CITYPOP DEPROGRAMMED. A theme and eleven variations, played on Sound Recorder.", 0, 10, 8, 430, 16, -1);
     cpList = cmk("LISTBOX", "", WS_BORDER | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT, 10, 28, 430, 210, 1);
     padded("Play", p); w = btn_w("Play"); cmk("BUTTON", p, BS_PUSHBUTTON, x, 246, w, 24, 2); x += w + 3;
     padded("Stop", p); w = btn_w("Stop"); cmk("BUTTON", p, BS_PUSHBUTTON, x, 246, w, 24, 3); x += w + 10;
     padded("|<<", p); w = btn_w("|<<"); cmk("BUTTON", p, BS_PUSHBUTTON, x, 246, w, 24, 4); x += w + 3;
     padded(">>|", p); w = btn_w(">>|"); cmk("BUTTON", p, BS_PUSHBUTTON, x, 246, w, 24, 5); x += w + 10;
-    cpTime = cmk("STATIC", "0:00 / 0:00", 0, x, 250, 440 - x, 16, -1);
+    cpTime = cmk("STATIC", "0:00 / 0:00", 0, x, 250, 100, 16, -1); x += 104;
+    padded("Discard Renders", p); w = btn_w("Discard Renders"); cmk("BUTTON", p, BS_PUSHBUTTON, 440 - w, 246, w, 24, 6);
     cpPosSb = cmk("SCROLLBAR", "", SBS_HORZ, 10, 278, 430, 14, -1); EnableWindow(cpPosSb, FALSE);
     cpNow = cmk("STATIC", "Stopped", 0, 10, 298, 430, 16, -1);
     cpStat = cmk("STATIC", "", 0, 10, 318, 430, 16, -1);
