@@ -499,7 +499,7 @@ function show(i) {
   $('#evname').textContent = 'TRACK' + nn + '.MID';
   document.title = (p.name || t.title) + ' — CITYPOP1993';
   if ('mediaSession' in navigator) {
-    try { navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: 'Algorithmic Industries', album: 'CITYPOP1993', artwork: [{ src: 'art/cover-640.png', sizes: '640x640', type: 'image/png' }] }); } catch (e) { /* old browsers */ }
+    try { navigator.mediaSession.metadata = new MediaMetadata({ title: t.title, artist: 'Algorithmic Industries', album: 'CITYPOP1993', artwork: [{ src: 'art/cover-640.png?v=1993', sizes: '640x640', type: 'image/png' }] }); } catch (e) { /* old browsers */ }
   }
   posBar.redraw();
   loadEvents(i);
@@ -710,7 +710,7 @@ const menus = {
     const t = T();
     return [
       { label: 'Save Track as MP3…', href: t && !t.pending ? t.mp3 : undefined, download: t ? `CITYPOP1993 ${String(t.n).padStart(2, '0')} ${t.title.replace(/[:/\\?*"<>|]/g, '')}.mp3` : '', disabled: !t || t.pending },
-      { label: 'Cover Art (640 px)', href: 'art/cover-640.png', blank: true },
+      { label: 'Cover Art (640 px)', href: 'art/cover-640.png?v=1993', blank: true },
       { label: 'SOURCES.TXT', href: 'SOURCES.TXT', blank: true },
       '-', { label: 'SNDWAVE1993 Home', href: '/sndwave2000/' },
     ];
