@@ -19,6 +19,8 @@
 #include <cstring>
 #include <fstream>
 #include <functional>
+#include <mutex>
+#include <thread>
 #include <string>
 #include <thread>
 #include <vector>
@@ -177,7 +179,8 @@ struct Machine {
             if (ty == 3 || ty == 7) {
                 for (int k = 1; k < n; k++) {
                     const char a = (char)(words[i + k] & 0xFF), b = (char)(words[i + k] >> 8);
-                    if (a) frag += a; if (a && b) frag += b;
+                    if (a) frag += a;
+                    if (a && b) frag += b;
                 }
                 if (ty == 3) { out.push_back(frag); frag.clear(); }
             }
@@ -398,6 +401,36 @@ inline bool renderTrack(const TrackJob &J, TrackOut &R)
     }
     R.endSec = endSec; R.buildSec = tBuilt - t0; R.playSec = nowSec() - tBuilt;
     return finish(true);
+}
+
+// A batch of tracks -> their stems: the Song tab's and render311 --song's one boundary to the engines. This backend
+// runs one engine per track (a private copy of the core each), `engines` at once, on threads at the caller's
+// priority (`setup` runs first on each thread). A backend that plays several tracks in one Windows can replace it:
+// the caller only sees jobs in and, per finished track, done(i, its TrackOut).
+inline bool renderStems(std::vector<TrackJob> &jobs, int engines, const std::atomic<bool> *cancel,
+                        const std::function<void(size_t, double)> &progress, const std::function<bool(size_t, TrackOut &)> &done,
+                        std::string &err, const std::function<void()> &setup = nullptr)
+{
+    std::atomic<size_t> next{0}; std::atomic<bool> failed{false}; std::mutex em;
+    auto worker = [&]() {
+        if (setup) setup();
+        for (size_t i; (i = next++) < jobs.size() && !(cancel && cancel->load()) && !failed;) {
+            TrackJob &J = jobs[i];
+            J.setLibrary = false; J.privateCore = true; J.cancel = cancel;
+            if (progress) J.progress = [&progress, i](double f) { progress(i, f); };
+            TrackOut R;
+            const bool ok = renderTrack(J, R);
+            if (!ok || !done(i, R)) {
+                std::lock_guard<std::mutex> l(em);
+                if (err.empty()) err = R.err.empty() ? "track " + std::to_string(i + 1) + " failed" : R.err;
+                failed = true;
+            }
+        }
+    };
+    std::vector<std::thread> th;
+    for (int k = 0; k < std::max(1, std::min<int>(engines, (int)jobs.size())); k++) th.emplace_back(worker);
+    for (auto &t : th) t.join();
+    return !failed && !(cancel && cancel->load());
 }
 
 }  // namespace b16song

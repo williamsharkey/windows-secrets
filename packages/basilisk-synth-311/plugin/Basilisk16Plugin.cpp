@@ -21,6 +21,7 @@
 #include "V3Host.h"
 #include "UserRec.h"
 #include "V3Seq.h"
+#include "SongSession.h"
 
 #include <atomic>
 #include <chrono>
@@ -208,6 +209,7 @@ public:
 
     ~Basilisk16() override
     {
+        song_.shutdown();   // (its render threads send to Windows: they stop first)
         quit_ = true;
         if (worker_.joinable()) worker_.join();
         if (engine_) bs_engine_stop(engine_);
@@ -332,6 +334,7 @@ protected:
             if (!kp.tuning.empty()) s.extra["tuning"] = kp.tuning;
         }
         if (!packs_.empty()) s.extra["packs"] = packs_;   // the Library tab's inserted discs (ids, PRESET-ENGINE-2 16.1)
+        song_.stateLines(s.extra);   // the Song tab's song (design/SONG-TAB.md 5)
         {   // the recordings the DNA uses: hash, and the audio while the total stays under 8 MB (RECORDING.md 3.3)
             size_t total = 0;
             for (const auto &n : b16rec::usedNames(dnaText_)) {
@@ -362,6 +365,7 @@ protected:
             if (s.extra.count("tuning")) kp.readLine("tuning " + s.extra["tuning"]);
             setKeyParams(kp);
             { std::lock_guard<std::mutex> l(mtx_); packs_ = s.extra.count("packs") ? s.extra["packs"] : ""; packsDirty_ = true; }
+            song_.loadState(s.extra);
             {   // its recordings (RECORDING.md 3.3): found by hash, the embedded copy saved if this machine lacks it
                 std::lock_guard<std::mutex> l(mtx_);
                 userPin_.clear(); userKept_.clear();
@@ -555,6 +559,7 @@ protected:
             }
             if (dump_) { float d2[2] = {S->ring[(uint32_t)((uint64_t)k % BSHM_RING) * 2], S->ring[(uint32_t)((uint64_t)k % BSHM_RING) * 2 + 1]}; std::fwrite(d2, 4, 2, dump_); }
         }
+        song_.process(L, R, frames, sr);   // the Song tab's mix, while it plays
         hcount_ += frames;
         dacPos_ = anchor_ + (double)hcount_ * ratio;
         S->host_r = (uint64_t)std::max(0.0, dacPos_ - 4);
@@ -712,6 +717,7 @@ private:
         }
         std::lock_guard<std::mutex> l(mtx_);
         dnaText_ = written.canonical;
+        song_.setDefaultDna(dnaText_);
         lenvDirty_ = true;               // the card gets every layer's effective envelopes again
         if (toGuest && !fromGuest) dnaToGuest_ = true;
         const std::string sig = sigOf(d);
@@ -840,6 +846,8 @@ private:
         recDir_ = tmp_ + "/rec";
         b16rec::makeDir(recDir_);
         myRec_ = b16rec::myRecordingsDir();
+        song_.configure(machine.substr(0, machine.size() - 1), machine + coreName, myRec_, tmp_,   // the Song tab's engines
+                        [this](const std::string &ln) { sendLine(ln.c_str(), 0, 0); });
         {
             std::lock_guard<std::mutex> l(mtx_);
             userNames_.clear();
@@ -949,6 +957,7 @@ private:
         sendLine(("scala ok " + std::to_string(t.size()) + " " + nm).substr(0, 200).c_str(), 0, 0);
     }
     std::string packs_;                    // inserted pack discs: "id,id" (guarded by mtx_)
+    b16song::SongTab song_;                // the Song tab (SongTab.h, SongTab.cpp): its own lock and threads
     std::atomic<bool> packsDirty_{true};
     std::string askPath_;   // a Save As waiting for the collision answer
     void recSaved(std::string path, int mode = 0)
@@ -1080,6 +1089,12 @@ private:
                 dnaToGuest_ = true;
             }
             if (hello && sh_.importReady.exchange(false)) importNow();
+            if (hello) song_.poll();
+            if (hello && sh_.songReady.exchange(false)) {   // the editor read a MIDI file or a song
+                std::vector<uint8_t> b; std::string p;
+                { std::lock_guard<std::mutex> l(sh_.fileMtx); b.swap(sh_.fileBytes); p = sh_.fileName; }
+                song_.loadLater(p, std::move(b));
+            }
             if (hello && packsDirty_.exchange(false)) {   // the inserted discs, before a DNA that may use their sounds
                 std::string p; { std::lock_guard<std::mutex> l(mtx_); p = packs_; }
                 sendLine(("packs " + p).c_str(), 0, 0);   // (sendLine splits a long line)
@@ -1231,6 +1246,21 @@ private:
             sh_.fileReq = line == "state save" ? 1 : 2;
             if (sh_.editors.load() == 0) sendLine("state error open the plugin's editor to save or load a state", 0, 0);
             return;
+        }
+        {   // the Song tab
+            int req = 0; std::string def;
+            if (song_.line(line, req, def)) {
+                if (req == 7 || req == 8) {
+                    std::vector<uint8_t> b;
+                    if (req == 7) b = song_.sngBytes(); else song_.mixWav(b);
+                    std::lock_guard<std::mutex> l(sh_.fileMtx); sh_.fileBytes.swap(b); sh_.fileName = def;
+                } else if (req == 6) { std::lock_guard<std::mutex> l(sh_.fileMtx); sh_.fileName.clear(); }
+                if (req) {
+                    sh_.fileReq = req;
+                    if (sh_.editors.load() == 0) sendLine("song status Open the plugin's editor for the file dialog.", 0, 0);
+                }
+                return;
+            }
         }
         if (line.rfind("seg ", 0) == 0) {   // seg <layer> <f0> <f1> ...: where a layer's segments start (kit pads)
             std::istringstream in(line.substr(4)); int L = -1; in >> L;

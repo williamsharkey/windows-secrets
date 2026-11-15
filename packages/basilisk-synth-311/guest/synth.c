@@ -98,13 +98,14 @@ static void wait_ms(DWORD ms);
 static void page_add(HWND w);
 static void scales_values(void);
 /* the tabs and pages (PRESET-ENGINE-2 section 8) */
-#define NTAB 7
-#define ID_TAB 1390
+#define NTAB 8
+#define ID_TAB 1370      /* + tab: (1390 + 6 was ID_STATESAVE: a click on Library asked to save the state, 1.3.0) */
 #define ID_PG 1400
 #define ID_RECPG 1480     /* + 0..11: the Rec page's controls */
 #define ID_LIBPG 1500     /* + 0..7: the Library page's */
-static const char *tabNames[NTAB] = {"Main", "Voices", "Playback", "Scales", "Rec", "Mines", "Library"};
-static const char *tabIds[NTAB] = {"main", "voices", "play", "scales", "rec", "seq", "lib"};
+#define ID_SONG 1520      /* + 0..63: the Song page's */
+static const char *tabNames[NTAB] = {"Main", "Voices", "Playback", "Scales", "Rec", "Mines", "Library", "Song"};
+static const char *tabIds[NTAB] = {"main", "voices", "play", "scales", "rec", "seq", "lib", "song"};
 static HWND hTab[NTAB], pgWin[64], pgSb[24], pgVal[24], pgBtn[24];
 static int curTab, npg, npgSb, npgBtn;
 static const COLORREF layerColor[NL] = {RGB(0, 128, 0), RGB(0, 0, 160), RGB(160, 0, 0), RGB(128, 0, 128),
@@ -1983,7 +1984,7 @@ static const PC pagePlay[] = {
     {"at", 'V', 'f', 1, 30, K_PAIR1, "Hz", 1}, {"Scoop", 'V', 's', 0, 200, K_PAIR0, "c", 1}, {"over", 'V', 's', 0, 2000, K_PAIR1, "ms", 1},
     {"Delay", 'W', 'o', 0, 30000, K_INT, "ms", 2}, {"Beat delay", 'W', 'b', 0, 64, K_INT, "/16", 2}, {"Gate", 'W', 'g', 0, 64, K_INT, "/16", 2},
     {"Tempo sync", 'W', 't', 0, 0, K_FLAG, "", 2}, {"Loop amp", 'W', 'r', 0, 8, K_INT, "", 2}, {"Loop pan", 'W', 'p', 0, 8, K_INT, "", 2}, {NULL}};
-static const PC *pgDef[NTAB] = {NULL, pageVoices, pagePlay, NULL, NULL, NULL, NULL};
+static const PC *pgDef[NTAB] = {NULL, pageVoices, pagePlay, NULL, NULL, NULL, NULL, NULL};
 /* the Scales page (PRESET-ENGINE-2 18.6): the key options and the 12 notes from the root; it edits the host's Key
    parameters (keyopt / keymask lines), not the DNA */
 #define ID_SC (ID_PG + 48)
@@ -2098,16 +2099,23 @@ static void page_values(void)   /* the controls show the selected layer's tokens
         else SendMessage(pgBtn[i], BM_SETSTATE, pc_value(c), 0L);
     }
 }
+static void song_closing(void);
+static BOOL sgStrips; static HWND hSong;
 static HWND recAsk[2], recStatus, recList, recSlotBtn;
 static HWND hLibDiscs, hLibPre, hLibInfo;   /* the Library page's lists */   /* the Rec page's collision Yes / No, status and list */
 static void page_close(void)
 {
     int i;
+    song_closing();
     for (i = 0; i < npg; i++) DestroyWindow(pgWin[i]);
     npg = npgSb = npgBtn = 0; nScBtn = 0;
     recAsk[0] = recAsk[1] = NULL; recStatus = recList = recSlotBtn = NULL; scScala = NULL; hLibDiscs = hLibPre = hLibInfo = NULL;   /* (the Rec page's, gone with it) */
 }
 static void page_add(HWND w) { if (npg < 64) pgWin[npg++] = w; }
+static void song_page(int y0);
+static void song_command(int k, int code);
+static BOOL song_scroll(HWND sb, int code, int pos);
+static void song_line(char *rest);
 static void rec_page(int y0);
 static void about_open(void);
 static void splash_close(void);
@@ -2149,6 +2157,7 @@ static void page_open(int t)
     if (t == 4) rec_page(y0);   /* the Rec page (the Recorder came down before: see above) */
     else if (t == 5) mine_page(y0);   /* the mine-grid sequencer */
     else if (t == 6) lib_page(y0);    /* the pack discs */
+    else if (t == 7) song_page(y0);   /* the song: tracks, mix, render */
     else if (t == 3) {   /* the Scales page */
         page_add(mk("STATIC", "Key", WS_VISIBLE, 8, y0 + 4, 80, 16, -1));
         scales_page(y0);
@@ -2183,6 +2192,13 @@ static void page_open(int t)
         page_values();
     }
     SendMessage(hMain, WM_SETREDRAW, TRUE, 0L);
+    if (hSong) RedrawWindow(hSong, NULL, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);   /* (over the strips) */
+    if (sgStrips && !hSong) {   /* the Song page went: the strips again */
+        RECT rs; int r2; sgStrips = FALSE;
+        SetRect(&rs, 0, ROW0 - 14, 970, ROW0 + 480);
+        RedrawWindow(hMain, &rs, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+        for (r2 = 0; r2 < NR; r2++) if (rw[r2]) paint_now(rw[r2]);
+    }
     {   /* the band, children included, at once */
         RECT rb; SetRect(&rb, 0, PANEL + 28, 880, KBY - 1);
         RedrawWindow(hMain, &rb, NULL, RDW_INVALIDATE | RDW_ERASE | RDW_ALLCHILDREN | RDW_UPDATENOW);
@@ -2871,6 +2887,383 @@ static void lib_packs(const char *ids)
         p += n; if (*p == ',') p++; else if (*p) p++;
     }
     if (curTab == 6) lib_discs();
+}
+/* ================================================================ the Song page (design/SONG-TAB.md)
+   A song: a MIDI file and its tracks, each voiced by a preset of a pack disc (or a DNA), mixed with one echo and
+   one reverb. The host keeps the song (its .song text) and renders it: every track plays in its own Windows 3.11,
+   offline, with its own 16 Sound Recorders, and the tracks are mixed. This page shows it and edits it. It covers
+   the strips (a window of ours, SndSong) with the track list and the selected track's controls; the band below
+   holds the transport. Everything comes from `song ...` lines (plugin/SongTab.h); edits go back as `song ...`. */
+#define NSONG 32
+typedef struct { char name[24], src[12], preset[72]; int tr, tune, vol10, pan, echo, verb, mute, solo, notes, lo, hi; } SongTrk;
+static SongTrk __far sgT[NSONG];   /* (far: DGROUP is full) */
+static char __far sgTitle[64], __far sgInfo[80], __far sgLoud[12], __far sgCeil[12], __far sgStatus[160];
+static int sgN, sgSel, sgPlaying, sgPk = -1, sgEngines; static long sgPosMs, sgLenMs;
+static HWND sgList, sgTitleEd, sgInfoTx, sgName, sgSrc, sgPack, sgPre, sgTr, sgTune, sgVol, sgVolTx, sgPan, sgPanTx,
+            sgEcho, sgEchoTx, sgVerb, sgVerbTx, sgMute, sgSolo, sgLoudEd, sgCeilEd, sgPos, sgTime, sgStat, sgEng;
+static HFONT sgFixed;
+static BOOL sgFilling;   /* (our own SetWindowText / CB_SETCURSEL: not an edit) */
+#define SGW 964
+#define SGH 480
+
+long FAR PASCAL __export SongProc(HWND h, UINT m, WPARAM w, LPARAM l)
+{
+    switch (m) {
+    case WM_COMMAND: if (w >= ID_SONG && w < ID_SONG + 64) { song_command(w - ID_SONG, HIWORD(l)); return 0; } break;
+    case WM_HSCROLL: song_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
+    case WM_CTLCOLOR:
+        if (HIWORD(l) == CTLCOLOR_STATIC || HIWORD(l) == CTLCOLOR_BTN) {
+            static HBRUSH face;
+            if (!face) face = CreateSolidBrush(GetSysColor(COLOR_BTNFACE));
+            SetBkColor((HDC)w, GetSysColor(COLOR_BTNFACE));
+            return (LRESULT)(WORD)face;
+        }
+        break;
+    }
+    return DefWindowProc(h, m, w, l);
+}
+static HWND smk(const char *cls, const char *text, DWORD st, int x, int y, int w, int h, int id)   /* a control of SndSong */
+{
+    HWND c = CreateWindow(cls, text, WS_CHILD | WS_VISIBLE | st, x, y, w, h, hSong, (HMENU)id, hInst, NULL);
+    SendMessage(c, WM_SETFONT, (WPARAM)panelFont, 0L);
+    return c;
+}
+static int slbl(const char *t, int x, int y) { int w = text_w(t) + 2; smk("STATIC", t, 0, x, y + 4, w, 16, -1); return w; }
+static int sbtn(const char *t, int x, int y, int id) { char p[64]; int w = btn_w(t); padded(t, p); smk("BUTTON", p, BS_PUSHBUTTON, x, y, w, 24, ID_SONG + id); return w; }
+static void sg_fix(char *d, const char __far *s, int n)   /* s cut or padded to n characters */
+{
+    int i = 0;
+    for (; i < n && s[i]; i++) d[i] = s[i];
+    for (; i < n; i++) d[i] = ' ';
+    d[n] = 0;
+}
+static void sg_dec(char *d, int v10)   /* -35 -> "-3.5" */
+{
+    int a = v10 < 0 ? -v10 : v10;
+    wsprintf(d, "%s%d.%d", (LPSTR)(v10 < 0 ? "-" : v10 > 0 ? "+" : " "), a / 10, a % 10);
+}
+static void sg_row(int i, char *t)
+{
+    char nm[15], sr[8], pr[37], vol[8];
+    const SongTrk __far *k = &sgT[i];
+    sg_fix(nm, k->name, 14); sg_fix(sr, k->src, 7); sg_fix(pr, k->preset, 36); sg_dec(vol, k->vol10);
+    wsprintf(t, "%2d %s %s %s %3d %4d %6s %4d %3d %3d %s %s %5d", i + 1, (LPSTR)nm, (LPSTR)sr, (LPSTR)pr, k->tr, k->tune, (LPSTR)vol,
+             k->pan, k->echo, k->verb, (LPSTR)(k->mute ? "M" : "."), (LPSTR)(k->solo ? "S" : "."), k->notes);   /* (wsprintf has no + flag) */
+}
+static void sg_list(void)
+{
+    int i; char t[160];
+    if (!sgList) return;
+    SendMessage(sgList, WM_SETREDRAW, FALSE, 0L);
+    SendMessage(sgList, LB_RESETCONTENT, 0, 0L);
+    for (i = 0; i < sgN; i++) { sg_row(i, t); SendMessage(sgList, LB_ADDSTRING, 0, (LPARAM)(LPSTR)t); }
+    if (sgSel >= sgN) sgSel = sgN - 1;
+    if (sgSel >= 0) SendMessage(sgList, LB_SETCURSEL, sgSel, 0L);
+    SendMessage(sgList, WM_SETREDRAW, TRUE, 0L); InvalidateRect(sgList, NULL, TRUE);
+}
+static void sg_val(HWND tx, int v, const char *unit)
+{
+    char t[16];
+    if (!tx) return;
+    if (unit[0] == 'd') sg_dec(t, v); else wsprintf(t, "%d", v);
+    lstrcat(t, unit[0] == 'd' ? " dB" : unit);
+    SetWindowText(tx, t);
+}
+static char __far sgPreName[72];   /* the preset to select once the pack's list is in */
+static void sg_pre_add(char *ln, long off)   /* PRESETS.TSV: category TAB name TAB DNA TAB pack TAB editions */
+{
+    char *a = strchr(ln, '\t'), *b, *c, *d, t[80]; int i;
+    (void)off;
+    if (!a || ln[0] == '#') return;
+    *a = 0; b = strchr(a + 1, '\t'); if (!b) return; *b = 0;
+    c = strchr(b + 1, '\t'); d = c ? strchr(c + 1, '\t') : NULL;
+    if (d && !strstr(d, "3.11")) return;
+    lstrcpyn(t, a + 1, 60);
+    i = (int)SendMessage(sgPre, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t);
+    (void)i;
+}
+static void sg_presets(int pk)   /* the pack's presets in the Preset box */
+{
+    char p[40];
+    if (!sgPre) return;
+    SendMessage(sgPre, WM_SETREDRAW, FALSE, 0L);
+    SendMessage(sgPre, CB_RESETCONTENT, 0, 0L);
+    if (pk >= 0 && pk < npk) { wsprintf(p, "P:\\%s\\PRESETS.TSV", (LPSTR)pkDir[pk]); read_lines_now(p, sg_pre_add); }
+    SendMessage(sgPre, WM_SETREDRAW, TRUE, 0L); InvalidateRect(sgPre, NULL, TRUE);
+    sgPk = pk;
+}
+static void sg_controls(void)   /* the selected track into the controls */
+{
+    const SongTrk __far *k; char t[80], *c; int pk = -1, i;
+    if (!hSong) return;
+    sgFilling = TRUE;
+    SetWindowText(sgTitleEd, sgTitle); SetWindowText(sgInfoTx, sgInfo);
+    SetWindowText(sgLoudEd, sgLoud); SetWindowText(sgCeilEd, sgCeil);
+    if (sgEngines > 0) SendMessage(sgEng, CB_SETCURSEL, sgEngines - 1, 0L);
+    if (sgSel < 0 || sgSel >= sgN) {
+        SetWindowText(sgName, ""); SetWindowText(sgTr, ""); SetWindowText(sgTune, "");
+        sgFilling = FALSE; return;
+    }
+    k = &sgT[sgSel];
+    lstrcpyn(t, k->name, sizeof t); SetWindowText(sgName, t);
+    lstrcpyn(t, k->src, sizeof t);
+    i = (int)SendMessage(sgSrc, CB_FINDSTRINGEXACT, (WPARAM)-1, (LPARAM)(LPSTR)t);
+    SendMessage(sgSrc, CB_SETCURSEL, i, 0L);
+    lstrcpyn(t, k->preset, sizeof t);
+    c = strchr(t, ':');
+    if (c && strncmp(t, "DNA ", 4)) {   /* pack:Name: the pack, then its preset */
+        *c = 0; pk = pk_find(t);
+        lstrcpyn(sgPreName, c + 1, sizeof sgPreName);
+    } else sgPreName[0] = 0;
+    SendMessage(sgPack, CB_SETCURSEL, pk, 0L);
+    if (pk != sgPk) sg_presets(pk);
+    { char n[72]; const char *slash; lstrcpyn(n, sgPreName, sizeof n); slash = strrchr(n, '/');
+      i = (int)SendMessage(sgPre, CB_FINDSTRINGEXACT, (WPARAM)-1, (LPARAM)(LPSTR)(slash ? slash + 1 : n));
+      SendMessage(sgPre, CB_SETCURSEL, i, 0L); }
+    wsprintf(t, "%d", k->tr); SetWindowText(sgTr, t);
+    wsprintf(t, "%d", k->tune); SetWindowText(sgTune, t);
+    SetScrollPos(sgVol, SB_CTL, k->vol10 + 600, TRUE); sg_val(sgVolTx, k->vol10, "d");
+    SetScrollPos(sgPan, SB_CTL, k->pan + 100, TRUE); sg_val(sgPanTx, k->pan, "");
+    SetScrollPos(sgEcho, SB_CTL, k->echo, TRUE); sg_val(sgEchoTx, k->echo, "%");
+    SetScrollPos(sgVerb, SB_CTL, k->verb, TRUE); sg_val(sgVerbTx, k->verb, "%");
+    SendMessage(sgMute, BM_SETCHECK, k->mute, 0L); SendMessage(sgSolo, BM_SETCHECK, k->solo, 0L);
+    sgFilling = FALSE;
+}
+static void sg_pos(void)
+{
+    char t[40];
+    if (!sgPos) return;
+    SetScrollRange(sgPos, SB_CTL, 0, sgLenMs > 0 ? (int)(sgLenMs / 100) : 1, FALSE);
+    SetScrollPos(sgPos, SB_CTL, (int)(sgPosMs / 100), TRUE);
+    wsprintf(t, "%d:%02d / %d:%02d%s", (int)(sgPosMs / 60000), (int)(sgPosMs / 1000 % 60), (int)(sgLenMs / 60000), (int)(sgLenMs / 1000 % 60), (LPSTR)(sgPlaying ? "  Playing" : ""));
+    SetWindowText(sgTime, t);
+}
+static int sg_field(char **p, char *out, int n)   /* the next |-separated field */
+{
+    char *e = strchr(*p, '|'); int L = e ? (int)(e - *p) : lstrlen(*p);
+    if (L > n - 1) L = n - 1;
+    memcpy(out, *p, L); out[L] = 0;
+    *p = e ? e + 1 : *p + lstrlen(*p);
+    return L;
+}
+static void song_line(char *rest)
+{
+    char f[80]; char *p;
+    if (!strncmp(rest, "clear", 5)) { sgN = 0; return; }
+    if (!strncmp(rest, "meta ", 5)) {   /* meta <title>|<info>|<loudness>|<ceiling>|<engines> */
+        p = rest + 5;
+        sg_field(&p, f, sizeof f); lstrcpyn(sgTitle, f, sizeof sgTitle);
+        sg_field(&p, f, sizeof f); lstrcpyn(sgInfo, f, sizeof sgInfo);
+        sg_field(&p, f, sizeof f); lstrcpyn(sgLoud, f, sizeof sgLoud);
+        sg_field(&p, f, sizeof f); lstrcpyn(sgCeil, f, sizeof sgCeil);
+        sg_field(&p, f, sizeof f); sgEngines = atoi(f);
+        return;
+    }
+    if (!strncmp(rest, "trk ", 4)) {   /* trk <i> <name>|<src>|<preset>|<tr>|<tune>|<vol10>|<pan>|<echo>|<verb>|<mute>|<solo>|<notes>|<lo>|<hi> */
+        int i = atoi(rest + 4); SongTrk __far *k;
+        p = strchr(rest + 4, ' ');
+        if (!p || i < 0 || i >= NSONG) return;
+        p++; k = &sgT[i];
+        sg_field(&p, f, sizeof f); lstrcpyn(k->name, f, sizeof k->name);
+        sg_field(&p, f, sizeof f); lstrcpyn(k->src, f, sizeof k->src);
+        sg_field(&p, f, sizeof f); lstrcpyn(k->preset, f, sizeof k->preset);
+        sg_field(&p, f, sizeof f); k->tr = atoi(f);
+        sg_field(&p, f, sizeof f); k->tune = atoi(f);
+        sg_field(&p, f, sizeof f); k->vol10 = atoi(f);
+        sg_field(&p, f, sizeof f); k->pan = atoi(f);
+        sg_field(&p, f, sizeof f); k->echo = atoi(f);
+        sg_field(&p, f, sizeof f); k->verb = atoi(f);
+        sg_field(&p, f, sizeof f); k->mute = atoi(f);
+        sg_field(&p, f, sizeof f); k->solo = atoi(f);
+        sg_field(&p, f, sizeof f); k->notes = atoi(f);
+        sg_field(&p, f, sizeof f); k->lo = atoi(f);
+        sg_field(&p, f, sizeof f); k->hi = atoi(f);
+        if (i >= sgN) sgN = i + 1;
+        return;
+    }
+    if (!strncmp(rest, "end", 3)) { if (sgSel < 0 && sgN) sgSel = 0; sg_list(); sg_controls(); return; }
+    if (!strncmp(rest, "status ", 7)) { lstrcpyn(sgStatus, rest + 7, sizeof sgStatus); if (sgStat) SetWindowText(sgStat, sgStatus); return; }
+    if (!strncmp(rest, "pos ", 4)) {
+        long a = 0, b = 0; int c = 0;
+        if (sscanf(rest + 4, "%ld %ld %d", &a, &b, &c) >= 2) { sgPosMs = a; sgLenMs = b; sgPlaying = c; }
+        sg_pos();
+        return;
+    }
+}
+static void song_closing(void)
+{
+    int i;
+    if (!hSong) return;
+    for (i = 0; i < NDIG; i++) if (hDig[i]) ShowWindow(hDig[i], SW_SHOWNA);
+    hSong = sgList = sgTitleEd = sgInfoTx = sgName = sgSrc = sgPack = sgPre = sgTr = sgTune = sgVol = sgVolTx = sgPan = sgPanTx = NULL;
+    sgEcho = sgEchoTx = sgVerb = sgVerbTx = sgMute = sgSolo = sgLoudEd = sgCeilEd = sgPos = sgTime = sgStat = sgEng = NULL;
+    sgPk = -1;
+    sgStrips = TRUE;   /* the strips are painted again once the new page is up (page_open) */
+}
+static HWND sg_sb(int x, int y, int w, int lo, int hi, int id)
+{
+    HWND b = smk("SCROLLBAR", "", SBS_HORZ, x, y + 5, w, 14, ID_SONG + id);
+    SetScrollRange(b, SB_CTL, lo, hi, FALSE);
+    return b;
+}
+static void song_page(int y0)
+{
+    static BOOL reg; int x, y, w, i; char t[16]; HWND b;
+    if (!reg) {
+        WNDCLASS wc; memset(&wc, 0, sizeof wc); wc.lpfnWndProc = SongProc; wc.hInstance = hInst; wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+        wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.lpszClassName = "SndSong"; RegisterClass(&wc); reg = TRUE;
+    }
+    if (!sgFixed) sgFixed = GetStockObject(ANSI_FIXED_FONT);
+    pk_load();
+    for (i = 0; i < NDIG; i++) if (hDig[i]) ShowWindow(hDig[i], SW_HIDE);
+    hSong = CreateWindow("SndSong", "", WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 4, ROW0 - 14, SGW, SGH + 14, hMain, (HMENU)-1, hInst, NULL);   /* (the strips' column titles too) */
+    SetWindowPos(hSong, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    page_add(hSong);
+    /* the song */
+    x = 6; y = 4;
+    x += slbl("Song", x, y);
+    sgTitleEd = smk("EDIT", sgTitle, WS_BORDER | ES_AUTOHSCROLL, x, y + 1, 280, 22, ID_SONG + 1); x += 286;
+    sgInfoTx = smk("STATIC", sgInfo, 0, x, y + 4, 300, 16, -1); x += 304;
+    x += sbtn("Import MIDI...", x, y, 2) + 3;
+    x += sbtn("Open...", x, y, 3) + 3;
+    x += sbtn("Save...", x, y, 4) + 3;
+    /* the tracks: one row each (the event-list look of a Windows 3.1 sequencer, in the fixed font) */
+    b = smk("STATIC", " #  Track          Source  Preset (pack:name)                   Tr Tune    Vol  Pan Ech Vrb M S Notes", 0, 6, 32, SGW - 12, 14, -1);
+    SendMessage(b, WM_SETFONT, (WPARAM)sgFixed, 0L);
+    sgList = smk("LISTBOX", "", WS_BORDER | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT, 6, 48, SGW - 12, 230, ID_SONG + 5);
+    SendMessage(sgList, WM_SETFONT, (WPARAM)sgFixed, 0L);
+    /* the selected track */
+    x = 6; y = 286;
+    x += slbl("Track", x, y);
+    sgName = smk("EDIT", "", WS_BORDER | ES_AUTOHSCROLL, x, y + 1, 120, 22, ID_SONG + 6); x += 126;
+    x += slbl("Source", x, y);
+    sgSrc = smk("COMBOBOX", "", WS_VSCROLL | CBS_DROPDOWNLIST, x, y + 1, 70, 200, ID_SONG + 7); x += 76;
+    SendMessage(sgSrc, CB_ADDSTRING, 0, (LPARAM)(LPSTR)"all");
+    for (i = 1; i <= 16; i++) { wsprintf(t, "ch%d", i); SendMessage(sgSrc, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t); }
+    for (i = 0; i < 16; i++) { wsprintf(t, "tr%d", i); SendMessage(sgSrc, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t); }
+    x += slbl("Pack", x, y);
+    sgPack = smk("COMBOBOX", "", WS_VSCROLL | CBS_DROPDOWNLIST, x, y + 1, 170, 260, ID_SONG + 8); x += 176;
+    for (i = 0; i < npk; i++) SendMessage(sgPack, CB_ADDSTRING, 0, (LPARAM)(LPSTR)pkTitle[i]);
+    x += slbl("Preset", x, y);
+    sgPre = smk("COMBOBOX", "", WS_VSCROLL | CBS_DROPDOWNLIST | CBS_SORT, x, y + 1, 230, 260, ID_SONG + 9); x += 236;
+    x += sbtn("Use the DNA", x, y, 10) + 3;
+    x = 6; y = 318;
+    x += slbl("Transpose", x, y);
+    sgTr = smk("EDIT", "", WS_BORDER, x, y + 1, 40, 22, ID_SONG + 11); x += 46;
+    x += slbl("Tune (cents)", x, y);
+    sgTune = smk("EDIT", "", WS_BORDER, x, y + 1, 44, 22, ID_SONG + 12); x += 54;
+    x += slbl("Volume", x, y);
+    sgVol = sg_sb(x, y, 120, 0, 720, 13); x += 124;   /* -60.0 .. +12.0 dB */
+    sgVolTx = smk("STATIC", "", 0, x, y + 4, 60, 16, -1); x += 62;
+    x += slbl("Pan", x, y);
+    sgPan = sg_sb(x, y, 100, 0, 200, 14); x += 104;
+    sgPanTx = smk("STATIC", "", 0, x, y + 4, 36, 16, -1); x += 40;
+    x += slbl("Echo", x, y);
+    sgEcho = sg_sb(x, y, 80, 0, 100, 15); x += 84;
+    sgEchoTx = smk("STATIC", "", 0, x, y + 4, 36, 16, -1); x += 40;
+    x += slbl("Reverb", x, y);
+    sgVerb = sg_sb(x, y, 80, 0, 100, 16); x += 84;
+    sgVerbTx = smk("STATIC", "", 0, x, y + 4, 36, 16, -1); x += 40;
+    x = 6; y = 350;
+    w = text_w("Mute") + 22; sgMute = smk("BUTTON", "Mute", BS_AUTOCHECKBOX, x, y + 4, w, 16, ID_SONG + 17); x += w + 6;
+    w = text_w("Solo") + 22; sgSolo = smk("BUTTON", "Solo", BS_AUTOCHECKBOX, x, y + 4, w, 16, ID_SONG + 18); x += w + 14;
+    x += sbtn("Add track", x, y, 19) + 3;
+    x += sbtn("Remove track", x, y, 20) + 20;
+    x += slbl("Master loudness", x, y);
+    sgLoudEd = smk("EDIT", "", WS_BORDER, x, y + 1, 40, 22, ID_SONG + 21); x += 44;
+    x += slbl("LUFS   Ceiling", x, y);
+    sgCeilEd = smk("EDIT", "", WS_BORDER, x, y + 1, 40, 22, ID_SONG + 22); x += 44;
+    x += slbl("dB", x, y);
+    smk("STATIC", "Every track plays in its own Windows for Workgroups 3.11, on its own sixteen Sound Recorders. Then the tracks are mixed.", 0, 6, 392, SGW - 12, 16, -1);
+    smk("STATIC", "Render plays them all, offline, as fast as the PC allows. Play and Export use the last render. Echo and reverb are sends.", 0, 6, 410, SGW - 12, 16, -1);
+    /* the band: the transport, Media Player's buttons */
+    x = 8;
+    b = mkbtn("Render", x, y0, 24, ID_SONG + 30, &w); page_add(b); x += w + 3;
+    b = mkbtn("Play", x, y0, 24, ID_SONG + 31, &w); page_add(b); x += w + 3;
+    b = mkbtn("Stop", x, y0, 24, ID_SONG + 32, &w); page_add(b); x += w + 3;
+    b = mkbtn("Export WAV...", x, y0, 24, ID_SONG + 33, &w); page_add(b); x += w + 10;
+    sgPos = mk("SCROLLBAR", "", WS_VISIBLE | SBS_HORZ, x, y0 + 5, 300, 14, ID_SONG + 34); page_add(sgPos); x += 306;
+    sgTime = mk("STATIC", "", WS_VISIBLE, x, y0 + 4, 150, 16, -1); page_add(sgTime); x += 154;
+    page_add(mklbl("Engines", x, y0 + 4, 16, &w)); x += w + 3;
+    sgEng = mk("COMBOBOX", "", WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, x, y0 + 1, 44, 160, ID_SONG + 35); page_add(sgEng);
+    for (i = 1; i <= 8; i++) { wsprintf(t, "%d", i); SendMessage(sgEng, CB_ADDSTRING, 0, (LPARAM)(LPSTR)t); }
+    sgStat = mk("STATIC", sgStatus, WS_VISIBLE, 8, y0 + 32, 860, 16, -1); page_add(sgStat);
+    sg_list(); sg_controls(); sg_pos();
+    say("song get");
+}
+static void sg_set(const char *key, int v)
+{
+    if (sgSel < 0 || sgSel >= sgN || sgFilling) return;
+    say("song set %d %s %d", sgSel, (LPSTR)key, v);
+}
+static int sg_int(HWND e) { char t[16]; GetWindowText(e, t, sizeof t); return atoi(t); }
+static void song_command(int k, int code)
+{
+    char t[80]; int i;
+    if (sgFilling) return;
+    switch (k) {
+    case 1: if (code == EN_KILLFOCUS) { GetWindowText(sgTitleEd, t, sizeof t); if (lstrcmp(t, sgTitle)) say("song title %s", (LPSTR)t); } return;
+    case 2: if (code == BN_CLICKED) say("song import"); return;
+    case 3: if (code == BN_CLICKED) say("song open"); return;
+    case 4: if (code == BN_CLICKED) say("song save"); return;
+    case 5: if (code == LBN_SELCHANGE) { i = (int)SendMessage(sgList, LB_GETCURSEL, 0, 0L); if (i >= 0) { sgSel = i; sg_controls(); } } return;
+    case 6: if (code == EN_KILLFOCUS && sgSel >= 0 && sgSel < sgN) { GetWindowText(sgName, t, 24); if (t[0] && lstrcmp(t, sgT[sgSel].name)) say("song set %d name %s", sgSel, (LPSTR)t); } return;
+    case 7: if (code == CBN_SELCHANGE && sgSel >= 0) { i = (int)SendMessage(sgSrc, CB_GETCURSEL, 0, 0L); if (i >= 0) { SendMessage(sgSrc, CB_GETLBTEXT, i, (LPARAM)(LPSTR)t); say("song set %d src %s", sgSel, (LPSTR)t); } } return;
+    case 8: if (code == CBN_SELCHANGE) { i = (int)SendMessage(sgPack, CB_GETCURSEL, 0, 0L); sgPreName[0] = 0; sg_presets(i); } return;
+    case 9:
+        if (code == CBN_SELCHANGE && sgSel >= 0 && sgPk >= 0) {
+            char n[64];
+            i = (int)SendMessage(sgPre, CB_GETCURSEL, 0, 0L);
+            if (i < 0) return;
+            SendMessage(sgPre, CB_GETLBTEXT, i, (LPARAM)(LPSTR)n);
+            say("song set %d preset %s:%s", sgSel, (LPSTR)pkId[sgPk], (LPSTR)n);
+        }
+        return;
+    case 10: if (code == BN_CLICKED && sgSel >= 0) say("song set %d usedna 1", sgSel);   /* (the host has the DNA: it may be long) */ return;
+    case 11: if (code == EN_KILLFOCUS && sgSel >= 0 && sg_int(sgTr) != sgT[sgSel].tr) sg_set("tr", sg_int(sgTr)); return;
+    case 12: if (code == EN_KILLFOCUS && sgSel >= 0 && sg_int(sgTune) != sgT[sgSel].tune) sg_set("tune", sg_int(sgTune)); return;
+    case 17: if (code == BN_CLICKED) sg_set("mute", (int)SendMessage(sgMute, BM_GETCHECK, 0, 0L)); return;
+    case 18: if (code == BN_CLICKED) sg_set("solo", (int)SendMessage(sgSolo, BM_GETCHECK, 0, 0L)); return;
+    case 19: if (code == BN_CLICKED) { sgSel = sgN; say("song add"); } return;
+    case 20: if (code == BN_CLICKED && sgSel >= 0) say("song del %d", sgSel); return;
+    case 21: if (code == EN_KILLFOCUS) { GetWindowText(sgLoudEd, t, 12); if (lstrcmp(t, sgLoud)) say("song master loudness %s", (LPSTR)t); } return;
+    case 22: if (code == EN_KILLFOCUS) { GetWindowText(sgCeilEd, t, 12); if (lstrcmp(t, sgCeil)) say("song master ceiling %s", (LPSTR)t); } return;
+    case 30: if (code == BN_CLICKED) say("song render"); return;
+    case 31: if (code == BN_CLICKED) say("song play %ld", (long)GetScrollPos(sgPos, SB_CTL) * 100L); return;
+    case 32: if (code == BN_CLICKED) say("song stop"); return;
+    case 33: if (code == BN_CLICKED) say("song export"); return;
+    case 35: if (code == CBN_SELCHANGE) { i = (int)SendMessage(sgEng, CB_GETCURSEL, 0, 0L); if (i >= 0) { sgEngines = i + 1; say("song engines %d", i + 1); } } return;
+    }
+}
+static BOOL song_scroll(HWND sb, int code, int pos)
+{
+    int lo, hi, v, k;
+    if (!sb || (sb != sgVol && sb != sgPan && sb != sgEcho && sb != sgVerb && sb != sgPos)) return FALSE;
+    GetScrollRange(sb, SB_CTL, &lo, &hi); v = GetScrollPos(sb, SB_CTL);
+    k = (hi - lo) / 20; if (k < 1) k = 1;
+    switch (code) {
+    case SB_LINELEFT: v--; break; case SB_LINERIGHT: v++; break;
+    case SB_PAGELEFT: v -= k; break; case SB_PAGERIGHT: v += k; break;
+    case SB_THUMBTRACK: case SB_THUMBPOSITION: v = pos; break;
+    case SB_ENDSCROLL: break;
+    default: return TRUE;
+    }
+    if (v < lo) v = lo; if (v > hi) v = hi;
+    SetScrollPos(sb, SB_CTL, v, TRUE);
+    if (sb == sgPos) {   /* the playhead: where Play starts (and, while playing, a jump) */
+        sgPosMs = (long)v * 100; sg_pos();
+        if (code == SB_ENDSCROLL && sgPlaying) say("song play %ld", (long)v * 100L);
+        return TRUE;
+    }
+    if (sb == sgVol) sg_val(sgVolTx, v - 600, "d");
+    else if (sb == sgPan) sg_val(sgPanTx, v - 100, "");
+    else sg_val(sb == sgEcho ? sgEchoTx : sgVerbTx, v, "%");
+    if (code == SB_ENDSCROLL || code == SB_THUMBPOSITION) {   /* the value to the host once the drag ends */
+        if (sb == sgVol) sg_set("vol10", v - 600);
+        else if (sb == sgPan) sg_set("pan", v - 100);
+        else sg_set(sb == sgEcho ? "echo" : "verb", v);
+    }
+    return TRUE;
 }
 /* ================================================================ the mine-grid sequencer (PRESET-ENGINE-2 9)
    The real Minesweeper (WINMINE.EXE) holds the pattern. It runs as itself, an owned window over the strips while
@@ -3583,6 +3976,7 @@ static void host_line(char *s)
     else if (!strcmp(s, "showwin")) { HWND x = FindWindow(rest, NULL); if (x) { ShowWindow(x, SW_RESTORE); SetWindowPos(x, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); } say("showwin %d", x != NULL); }   /* test aid */
     else if (!strcmp(s, "exec")) say("exec %d", WinExec(rest, SW_SHOWNORMAL));   /* test aid: a program, as Program Manager starts it */
     else if (!strcmp(s, "packs")) lib_packs(rest);   /* the inserted discs */
+    else if (!strcmp(s, "song")) song_line(rest);   /* the Song page (plugin/SongTab.h) */
     else if (!strcmp(s, "step")) mine_step(atoi(rest));   /* the sequencer's playhead */
     else if (!strcmp(s, "newgame") && hMine) PostMessage(hMine, WM_KEYDOWN, VK_F2, 0L);   /* the host's Randomize */
     else if (!strcmp(s, "scala")) {   /* scala ok <steps> <name> | scala error <message> */
@@ -3886,7 +4280,7 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
         if (w >= ID_DIG && w < ID_DIG + NDIG) { dig_drawitem((const DRAWITEMSTRUCT FAR *)l); return TRUE; }
         if (w == ID_KITBTN) { kitbtn_draw((const DRAWITEMSTRUCT FAR *)l); return TRUE; }
         break;
-    case WM_HSCROLL: if (!page_scroll((HWND)HIWORD(l), w, LOWORD(l))) panel_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
+    case WM_HSCROLL: if (!song_scroll((HWND)HIWORD(l), w, LOWORD(l)) && !page_scroll((HWND)HIWORD(l), w, LOWORD(l))) panel_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
     case WM_VSCROLL: kb_scroll((HWND)HIWORD(l), w, LOWORD(l)); return 0;
     case WM_KEYDOWN: case WM_KEYUP: if (computer_key(w, l, m == WM_KEYDOWN)) return 0; break;
     case WM_CTLCOLOR:                  /* the panel's labels sit on the window's grey */
@@ -3901,6 +4295,7 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
         int r;
         if (w >= 1100 && w < 1200) { panel_command(w, HIWORD(l)); return 0; }
         if (w == ID_KITBTN) { if (HIWORD(l) == BN_CLICKED && kitOn) padcalc_open(); return 0; }
+        if (w >= ID_SONG && w < ID_SONG + 64) { song_command(w - ID_SONG, HIWORD(l)); return 0; }
         if (w >= ID_LIBPG && w < ID_LIBPG + 8) { int k = w - ID_LIBPG; if (k <= 1 || HIWORD(l) == BN_CLICKED) lib_command(k, HIWORD(l)); return 0; }
         if (w == ID_STATESAVE || w == ID_STATELOAD) { if (HIWORD(l) == BN_CLICKED) say(w == ID_STATESAVE ? "state save" : "state load"); return 0; }
         if (w >= ID_TAB && w < ID_PG + 100) {

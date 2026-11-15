@@ -74,12 +74,13 @@ protected:
             FileBrowserOptions o;
             std::string def;
             if (req >= 3) { std::lock_guard<std::mutex> l(sh_->fileMtx); def = sh_->fileName; }
-            o.saving = req == 1 || req == 3;
-            o.title = req == 1 ? "Save SNDWAVE2000 state" : req == 2 ? "Load SNDWAVE2000 state" : req == 3 ? "Export recording" : req == 5 ? "Import a Scala tuning (.scl, .kbm)" : "Import WAV";
+            o.saving = req == 1 || req == 3 || req == 7 || req == 8;
+            o.title = req == 1 ? "Save SNDWAVE2000 state" : req == 2 ? "Load SNDWAVE2000 state" : req == 3 ? "Export recording" : req == 5 ? "Import a Scala tuning (.scl, .kbm)"
+                    : req == 6 ? "Import MIDI or open a song (.mid, .sng, .song)" : req == 7 ? "Save song" : req == 8 ? "Export the song" : "Import WAV";
             o.defaultName = req >= 3 ? def.c_str() : "SNDWAVE2000.b16";
             fileReqNow_ = req;
             fileSaving_ = o.saving;
-            if (const char *tf = std::getenv(req == 1 ? "BASILISK16_TEST_SAVE_AS" : req == 2 ? "BASILISK16_TEST_OPEN" : "-")) if (*tf) {
+            if (const char *tf = std::getenv(req == 1 ? "BASILISK16_TEST_SAVE_AS" : req == 2 ? "BASILISK16_TEST_OPEN" : req == 6 ? "BASILISK16_TEST_SONG_OPEN" : req == 7 || req == 8 ? "BASILISK16_TEST_SONG_SAVE" : "-")) if (*tf) {
                 uiFileBrowserSelected(tf);   // test: the file the dialog would have given (the host's dialog is not scriptable)
                 return;
             }
@@ -89,7 +90,16 @@ protected:
     void uiFileBrowserSelected(const char *path) override
     {
         if (!path || !sh_) return;
-        if (fileReqNow_ == 3) {   // Export: the exact bytes
+        if (fileReqNow_ == 6) {   // a MIDI file or a song: the bytes and the path to the plugin (a .song's MIDI is beside it)
+            FILE *f = std::fopen(path, "rb"); if (!f) return;
+            std::vector<uint8_t> b; uint8_t buf[65536]; size_t n;
+            while ((n = std::fread(buf, 1, sizeof buf, f)) > 0 && b.size() < (64u << 20)) b.insert(b.end(), buf, buf + n);
+            std::fclose(f);
+            { std::lock_guard<std::mutex> l(sh_->fileMtx); sh_->fileBytes.swap(b); sh_->fileName = path; }
+            sh_->songReady = true;
+            return;
+        }
+        if (fileReqNow_ == 3 || fileReqNow_ == 7 || fileReqNow_ == 8) {   // Export, Save song, Export the song: the exact bytes
             std::vector<uint8_t> b; { std::lock_guard<std::mutex> l(sh_->fileMtx); b = sh_->fileBytes; }
             if (FILE *f = std::fopen(path, "wb")) { std::fwrite(b.data(), 1, b.size(), f); std::fclose(f); }
             return;
