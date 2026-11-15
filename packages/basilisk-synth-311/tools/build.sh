@@ -54,7 +54,7 @@ python3 "$PKG/tools/make_tuning311.py"   # the Song tab's measured tuning (plugi
 M="$W/win/SNDWAVE2000.vst3/Contents/Resources/machine"
 rm -rf "$M"; mkdir -p "$M"
 cp "$W/dbp-win/dosbox_pure_libretro.dll" "$W/machine/w31.conf" "$W/machine/w31.state" "$W/machine/drive.zip" "$M/"
-cp "$W/machine/library.zip" "$W/machine/library.names.txt" "$M/"; cp -r "$W/machine/packs" "$M/"
+cp "$W/machine/library.zip" "$W/machine/library.names.txt" "$M/"; cp -r "$W/machine/packs" "$M/"; cp -r "$W/machine/citypop" "$M/"   # (CITYPOP.EXE's album)
 
 # --- inputs for the Mac build
 rm -rf "$W/macsrc"; mkdir -p "$W/macsrc"
@@ -64,5 +64,5 @@ cp -r "$PKG" "$W/macsrc/pkg"; cp -r "$PKG/../basilisk-synth/core" "$W/macsrc/cor
 cp -r "$W/wfw" "$W/macsrc/wfw"; cp -r "$W/gout" "$W/macsrc/gout"; cp "$W/library.zip" "$W/library.names.txt" "$W/macsrc/"; cp -r "$W/xpsounds" "$W/macsrc/xpsounds"
 cp -r "$W/packs" "$W/macsrc/packs"; cp -r "$W/brand" "$W/macsrc/brand"; cp "$PKG/../basilisk-synth/help/out/SNDWAVE.HLP" "$W/macsrc/"
 cp -r "$PKG/../basilisk-synth/help/install" "$W/macsrc/helpinstall"
-mkdir -p "$W/macsrc/machine"; cp "$W/machine/w31.conf" "$W/machine/w31.state" "$W/machine/drive.zip" "$W/machine/library.zip" "$W/machine/library.names.txt" "$W/macsrc/machine/"; cp -r "$W/machine/packs" "$W/macsrc/machine/"   # the one snapshot
+mkdir -p "$W/macsrc/machine"; cp "$W/machine/w31.conf" "$W/machine/w31.state" "$W/machine/drive.zip" "$W/machine/library.zip" "$W/machine/library.names.txt" "$W/macsrc/machine/"; cp -r "$W/machine/packs" "$W/machine/citypop" "$W/macsrc/machine/"   # the one snapshot
 echo "built: $W/win (Windows), $W/macsrc (copy to a Mac, run pkg/tools/mac_build.sh there)"

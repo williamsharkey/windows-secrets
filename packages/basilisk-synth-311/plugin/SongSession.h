@@ -10,6 +10,7 @@
 
 namespace b16song {
 class Session;
+class CityPop;
 class SongTab {
 public:
     SongTab();
@@ -28,5 +29,6 @@ public:
     void shutdown();
 private:
     Session *s_;
+    CityPop *c_;   // CITYPOP.EXE (CityPop.h)
 };
 }  // namespace b16song

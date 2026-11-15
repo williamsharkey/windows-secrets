@@ -1080,6 +1080,7 @@ private:
                 }
                 packsDirty_ = true;
                 keyVerGuest_ = 0;   // and the key
+                if (const char *x = std::getenv("BASILISK16_TEST_EXEC")) if (*x) sendLine((std::string("exec ") + x).c_str(), 0, 0);   // test: a program, as Program Manager starts it
                 std::lock_guard<std::mutex> l(mtx_);
                 dnaToGuest_ = true;
             }

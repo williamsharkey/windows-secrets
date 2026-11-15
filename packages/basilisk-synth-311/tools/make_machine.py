@@ -9,7 +9,7 @@ bundle must ship this same library.zip (and library.names.txt, the plugin's cata
 
 WFW_DRIVE: an installed WfW 3.11 C: (the one in site/basilisk-31-browser/w31.jsdos, see README).
 The snapshot is made with the Linux build of the engine (tools/engine, built by build.sh); it loads on every OS."""
-import os, shutil, struct, subprocess, sys, time
+import os, re, shutil, struct, subprocess, sys, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from bsdrv import Engine
 
@@ -39,7 +39,7 @@ if os.path.isdir(brand):
         from PIL import Image
         t = Image.open(os.path.join(brand, 'screens', 'title-640.png')).convert('RGB')
         t.quantize(colors=16, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).save(os.path.join(drive, 'BS', 'TITLE.BMP'))   # (4 colours: exact)
-    for src, dst in (('sndwave2000', 'SNDWAVE'), ('16-recorders', 'RECORDRS'), ('voice-mixer', 'MIXER'), ('read-me', 'README'), ('setup', 'SETUP')):
+    for src, dst in (('sndwave2000', 'SNDWAVE'), ('16-recorders', 'RECORDRS'), ('voice-mixer', 'MIXER'), ('read-me', 'README'), ('setup', 'SETUP'), ('citypop', 'CITYPOP')):
         shutil.copy(os.path.join(brand, 'icons', src + '.ico'), os.path.join(drive, 'BS', dst + '.ICO'))
     open(os.path.join(drive, 'BS', 'README.TXT'), 'wb').write((
         'SNDWAVE2000\r\nExecutive Audiophile Edition\r\nVersion 1.00 (Build 0311)\r\n'
@@ -60,6 +60,7 @@ if helpfile:
 for f in ('CHORD.WAV', 'TADA.WAV'):
     shutil.copy(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'machine-extra', f), os.path.join(drive, 'WINDOWS', f))
 for f in ('SYNTH.EXE', 'SYNHOOK.DLL', 'SNDWAVE.EXE'): shutil.copy(os.path.join(gout, f), os.path.join(drive, 'BS', f))
+if os.path.exists(os.path.join(gout, 'CITYPOP.EXE')): shutil.copy(os.path.join(gout, 'CITYPOP.EXE'), os.path.join(drive, 'BS', 'CITYPOP.EXE'))   # (the album's player)
 shutil.copy(os.path.join(gout, 'BSYNTH.DRV'), os.path.join(drive, 'WINDOWS', 'SYSTEM', 'BSYNTH.DRV'))
 
 def edit(path, fn):
@@ -133,6 +134,12 @@ shutil.copy(os.path.join(here, '..', 'engine', conf_name), os.path.join(out, 'w3
 run_conf = os.path.join(out, 'make.conf')
 recdir = os.path.join(out, 'recdir'); os.makedirs(recdir, exist_ok=True)   # R:, My Recordings (RECORDING.md 3.2)
 packdir = os.path.join(out, 'packs')                                       # P:, the pack discs (Library tab)
+# the album CITYPOP DEPROGRAMMED for CITYPOP.EXE (plugin/CityPop.h): its .song and MIDI files, in the machine folder
+album = sys.argv[sys.argv.index('--album') + 1] if '--album' in sys.argv else os.path.join(here, '..', '..', 'basilisk-synth', 'library', 'albums', 'citypop-deprogrammed', 'tracks')
+if os.path.isdir(album):
+    cdir = os.path.join(out, 'citypop'); shutil.rmtree(cdir, ignore_errors=True); os.makedirs(cdir)
+    for f in sorted(os.listdir(album)):
+        if re.match(r'\d\d-.*\.(song|mid)$', f): shutil.copy(os.path.join(album, f), os.path.join(cdir, f))
 shutil.rmtree(packdir, ignore_errors=True)
 if packs: shutil.copytree(packs, packdir)
 else: os.makedirs(packdir)

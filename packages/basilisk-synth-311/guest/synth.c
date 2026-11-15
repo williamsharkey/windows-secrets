@@ -2116,6 +2116,9 @@ static void song_page(int y0);
 static void song_command(int k, int code);
 static BOOL song_scroll(HWND sb, int code, int pos);
 static void song_line(char *rest);
+static void cp_open(void);
+static void cp_line(char *rest);
+static BOOL cpPending;
 static void rec_page(int y0);
 static void about_open(void);
 static void splash_close(void);
@@ -3378,6 +3381,124 @@ static BOOL song_scroll(HWND sb, int code, int pos)
     }
     return TRUE;
 }
+/* ================================================================ CITYPOP.EXE: the album CITYPOP DEPROGRAMMED
+   A Media Player window of ours (SndCityPop) on SNDWAVE2000's Windows: the twelve tracks, Play, Stop, Previous, Next,
+   the playhead and a status line. The host plays the album through this instance: every part on Sound Recorder, a
+   track rendered before it plays, the next one while it plays (plugin/CityPop.h). */
+#define NCP 16
+static char __far cpTitle[NCP][64]; static int __far cpSec[NCP];
+static int cpN, cpCur = -1, cpPlaying; static long cpPos, cpLen;
+static HWND hCity, cpList, cpPosSb, cpTime, cpStat, cpNow, cpParts;
+static HWND cmk(const char *cls, const char *text, DWORD st, int x, int y, int w, int h, int id)
+{
+    HWND c = CreateWindow(cls, text, WS_CHILD | WS_VISIBLE | st, x, y, w, h, hCity, (HMENU)id, hInst, NULL);
+    SendMessage(c, WM_SETFONT, (WPARAM)panelFont, 0L);
+    return c;
+}
+static void cp_fill(void)
+{
+    int i; char t[100];
+    if (!cpList) return;
+    SendMessage(cpList, WM_SETREDRAW, FALSE, 0L);
+    SendMessage(cpList, LB_RESETCONTENT, 0, 0L);
+    for (i = 0; i < cpN; i++) {
+        wsprintf(t, "%s%2d.  %s", (LPSTR)(i == cpCur ? "\x95 " : "   "), i + 1, (LPSTR)cpTitle[i]);
+        SendMessage(cpList, LB_ADDSTRING, 0, (LPARAM)(LPSTR)t);
+    }
+    if (cpCur >= 0) SendMessage(cpList, LB_SETCURSEL, cpCur, 0L);
+    SendMessage(cpList, WM_SETREDRAW, TRUE, 0L); InvalidateRect(cpList, NULL, TRUE);
+}
+static void cp_pos(void)
+{
+    char t[120];
+    if (!hCity) return;
+    SetScrollRange(cpPosSb, SB_CTL, 0, cpLen > 0 ? (int)(cpLen / 1000) : 1, FALSE);
+    SetScrollPos(cpPosSb, SB_CTL, (int)(cpPos / 1000), TRUE);
+    wsprintf(t, "%d:%02d / %d:%02d", (int)(cpPos / 60000), (int)(cpPos / 1000 % 60), (int)(cpLen / 60000), (int)(cpLen / 1000 % 60));
+    SetWindowText(cpTime, t);
+    if (cpCur >= 0 && cpCur < cpN) wsprintf(t, "%s  %d. %s", (LPSTR)(cpPlaying ? "Playing:" : "Stopped:"), cpCur + 1, (LPSTR)cpTitle[cpCur]);
+    else lstrcpy(t, "Stopped");
+    SetWindowText(cpNow, t);
+}
+static void cp_line(char *rest)
+{
+    if (!strncmp(rest, "trk ", 4)) {   /* trk <i> <title>|<seconds> */
+        int i = atoi(rest + 4); char *p = strchr(rest + 4, ' '), *b;
+        if (p && i >= 0 && i < NCP) { p++; b = strchr(p, '|'); if (b) { *b = 0; cpSec[i] = atoi(b + 1); } lstrcpyn(cpTitle[i], p, sizeof cpTitle[0]); if (i >= cpN) cpN = i + 1; }
+        return;
+    }
+    if (!strncmp(rest, "end", 3)) { cp_fill(); return; }
+    if (!strncmp(rest, "now ", 4)) {   /* now <i> <playing> <ms> <length ms> */
+        int i = -1, pl = 0; long a = 0, b = 0;
+        sscanf(rest + 4, "%d %d %ld %ld", &i, &pl, &a, &b);
+        if (i != cpCur) { cpCur = i; cp_fill(); }
+        cpPlaying = pl; cpPos = a; cpLen = b; cp_pos();
+        return;
+    }
+    if (!strncmp(rest, "status ", 7) && cpStat) SetWindowText(cpStat, rest + 7);
+    if (!strncmp(rest, "parts ", 6) && cpParts) {   /* parts <name> <pct>|...: each part on its own Sound Recorders */
+        static char t[400]; char *p = rest + 6, *o = t;
+        if (*p == '-') { SetWindowText(cpParts, ""); return; }
+        lstrcpy(t, "Parts:  ");
+        o = t + lstrlen(t);
+        for (; *p && o < t + sizeof t - 16; p++) {
+            if (*p == '|') { lstrcpy(o, "%    "); o += 5; }
+            else *o++ = *p;
+        }
+        lstrcpy(o, "%");
+        SetWindowText(cpParts, t);
+    }
+}
+long FAR PASCAL __export CityProc(HWND h, UINT m, WPARAM w, LPARAM l)
+{
+    switch (m) {
+    case WM_COMMAND:
+        if (w == 1 && HIWORD(l) == LBN_DBLCLK) { int i = (int)SendMessage(cpList, LB_GETCURSEL, 0, 0L); if (i >= 0) say("citypop play %d", i); }
+        else if (w == 2 && HIWORD(l) == BN_CLICKED) { int i = (int)SendMessage(cpList, LB_GETCURSEL, 0, 0L); say("citypop play %d", i >= 0 ? i : 0); }
+        else if (w == 3 && HIWORD(l) == BN_CLICKED) say("citypop stop");
+        else if (w == 4 && HIWORD(l) == BN_CLICKED) say("citypop prev");
+        else if (w == 5 && HIWORD(l) == BN_CLICKED) say("citypop next");
+        return 0;
+    case WM_CTLCOLOR:
+        if (HIWORD(l) == CTLCOLOR_STATIC) {
+            static HBRUSH face;
+            if (!face) face = CreateSolidBrush(GetSysColor(COLOR_BTNFACE));
+            SetBkColor((HDC)w, GetSysColor(COLOR_BTNFACE));
+            return (LRESULT)(WORD)face;
+        }
+        break;
+    case WM_CLOSE: DestroyWindow(h); return 0;   /* (the album goes on playing; CITYPOP.EXE opens it again) */
+    case WM_DESTROY: hCity = cpList = cpPosSb = cpTime = cpStat = cpNow = cpParts = NULL; return 0;
+    }
+    return DefWindowProc(h, m, w, l);
+}
+static void cp_open(void)
+{
+    static BOOL reg; RECT r; int x = 10, w;
+    char p[16];
+    if (hCity) { SetWindowPos(hCity, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE); say("citypop list"); return; }
+    if (!reg) {
+        WNDCLASS wc; memset(&wc, 0, sizeof wc); wc.lpfnWndProc = CityProc; wc.hInstance = hInst; wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+        wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1); wc.lpszClassName = "SndCityPop"; RegisterClass(&wc); reg = TRUE;
+    }
+    GetWindowRect(hMain, &r);
+    hCity = CreateWindow("SndCityPop", "CITYPOP DEPROGRAMMED - Media Player", WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
+                         (r.left + r.right) / 2 - 230, (r.top + r.bottom) / 2 - 205, 460, 410, hMain, NULL, hInst, NULL);
+    cmk("STATIC", "CITYPOP DEPROGRAMMED. A theme and eleven variations, played on Sound Recorder.", 0, 10, 8, 430, 16, -1);
+    cpList = cmk("LISTBOX", "", WS_BORDER | WS_VSCROLL | LBS_NOTIFY | LBS_NOINTEGRALHEIGHT, 10, 28, 430, 210, 1);
+    padded("Play", p); w = btn_w("Play"); cmk("BUTTON", p, BS_PUSHBUTTON, x, 246, w, 24, 2); x += w + 3;
+    padded("Stop", p); w = btn_w("Stop"); cmk("BUTTON", p, BS_PUSHBUTTON, x, 246, w, 24, 3); x += w + 10;
+    padded("|<<", p); w = btn_w("|<<"); cmk("BUTTON", p, BS_PUSHBUTTON, x, 246, w, 24, 4); x += w + 3;
+    padded(">>|", p); w = btn_w(">>|"); cmk("BUTTON", p, BS_PUSHBUTTON, x, 246, w, 24, 5); x += w + 10;
+    cpTime = cmk("STATIC", "0:00 / 0:00", 0, x, 250, 440 - x, 16, -1);
+    cpPosSb = cmk("SCROLLBAR", "", SBS_HORZ, 10, 278, 430, 14, -1); EnableWindow(cpPosSb, FALSE);
+    cpNow = cmk("STATIC", "Stopped", 0, 10, 298, 430, 16, -1);
+    cpStat = cmk("STATIC", "", 0, 10, 318, 430, 16, -1);
+    cpParts = cmk("STATIC", "", 0, 10, 338, 430, 34, -1);
+    cp_fill(); cp_pos();
+    ShowWindow(hCity, SW_SHOW); UpdateWindow(hCity);
+    say("citypop list");
+}
 /* ================================================================ the mine-grid sequencer (PRESET-ENGINE-2 9)
    The real Minesweeper (WINMINE.EXE) holds the pattern. It runs as itself, an owned window over the strips while
    the Mines tab is open; its board is read from its own data segment (Win16: the instance handle is the selector;
@@ -3942,6 +4063,7 @@ static void assemble(void)
         WORD z = 0; bs_report(1, &z, 0);
     }
     say("ready");
+    if (cpPending) { cpPending = FALSE; cp_open(); }
     show_envelope();
     logf_("stages: grow %ld clock %ld recorders %ld envelope %ld panel %ld keys made %ld", stage[0], stage[1], stage[2], stage[3], stage[4], stage[5]);
     logf_("ready: assembled in %ld ms (Windows' clock); free resources user %d%% gdi %d%%", (long)(timeGetTime() - tStart), GetFreeSystemResources(GFSR_USERRESOURCES), GetFreeSystemResources(GFSR_GDIRESOURCES));
@@ -4090,6 +4212,7 @@ static void host_line(char *s)
     else if (!strcmp(s, "exec")) say("exec %d", WinExec(rest, SW_SHOWNORMAL));   /* test aid: a program, as Program Manager starts it */
     else if (!strcmp(s, "packs")) lib_packs(rest);   /* the inserted discs */
     else if (!strcmp(s, "song")) song_line(rest);   /* the Song page (plugin/SongTab.h) */
+    else if (!strcmp(s, "citypop")) cp_line(rest);   /* CITYPOP.EXE's player (plugin/CityPop.h) */
     else if (!strcmp(s, "step")) mine_step(atoi(rest));   /* the sequencer's playhead */
     else if (!strcmp(s, "newgame") && hMine) PostMessage(hMine, WM_KEYDOWN, VK_F2, 0L);   /* the host's Randomize */
     else if (!strcmp(s, "scala")) {   /* scala ok <steps> <name> | scala error <message> */
@@ -4371,10 +4494,11 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
         static char a[160]; ATOM at = (ATOM)w;
         a[0] = 0; GlobalGetAtomName(at, a, sizeof a); GlobalDeleteAtom(at);
         if (IsIconic(hMain)) ShowWindow(hMain, SW_RESTORE);
-        if (!assembled) return 0;
+        if (!assembled) { if (!lstrcmpi(a, "/citypop")) cpPending = TRUE; return 0; }   /* (the player opens once the synth is up) */
         if (!lstrcmpi(a, "/voices")) page_open(1);
         else if (!lstrcmpi(a, "/recorders")) page_open(0);
         else if (!lstrcmpi(a, "/setup")) about_open();
+        else if (!lstrcmpi(a, "/citypop")) cp_open();   /* CITYPOP.EXE: the album's player */
         else if (a[0] && a[0] != '/') {
             OFSTRUCT of; HFILE f = OpenFile(a, &of, OF_READ); static char d[1100]; int n;
             if (f != HFILE_ERROR) {

@@ -36,7 +36,7 @@ for b in SNDWAVE2000.vst3 SNDWAVE2000.component; do
   cp "$W/dosbox_pure_libretro.dylib" "$M/"
   cp "$W/machine/w31.conf" "$W/machine/w31.state" "$M/"
   cp "$W/machine/drive.zip" "$W/machine/library.zip" "$W/machine/library.names.txt" "$M/"
-  cp -R "$W/machine/packs" "$M/"
+  cp -R "$W/machine/packs" "$W/machine/citypop" "$M/"
   codesign --force --deep -s - "$b"
 done
 codesign --force --deep -s - SNDWAVE2000.clap   # (the CLAP uses the machine of the SNDWAVE2000.vst3 installed beside it)
