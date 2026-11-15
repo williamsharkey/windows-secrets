@@ -115,6 +115,12 @@ def scenes():
                         *go(*cell(3, 6)), 'glide %d %d 0.4' % cell(5, 5), 'rclick %d %d' % cell(5, 5), 'wait 1', 'shot m2',
                         'at 34', *go(547, 386), 'wait 1', *go(*cell(2, 3)), *go(*cell(7, 7)), 'at 44', 'shot m3', 'rec off'],
                        [(25 - WARMUP, 48, 100, 19.0)], program=0, end=44)
+    # 7b. the Steps tab (1.5: a step sequencer drawn like Minesweeper): Lucid Strum, Random Fill, a few cells changed
+    stc = lambda c, r: (450 + 16 * c, 157 + 16 * r)    # rows: 0 note, 1 accent, 2 octave
+    S['steps'] = Scene('steps', ['rec cap.bhrc 30', 'at 14.5', *go(*TAB['library']), 'at 16'] + pick_preset(0, 'Lucid Strum') +
+                       ['at 23', *go(*TAB['mines']), 'wait 1', *go(465, 250), 'wait 0.8', *go(*stc(2, 0)), 'click %d %d' % stc(2, 0),
+                        *go(*stc(5, 1)), *go(*stc(9, 1)), *go(*stc(12, 2)), 'wait 1', 'shot t1', 'at 46', 'shot t2', 'rec off'],
+                       [(25 - WARMUP, n, 96, 20.0) for n in (48, 55, 64)], program=0, end=46)
     # 8. recording: the synth's own output into the Recorder, then To all 16
     S['rec'] = Scene('rec', ['rec cap.bhrc 30', 'at 14.5', *go(*TAB['library']), 'at 16'] + pick_preset(0, 'Afterhours Tine') +
                      ['at 22', *go(*TAB['rec']), 'wait 0.5', *go(125, 663), 'wait 0.8', *go(*TAB['main']), 'at 25.3', *go(311, 57),

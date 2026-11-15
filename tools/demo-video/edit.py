@@ -14,7 +14,7 @@ SRC = {
     'minimise': 12.6, 'sr_menu': 25.0, 'about': 28.6,
     'lib': 14.6, 'granite': 22.6, 'tremolo': 38.4, 'shaded': 54.0, 'afterhours': 69.8, 'misty': 86.0,
     'rounded': 22.0, 'opal': 38.0, 'neon': 54.0, 'crystal': 70.0, 'loft': 86.0,
-    'vibe': float(os.environ.get('VIBE', 25.8)), 'kit': 25.0, 'mines': 23.3, 'rec': 25.0, 'rec_play': 36.0,
+    'vibe': float(os.environ.get('VIBE', 25.8)), 'kit': 25.0, 'mines': 23.3, 'steps': 25.8, 'rec': 25.0, 'rec_play': 36.0,
     'song_open': 15.0, 'song_render': 26.0, 'song_done': 118.0, 'song_play': float(os.environ.get('SONG_PLAY', 130.0)), 'song_start': 130.549,   # where the song's first sample lands in the capture
     'citypop': 20.0, 'citypop_track': 25.867,   # (the live capture; track 1 starts here)
 }
@@ -161,7 +161,7 @@ def build(cut):
         k1 = ln[0][1] + 2.9
         shot(k1, cap('kits', SRC['kit'], Z(700, 420, 3)), ln, host='corner', tr=('wipe', 0.5),
              over=[{'k': 'chapter', 'text': 'LESSON 5 \u00b7 MORE FEATURES', 't': (0.2, 3.0)}])
-        shot(4.0, cap('mines', SRC['mines'], Z(548, 450, 3)), host='corner', gest=[(0.3, 'point', 2.5)])
+        shot(4.0, cap('steps', SRC['steps'], Z(670, 250, 2)), host='corner', gest=[(0.3, 'point', 2.5)])
         shot(max(2.6, d - k1 - 4.8 + 0.4), cap('rec', SRC['rec'], Z(340, 200, 3)), host='corner')
     else:
         ln, d = said('h_kits', lead=0.2)
@@ -169,8 +169,8 @@ def build(cut):
              over=[{'k': 'chapter', 'text': 'LESSON 5 \u00b7 MORE FEATURES', 't': (0.2, 3.0)},
                    {'k': 'super', 'text': 'Echo Chamber Kit', 'sub': 'Kit Manager 98', 'x': 60, 'y': 120, 't': (0.5, 99)}])
         ln, d = said('h_mines', lead=0.2)
-        shot(d + 1.0, cap('mines', SRC['mines'], Z(548, 450, 3)), ln, host='corner', gest=[(0.3, 'point', 2.5)],
-             over=[{'k': 'super', 'text': 'Bedroom Tape Kit', 'sub': 'Kit Manager 98 \u00b7 played by the board', 'x': 60, 'y': 120}])
+        shot(d + 1.0, cap('steps', SRC['steps'], Z(670, 250, 2)), ln, host='corner', gest=[(0.3, 'point', 2.5)],
+             over=[{'k': 'super', 'text': 'The Steps tab', 'sub': 'Lucid Strum \u00b7 Workgroup House Edition', 'x': 60, 'y': 760}])
         ln, d = said('h_rec', lead=0.2)
         shot(max(d, 3.5), cap('rec', SRC['rec'], Z(340, 200, 3)), ln, host='corner')
         shot(4.0, cap('rec', SRC['rec_play'], Z(340, 200, 3)), host='corner',
