@@ -1,11 +1,11 @@
 Office Machinery
 ================
 
-A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+A sound pack for SNDWAVE1993 by Algorithmic Industries (Windows 3.11).
 
 Id: office-machinery
 Title: Office Machinery
-Product: SNDWAVE2000 by Algorithmic Industries
+Product: SNDWAVE1993 by Algorithmic Industries
 Version: 1.0
 Author: Surplus City Computer Liquidators
 Date: 1998-06-19

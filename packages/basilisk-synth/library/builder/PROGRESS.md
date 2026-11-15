@@ -112,7 +112,7 @@ Nothing audio goes in git.
   27 for 3.11 and XP and 12 electromech kits XP-only. `DISCS.TSV` indexes them and `XP-ONLY.TSV` lists the 12 kits.
   152 favourites, from the owner's 152 keeps.
 
-## 2026-11-14: packs from the owner's gardens and the research sources (3.11, now SNDWAVE2000)
+## 2026-11-14: packs from the owner's gardens and the research sources (3.11, now SNDWAVE1993)
 
 - **Sources.** `garden_sources.py` writes catalog/garden.json, with 335 sounds converted by build_library.py:
   - Bele Dance EP (tine, bell, reed) and bass DSP, rendered offline by a private harness.
@@ -151,7 +151,7 @@ Nothing audio goes in git.
   1318 presets in 24 packs. octave_fix.py (the owner's decision): 120 presets whose first sound is named in the
   C3 = middle C convention now play at the written pitch (K + 12, T + 12 on correctly named layers); 13 the
   owner rated stay as heard (data/octave-fix.json).
-- **Re-check on SNDWAVE2000 1.3.0 RC (main 37543bc).** recheck.py --check-only: 1306/1318 pass, nothing silent or
+- **Re-check on SNDWAVE1993 1.3.0 RC (main 37543bc).** recheck.py --check-only: 1306/1318 pass, nothing silent or
   crashed. 10 stay flagged (check311.ok false): 3 flute or lead probes with a long attack (the 3.11 lane hears all
   notes; the probe window is early), 4 with W/Y random draws seeded per key, 2 two-layer glock + print, 1 too
   short. The two tape zone failures were the Y random pitch draw, not the roots: Ballroom Chant and Noble Stops
@@ -170,3 +170,6 @@ Nothing audio goes in git.
   (~/libbuild/r140: render311 and the 26-disc machine, copied from the 3.11 lane's Linux 1.4 setup). The 1318
   library clips stay on 1.3.0 RC (same presets; coordinator's call); each manifest entry records its build.
   Renderers kept: r140 (default now) and rc130 (the full render library, 1288 sounds, for library-only work).
+- **Renamed (owner, 2026-11-15):** SNDWAVE2000 is now SNDWAVE1993 (the album CITYPOP DEPROGRAMMED is CITYPOP1993).
+  make_discs PRODUCT, library.json build strings and the disc folders say SNDWAVE1993; the git tags keep their
+  names (sndwave2000-v1.3.1, -v1.4.0). Disc content re-emitted for the 1.5 set.

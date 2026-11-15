@@ -1,11 +1,11 @@
 Listening Post
 ==============
 
-A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+A sound pack for SNDWAVE1993 by Algorithmic Industries (Windows 3.11).
 
 Id: listening-post
 Title: Listening Post
-Product: SNDWAVE2000 by Algorithmic Industries
+Product: SNDWAVE1993 by Algorithmic Industries
 Version: 7.0
 Author: Fathom Line Scientific Media
 Date: 1997-09-08

@@ -1,11 +1,11 @@
 Lifestyle Aesthetics Pack
 =========================
 
-A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+A sound pack for SNDWAVE1993 by Algorithmic Industries (Windows 3.11).
 
 Id: lifestyle-aesthetics
 Title: Lifestyle Aesthetics Pack
-Product: SNDWAVE2000 by Algorithmic Industries
+Product: SNDWAVE1993 by Algorithmic Industries
 Version: 2.0
 Author: Meridian Interactive K.K.
 Date: 2002-04-26

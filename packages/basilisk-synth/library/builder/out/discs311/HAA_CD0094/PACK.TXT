@@ -1,11 +1,11 @@
 ROM Reference Library
 =====================
 
-A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+A sound pack for SNDWAVE1993 by Algorithmic Industries (Windows 3.11).
 
 Id: rom-reference
 Title: ROM Reference Library
-Product: SNDWAVE2000 by Algorithmic Industries
+Product: SNDWAVE1993 by Algorithmic Industries
 Version: 1.0
 Author: Halvorsen Audio Archives
 Date: 1994-02-14

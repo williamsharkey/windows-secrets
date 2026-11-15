@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The packs as disc images for SNDWAVE2000's Library tab (the 3.11 synth, formerly BASILISK 16) (PRESET-ENGINE-2.md section 16.3: packs as real discs
+"""The packs as disc images for SNDWAVE1993's Library tab (the 3.11 synth, formerly BASILISK 16) (PRESET-ENGINE-2.md section 16.3: packs as real discs
 in File Manager), with the owner's ratings attached.
 
     PYTHONPATH=<pycdlib> make_discs.py [--edition 311|xp]     out/library.json + ratings/*.json -> out/discs<ed>/
@@ -34,7 +34,7 @@ FOLDER = {'workgroup-house': 'workgrp', 'techno-server': 'techsrv', 'trance-conn
           'electromech-heritage': 'emheritg', 'kit-manager': 'kitmgr', 'paulywaulophone': 'paulyw', 'garden-rhythm': 'gardenrw', 'tape-parlour': 'tapeparl', 'courtyard-chapel': 'courtyd', 'listening-post': 'listenpt', 'office-machinery': 'officemc', 'polysynth-showroom': 'polyshow'}
 FAV_RATING = 6.5
 # the product strings (design/brand/sndwave2000/COPY.md when the names lane commits it)
-PRODUCT = os.environ.get('SNDWAVE_PRODUCT', 'SNDWAVE2000')
+PRODUCT = os.environ.get('SNDWAVE_PRODUCT', 'SNDWAVE1993')
 MAKER = os.environ.get('SNDWAVE_MAKER', 'Algorithmic Industries')
 
 

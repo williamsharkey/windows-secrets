@@ -1,11 +1,11 @@
 Heritage Edition 3.x
 ====================
 
-A sound pack for SNDWAVE2000 by Algorithmic Industries (Windows 3.11).
+A sound pack for SNDWAVE1993 by Algorithmic Industries (Windows 3.11).
 
 Id: w3x-heritage
 Title: Heritage Edition 3.x
-Product: SNDWAVE2000 by Algorithmic Industries
+Product: SNDWAVE1993 by Algorithmic Industries
 Version: 2.1
 Author: Pemberton Software
 Date: 1993-11-02
