@@ -1,6 +1,6 @@
-"""songrender --engine host: each track rendered through the real SNDWAVE2000 VST3 in BasiliskHost (Windows), offline.
+"""songrender --engine host: each track rendered through the real SNDWAVE1993 VST3 in BasiliskHost (Windows), offline.
 
-    songrender.py SONG.song --engine host --host C:/.../BasiliskHost.exe --plugin C:/.../SNDWAVE2000.vst3
+    songrender.py SONG.song --engine host --host C:/.../BasiliskHost.exe --plugin C:/.../SNDWAVE1993.vst3
 
 Per track: a raw VST3 component state (DPF's "__dpf_state_begin__" block) holding the plugin's own state text, the
 track's DNA and every pack disc inserted (the Library tab's discs, as render311 inserts them all), then
@@ -22,7 +22,7 @@ def winpath(p):
 class HostArgs:
     def __init__(self, host, plugin):
         if not host or not plugin:
-            raise SystemExit('--engine host needs --host BasiliskHost.exe and --plugin SNDWAVE2000.vst3')
+            raise SystemExit('--engine host needs --host BasiliskHost.exe and --plugin SNDWAVE1993.vst3')
         self.host, self.plugin = host, plugin
         self.packs = ''
         m = os.path.join(plugin, 'Contents', 'Resources', 'machine', 'packs', 'PACKS.TSV')
@@ -37,7 +37,9 @@ class HostArgs:
 
     def ident(self):
         h = hashlib.sha256()
-        dll = os.path.join(self.plugin, 'Contents', 'x86_64-win', 'SNDWAVE2000.vst3')
+        win = os.path.join(self.plugin, 'Contents', 'x86_64-win')
+        dll = next((os.path.join(win, n) for n in ('SNDWAVE1993.vst3', 'SNDWAVE2000.vst3')
+                    if os.path.exists(os.path.join(win, n))), os.path.join(win, 'SNDWAVE1993.vst3'))   # 1.5 renamed it
         for p in (dll, os.path.join(self.plugin, 'Contents', 'Resources', 'machine', 'w31.state')):
             if os.path.exists(p):
                 with open(p, 'rb') as f:

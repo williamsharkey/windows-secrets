@@ -1,6 +1,6 @@
-# SNDWAVE2000: the Song tab (a proposal for 1.4)
+# SNDWAVE1993: the Song tab (a proposal for 1.4)
 
-The Song tab composes, voices, mixes and renders multi-instrument songs inside SNDWAVE2000. It is the plugin
+The Song tab composes, voices, mixes and renders multi-instrument songs inside SNDWAVE1993. It is the plugin
 version of `tools/songrender`, the headless renderer that made the pack demo songs (one per pack so far, 25 songs,
 about 300 stems). Everything below comes from building and running that renderer. The measured numbers are from it.
 
@@ -15,7 +15,7 @@ about 300 stems). Everything below comes from building and running that renderer
   mixed. The result is a WAV in My Recordings. It plays back through a recorder like any other recording, or
   exports through the host's file dialog.
 
-What sounds is the same rule as the rest of SNDWAVE2000: every note is played by Sound Recorder. The mixer only
+What sounds is the same rule as the rest of SNDWAVE1993: every note is played by Sound Recorder. The mixer only
 scales, delays and sums the recorders' output.
 
 ## 2. The page (Windows 3.11, no new widget kinds)

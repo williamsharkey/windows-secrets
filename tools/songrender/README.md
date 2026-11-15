@@ -2,7 +2,7 @@
 
 `songrender.py` renders a song (a Standard MIDI File plus a track table) headlessly. Each track is its own engine,
 one `render311` run, that is one emulated Windows for Workgroups 3.11 with its 16 Sound Recorders, playing only that
-track's notes. This is the same as a DAW with one SNDWAVE2000 instance per track. The stems are then mixed to stereo:
+track's notes. This is the same as a DAW with one SNDWAVE1993 instance per track. The stems are then mixed to stereo:
 
 - volume and pan;
 - a send to a shared echo and to a shared reverb;
@@ -15,7 +15,7 @@ and the reverb are convolutions of the rendered stems.
 ```
 songrender.py SONG.song [SONG.song ...] [--out-dir DIR] [--jobs 6] [--stems] [--no-wav] [--dry]
               [--render311 EXE] [--machine DIR] [--cache DIR] [--lookahead 150] [--drop-stems] [--cache-gb 1.5]
-songrender.py SONG.song --engine host --host BasiliskHost.exe --plugin SNDWAVE2000.vst3   (through the real plugin)
+songrender.py SONG.song --engine host --host BasiliskHost.exe --plugin SNDWAVE1993.vst3   (through the real plugin)
 ```
 
 The command writes these files to `DIR`:
@@ -132,7 +132,7 @@ give bit-identical stems, WAV, Opus and MP3 (ffmpeg runs with `-bitexact`, and t
 
 ## Through the real plugin (`--engine host`)
 
-`--engine host` renders each track through the SNDWAVE2000 VST3 in BasiliskHost (`tools/basilisk-host`), offline,
+`--engine host` renders each track through the SNDWAVE1993 VST3 in BasiliskHost (`tools/basilisk-host`), offline,
 one track at a time. For each track it:
 
 1. writes a raw VST3 component state holding the plugin's state text, with the track's DNA and every pack disc
@@ -143,7 +143,7 @@ one track at a time. For each track it:
 The mix is the same. `host_song.py` has the details.
 
 The comparison (`compare_engines.py`, Registration Rag, 2026-11-14) put the plugin build in `~/bs311/pbuild/win`
-(SNDWAVE2000.vst3 from 16:00) in BasiliskHost against render311 from main with the same machine:
+(SNDWAVE2000.vst3 from 16:00, the name before 1.5) in BasiliskHost against render311 from main with the same machine:
 
 | Track | Lag | Residual after gain | Correlation |
 |---|---|---|---|

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """compare_engines: a song's stems from render311 against the same stems through the real plugin in BasiliskHost.
 
-    compare_engines.py SONG.song --host BasiliskHost.exe --plugin SNDWAVE2000.vst3 [--machine DIR] [--tracks a,b]
+    compare_engines.py SONG.song --host BasiliskHost.exe --plugin SNDWAVE1993.vst3 [--machine DIR] [--tracks a,b]
 
 Each track is rendered both ways (songrender's stem cache keeps them apart: the engine id is part of the key), then
 compared: the best alignment within +-50 ms, the largest sample difference, the RMS of the difference against the
