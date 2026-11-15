@@ -10,6 +10,7 @@
 #include "V3Host.h"
 #include "UserRec.h"
 #include "V3Seq.h"
+#include "CoreChoice.h"
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -286,6 +287,7 @@ inline bool renderTrack(const TrackJob &J, TrackOut &R)
         while ((p = s.find("@DRIVE@")) != std::string::npos) s.replace(p, 7, "\"" + machine + "/drive\"");
         while ((p = s.find("@RECDIR@")) != std::string::npos) s.replace(p, 8, "\"" + recDir + "\"");
         while ((p = s.find("@PACKS@")) != std::string::npos) s.replace(p, 7, "\"" + machine + "/packs\"");
+        chooseCore(s);   // dynamic where it works (CoreChoice.h)
         std::ofstream o(conf); o << s;
     }
 #if defined(__APPLE__) && defined(__aarch64__)

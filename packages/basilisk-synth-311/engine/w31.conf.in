@@ -3,7 +3,7 @@ machine=svga_s3
 memsize=64
 [cpu]
 cputype=pentium
-core=dynamic
+core=normal
 cycles=fixed 60000
 [render]
 scaler=none

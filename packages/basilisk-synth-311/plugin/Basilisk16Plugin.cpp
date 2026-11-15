@@ -22,6 +22,7 @@
 #include "UserRec.h"
 #include "V3Seq.h"
 #include "SongSession.h"
+#include "CoreChoice.h"
 
 #include <atomic>
 #include <chrono>
@@ -881,6 +882,7 @@ private:
                 out += s;
             }
             std::fclose(f);
+            chooseCore(out);   // dynamic where it works (CoreChoice.h)
             if (!writeText(conf_, out)) { status("SNDWAVE2000: cannot write the machine settings."); sh_.S->state = BS_FAILED; return; }
         }
         const char *logEnv = std::getenv("BASILISK16_LOG");
