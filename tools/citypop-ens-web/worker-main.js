@@ -110,7 +110,21 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
     const album = new TextDecoder().decode(by['album.ens']);
     const pa = M.stringToNewUTF8(album); M._ens_album(pa); M._free(pa);
     schedule = m.schedule || null;
-    if (schedule) discWant(schedule.ranges[m.from || 0] || [], true);
+    if (schedule) {   // the first track's sounds before the first note (Windows reads them while it plays: a piece it waits
+                      // for stops the emulator), the next track's behind them
+      const c = disc.chunk, want = new Set();
+      // (from the first track, whose sounds the snapshot holds built: the second track's, which build while it plays;
+      // from any other: that track's own, which build before its first note - the next one's follow at once)
+      for (const t of [(m.from || 0) === 0 ? 1 : m.from])
+        for (const [a, e] of schedule.ranges[t] || []) for (let i = Math.floor(a / c); i <= Math.floor((e - 1) / c); i++) want.add(i);
+      let got = 0; const all = [...want], total2 = all.length;
+      await Promise.all([0, 1, 2, 3].map(async w => { for (let k = w; k < all.length; k += 4) {
+        const i = all[k], a = i * c, e = Math.min(disc.size, a + c) - 1;
+        const r = await fetch(disc.url, { headers: { Range: 'bytes=' + a + '-' + e } });
+        if (r.status === 206) M.b16LazyCache.set(a, new Uint8Array(await r.arrayBuffer()));
+        post({ t: 'progress', loaded: total + (++got) * c, total: total + total2 * c }); } }));
+      prefetched = (m.from || 0);
+    }
     if (m.colors) M._ens_colors(1);
     const ok = M.ccall('ens_start', 'number', ['string', 'string', 'string', 'string', 'number', 'string'],
                        ['/machine/w31.conf', '/machine/w31web.state', '', '', m.lead || 96000, m.libraryNames || '']);
@@ -121,6 +135,7 @@ if (typeof WorkerGlobalScope !== 'undefined' && self.name !== 'em-pthread') (fun
                'grant_until', 'sched_late', 'error', 'gain', 'size', 'w', 'h', 'lead'].forEach((k, i) => lay[k] = h32[o + i]);
     S = M._ens_shm();
     running = true;
+    if (schedule) { prefetched = (m.from || 0) + 1; if (m.from) discWant(schedule.ranges[prefetched] || [], false); }
     setInterval(tick, 5);
     post({ t: 'mem', buffer: M.wasmMemory.buffer, base: S, lay });
     let resumed = false;
