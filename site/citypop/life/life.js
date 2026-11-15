@@ -1249,8 +1249,10 @@ function create(opts) {
     if (l < 0.004) bass *= 0.5;
   }
   let lastListen = 0, lastBeatT = -1e9;
+  // driven: the UI calls frame() from its own requestAnimationFrame while music plays, so the page shares one beat
+  let driven = false;
   function tick() {
-    raf = 0; if (paused || dead) return;
+    raf = 0; if (paused || dead || !A) return;
     const T = now(); let next = Infinity, nextFast = Infinity;
     if (analyser && T - lastListen > 0.1) { lastListen = T; listen(T); }
     for (const a of actors) {
@@ -1276,14 +1278,14 @@ function create(opts) {
     // frames fall on a shared grid: ambient things on a 3 fps beat (6 while music plays), fast movers (a train, a satellite) on 8 fps,
     // so the two never interleave into more frames than the faster beat
     // while music plays the page is repainting anyway, so life can afford a quicker beat
-    const music = (analyser && level > 0.01) || now() - lastBeatT < 2.5, BEAT = music ? BEAT_MUSIC : BEAT_IDLE;
-    for (const s of allSurfs()) s.rate = BEAT;
+    const music = driven || (analyser && level > 0.01) || now() - lastBeatT < 2.5, BEAT = music ? BEAT_MUSIC : BEAT_IDLE;
+    for (const s of allSurfs()) s.rate = driven ? 20 : BEAT;
     next = Math.ceil(Math.max(next, T + 0.001) * BEAT) / BEAT;
     if (nextFast < Infinity) next = Math.min(next, Math.ceil(Math.max(nextFast, T + 0.001) * BEAT_FAST) / BEAT_FAST);
     schedule((next - now()) / timeScale);
   }
   function schedule(dt) {
-    if (paused || dead) return;
+    if (paused || dead || driven) return;
     clearTimeout(timer);
     const ms = Math.max(1000 / 30, Math.min(60000, dt * 1000 - 4));
     timer = setTimeout(() => { timer = 0; if (!raf) raf = requestAnimationFrame(tick); }, ms);
@@ -1294,6 +1296,13 @@ function create(opts) {
   let userPaused = false;
   const ctl = {
     setAnalyser(n) { analyser = n || null; bins = null; schedule(0); },
+    // drive(true): no timers of our own; draw only inside frame(). drive(false): back to our own idle schedule.
+    drive(on) {
+      on = !!on; if (on === driven) return; driven = on;
+      if (on) { clearTimeout(timer); timer = 0; if (raf) cancelAnimationFrame(raf); raf = 0; }
+      else { wakeAll(); schedule(0); }
+    },
+    frame(/* nowMs: life keeps its own clock from performance.now() */) { if (driven && !dead && !paused) tick(); },
     pause(auto) { if (!auto) userPaused = true; paused = true; clearTimeout(timer); timer = 0; if (raf) cancelAnimationFrame(raf); raf = 0; },
     resume(auto) { if (!auto) userPaused = false; if (dead || (auto && userPaused) || document.hidden) return; paused = false; wakeAll(); schedule(0); },
     resize() { if (dead) return; computeView(); build(); schedule(0); },

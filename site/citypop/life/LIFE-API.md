@@ -34,6 +34,7 @@ const ctl = CityLife.mount(canvas, scene, { analyser, dpr, reduced, seed });
 | `setOccluders([{x,y,w,h}])` | Rects in CSS px, such as your windows. Things wholly under them are not drawn or redrawn. Pass `[]` when the windows are hidden. |
 | `pause()` / `resume()` | Life also pauses itself while the tab is hidden. After a `pause()` from you, it waits for your `resume()`. |
 | `resize()` | Re-lays-out everything. Life listens to `resize` itself, debounced, and to `scene.onChange`. |
+| `drive(on)` / `frame(nowMs)` | Shares the page's frames. With `drive(true)`, life stops its own timers and draws only when you call `frame()` from your requestAnimationFrame, for example at ~6 fps while music plays. It updates what is due and skips the paint when nothing changed. `drive(false)` returns to life's own idle schedule (3 fps, or 8 while a train passes). Life keeps its own clock from `performance.now()`. |
 | `stats()` | `{fps, actors, kinds, kindList, drawnPxPerSec, U, hours}` |
 | `destroy()` | |
 
