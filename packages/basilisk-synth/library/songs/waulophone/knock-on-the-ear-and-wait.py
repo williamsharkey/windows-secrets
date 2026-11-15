@@ -1,6 +1,6 @@
-"""Friday at Four: an original office singalong, 120 bpm, G major, with a light shuffle. The office piano, the
-bass from Accounts, the hum from the back row, a doo-doo choir, the bee-buzzing organ, a sax and a glockenspiel.
-Sounds by Paul Chauncy (the WAULOPHONE pack)."""
+"""Knock on the Ear and Wait: an original singalong, 120 bpm, G major, with a light shuffle, for the fairy door in the
+old oak. The front-room piano, Barry on the bass, the big-ears hum, a doo-doo choir, the bee organ, a sax and a
+glockenspiel. Sounds by Paul Chauncy (the WAULOPHONE pack)."""
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from _lib import *
@@ -57,7 +57,7 @@ t = 0.0
 fork.note(0, 67, 3, 80)
 piano_oompah(4, 'G D G')
 t = 16
-# verse 1 (8): piano, bass, the hum from the back row
+# verse 1 (8): piano, bass, the big-ears hum
 piano_oompah(t, V); bassline(t, V)
 hum.mel(VERSE, at=t, vel=88)
 t += 32
@@ -111,14 +111,14 @@ kit.note(t, KICK, 1, 104); kit.note(t, CRASH, 3, 104); fork.note(t + 2, 69, 4, 7
 
 S.humanize(ms=6, vel=5)
 finish(__file__, S, {
-    'title': 'Friday at Four',
+    'title': 'Knock on the Ear and Wait',
     'pack': 'waulophone', 'credit': 'Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)',
     'kind': 'original',
     'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement); sounds by Paul Chauncy',
-    'note': 'An office singalong in G major, 120 bpm, light shuffle: office piano, the bass from Accounts, the hum from '
-            'the back row, doo-doo choir, bee-buzzing organ, sax, glockenspiel, boops, guitar, a tuning fork; the last '
-            'chorus goes up a tone. Drums: the pack\'s Honey Pine Kit.',
+    'note': ('A singalong in G major, 120 bpm, light shuffle, at the fairy door in the old oak: the front-room piano, Barry '
+            'on the bass, the big-ears hum, the doo-doo choir, the bee organ, sax, glockenspiel, boops, guitar, a tuning '
+            'fork; the last chorus goes up a tone. Drums: the pack\'s Honey Pine Kit.'),
 }, [
     ('kit', 'ch10', 'Honey Pine Kit', dict(lufs=-18, verb=0.08)),
     ('piano', 'ch1', 'Kettle On', dict(lufs=-20, pan=-14, verb=0.25)),

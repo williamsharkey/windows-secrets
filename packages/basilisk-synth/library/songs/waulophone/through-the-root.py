@@ -1,6 +1,6 @@
-"""Last Day Before the Holidays: an original office singalong waltz, 3/4 at 168 bpm, F major. The piano and the
-bass from Accounts, the hum from the back row, a doo-doo choir, the tuning fork, glockenspiel bells, the sax on
-the middle eight and everyone on the last chorus. Sounds by Paul Chauncy."""
+"""Through the Root: an original singalong waltz, 3/4 at 168 bpm, F major, down the root tunnel under the old oak.
+The piano and Barry on the bass, the big-ears hum, a doo-doo choir, the tuning fork, glockenspiel bells, the sax on
+the middle eight and everyone on the last chorus. Sounds by Paul Chauncy (the WAULOPHONE pack)."""
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 from _lib import *
@@ -63,14 +63,14 @@ hum.note(t, pitch('F5'), 6, 92); bass.note(t, pitch('F2') + 12, 6, 94); fork.not
 
 S.humanize(ms=6, vel=5)
 finish(__file__, S, {
-    'title': 'Last Day Before the Holidays',
+    'title': 'Through the Root',
     'pack': 'waulophone', 'credit': 'Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)',
     'kind': 'original',
     'composer': 'Algorithmic Industries house band (an original for SNDWAVE1993)',
     'licence': 'CC0-1.0 (the composition and this arrangement); sounds by Paul Chauncy',
-    'note': 'An office singalong waltz in F, 3/4: the piano and the bass from Accounts, the hum from the back row, a '
-            'doo-doo choir, glockenspiel answers, the sax and the bee-buzzing organ on the middle eight, everyone on '
-            'the last chorus, a tuning fork at each end. Drums: the pack\'s Honey Pine Kit.',
+    'note': ('A singalong waltz in F, 3/4, down the root tunnel under the old oak: the piano and Barry on the bass, the '
+            'big-ears hum, a doo-doo choir, glockenspiel answers, the sax and the bee organ on the middle eight, everyone '
+            'on the last chorus, a tuning fork at each end. Drums: the pack\'s Honey Pine Kit.'),
 }, [
     ('piano', 'ch1', 'Front Room Upright', dict(lufs=-21, pan=-12, verb=0.25)),
     ('bass', 'ch2', 'Boop Bass', dict(lufs=-21)),

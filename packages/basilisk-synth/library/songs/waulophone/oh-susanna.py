@@ -1,5 +1,5 @@
-"""Oh! Susanna (Stephen Foster, 1848), arranged for the WAULOPHONE pack as an office singalong: verse and chorus
-six times, the hum from the back row first, then the piano, the bass from Accounts, the kit, the sax, the
+"""Oh! Susanna (Stephen Foster, 1848), arranged for the WAULOPHONE pack as a Paulywaulyton singalong: verse and chorus
+six times, the big-ears hum first, then the piano, Barry on the bass, the kit, the sax, the
 bee-buzzing organ and the doo-doo choir; up a tone for the last two. Sounds by Paul Chauncy."""
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
@@ -92,8 +92,8 @@ finish(__file__, S, {
                'by Paul Chauncy.',
     'proof': 'https://en.wikipedia.org/wiki/Oh!_Susanna',
     'arranger': 'Algorithmic Industries house band',
-    'note': 'An office singalong at 116 bpm: six rounds of verse and chorus, the hum from the back row, office piano, '
-            'the bass from Accounts, guitar, the sax, the bee-buzzing organ, the doo-doo choir, boops, a glockenspiel '
+    'note': 'A Paulywaulyton singalong at 116 bpm: six rounds of verse and chorus, the big-ears hum, the front-room piano, '
+            'Barry on the bass, guitar, the sax, the bee-buzzing organ, the doo-doo choir, boops, a glockenspiel '
             'and a tuning fork; up a tone for the last two rounds. Drums: the pack\'s Honey Pine Kit.',
 }, [
     ('hum', 'ch1', 'Hmm Held', dict(lufs=-19, pan=4, verb=0.3)),
