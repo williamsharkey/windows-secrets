@@ -1,5 +1,5 @@
 diff --git a/dosbox_pure_libretro.cpp b/dosbox_pure_libretro.cpp
-index ea24d45..94890d6 100644
+index ea24d45..07430ba 100644
 --- a/dosbox_pure_libretro.cpp
 +++ b/dosbox_pure_libretro.cpp
 @@ -989,7 +989,13 @@ static DOS_Drive* DBP_Mount(unsigned image_index = 0, bool unmount_existing = tr
@@ -17,19 +17,20 @@ index ea24d45..94890d6 100644
  		if ((boot && letter == 'C') || no_register_just_get_drive) return drive;
  	}
  	else if (!strcasecmp(ext, "IMG") || !strcasecmp(ext, "IMA") || !strcasecmp(ext, "VHD") || !strcasecmp(ext, "JRC"))
-@@ -1499,9 +1505,11 @@ Bit8u* GFX_GetPixels(Bitu& pitch)
+@@ -1499,6 +1505,12 @@ Bit8u* GFX_GetPixels(Bitu& pitch)
  	return (Bit8u*)(buf.video + (buf.width * buf.pad_y + buf.pad_x));
  }
  
-+extern bool BSYN_NoVideo(void);
++// SNDWAVE2000: a frame not drawn (no video, render.cpp) counts where GFX_EndUpdate counts a drawn one
++void DBP_NoVideoEndUpdate(void)
++{
++	dbp_framecount += 1 + render.frameskip.max;
++	render.frameskip.max = DBP_NeedFrameSkip(true);
++}
  bool GFX_StartUpdate(Bit8u*& pixels, Bitu& pitch)
  {
  	if (dbp_state == DBPSTATE_BOOT) return false;
-+	if (BSYN_NoVideo()) { dbp_framecount += 1 + render.frameskip.max; return false; } // SNDWAVE2000: nobody watches (a headless engine, or no editor open): no scaling, no frame; the frame still counts (retro_run waits for it)
- 	DBP_FPSCOUNT(dbp_fpscount_gfxstart)
- 	Bit32u w = (Bit32u)render.src.width, h = (Bit32u)render.src.height, pad_x = 0, pad_y = 0, pad_offset = 0;
- 	if (dbp_doublescan)
-@@ -3619,6 +3627,7 @@ void retro_run(void)
+@@ -3619,6 +3631,7 @@ void retro_run(void)
  
  	bool skip_emulate = (fpsboost > 1 && (((fpsboost_count++)%fpsboost)!=0)) || DBP_NeedFrameSkip(false);
  	DBP_ThreadControl(skip_emulate ? TCM_PAUSE_FRAME : TCM_FINISH_FRAME);
@@ -37,7 +38,7 @@ index ea24d45..94890d6 100644
  
  	Bit32u tpfActual = 0, tpfTarget = 0, tpfDraws = 0;
  	#ifdef DBP_ENABLE_WAITSTATS
-@@ -3663,6 +3672,11 @@ void retro_run(void)
+@@ -3663,6 +3676,11 @@ void retro_run(void)
  	if (dbp_opengl_draw && voodoo_ogl_mainthread()) { view_width *= voodoo_ogl_scale; view_height *= voodoo_ogl_scale; }
  
  	DBP_ThreadControl(skip_emulate ? TCM_RESUME_FRAME : TCM_NEXT_FRAME);
@@ -49,6 +50,18 @@ index ea24d45..94890d6 100644
  
  	#ifndef DBP_STANDALONE
  	// submit audio
+diff --git a/include/render.h b/include/render.h
+index c534f2a..7080aa0 100644
+--- a/include/render.h
++++ b/include/render.h
+@@ -98,6 +98,7 @@ typedef struct {
+ 	char* shader_src;
+ #endif
+ 	RenderPal_t pal;
++	bool novideo;   // SNDWAVE2000: this frame is not drawn (nobody watches)
+ 	bool updating;
+ 	bool active;
+ 	bool aspect;
 diff --git a/src/dbp_serialize.cpp b/src/dbp_serialize.cpp
 index 8c3c343..e56a254 100644
 --- a/src/dbp_serialize.cpp
@@ -81,3 +94,37 @@ index 24e2472..605ffea 100644
  
  	Pbool = secprop->Add_bool("disney",Property::Changeable::WhenIdle,true);
  	Pbool->Set_help("Enable Disney Sound Source emulation. (Covox Voice Master and Speech Thing compatible).");
+diff --git a/src/gui/render.cpp b/src/gui/render.cpp
+index ba60b45..f686c14 100644
+--- a/src/gui/render.cpp
++++ b/src/gui/render.cpp
+@@ -164,6 +164,17 @@ bool RENDER_StartUpdate(void) {
+ 	if (render.scale.inMode == scalerMode8) {
+ 		Check_Palette();
+ 	}
++	{	// SNDWAVE2000: nobody watches (a headless engine, or the plugin with its editor closed): the frame runs as a drawn
++		// one does (the VGA's line events, the frame's end), only no line is scaled or stored and GFX is not called
++		extern bool BSYN_NoVideo(void);
++		if (BSYN_NoVideo()) {
++			render.scale.outWrite = 0; render.scale.outPitch = 0;
++			RENDER_DrawLine = RENDER_EmptyLineHandler;
++			render.updating = true; render.novideo = true;
++			return true;
++		}
++		render.novideo = false;
++	}
+ 	render.scale.inLine = 0;
+ 	render.scale.outLine = 0;
+ #ifdef C_DBP_ENABLE_SCALERCACHE
+@@ -246,6 +257,11 @@ void RENDER_EndUpdate( bool abort ) {
+ 			flags, fps, (Bit8u *)&scalerSourceCache, (Bit8u*)&render.pal.rgb );
+ 	}
+ #endif
++	if (render.novideo) {   // SNDWAVE2000: the undrawn frame ends where a drawn one would (GFX_EndUpdate's count)
++		extern void DBP_NoVideoEndUpdate(void);
++		if (!abort) DBP_NoVideoEndUpdate();
++		render.novideo = false;
++	} else
+ 	if ( render.scale.outWrite ) {
+ #ifndef C_DBP_ENABLE_SCALERCACHE
+ 		GFX_EndUpdate( abort? NULL : (const Bit16u*)(size_t)1 );
