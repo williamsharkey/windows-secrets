@@ -752,19 +752,19 @@
    "ins   6 VRC6 Pulse 1 529 notes 42-74"
   ]
  },
- "autism_island.notes.mid": {
+ "swing.notes.mid": {
   "title_in_file": "New song",
-  "module": "autism_island.0cc",
-  "page": "https://opengameart.org/content/autism-island",
-  "download": "https://opengameart.org/sites/default/files/autism%20island.zip",
-  "author": "Spring Spring",
+  "module": "swing.ftm",
+  "page": "https://opengameart.org/content/nes-chiptune-swingshot-swing-jazz",
+  "download": "https://opengameart.org/sites/default/files/swing.ftm_.7z",
+  "author": "Haley Halcyon",
   "licence": "CC0-1.0 (as stated on the OpenGameArt page)",
-  "sha256_of_module": "4b4221789fa12c8b00ea938801fef4205ddfc18208bf33ffa0f753a5b1b8d052",
+  "sha256_of_module": "264aeaa00b4b36c94190bf86cee54a7d98d0b79338b40fa1d6a4d02999b21245",
   "instruments": [
-   "ins   1 Pulse 1 169 notes 47-78",
-   "ins   2 Pulse 2 210 notes 40-78",
-   "ins   3 Triangle 249 notes 32-71",
-   "ins   4 Noise 520 notes 38-42"
+   "ins   1 Pulse 1 103 notes 43-57",
+   "ins   2 Pulse 2 172 notes 49-65",
+   "ins   3 Triangle 229 notes 34-77",
+   "ins   4 Noise 300 notes 38-42"
   ]
  }
 }

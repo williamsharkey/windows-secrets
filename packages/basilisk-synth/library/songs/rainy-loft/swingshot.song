@@ -1,0 +1,44 @@
+# Swingshot: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+
+title    = Swingshot
+pack     = rainy-loft
+kind     = chiptune
+composer = Haley Halcyon
+source   = Swingshot (swing jazz), a FamiTracker module (swing.ftm) from OpenGameArt (https://opengameart.org/sites/default/files/swing.ftm_.7z). Its notes are played here; its chip voices are not used.
+licence  = The music: CC0-1.0 (public-domain dedication on the OpenGameArt page). This arrangement: CC0-1.0.
+proof    = https://opengameart.org/content/nes-chiptune-swingshot-swing-jazz
+arranger = Algorithmic Industries house band
+note     = A NES swing tune (2A03) played twice in a late-night jazz room: pulse 2 on the straight-mute trumpet, pulse 1 on the loft tine piano, the triangle's walking line on the fretless bass, the noise channel on the pack's Loft Brushes kit.
+midi     = swingshot.mid
+script   = swingshot.py
+
+[master]
+loudness = -16
+ceiling  = -1.0
+fadeout  = 3
+
+[echo]
+time     = 3/8
+feedback = 0.25
+tone     = 3200
+level    = -7
+
+[reverb]
+size     = 2.2
+predelay = 18
+tone     = 5200
+level    = -6
+
+[tracks]
+# name      source  preset                                  mix
+mute        ch1     "Straight Mute"                          lufs=-19 pan=-6 echo=0.12 verb=0.25
+tine        ch2     "Loft Tine"                              lufs=-22 pan=16 verb=0.2
+bass        ch4     "Fretless Harbour"                       lufs=-20
+kit         ch10    "Loft Brushes"                           lufs=-21 verb=0.1
+
+[dna]
+# the presets' DNA when this song was written (used before the pack discs' own)
+"rainy-loft:Fretless Harbour" = rl_bass_round_c1#4Z0,31,24Nlg70Vw4,4L80/rl_bass_round_c2#5Z32,43,36Nlg70Vw4,4L80/rl_bass_round_c3#4Z44,127,48Nlg70Vw4,4L80/rl_fretless_e1#3T8L35Nlg70;A2D700S55R140V85K36
+"rainy-loft:Loft Brushes" = gd_kit_tape_kick@t30000Irl_brush_rim@t30000Irl_brush_a@t30000Irl_clap_b@t30000Irl_brush_sw2@t30000Igd_kit_tape_lotom@t30000Igd_kit_tape_tighthat@t30000Igd_kit_tape_hat@t30000Igd_kit_tape_midtom@t30000Igd_kit_tape_openhat@t30000Igd_kit_tape_hitom@t30000Igd_kit_tape_crash@t30000Igd_kit_studio_ride@t30000Irl_brush_sw1#16;R160V100G-6k36j1i90k37j2h92k38j3k39j4i70h96k40j5i80k41j6i70h70k43j6i70t300h80k42j7c1i55h130k44j8c1i50h130k45j9i70h100k47j9i70t200h100k46j10c1i50h130k48j11i70h125k50j11i70t200h125k49j12i60h120k51j13i55h72k35j14
+"rainy-loft:Loft Tine" = rl_ep_loft_c2#1Z0,41,36Vw3,5L42Q-36/rl_ep_loft_c3#4Z42,53,48Vw3,5L42Q-18/rl_ep_loft_c4#5Z54,65,60Vw3,5L42Q0/rl_ep_loft_c5#4Z66,77,72Vw3,5L42Q18/rl_ep_loft_c6#2Z78,127,84Vw3,5L42Q36;A0R420V80
+"rainy-loft:Straight Mute" = rl_straightmute_g4#6Z0,127,67Nlg35Vw4,6s15,60;A20S100R220V75
