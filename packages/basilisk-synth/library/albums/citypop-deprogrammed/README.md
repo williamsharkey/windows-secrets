@@ -1,6 +1,6 @@
-# CITYPOP DEPROGRAMMED
+# CITYPOP1993
 
-An album performed on SNDWAVE2000: a theme and eleven variations for a quiet night in a harbour town, about 41
+An album performed on SNDWAVE1993: a theme and eleven variations for a quiet night in a harbour town, about 41
 minutes. Every note is played by the Windows 3.11 Sound Recorders through `render311`
 (`tools/songrender`), one engine per part. Page: williamsharkey.com/citypop/ (`site/citypop/`).
 

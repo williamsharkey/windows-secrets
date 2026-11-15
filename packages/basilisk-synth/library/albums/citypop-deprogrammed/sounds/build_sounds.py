@@ -20,7 +20,7 @@ import dsp   # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 LIB = os.path.abspath(os.path.join(HERE, '..', '..', '..'))
-OWNER = 'William Sharkey (rendered from his own instruments, Bele Dance / midigarden); for SNDWAVE2000 packs'
+OWNER = 'William Sharkey (rendered from his own instruments, Bele Dance / midigarden); for SNDWAVE1993 packs'
 
 
 def bele(garden, kind, *args):

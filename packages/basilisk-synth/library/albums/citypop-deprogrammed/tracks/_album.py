@@ -1,4 +1,4 @@
-"""CITYPOP DEPROGRAMMED: the album's arranging kit, shared by every track script in this folder.
+"""CITYPOP1993: the album's arranging kit, shared by every track script in this folder.
 
 Each track is one script that writes its .mid and .song beside itself (tools/songrender/README.md has the format);
 `finish()` does that. Everything here is plain MIDI writing: harmony with extended chords and voice leading, the
@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.join(REPO, 'tools', 'songrender'))
 from compose import Score, Part, pitch, write_song   # noqa: E402,F401
 
 PACK = 'rainy-loft'
-ALBUM = 'CITYPOP DEPROGRAMMED'
+ALBUM = 'CITYPOP1993'
 ARTIST = 'Algorithmic Industries'
 
 # ------------------------------------------------------------------------------------------------ harmony
@@ -518,7 +518,7 @@ def finish(script, S, header, tracks, master=None, echo=None, reverb=None):
     header.setdefault('pack', PACK)
     header.setdefault('kind', 'original')
     header.setdefault('album', ALBUM)
-    header.setdefault('composer', 'Algorithmic Industries (an original for SNDWAVE2000)')
+    header.setdefault('composer', 'Algorithmic Industries (an original for SNDWAVE1993)')
     header.setdefault('licence', 'CC0-1.0 (the composition and this arrangement)')
     tun = tuning()
     fixed = []

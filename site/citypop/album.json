@@ -6,72 +6,62 @@
    "seconds": 210.43,
    "note": "The theme, stated plainly in E-flat: A, A, B, A, an electric piano chorus, B, A, ending on the IV. Brushes, fretless, reed lead, muted trumpet, vibraphone answers, the rain before and after.",
    "bpm": 84.0,
-   "opus": "audio/01.opus?v=52eced01ba",
-   "mp3": "audio/01.mp3?v=52eced01ba",
-   "events": "data/01.json?v=52eced01ba",
+   "opus": "audio/01.opus?v=e8d84861f4",
+   "mp3": "audio/01.mp3?v=e8d84861f4",
+   "events": "data/01.json?v=e8d84861f4",
    "presets": [
     {
      "part": "rain",
-     "preset": "rainy-loft:Rain on Glass",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Rain on Glass"
     },
     {
      "part": "vinyl",
-     "preset": "rainy-loft:Vinyl Bed",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Vinyl Bed"
     },
     {
      "part": "ep",
-     "preset": "rainy-loft:Loft Tine",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Tine"
     },
     {
      "part": "bass",
-     "preset": "rainy-loft:Fretless Harbour",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Fretless Harbour"
     },
     {
      "part": "lead",
-     "preset": "rainy-loft:Harbour Reed",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Harbour Reed"
     },
     {
      "part": "vibes",
-     "preset": "rainy-loft:Lobby Vibraphone",
-     "where": "rainy-loft"
+     "preset": "courtyard-chapel:Delta Tower"
     },
     {
      "part": "strings",
-     "preset": "rainy-loft:Humid Strings",
-     "where": "rainy-loft"
+     "preset": "studio-archive:Humid Swell"
     },
     {
      "part": "pad",
-     "preset": "rainy-loft:Hotel Corridor",
-     "where": "rainy-loft"
+     "preset": "polysynth-showroom:Hotel Wash"
     },
     {
      "part": "bell",
-     "preset": "rainy-loft:Crystal Bb",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Crystal Bb"
     },
     {
      "part": "horn",
-     "preset": "rainy-loft:Harmon Glow",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Harmon Glow"
     },
     {
      "part": "kit",
-     "preset": "rainy-loft:Loft Brushes",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Brushes"
     },
     {
      "part": "perc",
-     "preset": "rainy-loft:Loft Percussion",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Percussion"
     }
    ],
-   "lufs": -16.0
+   "lufs": -16.0,
+   "key": "E-flat major",
+   "variation": "the theme, stated plainly"
   },
   {
    "n": 2,
@@ -79,69 +69,57 @@
    "seconds": 190.88,
    "note": "The theme in F, as a light shuffle: the motto traded between vibraphone and suitcase piano (once as written, once upside down), the flute an eighth late, muted trumpet on B, two choruses, a stop-time.",
    "bpm": 96.0,
-   "opus": "audio/02.opus?v=aa30405365",
-   "mp3": "audio/02.mp3?v=aa30405365",
-   "events": "data/02.json?v=aa30405365",
+   "opus": "audio/02.opus?v=e5aa1c474d",
+   "mp3": "audio/02.mp3?v=e5aa1c474d",
+   "events": "data/02.json?v=e5aa1c474d",
    "presets": [
     {
      "part": "room",
-     "preset": "rainy-loft:City Hush",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:City Hush"
     },
     {
      "part": "vinyl",
-     "preset": "rainy-loft:Vinyl Dust",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Vinyl Dust"
     },
     {
      "part": "cafe",
-     "preset": "rainy-loft:Espresso Bar",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Espresso Bar"
     },
     {
      "part": "spoon",
-     "preset": "rainy-loft:Cup and Spoon",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Cup and Spoon"
     },
     {
      "part": "ep",
-     "preset": "rainy-loft:Suitcase Night",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Suitcase Night"
     },
     {
      "part": "bass",
-     "preset": "rainy-loft:Pluck Avenue",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Pluck Avenue"
     },
     {
      "part": "flute",
-     "preset": "rainy-loft:Night Flute",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Night Flute"
     },
     {
      "part": "vibes",
-     "preset": "rainy-loft:Lobby Vibraphone",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Lobby Vibraphone"
     },
     {
      "part": "horn",
-     "preset": "rainy-loft:Harmon Glow",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Harmon Glow"
     },
     {
      "part": "organ",
-     "preset": "rainy-loft:Back Room Organ",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Back Room Organ"
     },
     {
      "part": "kit",
-     "preset": "rainy-loft:Loft Sticks",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Sticks"
     },
     {
      "part": "perc",
-     "preset": "rainy-loft:Loft Percussion",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Percussion"
     }
    ],
    "lufs": -16.0,
@@ -154,67 +132,58 @@
    "seconds": 213.42,
    "note": "The theme in G at 104 bpm, every long note pushed a sixteenth early: slap bass, a plucked guitar in sixteenths, synth brass, the reed with a polysynth an octave above; two choruses; up to A-flat at the end.",
    "bpm": 104.0,
-   "opus": "audio/03.opus?v=6eb0a74c1a",
-   "mp3": "audio/03.mp3?v=6eb0a74c1a",
-   "events": "data/03.json?v=6eb0a74c1a",
+   "opus": "audio/03.opus?v=8fbccdf281",
+   "mp3": "audio/03.mp3?v=8fbccdf281",
+   "events": "data/03.json?v=8fbccdf281",
    "presets": [
     {
      "part": "street",
-     "preset": "rainy-loft:Wet Traffic",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Wet Traffic"
     },
     {
      "part": "ep",
-     "preset": "rainy-loft:Loft Tine Bright",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Tine Bright"
     },
     {
      "part": "bass",
-     "preset": "rainy-loft:Rubber Taxi",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Rubber Taxi"
     },
     {
      "part": "sax",
-     "preset": "rainy-loft:Harbour Reed",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Harbour Reed"
     },
     {
      "part": "synlead",
-     "preset": "rainy-loft:Neon Sign Lead",
-     "where": "rainy-loft"
+     "preset": "polysynth-showroom:Tropic Signal"
     },
     {
      "part": "brass",
-     "preset": "rainy-loft:Rooftop Brass",
-     "where": "rainy-loft"
+     "preset": "polysynth-showroom:Signal Stab"
     },
     {
      "part": "strings",
-     "preset": "rainy-loft:Daylight Strings",
-     "where": "rainy-loft"
+     "preset": "studio-archive:Daylight Bows"
     },
     {
      "part": "gtr",
-     "preset": "rainy-loft:Taxi Rhythm Guitar",
-     "where": "rainy-loft"
+     "preset": "courtyard-chapel:Kinetic Harp"
     },
     {
      "part": "glass",
-     "preset": "rainy-loft:Glass Tine",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Glass Tine"
     },
     {
      "part": "kit",
-     "preset": "rainy-loft:Loft Sticks",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Sticks"
     },
     {
      "part": "perc",
-     "preset": "rainy-loft:Loft Percussion",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Percussion"
     }
    ],
-   "lufs": -16.0
+   "lufs": -16.0,
+   "key": "G major, then A-flat",
+   "variation": "every long note pushed a sixteenth early"
   },
   {
    "n": 4,
@@ -222,62 +191,54 @@
    "seconds": 234.5,
    "note": "A bossa nova in B-flat at 120 bpm with the theme in augmentation (every note twice as long) on flute; a nylon-style guitar on a two-bar pattern, the glass piano on B, the motto traded in double time.",
    "bpm": 120.0,
-   "opus": "audio/04.opus?v=4f7e925071",
-   "mp3": "audio/04.mp3?v=4f7e925071",
-   "events": "data/04.json?v=4f7e925071",
+   "opus": "audio/04.opus?v=001d2c2e2f",
+   "mp3": "audio/04.mp3?v=001d2c2e2f",
+   "events": "data/04.json?v=001d2c2e2f",
    "presets": [
     {
      "part": "lobby",
-     "preset": "rainy-loft:City Hush",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:City Hush"
     },
     {
      "part": "chime",
-     "preset": "rainy-loft:Single Chime",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Single Chime"
     },
     {
      "part": "gtr",
-     "preset": "rainy-loft:Harbour Harp",
-     "where": "rainy-loft"
+     "preset": "courtyard-chapel:Faded Pluck"
     },
     {
      "part": "bass",
-     "preset": "rainy-loft:Fretless Harbour",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Fretless Harbour"
     },
     {
      "part": "flute",
-     "preset": "rainy-loft:Night Flute",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Night Flute"
     },
     {
      "part": "ep",
-     "preset": "rainy-loft:Glass Tine",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Glass Tine"
     },
     {
      "part": "strings",
-     "preset": "rainy-loft:Velvet Strings",
-     "where": "rainy-loft"
+     "preset": "studio-archive:Waxed Aurora"
     },
     {
      "part": "vibes",
-     "preset": "rainy-loft:Lobby Vibraphone",
-     "where": "rainy-loft"
+     "preset": "courtyard-chapel:Delta Tower"
     },
     {
      "part": "kit",
-     "preset": "rainy-loft:Loft Brushes",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Brushes"
     },
     {
      "part": "perc",
-     "preset": "rainy-loft:Loft Percussion",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Percussion"
     }
    ],
-   "lufs": -16.01
+   "lufs": -16.01,
+   "key": "B-flat major",
+   "variation": "augmentation: twice as slow"
   },
   {
    "n": 5,
@@ -285,67 +246,58 @@
    "seconds": 215.48,
    "note": "The theme in C minor at 72 bpm, lo-fi: a worn tape electric piano, a close muted trumpet, a far flute, swung drums, vinyl and rain; the phone rings twice, the machine answers, nobody speaks.",
    "bpm": 72.0,
-   "opus": "audio/05.opus?v=0fde7b3cbc",
-   "mp3": "audio/05.mp3?v=0fde7b3cbc",
-   "events": "data/05.json?v=0fde7b3cbc",
+   "opus": "audio/05.opus?v=aa9ffaf7a6",
+   "mp3": "audio/05.mp3?v=aa9ffaf7a6",
+   "events": "data/05.json?v=aa9ffaf7a6",
    "presets": [
     {
      "part": "rain",
-     "preset": "rainy-loft:Soft Rain",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Soft Rain"
     },
     {
      "part": "vinyl",
-     "preset": "rainy-loft:Vinyl Bed",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Vinyl Bed"
     },
     {
      "part": "phone",
-     "preset": "rainy-loft:Telephone, Two Rings",
-     "where": "rainy-loft"
+     "preset": "(DNA)"
     },
     {
      "part": "ep",
-     "preset": "rainy-loft:Tape Loft Tine",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Tape Loft Tine"
     },
     {
      "part": "bass",
-     "preset": "rainy-loft:Fretless Harbour",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Fretless Harbour"
     },
     {
      "part": "trumpet",
-     "preset": "rainy-loft:Harmon Glow",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Harmon Glow"
     },
     {
      "part": "flute",
-     "preset": "rainy-loft:Late Flute",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Late Flute"
     },
     {
      "part": "pad",
-     "preset": "rainy-loft:Mist Choir",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Mist Choir"
     },
     {
      "part": "bell",
-     "preset": "rainy-loft:Machine Beep",
-     "where": "rainy-loft"
+     "preset": "(DNA)"
     },
     {
      "part": "kit",
-     "preset": "rainy-loft:Loft Sticks",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Sticks"
     },
     {
      "part": "perc",
-     "preset": "rainy-loft:Loft Percussion",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Percussion"
     }
    ],
-   "lufs": -16.0
+   "lufs": -16.0,
+   "key": "C minor",
+   "variation": "the minor mode"
   },
   {
    "n": 6,
@@ -353,62 +305,54 @@
    "seconds": 202.5,
    "note": "The theme in waltz time (each bar becomes two) in A-flat at 120: glass piano, folk harp, pizzicato bass, brushes, a music box; a harmonica takes it a tone higher; B on strings.",
    "bpm": 120.0,
-   "opus": "audio/06.opus?v=4a4c07224c",
-   "mp3": "audio/06.mp3?v=4a4c07224c",
-   "events": "data/06.json?v=4a4c07224c",
+   "opus": "audio/06.opus?v=04939889af",
+   "mp3": "audio/06.mp3?v=04939889af",
+   "events": "data/06.json?v=04939889af",
    "presets": [
     {
      "part": "night",
-     "preset": "rainy-loft:Night Insects",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Night Insects"
     },
     {
      "part": "glass",
-     "preset": "rainy-loft:Glass Tine",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Glass Tine"
     },
     {
      "part": "harp",
-     "preset": "rainy-loft:Harbour Harp",
-     "where": "rainy-loft"
+     "preset": "courtyard-chapel:Faded Pluck"
     },
     {
      "part": "bass",
-     "preset": "rainy-loft:Night Pizz Bass",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Night Pizz Bass"
     },
     {
      "part": "strings",
-     "preset": "rainy-loft:Waltz Strings",
-     "where": "rainy-loft"
+     "preset": "(DNA)"
     },
     {
      "part": "flute",
-     "preset": "rainy-loft:Night Flute",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Night Flute"
     },
     {
      "part": "harmonica",
-     "preset": "rainy-loft:Waltz Harmonica",
-     "where": "rainy-loft"
+     "preset": "tape-parlour:Hollow Revival"
     },
     {
      "part": "box",
-     "preset": "rainy-loft:Music Box at Two",
-     "where": "rainy-loft"
+     "preset": "courtyard-chapel:Late Ladder"
     },
     {
      "part": "kit",
-     "preset": "rainy-loft:Loft Brushes",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Brushes"
     },
     {
      "part": "perc",
-     "preset": "rainy-loft:Loft Percussion",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Percussion"
     }
    ],
-   "lufs": -16.01
+   "lufs": -16.01,
+   "key": "A-flat major",
+   "variation": "waltz time"
   },
   {
    "n": 7,
@@ -416,64 +360,53 @@
    "seconds": 166.86,
    "note": "A minor at 112 on a train groove. Opens with the first figure of Paganini's Caprice No. 24 (1817, public domain) and the theme answering in the minor; B in C major; the caprice in the bass turns into the theme's pick-up; ends in A major as the train leaves.",
    "bpm": 112.0,
-   "opus": "audio/07.opus?v=10d9684f99",
-   "mp3": "audio/07.mp3?v=10d9684f99",
-   "events": "data/07.json?v=10d9684f99",
+   "opus": "audio/07.opus?v=c25242a199",
+   "mp3": "audio/07.mp3?v=c25242a199",
+   "events": "data/07.json?v=c25242a199",
    "presets": [
     {
      "part": "train",
-     "preset": "rainy-loft:Passing Train",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Passing Train"
     },
     {
      "part": "crossing",
-     "preset": "rainy-loft:Glass Ceiling",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Glass Ceiling"
     },
     {
      "part": "pizz",
-     "preset": "rainy-loft:Pizzicato Night",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Pizzicato Night"
     },
     {
      "part": "bass",
-     "preset": "rainy-loft:Rubber Taxi",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Rubber Taxi"
     },
     {
      "part": "trumpet",
-     "preset": "rainy-loft:Harmon Glow",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Harmon Glow"
     },
     {
      "part": "ep",
-     "preset": "rainy-loft:Suitcase Night",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Suitcase Night"
     },
     {
      "part": "strings",
-     "preset": "rainy-loft:Humid Strings",
-     "where": "rainy-loft"
+     "preset": "studio-archive:Humid Swell"
     },
     {
      "part": "flute",
-     "preset": "rainy-loft:Night Flute",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Night Flute"
     },
     {
      "part": "glass",
-     "preset": "rainy-loft:Glass Tine",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Glass Tine"
     },
     {
      "part": "kit",
-     "preset": "rainy-loft:Loft Sticks",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Sticks"
     },
     {
      "part": "perc",
-     "preset": "rainy-loft:Loft Percussion",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Percussion"
     }
    ],
    "lufs": -16.0,
@@ -486,64 +419,53 @@
    "seconds": 250.29,
    "note": "The slow heart: the theme inverted in D-flat at 66, re-harmonised; soft piano alone, then violins and cellos, choir and glass piano on the inverted B, a climax a tone higher with horns, the piano alone again.",
    "bpm": 66.0,
-   "opus": "audio/08.opus?v=c16513197b",
-   "mp3": "audio/08.mp3?v=c16513197b",
-   "events": "data/08.json?v=c16513197b",
+   "opus": "audio/08.opus?v=9f981cf38c",
+   "mp3": "audio/08.mp3?v=9f981cf38c",
+   "events": "data/08.json?v=9f981cf38c",
    "presets": [
     {
      "part": "rain",
-     "preset": "rainy-loft:Balcony Rain",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Balcony Rain"
     },
     {
      "part": "piano",
-     "preset": "rainy-loft:Felt Upright",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Felt Upright"
     },
     {
      "part": "violins",
-     "preset": "rainy-loft:Legato Violins",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Legato Violins"
     },
     {
      "part": "cellos",
-     "preset": "rainy-loft:Legato Cellos",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Legato Cellos"
     },
     {
      "part": "choir",
-     "preset": "rainy-loft:Mist Choir",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Mist Choir"
     },
     {
      "part": "harp",
-     "preset": "rainy-loft:Harbour Harp",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Harbour Harp"
     },
     {
      "part": "horns",
-     "preset": "rainy-loft:Ferry Horns",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Ferry Horns"
     },
     {
      "part": "bass",
-     "preset": "rainy-loft:Fretless Harbour",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Fretless Harbour"
     },
     {
      "part": "glass",
-     "preset": "rainy-loft:Glass Tine",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Glass Tine"
     },
     {
      "part": "flute",
-     "preset": "rainy-loft:Late Flute",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Late Flute"
     },
     {
      "part": "kit",
-     "preset": "rainy-loft:Loft Brushes",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Brushes"
     }
    ],
    "lufs": -16.01,
@@ -556,64 +478,53 @@
    "seconds": 186.03,
    "note": "Four on the floor in E at 118: the theme in diminution (eight bars in four) on polysynth, then at its own speed on the reed; octave bass, clavinet, string runs, claps, congas, a wordless vocoder choir; it fades.",
    "bpm": 118.0,
-   "opus": "audio/09.opus?v=1211e2ece7",
-   "mp3": "audio/09.mp3?v=1211e2ece7",
-   "events": "data/09.json?v=1211e2ece7",
+   "opus": "audio/09.opus?v=a6055aaf25",
+   "mp3": "audio/09.mp3?v=a6055aaf25",
+   "events": "data/09.json?v=a6055aaf25",
    "presets": [
     {
      "part": "room",
-     "preset": "rainy-loft:City at Night",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:City at Night"
     },
     {
      "part": "ep",
-     "preset": "rainy-loft:Loft Tine Bright",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Tine Bright"
     },
     {
      "part": "bass",
-     "preset": "rainy-loft:Rubber Taxi",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Rubber Taxi"
     },
     {
      "part": "synth",
-     "preset": "rainy-loft:Couch Fort Lead",
-     "where": "rainy-loft"
+     "preset": "polysynth-showroom:Violet Pilot"
     },
     {
      "part": "sax",
-     "preset": "rainy-loft:Harbour Reed",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Harbour Reed"
     },
     {
      "part": "clav",
-     "preset": "rainy-loft:Disco Clavinet",
-     "where": "rainy-loft"
+     "preset": "polysynth-showroom:Distant Parlour"
     },
     {
      "part": "strings",
-     "preset": "rainy-loft:Daylight Strings",
-     "where": "rainy-loft"
+     "preset": "studio-archive:Daylight Bows"
     },
     {
      "part": "vox",
-     "preset": "rainy-loft:Vocoder Chorus",
-     "where": "rainy-loft"
+     "preset": "polysynth-showroom:Broadcast Vox"
     },
     {
      "part": "brass",
-     "preset": "rainy-loft:Party Horns",
-     "where": "rainy-loft"
+     "preset": "polysynth-showroom:Noble Hit"
     },
     {
      "part": "kit",
-     "preset": "rainy-loft:Couch Disco",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Couch Disco"
     },
     {
      "part": "perc",
-     "preset": "rainy-loft:Loft Percussion",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Percussion"
     }
    ],
    "lufs": -16.0,
@@ -626,54 +537,45 @@
    "seconds": 181.0,
    "note": "The interlude, in G-flat at 60 with no drums: grain clouds made from the steam wand, the rain and the glass piano follow the harmony; the theme crosses once on the crystal bell, every note twice as long.",
    "bpm": 60.0,
-   "opus": "audio/10.opus?v=2f95879526",
-   "mp3": "audio/10.mp3?v=2f95879526",
-   "events": "data/10.json?v=2f95879526",
+   "opus": "audio/10.opus?v=38ca313714",
+   "mp3": "audio/10.mp3?v=38ca313714",
+   "events": "data/10.json?v=38ca313714",
    "presets": [
     {
      "part": "rain",
-     "preset": "rainy-loft:Rain on the Window",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Rain on the Window"
     },
     {
      "part": "static",
-     "preset": "rainy-loft:Radio Static",
-     "where": "rainy-loft"
+     "preset": "(DNA)"
     },
     {
      "part": "wand",
-     "preset": "rainy-loft:Steam Wand",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Steam Wand"
     },
     {
      "part": "cloud",
-     "preset": "rainy-loft:Glass Cloud",
-     "where": "rainy-loft"
+     "preset": "(DNA)"
     },
     {
      "part": "steam",
-     "preset": "rainy-loft:Steam Cloud",
-     "where": "rainy-loft"
+     "preset": "(DNA)"
     },
     {
      "part": "bell",
-     "preset": "rainy-loft:Crystal Bb",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Crystal Bb"
     },
     {
      "part": "bass",
-     "preset": "rainy-loft:Fretless Harbour",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Fretless Harbour"
     },
     {
      "part": "glass",
-     "preset": "rainy-loft:Glass Tine",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Glass Tine"
     },
     {
      "part": "choir",
-     "preset": "rainy-loft:Mist Choir",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Mist Choir"
     }
    ],
    "lufs": -17.0,
@@ -686,59 +588,49 @@
    "seconds": 203.77,
    "note": "Jazz-funk in D-flat at 88, swung: the theme over tritone substitutions, sixteen bars of electric piano, reed and piano trading fours, B on strings, the last A a semitone up; glasses on the counter.",
    "bpm": 88.0,
-   "opus": "audio/11.opus?v=1e1408ac9c",
-   "mp3": "audio/11.mp3?v=1e1408ac9c",
-   "events": "data/11.json?v=1e1408ac9c",
+   "opus": "audio/11.opus?v=e4f7d35a23",
+   "mp3": "audio/11.mp3?v=e4f7d35a23",
+   "events": "data/11.json?v=e4f7d35a23",
    "presets": [
     {
      "part": "room",
-     "preset": "rainy-loft:City Hush",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:City Hush"
     },
     {
      "part": "glasses",
-     "preset": "rainy-loft:Glasses on the Counter",
-     "where": "rainy-loft"
+     "preset": "(DNA)"
     },
     {
      "part": "ep",
-     "preset": "rainy-loft:Loft Tine",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Tine"
     },
     {
      "part": "bass",
-     "preset": "rainy-loft:Pluck Avenue",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Pluck Avenue"
     },
     {
      "part": "reed",
-     "preset": "rainy-loft:Harbour Reed",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Harbour Reed"
     },
     {
      "part": "clarinet",
-     "preset": "rainy-loft:Clarinet After Hours",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Clarinet After Hours"
     },
     {
      "part": "strings",
-     "preset": "rainy-loft:Velvet Strings",
-     "where": "rainy-loft"
+     "preset": "studio-archive:Waxed Aurora"
     },
     {
      "part": "vibes",
-     "preset": "rainy-loft:Lobby Vibraphone",
-     "where": "rainy-loft"
+     "preset": "courtyard-chapel:Delta Tower"
     },
     {
      "part": "kit",
-     "preset": "rainy-loft:Loft Sticks",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Sticks"
     },
     {
      "part": "perc",
-     "preset": "rainy-loft:Loft Percussion",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Percussion"
     }
    ],
    "lufs": -16.0,
@@ -747,93 +639,77 @@
   },
   {
    "n": 12,
-   "title": "Finale: Dawn over the Bay, Deprogrammed",
+   "title": "Finale: Dawn over the Bay",
    "seconds": 235.24,
    "note": "The theme comes home in E-flat with the night around it (the inversion as a counter-line, the motto traded, the fast version), the caprice figure as a hinge into F, everything pushed and full, then the motto slowly on the bell; the first track ended on the IV, this one on the I, as the birds start.",
    "bpm": 96.0,
-   "opus": "audio/12.opus?v=5b1d4ba6c0",
-   "mp3": "audio/12.mp3?v=5b1d4ba6c0",
-   "events": "data/12.json?v=5b1d4ba6c0",
+   "opus": "audio/12.opus?v=9bebee3d11",
+   "mp3": "audio/12.mp3?v=9bebee3d11",
+   "events": "data/12.json?v=9bebee3d11",
    "presets": [
     {
      "part": "rain",
-     "preset": "rainy-loft:Rain on Glass",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Rain on Glass"
     },
     {
      "part": "dawn",
-     "preset": "rainy-loft:Dawn Chorus",
-     "where": "rainy-loft"
+     "preset": "(DNA)"
     },
     {
      "part": "harbour",
-     "preset": "rainy-loft:Harbour Horn",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Harbour Horn"
     },
     {
      "part": "ep",
-     "preset": "rainy-loft:Loft Tine",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Tine"
     },
     {
      "part": "bass",
-     "preset": "rainy-loft:Fretless Harbour",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Fretless Harbour"
     },
     {
      "part": "reed",
-     "preset": "rainy-loft:Harbour Reed",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Harbour Reed"
     },
     {
      "part": "trumpet",
-     "preset": "rainy-loft:Harmon Glow",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Harmon Glow"
     },
     {
      "part": "strings",
-     "preset": "rainy-loft:Humid Strings",
-     "where": "rainy-loft"
+     "preset": "studio-archive:Humid Swell"
     },
     {
      "part": "choir",
-     "preset": "rainy-loft:Mist Choir",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Mist Choir"
     },
     {
      "part": "glass",
-     "preset": "rainy-loft:Glass Tine",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Glass Tine"
     },
     {
      "part": "flute",
-     "preset": "rainy-loft:Night Flute",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Night Flute"
     },
     {
      "part": "brass",
-     "preset": "rainy-loft:Rooftop Brass",
-     "where": "rainy-loft"
+     "preset": "polysynth-showroom:Signal Stab"
     },
     {
      "part": "synth",
-     "preset": "rainy-loft:Couch Fort Lead",
-     "where": "rainy-loft"
+     "preset": "polysynth-showroom:Violet Pilot"
     },
     {
      "part": "bell",
-     "preset": "rainy-loft:Crystal Bb",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Crystal Bb"
     },
     {
      "part": "kit",
-     "preset": "rainy-loft:Loft Sticks",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Sticks"
     },
     {
      "part": "perc",
-     "preset": "rainy-loft:Loft Percussion",
-     "where": "rainy-loft"
+     "preset": "rainy-loft:Loft Percussion"
     }
    ],
    "lufs": -16.0,
@@ -841,5 +717,5 @@
    "variation": "the variations return; the I at last"
   }
  ],
- "title": "CITYPOP DEPROGRAMMED"
+ "title": "CITYPOP1993"
 }

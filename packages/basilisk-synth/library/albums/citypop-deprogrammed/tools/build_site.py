@@ -92,7 +92,8 @@ def main():
             continue
         rep = os.path.join(a.render, slug + '.json')
         wav = os.path.join(a.render, slug + '.wav')
-        if not os.path.exists(rep) or not os.path.exists(wav):
+        mwav = os.path.join(a.render, slug + '.master.wav')
+        if not os.path.exists(rep) or not (os.path.exists(wav) or os.path.exists(mwav)):
             if int(nn) not in by or by[int(nn)].get('pending'):
                 song = sr.Song(songf)
                 m = Smf.read(song.midi_path); sec = tempo_map(m)
@@ -101,13 +102,14 @@ def main():
                                'note': song.meta.get('note', ''), 'pending': True}
             print('not rendered (listed as pending):', slug); continue
         r = json.load(open(rep))
-        src = wav
-        if a.master:
+        src = wav if os.path.exists(wav) else mwav   # an earlier master, kept (re-tagging needs no re-render)
+        if a.master and os.path.exists(wav):
             src = os.path.join(a.render, slug + '.master.wav')
             subprocess.run([sys.executable, os.path.join(HERE, 'master.py'), wav, src], check=True)
         op, mp = os.path.join(a.site, 'audio', nn + '.opus'), os.path.join(a.site, 'audio', nn + '.mp3')
-        meta = ['-metadata', f'title={r["title"]}', '-metadata', 'album=CITYPOP DEPROGRAMMED', '-metadata', f'track={int(nn)}',
-                '-metadata', 'artist=Algorithmic Industries', '-metadata', 'comment=Performed on SNDWAVE2000']
+        title = sr.Song(songf).meta.get('title', r['title'])   # the .song is the source of truth for titles
+        meta = ['-metadata', f'title={title}', '-metadata', 'album=CITYPOP1993', '-metadata', f'track={int(nn)}',
+                '-metadata', 'artist=Algorithmic Industries', '-metadata', 'comment=Performed on SNDWAVE1993']
         subprocess.run([FFMPEG, '-y', '-v', 'error', '-i', src, '-c:a', 'libopus', '-b:a', '112k', '-vbr', 'on',
                         '-ar', '48000'] + meta + [op], check=True)
         subprocess.run([FFMPEG, '-y', '-v', 'error', '-i', src, '-c:a', 'libmp3lame', '-b:a', '192k', '-ar', '44100']
@@ -119,13 +121,13 @@ def main():
         pres = [{'part': t['track'] if 'track' in t else t.get('name'), 'preset': t.get('label') or t.get('preset')}
                 for t in r.get('tracks', [])]
         h = hashlib.sha256(open(op, 'rb').read()).hexdigest()[:10]
-        by[int(nn)] = {'n': int(nn), 'title': r['title'], 'seconds': r['seconds'], 'note': mm.get('note', ''),
+        by[int(nn)] = {'n': int(nn), 'title': title, 'seconds': r['seconds'], 'note': mm.get('note', ''),
                        'bpm': round(r['bpm'], 1), 'opus': f'audio/{nn}.opus?v={h}', 'mp3': f'audio/{nn}.mp3?v={h}',
                        'events': f'data/{nn}.json?v={h}', 'presets': pres, 'lufs': r['mix']['lufs'],
                        'key': VAR[int(nn)][0], 'variation': VAR[int(nn)][1]}
         print(f'{nn} {r["title"]}: {r["seconds"]:.1f} s, {len(ev["ev"])} events')
     album['tracks'] = [by[k] for k in sorted(by)]
-    album['title'] = 'CITYPOP DEPROGRAMMED'
+    album['title'] = 'CITYPOP1993'
     json.dump(album, open(aj, 'w'), indent=1, ensure_ascii=False)
     sources_txt(os.path.join(a.site, 'SOURCES.TXT'))
     subprocess.run([sys.executable, os.path.join(HERE, 'annotate_presets.py'), aj], check=False)
@@ -134,7 +136,7 @@ def main():
 def sources_txt(path):
     """SOURCES.TXT: every recording the album's own library uses, with its author, licence and page"""
     cat = json.load(open(os.path.join(ALB, 'sounds', 'rainy_loft.json')))
-    L = ['CITYPOP DEPROGRAMMED: SOURCES', '', 'Every note was played by SNDWAVE2000 (Windows 3.11 Sound Recorders in DOSBox Pure).',
+    L = ['CITYPOP1993: SOURCES', '', 'Every note was played by SNDWAVE1993 (Windows 3.11 Sound Recorders in DOSBox Pure).',
          'The album\'s sound library, the Rainy Loft Collection, was prepared from these recordings:', '',
          'Recordings dedicated to the public domain (CC0 1.0), from Freesound:', '']
     for c in sorted(cat, key=lambda c: c['author'].lower()):
@@ -150,7 +152,7 @@ def sources_txt(path):
           'Every part is a preset of the Rainy Loft Collection; its disc LIBRARY.TSV lists every sound it plays.',
           'Paganini, Caprice No. 24 in A minor (published 1820): public domain; one bar is quoted in Var. VI.',
           'Windows for Workgroups 3.11 and Sound Recorder (c) Microsoft Corporation. DOSBox Pure: GPL-2.0-or-later.',
-          '', 'The compositions, arrangements and recordings of CITYPOP DEPROGRAMMED: CC0 1.0.']
+          '', 'The compositions, arrangements and recordings of CITYPOP1993: CC0 1.0.']
     open(path, 'w', newline='\r\n').write('\n'.join(L) + '\n')
 
 

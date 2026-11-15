@@ -1,6 +1,6 @@
-CITYPOP DEPROGRAMMED: SOURCES
+CITYPOP1993: SOURCES
 
-Every note was played by SNDWAVE2000 (Windows 3.11 Sound Recorders in DOSBox Pure).
+Every note was played by SNDWAVE1993 (Windows 3.11 Sound Recorders in DOSBox Pure).
 The album's sound library, the Rainy Loft Collection, was prepared from these recordings:
 
 Recordings dedicated to the public domain (CC0 1.0), from Freesound:
@@ -157,4 +157,4 @@ Every part is a preset of the Rainy Loft Collection; its disc LIBRARY.TSV lists 
 Paganini, Caprice No. 24 in A minor (published 1820): public domain; one bar is quoted in Var. VI.
 Windows for Workgroups 3.11 and Sound Recorder (c) Microsoft Corporation. DOSBox Pure: GPL-2.0-or-later.
 
-The compositions, arrangements and recordings of CITYPOP DEPROGRAMMED: CC0 1.0.
+The compositions, arrangements and recordings of CITYPOP1993: CC0 1.0.

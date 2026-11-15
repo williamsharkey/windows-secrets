@@ -38,7 +38,7 @@ hard you play.
 
 2. GETTING STARTED
 
-Insert the disc. In SNDWAVE2000 open the Library tab, choose RAINYLOFT and
+Insert the disc. In SNDWAVE1993 open the Library tab, choose RAINYLOFT and
 pick a preset. Texture and FX presets play at the pitch they were recorded at,
 whatever key you press. Hold a key to hear the weather. Release it to let the
 weather go.
@@ -83,6 +83,9 @@ def main():
                     help='installed pack discs to copy borrowed sounds from, so this disc stands alone')
     ap.add_argument('--library-names', default=os.path.expanduser('~/cpd/machine/library.names.txt'))
     a = ap.parse_args()
+    for need in (a.library_names, os.path.join(a.from_packs, 'PACKS.TSV')):   # check inputs before clearing the old disc
+        if not os.path.exists(need):
+            raise SystemExit(f'make_disc: {need} is missing; the existing disc is left as it is')
     shutil.rmtree(a.disc, ignore_errors=True)
     os.makedirs(a.disc)
     pres = []
@@ -138,9 +141,9 @@ def main():
         os.makedirs(os.path.join(a.disc, folder), exist_ok=True)
         open(os.path.join(a.disc, folder, fn), 'wb').write((d + '\r\n').encode('ascii'))
         rows.append('\t'.join([c, n, d, PID, '3.11', '', '-', f'{folder}\\{fn}']))
-    hdr = '# SNDWAVE2000 by Algorithmic Industries presets: category\tname\tDNA\tpack\teditions\trating\tverdict\tfile'
+    hdr = '# SNDWAVE1993 by Algorithmic Industries presets: category\tname\tDNA\tpack\teditions\trating\tverdict\tfile'
     open(os.path.join(a.disc, 'PRESETS.TSV'), 'wb').write(('\r\n'.join([hdr] + rows) + '\r\n').encode('cp1252'))
-    inf = (f'[Pack]\r\nId={PID}\r\nTitle={TITLE}\r\nProduct=SNDWAVE2000 by Algorithmic Industries\r\nVersion=1.0\r\n'
+    inf = (f'[Pack]\r\nId={PID}\r\nTitle={TITLE}\r\nProduct=SNDWAVE1993 by Algorithmic Industries\r\nVersion=1.0\r\n'
            f'Author={MAKER}\r\nDate={DATE}\r\nPresets={len(rows)}\r\nPresets311={len(rows)}\r\nPresetsXP=0\r\n'
            f'Favourites=0\r\nDescription={BLURB}\r\n')
     open(os.path.join(a.disc, 'PACK.INF'), 'wb').write(inf.encode('cp1252'))

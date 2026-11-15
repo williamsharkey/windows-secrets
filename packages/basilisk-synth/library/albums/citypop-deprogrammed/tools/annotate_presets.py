@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Mark each preset album.json credits by where a listener can find it: "shipped" (on SNDWAVE2000's released pack
+"""Mark each preset album.json credits by where a listener can find it: "shipped" (on SNDWAVE1993's released pack
 discs with this exact DNA), "rainy-loft" (the album's own pack, coming in 1.4) or "album" (an album-only DNA: a
 pack-disc preset as it was on the 1.3.0 release-candidate discs, or a DNA written for the album).
 

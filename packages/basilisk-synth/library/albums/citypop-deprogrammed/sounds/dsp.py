@@ -1,7 +1,7 @@
 """Offline sample preparation for the Rainy Loft Collection (the album pack): load, trim, filter, saturate, chorus,
 room, retune, loop and write 3.11-ready WAVs (22050 Hz, 16-bit, mono, at most 30 s).
 
-This only prepares source recordings before they go into SNDWAVE2000's Sound Recorders; every note of the album is
+This only prepares source recordings before they go into SNDWAVE1993's Sound Recorders; every note of the album is
 then played by the recorders themselves.
 """
 import math, os, subprocess, wave

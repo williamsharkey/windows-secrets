@@ -1,5 +1,5 @@
 #!/bin/bash
-# deploy.sh: put site/citypop on williamsharkey.com/citypop/ (and the old /citypop-deprogrammed/ redirect) (docroot ~/html/live on the web
+# deploy.sh: put site/citypop on williamsharkey.com/citypop1993/ (docroot ~/html/live on the web
 # host, reached through sharkey-server). Shows what differs from the live copy first; --go to copy.
 set -e
 REPO=$(cd "$(dirname "$0")/../../../../../.." && pwd)
@@ -17,6 +17,6 @@ CH=$(diff /tmp/cpd_live.md5 /tmp/cpd_local.md5 | grep '^>' | awk '{print $3}' | 
 [ -n "$CH" ] && (cd "$SRC" && tar czf - $CH) | $SSH "mkdir -p $DST && tar xzf - -C $DST"
 echo "== check over HTTPS"
 for f in album.json; do
-  a=$(md5sum < "$SRC/$f" | cut -c1-32); b=$(curl -s "https://williamsharkey.com/citypop/$f" | md5sum | cut -c1-32)
+  a=$(md5sum < "$SRC/$f" | cut -c1-32); b=$(curl -s "https://williamsharkey.com/citypop1993/$f" | md5sum | cut -c1-32)
   [ "$a" = "$b" ] && echo "ok   $f" || echo "DIFF $f"
 done

@@ -1,12 +1,12 @@
-# Finale: Dawn over the Bay, Deprogrammed: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
+# Finale: Dawn over the Bay: a SNDWAVE2000 song demo (tools/songrender/README.md has the format)
 
-title    = Finale: Dawn over the Bay, Deprogrammed
+title    = Finale: Dawn over the Bay
 track    = 12
 note     = The theme comes home in E-flat with the night around it (the inversion as a counter-line, the motto traded, the fast version), the caprice figure as a hinge into F, everything pushed and full, then the motto slowly on the bell; the first track ended on the IV, this one on the I, as the birds start.
 pack     = rainy-loft
 kind     = original
-album    = CITYPOP DEPROGRAMMED
-composer = Algorithmic Industries (an original for SNDWAVE2000)
+album    = CITYPOP1993
+composer = Algorithmic Industries (an original for SNDWAVE1993)
 licence  = CC0-1.0 (the composition and this arrangement)
 midi     = 12-dawn-over-the-bay.mid
 script   = 12-dawn-over-the-bay.py

@@ -1,4 +1,4 @@
-"""12. Finale: Dawn over the Bay, Deprogrammed. E-flat, then F major, 96 bpm. The theme comes home with the night's
+"""12. Finale: Dawn over the Bay. E-flat, then F major, 96 bpm. The theme comes home with the night's
 variations around it: the inversion as a high counter-line, the motto traded as in the espresso bar, the caprice
 figure as a hinge into F, the pushes of the taxi ride, the party's fast version. The first
 track ended on the IV. This one ends on the I, as the birds start and the rain stops."""
@@ -182,7 +182,7 @@ for b in range(0, int(t), 4):
     ep.cc(b, 64, 0); ep.cc(b + 0.05, 64, 127)
 
 finish(__file__, S, {
-    'title': 'Finale: Dawn over the Bay, Deprogrammed',
+    'title': 'Finale: Dawn over the Bay',
     'track': 12,
     'note': 'The theme comes home in E-flat with the night around it (the inversion as a counter-line, the motto '
             'traded, the fast version), the caprice figure as a hinge into F, everything pushed and full, then the '

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""CITYPOP DEPROGRAMMED: the pixel art. One night scene, drawn from code (no photographs): a stone stair lane on the
+"""CITYPOP1993: the pixel art. One night scene, drawn from code (no photographs): a stone stair lane on the
 slope of a harbour town, after the rain, at about two in the morning. Houses step down on both sides, a pagoda on the
 hill, wires across the sky, a lamp halfway down, puddles on the landings, the strait below with islands and a long
 bridge, the moon in the haze.
@@ -335,11 +335,11 @@ def main():
     w, h = text1bit(np.zeros((40, 400), np.uint8), (0, 0), 'CITYPOP', 30, 1)
     text1bit(c, ((320 - w) // 2 + 1, 23), 'CITYPOP', 30, 1)
     text1bit(c, ((320 - w) // 2, 22), 'CITYPOP', 30, 14)
-    w2, _ = text1bit(np.zeros((40, 400), np.uint8), (0, 0), 'DEPROGRAMMED', 19, 1, spacing=2)
-    text1bit(c, ((320 - w2) // 2 + 1, 57), 'DEPROGRAMMED', 19, 1, spacing=2)
-    text1bit(c, ((320 - w2) // 2, 56), 'DEPROGRAMMED', 19, 15, spacing=2)
-    w3, _ = text1bit(np.zeros((40, 400), np.uint8), (0, 0), 'performed on SNDWAVE2000', 9, 1, font='DejaVuSans.ttf')
-    text1bit(c, ((320 - w3) // 2, 300), 'performed on SNDWAVE2000', 9, 15, font='DejaVuSans.ttf')
+    w2, _ = text1bit(np.zeros((40, 400), np.uint8), (0, 0), '1993', 24, 1, spacing=3)
+    text1bit(c, ((320 - w2) // 2 + 1, 57), '1993', 24, 1, spacing=3)
+    text1bit(c, ((320 - w2) // 2, 56), '1993', 24, 15, spacing=3)
+    w3, _ = text1bit(np.zeros((40, 400), np.uint8), (0, 0), 'performed on SNDWAVE1993', 9, 1, font='DejaVuSans.ttf')
+    text1bit(c, ((320 - w3) // 2, 300), 'performed on SNDWAVE1993', 9, 15, font='DejaVuSans.ttf')
     save(c, os.path.join(out, 'cover.png'))
     save(c, os.path.join(out, 'cover-640.png'), 2)
     ic = Image.open(os.path.join(out, 'cover.png')).crop((150, 20, 214, 84)).resize((32, 32), Image.NEAREST)
