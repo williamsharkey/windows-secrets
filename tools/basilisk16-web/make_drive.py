@@ -27,6 +27,7 @@ for i in src.infolist():
 extra = os.path.join(pkg, 'machine-extra')
 for f in ('CHORD.WAV', 'TADA.WAV'): files['WINDOWS/' + f] = open(os.path.join(extra, f), 'rb').read()
 for f in ('SYNTH.EXE', 'SYNHOOK.DLL'): files['BS/' + f] = open(os.path.join(gout, f), 'rb').read()
+if os.path.exists(os.path.join(gout, 'SNDWAVE.EXE')): files['BS/SNDWAVE.EXE'] = open(os.path.join(gout, 'SNDWAVE.EXE'), 'rb').read()   # (opens .bsp presets)
 files['WINDOWS/SYSTEM/BSYNTH.DRV'] = open(os.path.join(gout, 'BSYNTH.DRV'), 'rb').read()
 if '--xpsounds' in sys.argv:
     xp = sys.argv[sys.argv.index('--xpsounds') + 1]
@@ -38,6 +39,12 @@ if '--xpsounds' in sys.argv:
         # groups (F1 opens the help with WINHELP.EXE, which drive-keep.txt keeps); BASIL16.* in drives from before the rename
         for n in ('BS/SNDWAVE.HLP', 'WINDOWS/SNDWAVE.GRP', 'BS/BASIL16.HLP', 'WINDOWS/BASIL16.GRP', 'WINDOWS/PROGMAN.INI'):
             if n in zx.namelist(): files[n] = zx.read(n)
+        # and the rest of C:\BS that the group's items use (SNDWAVE.EXE, the icons, Read Me, the title screen); not the
+        # album player (CITYPOP.*: it needs the plugin host) nor the test program
+        for n in zx.namelist():
+            u = n.upper()
+            if u.startswith('BS/') and not u.endswith('/') and not u.startswith('BS/CITYPOP.') and u not in ('BS/BSTEST.EXE', 'BS/SYNTH.EXE', 'BS/SYNHOOK.DLL'):
+                files.setdefault(u, zx.read(n))
     else:
         for f in sorted(os.listdir(xp)):
             if f.upper().endswith('.WAV'): files['XPSOUNDS/' + f.upper()] = open(os.path.join(xp, f), 'rb').read()

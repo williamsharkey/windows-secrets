@@ -353,6 +353,19 @@ EMSCRIPTEN_KEEPALIVE const int *b16_layout()
     return o;
 }
 
+// Windows' clock: the visitor's local date and time, in 1993 (29 Feb becomes 28 Feb; DOS works out the weekday).
+// Only while someone is watching (the engine live, not granted/offline), so no render ever depends on the wall clock.
+int clockMin = -1;
+void sendClock(bool force)
+{
+    if (!S || S->offline) return;
+    std::time_t t = std::time(nullptr); std::tm lt; localtime_r(&t, &lt);
+    if (!force && lt.tm_min == clockMin) return;
+    clockMin = lt.tm_min;
+    const int mon = lt.tm_mon + 1, day = (mon == 2 && lt.tm_mday == 29) ? 28 : lt.tm_mday;
+    char b[64]; proto::time(b, sizeof b, 1993, mon, day, lt.tm_hour, lt.tm_min, lt.tm_sec); trimSend(b);
+}
+
 // the host's periodic work: the plugin's worker loop
 EMSCRIPTEN_KEEPALIVE void b16_tick()
 {
@@ -361,9 +374,8 @@ EMSCRIPTEN_KEEPALIVE void b16_tick()
     if (!hello && S->state >= BS_RUNNING && S->state != BS_FAILED) {
         hello = true;
         char b[128];
-        std::time_t t = std::time(nullptr); std::tm lt; localtime_r(&t, &lt);
         trimSend(std::strcpy(b, "hi 3"));   // DNA v3: the guest answers with its caps
-        proto::time(b, sizeof b, lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday, lt.tm_hour, lt.tm_min, lt.tm_sec); trimSend(b);
+        sendClock(true);
         proto::go(b, sizeof b); trimSend(b);
         for (const auto &x : bsynth3::scaleLibrary()) {   // the scale library, for Windows' Scale box
             std::string cat = x.category; for (auto &ch : cat) if (ch == ' ') ch = '_';
@@ -373,6 +385,7 @@ EMSCRIPTEN_KEEPALIVE void b16_tick()
         dnaToGuest = true;
     }
     if (hello && keyVerGuest != keyVer) sendKey();
+    if (hello) sendClock(false);   // once a minute
     if (hello) {   // the plugin's per-block work: the sequencer's steps (no transport here: its free run, xf) and grains
         const uint64_t now = nowStamp(), end = now + 960;   // this tick's block: 20 ms ahead of the latest note stamp
         if (seqPos < now) seqPos = now;
