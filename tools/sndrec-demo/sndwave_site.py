@@ -126,7 +126,7 @@ def main():
     songs = json.load(open(os.path.join(songsdir, 'index.json')))['packs'] if songsdir else {}
     index = []
     # the released discs: a pack staged for a later release (Rainy Loft Collection, 1.4) is left out until then;
-    # --discs packages/basilisk-synth/library/packs/out/discs-1.4/DISCS.TSV switches the 1.4 set on
+    # --discs packages/basilisk-synth/library/packs/out/discs-1.4/DISCS.TSV switches the 1.4 set on (disc images from beside it)
     discs = opt('--discs') or os.path.join(LIB, 'packs', 'out', 'discs', 'DISCS.TSV')
     released = {l.split('\t')[0] for l in open(discs) if l.strip() and not l.startswith('#')} if os.path.exists(discs) else None
     for pid, P, W, lid, pdir in entries:
@@ -175,7 +175,7 @@ def main():
             shutil.rmtree(bdst, ignore_errors=True); os.makedirs(bdst)   # the export as it is now: no stale pages
             for f in os.listdir(bsrc): copy(os.path.join(bsrc, f), os.path.join(bdst, f))
             booklet = 'booklet/' + os.path.basename(W['booklet'])
-        iso = W and W.get('iso') and os.path.join(LIB, 'packs', 'out', 'discs', W['iso'])
+        iso = W and W.get('iso') and next((f for f in (os.path.join(os.path.dirname(discs), W['iso']), os.path.join(LIB, 'packs', 'out', 'discs', W['iso'])) if os.path.exists(f)), None)
         if iso and os.path.exists(iso):   # the disc image (it also ships inside the release, on drive P:)
             copy(iso, os.path.join(dst, W['iso'])); files['iso'] = {'name': W['iso'], 'kb': max(1, round(os.path.getsize(iso) / 1024))}
         M, T = P['maker'], P.get('text', {})

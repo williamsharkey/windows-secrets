@@ -160,3 +160,10 @@ main.wait { min-height: 180vh; }   /* until packs.json is in: the footer stays b
 .mp-now .fl { font-size: 11.5px; background: #ffffcc; border: 1px solid #c0a000; padding: 0 4px; margin-top: 2px; }
 .mp-it .flg { font: 700 10px/14px Arial, sans-serif; background: #ffcc00; color: #000; padding: 0 4px; margin-left: 2px; }
 .mp-it[aria-selected="true"] .flg { color: #000; }
+
+/* ?embed=1: the player alone, inside the home page's window (carousel.js) */
+html.embed, .embed body { background: var(--face); min-height: 0; }
+.embed .wrap { padding: 0; max-width: none; }
+.embed .mast, .embed .mp-help, .embed #pack, .embed .allpacks, .embed .foot, .embed .mp > .cap { display: none !important; }
+.embed main.wait { min-height: 0; }
+.embed .mp { margin: 0; border: 0; box-shadow: none; }

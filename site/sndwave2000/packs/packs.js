@@ -17,6 +17,7 @@
   var PACKS = [], BY = {}, DATA = {}, ORDER = [];   // ORDER: pack ids in the combo's (alphabetical) order
   var cur = {pack: null, items: [], sel: -1}, playingX = null, playingPack = null, hist = [], wantPlay = false;
   var ALL = '*all';
+  var EMBED = /[?&]embed=1/.test(location.search), AUTOPLAY = EMBED && /[?&]autoplay=1/.test(location.search), autoplayed = false;
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]; }); }
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
@@ -302,7 +303,7 @@
       (x.fl && x.fl.length ? '<span class="fl" title="From the check on the release build">Note: ' + esc(x.fl.join(', ')) + '</span>' : '');
     $('mp-recipe').textContent = recipeLines(x).join('\n'); $('mp-recipe').style.whiteSpace = '';
     $('mp-links').innerHTML = (f.pdf ? '<a href="' + p.id + '/' + esc(f.pdf.name) + '" target="_blank" rel="noopener">Manual</a>' : '') +
-      (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + (f.iso ? '<a href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image</a>' : '') + '<a href="#pack" class="about">About this pack</a>';
+      (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + (f.iso ? '<a href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image</a>' : '') + (EMBED ? '<a href="/sndwave2000/packs/#' + p.id + '" target="_top" class="about">About this pack</a>' : '<a href="#pack" class="about">About this pack</a>');
     $('mp-title').textContent = 'SNDWAVE2000 Media Player - ' + x.n.toUpperCase();
     drawArt(x);
     if (!audioOf(x)) { tEl.textContent = '--:--.-'; lenEl.textContent = 'preview coming'; }
@@ -310,7 +311,7 @@
   }
   function links(p, f) {
     $('mp-links').innerHTML = (f.pdf ? '<a href="' + p.id + '/' + esc(f.pdf.name) + '" target="_blank" rel="noopener">Manual</a>' : '') +
-      (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + (f.iso ? '<a href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image</a>' : '') + '<a href="#pack" class="about">About this pack</a>';
+      (f.hlp ? '<a href="' + p.id + '/' + esc(f.hlp.name) + '" download>Help</a>' : '') + (f.iso ? '<a href="' + p.id + '/' + esc(f.iso.name) + '" download>Disc image</a>' : '') + (EMBED ? '<a href="/sndwave2000/packs/#' + p.id + '" target="_top" class="about">About this pack</a>' : '<a href="#pack" class="about">About this pack</a>');
   }
   // a song: its credits as given (composer, arranger, source, licence, proof), the presets it plays
   function songShow(x, p, f) {
@@ -458,7 +459,9 @@
     var pr = id === ALL ? Promise.all(ORDER.map(load)).then(function (a) { return [].concat.apply([], a); }) : load(id);
     q.setAttribute('aria-label', id === ALL ? 'Find a preset in every pack' : 'Find a preset in this pack');
     if (id !== ALL) about(id);
-    return pr.then(function (arr) { if (cur.pack !== id) return; cur.all = arr; renderList(); if (!playingX || audio.paused) nowShow(cur.items[cur.sel]); },
+    return pr.then(function (arr) { if (cur.pack !== id) return; cur.all = arr; renderList(); if (!playingX || audio.paused) nowShow(cur.items[cur.sel]);
+        if (AUTOPLAY && !autoplayed) { autoplayed = true; toggle(); }
+        if (EMBED && window.parent !== window) try { window.parent.postMessage({spxHeight: $('mp').offsetHeight}, location.origin); } catch (e) {} },
       function () { listEl.innerHTML = '<div class="mp-cat">The presets did not load. Try again later.</div>'; });
   }
   packSel.addEventListener('change', function () { hist = []; openPack(packSel.value); if (packSel.value !== ALL) setHash(packSel.value); });
@@ -562,7 +565,7 @@
     PACKS.forEach(function (p) { grid.appendChild(card(p)); });
     [].forEach.call(grid.querySelectorAll('[data-px]'), function (i) { pxfit.fit(i); });
     $('status').textContent = PACKS.length + ' packs, ' + num(d.total) + ' presets. ' +
-      (d.previews ? 'Every preview was rendered by the real Windows 3.11 machine on the 1.3.0 release build; the few that missed a check are marked with a note.' : 'Every disc ships with SNDWAVE2000 1.3.0. Previews of every preset are being rendered on the release build; until then the owner\'s top picks play the demos already made, and the rest say "preview coming".');
+      (d.previews ? 'Every preview was rendered by the real Windows 3.11 machine on a release build; the few that missed a check are marked with a note.' : 'Every disc ships with SNDWAVE2000. Previews of every preset are being rendered on the release build; until then the owner\'s top picks play the demos already made, and the rest say "preview coming".');
     if (!route(false)) {   // first visit: the pack with the most previews
       var best = PACKS.slice().sort(function (a, b) { return (b.picks || 0) - (a.picks || 0) || b.fav - a.fav; })[0];
       packSel.value = best.id; openPack(best.id);
