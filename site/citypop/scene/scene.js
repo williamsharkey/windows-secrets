@@ -234,12 +234,15 @@
       if (reduced || S.paused) return;
       S.target.x = clamp((e.clientX / innerWidth) * 2 - 1, -1, 1);
       S.target.y = clamp((e.clientY / innerHeight) * 2 - 1, -1, 1);
-      if (!S.raf) S.raf = requestAnimationFrame(stepParallax);
+      if (!S.raf && !S.tmr) S.raf = requestAnimationFrame(stepParallax);
     }
     let lastStep = 0;
     function stepParallax(now) {
       S.raf = 0;
-      if (now - lastStep < 66) { S.raf = requestAnimationFrame(stepParallax); return; }   // ~15 fps easing
+      if (now - lastStep < 66) {   // ~15 fps easing: wait on a timer, not by spinning rAF (each rAF tick costs a frame)
+        S.tmr = setTimeout(() => { S.tmr = 0; S.raf = requestAnimationFrame(stepParallax); }, 66 - (now - lastStep));
+        return;
+      }
       lastStep = now;
       S.cur.x += (S.target.x - S.cur.x) * 0.25;
       S.cur.y += (S.target.y - S.cur.y) * 0.25;
@@ -250,7 +253,9 @@
         if (nx !== S.par[n][0] || ny !== S.par[n][1]) { S.par[n] = [nx, ny]; place(n); moved = true; }
       }
       if (moved) changed();
-      if (Math.abs(S.target.x - S.cur.x) > 0.01 || Math.abs(S.target.y - S.cur.y) > 0.01) S.raf = requestAnimationFrame(stepParallax);
+      if (Math.abs(S.target.x - S.cur.x) > 0.01 || Math.abs(S.target.y - S.cur.y) > 0.01) {
+        S.tmr = setTimeout(() => { S.tmr = 0; S.raf = requestAnimationFrame(stepParallax); }, 66);
+      }
     }
 
     // ------------------------------------------------------------ resize / dpr
@@ -331,7 +336,7 @@
         return cv;
       },
       occluders() { /* reserved: the UI may pass window rects; the scene draws everything for now */ },
-      pause() { S.paused = true; if (S.raf) { cancelAnimationFrame(S.raf); S.raf = 0; } },
+      pause() { S.paused = true; if (S.raf > 0) cancelAnimationFrame(S.raf); if (S.tmr) clearTimeout(S.tmr); S.raf = 0; S.tmr = 0; },
       resume() { S.paused = false; },
       resize() { onResize(); },
       destroy() {
