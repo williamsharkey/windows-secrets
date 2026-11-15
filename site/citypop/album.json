@@ -79,9 +79,9 @@
    "seconds": 190.88,
    "note": "The theme in F, as a light shuffle: the motto traded between vibraphone and suitcase piano (once as written, once upside down), the flute an eighth late, muted trumpet on B, two choruses, a stop-time.",
    "bpm": 96.0,
-   "opus": "audio/02.opus?v=03cb7aaac9",
-   "mp3": "audio/02.mp3?v=03cb7aaac9",
-   "events": "data/02.json?v=03cb7aaac9",
+   "opus": "audio/02.opus?v=aa30405365",
+   "mp3": "audio/02.mp3?v=aa30405365",
+   "events": "data/02.json?v=aa30405365",
    "presets": [
     {
      "part": "room",
@@ -144,7 +144,9 @@
      "where": "rainy-loft"
     }
    ],
-   "lufs": -16.0
+   "lufs": -16.0,
+   "key": "F major",
+   "variation": "the motto traded, inverted, an eighth late"
   },
   {
    "n": 3,
@@ -484,9 +486,9 @@
    "seconds": 250.29,
    "note": "The slow heart: the theme inverted in D-flat at 66, re-harmonised; soft piano alone, then violins and cellos, choir and glass piano on the inverted B, a climax a tone higher with horns, the piano alone again.",
    "bpm": 66.0,
-   "opus": "audio/08.opus?v=e58587a33f",
-   "mp3": "audio/08.mp3?v=e58587a33f",
-   "events": "data/08.json?v=e58587a33f",
+   "opus": "audio/08.opus?v=c16513197b",
+   "mp3": "audio/08.mp3?v=c16513197b",
+   "events": "data/08.json?v=c16513197b",
    "presets": [
     {
      "part": "rain",

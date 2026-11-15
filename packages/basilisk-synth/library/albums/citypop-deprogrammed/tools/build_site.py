@@ -140,10 +140,14 @@ def sources_txt(path):
     for c in sorted(cat, key=lambda c: c['author'].lower()):
         L.append(f'  {c["description"][:70]}')
         L.append(f'    by {c["author"]}, {c["license"]}, {c["source_url"]}')
-    L += ['', 'Electric piano and bass: the Bele Dance instruments (midigarden) by William Sharkey, rendered offline.',
-          'Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly), from the Paulywaulophone pack.',
-          'Other SNDWAVE2000 pack discs used: Tape Parlour, Polysynth Showroom, Courtyard Chapel, Studio Archive,',
-          '  Garden Rhythm Works and the library disc. Their own LIBRARY.TSV files list their sources (CC0 / public domain).',
+    L += ['', 'Electric piano and bass: the Bele Dance instruments (midigarden); kick, snare, hats, toms and cymbals: the ghosts.garden',
+          '  kits; all by William Sharkey, rendered offline.',
+          'Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly): the bee organ, by permission.',
+          'Soft piano: Salamander Grand Piano V3 by Alexander Holm (public-domain dedication; first released CC-BY 3.0).',
+          'Vibraphone, harp, strumstick, kalimba, clavinet, harmonica and horn samples: VCSL and VSCO 2 CE by Versilian',
+          '  Studios / Sam Gossner and contributors (CC0). Polysynth samples: modularsamples (CC0). Vocoder choir:',
+          '  Elektrik_Musik (CC0). Strings, choir, field and machine recordings of the library disc: see its LIBRARY.TSV.',
+          'Every part is a preset of the Rainy Loft Collection; its disc LIBRARY.TSV lists every sound it plays.',
           'Paganini, Caprice No. 24 in A minor (published 1820): public domain; one bar is quoted in Var. VI.',
           'Windows for Workgroups 3.11 and Sound Recorder (c) Microsoft Corporation. DOSBox Pure: GPL-2.0-or-later.',
           '', 'The compositions, arrangements and recordings of CITYPOP DEPROGRAMMED: CC0 1.0.']
