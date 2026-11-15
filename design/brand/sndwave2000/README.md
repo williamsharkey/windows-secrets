@@ -1,4 +1,6 @@
-# SNDWAVE2000 brand kit
+# SNDWAVE2000 brand kit (SUPERSEDED)
+
+> **Superseded by `design/brand/sndwave1993/`.** On 2026-11-15 the owner renamed the product SNDWAVE2000 → **SNDWAVE1993**, and the album CITYPOP DEPROGRAMMED → **CITYPOP1993**, to stress that this is 1993 technology revisited. This folder is kept for history only; do not use it for new work.
 
 The owner chose boutique design 1 from round 3 of the names page, with Algorithmic Industries as the company. This kit is the single source for every SNDWAVE2000 surface: the 3.11 instrument, the website, the web edition and the sound packs. `preview.png` shows all the pieces on one sheet, and `COPY.md` has the exact strings.
 
