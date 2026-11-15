@@ -2,7 +2,7 @@
    Every window is placed on whole device pixels; every canvas is backed at device resolution and drawn in device pixels. */
 (() => {
 'use strict';
-const BUILD = '20261114g';             // cache key for the scene and life modules; bump on each UI deploy
+const BUILD = '20261114h';             // cache key for the scene and life modules; bump on each UI deploy
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const store = {
   get(k, d) { try { const v = localStorage.getItem('cpd:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
