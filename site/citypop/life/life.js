@@ -1,4 +1,4 @@
-/* CITYPOP DEPROGRAMMED: the life in the night.
+/* CITYPOP1993: the life in the night.
    Hundreds of small, slow, device-pixel things on overlay canvases above the scene's layers.
    One scheduler; each thing is a pure function of (seed, time, hour of night) and says when it next changes;
    only the rectangles that changed are cleared and redrawn. See LIFE-API.md. */
