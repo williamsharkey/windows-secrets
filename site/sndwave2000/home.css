@@ -47,3 +47,12 @@ figure { margin: 0; }
 @media (max-width: 860px) { .credrow { grid-template-columns: minmax(0, 1fr); } }
 .shelf .pxbox { justify-content: center; margin-bottom: 8px; }
 .shelf .pxbox canvas, .shelf .pxbox img { margin: 0; }
+
+/* the album, under the sound packs */
+.album { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 14px 20px; align-items: center; max-width: 640px; margin: 22px 0 0; padding: 12px 0 0; border-top: 1px solid var(--bk-rule); text-decoration: none; color: var(--bk-text); }
+.album .pxbox { width: 160px; }
+.album b { display: block; font: italic 700 22px/1.2 "SW Serif", "DejaVu Serif", Georgia, serif; margin: 2px 0 4px; }
+.album:hover b { color: var(--bk-accent); }
+.album > span:last-child { font-size: 15px; }
+.album b { overflow-wrap: anywhere; }
+@media (max-width: 520px) { .album { grid-template-columns: minmax(0, 1fr); } .album b { font-size: 19px; } }
