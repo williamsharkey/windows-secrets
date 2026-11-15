@@ -56,3 +56,4 @@ figure { margin: 0; }
 .album > span:last-child { font-size: 15px; }
 .album b { overflow-wrap: anywhere; }
 @media (max-width: 520px) { .album { grid-template-columns: minmax(0, 1fr); } .album b { font-size: 19px; } }
+.known { margin: 0 0 8px; padding-left: 20px; } .known li { margin: 0 0 6px; font-size: 15px; }
