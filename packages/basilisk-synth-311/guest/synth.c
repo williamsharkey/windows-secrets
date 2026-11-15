@@ -3375,6 +3375,9 @@ static BOOL song_scroll(HWND sb, int code, int pos)
 #define GPH 96
 static int __far gpId[NGP], __far gpSuit[NGP], __far gpRank[NGP], __far gpGen[NGP], __far gpKept[NGP], __far gpSel[NGP], __far gpAnim[NGP];
 static char __far gpName[NGP][32]; static char __far gpCode[NGP][9];
+static char __far gpKind[NGP], __far gpLab[NGP][24];   /* the origin: 'p' a pack preset (gpLab: its pack), 'w' wild, 'b' bred (gpLab: its lineage) */
+static HWND gpSrcCb; static HFONT gpSmall;
+#define GPWILD 56   /* a wild card's face: CARDS.DLL's robot back */
 static int gpN, gpSeen[64], gpNSeen, gpRate = 25;
 static HWND hGene, gpStat, gpRateSb, gpRateTx;
 static HINSTANCE gpCards;
@@ -3391,16 +3394,16 @@ static void gp_slot(int i, int *x, int *y)   /* the table: two rows of six; the 
 }
 static void gp_card(HDC dc, int i, int x, int y)
 {
-    RECT r; char t[40]; int b; HFONT of;
+    RECT r; char t[48]; int b, top; HFONT of; char k = gpKind[i];
     SetTextColor(dc, RGB(0, 0, 0)); SetBkColor(dc, RGB(255, 255, 255));   /* (CARDS.DLL's black pips are monochrome: drawn in the DC's text colour, white after "The deck") */
-    if (gpDraw && gpDraw(dc, x, y, (gpRank[i] - 1) * 4 + gpSuit[i], 0, RGB(0, 128, 0))) {
+    if (gpDraw && (k == 'w' ? gpDraw(dc, x, y, GPWILD, 1, RGB(0, 128, 0)) : gpDraw(dc, x, y, (gpRank[i] - 1) * 4 + gpSuit[i], 0, RGB(0, 128, 0)))) {
         /* selected: inverted, as CARDS.DLL's own highlight looks */
         if (gpSel[i]) { SetRect(&r, x + 1, y + 1, x + GPW - 1, y + GPH - 1); InvertRect(dc, &r); }
+    } else if (k == 'w') {
+        SetRect(&r, x, y, x + GPW, y + GPH); FillRect(dc, &r, GetStockObject(gpSel[i] ? BLACK_BRUSH : GRAY_BRUSH)); FrameRect(dc, &r, GetStockObject(BLACK_BRUSH));
     } else {
         /* no CARDS.DLL, or it could not draw (no GDI room for its bitmap): the corner by hand */
         static const char *rk = "A23456789TJQK"; static HFONT sym; char c[3]; HFONT of2;
-        static int logged;
-        if (gpDraw && !logged) { logged = 1; logf_("genepool: cdtDraw failed (card %d)", (gpRank[i] - 1) * 4 + gpSuit[i]); }
         SetRect(&r, x, y, x + GPW, y + GPH); FillRect(dc, &r, GetStockObject(gpSel[i] ? BLACK_BRUSH : WHITE_BRUSH)); FrameRect(dc, &r, GetStockObject(BLACK_BRUSH));
         SetBkMode(dc, TRANSPARENT); SetTextColor(dc, gpSuit[i] == 1 || gpSuit[i] == 2 ? RGB(255, 0, 0) : gpSel[i] ? RGB(255, 255, 255) : RGB(0, 0, 0));
         if (gpRank[i] == 10) lstrcpy(c, "10"); else { c[0] = rk[gpRank[i] - 1]; c[1] = 0; }
@@ -3409,9 +3412,31 @@ static void gp_card(HDC dc, int i, int x, int y)
         SelectObject(dc, sym); c[0] = (char)(0xA7 + (gpSuit[i] == 0 ? 0 : gpSuit[i] == 1 ? 1 : gpSuit[i] == 2 ? 2 : 3)); c[1] = 0;   /* clubs, diamonds, hearts, spades */
         TextOut(dc, x + 4, y + 18, c, 1); SelectObject(dc, of2);
     }
-    SetRect(&r, x + 5, y + 50, x + GPW - 5, y + GPH - 6);   /* the label: name, generation, and the DNA's barcode */
+    if (!gpSmall) gpSmall = CreateFont(10, 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Small Fonts");
+    of = SelectObject(dc, gpFont); SetBkMode(dc, TRANSPARENT);
+    if (k == 'w') {   /* the wild card's tag, a Joker's corner */
+        HFONT bold = CreateFont(12, 0, 0, 0, FW_BOLD, 0, 0, 0, ANSI_CHARSET, 0, 0, 0, VARIABLE_PITCH | FF_SWISS, "Arial");
+        SetRect(&r, x + 5, y + 5, x + 40, y + 20); FillRect(dc, &r, GetStockObject(WHITE_BRUSH)); FrameRect(dc, &r, GetStockObject(BLACK_BRUSH));
+        SelectObject(dc, bold); SetTextColor(dc, RGB(255, 0, 0)); DrawText(dc, "WILD", 4, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+        SelectObject(dc, gpFont); DeleteObject(bold);
+    }
+    top = k == 'p' || k == 'b' ? 37 : 50;   /* the label: origin (a pack's name, or generation and lineage), name, the DNA's barcode */
+    SetRect(&r, x + 5, y + top, x + GPW - 5, y + GPH - 6);
     FillRect(dc, &r, GetStockObject(WHITE_BRUSH)); FrameRect(dc, &r, GetStockObject(GRAY_BRUSH));
-    of = SelectObject(dc, gpFont); SetBkMode(dc, TRANSPARENT); SetTextColor(dc, RGB(0, 0, 0));
+    if (top == 37) {
+        if (k == 'b') { if (gpLab[i][0]) wsprintf(t, "G%d \xB7 %s", gpGen[i], (LPSTR)gpLab[i]); else wsprintf(t, "G%d", gpGen[i]); }
+        else lstrcpyn(t, gpLab[i], sizeof t);
+        SelectObject(dc, gpSmall); SetTextColor(dc, RGB(0, 0, 128));
+        {   /* a long pack name: its first words that fit ("Game Port Sound Shop": "Game Port") */
+            int n = lstrlen(t);
+            while (n > 0 && LOWORD(GetTextExtent(dc, t, n)) > GPW - 12) { while (n > 0 && t[n - 1] != ' ') n--; while (n > 0 && t[n - 1] == ' ') n--; }
+            if (n <= 0) n = lstrlen(t);
+            t[n] = 0;
+        }
+        SetRect(&r, x + 6, y + 38, x + GPW - 6, y + 49); DrawText(dc, t, -1, &r, DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+        SelectObject(dc, gpFont);
+    }
+    SetTextColor(dc, RGB(0, 0, 0));
     SetRect(&r, x + 7, y + 51, x + GPW - 7, y + 75);
     lstrcpyn(t, gpName[i], sizeof t);
     DrawText(dc, t, -1, &r, DT_CENTER | DT_WORDBREAK | DT_NOPREFIX);
@@ -3419,7 +3444,7 @@ static void gp_card(HDC dc, int i, int x, int y)
         int hx = gpCode[i][b / 4], v = hx >= 'a' ? hx - 'a' + 10 : hx - '0';
         if ((v >> (3 - b % 4)) & 1) { RECT q; SetRect(&q, x + 10 + b * 16 / 10, y + 77, x + 11 + b * 16 / 10, y + 86); FillRect(dc, &q, GetStockObject(BLACK_BRUSH)); }
     }
-    if (gpGen[i]) { wsprintf(t, "G%d", gpGen[i]); TextOut(dc, x + GPW - 22, y + 77, t, lstrlen(t)); }
+    if (gpGen[i] && k != 'b') { wsprintf(t, "G%d", gpGen[i]); TextOut(dc, x + GPW - 22, y + 77, t, lstrlen(t)); }
     SelectObject(dc, of);
 }
 static void gp_paint(HWND h)
@@ -3447,6 +3472,7 @@ static int gp_hit(int px, int py)
 static void gp_line(char *rest)
 {
     if (!strncmp(rest, "clear", 5)) { gpN = 0; return; }
+    if (!strncmp(rest, "source ", 7)) { if (gpSrcCb) SendMessage(gpSrcCb, CB_SETCURSEL, atoi(rest + 7), 0L); return; }
     if (!strncmp(rest, "card ", 5) && gpN < NGP) {   /* card <id>|<name>|<suit>|<rank>|<gen>|<kept>|<parents>|<code> */
         char *p = rest + 5, *f[8]; int k, i = gpN, s, seen = 0;
         for (k = 0; k < 8; k++) { f[k] = p; p = strchr(p, '|'); if (!p) { k++; break; } *p++ = 0; }
@@ -3454,6 +3480,8 @@ static void gp_line(char *rest)
         gpId[i] = atoi(f[0]); lstrcpyn(gpName[i], f[1], sizeof gpName[0]); gpSuit[i] = atoi(f[2]) & 3; gpRank[i] = atoi(f[3]);
         if (gpRank[i] < 1 || gpRank[i] > 13) gpRank[i] = 1;
         gpGen[i] = atoi(f[4]); gpKept[i] = atoi(f[5]); lstrcpyn(gpCode[i], f[7], sizeof gpCode[0]); gpSel[i] = 0;
+        gpKind[i] = gpGen[i] ? 'b' : 'p'; gpLab[i][0] = 0;
+        if (p && *p) { char *q = strchr(p, '|'); gpKind[i] = *p; if (q) lstrcpyn(gpLab[i], q + 1, sizeof gpLab[0]); }   /* |<kind>|<label> (1.5) */
         for (s = 0; s < gpNSeen; s++) if (gpSeen[s] == gpId[i]) seen = 1;
         gpAnim[i] = seen ? 0 : 8;   /* new on the table: dealt from the deck */
         if (!seen && gpNSeen < 64) gpSeen[gpNSeen++] = gpId[i];
@@ -3491,6 +3519,7 @@ long FAR PASCAL __export GeneProc(HWND h, UINT m, WPARAM w, LPARAM l)
         InvalidateRect(h, NULL, FALSE);
         return 0; }
     case WM_COMMAND:
+        if (w == 6 && HIWORD(l) == CBN_SELCHANGE) { int v = (int)SendMessage(gpSrcCb, CB_GETCURSEL, 0, 0L); if (v >= 0) say("pool source %d", v); return 0; }
         if (HIWORD(l) != BN_CLICKED) return 0;
         if (w == 1) say("pool draw 3");
         else if (w == 2) { gp_selected(ids, sizeof ids); say("pool breed %s", (LPSTR)ids); }
@@ -3511,7 +3540,7 @@ long FAR PASCAL __export GeneProc(HWND h, UINT m, WPARAM w, LPARAM l)
         if (HIWORD(l) == CTLCOLOR_STATIC) { static HBRUSH face; if (!face) face = CreateSolidBrush(GetSysColor(COLOR_BTNFACE)); SetBkColor((HDC)w, GetSysColor(COLOR_BTNFACE)); return (LRESULT)(WORD)face; }
         break;
     case WM_CLOSE: DestroyWindow(h); return 0;
-    case WM_DESTROY: KillTimer(h, 1); hGene = gpStat = gpRateSb = gpRateTx = NULL; return 0;
+    case WM_DESTROY: KillTimer(h, 1); hGene = gpStat = gpRateSb = gpRateTx = gpSrcCb = NULL; return 0;
     }
     return DefWindowProc(h, m, w, l);
 }
@@ -3547,6 +3576,12 @@ static void gp_open(void)
     gpRateSb = CreateWindow("SCROLLBAR", "", WS_CHILD | WS_VISIBLE | SBS_HORZ, x, 373, 100, 14, hGene, (HMENU)-1, hInst, NULL);
     SetScrollRange(gpRateSb, SB_CTL, 0, 100, FALSE); SetScrollPos(gpRateSb, SB_CTL, gpRate, FALSE); x += 104;
     gpRateTx = CreateWindow("STATIC", "25%", WS_CHILD | WS_VISIBLE, x, 372, 40, 16, hGene, (HMENU)-1, hInst, NULL); SendMessage(gpRateTx, WM_SETFONT, (WPARAM)panelFont, 0L);
+    x += 40;
+    c = CreateWindow("STATIC", "Draw", WS_CHILD | WS_VISIBLE, x, 372, 32, 16, hGene, (HMENU)-1, hInst, NULL); SendMessage(c, WM_SETFONT, (WPARAM)panelFont, 0L); x += 34;
+    gpSrcCb = CreateWindow("COMBOBOX", "", WS_CHILD | WS_VISIBLE | WS_VSCROLL | CBS_DROPDOWNLIST, x, 369, 638 - x, 80, hGene, (HMENU)6, hInst, NULL);   /* where Draw takes cards from */
+    SendMessage(gpSrcCb, WM_SETFONT, (WPARAM)panelFont, 0L);
+    { static const char *src[3] = {"Mixed", "From packs", "Wild"}; for (k = 0; k < 3; k++) SendMessage(gpSrcCb, CB_ADDSTRING, 0, (LPARAM)(LPSTR)src[k]); }
+    SendMessage(gpSrcCb, CB_SETCURSEL, 0, 0L);
     gpStat = CreateWindow("STATIC", "", WS_CHILD | WS_VISIBLE, 10, 400, 620, 16, hGene, (HMENU)-1, hInst, NULL); SendMessage(gpStat, WM_SETFONT, (WPARAM)panelFont, 0L);
     ShowWindow(hGene, SW_SHOW); UpdateWindow(hGene);
     say("pool open");

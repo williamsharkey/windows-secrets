@@ -1,15 +1,19 @@
-// SNDWAVE2000: GENEPOOL.EXE, a table of sounds dealt as playing cards (1.5). Every card is a DNA. Draw deals new
+// SNDWAVE1993: GENEPOOL.EXE, a table of sounds dealt as playing cards (1.5). Every card is a DNA. Draw deals new
 // cards from the deck (pack presets, and raw sounds of the library and the inserted discs with random genes); Breed
 // crosses two or more cards into a new generation (layers and gene families from either parent, then mutation);
-// Keep saves a card (the kept row, and a .BSP file in Documents/SNDWAVE2000/Kept Sounds); Discard removes it. A click
+// Keep saves a card (the kept row, and a .BSP file in Documents/SNDWAVE1993/Kept Sounds); Discard removes it. A click
 // loads the card into this instance's own recorders and plays it: every audition is Sound Recorder.
 //
 // All DNA stays typable ASCII and passes the parser (dna.h): a child that does not parse back to valid layers is drawn
 // again. Everything follows from one seed (SplitMix64), kept in the project with the table.
 //
+// Every card shows where it came from: a pack preset (the pack's name on it), a wild card (a raw sound with random
+// genes: a card back marked WILD), or a bred card (its generation and lineage: pack, wild or pack x wild).
+//
 // Windows -> host: pool open | pool draw <n> | pool breed <id,id,...> | pool keep <id> | pool discard <id>
-//                  pool play <id> | pool rate <0-100> | pool clear
-// host -> Windows: pool clear | pool card <id>|<name>|<suit 0-3>|<rank 1-13>|<generation>|<kept>|<parents>|<code>
+//                  pool play <id> | pool rate <0-100> | pool source <0 mixed, 1 packs, 2 wild> | pool clear
+// host -> Windows: pool clear | pool source <n>
+//                  pool card <id>|<name>|<suit 0-3>|<rank 1-13>|<generation>|<kept>|<parents>|<code>|<kind p/w/b>|<label>
 //                  pool end | pool status <text>
 #pragma once
 #include <algorithm>
@@ -25,22 +29,29 @@
 
 namespace b16pool {
 
-struct Card { int id = 0, gen = 0, suit = 0, rank = 1; bool kept = false; std::string name, dna; std::vector<int> parents; };
+// kind: 'p' a pack preset (pack: its pack's name), 'w' wild (a raw sound), 'b' bred; lin: the lineage, 1 pack, 2 wild
+struct Card { int id = 0, gen = 0, suit = 0, rank = 1, lin = 0; bool kept = false; char kind = 'p'; std::string name, dna, pack; std::vector<int> parents;
+              std::string label() const   // what the card says of its origin
+              { if (kind == 'p') return pack; if (kind == 'w') return "WILD";
+                return lin == 3 ? "pack\xD7wild" : lin == 2 ? "wild" : lin == 1 ? "pack" : ""; } };
 
 class Pool {
 public:
     uint64_t seed = 0x5EED3110ull;
     int rate = 25;   // mutation, percent
+    int source = 0;  // Draw: 0 mixed (70% pack presets, 30% wild), 1 pack presets only, 2 wild only
     int nextId = 1;
     std::vector<Card> cards;          // on the table, in deal order
     std::vector<Card> kept;           // the kept row
-    std::vector<std::pair<std::string, std::string>> deck;   // (name, DNA): every pack preset of the machine
+    struct DeckCard { std::string name, dna, pack; };
+    std::vector<DeckCard> deck;       // every pack preset of the machine, with its pack's name
     std::vector<std::string> sounds;  // raw sound NAMEs: the six of C:\WINDOWS, the library disc, the pack discs
     std::map<std::string, std::string> soundPack;   // a pack disc's sound NAME -> its pack id (the disc goes in to play it)
 
+    std::vector<int> origins;         // cards of an older table whose origin is not known yet
     void loadDeck(const std::string &machine)
     {
-        if (!deck.empty()) return;
+        if (!deck.empty()) { inferOrigins(); return; }
         std::ifstream pk(machine + "/packs/PACKS.TSV"); std::string l;
         while (std::getline(pk, l)) {
             if (!l.empty() && l.back() == '\r') l.pop_back();
@@ -50,12 +61,13 @@ public:
                 std::ifstream lt(machine + "/packs/" + l.substr(0, a) + "/LIBRARY.TSV"); std::string r2;
                 while (std::getline(lt, r2)) { if (r2.empty() || r2[0] == '#') continue; const size_t t2 = r2.find('\t'); soundPack[r2.substr(0, t2)] = id; }
             }
+            std::string title; { std::vector<std::string> pc; std::stringstream ps(l); std::string x; while (std::getline(ps, x, '\t')) pc.push_back(x); title = pc.size() > 3 ? pc[3] : pc.size() > 2 ? pc[2] : l.substr(0, a); }
             std::ifstream t(machine + "/packs/" + l.substr(0, a) + "/PRESETS.TSV"); std::string r;
             while (std::getline(t, r)) {
                 if (!r.empty() && r.back() == '\r') r.pop_back();
                 if (r.empty() || r[0] == '#') continue;
                 std::vector<std::string> c; std::stringstream ss(r); std::string x; while (std::getline(ss, x, '\t')) c.push_back(x);
-                if (c.size() >= 3 && (c.size() < 5 || c[4].find("3.11") != std::string::npos)) deck.push_back({c[1], c[2]});
+                if (c.size() >= 3 && (c.size() < 5 || c[4].find("3.11") != std::string::npos)) deck.push_back({c[1], c[2], title});
             }
         }
         for (const char *s : {"chimes", "ding", "ringin", "ringout", "chord", "tada"}) sounds.push_back(s);
@@ -63,6 +75,20 @@ public:
             std::ifstream n(machine + f);
             while (std::getline(n, l)) { while (!l.empty() && (l.back() == '\r' || l.back() == ' ')) l.pop_back(); if (!l.empty()) sounds.push_back(l); }
         }
+        inferOrigins();
+    }
+    void inferOrigins()   // a pre-1.5 card: bred if it has a generation, a pack preset if the deck has its DNA, else wild
+    {
+        if (origins.empty()) return;
+        std::map<int, Card *> byId; for (auto &c : cards) byId[c.id] = &c; for (auto &c : kept) byId[c.id] = &c;
+        for (int id : origins) {
+            Card *c = byId.count(id) ? byId[id] : nullptr; if (!c) continue;
+            if (c->gen > 0) { c->kind = 'b'; continue; }
+            c->kind = 'w'; c->lin = 2;
+            for (auto &d : deck) if (d.name == c->name && bsynth::canonical(d.dna) == c->dna) { c->kind = 'p'; c->lin = 1; c->pack = d.pack; break; }
+        }
+        for (int id : origins) { Card *c = byId.count(id) ? byId[id] : nullptr; if (c && c->kind == 'b') for (int p : c->parents) if (byId.count(p)) c->lin |= byId[p]->lin; }
+        origins.clear();
     }
 
     // ---- the deck: n new cards, generation 0
@@ -71,11 +97,12 @@ public:
         std::vector<int> ids;
         for (int k = 0; k < n; k++) {
             Card c; c.id = nextId++; c.gen = 0;
-            if (!deck.empty() && (sounds.empty() || next() % 100 < 70)) {   // a pack preset, as it is
+            const bool pack = !deck.empty() && (sounds.empty() || source == 1 || (source == 0 && next() % 100 < 70));
+            if (pack) {   // a pack preset, as it is
                 const auto &p = deck[next() % deck.size()];
-                c.name = p.first; c.dna = bsynth::canonical(p.second);
-            } else {   // a raw sound with random genes
-                c.dna = randomSound(); c.name = rawName(c.dna);
+                c.name = p.name; c.dna = bsynth::canonical(p.dna); c.kind = 'p'; c.pack = p.pack; c.lin = 1;
+            } else {   // a wild card: a raw sound with random genes
+                c.dna = randomSound(); c.name = rawName(c.dna); c.kind = 'w'; c.lin = 2;
             }
             face(c);
             cards.push_back(c); ids.push_back(c.id);
@@ -94,7 +121,7 @@ public:
         for (int k = 0; k < n; k++) {
             const Card *a = ps[next() % ps.size()], *b = ps[next() % ps.size()];
             if (a == b) b = ps[(std::find(ps.begin(), ps.end(), a) - ps.begin() + 1) % ps.size()];
-            Card c; c.id = nextId++; c.gen = gen + 1; c.parents = {a->id, b->id};
+            Card c; c.id = nextId++; c.gen = gen + 1; c.parents = {a->id, b->id}; c.kind = 'b'; c.lin = a->lin | b->lin;
             c.dna = cross(a->dna, b->dna);
             c.dna = mutate(c.dna);
             c.name = childName(*a, *b);
@@ -135,11 +162,11 @@ public:
     // ---- the table in the project state: one text, base64 in the state line
     std::string save() const
     {
-        std::ostringstream o; o << "genepool 1\nseed " << seed << "\nrate " << rate << "\nnext " << nextId << "\n";
+        std::ostringstream o; o << "genepool 1\nseed " << seed << "\nrate " << rate << "\nsource " << source << "\nnext " << nextId << "\n";
         auto put = [&](const Card &c) {
             o << "card " << c.id << "\t" << c.gen << "\t" << (c.kept ? 1 : 0) << "\t";
             for (size_t k = 0; k < c.parents.size(); k++) o << (k ? "," : "") << c.parents[k];
-            o << "\t" << c.name << "\t" << c.dna << "\n";
+            o << "\t" << c.name << "\t" << c.dna << "\t" << c.kind << "\t" << c.lin << "\t" << c.pack << "\n";   // (1.5: the origin)
         };
         for (auto &c : cards) put(c);
         for (auto &c : kept) put(c);
@@ -147,11 +174,12 @@ public:
     }
     void load(const std::string &text)
     {
-        cards.clear(); kept.clear();
+        cards.clear(); kept.clear(); origins.clear();
         std::istringstream in(text); std::string l;
         while (std::getline(in, l)) {
             if (l.rfind("seed ", 0) == 0) seed = std::stoull(l.substr(5));
             else if (l.rfind("rate ", 0) == 0) rate = std::atoi(l.c_str() + 5);
+            else if (l.rfind("source ", 0) == 0) source = std::max(0, std::min(2, std::atoi(l.c_str() + 7)));
             else if (l.rfind("next ", 0) == 0) nextId = std::atoi(l.c_str() + 5);
             else if (l.rfind("card ", 0) == 0) {
                 std::vector<std::string> f; std::stringstream ss(l.substr(5)); std::string x; while (std::getline(ss, x, '\t')) f.push_back(x);
@@ -159,6 +187,8 @@ public:
                 Card c; c.id = std::atoi(f[0].c_str()); c.gen = std::atoi(f[1].c_str()); c.kept = f[2] == "1";
                 std::stringstream ps(f[3]); while (std::getline(ps, x, ',')) if (!x.empty()) c.parents.push_back(std::atoi(x.c_str()));
                 c.name = f[4]; c.dna = f[5]; face(c);
+                if (f.size() >= 8 && !f[6].empty()) { c.kind = f[6][0]; c.lin = std::atoi(f[7].c_str()); c.pack = f.size() > 8 ? f[8] : ""; }
+                else origins.push_back(c.id);   // a table saved before 1.5: its origins are worked out once the deck is read
                 (c.kept ? kept : cards).push_back(c);
             }
         }

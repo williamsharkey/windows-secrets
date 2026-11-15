@@ -1269,10 +1269,11 @@ private:
         {
             std::lock_guard<std::mutex> l(poolMtx_);
             out.push_back("pool clear");
+            out.push_back("pool source " + std::to_string(pool_.source));
             auto put = [&](const b16pool::Card &c) {
                 std::string par; for (size_t k = 0; k < c.parents.size(); k++) par += (k ? "," : "") + std::to_string(c.parents[k]);
-                char b[200]; std::snprintf(b, sizeof b, "pool card %d|%s|%d|%d|%d|%d|%s|%s", c.id, c.name.c_str(), c.suit, c.rank, c.gen, c.kept ? 1 : 0, par.c_str(),
-                                           bsynth::sha1Hex(c.dna.data(), c.dna.size()).substr(0, 8).c_str());
+                char b[260]; std::snprintf(b, sizeof b, "pool card %d|%s|%d|%d|%d|%d|%s|%s|%c|%s", c.id, c.name.c_str(), c.suit, c.rank, c.gen, c.kept ? 1 : 0, par.c_str(),
+                                           bsynth::sha1Hex(c.dna.data(), c.dna.size()).substr(0, 8).c_str(), c.kind, c.label().c_str());
                 out.push_back(b);
             };
             for (auto &c : pool_.cards) put(c);
@@ -1311,6 +1312,7 @@ private:
             }
             else if (op == "discard") { int id = 0; in >> id; if (pool_.discard(id)) status = "Discarded."; }
             else if (op == "rate") { int v = 25; in >> v; pool_.rate = std::max(0, std::min(100, v)); }
+            else if (op == "source") { int v = 0; in >> v; pool_.source = std::max(0, std::min(2, v)); }
             else if (op == "clear") { pool_.cards.clear(); status = "The table is cleared. The kept row stays."; }
             else if (op == "play") {
                 int id = 0; in >> id;
@@ -1324,7 +1326,7 @@ private:
             }
         }
         if (!dna.empty()) { setDna(dna, true); auditionAt_ = nowSec() + 0.3; }
-        if (op != "play" && op != "rate") poolSend();
+        if (op != "play" && op != "rate" && op != "source") poolSend();
         if (!status.empty()) poolStatus(status);
     }
 

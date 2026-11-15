@@ -572,7 +572,7 @@ Each change becomes the plugin's sound, and your project saves it.
 
 :311 %topic genepool
 :311 %title Gene Pool
-:311 %keys Gene Pool;cards;breed;mutation;keep;GENEPOOL.EXE
+:311 %keys Gene Pool;cards;breed;mutation;keep;wild card;GENEPOOL.EXE
 :311 %map 23
 :311 Gene Pool deals sounds as playing cards. Every card is a DNA; you keep the ones you like and breed new ones from them.
 :311 ## To start
@@ -582,13 +582,18 @@ Each change becomes the plugin's sound, and your project saves it.
 :311 | Click a card | Loads its sound into the recorders and plays it. The card is selected (or no longer selected). |
 :311 | Double-click | Keeps the card. |
 :311 | The deck | Click it for one more card. |
-:311 | Draw | Three cards from the deck: pack presets, and raw sounds of the library and the pack discs with genes of chance. |
+:311 | Draw | Three cards from the deck. |
+:311 | Draw (the list) | Where the cards come from: **From packs** (presets of the pack discs), **Wild** (raw sounds of the library and the pack discs, with genes of chance), or **Mixed** (seven pack presets in ten). |
 :311 | Breed | The selected cards have six children. Each child takes its layers and genes from its parents; kits keep their pads together. |
 :311 | Mutation | How much a child changes: transpose, level, a new sound, one of Sound Recorder's effects, the envelope. |
 :311 | Keep | The selected cards go to the kept row, and each is saved as a .BSP preset in Documents\SNDWAVE1993\Kept Sounds. |
 :311 | Discard | The selected cards leave the table. |
 :311 | Clear Table | Every card leaves the table; the kept row stays. |
-:311 A card's suit and rank come from its sound, the label shows its name and generation (G1, G2 ...), and the barcode is drawn from its DNA. The table is saved with your project, and the same seed always deals the same cards.
+:311 ## Where a card comes from
+:311 | A pack card | A face card or a number card with its pack's name above the sound's name. |
+:311 | A wild card | A card back marked WILD: a raw sound with genes of chance. |
+:311 | A bred card | Its generation and lineage above its name: G1 · pack, G2 · wild, or G2 · pack×wild when its ancestors include both. |
+:311 A card's suit and rank come from its sound, and the barcode is drawn from its DNA. The table is saved with your project, the Draw choice and every card's origin with it, and the same seed always deals the same cards.
 
 %topic dna_ref
 %title DNA Reference
