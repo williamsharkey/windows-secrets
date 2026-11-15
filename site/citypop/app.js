@@ -2,7 +2,7 @@
    Every window is placed on whole device pixels; every canvas is backed at device resolution and drawn in device pixels. */
 (() => {
 'use strict';
-const BUILD = '20261114i';             // cache key for the scene and life modules; bump on each UI deploy
+const BUILD = '20261114j';             // cache key for the scene and life modules; bump on each UI deploy
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const store = {
   get(k, d) { try { const v = localStorage.getItem('cpd:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -734,12 +734,24 @@ function watch() {
   const on = document.body.classList.toggle('watch');
   $('#unhide').hidden = !on;
   if (on) $('#unhide').focus(); else $('#hide').focus();
+  idleOn = false; document.body.classList.remove('idle'); lastMove = performance.now();
+  if (on && !idleT) idleT = setTimeout(idleCheck, 2600);
   occlude(); driveLife(); kick();
 }
 $('#hide').onclick = watch; $('#unhide').onclick = watch;
+let idleOn = false, lastMove = 0;
+function idleCheck() {   // one timer, re-armed only when it fires: no per-move timer churn
+  idleT = 0;
+  if (!document.body.classList.contains('watch')) return;
+  const left = 2600 - (performance.now() - lastMove);
+  if (left > 0) { idleT = setTimeout(idleCheck, left); return; }
+  if (!idleOn) { idleOn = true; document.body.classList.add('idle'); }
+}
 addEventListener('pointermove', () => {
   if (!document.body.classList.contains('watch')) return;
-  document.body.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(() => document.body.classList.add('idle'), 2600);
+  lastMove = performance.now();
+  if (idleOn) { idleOn = false; document.body.classList.remove('idle'); }   // the class changes only when the state does
+  if (!idleT) idleT = setTimeout(idleCheck, 2600);
 }, { passive: true });
 
 /* ------------------------------------------------------------------ dialogs: Desktop (time of night) and About */
