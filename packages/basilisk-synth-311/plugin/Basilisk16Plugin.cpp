@@ -22,7 +22,6 @@
 #include "UserRec.h"
 #include "V3Seq.h"
 #include "SongSession.h"
-#include "CoreChoice.h"
 
 #include <atomic>
 #include <chrono>
@@ -882,19 +881,13 @@ private:
                 out += s;
             }
             std::fclose(f);
-            chooseCore(out);   // dynamic where it works (CoreChoice.h)
             if (!writeText(conf_, out)) { status("SNDWAVE2000: cannot write the machine settings."); sh_.S->state = BS_FAILED; return; }
         }
         const char *logEnv = std::getenv("BASILISK16_LOG");
         status("Starting Windows for Workgroups 3.11...");
-        // the snapshot is per CPU (the emulator's saved state follows the host's data layout)
-#if defined(__APPLE__) && defined(__aarch64__)
-        const char *stateName = "w31-arm64.state";
-#elif defined(__APPLE__)
-        const char *stateName = "w31-x86_64.state";
-#else
+        // one snapshot for every OS and CPU: the cores are built without a dynamic recompiler, so the saved state has one
+        // layout everywhere, and every machine resumes in exactly the same state (renders are bit-identical everywhere)
         const char *stateName = "w31.state";
-#endif
         engine_ = bs_engine_start(sh_.S, coreCopy_.c_str(), conf_.c_str(), (machine + stateName).c_str(), nullptr,
                                   logEnv && *logEnv ? logEnv : nullptr);
         worker_ = std::thread([this] { work(); });

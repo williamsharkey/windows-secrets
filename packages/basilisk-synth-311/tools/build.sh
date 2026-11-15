@@ -20,9 +20,10 @@ cp "$PKG/dosbox-pure/bsynth.cpp" "$W/dosbox-pure/src/hardware/bsynth.cpp"
 sh "$PKG/guest/build.sh" "$W/ow" "$W/gout"
 
 # --- DOSBox Pure: Linux (makes the snapshot) and Windows
-(cd "$W/dosbox-pure" && make -j"$(nproc)" >/dev/null)
+# no dynamic recompiler (DISABLE_DYNAREC): the saved state then has one layout on every OS and CPU, and one snapshot serves all
+(cd "$W/dosbox-pure" && make -j"$(nproc)" CC="gcc -DDISABLE_DYNAREC=1" CXX="g++ -DDISABLE_DYNAREC=1" >/dev/null)
 rm -rf "$W/dbp-win"; cp -r "$W/dosbox-pure" "$W/dbp-win"; rm -rf "$W/dbp-win/build" "$W/dbp-win"/*.so
-(cd "$W/dbp-win" && make platform=windows CXX=x86_64-w64-mingw32-g++ STRIP=x86_64-w64-mingw32-strip \
+(cd "$W/dbp-win" && make platform=windows CC="x86_64-w64-mingw32-gcc -DDISABLE_DYNAREC=1" CXX="x86_64-w64-mingw32-g++ -DDISABLE_DYNAREC=1" STRIP=x86_64-w64-mingw32-strip \
   LDFLAGS="-Wl,--gc-sections -fno-ident -O2 -shared -static -static-libgcc -static-libstdc++" -j"$(nproc)" >/dev/null)
 
 # --- the engine as a test process, and the machine
@@ -63,4 +64,5 @@ cp -r "$PKG" "$W/macsrc/pkg"; cp -r "$PKG/../basilisk-synth/core" "$W/macsrc/cor
 cp -r "$W/wfw" "$W/macsrc/wfw"; cp -r "$W/gout" "$W/macsrc/gout"; cp "$W/library.zip" "$W/library.names.txt" "$W/macsrc/"; cp -r "$W/xpsounds" "$W/macsrc/xpsounds"
 cp -r "$W/packs" "$W/macsrc/packs"; cp -r "$W/brand" "$W/macsrc/brand"; cp "$PKG/../basilisk-synth/help/out/SNDWAVE.HLP" "$W/macsrc/"
 cp -r "$PKG/../basilisk-synth/help/install" "$W/macsrc/helpinstall"
+mkdir -p "$W/macsrc/machine"; cp "$W/machine/w31.conf" "$W/machine/w31.state" "$W/machine/drive.zip" "$W/machine/library.zip" "$W/machine/library.names.txt" "$W/macsrc/machine/"; cp -r "$W/machine/packs" "$W/macsrc/machine/"   # the one snapshot
 echo "built: $W/win (Windows), $W/macsrc (copy to a Mac, run pkg/tools/mac_build.sh there)"

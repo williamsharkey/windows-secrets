@@ -10,7 +10,6 @@
 #include "V3Host.h"
 #include "UserRec.h"
 #include "V3Seq.h"
-#include "CoreChoice.h"
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -287,16 +286,9 @@ inline bool renderTrack(const TrackJob &J, TrackOut &R)
         while ((p = s.find("@DRIVE@")) != std::string::npos) s.replace(p, 7, "\"" + machine + "/drive\"");
         while ((p = s.find("@RECDIR@")) != std::string::npos) s.replace(p, 8, "\"" + recDir + "\"");
         while ((p = s.find("@PACKS@")) != std::string::npos) s.replace(p, 7, "\"" + machine + "/packs\"");
-        chooseCore(s);   // dynamic where it works (CoreChoice.h)
         std::ofstream o(conf); o << s;
     }
-#if defined(__APPLE__) && defined(__aarch64__)
-    std::string state = machine + "/w31-arm64.state";
-#elif defined(__APPLE__)
-    std::string state = machine + "/w31-x86_64.state";
-#else
-    std::string state = machine + "/w31.state";
-#endif
+    std::string state = machine + "/w31.state";   // one snapshot everywhere (see the plugin)
     M.S = (bshm *)std::calloc(1, sizeof(bshm));
     S = M.S;
     S->magic = BSHM_MAGIC; S->version = BSHM_VERSION; S->rate = 48000; S->ring_len = BSHM_RING;
