@@ -390,9 +390,9 @@
   }
  },
  {
-  "id": "paulywaulophone",
-  "name": "Paulywaulophone",
-  "blurb": "Uncle Homunculus plays the office piano. Everyone sings along.",
+  "id": "waulophone",
+  "name": "WAULOPHONE",
+  "blurb": "The WAULOPHONE is made in Paulywaulyton, behind the small door in the root of the old oak. Play it by ear.",
   "presets": 62,
   "xp": 0,
   "w311_badge": 48,
@@ -408,8 +408,8 @@
    "Vocal": 10
   },
   "files": {
-   "w311": "w311/paulywaulophone.tsv",
-   "xp": "xp/paulywaulophone.tsv"
+   "w311": "w311/waulophone.tsv",
+   "xp": "xp/waulophone.tsv"
   }
  },
  {

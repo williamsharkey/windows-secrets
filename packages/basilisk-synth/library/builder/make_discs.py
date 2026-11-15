@@ -31,7 +31,7 @@ FOLDER = {'workgroup-house': 'workgrp', 'techno-server': 'techsrv', 'trance-conn
           'retro-display': 'retrodsp', 'screen-saver': 'screensv', 'diagnostics': 'diagnost', 'leisure': 'leisure',
           'game-port': 'gameport', 'workstation-classics': 'workstn', 'studio-archive': 'studarch',
           'w3x-heritage': 'heritage', 'rom-reference': 'romref', 'lifestyle-aesthetics': 'lifestyl',
-          'electromech-heritage': 'emheritg', 'kit-manager': 'kitmgr', 'paulywaulophone': 'paulyw', 'garden-rhythm': 'gardenrw', 'tape-parlour': 'tapeparl', 'courtyard-chapel': 'courtyd', 'listening-post': 'listenpt', 'office-machinery': 'officemc', 'polysynth-showroom': 'polyshow'}
+          'electromech-heritage': 'emheritg', 'kit-manager': 'kitmgr', 'waulophone': 'waulophone', 'paulywaulophone': 'waulophone', 'garden-rhythm': 'gardenrw', 'tape-parlour': 'tapeparl', 'courtyard-chapel': 'courtyd', 'listening-post': 'listenpt', 'office-machinery': 'officemc', 'polysynth-showroom': 'polyshow'}
 FAV_RATING = 6.5
 # the product strings (design/brand/sndwave2000/COPY.md when the names lane commits it)
 PRODUCT = os.environ.get('SNDWAVE_PRODUCT', 'SNDWAVE1993')
@@ -45,6 +45,10 @@ def ratings():
         d = json.load(open(f))
         for slug, v in d.get('presets', {}).items():
             out[slug] = {'rating': v.get('rating'), 'verdict': v.get('verdict'), 'export': os.path.basename(f)}
+    # presets renamed since the export: their old slugs (library.json aliases) carry the rating
+    for p in load_json('library.json'):
+        for s in p.get('aliases', {}).get('slugs', []):
+            if s in out and p['slug'] not in out: out[p['slug']] = out[s]
     return out
 
 

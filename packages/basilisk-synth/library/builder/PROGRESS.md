@@ -173,3 +173,7 @@ Nothing audio goes in git.
 - **Renamed (owner, 2026-11-15):** SNDWAVE2000 is now SNDWAVE1993 (the album CITYPOP DEPROGRAMMED is CITYPOP1993).
   make_discs PRODUCT, library.json build strings and the disc folders say SNDWAVE1993; the git tags keep their
   names (sndwave2000-v1.3.1, -v1.4.0). Disc content re-emitted for the 1.5 set.
+- **WAULOPHONE (owner, 2026-11-15):** pack paulywaulophone is now waulophone (label WAULOPHONE, "WAULOPHONE PW-62",
+  Paulywaulyton Works), its 62 presets renamed from packs/waulophone/RENAMES.TSV by rename_pack.py; old slugs,
+  names and the pack id stay as `aliases` (library.json, the previews manifest, packs.PACK_ALIASES, ratings).
+  The DNA is unchanged. Disc content: out/discs311/WAULOPHONE/ (the old PAULYWAULO folder is left as it was).

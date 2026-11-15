@@ -1,0 +1,25 @@
+WAULOPHONE
+==========
+
+A sound pack for SNDWAVE1993 by Algorithmic Industries (Windows 3.11).
+
+Id: waulophone
+Title: WAULOPHONE
+Product: SNDWAVE1993 by Algorithmic Industries
+Version: 1.0
+Author: Paulywaulyton Works
+Date: 1993-10-31
+Presets: 62
+Presets311: 62
+PresetsXP: 0
+Favourites: 0
+Description: The WAULOPHONE is made in Paulywaulyton, behind the small door in the root of the old oak. Play it by ear.
+
+Sounds on this disc (SOUNDS\, listed in LIBRARY.TSV):
+  Alexander Holm (Salamander Grand Piano V3); soft layer by William Sharkey
+  Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly)
+  William Sharkey
+  Rendered from William Sharkey's own instruments in midigarden / Bele Dance and ghosts.garden.
+  Sounds by Paul Chauncy (Uncle Homunculus / Paulywauly): permission from the author, via the owner, 2026-11-14.
+
+Favourites (the owner's picks): FAVORITE\

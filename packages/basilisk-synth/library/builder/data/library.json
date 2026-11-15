@@ -140932,11 +140932,11 @@
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Night Ballad",
+  "name": "OTOLITH Late",
   "dna": "pw_guitar_pad#8U2~6/ding#4T5L13O13Q-29/gd_ep_bell_c4#4T12L66Q-22;A5D448S36R178V79K60",
   "scat": "Keys",
   "kind": "keys",
@@ -140979,7 +140979,7 @@
   "phrase_lufs": -17.9,
   "phrase_peak": -1.98,
   "final_ok": true,
-  "slug": "paulywaulophone-night-ballad",
+  "slug": "waulophone-otolith-late",
   "wave": [
    0.749,
    0.317,
@@ -141046,14 +141046,25 @@
    "ok": true,
    "why": [],
    "score": 104.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-night-ballad"
+   ],
+   "names": [
+    "Night Ballad"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Digital Study",
+  "name": "Mossy Tines",
   "dna": "gd_ep_tine_hard_c3#8/gd_ep_tine_c5#8T-36L60Q-20;A1D1272S3R428V84K48",
   "scat": "Keys",
   "kind": "keys",
@@ -141094,7 +141105,7 @@
   "phrase_lufs": -18.2,
   "phrase_peak": -4.5,
   "final_ok": true,
-  "slug": "paulywaulophone-digital-study",
+  "slug": "waulophone-mossy-tines",
   "wave": [
    0.574,
    0.296,
@@ -141160,14 +141171,25 @@
    "ok": true,
    "why": [],
    "score": 104.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-digital-study"
+   ],
+   "names": [
+    "Digital Study"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Humid Practice",
+  "name": "Kettle On",
   "dna": "gd_piano_a1E>>#5/gd_ep_tine_c5#5T-15L55Q-34/pw_guitar_pad#6T-3L43Q-35;A0D425S20R489V71K57",
   "scat": "Keys",
   "kind": "keys",
@@ -141209,7 +141231,7 @@
   "phrase_lufs": -17.0,
   "phrase_peak": -0.76,
   "final_ok": true,
-  "slug": "paulywaulophone-humid-practice",
+  "slug": "waulophone-kettle-on",
   "wave": [
    0.803,
    0.314,
@@ -141276,14 +141298,25 @@
    "ok": true,
    "why": [],
    "score": 104.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-humid-practice"
+   ],
+   "names": [
+    "Humid Practice"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Crystal Lounge",
+  "name": "Toadstool Grand",
   "dna": "gd_piano_a5<<#5/ding#5T-22L49Q3/gd_ep_reed_c4#6T-15L58Q-34;A0D473S2R161V88K57",
   "scat": "Keys",
   "kind": "keys",
@@ -141326,7 +141359,7 @@
   "phrase_lufs": -19.7,
   "phrase_peak": -5.24,
   "final_ok": true,
-  "slug": "paulywaulophone-crystal-lounge",
+  "slug": "waulophone-toadstool-grand",
   "wave": [
    0.458,
    0.251,
@@ -141393,14 +141426,25 @@
    "ok": true,
    "why": [],
    "score": 104.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-crystal-lounge"
+   ],
+   "names": [
+    "Crystal Lounge"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Pearl Recital",
+  "name": "Bookshelf",
   "dna": "gd_ep_reed_c3#11U2~3/chimesxp#5T-19L29Q-34;A5D629S31R577V98K48",
   "scat": "Keys",
   "kind": "keys",
@@ -141443,7 +141487,7 @@
   "phrase_lufs": -18.1,
   "phrase_peak": -3.35,
   "final_ok": true,
-  "slug": "paulywaulophone-pearl-recital",
+  "slug": "waulophone-bookshelf",
   "wave": [
    0.675,
    0.218,
@@ -141509,14 +141553,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-pearl-recital"
+   ],
+   "names": [
+    "Pearl Recital"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Sunlit Keys",
+  "name": "Flower Market",
   "dna": "gd_ep_reed_c6@t1026]E#8U2~4/print#4T14L39O19Q29/ding#4T17L19O15Q-3;A5D1658S34R274V96K84",
   "scat": "Keys",
   "kind": "keys",
@@ -141561,7 +141616,7 @@
   "phrase_lufs": -18.9,
   "phrase_peak": -6.69,
   "final_ok": true,
-  "slug": "paulywaulophone-sunlit-keys",
+  "slug": "waulophone-flower-market",
   "wave": [
    0.438,
    0.242,
@@ -141628,14 +141683,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-sunlit-keys"
+   ],
+   "names": [
+    "Sunlit Keys"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Saffron Etude",
+  "name": "Saffron Tines",
   "dna": "gd_ep_tine_hard_c5#11U2~5/default@t300]#5T28L26O8Q34;A1D1346S9R678V73K72",
   "scat": "Keys",
   "kind": "keys",
@@ -141678,7 +141744,7 @@
   "phrase_lufs": -18.5,
   "phrase_peak": -4.78,
   "final_ok": true,
-  "slug": "paulywaulophone-saffron-etude",
+  "slug": "waulophone-saffron-tines",
   "wave": [
    0.576,
    0.272,
@@ -141744,14 +141810,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-saffron-etude"
+   ],
+   "names": [
+    "Saffron Etude"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Hollow Study",
+  "name": "Reading Lamp",
   "dna": "gd_ep_reed_c4E#11U2~5/print#5T-10L36O11Q-27;A1D2232S41R649V99K60",
   "scat": "Keys",
   "kind": "keys",
@@ -141795,7 +141872,7 @@
   "phrase_lufs": -18.9,
   "phrase_peak": -4.82,
   "final_ok": true,
-  "slug": "paulywaulophone-hollow-study",
+  "slug": "waulophone-reading-lamp",
   "wave": [
    0.545,
    0.217,
@@ -141861,14 +141938,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-hollow-study"
+   ],
+   "names": [
+    "Hollow Study"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Floor Felt",
+  "name": "Front Room Upright",
   "dna": "gd_piano_a1>>;A0D472S16R269V90K57",
   "scat": "Keys",
   "kind": "keys",
@@ -141906,7 +141994,7 @@
   "phrase_lufs": -19.6,
   "phrase_peak": -2.63,
   "final_ok": true,
-  "slug": "paulywaulophone-floor-felt",
+  "slug": "waulophone-front-room-upright",
   "wave": [
    0.731,
    0.221,
@@ -141971,14 +142059,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-floor-felt"
+   ],
+   "names": [
+    "Floor Felt"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Silver Etude",
+  "name": "White Bicycle",
   "dna": "gd_ep_tine_hard_c3@t2058]>#8/default#8T21L24O8Q-21;A0D1567S16R191V79K60",
   "scat": "Keys",
   "kind": "keys",
@@ -142019,7 +142118,7 @@
   "phrase_lufs": -18.7,
   "phrase_peak": -5.89,
   "final_ok": true,
-  "slug": "paulywaulophone-silver-etude",
+  "slug": "waulophone-white-bicycle",
   "wave": [
    0.462,
    0.258,
@@ -142085,14 +142184,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-silver-etude"
+   ],
+   "names": [
+    "Silver Etude"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Pearl Piano",
+  "name": "Fairy Door Piano",
   "dna": "gd_ep_tine_c6<<#8H0,12/gd_ep_bell_c6#4T-24L64Q32/default#4T21L19Q25;A5D2284S14R380V71K60",
   "scat": "Keys",
   "kind": "keys",
@@ -142136,7 +142246,7 @@
   "phrase_lufs": -18.7,
   "phrase_peak": -6.3,
   "final_ok": true,
-  "slug": "paulywaulophone-pearl-piano",
+  "slug": "waulophone-fairy-door-piano",
   "wave": [
    0.398,
    0.296,
@@ -142203,14 +142313,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-pearl-piano"
+   ],
+   "names": [
+    "Pearl Piano"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Inland Keys",
+  "name": "Canal Keys",
   "dna": "gd_ep_tine_c6@t1051]#11U2~3/dingxp#5T17L38O12Q-17;A3D1238S9R162V72K84",
   "scat": "Keys",
   "kind": "keys",
@@ -142253,7 +142374,7 @@
   "phrase_lufs": -18.2,
   "phrase_peak": -5.47,
   "final_ok": true,
-  "slug": "paulywaulophone-inland-keys",
+  "slug": "waulophone-canal-keys",
   "wave": [
    0.487,
    0.302,
@@ -142319,14 +142440,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-inland-keys"
+   ],
+   "names": [
+    "Inland Keys"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Frosted Recital",
+  "name": "Long Rug",
   "dna": "gd_piano_a4@t2610]#8/default#8T25L29O24Q-29;A0D921S41R424V88K69",
   "scat": "Keys",
   "kind": "keys",
@@ -142367,7 +142499,7 @@
   "phrase_lufs": -17.2,
   "phrase_peak": -3.97,
   "final_ok": true,
-  "slug": "paulywaulophone-frosted-recital",
+  "slug": "waulophone-long-rug",
   "wave": [
    0.58,
    0.372,
@@ -142433,14 +142565,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-frosted-recital"
+   ],
+   "names": [
+    "Frosted Recital"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Keys",
   "category": "Keys",
-  "name": "Quiet Ballad",
+  "name": "Lamp Off",
   "dna": "gd_piano_a5@t1600];A3D933S19R364V96K81",
   "scat": "Keys",
   "kind": "keys",
@@ -142478,7 +142621,7 @@
   "phrase_lufs": -18.7,
   "phrase_peak": -5.01,
   "final_ok": true,
-  "slug": "paulywaulophone-quiet-ballad",
+  "slug": "waulophone-lamp-off",
   "wave": [
    0.526,
    0.302,
@@ -142543,14 +142686,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-quiet-ballad"
+   ],
+   "names": [
+    "Quiet Ballad"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Pad",
   "category": "Pad",
-  "name": "Corner Drift",
+  "name": "Fairy Ring",
   "dna": "gd_conch_horizon_c2E#10U3~13/pw_forkE#3T-12L15O250Q-45/gd_ep_tine_c6RE#3T-36L25O73Q34;A280D555S70R936V76K36",
   "scat": "Pads",
   "kind": "pad",
@@ -142594,7 +142748,7 @@
   "phrase_lufs": -18.7,
   "phrase_peak": -6.78,
   "final_ok": true,
-  "slug": "paulywaulophone-corner-drift",
+  "slug": "waulophone-fairy-ring",
   "wave": [
    0.23,
    0.385,
@@ -142661,14 +142815,25 @@
    "ok": true,
    "why": [],
    "score": 104.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-corner-drift"
+   ],
+   "names": [
+    "Corner Drift"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Pad",
   "category": "Pad",
-  "name": "Ember Tide",
+  "name": "Evening Canopy",
   "dna": "gd_conch_horizon_c6@t5593]@t1598[@0CP@0CPE<<#11U2~10/pw_fork#5T-12L61;A350D864S83R1112V77K60",
   "scat": "Pads",
   "kind": "pad",
@@ -142712,7 +142877,7 @@
   "phrase_lufs": -18.2,
   "phrase_peak": -5.87,
   "final_ok": true,
-  "slug": "paulywaulophone-ember-tide",
+  "slug": "waulophone-evening-canopy",
   "wave": [
    0.157,
    0.32,
@@ -142778,14 +142943,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-ember-tide"
+   ],
+   "names": [
+    "Ember Tide"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Pad",
   "category": "Pad",
-  "name": "Remote Haze",
+  "name": "Doo Choir",
   "dna": "pw_doo_held@t105]@t30[@0CP@0CP@0CPE#8U2~18/pw_hmm_held#4T-12L69/gd_ep_tine_c4R>#4L37O352Q-18;A774D54S99R1115V95K60",
   "scat": "Pads",
   "kind": "pad",
@@ -142830,7 +143006,7 @@
   "phrase_lufs": -18.2,
   "phrase_peak": -4.46,
   "final_ok": true,
-  "slug": "paulywaulophone-remote-haze",
+  "slug": "waulophone-doo-choir",
   "wave": [
    0.129,
    0.343,
@@ -142897,14 +143073,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-remote-haze"
+   ],
+   "names": [
+    "Remote Haze"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Pad",
   "category": "Pad",
-  "name": "Second Aurora",
+  "name": "Glowing Mushrooms",
   "dna": "gd_stalactite_grotto_c2E>>#13U4~18/gd_fog_temple_c4R>#3L24O50Q18;A1175D264S86R1863V91K60",
   "scat": "Pads",
   "kind": "pad",
@@ -142948,7 +143135,7 @@
   "phrase_lufs": -18.9,
   "phrase_peak": -5.99,
   "final_ok": true,
-  "slug": "paulywaulophone-second-aurora",
+  "slug": "waulophone-glowing-mushrooms",
   "wave": [
    0.047,
    0.105,
@@ -143014,14 +143201,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-second-aurora"
+   ],
+   "names": [
+    "Second Aurora"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Pad",
   "category": "Pad",
-  "name": "Meadow Field",
+  "name": "Bluebell Wood",
   "dna": "gd_ep_tine_c5@t2880]@t823[@0CP@0CP#13H0,12U2~16/pw_fork#3L32;A1072D64S93R940V77K72",
   "scat": "Pads",
   "kind": "pad",
@@ -143064,7 +143262,7 @@
   "phrase_lufs": -17.7,
   "phrase_peak": -6.32,
   "final_ok": true,
-  "slug": "paulywaulophone-meadow-field",
+  "slug": "waulophone-bluebell-wood",
   "wave": [
    0.093,
    0.181,
@@ -143130,14 +143328,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-meadow-field"
+   ],
+   "names": [
+    "Meadow Field"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Pad",
   "category": "Pad",
-  "name": "Swift Aurora",
+  "name": "Spore Light",
   "dna": "gd_stalactite_grotto_c6<<#11H0,12U2~7/gd_fog_temple_c2R#3T36L22O189Q7/gd_ep_tine_c2RE#2T36L24O199Q-15;A355D725S96R1131V80K60",
   "scat": "Pads",
   "kind": "pad",
@@ -143183,7 +143392,7 @@
   "phrase_lufs": -18.1,
   "phrase_peak": -6.96,
   "final_ok": true,
-  "slug": "paulywaulophone-swift-aurora",
+  "slug": "waulophone-spore-light",
   "wave": [
    0.093,
    0.249,
@@ -143250,14 +143459,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-swift-aurora"
+   ],
+   "names": [
+    "Swift Aurora"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Pad",
   "category": "Pad",
-  "name": "Polar Mist",
+  "name": "Through the Root",
   "dna": "gd_ep_tine_c4E#12H0,7U3~11/ringin#2L28Ja0,100.135,30.537,0/gd_ep_tine_c3R#2T31L15O83Q-53;A1201D747S90R1498V84K60",
   "scat": "Pads",
   "kind": "pad",
@@ -143304,7 +143524,7 @@
   "phrase_lufs": -18.5,
   "phrase_peak": -5.67,
   "final_ok": true,
-  "slug": "paulywaulophone-polar-mist",
+  "slug": "waulophone-through-the-root",
   "wave": [
    0.086,
    0.162,
@@ -143371,14 +143591,25 @@
    "ok": true,
    "why": [],
    "score": 99.6
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-polar-mist"
+   ],
+   "names": [
+    "Polar Mist"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Pad",
   "category": "Pad",
-  "name": "Swift Field",
+  "name": "Mossy Stones",
   "dna": "gd_fog_temple_c2E#12U3~10/gd_ep_tine_c5#4T-24L34Q-1;A1064D601S74R1463V94K36",
   "scat": "Pads",
   "kind": "pad",
@@ -143421,7 +143652,7 @@
   "phrase_lufs": -18.3,
   "phrase_peak": -5.78,
   "final_ok": true,
-  "slug": "paulywaulophone-swift-field",
+  "slug": "waulophone-mossy-stones",
   "wave": [
    0.108,
    0.161,
@@ -143487,14 +143718,25 @@
    "ok": true,
    "why": [],
    "score": 97.9
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-swift-field"
+   ],
+   "names": [
+    "Swift Field"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Pad",
   "category": "Pad",
-  "name": "Meadow Wash",
+  "name": "Mist Spirits",
   "dna": "gd_ep_tine_c4@t2902]@t829[@0CP@0CP#11U2~9/gd_stalactite_grotto_c2>#5T24L22O153Q38;A726D204S71R1280V78K60",
   "scat": "Pads",
   "kind": "pad",
@@ -143537,7 +143779,7 @@
   "phrase_lufs": -18.1,
   "phrase_peak": -6.26,
   "final_ok": true,
-  "slug": "paulywaulophone-meadow-wash",
+  "slug": "waulophone-mist-spirits",
   "wave": [
    0.082,
    0.231,
@@ -143603,14 +143845,25 @@
    "ok": true,
    "why": [],
    "score": 88.6
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-meadow-wash"
+   ],
+   "names": [
+    "Meadow Wash"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Pad",
   "category": "Pad",
-  "name": "Topaz Field",
+  "name": "Bee Loud Glade",
   "dna": "gd_ep_tine_c4@t2902]@t829[@0CP@0CP#11U2~11/pw_bee_organEE#5T24L27O251Q3;A475D1S82R972V75K60",
   "scat": "Pads",
   "kind": "pad",
@@ -143654,7 +143907,7 @@
   "phrase_lufs": -18.3,
   "phrase_peak": -6.82,
   "final_ok": true,
-  "slug": "paulywaulophone-topaz-field",
+  "slug": "waulophone-bee-loud-glade",
   "wave": [
    0.126,
    0.326,
@@ -143720,14 +143973,25 @@
    "ok": true,
    "why": [],
    "score": 59.5
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-topaz-field"
+   ],
+   "names": [
+    "Topaz Field"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Vocal",
   "category": "Vocal",
-  "name": "Electric Vox",
+  "name": "Hmm Held",
   "dna": "pw_hmm_held#8U2~8/gd_voice_lpc_lala#4T-12L66/gd_voice_klatt_oohR#4T12L30O79Q-10;A232D419S85R1101V93K60",
   "scat": "Choir/Vox",
   "kind": "pad",
@@ -143770,7 +144034,7 @@
   "phrase_lufs": -18.3,
   "phrase_peak": -5.13,
   "final_ok": true,
-  "slug": "paulywaulophone-electric-vox",
+  "slug": "waulophone-hmm-held",
   "wave": [
    0.269,
    0.295,
@@ -143837,14 +144101,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-electric-vox"
+   ],
+   "names": [
+    "Electric Vox"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Vocal",
   "category": "Vocal",
-  "name": "Signal Murmur",
+  "name": "Uncle's Murmur",
   "dna": "gd_voice_lpc_boop#12U3~15/gd_voice_lpc_lala+#4T-12L63;A414D349S75R716V98K60",
   "scat": "Choir/Vox",
   "kind": "pad",
@@ -143885,7 +144160,7 @@
   "phrase_lufs": -18.8,
   "phrase_peak": -5.64,
   "final_ok": true,
-  "slug": "paulywaulophone-signal-murmur",
+  "slug": "waulophone-uncle-s-murmur",
   "wave": [
    0.138,
    0.522,
@@ -143951,14 +144226,25 @@
    "ok": true,
    "why": [],
    "score": 99.7
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-signal-murmur"
+   ],
+   "names": [
+    "Signal Murmur"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Vocal",
   "category": "Vocal",
-  "name": "Silver Ahh",
+  "name": "Ahh Under the Oak",
   "dna": "gd_voice_klatt_aahE#10U3~15/gd_voice_klatt_ooh#3T-12L33/gd_voice_lpc_robot#3T-12L30;A715D253S81R690V88K60",
   "scat": "Choir/Vox",
   "kind": "pad",
@@ -144000,7 +144286,7 @@
   "phrase_lufs": -18.1,
   "phrase_peak": -4.08,
   "final_ok": true,
-  "slug": "paulywaulophone-silver-ahh",
+  "slug": "waulophone-ahh-under-the-oak",
   "wave": [
    0.147,
    0.427,
@@ -144067,14 +144353,25 @@
    "ok": true,
    "why": [],
    "score": 96.4
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-silver-ahh"
+   ],
+   "names": [
+    "Silver Ahh"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Vocal",
   "category": "Vocal",
-  "name": "Silver Singers",
+  "name": "Woodsprite Choir",
   "dna": "gd_voice_lpc_robot@t799]@t228[@0CP@0CPE#12U3~15/pw_hmm_held#4T-12L39;A154D34S76R539V99K60",
   "scat": "Choir/Vox",
   "kind": "pad",
@@ -144117,7 +144414,7 @@
   "phrase_lufs": -17.2,
   "phrase_peak": -6.25,
   "final_ok": true,
-  "slug": "paulywaulophone-silver-singers",
+  "slug": "waulophone-woodsprite-choir",
   "wave": [
    0.289,
    0.311,
@@ -144183,14 +144480,25 @@
    "ok": true,
    "why": [],
    "score": 88.1
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-silver-singers"
+   ],
+   "names": [
+    "Silver Singers"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Vocal",
   "category": "Vocal",
-  "name": "Satin Choir",
+  "name": "Eleven Fairies",
   "dna": "gd_voice_lpc_meow@t554]@t158[@0CP@0CPC@50X#13U4~10/gd_voice_lpc_robotR>#3L36O289Q-39;A465D153S74R1200V83K60",
   "scat": "Choir/Vox",
   "kind": "pad",
@@ -144234,7 +144542,7 @@
   "phrase_lufs": -17.2,
   "phrase_peak": -6.7,
   "final_ok": true,
-  "slug": "paulywaulophone-satin-choir",
+  "slug": "waulophone-eleven-fairies",
   "wave": [
    0.087,
    0.246,
@@ -144300,14 +144608,25 @@
    "ok": true,
    "why": [],
    "score": 82.2
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-satin-choir"
+   ],
+   "names": [
+    "Satin Choir"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Vocal",
   "category": "Vocal",
-  "name": "Silent Ahh",
+  "name": "Lamp-Off Ooh",
   "dna": "gd_voice_klatt_ooh@t570]@t163[@0CP@0CPU2~10;A139D255S81R695V74K60",
   "scat": "Choir/Vox",
   "kind": "pad",
@@ -144347,7 +144666,7 @@
   "phrase_lufs": -16.3,
   "phrase_peak": -6.35,
   "final_ok": true,
-  "slug": "paulywaulophone-silent-ahh",
+  "slug": "waulophone-lamp-off-ooh",
   "wave": [
    0.298,
    0.362,
@@ -144412,14 +144731,25 @@
    "ok": true,
    "why": [],
    "score": 67.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-silent-ahh"
+   ],
+   "names": [
+    "Silent Ahh"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Vocal",
   "category": "Vocal",
-  "name": "Humid Chop",
+  "name": "Boop Boop",
   "dna": "pw_boop@t520]@t148[@0CP@0CP>>#8/gd_voice_lpc_aah#8T-16L57;A195D107S73R653V91K56",
   "scat": "Choir/Vox",
   "kind": "pad",
@@ -144459,7 +144789,7 @@
   "phrase_lufs": -17.5,
   "phrase_peak": -6.28,
   "final_ok": true,
-  "slug": "paulywaulophone-humid-chop",
+  "slug": "waulophone-boop-boop",
   "wave": [
    0.485,
    0.388,
@@ -144525,14 +144855,25 @@
    "ok": true,
    "why": [],
    "score": 67.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-humid-chop"
+   ],
+   "names": [
+    "Humid Chop"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Vocal",
   "category": "Vocal",
-  "name": "Felt Chorus",
+  "name": "Homunculus Choir",
   "dna": "gd_voice_klatt_aah@t570]@t163[@0CP@0CPE#8/gd_voice_lpc_dance>#8L36O70Q35;A354D408S95R738V94K60",
   "scat": "Choir/Vox",
   "kind": "pad",
@@ -144574,7 +144915,7 @@
   "phrase_lufs": -16.6,
   "phrase_peak": -6.57,
   "final_ok": true,
-  "slug": "paulywaulophone-felt-chorus",
+  "slug": "waulophone-homunculus-choir",
   "wave": [
    0.201,
    0.366,
@@ -144640,14 +144981,25 @@
    "ok": true,
    "why": [],
    "score": 67.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-felt-chorus"
+   ],
+   "names": [
+    "Felt Chorus"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Vocal",
   "category": "Vocal",
-  "name": "Pastel Singers",
+  "name": "Big Ears Ooh",
   "dna": "gd_voice_lpc_meowE#12U3~14/gd_voice_lpc_ooh#4T-12L68;A88D146S84R794V87K60",
   "scat": "Choir/Vox",
   "kind": "pad",
@@ -144689,7 +145041,7 @@
   "phrase_lufs": -18.8,
   "phrase_peak": -6.89,
   "final_ok": true,
-  "slug": "paulywaulophone-pastel-singers",
+  "slug": "waulophone-big-ears-ooh",
   "wave": [
    0.382,
    0.424,
@@ -144755,14 +145107,25 @@
    "ok": true,
    "why": [],
    "score": 67.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-pastel-singers"
+   ],
+   "names": [
+    "Pastel Singers"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Vocal",
   "category": "Vocal",
-  "name": "Coded Vowel",
+  "name": "Boop",
   "dna": "gd_voice_lpc_boopU2~10;A158D563S81R882V72K60",
   "scat": "Choir/Vox",
   "kind": "pad",
@@ -144801,7 +145164,7 @@
   "phrase_lufs": -17.5,
   "phrase_peak": -6.53,
   "final_ok": true,
-  "slug": "paulywaulophone-coded-vowel",
+  "slug": "waulophone-boop",
   "wave": [
    0.308,
    0.46,
@@ -144866,14 +145229,25 @@
    "ok": true,
    "why": [],
    "score": 64.7
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-coded-vowel"
+   ],
+   "names": [
+    "Coded Vowel"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Lead",
   "category": "Lead",
-  "name": "Orbital Beam",
+  "name": "Glock Bird",
   "dna": "pw_glock<<Q51;A9D399S81R229V77K60",
   "scat": "Leads",
   "kind": "lead",
@@ -144913,7 +145287,7 @@
   "phrase_lufs": -17.1,
   "phrase_peak": -6.45,
   "final_ok": true,
-  "slug": "paulywaulophone-orbital-beam",
+  "slug": "waulophone-glock-bird",
   "wave": [
    0.276,
    0.206,
@@ -144978,14 +145352,25 @@
    "ok": true,
    "why": [],
    "score": 102.2
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-orbital-beam"
+   ],
+   "names": [
+    "Orbital Beam"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Lead",
   "category": "Lead",
-  "name": "Rainy Line",
+  "name": "Leaf Boat Flute",
   "dna": "gd_ep_reed_c6<<#8/pw_flute#8T-24L31;A27D153S77R220V94K60",
   "scat": "Leads",
   "kind": "lead",
@@ -145025,7 +145410,7 @@
   "phrase_lufs": -15.0,
   "phrase_peak": -5.78,
   "final_ok": true,
-  "slug": "paulywaulophone-rainy-line",
+  "slug": "waulophone-leaf-boat-flute",
   "wave": [
    0.34,
    0.231,
@@ -145091,14 +145476,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-rainy-line"
+   ],
+   "names": [
+    "Rainy Line"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Lead",
   "category": "Lead",
-  "name": "Lunar Line",
+  "name": "Will-o'-the-Wisp",
   "dna": "gd_ep_reed_c6E<<U2~8;A1D261S96R104V77K60",
   "scat": "Leads",
   "kind": "lead",
@@ -145139,7 +145535,7 @@
   "phrase_lufs": -15.0,
   "phrase_peak": -5.55,
   "final_ok": true,
-  "slug": "paulywaulophone-lunar-line",
+  "slug": "waulophone-will-o-the-wisp",
   "wave": [
    0.379,
    0.28,
@@ -145204,14 +145600,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-lunar-line"
+   ],
+   "names": [
+    "Lunar Line"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Lead",
   "category": "Lead",
-  "name": "Mint Voice",
+  "name": "Bee Organ Lead",
   "dna": "pw_bee_organ@t2304]@t658[@0CP@0CPH0,12U2~7;A17D434S79R331V87K60",
   "scat": "Leads",
   "kind": "lead",
@@ -145252,7 +145659,7 @@
   "phrase_lufs": -18.1,
   "phrase_peak": -6.85,
   "final_ok": true,
-  "slug": "paulywaulophone-mint-voice",
+  "slug": "waulophone-bee-organ-lead",
   "wave": [
    0.236,
    0.241,
@@ -145317,14 +145724,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-mint-voice"
+   ],
+   "names": [
+    "Mint Voice"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Lead",
   "category": "Lead",
-  "name": "Remote Voice",
+  "name": "Steer by Ear",
   "dna": "gd_ep_reed_c6@t1796]@t513[@0CP@0CPE;A12D437S88R203V72K84",
   "scat": "Leads",
   "kind": "lead",
@@ -145364,7 +145782,7 @@
   "phrase_lufs": -13.1,
   "phrase_peak": -6.45,
   "final_ok": true,
-  "slug": "paulywaulophone-remote-voice",
+  "slug": "waulophone-steer-by-ear",
   "wave": [
    0.284,
    0.29,
@@ -145429,14 +145847,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-remote-voice"
+   ],
+   "names": [
+    "Remote Voice"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Lead",
   "category": "Lead",
-  "name": "Dial Beam",
+  "name": "Crooner Sax",
   "dna": "pw_sax@t1110]@t317[@0CP@0CP#11H0,12/gd_ep_reed_c5#5T-24L65;A4D177S73R313V89K60",
   "scat": "Leads",
   "kind": "lead",
@@ -145477,7 +145906,7 @@
   "phrase_lufs": -17.1,
   "phrase_peak": -6.23,
   "final_ok": true,
-  "slug": "paulywaulophone-dial-beam",
+  "slug": "waulophone-crooner-sax",
   "wave": [
    0.275,
    0.239,
@@ -145543,14 +145972,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-dial-beam"
+   ],
+   "names": [
+    "Dial Beam"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bass",
   "category": "Bass",
-  "name": "Wired Anchor",
+  "name": "Barry Sings Low",
   "dna": "pw_bassE#13H0,12U2~6/gd_bass4_c3#3T-24L60Q-64;A1D180S16R125V83K36",
   "scat": "Bass",
   "kind": "bass",
@@ -145593,7 +146033,7 @@
   "phrase_lufs": -19.0,
   "phrase_peak": -1.5,
   "final_ok": true,
-  "slug": "paulywaulophone-wired-anchor",
+  "slug": "waulophone-barry-sings-low",
   "wave": [
    0.817,
    0.101,
@@ -145659,14 +146099,25 @@
    "ok": true,
    "why": [],
    "score": 104.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-wired-anchor"
+   ],
+   "names": [
+    "Wired Anchor"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bass",
   "category": "Bass",
-  "name": "Tinted Line",
+  "name": "Towpath",
   "dna": "gd_bass2_c3<EQ-27;A0D623S53R160V78K36",
   "scat": "Bass",
   "kind": "bass",
@@ -145707,7 +146158,7 @@
   "phrase_lufs": -14.5,
   "phrase_peak": -7.72,
   "final_ok": true,
-  "slug": "paulywaulophone-tinted-line",
+  "slug": "waulophone-towpath",
   "wave": [
    0.322,
    0.307,
@@ -145772,14 +146223,25 @@
    "ok": true,
    "why": [],
    "score": 104.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-tinted-line"
+   ],
+   "names": [
+    "Tinted Line"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bass",
   "category": "Bass",
-  "name": "Soft Pulse",
+  "name": "Tortoise Walk",
   "dna": "gd_bass2_c3@t1038]+<H0,12U2~5Q61;A0D876S68R140V78K36",
   "scat": "Bass",
   "kind": "bass",
@@ -145821,7 +146283,7 @@
   "phrase_lufs": -15.2,
   "phrase_peak": -5.21,
   "final_ok": true,
-  "slug": "paulywaulophone-soft-pulse",
+  "slug": "waulophone-tortoise-walk",
   "wave": [
    0.353,
    0.31,
@@ -145886,14 +146348,25 @@
    "ok": true,
    "why": [],
    "score": 104.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-soft-pulse"
+   ],
+   "names": [
+    "Soft Pulse"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bass",
   "category": "Bass",
-  "name": "Coded Sub",
+  "name": "Barry's Bottom",
   "dna": "gd_bass1_c2@t1049]+#11U2~5/gd_bass3_c2#5T-12L66;A2D188S61R136V72K36",
   "scat": "Bass",
   "kind": "bass",
@@ -145933,7 +146406,7 @@
   "phrase_lufs": -16.1,
   "phrase_peak": -6.9,
   "final_ok": true,
-  "slug": "paulywaulophone-coded-sub",
+  "slug": "waulophone-barry-s-bottom",
   "wave": [
    0.439,
    0.316,
@@ -145999,14 +146472,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-coded-sub"
+   ],
+   "names": [
+    "Coded Sub"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bass",
   "category": "Bass",
-  "name": "Marble Cellar",
+  "name": "Root Cellar",
   "dna": "gd_bass2_c2#8/gd_bass2_c1#8L31;A2D310S41R57V76K36",
   "scat": "Bass",
   "kind": "bass",
@@ -146045,7 +146529,7 @@
   "phrase_lufs": -15.7,
   "phrase_peak": -7.34,
   "final_ok": true,
-  "slug": "paulywaulophone-marble-cellar",
+  "slug": "waulophone-root-cellar",
   "wave": [
    0.43,
    0.283,
@@ -146111,14 +146595,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-marble-cellar"
+   ],
+   "names": [
+    "Marble Cellar"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bass",
   "category": "Bass",
-  "name": "Rainy Bass",
+  "name": "Narrowboat",
   "dna": "gd_bass1_c3@t1048]+#8/gd_bass1_c3#8T-12L65;A3D524S45R81V77K48",
   "scat": "Bass",
   "kind": "bass",
@@ -146157,7 +146652,7 @@
   "phrase_lufs": -15.9,
   "phrase_peak": -7.93,
   "final_ok": true,
-  "slug": "paulywaulophone-rainy-bass",
+  "slug": "waulophone-narrowboat",
   "wave": [
    0.402,
    0.348,
@@ -146223,14 +146718,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-rainy-bass"
+   ],
+   "names": [
+    "Rainy Bass"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bass",
   "category": "Bass",
-  "name": "Early Bottom",
+  "name": "Snail Post",
   "dna": "gd_bass0_c2@t1033]U2~5;A1D336S26R50V89K36",
   "scat": "Bass",
   "kind": "bass",
@@ -146269,7 +146775,7 @@
   "phrase_lufs": -16.8,
   "phrase_peak": -7.44,
   "final_ok": true,
-  "slug": "paulywaulophone-early-bottom",
+  "slug": "waulophone-snail-post",
   "wave": [
    0.425,
    0.21,
@@ -146334,14 +146840,25 @@
    "ok": true,
    "why": [],
    "score": 90.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-early-bottom"
+   ],
+   "names": [
+    "Early Bottom"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bass",
   "category": "Bass",
-  "name": "Frosted Thump",
+  "name": "Boop Bass",
   "dna": "pw_bass_held;A0D274S52R63V87K36",
   "scat": "Bass",
   "kind": "bass",
@@ -146379,7 +146896,7 @@
   "phrase_lufs": -17.2,
   "phrase_peak": -2.73,
   "final_ok": true,
-  "slug": "paulywaulophone-frosted-thump",
+  "slug": "waulophone-boop-bass",
   "wave": [
    0.73,
    0.419,
@@ -146444,14 +146961,25 @@
    "ok": true,
    "why": [],
    "score": 90.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-frosted-thump"
+   ],
+   "names": [
+    "Frosted Thump"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bell",
   "category": "Bell",
-  "name": "Rainy Steeple",
+  "name": "Old Oak Bell",
   "dna": "print<<#5/gd_marimba_fifth#5T3L45Q-18/print>#6T-24L15O86Q59;A2D1998S14R687V76K58",
   "scat": "Bells/Mallets",
   "kind": "bell",
@@ -146493,7 +147021,7 @@
   "phrase_lufs": -15.7,
   "phrase_peak": -5.84,
   "final_ok": true,
-  "slug": "paulywaulophone-rainy-steeple",
+  "slug": "waulophone-old-oak-bell",
   "wave": [
    0.424,
    0.261,
@@ -146560,14 +147088,25 @@
    "ok": true,
    "why": [],
    "score": 104.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-rainy-steeple"
+   ],
+   "names": [
+    "Rainy Steeple"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bell",
   "category": "Bell",
-  "name": "Winter Chimes",
+  "name": "Tuning Fork",
   "dna": "pw_forkE#8/default#8T9L13Q-3;A1D2132S26R1061V85K60",
   "scat": "Bells/Mallets",
   "kind": "bell",
@@ -146609,7 +147148,7 @@
   "phrase_lufs": -13.2,
   "phrase_peak": -6.62,
   "final_ok": true,
-  "slug": "paulywaulophone-winter-chimes",
+  "slug": "waulophone-tuning-fork",
   "wave": [
    0.283,
    0.282,
@@ -146675,14 +147214,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-winter-chimes"
+   ],
+   "names": [
+    "Winter Chimes"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bell",
   "category": "Bell",
-  "name": "Digital Gong",
+  "name": "Bluebell Gong",
   "dna": "gd_steelpan_tenth@t766]EE<H0,12,24U2~7;A0D1843S28R1549V83K64",
   "scat": "Bells/Mallets",
   "kind": "bell",
@@ -146724,7 +147274,7 @@
   "phrase_lufs": -20.5,
   "phrase_peak": -1.47,
   "final_ok": true,
-  "slug": "paulywaulophone-digital-gong",
+  "slug": "waulophone-bluebell-gong",
   "wave": [
    0.813,
    0.192,
@@ -146789,14 +147339,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-digital-gong"
+   ],
+   "names": [
+    "Digital Gong"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bell",
   "category": "Bell",
-  "name": "Rubber Bell",
+  "name": "Toadstool Bell",
   "dna": "gd_marimba_sixth@t1431]E<H0,12U2~3;A2D2286S9R661V80K57",
   "scat": "Bells/Mallets",
   "kind": "bell",
@@ -146838,7 +147399,7 @@
   "phrase_lufs": -17.1,
   "phrase_peak": -4.88,
   "final_ok": true,
-  "slug": "paulywaulophone-rubber-bell",
+  "slug": "waulophone-toadstool-bell",
   "wave": [
    0.498,
    0.19,
@@ -146903,14 +147464,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-rubber-bell"
+   ],
+   "names": [
+    "Rubber Bell"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bell",
   "category": "Bell",
-  "name": "White Vibes",
+  "name": "Dandelion Clock",
   "dna": "gd_marimba_sixthE<#13H0,19U2~9/dingxp#3T-10L34Q-26;A1D2542S15R1529V76K57",
   "scat": "Bells/Mallets",
   "kind": "bell",
@@ -146955,7 +147527,7 @@
   "phrase_lufs": -15.7,
   "phrase_peak": -5.04,
   "final_ok": true,
-  "slug": "paulywaulophone-white-vibes",
+  "slug": "waulophone-dandelion-clock",
   "wave": [
    0.482,
    0.3,
@@ -147021,14 +147593,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-white-vibes"
+   ],
+   "names": [
+    "White Vibes"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bell",
   "category": "Bell",
-  "name": "Metro Carillon",
+  "name": "Lantern Carillon",
   "dna": "gd_ep_bell_c6E<<#8/printRE#8T-10L16O329Q-18;A2D753S0R526V80K60",
   "scat": "Bells/Mallets",
   "kind": "bell",
@@ -147072,7 +147655,7 @@
   "phrase_lufs": -13.6,
   "phrase_peak": -6.18,
   "final_ok": true,
-  "slug": "paulywaulophone-metro-carillon",
+  "slug": "waulophone-lantern-carillon",
   "wave": [
    0.431,
    0.276,
@@ -147138,14 +147721,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-metro-carillon"
+   ],
+   "names": [
+    "Metro Carillon"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bell",
   "category": "Bell",
-  "name": "Pearl Vibes",
+  "name": "Fairy Lights",
   "dna": "dingxp#11H0,7/dingxp#5T19L14Q8;A1D1029S28R861V82K79",
   "scat": "Bells/Mallets",
   "kind": "bell",
@@ -147186,7 +147780,7 @@
   "phrase_lufs": -17.0,
   "phrase_peak": -5.62,
   "final_ok": true,
-  "slug": "paulywaulophone-pearl-vibes",
+  "slug": "waulophone-fairy-lights",
   "wave": [
    0.484,
    0.247,
@@ -147252,14 +147846,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-pearl-vibes"
+   ],
+   "names": [
+    "Pearl Vibes"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Bell",
   "category": "Bell",
-  "name": "Slate Ring",
+  "name": "Mossy Stone",
   "dna": "gd_steelpan_tenorE#8/dingxpR#8T-7L28O121Q-24;A5D2314S29R1323V87K60",
   "scat": "Bells/Mallets",
   "kind": "bell",
@@ -147302,7 +147907,7 @@
   "phrase_lufs": -16.0,
   "phrase_peak": -5.25,
   "final_ok": true,
-  "slug": "paulywaulophone-slate-ring",
+  "slug": "waulophone-mossy-stone",
   "wave": [
    0.495,
    0.213,
@@ -147368,6 +147973,17 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-slate-ring"
+   ],
+   "names": [
+    "Slate Ring"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
@@ -152801,11 +153417,11 @@
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Kit",
   "category": "Kit",
-  "name": "Hotel Atrium",
+  "name": "Gnome Page",
   "dna": "pw_bass@t30000Ipw_boop@t30000Igd_kit_studio_rim@t30000Ipw_doo@t30000Ipw_hmm@t30000Igd_kit_studio_snare@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_tighthat@t30000Ipw_sax@t30000Igd_kit_studio_openhat@t30000Ipw_guitar_pad@t30000Ipw_glock@t30000Ipw_flutecorder@t30000Ipw_fork@t30000Igd_kit_studio_tamb@t30000Ipw_bee_organ#16;R300V80k35j1k36j2k37j3k38j4k39j5k40j6k42j7k44j8k45j9k46j10k47j11k49j12k50j13k51j14k54j15k56j16",
   "scat": "Kit",
   "kind": "kit",
@@ -152841,7 +153457,7 @@
   "phrase_lufs": -18.4,
   "phrase_peak": -6.14,
   "final_ok": true,
-  "slug": "paulywaulophone-hotel-atrium",
+  "slug": "waulophone-gnome-page",
   "wave": [
    0.146,
    0.167,
@@ -152906,14 +153522,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-hotel-atrium"
+   ],
+   "names": [
+    "Hotel Atrium"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Kit",
   "category": "Kit",
-  "name": "Coral Drift",
+  "name": "Kitchen Table",
   "dna": "gd_kit_mouth_lowkick@t30000Igd_kit_mouth_bkick@t30000Igd_kit_mouth_click@t30000Igd_kit_mouth_ksnare@t30000Igd_kit_mouth_kesnare@t30000Igd_kit_mouth_pfsnare@t30000Igd_kit_mouth_tightkick@t30000Igd_kit_mouth_tshat@t30000Igd_kit_mouth_dumm@t30000Igd_kit_mouth_that@t30000Igd_kit_mouth_dum@t30000Igd_kit_mouth_opents@t30000Igd_kit_mouth_dom@t30000Igd_kit_mouth_pfrim@t30000Igd_kit_mouth_psh@t30000Igd_kit_mouth_hum@t30000Igd_kit_mouth_kh@t30000Igd_kit_mouth_double@t30000Igd_kit_mouth_tchhat@t30000Igd_kit_mouth_wubE#16;R160V100k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k53j19k55j20",
   "scat": "Kit",
   "kind": "kit",
@@ -152950,7 +153577,7 @@
   "phrase_lufs": -18.8,
   "phrase_peak": -6.16,
   "final_ok": true,
-  "slug": "paulywaulophone-coral-drift",
+  "slug": "waulophone-kitchen-table",
   "wave": [
    0.172,
    0.174,
@@ -153015,14 +153642,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-coral-drift"
+   ],
+   "names": [
+    "Coral Drift"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Kit",
   "category": "Kit",
-  "name": "Slate Bloom",
+  "name": "Toadstool Pages",
   "dna": "pw_bass@t30000Ipw_boop@t30000Igd_kit_studio_rim@t30000Ipw_doo@t30000Ipw_hmm@t30000Igd_kit_studio_snare@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_tighthat@t30000Ipw_sax@t30000Igd_kit_studio_openhat@t30000Ipw_guitar_pad@t30000Ipw_glock@t30000Ipw_flutecorder@t30000Ipw_fork@t30000Igd_kit_studio_tamb@t30000Ipw_bee_organ#16;R160V90k35j1k36j2k37j3k38j4k39j5k40j6k42j7k44j8k45j9k46j10k47j11k49j12k50j13k51j14k54j15k56j16",
   "scat": "Kit",
   "kind": "kit",
@@ -153058,7 +153696,7 @@
   "phrase_lufs": -18.6,
   "phrase_peak": -6.32,
   "final_ok": true,
-  "slug": "paulywaulophone-slate-bloom",
+  "slug": "waulophone-toadstool-pages",
   "wave": [
    0.143,
    0.163,
@@ -153123,14 +153761,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-slate-bloom"
+   ],
+   "names": [
+    "Slate Bloom"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Kit",
   "category": "Kit",
-  "name": "Honey Drift",
+  "name": "Honey Pine Kit",
   "dna": "gd_kit_studio_lowkick@t30000Igd_kit_studio_kick@t30000Igd_kit_studio_rim@t30000Igd_kit_studio_snare@t30000Igd_kit_studio_clap@t30000Igd_kit_studio_loclap@t30000Igd_kit_studio_lorim@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_loconga@t30000Igd_kit_studio_tighthat@t30000Igd_kit_studio_lotom@t30000Igd_kit_studio_openhat@t30000Igd_kit_studio_midtom@t30000Igd_kit_studio_conga@t30000Igd_kit_studio_crash@t30000Igd_kit_studio_hitom@t30000Igd_kit_studio_ride@t30000Igd_kit_studio_cabasa@t30000Igd_kit_studio_tamb@t30000Igd_kit_studio_bell#16;R80V90k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k54j19k56j20",
   "scat": "Kit",
   "kind": "kit",
@@ -153166,7 +153815,7 @@
   "phrase_lufs": -18.5,
   "phrase_peak": -5.31,
   "final_ok": true,
-  "slug": "paulywaulophone-honey-drift",
+  "slug": "waulophone-honey-pine-kit",
   "wave": [
    0.166,
    0.198,
@@ -153231,14 +153880,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-honey-drift"
+   ],
+   "names": [
+    "Honey Drift"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Kit",
   "category": "Kit",
-  "name": "Cathode Haze",
+  "name": "Hum and Click",
   "dna": "gd_kit_mouth_lowkick@t30000Igd_kit_mouth_bkick@t30000Igd_kit_mouth_click@t30000Igd_kit_mouth_ksnare@t30000Igd_kit_mouth_kesnare@t30000Igd_kit_mouth_pfsnare@t30000Igd_kit_mouth_tightkick@t30000Igd_kit_mouth_tshat@t30000Igd_kit_mouth_dumm@t30000Igd_kit_mouth_that@t30000Igd_kit_mouth_dum@t30000Igd_kit_mouth_opents@t30000Igd_kit_mouth_dom@t30000Igd_kit_mouth_pfrim@t30000Igd_kit_mouth_psh@t30000Igd_kit_mouth_hum@t30000Igd_kit_mouth_kh@t30000Igd_kit_mouth_double@t30000Igd_kit_mouth_tchhat@t30000Igd_kit_mouth_wub#16;R120V100k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k53j19k55j20",
   "scat": "Kit",
   "kind": "kit",
@@ -153274,7 +153934,7 @@
   "phrase_lufs": -18.4,
   "phrase_peak": -6.06,
   "final_ok": true,
-  "slug": "paulywaulophone-cathode-haze",
+  "slug": "waulophone-hum-and-click",
   "wave": [
    0.191,
    0.194,
@@ -153339,14 +153999,25 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-cathode-haze"
+   ],
+   "names": [
+    "Cathode Haze"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {
-  "pack": "paulywaulophone",
-  "pack_name": "Paulywaulophone",
+  "pack": "waulophone",
+  "pack_name": "WAULOPHONE",
   "group": "Kit",
   "category": "Kit",
-  "name": "Delta Field",
+  "name": "Tape on the Towpath",
   "dna": "gd_kit_tape_lowkick@t30000Igd_kit_tape_kick@t30000Igd_kit_tape_rim@t30000Igd_kit_tape_snare@t30000Igd_kit_tape_clap@t30000Igd_kit_tape_loclap@t30000Igd_kit_tape_lorim@t30000Igd_kit_tape_hat@t30000Igd_kit_tape_loconga@t30000Igd_kit_tape_tighthat@t30000Igd_kit_tape_lotom@t30000Igd_kit_tape_openhat@t30000Igd_kit_tape_midtom@t30000Igd_kit_tape_conga@t30000Igd_kit_tape_crash@t30000Igd_kit_tape_hitom@t30000Igd_kit_tape_ride@t30000Igd_kit_tape_cabasa@t30000Igd_kit_tape_tamb@t30000Igd_kit_tape_bellE#16;R120V100k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k54j19k56j20",
   "scat": "Kit",
   "kind": "kit",
@@ -153383,7 +154054,7 @@
   "phrase_lufs": -18.9,
   "phrase_peak": -5.37,
   "final_ok": true,
-  "slug": "paulywaulophone-delta-field",
+  "slug": "waulophone-tape-on-the-towpath",
   "wave": [
    0.121,
    0.123,
@@ -153448,6 +154119,17 @@
    "ok": true,
    "why": [],
    "score": 100.0
+  },
+  "aliases": {
+   "slugs": [
+    "paulywaulophone-delta-field"
+   ],
+   "names": [
+    "Delta Field"
+   ],
+   "packs": [
+    "paulywaulophone"
+   ]
   }
  },
  {

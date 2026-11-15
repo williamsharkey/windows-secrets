@@ -124,18 +124,19 @@ PAUL = ['pw_doo', 'pw_doo_held', 'pw_bass', 'pw_bass_held', 'pw_boop', 'pw_glock
 SHIM = ['dingxp', 'chimesxp', 'print', 'default', 'ding']   # a Windows sound may sparkle on top
 
 PACKS2 = [
-    dict(id='paulywaulophone', name='Paulywaulophone', blurb='Uncle Homunculus plays the office piano. Everyone sings along.',
+    dict(id='waulophone', name='WAULOPHONE', aliases=['paulywaulophone'],
+         blurb='The WAULOPHONE is made in Paulywaulyton, behind the small door in the root of the old oak. Play it by ear.',
          new=True, groups=[G('Keys', 14), G('Pad', 10), G('Vocal', 10), G('Lead', 6), G('Bass', 8), G('Bell', 8), G('Kit', 6)]),
     dict(id='garden-rhythm', name='Garden Rhythm Works', blurb='Drums, rave stabs and talking machines from the garden shed.',
          new=True, groups=[G('Kit', 14), G('Stab', 10), G('Pad', 10), G('Vocal', 8), G('Perc', 8), G('Mallet', 8)]),
 ]
 GROUP_ONLY = {
-    ('paulywaulophone', 'Keys'): EP + PIANO + ['pw_guitar_pad', 'pw_glock', 'pw_bee_organ'] + SHIM,
-    ('paulywaulophone', 'Pad'): ['pw_hmm_held', 'pw_doo_held', 'pw_bee_organ', 'pw_flute', 'pw_fork'] + WORLDS[:9] + EP[:5],
-    ('paulywaulophone', 'Vocal'): ['pw_doo', 'pw_doo_held', 'pw_hmm', 'pw_hmm_held', 'pw_boop'] + VOICE[:12],
-    ('paulywaulophone', 'Lead'): ['pw_flutecorder', 'pw_flute', 'pw_sax', 'pw_bee_organ', 'pw_glock'] + EP[10:15],
-    ('paulywaulophone', 'Bass'): ['pw_bass', 'pw_bass_held', 'pw_boop'] + BASS,
-    ('paulywaulophone', 'Bell'): ['pw_glock', 'pw_fork'] + EP[5:10] + MALLET[:14] + SHIM,
+    ('waulophone', 'Keys'): EP + PIANO + ['pw_guitar_pad', 'pw_glock', 'pw_bee_organ'] + SHIM,
+    ('waulophone', 'Pad'): ['pw_hmm_held', 'pw_doo_held', 'pw_bee_organ', 'pw_flute', 'pw_fork'] + WORLDS[:9] + EP[:5],
+    ('waulophone', 'Vocal'): ['pw_doo', 'pw_doo_held', 'pw_hmm', 'pw_hmm_held', 'pw_boop'] + VOICE[:12],
+    ('waulophone', 'Lead'): ['pw_flutecorder', 'pw_flute', 'pw_sax', 'pw_bee_organ', 'pw_glock'] + EP[10:15],
+    ('waulophone', 'Bass'): ['pw_bass', 'pw_bass_held', 'pw_boop'] + BASS,
+    ('waulophone', 'Bell'): ['pw_glock', 'pw_fork'] + EP[5:10] + MALLET[:14] + SHIM,
     ('garden-rhythm', 'Stab'): RAVE,
     ('garden-rhythm', 'Pad'): WORLDS + RAVE[12:15],
     ('garden-rhythm', 'Vocal'): VOICE,
@@ -156,10 +157,13 @@ KITS2 = {
     'garden-rhythm': [('studio', 'rosewood'), ('tape', 'rosewood'), ('chip', 'rosewood'), ('latin', 'rosewood'),
                       ('mouth', 'mouth'), ('radio', 'mouth'), ('hands', 'hands'), ('temple', 'hands'),
                       ('taiko', 'modal'), ('tabla', 'modal'), ('glitch', 'modal'), ('timpani', 'modal')],
-    'paulywaulophone': [('pauly', 'pauly'), ('studio', 'rosewood'), ('tape', 'rosewood'), ('mouth', 'mouth')],
+    'waulophone': [('pauly', 'pauly'), ('studio', 'rosewood'), ('tape', 'rosewood'), ('mouth', 'mouth')],
 }
 PACKS.extend(PACKS2)
 PACK_BY_ID.update({p['id']: p for p in PACKS2})
+# old pack ids still resolve (saved projects, .song files, ratings): the owner's renames
+PACK_ALIASES = {a: p['id'] for p in PACKS2 for a in p.get('aliases', [])}
+PACK_BY_ID.update({a: PACK_BY_ID[i] for a, i in PACK_ALIASES.items()})
 
 # the tape-replay pack: sustained PD/CC0 (and the owner's) notes given tape character in the DNA (gen.tapeify)
 PACKS2.append(dict(id='tape-parlour', name='Tape Parlour Ensemble', blurb='Eight seconds of tape behind every key.',

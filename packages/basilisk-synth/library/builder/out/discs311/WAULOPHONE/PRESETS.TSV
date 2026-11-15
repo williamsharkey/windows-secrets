@@ -1,0 +1,63 @@
+# SNDWAVE1993 by Algorithmic Industries presets: category	name	DNA	pack	editions	rating	verdict	file
+Bass	Barry Sings Low	pw_bassE#13H0,12U2~6/gd_bass4_c3#3T-24L60Q-64;A1D180S16R125V83K36G-6	waulophone	3.11		-	BASS\BARRYSL.BSP
+Bass	Barry's Bottom	gd_bass1_c2@t1049]+#11U2~5/gd_bass3_c2#5T-12L66;A2D188S61R136V72K36G-13	waulophone	3.11		-	BASS\BARRYSB.BSP
+Bass	Boop Bass	pw_bass_held;A0D274S52R63V87K36G1	waulophone	3.11		-	BASS\BOOPBASS.BSP
+Bass	Narrowboat	gd_bass1_c3@t1048]+#8/gd_bass1_c3#8T-12L65;A3D524S45R81V77K48G-9	waulophone	3.11		-	BASS\NARROWBO.BSP
+Bass	Root Cellar	gd_bass2_c2#8/gd_bass2_c1#8L31;A2D310S41R57V76K36G-6	waulophone	3.11		-	BASS\ROOTC.BSP
+Bass	Snail Post	gd_bass0_c2@t1033]U2~5;A1D336S26R50V89K36G-10	waulophone	3.11		-	BASS\SNAILP.BSP
+Bass	Tortoise Walk	gd_bass2_c3@t1038]+<H0,12U2~5Q61;A0D876S68R140V78K36G-16	waulophone	3.11		-	BASS\TORTOISW.BSP
+Bass	Towpath	gd_bass2_c3<EQ-27;A0D623S53R160V78K36G-6	waulophone	3.11		-	BASS\TOWPATH.BSP
+Bell	Bluebell Gong	gd_steelpan_tenth@t766]EE<H0,12,24U2~7;A0D1843S28R1549V83K64	waulophone	3.11		-	BELL\BLUEBELG.BSP
+Bell	Dandelion Clock	gd_marimba_sixthE<#13H0,19U2~9/dingxp#3T-10L34Q-26;A1D2542S15R1529V76K57G-9	waulophone	3.11		-	BELL\DANDELIC.BSP
+Bell	Fairy Lights	dingxp#11H0,7/dingxp#5T19L14Q8;A1D1029S28R861V82K79G6	waulophone	3.11		-	BELL\FAIRYL.BSP
+Bell	Lantern Carillon	gd_ep_bell_c6E<<#8/printRE#8T-10L16O329Q-18;A2D753S0R526V80K60G-3	waulophone	3.11		-	BELL\LANTERNC.BSP
+Bell	Mossy Stone	gd_steelpan_tenorE#8/dingxpR#8T-7L28O121Q-24;A5D2314S29R1323V87K60G-1	waulophone	3.11		-	BELL\MOSSYS.BSP
+Bell	Old Oak Bell	print<<#5/gd_marimba_fifth#5T3L45Q-18/print>#6T-24L15O86Q59;A2D1998S14R687V76K58G4	waulophone	3.11		-	BELL\OLDOB.BSP
+Bell	Toadstool Bell	gd_marimba_sixth@t1431]E<H0,12U2~3;A2D2286S9R661V80K57G-9	waulophone	3.11		-	BELL\TOADSTOB.BSP
+Bell	Tuning Fork	pw_forkE#8/default#8T9L13Q-3;A1D2132S26R1061V85K60G-7	waulophone	3.11		-	BELL\TUNINGF.BSP
+Keys	Bookshelf	gd_ep_reed_c3#11U2~3/chimesxp#5T-19L29Q-34;A5D629S31R577V98K48G-10	waulophone	3.11		-	KEYS\BOOKSHEL.BSP
+Keys	Canal Keys	gd_ep_tine_c6@t1051]#11U2~3/dingxp#5T17L38O12Q-17;A3D1238S9R162V72K84G-16	waulophone	3.11		-	KEYS\CANALK.BSP
+Keys	Fairy Door Piano	gd_ep_tine_c6<<#8H0,12/gd_ep_bell_c6#4T-24L64Q32/default#4T21L19Q25;A5D2284S14R380V71K60G-19	waulophone	3.11		-	KEYS\FAIRYDP.BSP
+Keys	Flower Market	gd_ep_reed_c6@t1026]E#8U2~4/print#4T14L39O19Q29/ding#4T17L19O15Q-3;A5D1658S34R274V96K84G-14	waulophone	3.11		-	KEYS\FLOWERM.BSP
+Keys	Front Room Upright	gd_piano_a1>>;A0D472S16R269V90K57G-2	waulophone	3.11		-	KEYS\FRONTRU.BSP
+Keys	Kettle On	gd_piano_a1E>>#5/gd_ep_tine_c5#5T-15L55Q-34/pw_guitar_pad#6T-3L43Q-35;A0D425S20R489V71K57G-4	waulophone	3.11		-	KEYS\KETTLEON.BSP
+Keys	Lamp Off	gd_piano_a5@t1600];A3D933S19R364V96K81G-4	waulophone	3.11		-	KEYS\LAMPOFF.BSP
+Keys	Long Rug	gd_piano_a4@t2610]#8/default#8T25L29O24Q-29;A0D921S41R424V88K69G-4	waulophone	3.11		-	KEYS\LONGRUG.BSP
+Keys	Mossy Tines	gd_ep_tine_hard_c3#8/gd_ep_tine_c5#8T-36L60Q-20;A1D1272S3R428V84K48G-10	waulophone	3.11		-	KEYS\MOSSYT.BSP
+Keys	OTOLITH Late	pw_guitar_pad#8U2~6/ding#4T5L13O13Q-29/gd_ep_bell_c4#4T12L66Q-22;A5D448S36R178V79K60G-5	waulophone	3.11		-	KEYS\OTOLITHL.BSP
+Keys	Reading Lamp	gd_ep_reed_c4E#11U2~5/print#5T-10L36O11Q-27;A1D2232S41R649V99K60G-12	waulophone	3.11		-	KEYS\READINGL.BSP
+Keys	Saffron Tines	gd_ep_tine_hard_c5#11U2~5/default@t300]#5T28L26O8Q34;A1D1346S9R678V73K72G-14	waulophone	3.11		-	KEYS\SAFFRONT.BSP
+Keys	Toadstool Grand	gd_piano_a5<<#5/ding#5T-22L49Q3/gd_ep_reed_c4#6T-15L58Q-34;A0D473S2R161V88K57G-6	waulophone	3.11		-	KEYS\TOADSTOG.BSP
+Keys	White Bicycle	gd_ep_tine_hard_c3@t2058]>#8/default#8T21L24O8Q-21;A0D1567S16R191V79K60G-9	waulophone	3.11		-	KEYS\WHITEB.BSP
+Kit	Gnome Page	pw_bass@t30000Ipw_boop@t30000Igd_kit_studio_rim@t30000Ipw_doo@t30000Ipw_hmm@t30000Igd_kit_studio_snare@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_tighthat@t30000Ipw_sax@t30000Igd_kit_studio_openhat@t30000Ipw_guitar_pad@t30000Ipw_glock@t30000Ipw_flutecorder@t30000Ipw_fork@t30000Igd_kit_studio_tamb@t30000Ipw_bee_organ#16;R300V80G-19k35j1k36j2k37j3k38j4k39j5k40j6k42j7k44j8k45j9k46j10k47j11k49j12k50j13k51j14k54j15k56j16	waulophone	3.11		-	KIT\GNOMEP.BSP
+Kit	Honey Pine Kit	gd_kit_studio_lowkick@t30000Igd_kit_studio_kick@t30000Igd_kit_studio_rim@t30000Igd_kit_studio_snare@t30000Igd_kit_studio_clap@t30000Igd_kit_studio_loclap@t30000Igd_kit_studio_lorim@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_loconga@t30000Igd_kit_studio_tighthat@t30000Igd_kit_studio_lotom@t30000Igd_kit_studio_openhat@t30000Igd_kit_studio_midtom@t30000Igd_kit_studio_conga@t30000Igd_kit_studio_crash@t30000Igd_kit_studio_hitom@t30000Igd_kit_studio_ride@t30000Igd_kit_studio_cabasa@t30000Igd_kit_studio_tamb@t30000Igd_kit_studio_bell#16;R80V90G-17k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k54j19k56j20	waulophone	3.11		-	KIT\HONEYPK.BSP
+Kit	Hum and Click	gd_kit_mouth_lowkick@t30000Igd_kit_mouth_bkick@t30000Igd_kit_mouth_click@t30000Igd_kit_mouth_ksnare@t30000Igd_kit_mouth_kesnare@t30000Igd_kit_mouth_pfsnare@t30000Igd_kit_mouth_tightkick@t30000Igd_kit_mouth_tshat@t30000Igd_kit_mouth_dumm@t30000Igd_kit_mouth_that@t30000Igd_kit_mouth_dum@t30000Igd_kit_mouth_opents@t30000Igd_kit_mouth_dom@t30000Igd_kit_mouth_pfrim@t30000Igd_kit_mouth_psh@t30000Igd_kit_mouth_hum@t30000Igd_kit_mouth_kh@t30000Igd_kit_mouth_double@t30000Igd_kit_mouth_tchhat@t30000Igd_kit_mouth_wub#16;R120V100G-13k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k53j19k55j20	waulophone	3.11		-	KIT\HUMAC.BSP
+Kit	Kitchen Table	gd_kit_mouth_lowkick@t30000Igd_kit_mouth_bkick@t30000Igd_kit_mouth_click@t30000Igd_kit_mouth_ksnare@t30000Igd_kit_mouth_kesnare@t30000Igd_kit_mouth_pfsnare@t30000Igd_kit_mouth_tightkick@t30000Igd_kit_mouth_tshat@t30000Igd_kit_mouth_dumm@t30000Igd_kit_mouth_that@t30000Igd_kit_mouth_dum@t30000Igd_kit_mouth_opents@t30000Igd_kit_mouth_dom@t30000Igd_kit_mouth_pfrim@t30000Igd_kit_mouth_psh@t30000Igd_kit_mouth_hum@t30000Igd_kit_mouth_kh@t30000Igd_kit_mouth_double@t30000Igd_kit_mouth_tchhat@t30000Igd_kit_mouth_wubE#16;R160V100G-14k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k53j19k55j20	waulophone	3.11		-	KIT\KITCHENT.BSP
+Kit	Tape on the Towpath	gd_kit_tape_lowkick@t30000Igd_kit_tape_kick@t30000Igd_kit_tape_rim@t30000Igd_kit_tape_snare@t30000Igd_kit_tape_clap@t30000Igd_kit_tape_loclap@t30000Igd_kit_tape_lorim@t30000Igd_kit_tape_hat@t30000Igd_kit_tape_loconga@t30000Igd_kit_tape_tighthat@t30000Igd_kit_tape_lotom@t30000Igd_kit_tape_openhat@t30000Igd_kit_tape_midtom@t30000Igd_kit_tape_conga@t30000Igd_kit_tape_crash@t30000Igd_kit_tape_hitom@t30000Igd_kit_tape_ride@t30000Igd_kit_tape_cabasa@t30000Igd_kit_tape_tamb@t30000Igd_kit_tape_bellE#16;R120V100G-22k35j1k36j2k37j3k38j4k39j5k40j6k41j7k42j8c1k43j9k44j10c1k45j11k46j12c1k47j13k48j14k49j15k50j16k51j17k52j18k54j19k56j20	waulophone	3.11		-	KIT\TAPEOTT.BSP
+Kit	Toadstool Pages	pw_bass@t30000Ipw_boop@t30000Igd_kit_studio_rim@t30000Ipw_doo@t30000Ipw_hmm@t30000Igd_kit_studio_snare@t30000Igd_kit_studio_hat@t30000Igd_kit_studio_tighthat@t30000Ipw_sax@t30000Igd_kit_studio_openhat@t30000Ipw_guitar_pad@t30000Ipw_glock@t30000Ipw_flutecorder@t30000Ipw_fork@t30000Igd_kit_studio_tamb@t30000Ipw_bee_organ#16;R160V90G-19k35j1k36j2k37j3k38j4k39j5k40j6k42j7k44j8k45j9k46j10k47j11k49j12k50j13k51j14k54j15k56j16	waulophone	3.11		-	KIT\TOADSTOP.BSP
+Lead	Bee Organ Lead	pw_bee_organ@t2304]@t658[@0CP@0CPH0,12U2~7;A17D434S79R331V87K60G-14	waulophone	3.11		-	LEAD\BEEOL.BSP
+Lead	Crooner Sax	pw_sax@t1110]@t317[@0CP@0CP#11H0,12/gd_ep_reed_c5#5T-24L65;A4D177S73R313V89K60G-10	waulophone	3.11		-	LEAD\CROONERS.BSP
+Lead	Glock Bird	pw_glock<<Q51;A9D399S81R229V77K60G-3	waulophone	3.11		-	LEAD\GLOCKB.BSP
+Lead	Leaf Boat Flute	gd_ep_reed_c6<<#8/pw_flute#8T-24L31;A27D153S77R220V94K60G-3	waulophone	3.11		-	LEAD\LEAFBF.BSP
+Lead	Steer by Ear	gd_ep_reed_c6@t1796]@t513[@0CP@0CPE;A12D437S88R203V72K84G4	waulophone	3.11		-	LEAD\STEERBE.BSP
+Lead	Will-o'-the-Wisp	gd_ep_reed_c6E<<U2~8;A1D261S96R104V77K60G-9	waulophone	3.11		-	LEAD\WILLOTHE.BSP
+Pad	Bee Loud Glade	gd_ep_tine_c4@t2902]@t829[@0CP@0CP#11U2~11/pw_bee_organEE#5T24L27O251Q3;A475D1S82R972V75K60G-7	waulophone	3.11		-	PAD\BEELG.BSP
+Pad	Bluebell Wood	gd_ep_tine_c5@t2880]@t823[@0CP@0CP#13H0,12U2~16/pw_fork#3L32;A1072D64S93R940V77K72G-8	waulophone	3.11		-	PAD\BLUEBELW.BSP
+Pad	Doo Choir	pw_doo_held@t105]@t30[@0CP@0CP@0CPE#8U2~18/pw_hmm_held#4T-12L69/gd_ep_tine_c4R>#4L37O352Q-18;A774D54S99R1115V95K60G-11	waulophone	3.11		-	PAD\DOOCHOIR.BSP
+Pad	Evening Canopy	gd_conch_horizon_c6@t5593]@t1598[@0CP@0CPE<<#11U2~10/pw_fork#5T-12L61;A350D864S83R1112V77K60G-12	waulophone	3.11		-	PAD\EVENINGC.BSP
+Pad	Fairy Ring	gd_conch_horizon_c2E#10U3~13/pw_forkE#3T-12L15O250Q-45/gd_ep_tine_c6RE#3T-36L25O73Q34;A280D555S70R936V76K36G-8	waulophone	3.11		-	PAD\FAIRYR.BSP
+Pad	Glowing Mushrooms	gd_stalactite_grotto_c2E>>#13U4~18/gd_fog_temple_c4R>#3L24O50Q18;A1175D264S86R1863V91K60G-7	waulophone	3.11		-	PAD\GLOWINGM.BSP
+Pad	Mist Spirits	gd_ep_tine_c4@t2902]@t829[@0CP@0CP#11U2~9/gd_stalactite_grotto_c2>#5T24L22O153Q38;A726D204S71R1280V78K60G-5	waulophone	3.11		-	PAD\MISTS.BSP
+Pad	Mossy Stones	gd_fog_temple_c2E#12U3~10/gd_ep_tine_c5#4T-24L34Q-1;A1064D601S74R1463V94K36G-7	waulophone	3.11		-	PAD\MOSSYS.BSP
+Pad	Spore Light	gd_stalactite_grotto_c6<<#11H0,12U2~7/gd_fog_temple_c2R#3T36L22O189Q7/gd_ep_tine_c2RE#2T36L24O199Q-15;A355D725S96R1131V80K60G-6	waulophone	3.11		-	PAD\SPOREL.BSP
+Pad	Through the Root	gd_ep_tine_c4E#12H0,7U3~11/ringin#2L28Ja0,100.135,30.537,0/gd_ep_tine_c3R#2T31L15O83Q-53;A1201D747S90R1498V84K60G-10	waulophone	3.11		-	PAD\THROUGTR.BSP
+Vocal	Ahh Under the Oak	gd_voice_klatt_aahE#10U3~15/gd_voice_klatt_ooh#3T-12L33/gd_voice_lpc_robot#3T-12L30;A715D253S81R690V88K60G-10	waulophone	3.11		-	VOCAL\AHHUTO.BSP
+Vocal	Big Ears Ooh	gd_voice_lpc_meowE#12U3~14/gd_voice_lpc_ooh#4T-12L68;A88D146S84R794V87K60G-13	waulophone	3.11		-	VOCAL\BIGEO.BSP
+Vocal	Boop	gd_voice_lpc_boopU2~10;A158D563S81R882V72K60G-10	waulophone	3.11		-	VOCAL\BOOP.BSP
+Vocal	Boop Boop	pw_boop@t520]@t148[@0CP@0CP>>#8/gd_voice_lpc_aah#8T-16L57;A195D107S73R653V91K56G-3	waulophone	3.11		-	VOCAL\BOOPBOOP.BSP
+Vocal	Eleven Fairies	gd_voice_lpc_meow@t554]@t158[@0CP@0CPC@50X#13U4~10/gd_voice_lpc_robotR>#3L36O289Q-39;A465D153S74R1200V83K60G-17	waulophone	3.11		-	VOCAL\ELEVENF.BSP
+Vocal	Hmm Held	pw_hmm_held#8U2~8/gd_voice_lpc_lala#4T-12L66/gd_voice_klatt_oohR#4T12L30O79Q-10;A232D419S85R1101V93K60G-11	waulophone	3.11		-	VOCAL\HMMHELD.BSP
+Vocal	Homunculus Choir	gd_voice_klatt_aah@t570]@t163[@0CP@0CPE#8/gd_voice_lpc_dance>#8L36O70Q35;A354D408S95R738V94K60G-8	waulophone	3.11		-	VOCAL\HOMUNCUC.BSP
+Vocal	Lamp-Off Ooh	gd_voice_klatt_ooh@t570]@t163[@0CP@0CPU2~10;A139D255S81R695V74K60G-12	waulophone	3.11		-	VOCAL\LAMPOFFO.BSP
+Vocal	Uncle's Murmur	gd_voice_lpc_boop#12U3~15/gd_voice_lpc_lala+#4T-12L63;A414D349S75R716V98K60G-9	waulophone	3.11		-	VOCAL\UNCLESM.BSP
+Vocal	Woodsprite Choir	gd_voice_lpc_robot@t799]@t228[@0CP@0CPE#12U3~15/pw_hmm_held#4T-12L39;A154D34S76R539V99K60G-8	waulophone	3.11		-	VOCAL\WOODSPRC.BSP

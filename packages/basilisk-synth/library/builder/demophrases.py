@@ -40,7 +40,7 @@ PACK_MOOD = {'workgroup-house': 'house', 'techno-server': 'techno', 'trance-conn
              'screen-saver': 'ambient', 'diagnostics': 'glitch', 'leisure': 'lounge', 'game-port': 'chip',
              'workstation-classics': 'classic', 'studio-archive': 'studio', 'w3x-heritage': 'heritage', 'rom-reference': 'classic',
              'lifestyle-aesthetics': 'vapor', 'electromech-heritage': 'electromech', 'kit-manager': 'breaks', 'rainy-loft': 'lounge',
-             'paulywaulophone': 'pauly', 'garden-rhythm': 'house', 'tape-parlour': 'tape', 'courtyard-chapel': 'early',
+             'waulophone': 'pauly', 'paulywaulophone': 'pauly', 'garden-rhythm': 'house', 'tape-parlour': 'tape', 'courtyard-chapel': 'early',
              'listening-post': 'ocean', 'office-machinery': 'office', 'polysynth-showroom': 'poly'}
 ROLE = {'Keys': 'keys', 'Organ': 'organ', 'Bass': 'bass', 'Sub': 'bass', 'Pad': 'pad', 'Strings': 'strings', 'Vocal': 'vocal',
         'Stab': 'stab', 'Brass': 'brass', 'Chord': 'stab', 'Lead': 'lead', 'Pluck': 'pluck', 'Arp': 'pluck', 'Bell': 'bell',
