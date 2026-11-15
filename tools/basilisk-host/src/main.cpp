@@ -73,7 +73,7 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
                    "                   [--tests offline,realtime,repeat,state,preset,progchange,multi,orphans,editor] [--repeat N] [--instances K]\n"
                    "                   [--sr HZ] [--block N] [--warmup S] [--tail S] [--program N] [--state-program N]\n"
                    "                   [--load-state FILE] [--automate NAME:t=v;t=v] [--multi-programs 0,2] [--change-at S] [--change-program N]\n"
-                   "                   [--editor-script \"wait 8|click X Y|type TEXT|key enter|shot NAME\"] [--state-contains TEXT] [--kill-orphans] [--env NAME=VALUE]\n"
+                   "                   [--editor-script \"wait 8|click X Y|type TEXT|key enter|shot NAME\"] [--state-contains TEXT] [--editor-offline] [--kill-orphans] [--env NAME=VALUE]\n"
                    "  BasiliskHost.exe --selftest DIR PLUGIN.vst3 [PLUGIN2.vst3 ...]\n"
                    "  BasiliskHost.exe --write-pattern FILE.mid\n");
             return 0;

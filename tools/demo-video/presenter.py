@@ -1,171 +1,195 @@
 #!/usr/bin/env python3
-"""Harlan Pettibone, the tour's host: an original character drawn from code (no photo, no reference person).
-A retired gentleman in a cardigan and bow tie, with big glasses, a bald crown and white side hair, clean-shaven.
+"""Clement Ashby, host of the (fictional) public-access show "Computing at Your Pace": an original character drawn
+from code, not based on any real person. A gentle man in his sixties: salt-and-pepper hair with a careful side part,
+thin wire glasses, a mustard cardigan and a red bow tie. Beside him a ficus; in front of him a mug that says
+WORLD'S OKAYEST USER.
 
     from presenter import Presenter
     P = Presenter(); img = P.draw(mouth=0.6, shape='a', blink=0, brow=0.3, gesture='point', g=1.0, t=12.3)
 
-`draw` returns an RGBA image of the inner picture (W x H). It is drawn at SS x the size and reduced, for smooth edges.
-    python3 presenter.py sheet OUT.png      a contact sheet of mouths, blinks and gestures
+`draw` returns an RGBA image of the inner picture (W x H), drawn at SS x the size and reduced, for smooth edges.
+    python3 presenter.py sheet OUT.png FONTDIR      a contact sheet of mouths, blinks and gestures
 """
-import math, sys
-from PIL import Image, ImageDraw, ImageFilter
+import math, os, sys
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 W, H = 420, 470
 SS = 3
+FONTDIR = os.environ.get('PRESENTER_FONTS', os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'design', 'brand', 'sndwave1993', 'fonts'))
 
-SKIN = (240, 196, 160)
-SKIN_D = (214, 160, 124)
-CHEEK = (236, 150, 140)
-HAIR = (236, 236, 232)
-HAIR_D = (196, 196, 192)
-CARD = (122, 46, 58)          # cardigan
-CARD_D = (92, 32, 44)
-SHIRT = (214, 228, 242)
-BOW = (32, 66, 132)
-FRAME = (70, 48, 34)          # glasses
-BG_TOP = (36, 84, 140)
-BG_BOT = (12, 34, 70)
+SKIN = (236, 192, 158)
+SKIN_D = (206, 152, 118)
+HAIR = (128, 120, 112)        # salt and pepper
+HAIR_L = (178, 172, 164)
+CARD = (184, 140, 52)         # mustard cardigan
+CARD_D = (146, 106, 34)
+SHIRT = (236, 232, 220)
+BOW = (168, 30, 40)
+WIRE = (150, 140, 110)        # wire glasses
+BG_TOP = (52, 86, 92)         # a public-access studio: a teal curtain
+BG_BOT = (20, 40, 46)
+
+
+def _font(size, bold=True):
+    try:
+        return ImageFont.truetype(os.path.join(FONTDIR, 'DejaVuSans-Bold.ttf' if bold else 'DejaVuSans.ttf'), size)
+    except OSError:
+        return ImageFont.load_default()
 
 
 def _bg():
-    """The studio: a blue sweep, a soft spotlight, a bookshelf line and a potted plant (all invented)."""
-    im = Image.new('RGB', (W * SS, H * SS))
-    d = ImageDraw.Draw(im)
-    for y in range(H * SS):
-        u = y / (H * SS)
-        c = tuple(int(BG_TOP[k] * (1 - u) + BG_BOT[k] * u) for k in range(3))
-        d.line([(0, y), (W * SS, y)], fill=c)
-    glow = Image.new('L', (W * SS, H * SS), 0)
-    ImageDraw.Draw(glow).ellipse([W * SS * 0.12, H * SS * 0.05, W * SS * 0.88, H * SS * 0.85], fill=90)
-    glow = glow.filter(ImageFilter.GaussianBlur(40 * SS))
-    im = Image.composite(Image.new('RGB', im.size, (120, 170, 220)), im, glow)
-    d = ImageDraw.Draw(im)
+    """The set: a teal curtain with soft folds, a spotlight, a ficus on the right (all invented)."""
     s = SS
-    # shelf on the left with three book spines
-    d.rectangle([0, 150 * s, 70 * s, 156 * s], fill=(70, 50, 40))
-    for i, (bw, bh, c) in enumerate([(14, 46, (150, 60, 50)), (11, 40, (60, 110, 80)), (16, 50, (200, 170, 90))]):
-        x = 8 * s + sum(b[0] + 3 for b in [(14,), (11,), (16,)][:i]) * s
-        d.rectangle([x, (150 - bh) * s, x + bw * s, 150 * s], fill=c)
-    # a plant on the right
-    d.rectangle([352 * s, 210 * s, 392 * s, 250 * s], fill=(176, 92, 60))
-    for a in range(-60, 61, 24):
-        r = math.radians(a - 90)
-        x0, y0 = 372 * s, 212 * s
-        d.ellipse([x0 + math.cos(r) * 46 * s - 12 * s, y0 + math.sin(r) * 50 * s - 22 * s,
-                   x0 + math.cos(r) * 46 * s + 12 * s, y0 + math.sin(r) * 50 * s + 22 * s], fill=(52, 128, 76))
+    im = Image.new('RGB', (W * s, H * s))
+    d = ImageDraw.Draw(im)
+    for y in range(H * s):
+        u = y / (H * s)
+        d.line([(0, y), (W * s, y)], fill=tuple(int(BG_TOP[k] * (1 - u) + BG_BOT[k] * u) for k in range(3)))
+    for k in range(9):   # curtain folds
+        x = (k + 0.5) * W * s / 9
+        fold = Image.new('L', im.size, 0)
+        ImageDraw.Draw(fold).rectangle([x - 6 * s, 0, x + 6 * s, H * s], fill=40)
+        fold = fold.filter(ImageFilter.GaussianBlur(8 * s))
+        im.paste(Image.new('RGB', im.size, (10, 24, 28)), (0, 0), fold)
+    glow = Image.new('L', im.size, 0)
+    ImageDraw.Draw(glow).ellipse([W * s * 0.15, H * s * 0.02, W * s * 0.85, H * s * 0.8], fill=80)
+    glow = glow.filter(ImageFilter.GaussianBlur(40 * s))
+    im = Image.composite(Image.new('RGB', im.size, (120, 170, 168)), im, glow)
+    d = ImageDraw.Draw(im)
+    # the ficus: a tall stem with small oval leaves, in a white pot
+    d.rectangle([326 * s, 404 * s, 420 * s, 412 * s], fill=(90, 62, 40))   # a shelf
+    d.polygon([(338 * s, 352 * s), (398 * s, 352 * s), (390 * s, 404 * s), (346 * s, 404 * s)], fill=(226, 222, 212))
+    d.line([(368 * s, 352 * s), (366 * s, 120 * s)], fill=(96, 70, 44), width=4 * s)
+    for k in range(26):
+        a = k * 2.399
+        r = 18 + (k % 5) * 9
+        cx = 366 + math.cos(a) * r * 0.9
+        cy = 112 + k * 8.5 + math.sin(a) * 12
+        col = (44, 108, 58) if k % 3 else (64, 132, 70)
+        d.ellipse([(cx - 8) * s, (cy - 5) * s, (cx + 8) * s, (cy + 5) * s], fill=col)
     return im
+
+
+def _mug():
+    """The mug, drawn once: white, a handle, two lines of text."""
+    s = SS
+    m = Image.new('RGBA', (110 * s, 96 * s), (0, 0, 0, 0))
+    d = ImageDraw.Draw(m)
+    d.ellipse([78 * s, 24 * s, 106 * s, 64 * s], outline=(236, 236, 230), width=7 * s)       # handle
+    d.rounded_rectangle([4 * s, 8 * s, 86 * s, 92 * s], radius=8 * s, fill=(242, 240, 232), outline=(180, 176, 166), width=2 * s)
+    d.ellipse([4 * s, 2 * s, 86 * s, 16 * s], fill=(90, 56, 36), outline=(180, 176, 166), width=2 * s)   # coffee
+    f1, f2 = _font(13 * s), _font(10 * s)
+    d.text((45 * s, 34 * s), "WORLD'S", font=f2, fill=(30, 50, 120), anchor='mm')
+    d.text((45 * s, 52 * s), 'OKAYEST', font=f1, fill=(168, 30, 40), anchor='mm')
+    d.text((45 * s, 70 * s), 'USER', font=f1, fill=(30, 50, 120), anchor='mm')
+    return m
 
 
 class Presenter:
     def __init__(self):
         self.bg = _bg()
+        self.mug = _mug()
 
     def draw(self, mouth=0.0, shape='a', blink=0.0, brow=0.0, gesture='none', g=0.0, t=0.0, tilt=0.0):
         s = SS
         im = self.bg.copy()
         d = ImageDraw.Draw(im)
-        # gentle idle sway and a breath
-        sway = math.sin(t * 0.9) * 3 + tilt
-        breath = math.sin(t * 1.7) * 1.5
-        cx = W / 2 + sway * 0.5
-        hx, hy = W / 2 + sway, 196 + breath * 0.5          # head centre
+        sway = math.sin(t * 0.7) * 2.5 + tilt
+        breath = math.sin(t * 1.5) * 1.5
+        cx = W / 2 - 20 + sway * 0.5
+        hx, hy = W / 2 - 20 + sway, 190 + breath * 0.5
         P = lambda pts: [(x * s, y * s) for x, y in pts]
-        # --- body: cardigan over a shirt, bow tie
-        top = 336 + breath
-        d.polygon(P([(cx - 150, H + 5), (cx - 138, top + 40), (cx - 96, top + 2), (cx - 34, top - 6), (cx + 34, top - 6),
-                     (cx + 96, top + 2), (cx + 138, top + 40), (cx + 150, H + 5)]), fill=CARD)
-        d.polygon(P([(cx - 36, top - 6), (cx + 36, top - 6), (cx, top + 110)]), fill=SHIRT)            # shirt V
-        d.polygon(P([(cx - 36, top - 6), (cx - 6, top + 112), (cx - 18, top + 116), (cx - 52, top + 4)]), fill=CARD_D)
-        d.polygon(P([(cx + 36, top - 6), (cx + 6, top + 112), (cx + 18, top + 116), (cx + 52, top + 4)]), fill=CARD_D)
+        # --- body: mustard cardigan, white shirt, red bow tie
+        top = 334 + breath
+        d.polygon(P([(cx - 146, H + 5), (cx - 134, top + 40), (cx - 92, top + 2), (cx - 32, top - 6), (cx + 32, top - 6),
+                     (cx + 92, top + 2), (cx + 134, top + 40), (cx + 146, H + 5)]), fill=CARD)
+        for k in range(12, 280, 9):   # the knit: faint ribbing
+            d.line(P([(cx - 140 + k, top + 44), (cx - 142 + k, H)]), fill=(174, 130, 46), width=s)
+        d.polygon(P([(cx - 34, top - 6), (cx + 34, top - 6), (cx, top + 104)]), fill=SHIRT)
+        d.polygon(P([(cx - 34, top - 6), (cx - 5, top + 106), (cx - 16, top + 112), (cx - 50, top + 4)]), fill=CARD_D)
+        d.polygon(P([(cx + 34, top - 6), (cx + 5, top + 106), (cx + 16, top + 112), (cx + 50, top + 4)]), fill=CARD_D)
         for k in range(3):
-            by = top + 132 + k * 34
-            d.ellipse(P([(cx - 5, by - 5), (cx + 5, by + 5)]), fill=(230, 214, 170))
-        d.polygon(P([(cx - 30, top - 10), (cx - 6, top + 8), (cx - 30, top + 22)]), fill=SHIRT, outline=(170, 180, 196))   # collar
-        d.polygon(P([(cx + 30, top - 10), (cx + 6, top + 8), (cx + 30, top + 22)]), fill=SHIRT, outline=(170, 180, 196))
-        # neck
-        d.rounded_rectangle(P([(hx - 32, hy + 60), (hx + 32, top + 4)]), radius=10 * s, fill=SKIN_D)
-        # bow tie
+            by = top + 128 + k * 32
+            d.ellipse(P([(cx - 5, by - 5), (cx + 5, by + 5)]), fill=(110, 76, 40))
+        d.polygon(P([(cx - 30, top - 10), (cx - 6, top + 8), (cx - 28, top + 24)]), fill=SHIRT, outline=(190, 186, 176))
+        d.polygon(P([(cx + 30, top - 10), (cx + 6, top + 8), (cx + 28, top + 24)]), fill=SHIRT, outline=(190, 186, 176))
+        d.rounded_rectangle(P([(hx - 30, hy + 62), (hx + 30, top + 4)]), radius=10 * s, fill=SKIN_D)   # neck
         bty = top + 10
-        d.polygon(P([(cx - 30, bty - 13), (cx - 4, bty - 3), (cx - 4, bty + 3), (cx - 30, bty + 13)]), fill=BOW)
-        d.polygon(P([(cx + 30, bty - 13), (cx + 4, bty - 3), (cx + 4, bty + 3), (cx + 30, bty + 13)]), fill=BOW)
-        d.ellipse(P([(cx - 7, bty - 7), (cx + 7, bty + 7)]), fill=(52, 92, 168))
-        for k in (-18, 18):
-            d.ellipse(P([(cx + k - 2, bty - 2), (cx + k + 2, bty + 2)]), fill=(220, 220, 240))     # polka dots
-        # --- head
-        d.ellipse(P([(hx - 92, hy - 6), (hx - 66, hy + 40)]), fill=SKIN_D)        # ears
-        d.ellipse(P([(hx + 66, hy - 6), (hx + 92, hy + 40)]), fill=SKIN_D)
-        d.ellipse(P([(hx - 80, hy - 100), (hx + 80, hy + 96)]), fill=SKIN)
-        # side hair, white, tufted
+        d.polygon(P([(cx - 32, bty - 12), (cx - 4, bty - 3), (cx - 4, bty + 3), (cx - 32, bty + 12)]), fill=BOW)
+        d.polygon(P([(cx + 32, bty - 12), (cx + 4, bty - 3), (cx + 4, bty + 3), (cx + 32, bty + 12)]), fill=BOW)
+        d.ellipse(P([(cx - 7, bty - 7), (cx + 7, bty + 7)]), fill=(196, 50, 60))
+        # --- head: a longish face
+        d.ellipse(P([(hx - 84, hy - 4), (hx - 62, hy + 40)]), fill=SKIN_D)          # ears
+        d.ellipse(P([(hx + 62, hy - 4), (hx + 84, hy + 40)]), fill=SKIN_D)
+        d.ellipse(P([(hx - 72, hy - 96), (hx + 72, hy + 100)]), fill=SKIN)
+        # hair: a careful side part on his left, grey at the temples
+        d.chord(P([(hx - 76, hy - 104), (hx + 76, hy + 20)]), 180, 360, fill=HAIR)
+        d.polygon(P([(hx - 76, hy - 42), (hx - 64, hy - 10), (hx - 58, hy - 44)]), fill=HAIR_L)   # temples
+        d.polygon(P([(hx + 76, hy - 42), (hx + 64, hy - 10), (hx + 58, hy - 44)]), fill=HAIR_L)
+        d.ellipse(P([(hx - 62, hy - 70), (hx + 66, hy - 18)]), fill=SKIN)           # forehead below the hairline
+        d.line(P([(hx - 30, hy - 100), (hx - 26, hy - 62)]), fill=HAIR_L, width=3 * s)   # the parting
+        for k in range(5):
+            d.arc(P([(hx - 24 + k * 16, hy - 98), (hx + 30 + k * 16, hy - 40)]), 200, 260, fill=(150, 142, 134), width=2 * s)
+        # forehead lines (a lifetime of mild surprise)
+        for k in range(2):
+            d.arc(P([(hx - 34, hy - 58 + k * 9), (hx + 34, hy - 30 + k * 9)]), 200, 340, fill=SKIN_D, width=2 * s)
+        # eyebrows, raised by `brow` (and a little worried by default)
+        by = hy - 26 - brow * 8
         for side in (-1, 1):
-            for k in range(5):
-                ox = side * (70 + (k % 2) * 6)
-                oy = -40 + k * 16
-                d.ellipse(P([(hx + ox - 16, hy + oy - 13), (hx + ox + 16, hy + oy + 13)]), fill=HAIR if k % 2 else HAIR_D)
-        d.arc(P([(hx - 40, hy - 104), (hx + 30, hy - 60)]), 200, 330, fill=HAIR_D, width=2 * s)      # a last few strands
-        d.arc(P([(hx - 28, hy - 102), (hx + 44, hy - 62)]), 210, 320, fill=HAIR_D, width=2 * s)
-        d.ellipse(P([(hx - 30, hy - 86), (hx + 6, hy - 70)]), fill=(250, 220, 196))                     # shine on the crown
-        # cheeks
-        for side in (-1, 1):
-            c = Image.new('L', im.size, 0)
-            ImageDraw.Draw(c).ellipse(P([(hx + side * 50 - 18, hy + 28), (hx + side * 50 + 18, hy + 50)]), fill=110)
-            c = c.filter(ImageFilter.GaussianBlur(6 * s))
-            im.paste(Image.new('RGB', im.size, CHEEK), (0, 0), c)
-        d = ImageDraw.Draw(im)
-        # eyebrows (white, bushy), raised by `brow`
-        by = hy - 30 - brow * 8
-        for side in (-1, 1):
-            x0 = hx + side * 34
-            d.polygon(P([(x0 - 22, by + 4 - side * 0), (x0 - 8, by - 6), (x0 + 12, by - 5), (x0 + 24, by + 3), (x0 + 8, by + 1), (x0 - 10, by + 2)]),
-                      fill=HAIR)
-        # eyes behind the glasses
+            x0 = hx + side * 30
+            d.line(P([(x0 - 16, by + 3 + side * 2), (x0 + 16, by - 1 - side * 2)]) if side < 0 else
+                   P([(x0 - 16, by - 1 + 2), (x0 + 16, by + 3 + 2)]), fill=HAIR, width=5 * s)
+        # eyes
         ey = hy + 2
         for side in (-1, 1):
-            ex = hx + side * 34
+            ex = hx + side * 30
             if blink > 0.5:
-                d.arc(P([(ex - 10, ey - 6), (ex + 10, ey + 6)]), 20, 160, fill=(60, 40, 30), width=3 * s)
+                d.arc(P([(ex - 9, ey - 5), (ex + 9, ey + 5)]), 20, 160, fill=(60, 40, 30), width=3 * s)
             else:
-                d.ellipse(P([(ex - 11, ey - 9), (ex + 11, ey + 9)]), fill=(250, 250, 248))
-                d.ellipse(P([(ex - 6 + sway * 0.3, ey - 6), (ex + 6 + sway * 0.3, ey + 6)]), fill=(70, 96, 120))
-                d.ellipse(P([(ex - 3 + sway * 0.3, ey - 3), (ex + 3 + sway * 0.3, ey + 3)]), fill=(20, 20, 24))
-                d.ellipse(P([(ex + 1, ey - 5), (ex + 4, ey - 2)]), fill=(255, 255, 255))
-        # glasses: big rounded rectangles, a bridge, temples
+                d.ellipse(P([(ex - 9, ey - 7), (ex + 9, ey + 7)]), fill=(250, 250, 248))
+                d.ellipse(P([(ex - 5 + sway * 0.3, ey - 5), (ex + 5 + sway * 0.3, ey + 5)]), fill=(92, 70, 46))
+                d.ellipse(P([(ex - 2 + sway * 0.3, ey - 2), (ex + 2 + sway * 0.3, ey + 2)]), fill=(16, 16, 18))
+                d.ellipse(P([(ex + 1, ey - 4), (ex + 3, ey - 2)]), fill=(255, 255, 255))
+            d.arc(P([(ex - 13, ey + 2), (ex + 13, ey + 14)]), 20, 160, fill=SKIN_D, width=2 * s)   # tired lids below
+        # thin wire glasses: small oval lenses
         for side in (-1, 1):
-            ex = hx + side * 36
-            d.rounded_rectangle(P([(ex - 30, ey - 24), (ex + 30, ey + 22)]), radius=14 * s, outline=FRAME, width=5 * s)
-            lens = Image.new('L', im.size, 0)
-            ImageDraw.Draw(lens).polygon(P([(ex - 22, ey - 20), (ex - 8, ey - 20), (ex - 22, ey + 2)]), fill=70)
-            im.paste(Image.new('RGB', im.size, (255, 255, 255)), (0, 0), lens)
-            d = ImageDraw.Draw(im)
-            d.line(P([(hx + side * 66, ey - 12), (hx + side * 80, ey - 6)]), fill=FRAME, width=4 * s)
-        d.arc(P([(hx - 10, ey - 18), (hx + 10, ey - 2)]), 200, 340, fill=FRAME, width=4 * s)
-        # nose
-        d.ellipse(P([(hx - 13, hy + 22), (hx + 13, hy + 46)]), fill=SKIN_D)
-        d.ellipse(P([(hx - 10, hy + 20), (hx + 9, hy + 40)]), fill=(246, 206, 172))
-        # mouth: visemes from openness and shape
+            ex = hx + side * 31
+            d.ellipse(P([(ex - 21, ey - 15), (ex + 21, ey + 15)]), outline=WIRE, width=3 * s)
+            d.line(P([(hx + side * 52, ey - 4), (hx + side * 72, ey - 8)]), fill=WIRE, width=2 * s)
+        d.arc(P([(hx - 10, ey - 12), (hx + 10, ey + 2)]), 200, 340, fill=WIRE, width=2 * s)
+        # nose: long and kind
+        d.polygon(P([(hx - 2, hy + 4), (hx - 12, hy + 40), (hx + 10, hy + 42)]), fill=SKIN_D)
+        d.ellipse(P([(hx - 13, hy + 32), (hx + 11, hy + 46)]), fill=(226, 176, 142))
+        # mouth: visemes
         my = hy + 66
         m = max(0.0, min(1.0, mouth))
-        wide = {'a': 26, 'e': 32, 'o': 15, 'm': 26}[shape]
+        wide = {'a': 22, 'e': 28, 'o': 13, 'm': 22}[shape]
         if m < 0.08 or shape == 'm':
-            d.arc(P([(hx - 26, my - 14), (hx + 26, my + 8)]), 20, 160, fill=(120, 50, 50), width=4 * s)   # a closed smile
+            d.line(P([(hx - 22, my), (hx + 22, my - 1)]), fill=(130, 60, 56), width=3 * s)   # a polite, flat smile
+            d.arc(P([(hx - 26, my - 6), (hx - 18, my + 4)]), 90, 200, fill=(130, 60, 56), width=2 * s)
         else:
-            hgt = 4 + m * (22 if shape in 'ao' else 12)
+            hgt = 3 + m * (20 if shape in 'ao' else 11)
             d.rounded_rectangle(P([(hx - wide, my - hgt * 0.45), (hx + wide, my + hgt * 0.75)]), radius=int(min(hgt, wide) * 0.5 * s),
-                                fill=(90, 24, 30), outline=(150, 70, 70), width=2 * s)
+                                fill=(84, 26, 30), outline=(150, 74, 70), width=2 * s)
             if hgt > 9:
-                d.ellipse(P([(hx - wide * 0.55, my + hgt * 0.2), (hx + wide * 0.55, my + hgt * 0.75)]), fill=(200, 90, 100))   # tongue
-                d.rectangle(P([(hx - wide * 0.7, my - hgt * 0.45 + 1), (hx + wide * 0.7, my - hgt * 0.45 + 5)]), fill=(246, 244, 236))  # teeth
-        # --- the right hand (his left on screen): gestures
+                d.ellipse(P([(hx - wide * 0.55, my + hgt * 0.2), (hx + wide * 0.55, my + hgt * 0.75)]), fill=(196, 92, 100))
+                d.rectangle(P([(hx - wide * 0.7, my - hgt * 0.45 + 1), (hx + wide * 0.7, my - hgt * 0.45 + 5)]), fill=(244, 240, 228))
+        # laugh lines
+        d.arc(P([(hx - 48, hy + 36), (hx - 24, hy + 82)]), 100, 200, fill=SKIN_D, width=2 * s)
+        d.arc(P([(hx + 24, hy + 36), (hx + 48, hy + 82)]), 340, 80, fill=SKIN_D, width=2 * s)
+        # the mug, on the desk edge in front of him (bottom left)
+        im.paste(self.mug, (int(18 * s), int((H - 100) * s)), self.mug)
+        d = ImageDraw.Draw(im)
+        # --- gestures
         if gesture != 'none' and g > 0:
             e = g * g * (3 - 2 * g)
-            if gesture == 'point':      # index finger up and towards the screen (to his right = image left)
-                hx2, hy2 = W * 0.18 + (1 - e) * 40, H - 40 - e * 150
+            if gesture == 'point':
+                hx2, hy2 = W * 0.16 + (1 - e) * 40, H - 60 - e * 150
+                d.line(P([(cx - 110, H), (hx2 + 10, hy2 + 40)]), fill=CARD, width=40 * s)
                 self._hand(d, hx2, hy2, 'point', s)
-                d.line(P([(cx - 120, H), (hx2 + 10, hy2 + 40)]), fill=CARD, width=40 * s)
-                self._hand(d, hx2, hy2, 'point', s)
-            elif gesture == 'disk':     # holds up a 3.5-inch diskette (blank label)
-                hx2, hy2 = W * 0.80 - (1 - e) * 30, H - 30 - e * 170
-                d.line(P([(cx + 120, H), (hx2 - 6, hy2 + 50)]), fill=CARD, width=40 * s)
+            elif gesture == 'disk':
+                hx2, hy2 = W * 0.70 - (1 - e) * 30, H - 30 - e * 170
+                d.line(P([(cx + 110, H), (hx2 - 6, hy2 + 50)]), fill=CARD, width=40 * s)
                 d.rectangle(P([(hx2 - 40, hy2 - 50), (hx2 + 40, hy2 + 30)]), fill=(40, 40, 46))
                 d.rectangle(P([(hx2 - 22, hy2 - 50), (hx2 + 18, hy2 - 22)]), fill=(180, 184, 190))
                 d.rectangle(P([(hx2 - 8, hy2 - 46), (hx2 + 4, hy2 - 26)]), fill=(40, 40, 46))
@@ -174,12 +198,12 @@ class Presenter:
                     d.line(P([(hx2 - 24, hy2 - 2 + k * 9), (hx2 + 24, hy2 - 2 + k * 9)]), fill=(150, 160, 200), width=s)
                 self._hand(d, hx2 + 6, hy2 + 34, 'grip', s)
             elif gesture == 'wave':
-                hx2, hy2 = W * 0.80, H - 40 - e * 160
-                d.line(P([(cx + 120, H), (hx2, hy2 + 40)]), fill=CARD, width=40 * s)
-                self._hand(d, hx2 + math.sin(t * 9) * 8 * e, hy2, 'open', s)
+                hx2, hy2 = W * 0.70, H - 60 - e * 150
+                d.line(P([(cx + 110, H), (hx2, hy2 + 40)]), fill=CARD, width=40 * s)
+                self._hand(d, hx2 + math.sin(t * 7) * 7 * e, hy2, 'open', s)
             elif gesture == 'thumb':
-                hx2, hy2 = W * 0.80, H - 40 - e * 140
-                d.line(P([(cx + 120, H), (hx2, hy2 + 40)]), fill=CARD, width=40 * s)
+                hx2, hy2 = W * 0.70, H - 60 - e * 130
+                d.line(P([(cx + 110, H), (hx2, hy2 + 40)]), fill=CARD, width=40 * s)
                 self._hand(d, hx2, hy2, 'thumb', s)
         return im.resize((W, H), Image.LANCZOS).convert('RGBA')
 
@@ -202,6 +226,7 @@ class Presenter:
 
 if __name__ == '__main__':
     if sys.argv[1] == 'sheet':
+        if len(sys.argv) > 3: FONTDIR = sys.argv[3]
         Pz = Presenter()
         states = [dict(), dict(mouth=0.4), dict(mouth=1.0), dict(mouth=0.8, shape='o'), dict(mouth=0.7, shape='e'),
                   dict(blink=1), dict(brow=1, mouth=0.5), dict(gesture='point', g=1), dict(gesture='disk', g=1),

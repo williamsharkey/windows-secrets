@@ -118,7 +118,7 @@ def daw_base(notes, length):
 
 # ------------------------------------------------------------------ the host's box
 class HostBox:
-    TITLE = 'Your Instructor'
+    TITLE = 'Computing at Your Pace'
 
     def __init__(self):
         self.P = Presenter()
@@ -135,8 +135,8 @@ class HostBox:
         d.rectangle([4, 30, bw - 5, 30 + PH + 1], outline=(128, 128, 128))
         ny = 34 + PH
         d.rectangle([4, ny, bw - 5, bh - 5], fill=(255, 255, 224), outline=(128, 128, 128))
-        d.text((16, ny + 6), 'HARLAN PETTIBONE', font=f1, fill=(20, 20, 80))
-        d.text((18, ny + 40), 'Home computing instructor (retired)', font=f2, fill=(60, 60, 60))
+        d.text((16, ny + 6), 'CLEMENT ASHBY', font=f1, fill=(20, 20, 80))
+        d.text((18, ny + 40), 'Host, Computing at Your Pace', font=f2, fill=(60, 60, 60))
         self.frame = fr
         self.size = (bw, bh)
 
@@ -144,12 +144,12 @@ class HostBox:
         key = (round(st['mouth'] * 6), st['shape'], st['blink'] > 0.5, round(st['brow'] * 3), st['gesture'], round(st['g'] * 8),
                round(st['t'] * 6) % 48 if True else 0)
         if STYLE == 'ai':   # the AI stills: one per gesture, a small bob while he talks (no lip movement)
-            name = {'point': 'harlan_point.png', 'disk': 'harlan_disk.png'}.get(st['gesture'] if st['g'] > 0.5 else 'none', 'harlan_ref.png')
+            name = {'point': 'clement_point.png', 'disk': 'clement_disk.png'}.get(st['gesture'] if st['g'] > 0.5 else 'none', 'clement_ref.png')
             bob = int(round(st['mouth'] * 3))
             key = ('ai', name, bob)
             im = self.cache.get(key)
             if im is None:
-                src = Image.open(os.path.join(ROOT, 'grok', 'px', name)).convert('RGB')   # 140 x 157 pixel art: 3x
+                src = Image.open(os.path.join(ROOT, 'grok_clement', 'px', name)).convert('RGB')   # 140 x 157 pixel art: 3x
                 crop = src.resize((src.width * 3, src.height * 3), Image.NEAREST).crop((0, 0, PW, PH))
                 pic = Image.new('RGB', (PW, PH)); pic.paste(crop, (0, -bob))
                 im = self.frame.copy(); im.paste(pic, (4, 31)); self.cache[key] = im
@@ -292,6 +292,15 @@ def mix(E, out_wav):
     voice = np.zeros((N, 2), np.float32)
     host_env = np.zeros(N, np.float32)      # the host's voice alone (for his mouth)
     caps = {}
+    events = []   # note on/off times of the plugin footage in the edit's time line (dropouts.py --notes)
+    for s in E.shots:
+        v = s['v']
+        if v.get('k') in ('cap', 'daw') and not s.get('mute') and v.get('speed', 1.0) == 1.0:
+            nj = os.path.join(ROOT, 'cap', v['scene'], 'notes.json')
+            if os.path.exists(nj):
+                events += [s['t0'] + t - v['src'] for t in json.load(open(nj)) if v['src'] - 0.1 <= t <= v['src'] + s['dur']]
+        events += [s['t0']]   # cuts
+    json.dump(sorted(events), open(os.path.join(os.path.dirname(out_wav), 'notes.json'), 'w'))
     for s in E.shots:
         v = s['v']
         if v.get('k') in ('cap', 'daw') and not s.get('mute'):
@@ -319,7 +328,7 @@ def mix(E, out_wav):
         a = load_audio(os.path.join(ROOT, 'music', m['file']))
         i0 = int(m.get('src', 0) * SR)
         n = int(m['len'] * SR)
-        seg = a[i0:i0 + n] * lufs_gain(a, -20) * m.get('gain', 0.5)
+        seg = a[i0:i0 + n] * lufs_gain(a, m.get('lufs', -20)) * m.get('gain', 0.5)
         fi, fo = int(m.get('fin', 1.0) * SR), int(m.get('fout', 1.5) * SR)
         if fi: seg[:fi] *= np.linspace(0, 1, fi)[:, None]
         if fo: seg[-fo:] *= np.linspace(1, 0, fo)[:, None]

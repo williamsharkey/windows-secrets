@@ -17,7 +17,7 @@ for name in sorted(os.listdir(d)):
     if not name.endswith('.png'): continue
     img = cv2.imread(os.path.join(d, name))
     h, w = img.shape[:2]
-    if name.startswith('harlan'):
+    if name.startswith(('harlan', 'clement')):
         cw = int(h * 420 / 470)
         img = img[:, (w - cw) // 2:(w - cw) // 2 + cw]
         size = (140, 157)

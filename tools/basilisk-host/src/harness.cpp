@@ -16,6 +16,8 @@
 
 namespace {
 
+std::atomic<double> g_apos{-1.0};   // the render's audio position (seconds), for offline editor captures
+
 struct Opts {
     std::string plugin, outDir, report, midiFile, pattern = "all", score;
     double sr = 48000, warmup = 8, tail = 2, timeout = -1;
@@ -29,6 +31,7 @@ struct Opts {
     std::set<std::string> tests;
     std::vector<std::string> automate;
     bool killOrphans = false, keepWavs = true;
+    bool editorOffline = false;   // --editor-offline: the editor test renders offline (paced to the wall clock), frames stamped with audio time
 };
 
 struct RenderSpec {
@@ -116,6 +119,8 @@ struct EditorRun {
     // per frame its time (double, now_s()) and the rectangle that changed since the last frame (int32 x, y, w, h;
     // w = 0 when nothing did) followed by its pixels, BGRX rows. A frame's audio is at (time - start) in the WAV.
     double renderStart = 0;
+    bool offline = false;   // stamps frames and `at` steps with the render's audio position, not the wall clock
+    double dueA = -1;
     std::thread recT;
     std::atomic<bool> recOn{false}, recDone{true};
     void recStart(const std::string &path, double fps)
@@ -148,7 +153,7 @@ struct EditorRun {
                 double a = now_s();
                 PrintWindow(win, md, PW_CLIENTONLY | 2);
                 GetDIBits(md, bm, 0, H, cur.data(), (BITMAPINFO *)&bi, DIB_RGB_COLORS);
-                double tm = (a + now_s()) / 2;
+                double tm = offline ? renderStart + g_apos.load() : (a + now_s()) / 2;
                 int x0 = W, y0 = H, x1 = -1, y1 = -1;
                 for (int y = 0; y < H; y++) {
                     const uint32_t *c = &cur[(size_t)y * W], *p = &prev[(size_t)y * W];
@@ -309,8 +314,12 @@ struct EditorRun {
         e["t"] = r3(now_s() - t0);
         e["step"] = line;
         int x = 0, y = 0, x2 = 0, y2 = 0;
+        dueA = -1;
         if (cmd == "wait") due = std::max(now_s(), qEnd) + atof(rest.c_str());
-        else if (cmd == "at") due = std::max(qEnd, (renderStart > 0 ? renderStart : t0) + atof(rest.c_str()));   // S seconds into the render's audio
+        else if (cmd == "at") {   // S seconds into the render's audio
+            if (offline) { due = qEnd; dueA = atof(rest.c_str()); }
+            else due = std::max(qEnd, (renderStart > 0 ? renderStart : t0) + atof(rest.c_str()));
+        }
         else if (cmd == "shot") {
             std::string f = join(O.outDir, (rest.empty() ? "editor" : rest) + ".bmp");
             bool ok = save_bmp(win, f, true);
@@ -421,7 +430,7 @@ struct EditorRun {
         }
         q.erase(q.begin(), q.begin() + k);
         // a step runs once the previous one's input is out
-        while (win && next < steps.size() && now_s() >= due && q.empty()) step(steps[next++]);
+        while (win && next < steps.size() && now_s() >= due && (dueA < 0 || g_apos.load() >= dueA) && q.empty()) step(steps[next++]);
     }
 };
 
@@ -468,6 +477,8 @@ RenderOut render(const RenderSpec &spec, const char *tag)
     int64_t pos = 0;
     double start = now_s(), lastPoll = 0;
     ed.renderStart = start;
+    ed.offline = spec.offline;
+    g_apos = 0.0;
     while (pos < total) {
         // the score's messages in this block, at their sample offsets
         while (mi < S.msgs.size()) {
@@ -487,6 +498,7 @@ RenderOut render(const RenderSpec &spec, const char *tag)
             for (int i = 0; i < O.block; i++) { o.push_back(L[i]); o.push_back(Rr[i]); }
         }
         pos += O.block;
+        g_apos = pos / O.sr;
         ed.tick();
         // a plugin that stops producing (a hung emulator) must not hang the harness
         double limit = O.timeout > 0 ? O.timeout : 4 * (O.warmup + S.length + O.tail) + 120;
@@ -497,7 +509,7 @@ RenderOut render(const RenderSpec &spec, const char *tag)
             break;
         }
         if (now_s() - lastPoll > 1) { merge_children(R.children, descendants(GetCurrentProcessId())); lastPoll = now_s(); }
-        if (!spec.offline) {   // real time: one block per block-length of wall clock
+        if (!spec.offline || !spec.editorScript.empty()) {   // real time, or an offline editor run: never ahead of the wall clock
             double due = start + pos / O.sr, n = now_s();
             if (due > n) std::this_thread::sleep_for(std::chrono::duration<double>(due - n));
             else R.maxLateMs = std::max(R.maxLateMs, (n - due) * 1000);
@@ -692,6 +704,7 @@ int run_harness(const std::vector<std::string> &args)
         else if (a == "--load-state") O.loadState = next();
         else if (a == "--automate") O.automate.push_back(next());
         else if (a == "--kill-orphans") O.killOrphans = true;
+        else if (a == "--editor-offline") O.editorOffline = true;
         else if (a == "--change-at") O.changeAt = atof(next().c_str());
         else if (a == "--change-program") O.changeProgram = atoi(next().c_str());
         else if (a == "--state-contains") O.stateContains = next();
@@ -1012,9 +1025,9 @@ int run_harness(const std::vector<std::string> &args)
     // 3c. the editor: open it, send it mouse and keys from a script, screenshot it, check the state
     if (want("editor")) {
         RenderSpec e = base;
-        e.offline = false;
+        e.offline = O.editorOffline;
         e.editorScript = O.editorScript.empty() ? std::vector<std::string>{"wait 8", "shot editor-1", "wait 2", "shot editor-2", "state"} : O.editorScript;
-        say("editor: %zu steps (real time render)...", e.editorScript.size());
+        say("editor: %zu steps (%s render)...", e.editorScript.size(), e.offline ? "offline, paced" : "real time");
         RenderOut E = render(e, "editor");
         track(E);
         if (E.ok) {

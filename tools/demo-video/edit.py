@@ -15,8 +15,8 @@ SRC = {
     'lib': 14.6, 'granite': 22.6, 'tremolo': 38.4, 'shaded': 54.0, 'afterhours': 69.8, 'misty': 86.0,
     'rounded': 22.0, 'opal': 38.0, 'neon': 54.0, 'crystal': 70.0, 'loft': 86.0,
     'vibe': float(os.environ.get('VIBE', 25.8)), 'kit': 25.0, 'mines': 23.3, 'rec': 25.0, 'rec_play': 36.0,
-    'song_open': 15.0, 'song_render': 26.0, 'song_done': 118.0, 'song_play': float(os.environ.get('SONG_PLAY', 130.0)),
-    'citypop': 20.0,
+    'song_open': 15.0, 'song_render': 26.0, 'song_done': 118.0, 'song_play': float(os.environ.get('SONG_PLAY', 130.0)), 'song_start': 130.549,   # where the song's first sample lands in the capture
+    'citypop': 20.0, 'citypop_track': 25.867,   # (the live capture; track 1 starts here)
 }
 
 SCR_X, SCR_Y = 88, 92   # compose.py's wide layout
@@ -79,7 +79,7 @@ def build(cut):
     #    capture of the machine resuming; through the glass into the capture itself
     shot(7.0, {'k': 'seq', 'dir': 'blender/day_px'}, [('ann_open', 1.0)], host=None,
          over=[{'k': 'osd', 'text': 'PLAY \u25b6', 't': (0, 2.6)}])
-    shot(3.4, cap('cold', SRC['asm'] + 7.0, WIDE), host=None, tr=('dissolve', 0.5))
+    shot(3.4, cap('cold_rt', SRC['asm'] + 7.0, WIDE), host=None, tr=('dissolve', 0.5), mute=True)
     # 2. title card
     shot(2.4 if spot else 3.0, {'k': 'card', 'title': 'Getting Started with SNDWAVE1993', 'sub': 'Home Learning Series \u00b7 Tape 1 \u00b7 1993 technology, revisited',
                'logo': 'title-640.png', 'logo_scale': 2, 'logo_y': 30, 'band_y': 840}, host=None, tr=('star', 0.8))
@@ -90,13 +90,13 @@ def build(cut):
                          't': (3.0, 9.0), 'size': 34}])
     # 4. it is really Windows: Program Manager, Accessories, Sound Recorder (sped up twice)
     ln, d = said('h_real')
-    shot(max(d, 6.2), cap('proof', SRC['minimise'], WIDE, speed=2.0), ln, host='side', tr=('page', 0.6),
+    shot(max(d, 6.2), cap('proof', SRC['minimise'], WIDE, speed=2.0), ln, host='side', tr=('page', 0.6), mute=True,
          over=[{'k': 'chapter', 'text': 'LESSON 1 \u00b7 IT REALLY IS WINDOWS', 't': (0.2, 3.6)},
                {'k': 'osd', 'text': '\u25b6\u25b6 x2', 't': (0, 99)}])
-    shot(3.0 if spot else 3.6, cap('proof', SRC['sr_menu'], Z(320, 250, 3)), host='corner')
+    shot(3.0 if spot else 3.6, cap('proof', SRC['sr_menu'], Z(320, 250, 3)), host='corner', mute=True)
     ln, d = said('s_ver' if spot else 'h_ver', 'h_res', pad=0.5)
     t_res = ln[1][1]
-    shot(d + 0.2, cap('proof', SRC['about'], Z(470, 370, 3), hold=SRC['about'] + 5.0), ln, host='corner', gest=[(0.5, 'point', 3.0)],
+    shot(d + 0.2, cap('proof', SRC['about'], Z(470, 370, 3), hold=SRC['about'] + 5.0), ln, host='corner', gest=[(0.5, 'point', 3.0)], mute=True,
          over=[{'k': 'panel', 'title': 'C:\\WINDOWS\\SOUNDREC.EXE (its version resource)', 'x': 1290, 'y': 60, 'w': 610, 'col': 190, 'size': 23,
                 'rows': [('Description', 'Sound Recorder accessory'), ('File version', '3.1'),
                          ('Copyright', 'Copyright \u00a9 Microsoft Corp. 1991'), ('Product', 'Microsoft Windows 3.1'),
@@ -150,7 +150,7 @@ def build(cut):
     shot(max(rs, d - a + 0.3), cap('song', SRC['song_render'], Z(480, 470), speed=30.0), host='corner',
          over=[{'k': 'osd', 'text': '\u25b6\u25b6 x30', 't': (0, 99)}], mute=True)
     ln, d = ([], 0) if spot else said('h_export', lead=1.2)
-    shot(max(d, 4.8 if spot else 7.0), cap('song', SRC['song_play'] + 0.3, WIDE), ln, host='side', gain=1.1,
+    shot(max(d, 4.8 if spot else 7.0), cap('song', SRC['song_play'] + 0.3, WIDE), ln, host='side', mute=True, mark='songplay',
          over=[{'k': 'super', 'text': 'Aquarium (Level 3)', 'sub': 'Lifestyle Aesthetics Pack demo song \u00b7 11 tracks \u00b7 rendered on the Song tab',
                 'x': 1180, 'y': 780, 'size': 34}] + ([{'k': 'super', 'text': 'Then: Export WAV...', 'x': 60, 'y': 120, 't': (3.0, 99), 'size': 32}] if spot else []))
     # 8. kits, the mine grid, recording
@@ -186,13 +186,13 @@ def build(cut):
     # 10. CITYPOP1993: Program Manager, the icon, the player (wide), then up close as it plays
     ln, d = said('h_citypop') if spot else said('h_citypop', 'h_citypop2')
     D = max(d + 1.2, 7.5)
-    shot(3.5, cap('citypop', SRC['citypop'], WIDE), ln, host='side', tr=('iris', 0.7),
+    shot(3.5, cap('citypop', SRC['citypop'], WIDE), ln, host='side', tr=('iris', 0.7), mute=True,
          over=[{'k': 'box', 'r': (SCR_X + 104, SCR_Y + 208, SCR_X + 150, SCR_Y + 256), 't': (0.3, 2.2)}])
-    shot(D - 3.5, cap('citypop', SRC['citypop'] + 3.5, Z(515, 330)), host='corner', gain=1.0,
+    shot(D - 3.5, cap('citypop', SRC['citypop'] + 3.5, Z(515, 330)), host='corner', mute=True,
          over=[{'k': 'super', 'text': 'CITYPOP1993', 'sub': 'an album made on it \u00b7 williamsharkey.com/citypop1993', 'x': 60, 'y': 120, 'size': 40},
                {'k': 'super', 'text': 'CITYPOP1993.EXE: coming in 1.5', 'sub': "the album, on the plugin's own desktop (test build shown)", 'x': 60, 'y': 250, 'size': 28, 't': (0.6, 99)}])
     # 11. sign-off: the host up close, then the end card
-    ln, d = said('h_bye')
+    ln, d = said('s_bye' if spot else 'h_bye')
     shot(max(d + 0.8, 4.5), {'k': 'seq', 'dir': 'blender/night_px', 'mark': 1, 'speed': 210 / (30 * max(d + 0.8, 4.5))}, ln, host='side', tr=('page', 0.7),
          gest=[(0.3, 'wave', 2.2)])
     ln, d = said('ann_tag', lead=0.4)
@@ -204,6 +204,16 @@ def build(cut):
     i_free = next(i for i, x in enumerate(S) if x.get('mark') == 'free')
     i_city = next(i for i, x in enumerate(S) if x['v'].get('scene') == 'citypop')
     i_bye = next(i for i, x in enumerate(S) if x['v'].get('mark'))
+    # the Song tab's Play: its picture is the capture; its sound is the same song rendered offline by render311 --song
+    # (tools/songrender), which matches the tab's mix sample for sample (correlation 0.999), without the playback
+    # thread's 512-sample underruns that an editor capture records
+    # CITYPOP1993.EXE: the picture is the live capture (the album player plays only on a live host); the sound is the
+    # album's master of track 1, which the player plays sample for sample (correlation 0.998), placed where it starts
+    music.append({'file': 'citypop-01.mp3', 'at': at(i_city) + SRC['citypop_track'] - SRC['citypop'], 'src': 0.0,
+                  'len': at(i_bye) - at(i_city) - (SRC['citypop_track'] - SRC['citypop']), 'gain': 1.0, 'fin': 0.02, 'fout': 0.6, 'lufs': -20})
+    i_sp = next(i for i, x in enumerate(S) if x.get('mark') == 'songplay')
+    music.append({'file': 'aquarium-level-three.mp3', 'at': at(i_sp), 'src': SRC['song_play'] + 0.3 - SRC['song_start'],
+                  'len': S[i_sp]['dur'], 'gain': 1.0, 'fin': 0.05, 'fout': 0.4, 'lufs': -20})
     music.append({'file': 'atrium-level-b2.mp3', 'at': 0.0, 'src': 0.0, 'len': 12.5, 'gain': 0.45, 'fin': 0.5, 'fout': 1.5})
     music.append({'file': 'atrium-level-b2.mp3', 'at': at(i_free), 'src': 30.0, 'len': at(i_city) - at(i_free) + 0.6, 'gain': 0.5})
     music.append({'file': 'citypop-12.mp3', 'at': at(i_bye), 'src': 0.0, 'len': total - at(i_bye), 'gain': 0.5, 'fin': 0.6, 'fout': 2.0})

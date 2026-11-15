@@ -5,10 +5,11 @@ real-time render with the editor open, driven by window messages, captured with 
 
     shoot.py SCENE [SCENE ...] [--sw C:/Users/willi/video-sw] [--dry]
 
-SW holds BasiliskHost.exe and the plugin bundle (--bundle; the SNDWAVE1993 test build from the 3.11 lane); each scene writes SW/cap/SCENE/.
+Offline (--editor-offline): the plugin renders offline, paced to the wall clock, so its audio has no dropouts
+whatever the PC's load, and the frames carry their audio time. SW holds BasiliskHost.exe and the plugin bundle (--bundle; the SNDWAVE1993 test build from the 3.11 lane); each scene writes SW/cap/SCENE/.
 Times in the scripts below are seconds of the render's audio (the `at` step); the score starts at WARMUP.
 """
-import argparse, os, subprocess, sys
+import argparse, json, os, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from phrases import phrase, write_smf
 
@@ -155,12 +156,14 @@ def main():
         notes = sc.notes or [(0.0, 60, 1, 0.1)]
         mid = os.path.join(out, 'score.mid')
         write_smf(mid, notes)
+        json.dump(sorted({round(WARMUP + t, 4) for t, n, v, d in notes} | {round(WARMUP + t + d, 4) for t, n, v, d in notes}),
+                  open(os.path.join(out, 'notes.json'), 'w'))   # note on/off times in the WAV (dropouts.py)
         score_len = max(t + d for t, _, _, d in notes)
         tail = max(2.0, (sc.end or 0) + 3 - WARMUP - score_len)
         open(os.path.join(out, 'script.txt'), 'w').write('\n'.join(sc.steps) + '\n')
         cmd = [os.path.join(a.sw, 'BasiliskHost.exe'), '--test', winsw + '\\' + a.bundle, '--tests', 'editor',
                '--midi', winsw + f'\\cap\\{name}\\score.mid', '--tail', f'{tail:.1f}', '--warmup', str(WARMUP),
-               '--editor-script-file', winsw + f'\\cap\\{name}\\script.txt', '--out-dir', winsw + f'\\cap\\{name}']
+               '--editor-script-file', winsw + f'\\cap\\{name}\\script.txt', '--out-dir', winsw + f'\\cap\\{name}', '--editor-offline']
         if sc.program is not None: cmd += ['--program', str(sc.program)]
         for e in sc.env: cmd += ['--env', e]
         print(name, ':', len(sc.steps), 'steps,', len(notes), 'notes, render', round(WARMUP + score_len + tail, 1), 's', flush=True)

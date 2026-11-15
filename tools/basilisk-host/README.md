@@ -81,6 +81,7 @@ or WSL it waits on its own.
 | `--state-contains TEXT` | | `editor` test: the plugin's final state must contain TEXT |
 | `--env NAME=VALUE` | | set before loading, e.g. `BSYNTH_MACHINE_DIR=D:\xp` |
 | `--kill-orphans` | | end child processes still running after the check (own children, by pid) |
+| `--editor-offline` | | the `editor` test renders offline (`kOffline`) instead of in real time, never ahead of the wall clock; `rec` frames and `at` steps use the render's audio time. No dropouts on a loaded PC. |
 
 The tests:
 

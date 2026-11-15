@@ -14,7 +14,7 @@ argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
 def arg(name, default=None):
     return argv[argv.index(name) + 1] if name in argv else default
 SCREEN = arg('--screen'); OUT = arg('--out', '/tmp/scene1993'); NIGHT = '--night' in argv; REVERSE = '--reverse' in argv
-NF = int(arg('--frames', 210)); RW, RH = (int(v) for v in arg('--res', '640x360').split('x'))
+NF = int(arg('--frames', 210)); RW, RH = (int(v) for v in arg('--res', '960x540').split('x'))
 
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene
@@ -88,24 +88,53 @@ box('badge', 0.08, 0.2, 0.316, 0.322, 0.885, 0.9, BEIGE_D)
 box('led', 0.17, 0.185, 0.314, 0.32, 0.79, 0.8, GREEN_LED)
 box('button', 0.08, 0.13, 0.314, 0.322, 0.785, 0.805, BEIGE_D)
 box('mon_body', -0.17, 0.17, 0.5, 0.8, 0.95, 1.24, BEIGE)
-box('mon_bezel', -0.215, 0.215, 0.425, 0.5, 0.93, 1.27, BEIGE)
+# the monitor's front: a bezel with a 4:3 opening; the glass sits in the opening, convex (bulging towards the viewer),
+# its edges tucked behind the bezel, its centre just reaching the bezel's front face
+BZ0, BZ1 = 0.425, 0.5                      # bezel front and back (y)
+SX, SZ, OW, OH = 0.0, 1.10, 0.300, 0.225   # opening centre and size
+box('bez_l', -0.215, SX - OW / 2, BZ0, BZ1, 0.93, 1.27, BEIGE)
+box('bez_r', SX + OW / 2, 0.215, BZ0, BZ1, 0.93, 1.27, BEIGE)
+box('bez_b', SX - OW / 2, SX + OW / 2, BZ0, BZ1, 0.93, SZ - OH / 2, BEIGE)
+box('bez_t', SX - OW / 2, SX + OW / 2, BZ0, BZ1, SZ + OH / 2, 1.27, BEIGE)
+# the opening's inner walls (a dark recess, so the tube's sides read)
+box('recess_l', SX - OW / 2 - 0.002, SX - OW / 2, BZ0, BZ0 + 0.03, SZ - OH / 2, SZ + OH / 2, DARK)
+box('recess_r', SX + OW / 2, SX + OW / 2 + 0.002, BZ0, BZ0 + 0.03, SZ - OH / 2, SZ + OH / 2, DARK)
+box('recess_b', SX - OW / 2, SX + OW / 2, BZ0, BZ0 + 0.03, SZ - OH / 2 - 0.002, SZ - OH / 2, DARK)
+box('recess_t', SX - OW / 2, SX + OW / 2, BZ0, BZ0 + 0.03, SZ + OH / 2, SZ + OH / 2 + 0.002, DARK)
 box('mon_stand', -0.08, 0.08, 0.5, 0.7, 0.92, 0.95, BEIGE_D)
-box('mon_button', 0.16, 0.19, 0.421, 0.425, 0.945, 0.955, BEIGE_D)
-# the screen: 4:3, slightly curved glass, showing the capture
-bpy.ops.mesh.primitive_grid_add(x_subdivisions=24, y_subdivisions=18, size=1, location=(0, 0.4205, 1.10), rotation=(math.radians(90), 0, 0))
-scr = bpy.context.object; scr.name = 'screen'
-scr.scale = (0.33, 0.2475, 1)
-bpy.ops.object.transform_apply(scale=True)
-for v in scr.data.vertices:
-    r2 = (v.co.x / 0.165) ** 2 + (v.co.z / 0.124) ** 2 if False else (v.co.x / 0.165) ** 2 + (v.co.y / 0.124) ** 2
-    v.co.z += 0.012 * (1 - r2 / 2)          # bulge towards the viewer (local z = world -y)
+box('mon_button', 0.16, 0.19, BZ0 - 0.004, BZ0, 0.945, 0.955, BEIGE_D)
+# the glass: built in world coordinates. GW x GH (a little larger than the opening, so the bezel overlaps its edges),
+# its rim at y = GY (behind the bezel's front), its centre bulging BULGE towards the camera (-y)
+GW, GH, GY, BULGE, N = 0.304, 0.228, BZ0 + 0.018, 0.016, 32
+verts, faces, uvs, vig = [], [], [], []
+for j in range(N + 1):
+    for i in range(N + 1):
+        u, v = i / N, j / N
+        x = SX + (u - 0.5) * GW; z = SZ + (v - 0.5) * GH
+        f = (1 - (2 * u - 1) ** 2) * (1 - (2 * v - 1) ** 2)          # 1 at the centre, 0 on the rim
+        verts.append((x, GY - BULGE * f, z))
+        r2 = ((2 * u - 1) ** 2 + (2 * v - 1) ** 2) / 2
+        vig.append(1.0 - 0.45 * r2 ** 1.5)                             # the tube's darker corners
+for j in range(N):
+    for i in range(N):
+        a = j * (N + 1) + i
+        faces.append((a, a + 1, a + N + 2, a + N + 1))                 # wound so the normal faces the camera
+me = bpy.data.meshes.new('glass'); me.from_pydata(verts, [], faces); me.update()
+uvl = me.uv_layers.new(name='UVMap')
+col = me.color_attributes.new(name='vig', type='FLOAT_COLOR', domain='POINT')
+for k, c in enumerate(vig): col.data[k].color = (c, c, c, 1)
+for poly in me.polygons:
+    for li in poly.loop_indices:
+        vi = me.loops[li].vertex_index
+        uvl.data[li].uv = ((vi % (N + 1)) / N, (vi // (N + 1)) / N)
+scr = bpy.data.objects.new('screen', me); sc.collection.objects.link(scr)
 sm = bpy.data.materials.new('screen'); sm.use_nodes = True
 nt = sm.node_tree; nodes = nt.nodes
 bsdf = nodes['Principled BSDF']
 bsdf.inputs['Base Color'].default_value = (0.0, 0.0, 0.0, 1)
-bsdf.inputs['Roughness'].default_value = 0.08
+bsdf.inputs['Roughness'].default_value = 0.06                          # glossy glass: the room reflects in it
 for k in ('Specular IOR Level', 'Specular'):
-    if k in bsdf.inputs: bsdf.inputs[k].default_value = 0.6
+    if k in bsdf.inputs: bsdf.inputs[k].default_value = 0.7
 if SCREEN:
     files = sorted(f for f in os.listdir(SCREEN) if f.endswith('.png'))
     img = bpy.data.images.load(os.path.join(SCREEN, files[0]))
@@ -113,23 +142,49 @@ if SCREEN:
     tex = nodes.new('ShaderNodeTexImage'); tex.image = img
     tex.image_user.frame_duration = len(files); tex.image_user.frame_start = 1; tex.image_user.use_auto_refresh = True
     tex.interpolation = 'Closest'
-    uv = nodes.new('ShaderNodeTexCoord')
-    nt.links.new(uv.outputs['UV'], tex.inputs['Vector'])
-    nt.links.new(tex.outputs['Color'], bsdf.inputs['Emission Color'])
+    uvn = nodes.new('ShaderNodeUVMap'); uvn.uv_map = 'UVMap'
+    nt.links.new(uvn.outputs['UV'], tex.inputs['Vector'])
+    va = nodes.new('ShaderNodeVertexColor'); va.layer_name = 'vig'
+    mul = nodes.new('ShaderNodeMixRGB'); mul.blend_type = 'MULTIPLY'; mul.inputs['Fac'].default_value = 1.0
+    nt.links.new(tex.outputs['Color'], mul.inputs['Color1']); nt.links.new(va.outputs['Color'], mul.inputs['Color2'])
+    nt.links.new(mul.outputs['Color'], bsdf.inputs['Emission Color'])
     bsdf.inputs['Emission Strength'].default_value = 0.6 if NIGHT else 0.85
 scr.data.materials.append(sm)
-# keyboard with keys, mouse and pad, notepad and pencil, sticky notes
-box('kbd', -0.24, 0.24, 0.06, 0.25, 0.76, 0.785, BEIGE)
-for r in range(5):
-    for c in range(15):
-        x = -0.22 + c * 0.0295; y = 0.085 + r * 0.033
-        box(f'key{r}_{c}', x, x + 0.024, y, y + 0.026, 0.785, 0.795, BEIGE_D if c > 12 else BEIGE)
+# a 101-key keyboard (keyboard101.py): a case tilted a little, each cap a box whose top shows its own part of the
+# legend texture (kbd_texture.py), beige alphanumerics, darker modifiers
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from keyboard101 import keys as kb_keys, WIDTH as KW, DEPTH as KD
+KU = 0.0195                                   # one key unit
+KX0, KY_BACK, KZ = -KW * KU / 2, 0.06 + KD * KU + 0.02, 0.79
+box('kbd', KX0 - 0.012, -KX0 + 0.012, 0.045, KY_BACK + 0.012, 0.76, KZ, BEIGE)
+KT = mat('keytops', (1, 1, 1), 0.4)
+kimg_path = arg('--kbd', os.path.join(os.path.dirname(SCREEN or '.'), 'kbd.png'))
+if os.path.exists(kimg_path):
+    kt = KT.node_tree.nodes; kb = kt['Principled BSDF']
+    ktex = kt.new('ShaderNodeTexImage'); ktex.image = bpy.data.images.load(kimg_path)
+    KT.node_tree.links.new(ktex.outputs['Color'], kb.inputs['Base Color'])
+for (x, y, w, h, leg, dark) in kb_keys():
+    x0 = KX0 + x * KU + 0.0012; x1 = KX0 + (x + w) * KU - 0.0012
+    y1 = KY_BACK - y * KU - 0.0012; y0 = KY_BACK - (y + h) * KU + 0.0012
+    tilt = (KD - y - h / 2) * KU * 0.12                                 # the back rows sit a little higher
+    o = box(f'key_{x}_{y}', x0, x1, y0, y1, KZ, KZ + 0.008 + tilt, BEIGE_D if dark else BEIGE)
+    o.data.materials.append(KT)
+    # the top face gets the legend texture, mapped from the keyboard's plan
+    for poly in o.data.polygons:
+        if poly.normal.z > 0.9:
+            poly.material_index = 1
+    uvl = o.data.uv_layers.active
+    for poly in o.data.polygons:
+        for li in poly.loop_indices:
+            vco = o.data.vertices[o.data.loops[li].vertex_index].co
+            wx = o.location.x + vco.x * o.scale.x; wy = o.location.y + vco.y * o.scale.y
+            uvl.data[li].uv = ((wx - KX0) / (KW * KU), (wy - (KY_BACK - KD * KU)) / (KD * KU))
 box('pad', 0.34, 0.56, 0.08, 0.28, 0.76, 0.763, PURPLE)
 box('mouse', 0.42, 0.48, 0.13, 0.22, 0.763, 0.79, BEIGE)
 box('notepad', -0.78, -0.46, 0.08, 0.42, 0.76, 0.775, PAPER)
 o = cyl('pencil', -0.62, 0.25, 0.782, 0.006, 0.2, ORANGE, rot=(0, math.radians(90), math.radians(35)), verts=6)
-box('sticky1', 0.12, 0.2, 0.418, 0.42, 1.18, 1.26, YELLOW).rotation_euler = (0, math.radians(8), 0)
-box('sticky2', -0.05, 0.03, 0.12, 0.2, 0.795, 0.797, YELLOW)
+box('sticky1', 0.158, 0.208, BZ0 - 0.002, BZ0, 1.215, 1.265, YELLOW).rotation_euler = (0, math.radians(6), 0)
+box('sticky2', -0.25, -0.19, 0.316, 0.318, 0.84, 0.9, YELLOW)
 # a puzzle cube (generic, no marks): 3x3 stickers on three faces
 cols = [(0.8, 0.05, 0.05), (0.05, 0.4, 0.8), (0.9, 0.85, 0.1), (0.1, 0.6, 0.15), (0.95, 0.45, 0.05), (0.9, 0.9, 0.9)]
 cm = [mat(f'cube{k}', c, 0.3) for k, c in enumerate(cols)]
@@ -190,7 +245,9 @@ target = bpy.data.objects.new('target', None); sc.collection.objects.link(target
 tr = cam.constraints.new('TRACK_TO'); tr.target = target; tr.track_axis = 'TRACK_NEGATIVE_Z'; tr.up_axis = 'UP_Y'
 A = ((-0.95, -1.55, 1.62), (-0.25, 0.55, 1.0)); B = ((0.0, -0.10, 1.10), (0.0, 0.42, 1.10))
 if REVERSE: A, B = B, A
-for f, (p, t) in ((1, A), (NF, B)):
+MID = ((-0.03, -0.30, 0.99), (0.0, 0.26, 0.83))   # past the keyboard on the way in (its legends read here)
+keys_ = ((1, A), (int(NF * 0.55), MID), (NF, B)) if not REVERSE else ((1, A), (NF, B))
+for f, (p, t) in keys_:
     cam.location = p; cam.keyframe_insert('location', frame=f)
     target.location = t; target.keyframe_insert('location', frame=f)
 
