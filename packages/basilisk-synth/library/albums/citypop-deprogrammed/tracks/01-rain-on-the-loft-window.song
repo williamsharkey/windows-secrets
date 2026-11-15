@@ -38,9 +38,9 @@ vinyl       ch14    "Vinyl Bed"                              lufs=-38 hp=120
 ep          ch1     "Loft Tine"                              lufs=-21 pan=-18 verb=0.24 echo=0.05
 bass        ch2     "Fretless Harbour"                       lufs=-20
 lead        ch3     "Harbour Reed"                           lufs=-18 pan=8 verb=0.3 echo=0.14
-vibes       ch4     "courtyard-chapel:Delta Tower"           lufs=-24 pan=48 verb=0.32 echo=0.15
-strings     ch5     "studio-archive:Humid Swell"             lufs=-26 pan=-42 verb=0.45
-pad         ch6     "polysynth-showroom:Hotel Wash"          lufs=-29 pan=38 verb=0.4 tune=11
+vibes       ch4     "Lobby Vibraphone"                       lufs=-24 pan=48 verb=0.32 echo=0.15
+strings     ch5     "Humid Strings"                          lufs=-26 pan=-42 verb=0.45
+pad         ch6     "Hotel Corridor"                         lufs=-29 pan=38 verb=0.4 tune=11
 bell        ch7     "Crystal Bb"                             lufs=-26 pan=-50 verb=0.45 echo=0.25
 horn        ch8     "Harmon Glow"                            lufs=-19 pan=-10 verb=0.3 echo=0.12
 kit         ch10    "Loft Brushes"                           lufs=-21 verb=0.12

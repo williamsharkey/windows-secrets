@@ -34,12 +34,12 @@ seed     = 3121
 [tracks]
 # name      source  preset                                  mix
 room        ch13    "City Hush"                              lufs=-36
-glasses     ch7     'dna:glass_clink#4F;A0R600V80'           lufs=-30 pan=36 verb=0.3
+glasses     ch7     "Glasses on the Counter"                 lufs=-30 pan=36 verb=0.3
 ep          ch1     "Loft Tine"                              lufs=-18 pan=-10 verb=0.22 echo=0.05
 bass        ch2     "Pluck Avenue"                           lufs=-20 vel=0.75
 reed        ch3     "Harbour Reed"                           lufs=-19 pan=14 verb=0.28 echo=0.12
 clarinet    ch4     "Clarinet After Hours"                   lufs=-24 pan=-24 verb=0.3
-strings     ch5     "studio-archive:Waxed Aurora"            lufs=-26 pan=32 verb=0.45
-vibes       ch6     "courtyard-chapel:Delta Tower"           lufs=-25 pan=40 verb=0.35 echo=0.15
+strings     ch5     "Velvet Strings"                         lufs=-26 pan=32 verb=0.45
+vibes       ch6     "Lobby Vibraphone"                       lufs=-25 pan=40 verb=0.35 echo=0.15
 kit         ch10    "Loft Sticks"                            lufs=-22 verb=0.12
 perc        ch11    "Loft Percussion"                        lufs=-32 pan=-30 verb=0.1

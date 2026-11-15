@@ -34,18 +34,18 @@ seed     = 3122
 [tracks]
 # name      source  preset                                  mix
 rain        ch13    "Rain on Glass"                          lufs=-32
-dawn        ch14    'dna:bird_dawn_chorus_bryce#4F;A4000R4000V70' lufs=-32 hp=300 pan=-10 verb=0.2
+dawn        ch14    "Dawn Chorus"                            lufs=-32 hp=300 pan=-10 verb=0.2
 harbour     ch15    "Harbour Horn"                           lufs=-34 pan=40 verb=0.4 lp=3000
 ep          ch1     "Loft Tine"                              lufs=-20 pan=-16 verb=0.22 echo=0.05
 bass        ch2     "Fretless Harbour"                       lufs=-20
 reed        ch3     "Harbour Reed"                           lufs=-18 pan=8 verb=0.28 echo=0.12
 trumpet     ch4     "Harmon Glow"                            lufs=-21 pan=-8 verb=0.3 echo=0.1
-strings     ch5     "studio-archive:Humid Swell"             lufs=-23 pan=-36 verb=0.45
+strings     ch5     "Humid Strings"                          lufs=-23 pan=-36 verb=0.45
 choir       ch6     "Mist Choir"                             lufs=-27 pan=22 verb=0.55
 glass       ch7     "Glass Tine"                             lufs=-24 pan=36 verb=0.35 echo=0.18
 flute       ch8     "Night Flute"                            lufs=-22 pan=-24 verb=0.35 echo=0.12
-brass       ch9     "polysynth-showroom:Signal Stab"         lufs=-25 pan=26 verb=0.2
-synth       ch16    "polysynth-showroom:Violet Pilot"        lufs=-24 pan=10 verb=0.25 echo=0.15
+brass       ch9     "Rooftop Brass"                          lufs=-25 pan=26 verb=0.2
+synth       ch16    "Couch Fort Lead"                        lufs=-24 pan=10 verb=0.25 echo=0.15
 bell        ch12    "Crystal Bb"                             lufs=-22 pan=-20 verb=0.5 echo=0.25
 kit         ch10    "Loft Sticks"                            lufs=-20 verb=0.1
 perc        ch11    "Loft Percussion"                        lufs=-28 pan=30 verb=0.12

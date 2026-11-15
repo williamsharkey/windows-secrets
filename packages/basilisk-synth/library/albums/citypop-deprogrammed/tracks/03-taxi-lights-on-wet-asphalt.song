@@ -37,10 +37,10 @@ street      ch13    "Wet Traffic"                            lufs=-34
 ep          ch1     "Loft Tine Bright"                       lufs=-21 pan=-22 verb=0.18 echo=0.04
 bass        ch2     "Rubber Taxi"                            lufs=-19
 sax         ch3     "Harbour Reed"                           lufs=-18 pan=6 verb=0.25 echo=0.12
-synlead     ch4     "polysynth-showroom:Tropic Signal"       lufs=-28 pan=-10 verb=0.25 echo=0.2 tune=-15
-brass       ch5     "polysynth-showroom:Signal Stab"         lufs=-24 pan=26 verb=0.2
-strings     ch6     "studio-archive:Daylight Bows"           lufs=-26 pan=-40 verb=0.4
-gtr         ch7     "courtyard-chapel:Kinetic Harp"          lufs=-26 pan=42 verb=0.12 echo=0.08
+synlead     ch4     "Neon Sign Lead"                         lufs=-28 pan=-10 verb=0.25 echo=0.2 tune=-15
+brass       ch5     "Rooftop Brass"                          lufs=-24 pan=26 verb=0.2
+strings     ch6     "Daylight Strings"                       lufs=-26 pan=-40 verb=0.4
+gtr         ch7     "Taxi Rhythm Guitar"                     lufs=-26 pan=42 verb=0.12 echo=0.08
 glass       ch8     "Glass Tine"                             lufs=-24 pan=34 verb=0.3 echo=0.18
 kit         ch10    "Loft Sticks"                            lufs=-19 verb=0.08
 perc        ch11    "Loft Percussion"                        lufs=-28 pan=-30 verb=0.1

@@ -34,10 +34,10 @@ seed     = 3120
 [tracks]
 # name      source  preset                                  mix
 rain        ch13    "Rain on the Window"                     lufs=-30
-static      ch8     'dna:em_static_elec_loop#4F;A3000R4000V60' lufs=-38 hp=400 lp=6000 pan=-30
+static      ch8     "Radio Static"                           lufs=-38 hp=400 lp=6000 pan=-30
 wand        ch7     "Steam Wand"                             lufs=-32 pan=34 verb=0.3
-cloud       ch1     'dna:rl_ep_glass_c5#16Gp.35j.15z90~200n22c6e2s.2v4w.7;A1600R3200V60K72' lufs=-21 verb=0.5 echo=0.2
-steam       ch2     'dna:rl_espresso_wave#16Gp.4j.3z60~140n28c25e2s.3v4w.8;A2000R3000V50K60' lufs=-30 hp=300 verb=0.4
+cloud       ch1     "Glass Cloud"                            lufs=-21 verb=0.5 echo=0.2
+steam       ch2     "Steam Cloud"                            lufs=-30 hp=300 verb=0.4
 bell        ch3     "Crystal Bb"                             lufs=-21 pan=-16 verb=0.5 echo=0.25
 bass        ch4     "Fretless Harbour"                       lufs=-25 lp=900
 glass       ch5     "Glass Tine"                             lufs=-24 pan=28 verb=0.55 echo=0.3

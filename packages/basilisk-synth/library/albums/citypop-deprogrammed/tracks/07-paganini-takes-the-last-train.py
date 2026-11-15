@@ -158,7 +158,7 @@ finish(__file__, S, {
     ('bass', 'ch2', 'Rubber Taxi', dict(lufs=-19)),
     ('trumpet', 'ch3', 'Harmon Glow', dict(lufs=-18, pan=8, verb=0.25, echo=0.12)),
     ('ep', 'ch4', 'Suitcase Night', dict(lufs=-21, pan=-12, verb=0.2)),
-    ('strings', 'ch5', 'studio-archive:Humid Swell', dict(lufs=-24, pan=36, verb=0.35)),
+    ('strings', 'ch5', 'Humid Strings', dict(lufs=-24, pan=36, verb=0.35)),
     ('flute', 'ch6', 'Night Flute', dict(lufs=-22, pan=-18, verb=0.3, echo=0.12)),
     ('glass', 'ch7', 'Glass Tine', dict(lufs=-21, pan=24, verb=0.3, echo=0.15)),
     ('kit', 'ch10', 'Loft Sticks', dict(lufs=-19, verb=0.08)),

@@ -40,7 +40,7 @@ pizz        ch1     "Pizzicato Night"                        lufs=-21 pan=-26 ve
 bass        ch2     "Rubber Taxi"                            lufs=-19
 trumpet     ch3     "Harmon Glow"                            lufs=-18 pan=8 verb=0.25 echo=0.12
 ep          ch4     "Suitcase Night"                         lufs=-21 pan=-12 verb=0.2
-strings     ch5     "studio-archive:Humid Swell"             lufs=-24 pan=36 verb=0.35
+strings     ch5     "Humid Strings"                          lufs=-24 pan=36 verb=0.35
 flute       ch6     "Night Flute"                            lufs=-22 pan=-18 verb=0.3 echo=0.12
 glass       ch7     "Glass Tine"                             lufs=-21 pan=24 verb=0.3 echo=0.15
 kit         ch10    "Loft Sticks"                            lufs=-19 verb=0.08

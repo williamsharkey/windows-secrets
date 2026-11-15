@@ -29,12 +29,28 @@ def main():
     ap.add_argument('--shipped', default=os.path.expanduser('~/bs311/machine131'))
     ap.add_argument('--ours', default=os.path.expanduser('~/cpd/machine'))
     a = ap.parse_args()
-    S, O = presets(a.shipped), presets(a.ours)
+    S = presets(a.shipped) if os.path.exists(os.path.join(a.shipped, 'packs', 'PACKS.TSV')) else {}
+    O = presets(a.ours)
+    fold = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'pack', 'fold.json')))
     d = json.load(open(a.album))
+    import glob, re
+    tracks_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'tracks')
+    song = {}   # track number -> {part: preset label}, from the .song files (the source of truth)
+    for f in glob.glob(os.path.join(tracks_dir, '[0-9][0-9]-*.song')):
+        n = int(os.path.basename(f)[:2]); song[n] = {}
+        for l in open(f, encoding='utf-8'):
+            m = re.match(r"^(\w+)\s+\S+\s+(\"[^\"]+\"|'[^']+')", l)
+            if m:
+                lab = m.group(2)[1:-1]
+                song[n][m.group(1)] = lab if (':' in lab and not lab.startswith('dna:')) else ('rainy-loft:' + lab if not lab.startswith('dna:') else lab)
     n = {'shipped': 0, 'rainy-loft': 0, 'album': 0}
     for t in d['tracks']:
         for p in t.get('presets', []):
-            lab = p.get('preset') or ''
+            lab = song.get(t['n'], {}).get(p.get('part'), p.get('preset') or '')
+            p['preset'] = lab
+            if lab in fold or ('dna:' + lab) in fold:   # parts that became Rainy Loft presets
+                lab = p['preset'] = 'rainy-loft:' + fold.get(lab, fold.get('dna:' + lab))
+                p.pop('after', None)
             if lab.startswith('dna:') or ':' not in lab:
                 p['where'] = 'album'
             else:

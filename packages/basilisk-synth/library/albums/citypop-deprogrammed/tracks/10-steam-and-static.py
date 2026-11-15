@@ -79,10 +79,10 @@ finish(__file__, S, {
             'glass piano follow the harmony; the theme crosses once on the crystal bell, every note twice as long.',
 }, [
     ('rain', 'ch13', 'Rain on the Window', dict(lufs=-30)),
-    ('static', 'ch8', 'dna:em_static_elec_loop#4F;A3000R4000V60', dict(lufs=-38, hp=400, lp=6000, pan=-30)),
+    ('static', 'ch8', 'Radio Static', dict(lufs=-38, hp=400, lp=6000, pan=-30)),
     ('wand', 'ch7', 'Steam Wand', dict(lufs=-32, pan=34, verb=0.3)),
-    ('cloud', 'ch1', 'dna:rl_ep_glass_c5#16Gp.35j.15z90~200n22c6e2s.2v4w.7;A1600R3200V60K72', dict(lufs=-21, verb=0.5, echo=0.2)),
-    ('steam', 'ch2', 'dna:rl_espresso_wave#16Gp.4j.3z60~140n28c25e2s.3v4w.8;A2000R3000V50K60', dict(lufs=-30, hp=300, verb=0.4)),
+    ('cloud', 'ch1', 'Glass Cloud', dict(lufs=-21, verb=0.5, echo=0.2)),
+    ('steam', 'ch2', 'Steam Cloud', dict(lufs=-30, hp=300, verb=0.4)),
     ('bell', 'ch3', 'Crystal Bb', dict(lufs=-21, pan=-16, verb=0.5, echo=0.25)),
     ('bass', 'ch4', 'Fretless Harbour', dict(lufs=-25, lp=900)),
     ('glass', 'ch5', 'Glass Tine', dict(lufs=-24, pan=28, verb=0.55, echo=0.3)),

@@ -36,11 +36,11 @@ seed     = 3119
 room        ch13    "City at Night"                          lufs=-36
 ep          ch1     "Loft Tine Bright"                       lufs=-24 pan=-20 verb=0.15
 bass        ch2     "Rubber Taxi"                            lufs=-18
-synth       ch3     "polysynth-showroom:Violet Pilot"        lufs=-20 pan=6 verb=0.25 echo=0.15
+synth       ch3     "Couch Fort Lead"                        lufs=-20 pan=6 verb=0.25 echo=0.15
 sax         ch4     "Harbour Reed"                           lufs=-19 pan=-6 verb=0.25 echo=0.1
-clav        ch5     "polysynth-showroom:Distant Parlour"     lufs=-24 pan=36 verb=0.1 tune=-22
-strings     ch6     "studio-archive:Daylight Bows"           lufs=-24 pan=-38 verb=0.35
-vox         ch7     "polysynth-showroom:Broadcast Vox"       lufs=-24 pan=20 verb=0.45 tune=-11
-brass       ch8     "polysynth-showroom:Noble Hit"           lufs=-24 pan=28 verb=0.2
+clav        ch5     "Disco Clavinet"                         lufs=-24 pan=36 verb=0.1 tune=-22
+strings     ch6     "Daylight Strings"                       lufs=-24 pan=-38 verb=0.35
+vox         ch7     "Vocoder Chorus"                         lufs=-24 pan=20 verb=0.45 tune=-11
+brass       ch8     "Party Horns"                            lufs=-24 pan=28 verb=0.2
 kit         ch10    "Couch Disco"                            lufs=-18 verb=0.08
 perc        ch11    "Loft Percussion"                        lufs=-26 pan=-26 verb=0.1
