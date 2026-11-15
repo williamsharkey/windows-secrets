@@ -6,6 +6,10 @@ bridge, the moon in the haze.
 
     make_art.py OUT_DIR
 
+The page's published covers (site/citypop/art/cover*.png, icon-32.png) are now made by the UI lane's
+tools/cover_wordmark.py (the CITYPOP1993 brand wordmark over scene(seed 1989)); don't copy this script's own covers
+over them.
+
 Writes (16 colours, ordered dither, no smoothing):
   scene.png      320 x 200, the page's backdrop (the page animates stars, haze, ripples, windows and a train on top)
   scene.json     where the animated things are: stars, windows, puddles, the moon, the shore line, the haze band
