@@ -230,6 +230,9 @@ button.mi:hover, .mi.open, button.mi:focus-visible { background: var(--sel); col
 .about p { margin: 0 0 8px; }
 .about .keys { color: var(--mut); font-size: 11px; line-height: 16px; }
 .about .dlgbtns { grid-column: 1 / -1; }
+.msg { display: grid; grid-template-columns: 48px 1fr; gap: 10px; align-items: center; }
+.msg p { margin: 0; }
+.msg .dlgbtns { grid-column: 1 / -1; justify-content: center; }
 .abicon { width: 32px; height: 32px; margin: 4px 8px; }
 
 /* ------------------------------------------------------------------ dropdown menus */
@@ -271,7 +274,7 @@ body:not(.wm) #ev { height: 260px; }
 body:not(.wm) #notes { height: 420px; }
 body:not(.wm) #clock { width: 172px; height: 196px; align-self: flex-start; }
 body:not(.wm) .lb { max-height: 240px; }
-body:not(.wm) #desktop, body:not(.wm) #about { position: fixed; z-index: 20; left: 16px; right: 16px; top: 80px; }
+body:not(.wm) #desktop, body:not(.wm) #about, body:not(.wm) #resume { position: fixed; z-index: 20; left: 16px; right: 16px; top: 80px; }
 @media (max-width: 480px) {
   .lbhead, .list li { grid-template-columns: 24px 32px minmax(0, 1fr) 32px 46px; }
   .lbhead { grid-template-columns: 24px 32px minmax(0, 1fr) 32px 63px; }

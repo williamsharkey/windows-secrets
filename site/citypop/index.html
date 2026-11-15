@@ -12,7 +12,7 @@
 <link rel="icon" href="art/icon-32.png">
 <link rel="preload" href="fonts/DejaVuSans.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/DejaVuSansMono.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 <div id="scene" aria-hidden="true"><canvas id="night"></canvas></div>
@@ -190,6 +190,18 @@
     </div>
   </section>
 
+  <!-- ============================================================ Resume? -->
+  <section class="win dlg" id="resume" data-label="Media Player" aria-label="Resume" role="alertdialog" aria-describedby="resumetext" hidden>
+    <div class="wi">
+      <div class="tb"><button class="sys" aria-label="Control menu" aria-haspopup="menu"></button><h2 class="tt">Media Player</h2></div>
+      <div class="client form msg">
+        <canvas class="abicon" id="resicon" aria-hidden="true"></canvas>
+        <p id="resumetext">Resume?</p>
+        <div class="dlgbtns"><button class="push def" id="rok" type="button">OK</button><button class="push" id="rcancel" type="button">Cancel</button></div>
+      </div>
+    </div>
+  </section>
+
   <!-- ============================================================ Program Manager icons -->
   <nav class="icons" id="icons" aria-label="Windows"></nav>
 </main>
@@ -197,6 +209,6 @@
 <div id="menus"></div>
 <button id="unhide" class="unhide" hidden title="Show the windows (H or Esc)">Show windows</button>
 <noscript><p class="nos">The player needs JavaScript. The files are in <a href="audio/">audio/</a>.</p></noscript>
-<script src="app.js?v=3"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>

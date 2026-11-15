@@ -2,7 +2,7 @@
    Every window is placed on whole device pixels; every canvas is backed at device resolution and drawn in device pixels. */
 (() => {
 'use strict';
-const BUILD = '20261114c';             // cache key for the scene and life modules; bump on each UI deploy
+const BUILD = '20261114d';             // cache key for the scene and life modules; bump on each UI deploy
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const store = {
   get(k, d) { try { const v = localStorage.getItem('cpd:' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -111,7 +111,7 @@ function openMenu(anchor, items) {
 addEventListener('pointerdown', (e) => { if (openDD && !openDD.dd.contains(e.target) && !openDD.anchor.contains(e.target)) closeMenu(); }, true);
 
 /* ================================================================== the window manager */
-const WINS = ['player', 'rec', 'ev', 'clock', 'notes', 'desktop', 'about'];
+const WINS = ['player', 'rec', 'ev', 'clock', 'notes', 'desktop', 'about', 'resume'];
 const W = {};          // id -> {el, x, y, w, h, min}
 let zTop = 10, wm = false;
 WINS.forEach((id) => { W[id] = { id, el: $('#' + id), min: false }; });
@@ -415,7 +415,7 @@ function trackbar(cv, o) {
 /* ================================================================== the player */
 const A = [new Audio(), new Audio()];     // two decks: the next track waits loaded in the other one
 A.forEach((a) => { a.preload = 'auto'; a.crossOrigin = 'anonymous'; });
-let cur = 0, deck = 0, album = null, ac = null, an = null, an2 = null, gain = null, loadedNext = -1, stopped = true;
+let cur = 0, deck = 0, album = null, ac = null, an = null, an2 = null, gain = null, fader = null, loadedNext = -1, stopped = true;
 const evdata = {};
 const opus = A[0].canPlayType('audio/ogg; codecs=opus') !== '';
 const src = (t) => (opus ? t.opus : t.mp3);
@@ -427,9 +427,9 @@ function webaudio() {
   if (ac) return;
   try {
     ac = new (window.AudioContext || window.webkitAudioContext)();
-    gain = ac.createGain(); an = ac.createAnalyser(); an.fftSize = 2048; an.smoothingTimeConstant = 0;
+    gain = ac.createGain(); fader = ac.createGain(); fader.connect(gain); an = ac.createAnalyser(); an.fftSize = 2048; an.smoothingTimeConstant = 0;
     an2 = ac.createAnalyser(); an2.fftSize = 1024;
-    A.forEach((a) => { a.volume = 1; ac.createMediaElementSource(a).connect(gain); });
+    A.forEach((a) => { a.volume = 1; ac.createMediaElementSource(a).connect(fader); });
     gain.connect(an); gain.connect(an2); gain.connect(ac.destination);
     gain.gain.value = (prefs.vol / 100) ** 2;
     if (lifeCtl && lifeCtl.setAnalyser) try { lifeCtl.setAnalyser(an2); } catch (e) { /* life optional */ }
@@ -517,6 +517,7 @@ function prepare(i) {   // the next track into the idle deck
 }
 function play(i, from = 0) {
   if (!album) return;
+  if (!leaving) unfade();
   if (!ready(i)) { cur = i; show(i); return; }
   webaudio(); if (ac && ac.state === 'suspended') ac.resume();
   const t = album.tracks[i];
@@ -528,11 +529,11 @@ function play(i, from = 0) {
   a.play().catch(() => {});
   show(i); playing(true);
   if (lifeCtl && lifeCtl.onTrack) try { lifeCtl.onTrack(t.n, { bpm: t.bpm, title: t.title }); } catch (e) { /* optional */ }
-  pushTime();
+  pushTime(); saveNow();
 }
 let isPlaying = false, lifeDriven = false;
 function driveLife() {   // while the music plays, life draws inside the UI's frames instead of its own
-  const want = !!(lifeCtl && lifeCtl.drive && lifeCtl.frame && isPlaying && !document.hidden && !prefs.motion);
+  const want = !!(lifeCtl && lifeCtl.drive && lifeCtl.frame && isPlaying && !document.hidden && !prefs.motion && busy());
   if (want === lifeDriven) return;
   lifeDriven = want;
   try { lifeCtl.drive(want); } catch (e) { lifeDriven = false; }
@@ -548,9 +549,9 @@ function playing(on) {
 function toggle() {
   const a = A[deck];
   if (!a.src) return play(cur);
-  if (a.paused) { webaudio(); if (ac) ac.resume(); stopped = false; a.play().catch(() => {}); playing(true); } else { a.pause(); playing(false); }
+  if (a.paused) { webaudio(); if (ac) ac.resume(); unfade(); stopped = false; a.play().catch(() => {}); playing(true); } else { a.pause(); playing(false); saveNow(); }
 }
-function stop() { const a = A[deck]; a.pause(); try { a.currentTime = 0; } catch (e) { /* ignore */ } stopped = true; playing(false); }
+function stop() { const a = A[deck]; a.pause(); try { a.currentTime = 0; } catch (e) { /* ignore */ } stopped = true; playing(false); saveNow(); }
 function nextReady(i, d) {   // the next track out of the mastering room; continuous play never stops on one that isn't
   const n = album.tracks.length;
   for (let k = 1; k <= n; k++) { const j = ((i + d * k) % n + n) % n; if (ready(j)) return j; }
@@ -570,6 +571,100 @@ A.forEach((a, k) => {
   a.addEventListener('playing', () => { if (k === deck) $('#stat').textContent = 'Playing'; });
   a.addEventListener('pause', () => { if (k === deck && isPlaying && !a.ended && !advancing) playing(false); });
   a.addEventListener('loadedmetadata', () => { if (k === deck) { posBar.redraw(); lcdDirty = true; kick(); } });
+});
+
+/* ------------------------------------------------------------------ remembering the place: back three seconds and a two-second fade-in on return; a one-second fade-out on leaving by a link */
+function saveNow() {
+  if (!album || !album.tracks[cur]) return;
+  const a = A[deck];
+  let t = a.currentTime || 0;
+  if (cued && !isPlaying && cued.i === cur && Math.abs(t - cued.from) < 0.25) t = cued.t;   // reloading while paused does not creep back three seconds a time
+  store.set('now', { n: album.tracks[cur].n, t: Math.round(t * 10) / 10, playing: isPlaying && !a.paused, at: Date.now() });
+}
+setInterval(() => { if (isPlaying) saveNow(); }, 1000);
+addEventListener('pagehide', saveNow);
+document.addEventListener('visibilitychange', () => { if (document.hidden) saveNow(); });
+A.forEach((a) => a.addEventListener('seeked', () => { if (a === A[deck]) saveNow(); }));
+function fadeTo(target, secs, cb) {   // an equal-power curve on the fader, ahead of the volume
+  if (!ac || !fader) { if (cb) setTimeout(cb, secs * 1000); return; }
+  const g = fader.gain, now = ac.currentTime, from = g.value, N = 64, curve = new Float32Array(N);
+  for (let i = 0; i < N; i++) { const x = i / (N - 1); curve[i] = target > from ? from + (target - from) * Math.sin(x * Math.PI / 2) : target + (from - target) * Math.cos(x * Math.PI / 2); }
+  g.cancelScheduledValues(now);
+  try { g.setValueCurveAtTime(curve, now, secs); } catch (e) { g.value = target; }
+  if (cb) setTimeout(cb, secs * 1000 + 40);
+}
+function unfade() { if (fader) { fader.gain.cancelScheduledValues(0); fader.gain.value = 1; } }
+let cued = null;
+function cue(i, from, t) {   // the track in the deck, paused at a place
+  cued = { i, from, t: t == null ? from : t };
+  webaudio();   // the graph must exist before the deck loads, or Chrome's element stalls once it is routed later
+  const a = A[deck];
+  a.src = src(album.tracks[i]); a.preload = 'auto'; loadedNext = -1;
+  const go = () => { try { a.currentTime = from; } catch (e) { /* not yet */ } evSnap = true; kick(); };
+  if (a.readyState >= 1) go(); else a.addEventListener('loadedmetadata', go, { once: true });
+  try { a.currentTime = from; } catch (e) { /* before metadata */ }
+  stopped = false; playing(false);
+}
+function resumeAt(from) {
+  webaudio(); if (ac && ac.state !== 'running') ac.resume().catch(() => {});
+  if (fader) { fader.gain.cancelScheduledValues(0); fader.gain.value = 0; }
+  const a = A[deck];
+  if (!a.src) a.src = src(T());
+  try { a.currentTime = from; } catch (e) { /* before metadata: the default start position */ }
+  stopped = false; advancing = false;
+  a.play().then(() => fadeTo(1, 2)).catch(() => unfade());
+  playing(true);
+}
+async function comeBack(r) {
+  cue(cur, r.from, r.t);
+  if (!r.playing) return;
+  // try to carry on unasked; most browsers want a click or a key first
+  webaudio();
+  let ok = false;
+  try {
+    if (fader) fader.gain.value = 0;
+    await A[deck].play();
+    if (ac && ac.state !== 'running') await Promise.race([ac.resume(), new Promise((res) => setTimeout(res, 500))]);
+    ok = !ac || ac.state === 'running';
+  } catch (e) { ok = false; }
+  if (ok) { stopped = false; playing(true); fadeTo(1, 2); return; }
+  A[deck].pause(); unfade(); playing(false);
+  askResume(r.from);
+}
+function askResume(from) {
+  const t = T();
+  $('#resumetext').textContent = `Resume Track ${String(t.n).padStart(2, '0')} at ${fmt(from).replace(/^0/, '')}?`;
+  if (!resIcon) resIcon = view($('#resicon'), (v) => paintIcon(v, 'player'));
+  openDialog('resume');
+  const done = () => { closeDialog('resume'); removeEventListener('pointerdown', onPtr, true); removeEventListener('keydown', onKey, true); };
+  const go = () => { done(); resumeAt(from); };
+  // OK, Enter or Space, or a click on the night itself resumes; a click on a control means the listener wants something else
+  const onPtr = (e) => {
+    if (e.target.closest('#rcancel')) { done(); return; }
+    if (e.target.closest('#rok') || !e.target.closest('button, a, li, input, label, canvas[role=slider], .dd, .sb, .hsb, .tb, .vp')) { e.preventDefault(); go(); }
+    else done();
+  };
+  const onKey = (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); done(); return; }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); go(); return; }
+    if (!['Shift', 'Control', 'Alt', 'Meta', 'Tab'].includes(e.key)) done();
+  };
+  addEventListener('pointerdown', onPtr, true); addEventListener('keydown', onKey, true);
+}
+let resIcon = null, leaving = false;
+document.addEventListener('click', (e) => {   // leaving by a link: a one-second fade, then go
+  const l = e.target.closest('a[href]');
+  if (!l || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  if (l.hasAttribute('download') || (l.target && l.target !== '_self') || !isPlaying || !fader || leaving) return;
+  const u = new URL(l.href, location.href);
+  if (u.origin === location.origin && u.pathname === location.pathname && u.hash) return;
+  e.preventDefault(); leaving = true; saveNow();
+  fadeTo(0, 1, () => { location.href = l.href; });
+});
+addEventListener('pageshow', (e) => {   // back from the page the link led to (the back/forward cache): carry on, faded in
+  if (!e.persisted || !leaving) return;
+  leaving = false;
+  const a = A[deck]; resumeAt(Math.max(0, (a.currentTime || 0) - 3));
 });
 
 /* ------------------------------------------------------------------ the transport */
@@ -639,7 +734,7 @@ function watch() {
   const on = document.body.classList.toggle('watch');
   $('#unhide').hidden = !on;
   if (on) $('#unhide').focus(); else $('#hide').focus();
-  occlude(); kick();
+  occlude(); driveLife(); kick();
 }
 $('#hide').onclick = watch; $('#unhide').onclick = watch;
 addEventListener('pointermove', () => {
@@ -963,6 +1058,13 @@ function clockLoop() {
 }
 
 /* ================================================================== the frame loop: ~30 fps while playing, nothing while paused or hidden */
+const inView = { ev: true, rec: true };
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver((es) => { for (const e of es) inView[e.target.id] = e.isIntersecting; kick(); });
+  io.observe(W.ev.el); io.observe(W.rec.el);
+}
+// only the tracker and the wave need ~6 frames a second, and only while one of them can be seen
+const busy = () => !document.body.classList.contains('watch') && ((!W.ev.min && inView.ev) || (!W.rec.min && inView.rec));
 let loopOn = false, lastSec = 0, lastPush = 0, rTrW = 0, evTrH = 0;
 const FR = +(new URLSearchParams(location.search).get('fr') || 166);   // ms between frames: every compositor frame costs, so the tracker, wave, LCD and clock share ~8 a second
 const dom = {}, rposEl = $('#rpos'), rThEl = $('#rscroll .th');
@@ -995,8 +1097,8 @@ function frame(now) {
   if (now - lastPush > 10000) { lastPush = now; pushTime(); }
   if (lifeDriven && lifeCtl) try { lifeCtl.frame(now); } catch (e) { /* optional */ }
   if (live) {
-    const busy = shown && (!W.ev.min || !W.rec.min);   // only the tracker and the wave need a fast frame
-    loopOn = true; setTimeout(() => requestAnimationFrame(frame), reduced() ? 160 : busy ? FR : 250);
+    driveLife();
+    loopOn = true; setTimeout(() => requestAnimationFrame(frame), reduced() ? 500 : busy() ? FR : 1000);   // 1 fps when nothing moving is in view
   }
 }
 document.addEventListener('visibilitychange', () => {
@@ -1071,7 +1173,7 @@ async function mountModules() {
   }
   pushTime(true);
 }
-window.cpd = { get scene() { return sceneCtl; }, get life() { return lifeCtl; }, get analyser() { return an2; }, todHours };
+window.cpd = { get scene() { return sceneCtl; }, get life() { return lifeCtl; }, get analyser() { return an2; }, get fader() { return fader; }, get deck() { return A[deck]; }, get playing() { return isPlaying; }, todHours };
 
 const PAL = ['#07081a', '#0d1030', '#171a46', '#23215a', '#33226a', '#4a2470', '#6a2a74', '#8c3478', '#b0507e',
   '#2a1a1c', '#3e2824', '#5a3a2c', '#c89058', '#f0d6a0', '#d8d0f0', '#9a90c8'];
@@ -1168,9 +1270,15 @@ function loadAlbum(first) {
     album = d;
     renderList();
     const h = location.hash.match(/^#(\d+)/);
+    let back = null;
     if (h) cur = clamp(+h[1] - 1, 0, d.tracks.length - 1);
+    else {   // where the listener was when the page last closed
+      const st = store.get('now', null), i = st && st.n ? d.tracks.findIndex((t) => t.n === st.n) : -1;
+      if (i >= 0 && ready(i)) { cur = i; if (st.t > 0) back = { from: Math.max(0, st.t - 3), t: st.t, playing: !!st.playing }; }
+    }
     if (!ready(cur)) cur = nextReady(cur, 1);
     show(cur); evStatus();
+    if (back) comeBack(back);
     // the heavy art waits until the page is up and the music can play
     const go = () => mountModules();
     if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 1200 }); else setTimeout(go, 300);
