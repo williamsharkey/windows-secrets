@@ -260,6 +260,7 @@ Each [step](!term_step) of a layer is one of Sound Recorder's own commands. The 
 | `@t`*N* | Move the position to N milliseconds |
 | `[` | Delete Before Current Position |
 | `]` | Delete After Current Position |
+:311 | | {NAME} moves a cut to the nearest point within 2 ms where the sound crosses zero, so a cut sound does not click. |
 | `C` | Copy the whole sound |
 | `P` | Paste Insert at the position |
 | `X` | Paste Mix at the position |

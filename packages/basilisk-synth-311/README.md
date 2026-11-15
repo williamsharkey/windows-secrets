@@ -60,6 +60,9 @@ class, AU codes and CLAP id, the same state format and `.b16` files.
 - **WAULOPHONE**, the renamed Paulywaulophone disc: projects and songs that use the old name or its old preset
   names still find them.
 - One preset list: the All / W3.11 / XP filter is gone.
+- **Cuts without clicks.** Delete Before and Delete After cut at the nearest zero crossing (within 2 ms), so a
+  cut sound no longer starts or ends on a step. Presets that use cuts sound very slightly different from 1.4, and
+  previews and songs rendered with earlier versions may differ from 1.5's by a few samples.
 - Fixed: right clicks reach Windows.
 
 ## What is new in 1.4.0
