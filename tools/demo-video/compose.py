@@ -22,7 +22,7 @@ W, H = 1920, 1080
 SR = 48000
 SCR_X, SCR_Y = 88, 92                       # the Windows screen at 1x in the wide layout
 ROOT = '.'
-STYLE = os.environ.get('HOST_STYLE', 'drawn')   # 'drawn' (presenter.py) or 'ai' (the Grok Imagine stills in grok/)
+STYLE = os.environ.get('HOST_STYLE', 'teen')   # 'drawn' (presenter.py) or 'ai' (the Grok Imagine stills in grok/)
 
 
 def font(name, size):
@@ -286,12 +286,101 @@ def lufs_gain(x, target):
     return 10 ** (target / 20) / ref
 
 
+def find_pops(m, thr=0.01, ratio=20.0):
+    """Sample indices of second-derivative spikes over thr and ratio x the local level (dropouts.py's 'pops')."""
+    d2 = np.abs(np.diff(m, 2))
+    nb = len(d2) // 240
+    if nb < 10: return []
+    blk = np.median(d2[:nb * 240].reshape(nb, 240), axis=1)
+    loc = np.repeat(np.maximum.reduce([np.roll(blk, k) for k in range(-4, 5)]), 240) + 1e-5
+    dd = d2[:len(loc)]
+    pk = np.nonzero((dd > thr) & (dd > ratio * loc))[0]
+    out = []
+    for i in pk:
+        if not out or i - out[-1] > 480: out.append(int(i) + 1)
+    return out
+
+
+def hf_bursts(m, thr=0.03, ratio=8.0):
+    """Sample indices of broadband clicks: bursts in the signal above a 9-tap moving average (roughly > 5 kHz) over
+    thr and ratio x their local (20 ms) RMS. Sound Recorder's 8-bit buffers start and stop off zero, which shows up
+    here at note onsets; speech has little energy up there, so the voice does not trigger it."""
+    hp = m - np.convolve(m, np.ones(9) / 9, 'same')
+    loc = np.sqrt(np.convolve(hp ** 2, np.ones(960) / 960, 'same')) + 1e-5
+    pk = np.nonzero((np.abs(hp) > thr) & (np.abs(hp) > ratio * loc))[0]
+    out = []
+    for i in pk:
+        if not out or i - out[-1] > 480: out.append(int(i))
+    return out
+
+
+def soften_bursts(x, h_ms=3.0):
+    """Remove only the burst's high band within +-3 ms of each click (a raised-cosine window over x minus its 9-tap
+    moving average): the note keeps its attack, without the tick. Returns (x, count)."""
+    pk = hf_bursts(x.mean(1))
+    if not pk: return x, 0
+    lp = np.stack([np.convolve(x[:, c], np.ones(9) / 9, 'same') for c in range(2)], 1)
+    h = int(h_ms / 1000 * SR)
+    win = 0.5 - 0.5 * np.cos(np.linspace(0, 2 * np.pi, 2 * h))
+    w = np.zeros(len(x), np.float32)
+    for i in pk:
+        a, b = max(0, i - h), min(len(x), i + h)
+        w[a:b] = np.maximum(w[a:b], win[a - (i - h):b - (i - h)])
+    return (x * (1 - w[:, None]) + lp * w[:, None]).astype(np.float32), len(pk)
+
+
+def final_repair(x, events, passes=4):
+    """Whatever pops or ticks are left in the mix (a source's own transient landing on silence, a bed's noise; pops
+    within 80 ms after a note of the footage are its attack and stay): blend 8 ms around each into a 1 ms moving average."""
+    ev = np.array(sorted(events)) + 0.06 if events else np.zeros(0)
+    n = 0
+    h = int(0.004 * SR)
+    win = 0.5 - 0.5 * np.cos(np.linspace(0, 2 * np.pi, 2 * h))
+    for _ in range(passes):
+        m = x.mean(1)
+        pops = find_pops(m, thr=0.008)
+        if len(ev): pops = [i for i in pops if not ((i / SR - ev >= -0.005) & (i / SR - ev < 0.08)).any()]
+        spots = sorted(set(pops) | set(hf_bursts(m, thr=0.025)))   # ticks are softened even on a note's attack
+        if not spots: break
+        lp = np.stack([np.convolve(x[:, c], np.ones(48) / 48, 'same') for c in range(2)], 1)
+        w = np.zeros(len(x), np.float32)
+        for i in spots:
+            a, b = max(0, i - h), min(len(x), i + h)
+            w[a:b] = np.maximum(w[a:b], win[a - (i - h):b - (i - h)])
+        x = (x * (1 - w[:, None]) + lp * w[:, None]).astype(np.float32)
+        n += len(spots)
+    return x, n
+
+
+def declick(x, thr=0.01, ratio=20.0):
+    """Repair only where a pop is: an abrupt sample start or stop (Sound Recorder's 8-bit buffers start and stop
+    off zero), a glitch in a TTS clip. ffmpeg's adeclick (autoregressive interpolation) is run over the whole
+    source, but only its output within 6 ms of each detected pop is used, crossfaded in over a raised cosine;
+    everything else is the original, sample for sample."""
+    pops = find_pops(x.mean(1), thr, ratio)
+    if not pops: return x, 0
+    p = subprocess.run(['ffmpeg', '-v', 'error', '-f', 'f32le', '-ar', str(SR), '-ac', '2', '-i', '-', '-af', 'adeclick',
+                        '-f', 'f32le', '-ac', '2', '-'], input=x.astype('<f4').tobytes(), capture_output=True, check=True)
+    y = np.frombuffer(p.stdout, '<f4').reshape(-1, 2)
+    if len(y) < len(x): y = np.concatenate([y, x[len(y):]])
+    out = x.copy()
+    h = int(0.006 * SR)
+    win = (0.5 - 0.5 * np.cos(np.linspace(0, 2 * np.pi, 2 * h)))[:, None]
+    w = np.zeros(len(x), np.float32)
+    for i in pops:
+        a, b = max(0, i - h), min(len(x), i + h)
+        w[a:b] = np.maximum(w[a:b], win[a - (i - h):b - (i - h), 0])
+    out = x * (1 - w[:, None]) + y[:len(x)] * w[:, None]
+    return out.astype(np.float32), len(pops)
+
+
 def mix(E, out_wav):
     N = int(E.length * SR) + SR
     bed = np.zeros((N, 2), np.float32)      # everything that ducks under the voice
     voice = np.zeros((N, 2), np.float32)
     host_env = np.zeros(N, np.float32)      # the host's voice alone (for his mouth)
     caps = {}
+    n_fixed = 0
     events = []   # note on/off times of the plugin footage in the edit's time line (dropouts.py --notes)
     for s in E.shots:
         v = s['v']
@@ -299,6 +388,12 @@ def mix(E, out_wav):
             nj = os.path.join(ROOT, 'cap', v['scene'], 'notes.json')
             if os.path.exists(nj):
                 events += [s['t0'] + t - v['src'] for t in json.load(open(nj)) if v['src'] - 0.1 <= t <= v['src'] + s['dur']]
+            if v.get('onsets'):   # notes the plugin plays by itself (the Steps sequencer): their attacks, from the sound
+                a = load_audio(os.path.join(ROOT, 'cap', v['scene'], 'editor.wav'))[int(v['src'] * SR):int((v['src'] + s['dur']) * SR)].mean(1)
+                r = np.sqrt(np.convolve(a ** 2, np.ones(240) / 240, 'same'))
+                for i in range(480, len(r), 240):
+                    if r[i] > 0.02 and r[i] > 2 * r[i - 480]:
+                        events.append(s['t0'] + i / SR - 0.06)
         events += [s['t0']]   # cuts
     json.dump(sorted(events), open(os.path.join(os.path.dirname(out_wav), 'notes.json'), 'w'))
     for s in E.shots:
@@ -319,6 +414,9 @@ def mix(E, out_wav):
             g = s.get('gain', 1.0)
             j = int(s['t0'] * SR)
             seg = seg * g
+            if not v.get('nodeclick'):
+                seg, nf = declick(seg); n_fixed += nf
+            seg, nf = soften_bursts(seg); n_fixed += nf
             fade = min(len(seg) // 2, int(0.08 * SR))
             if fade:
                 ramp = np.linspace(0, 1, fade)[:, None]
@@ -333,7 +431,10 @@ def mix(E, out_wav):
         n = int(ln * SR)
         seg = a[i0:i0 + n] * lufs_gain(a, m.get('lufs', -20)) * m.get('gain', 0.5)
         if not len(seg): continue
-        fi, fo = min(len(seg) // 2, int(m.get('fin', 1.0) * SR)), min(len(seg) // 2, int(m.get('fout', 1.5) * SR))
+        seg, nf = declick(seg); n_fixed += nf
+        seg, nf = soften_bursts(seg); n_fixed += nf
+        fi = min(len(seg) // 2, max(int(0.015 * SR), int(m.get('fin', 1.0) * SR)))     # never under 15 ms
+        fo = min(len(seg) // 2, max(int(0.015 * SR), int(m.get('fout', 1.5) * SR)))
         if fi: seg[:fi] *= np.linspace(0, 1, fi)[:, None]
         if fo: seg[-fo:] *= np.linspace(1, 0, fo)[:, None]
         j = int(at_ * SR)
@@ -341,26 +442,36 @@ def mix(E, out_wav):
     for t, lid in E.say:
         a = load_audio(os.path.join(ROOT, 'tts', lid + '.wav'))
         a = a * lufs_gain(a, -17)
+        a, nf = declick(a); n_fixed += nf
+        a, nf = soften_bursts(a); n_fixed += nf
+        f5 = min(len(a) // 2, int(0.008 * SR))   # 8 ms fades: a clip never starts or stops off zero
+        if f5: a[:f5] *= np.linspace(0, 1, f5)[:, None]; a[-f5:] *= np.linspace(1, 0, f5)[:, None]
         j = int(t * SR)
         voice[j:j + len(a)] += a[:N - j]
-        if E.lines[lid]['speaker'] == 'HOST':
+        if E.lines[lid]['speaker'] != 'ANN':
             host_env[j:j + len(a)] += a[:N - j, 0]
-    # ducking: the bed drops ~11 dB under the voice, with a 60 ms attack and 400 ms release
+    # ducking: the bed drops ~11 dB under the voice. The gain is computed at 200 Hz (80 ms attack, 400 ms release)
+    # and interpolated to every sample, then smoothed again over 20 ms: no steps, so no zipper noise or clicks
     env = np.abs(voice[:, 0])
     k = int(SR * 0.02)
     env = np.convolve(env, np.ones(k) / k, 'same')
     act = (env > 0.01).astype(np.float32)
-    g = np.empty_like(act)
+    nb = (len(act) + 239) // 240
+    gb = np.zeros(nb, np.float32)
     cur = 0.0
-    a_att, a_rel = 1 / (0.06 * SR), 1 / (0.4 * SR)
-    for i in range(0, len(act), 240):          # control rate 200 Hz
-        tgt = act[i:i + 240].max()
-        step = 240 * (a_att if tgt > cur else a_rel)
-        cur = min(tgt, cur + step) if tgt > cur else max(tgt, cur - step)
-        g[i:i + 240] = cur
+    a_att, a_rel = 240 / (0.08 * SR), 240 / (0.4 * SR)
+    for b in range(nb):
+        tgt = act[b * 240:(b + 1) * 240].max()
+        cur = min(tgt, cur + a_att) if tgt > cur else max(tgt, cur - a_rel)
+        gb[b] = cur
+    g = np.interp(np.arange(len(act)), np.arange(nb) * 240 + 120, gb).astype(np.float32)
+    g = np.convolve(g, np.ones(k) / k, 'same')
     duck = 1 - 0.72 * g
     out = bed * duck[:, None] + voice
     out = out[:int(E.length * SR)]
+    print(f'declick: {n_fixed} spots smoothed in the sources', flush=True)
+    out, n2 = final_repair(out, events)
+    print(f'declick: {n2} more smoothed in the mix', flush=True)
     import soundfile as sf
     sf.write(out_wav, out, SR, subtype='FLOAT')
     # the host's mouth: RMS and zero crossings per video frame
@@ -431,7 +542,7 @@ def host_track(E, he, zc):
                 g = min(1.0, (t - gt) / 0.35, (gt + dur - t) / 0.35)
         brow = 0.0
         for st, lid in E.say:
-            if 0 <= t - st < 0.6 and E.lines[lid]['speaker'] == 'HOST': brow = 1 - (t - st) / 0.6
+            if 0 <= t - st < 0.6 and E.lines[lid]['speaker'] != 'ANN': brow = 1 - (t - st) / 0.6
         states.append({'pos': pos_, 'mouth': m, 'shape': shape, 'blink': 1.0 if i in blinks else 0.0, 'brow': brow,
                        'gesture': g_kind, 'g': g, 't': t})
     return states
@@ -586,7 +697,11 @@ class Renderer:
     def __init__(self, E, states):
         self.E, self.states = E, states
         self.pics = Pictures(E)
-        self.box = HostBox()
+        if STYLE == 'teen':
+            from teen import TeenBox
+            self.box = TeenBox(os.path.join(ROOT, 'fonts'))
+        else:
+            self.box = HostBox()
         self.frozen = {}
         self.capts = self.caption_chunks()
 
@@ -639,6 +754,8 @@ class Renderer:
                 text_bar(im, ov['text'], None, 0, 24, u, colours=((200, 40, 120), (240, 140, 30)), size=34)
             elif ov['k'] == 'panel':
                 self.panel(im, ov, u)
+            elif ov['k'] == 'note':
+                self.note(im, ov, u)
             elif ov['k'] == 'box':      # a highlight rectangle (frame coordinates)
                 d = ImageDraw.Draw(im)
                 x0, y0, x1, y1 = ov['r']
@@ -652,6 +769,25 @@ class Renderer:
                 caption(im, c)
                 break
         return np.asarray(im.convert('RGB'))
+
+    def note(self, im, ov, u):
+        """Dad's index card: cream, a red rule, blue lines, his block capitals; slides up from the bottom, a little crooked."""
+        w, h = ov.get('w', 700), ov.get('h', 330)
+        card = Image.new('RGBA', (w, h), (252, 248, 232, 255))
+        d = ImageDraw.Draw(card)
+        for y in range(92, h, 38): d.line([(0, y), (w, y)], fill=(150, 180, 230), width=2)
+        d.line([(0, 70), (w, 70)], fill=(220, 70, 70), width=3)
+        d.rectangle([0, 0, w - 1, h - 1], outline=(190, 180, 150), width=2)
+        d.text((24, 22), ov.get('title', ''), font=font('DejaVuSans.ttf', 26), fill=(120, 110, 100))
+        f = font('DejaVuSans-Bold.ttf', 30)
+        for k, line in enumerate(wrap(ov['text'].upper(), f, w - 50, d)[:6]):
+            d.text((26, 80 + k * 38), line, font=f, fill=(30, 50, 140))
+        card = card.rotate(ov.get('rot', 3), resample=Image.BICUBIC, expand=True)
+        x = ov.get('x', 60)
+        y = int(ov.get('y', 600) + (1 - ease(u)) * (H - ov.get('y', 600) + 40))
+        sh = Image.new('RGBA', card.size, (0, 0, 0, 90))
+        im.paste(sh, (x + 10, y + 10), card)
+        im.paste(card, (x, y), card)
 
     def panel(self, im, ov, u):
         """A Windows 3.1-style information panel (title bar, grey body, rows of text)."""
@@ -673,6 +809,18 @@ class Renderer:
 
 
 # ------------------------------------------------------------------ main
+def loudnorm_linear(wav, out, I=-14.0, TP=-1.5):
+    """Two-pass loudnorm in linear mode (one gain for the whole film, no dynamic pumping), with true-peak headroom
+    left for the AAC encode. One continuous WAV in, one out."""
+    r = subprocess.run(['ffmpeg', '-hide_banner', '-i', wav, '-af', f'loudnorm=I={I}:TP={TP}:LRA=20:print_format=json', '-f', 'null', '-'],
+                       capture_output=True, text=True).stderr
+    m = json.loads(r[r.rindex('{'):r.rindex('}') + 1])
+    af = (f"loudnorm=I={I}:TP={TP}:LRA=20:linear=true:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
+          f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}")
+    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', wav, '-af', af, '-ar', '48000', '-c:a', 'pcm_f32le', out], check=True)
+    return out
+
+
 def render_range(args):
     root, cut, a, b, out, states_path = args
     global ROOT
@@ -738,9 +886,10 @@ def main():
     lst = os.path.join(work, 'parts.txt')
     open(lst, 'w').write(''.join(f"file '{o}'\n" for o in outs))
     # the mix: loudness for social video (-14 LUFS integrated, -1 dBTP), AAC
+    norm = loudnorm_linear(wav, os.path.join(work, 'mix-norm.wav'))
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', lst,
-                    '-ss', f'{a.t_from}', '-t', f'{(f1 - f0) / FPS}', '-i', wav,
-                    '-af', 'loudnorm=I=-14:TP=-1.0:LRA=11', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
+                    '-ss', f'{a.t_from}', '-t', f'{(f1 - f0) / FPS}', '-i', norm,
+                    '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-ar', '48000',
                     '-movflags', '+faststart', '-shortest', a.out], check=True)
     for o in outs: os.remove(o)
     print('wrote', a.out, flush=True)

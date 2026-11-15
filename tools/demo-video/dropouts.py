@@ -6,6 +6,9 @@
 Counts, per file:
 - gaps: runs of exact digital silence (|x| < 1e-6) of 5 to 80 ms where the sound just before and just after has a
   similar level (a buffer underrun cutting a sustained sound; rests between hits and notes are not counted);
+- pops: second-derivative spikes anywhere (edit points, fades, gain steps, sample starts) over 0.01 and 20x the
+  local level; with --notes, those within 80 ms after a note are counted apart as attacks;
+- ticks: broadband bursts above ~5 kHz (an 8-bit sample starting or stopping off zero), at any point;
 - clicks: sample-to-sample jumps larger than 0.25 and 12x the local (10 ms) RMS of the differences, out of sound
   (a jump out of near-silence is a note's attack).
 Reports each with its time. The target is 0 of each.
@@ -55,7 +58,35 @@ for f in args:
     clicks = []
     for i in cl:
         if not clicks or i / sr + t0 - clicks[-1] > 0.05: clicks.append(i / sr + t0)
-    total += len(gaps) + len(clicks)
-    print(f'{f}: {len(gaps)} gaps, {len(clicks)} clicks' + (f'; gaps at {[round(g[0], 3) for g in gaps[:8]]}' if gaps else '')
-          + (f'; clicks at {[round(c, 3) for c in clicks[:8]]}' if clicks else ''))
+    # pops: second-derivative spikes anywhere (edit points, fades, gain steps, sample starts), against a robust local
+    # level (the largest 5 ms block median within 20 ms); listed with their size
+    d2 = np.abs(np.diff(x, 2))
+    nb = len(d2) // 240
+    blk = np.array([np.median(d2[i * 240:(i + 1) * 240]) for i in range(nb)])
+    locm = np.repeat(np.maximum.reduce([np.roll(blk, k) for k in range(-4, 5)]), 240) + 1e-5
+    dd = d2[:len(locm)]
+    pk = np.nonzero((dd > 0.01) & (dd > 20 * locm))[0]
+    pops = []
+    for i in pk:
+        if not pops or i / sr + t0 - pops[-1][0] > 0.02: pops.append((i / sr + t0, float(dd[i])))
+    if A.notes:
+        ev = np.array(json.load(open(A.notes))) + A.latency
+        attacks = [p for p in pops if ((p[0] - ev >= -0.005) & (p[0] - ev < 0.08)).any()]
+        pops = [p for p in pops if p not in attacks]
+    else:
+        attacks = []
+    # broadband ticks: bursts above ~5 kHz (x minus its 9-tap moving average) over 0.03 and 8x their 20 ms RMS:
+    # how an 8-bit sample that starts or stops off zero sounds; speech hardly triggers it
+    hp = x - np.convolve(x, np.ones(9) / 9, 'same')
+    lh = np.sqrt(np.convolve(hp ** 2, np.ones(960) / 960, 'same')) + 1e-5
+    tk = np.nonzero((np.abs(hp) > 0.03) & (np.abs(hp) > 8 * lh))[0]
+    ticks = []
+    for i in tk:
+        if not ticks or i / sr + t0 - ticks[-1][0] > 0.02: ticks.append((i / sr + t0, float(abs(hp[i]))))
+    total += len(gaps) + len(clicks) + len(pops) + len(ticks)
+    print(f'{f}: {len(gaps)} gaps, {len(clicks)} clicks, {len(pops)} pops ({len(attacks)} more at note attacks), {len(ticks)} ticks'
+          + (f'; gaps at {[round(g[0], 3) for g in gaps[:8]]}' if gaps else '')
+          + (f'; clicks at {[round(c, 3) for c in clicks[:8]]}' if clicks else '')
+          + (f'; pops at {[(round(p[0], 3), round(p[1], 3)) for p in pops[:40]]}' if pops else '')
+          + (f'; ticks at {[(round(p[0], 3), round(p[1], 3)) for p in ticks[:40]]}' if ticks else ''))
 sys.exit(1 if total else 0)
