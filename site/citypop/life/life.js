@@ -338,7 +338,7 @@ function create(opts) {
     if (SKIP && SKIP.includes(kind)) return a;      // diagnostics: only some kinds (opts.only, or ?lifeonly=star,window)
     kinds.add(kind); actors.push(a); return a;
   }
-  const FR = 1 / 30, FR15 = 1 / 15, FR8 = 1 / 8, BEAT_IDLE = 3, BEAT_MUSIC = 6, BEAT_FAST = 8;
+  const FR = 1 / 30, FR15 = 1 / 15, FR8 = 1 / 8, BEAT_IDLE = 2.5, BEAT_MUSIC = 6, BEAT_FAST = 6;
   const box = (a, x, y, w, h) => { a.bx = x; a.by = y; a.bw = w; a.bh = h; };
 
   /* ================================================================== the things */
@@ -1201,7 +1201,7 @@ function create(opts) {
   /* ---------------------------------------------------------------- the air: mist and the quiet company in it */
   function air() {
     if (reduced) return;
-    const L = 'top';
+    const L = scene && typeof scene.overlay === 'function' ? 'fg' : 'top';   // one canvas fewer: the topmost layer's overlay carries the air
     // mist banks over the water and the low town, drifting, thinning toward dawn
     ((A.regions && A.regions.haze) || []).forEach((hz, i) => {
       const [, Y0] = P(0, hz.y0, 'mid'), [, Y1] = P(0, hz.y1, 'mid'), [X0] = P(0, 0, 'mid'), [X1] = P(A.w, 0, 'mid');
@@ -1305,7 +1305,7 @@ function create(opts) {
     frame(/* nowMs: life keeps its own clock from performance.now() */) { if (driven && !dead && !paused) tick(); },
     pause(auto) { if (!auto) userPaused = true; paused = true; clearTimeout(timer); timer = 0; if (raf) cancelAnimationFrame(raf); raf = 0; },
     resume(auto) { if (!auto) userPaused = false; if (dead || (auto && userPaused) || document.hidden) return; paused = false; wakeAll(); schedule(0); },
-    resize() { if (dead) return; computeView(); build(); schedule(0); },
+    resize() { if (dead) return; computeView(); for (const sf of allSurfs()) sf.cv.style.transform = ''; build(); schedule(0); },
     setTime(h) {
       if (typeof h === 'number' && isFinite(h) && Math.abs(h - hours) > 0.01) {
         const big = Math.round(h * 10) !== Math.round(hours * 10); hours = clamp(h, 18, 31); wakeAll();
@@ -1337,7 +1337,23 @@ function create(opts) {
     else { const r = await fetch(opts.oldScene || 'art/scene.json'); A = adaptOld(await r.json()); }
     if (A.seed != null) SEED = A.seed | 0; if (opts.seed != null) SEED = opts.seed | 0;
     // the scene's transform changes on resize and, eased in a few steps, on pointer parallax: rebuild once it settles
-    let chT = 0; if (scene && typeof scene.onChange === 'function') scene.onChange(() => { clearTimeout(chT); chT = setTimeout(() => ctl.resize(), 120); });
+    // pointer parallax only slides each layer by a few pixels: slide our overlay canvases with it (a compositor
+    // transform, nothing redrawn); only a real change of scale or crop rebuilds everything
+    let chT = 0;
+    if (scene && typeof scene.onChange === 'function') scene.onChange((nv) => {
+      const v = nv || (typeof scene.view === 'function' ? scene.view() : null);
+      if (v && view && v.scale === view.scale && v.ox === view.ox && v.oy === view.oy && v.w === view.w && v.h === view.h && v.variant === view.variant) {
+        const dpr = v.dpr || opts.dpr || window.devicePixelRatio || 1;
+        for (const [name, sf] of surfaces) {
+          const p0 = (view.parallax && view.parallax[name]) || [0, 0], p1 = (v.parallax && v.parallax[name]) || [0, 0];
+          const dx = Math.round((p1[0] - p0[0]) * v.scale), dy = Math.round((p1[1] - p0[1]) * v.scale);
+          sf.cv.style.transform = dx || dy ? `translate(${dx / dpr}px,${dy / dpr}px)` : '';
+        }
+        if (top) { const p0 = (view.parallax && view.parallax.mid) || [0, 0], p1 = (v.parallax && v.parallax.mid) || [0, 0], dx = Math.round((p1[0] - p0[0]) * v.scale), dy = Math.round((p1[1] - p0[1]) * v.scale); top.cv.style.transform = dx || dy ? `translate(${dx / dpr}px,${dy / dpr}px)` : ''; }
+        return;
+      }
+      clearTimeout(chT); chT = setTimeout(() => ctl.resize(), 120);
+    });
     if (scene && typeof scene.onMood === 'function' && opts.followSceneMood) scene.onMood((t) => ctl.setTime(19.5 + 10 * t));
     computeView(); build();
     addEventListener('resize', onResize); document.addEventListener('visibilitychange', onVis);

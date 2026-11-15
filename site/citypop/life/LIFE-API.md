@@ -66,7 +66,12 @@ Every anchor is optional. A missing one just means fewer things.
 
 ## Cost
 
-Frames fall on a shared grid: ambient things on a 3 fps beat when idle and 6 fps while music plays (the page is repainting then anyway), and fast movers (a train, a satellite) on 8 fps. Life is idle between changes.
+Frames fall on a shared grid, and life is idle between changes:
+- 2.5 fps for ambient things when idle;
+- 6 fps while music plays, or exactly on your `frame()` calls when driven;
+- 6 fps for movers, such as a train or a satellite.
+Pointer parallax does not redraw anything: each overlay canvas slides with a CSS translate that matches its layer's parallax. Only a change of scale or crop rebuilds.
+With the scene, mist and motes go on the topmost (`fg`) overlay, so life adds no canvas of its own.
 For the measured numbers, see the commit log and the report to the coordinator.
 
 ## Testing
