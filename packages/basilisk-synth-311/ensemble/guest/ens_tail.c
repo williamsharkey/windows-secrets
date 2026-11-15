@@ -120,6 +120,7 @@ static void layer_replies(void)
 static void wave_dirty(int k);
 static void show_recs(int k);
 static char sigBuf[1400];
+static BOOL cloneOn = TRUE;   /* a pool is built once and loaded by the rest (clone on|off) */
 static void build(const char *dna)   /* the lane `bank`'s DNA, on its recorders, in place (notes are served in between) */
 {
     DWORD t0 = timeGetTime(); int i, r;
@@ -134,16 +135,31 @@ static void build(const char *dna)   /* the lane `bank`'s DNA, on its recorders,
     HookActive(TRUE);
     for (i = 0; i < nlay; i++) {
         LAYER *Ly = &lay[i];
+        char clone[24]; BOOL cloned = FALSE;
+        wsprintf(clone, "R:\\L%dY%d.WAV", bank, i);
         for (r = Ly->first; r < Ly->first + Ly->count; r++) {
             int a = bank * NR + r;
             if (!rw[a]) continue;
             stop_rec(a, 0, 1500);
             hide_srvr();
             rlayer[a] = i;
-            temp_fields(a, TRUE);
-            if (tmpf[2]) { SendMessage(rw[a], WM_COMMAND, SR_REW, 0L); }   /* (it writes its fields as it rewinds) */
-            layer_len[i] = run_steps(a, Ly);
-            temp_fields(a, FALSE);
+            if (cloned) {   /* the pool's other recorders open what the first one built: the same buffer, one load each */
+                DWORD t = timeGetTime();
+                bs_arm(rt[a], 0, 0, 0);
+                drop_file(a, clone);
+                while (timeGetTime() - t < 400) { pump(); if (is_playing(a)) { bs_armstop(rt[a], 0, 1); press(a, SR_STOP); break; } }
+                press(a, SR_REW);
+            } else {
+                temp_fields(a, TRUE);
+                if (tmpf[2]) { SendMessage(rw[a], WM_COMMAND, SR_REW, 0L); }   /* (it writes its fields as it rewinds) */
+                layer_len[i] = run_steps(a, Ly);
+                temp_fields(a, FALSE);
+                if (cloneOn && Ly->count > 1 && Ly->nst > 0) {   /* File > Save As, answered by SYNHOOK */
+                    HookPending(clone); SendMessage(rw[a], WM_COMMAND, SR_SAVEAS, 0L);
+                    { DWORD t = timeGetTime(); while (timeGetTime() - t < 50) pump(); }
+                    cloned = TRUE;
+                }
+            }
             recRate[a] = sound_rate(Ly->source);
             { int b = bank, lr = laneRecs; poll_host(); pump(); bank = b; laneRecs = lr; }   /* (notes of any lane are served meanwhile) */
         }
@@ -187,6 +203,7 @@ static signed char __far lnPk[NB][64][2];
 static BOOL lnPkDirty[NB];
 static BOOL assembling;
 static HFONT hSmall;
+static char bigTitle[80];   /* what plays (the host's `title`), beside the name */
 static HBRUSH hBlack;
 static HPEN hGreen, hGrey, hYellow;
 
@@ -336,7 +353,18 @@ static void mix_show(int k)   /* the controls show the lane's mix */
     SendMessage(hMute[k], BM_SETCHECK, lnMute[k], 0L);
     SendMessage(hSolo[k], BM_SETCHECK, lnSolo[k], 0L);
 }
-static void mix_send(int k) { say("mix %d %d %d %d %d", k, lnLevel[k], lnPan[k], lnMute[k], lnSolo[k]); }
+/* the card's master mix follows the strips: level (100 = unity, squared like a fader), pan, mute and solo */
+static void lane_mix_apply(void)
+{
+    int k, solo = 0;
+    for (k = 0; k < NB; k++) if (lnSolo[k]) solo = 1;
+    for (k = 0; k < NB; k++) {
+        DWORD g = (lnMute[k] || (solo && !lnSolo[k])) ? 0 : (DWORD)((long)lnLevel[k] * lnLevel[k] * 65536L / 10000L);
+        int pan = (int)((long)lnPan[k] * 100 / 64);
+        _disable(); bs_put((WORD)k); bs_put(LOWORD(g)); bs_put(HIWORD(g)); bs_put((WORD)(pan + 100)); outpw(BS_CMD, 38); _enable();
+    }
+}
+static void mix_send(int k) { lane_mix_apply(); say("mix %d %d %d %d %d", k, lnLevel[k], lnPan[k], lnMute[k], lnSolo[k]); }
 static HWND mk(const char *cls, const char *text, DWORD st, int x, int y, int w, int h, int id)
 {
     HWND c = CreateWindow(cls, text, WS_CHILD | WS_CLIPSIBLINGS | st, x, y, w, h, hMain, (HMENU)id, hInst, NULL);   /* (siblings overlap while they fly) */
@@ -520,6 +548,24 @@ static void rotbench(int k, int deci, int n)
     GlobalFree(GlobalHandle(SELECTOROF(sb))); GlobalFree(GlobalHandle(SELECTOROF(db)));
 }
 
+/* ---------------------------------------------------------------- colour schemes: Windows' own system colours, as
+   Control Panel's Color sets them: the stock grey, or "Rainy Loft" (the /citypop/ night: navy, plum, magenta) */
+#define NSYS 21
+static COLORREF sysStock[NSYS]; static BOOL sysSaved;
+static const COLORREF sysRainy[NSYS] = {
+    RGB(0x1b,0x18,0x32), RGB(0x07,0x08,0x1a), RGB(0x4b,0x24,0x72), RGB(0x22,0x1d,0x36), RGB(0x1b,0x18,0x32), RGB(0x13,0x11,0x27),
+    RGB(0x00,0x00,0x00), RGB(0xe9,0xe2,0xf7), RGB(0xe9,0xe2,0xf7), RGB(0xf7,0xf0,0xff), RGB(0x34,0x28,0x3f), RGB(0x1f,0x1a,0x2c),
+    RGB(0x0d,0x10,0x30), RGB(0x8c,0x34,0x78), RGB(0xff,0xf3,0xfb), RGB(0x29,0x24,0x3f), RGB(0x0e,0x0b,0x20), RGB(0x6c,0x62,0x94),
+    RGB(0xe9,0xe2,0xf7), RGB(0x8a,0x7f,0xb2), RGB(0x78,0x69,0xab)};
+static int scheme;
+static void colors(int which)
+{
+    static int idx[NSYS]; int i;
+    for (i = 0; i < NSYS; i++) idx[i] = i;
+    if (!sysSaved) { for (i = 0; i < NSYS; i++) sysStock[i] = GetSysColor(i); sysSaved = TRUE; }
+    scheme = which;
+    SetSysColors(NSYS, idx, which ? sysRainy : sysStock);   /* every window repaints, as after Control Panel's OK */
+}
 /* ---------------------------------------------------------------- ends, idle, the status line */
 static void watch_ends(void)
 {
@@ -651,6 +697,7 @@ static void host_line(char *s)
     else if (!strcmp(s, "mix")) {   /* mix <level> <pan> <mute> <solo>: the host's values */
         sscanf(rest, "%d %d %d %d", &lnLevel[bank], &lnPan[bank], &lnMute[bank], &lnSolo[bank]);
         if (hLev[bank]) mix_show(bank);
+        lane_mix_apply();
     }
     else if (!strcmp(s, "chan")) { char t[16]; lnChan[bank] = atoi(rest); wsprintf(t, "Ch %d", lnChan[bank]); if (hCh[bank]) SetWindowText(hCh[bank], t); }
     else if (!strcmp(s, "who")) {   /* who <x> <y>: the window under a screen point (a test aid) */
@@ -664,6 +711,9 @@ static void host_line(char *s)
     else if (!strcmp(s, "dbg")) { DWORD v = bs_voices(); WORD dacl, dach; DWORD hi, lo = bs_dacnow_lo(&hi); say("dbg voices %08lx dac %lu playing0 %d", v, lo, is_playing(0));
         { WORD w[9]; int i; _disable(); bs_put(0); outpw(BS_CMD, 37); for (i = 0; i < 9; i++) w[i] = bs_get(); _enable();
           say("dbg v0 srate %u rate %u arm %u master %u pos %u q %u paused %u mod %u frames %u", w[0], w[1], w[2], w[3], w[4], w[5], w[6], w[7], w[8]); } }
+    else if (!strcmp(s, "clone")) cloneOn = atoi(rest) != 0;
+    else if (!strcmp(s, "colors")) colors(atoi(rest));
+    else if (!strcmp(s, "title")) { lstrcpyn(bigTitle, rest, sizeof bigTitle); { char *c; RECT rc; for (c = bigTitle; *c; c++) if (*c == '_') *c = ' '; SetRect(&rc, 190, 2, 1020, 24); InvalidateRect(hMain, &rc, TRUE); } }
     else if (!strcmp(s, "packs")) lib_packs(rest);
     else if (!strcmp(s, "panic")) { int r; for (r = 0; r < NALL; r++) stop_rec(r, 0, 5); }
     else if (!strcmp(s, "rotbench")) { int k = 0, d = 450, n = 10; sscanf(rest, "%d %d %d", &k, &d, &n); rotbench(k, d, n); }
@@ -720,8 +770,9 @@ long FAR PASCAL __export MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
     if (m == WM_PAINT) {
         PAINTSTRUCT ps; HDC dc = BeginPaint(h, &ps); HFONT of = hSmall ? SelectObject(dc, hSmall) : NULL;
-        SetBkMode(dc, TRANSPARENT);
+        SetBkMode(dc, TRANSPARENT); SetTextColor(dc, GetSysColor(COLOR_BTNTEXT));
         TextOut(dc, 12, 8, " SNDWAVE2000 Ensemble", 21);
+        if (bigTitle[0]) TextOut(dc, 200, 8, bigTitle, lstrlen(bigTitle));
         if (assembled) TextOut(dc, GRIDX, GRIDY - 18, " Track view", 11);
         if (of) SelectObject(dc, of);
         EndPaint(h, &ps); return 0;

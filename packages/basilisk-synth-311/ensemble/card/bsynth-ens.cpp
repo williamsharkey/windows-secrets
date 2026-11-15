@@ -143,6 +143,8 @@ static Bit64u fnv(const std::vector<Bit8u> &d) { Bit64u h = 1469598103934665603U
 #define BS_PK 128
 static Bit8s lpk[BS_LANES][BS_PK][2]; static Bit32u lpkFrames[BS_LANES]; static Bit32u lpkSeq[BS_LANES];
 #define BS_LRING 65536
+static float lmixL[BS_LANES], lmixR[BS_LANES];   /* LANEMIX: each lane's gain and pan in the master mix (1, 1 = as it is) */
+static bool lmixInit;
 static float *lring[BS_LANES];              /* each lane's own output (its stem), by DAC sample, once it has sounded */
 static std::vector<float> lout[BS_LANES];
 /* mt: a headless engine asks for no video: DOSBox Pure then skips the scaler and the frame (18% of a 16-lane render) */
@@ -323,6 +325,8 @@ static void render(float *out, Bitu len)
 		const int vl = v.lane >= 0 && v.lane < BS_LANES ? v.lane : 0;
 		if (!lring[vl]) { lring[vl] = (float *)calloc(BS_LRING * 2, sizeof(float)); lout[vl].assign(len * 2, 0.f); }
 		float *lo = &lout[vl][0];
+		if (!lmixInit) { for (int k = 0; k < BS_LANES; k++) lmixL[k] = lmixR[k] = 1.f; lmixInit = true; }
+		const float lml = lmixL[vl], lmr = lmixR[vl];
 		for (Bitu s = 0; s < len; s++) {
 			Bit64u t = bs.dac + s;
 			if (t < v.start_at) continue;
@@ -389,8 +393,8 @@ static void render(float *out, Bitu len)
 				/* 4-point, 3rd-order Hermite */
 				float c1 = 0.5f * (y2 - y0), c2 = y0 - 2.5f * y1 + 2.f * y2 - 0.5f * y3, c3 = 0.5f * (y3 - y0) + 1.5f * (y1 - y2);
 				float y = ((c3 * f + c2) * f + c1) * f + y1;
-				out[s * 2 + c] += y * (c ? gr : gl) * fg;
 				lo[s * 2 + c] += y * (c ? gr : gl) * fg;
+				out[s * 2 + c] += y * (c ? gr : gl) * fg * (c ? lmr : lml);
 			}
 			v.pos += step;
 			while (!v.q.empty() && v.pos >= v.q.front().frames) voice_finish_front(v);
@@ -716,6 +720,14 @@ static void command(Bit16u c)
 			if (v.mute_at == ~(Bit64u)0) { v.mute_at = at; v.mute_len = fade ? fade : BS_FADE; v.mute_left = 0; }
 			else if (at > v.mute_at) { v.mute_next_at = at; v.mute_next_len = fade ? fade : BS_FADE; }
 		}
+		break; }
+	case 38: { /* LANEMIX lane gain_lo gain_hi (16.16) pan(0..200 = -100..100): the lane's level and constant-power pan in the
+	              master mix (the lane buses stay as they are) */
+		int ln = arg(0); float g = arg32(1) / 65536.f, p = ((int)arg(3) - 100) / 100.f;
+		if (ln < 0 || ln >= BS_LANES) break;
+		if (!lmixInit) { for (int k = 0; k < BS_LANES; k++) lmixL[k] = lmixR[k] = 1.f; lmixInit = true; }
+		const double th = (p + 1.0) * 0.25 * 3.14159265358979323846;
+		lmixL[ln] = (float)(g * cos(th) * 1.4142135623730951); lmixR[ln] = (float)(g * sin(th) * 1.4142135623730951);
 		break; }
 	case 36: { /* PEAKS lane n -> seq, pos (0..1000 of the lane's newest sounding voice, 0xFFFF none), n words (max << 8 | min & 0xFF) */
 		int ln = arg(0), n = arg(1); if (n > BS_PK) n = BS_PK; if (n < 1) n = 1;

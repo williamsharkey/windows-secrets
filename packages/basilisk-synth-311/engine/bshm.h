@@ -5,7 +5,9 @@
 #include <stdint.h>
 #define BSHM_MAGIC 0x4D485342u   /* "BSHM" */
 #define BSHM_VERSION 2   /* 2: the input ring (RECORDING.md 1.3) */
-#define BSHM_RING 65536          /* stereo float frames of DAC output (1.37 s at 48 kHz) */
+#ifndef BSHM_RING
+#define BSHM_RING 65536          /* stereo float frames of DAC output (1.37 s at 48 kHz); a build may give more (the web album player: seconds of lookahead) */
+#endif
 #define BSHM_W 1024
 #define BSHM_H 768
 #define BSHM_EV 1024
