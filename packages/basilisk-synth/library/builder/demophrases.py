@@ -197,7 +197,7 @@ def f_kit(m, rng, pads, mood):
 # ------------------------------------------------------------------ the choice
 def phrase_for(p, pads=None, slow_attack=False):
     """p: a preset row (pack, category, slug, kind); pads: a kit's mapped notes; slow_attack: the patch's A >= 250 ms"""
-    seed = int(hashlib.sha1(p['slug'].encode()).hexdigest()[:8], 16)
+    seed = int(hashlib.sha1((p.get('aliases', {}).get('slugs') or [p['slug']])[0].encode()).hexdigest()[:8], 16)   # a renamed preset keeps its phrase
     rng = random.Random(seed)
     mood = PACK_MOOD.get(p['pack'], 'classic')
     m = MOODS[mood]

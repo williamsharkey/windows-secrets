@@ -177,3 +177,8 @@ Nothing audio goes in git.
   Paulywaulyton Works), its 62 presets renamed from packs/waulophone/RENAMES.TSV by rename_pack.py; old slugs,
   names and the pack id stay as `aliases` (library.json, the previews manifest, packs.PACK_ALIASES, ratings).
   The DNA is unchanged. Disc content: out/discs311/WAULOPHONE/ (the old PAULYWAULO folder is left as it was).
+- **1.5.0 (sndwave1993-v1.5.0):** 1.5 moves Delete Before/After cuts to the nearest zero crossing, so the 806
+  previews whose DNA uses [ or ] are re-rendered on 1.5.0 (~/libbuild/r150, the 3.11 lane's Linux 1.5 setup);
+  the rest keep their 1.3.0 RC / 1.4.0 renders (byte-identical without cuts). out/previews-manifest.json is the
+  site's manifest (each entry has its build). demophrases seeds a renamed preset by its first slug, so it keeps
+  its phrase.
