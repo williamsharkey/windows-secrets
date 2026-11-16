@@ -29,8 +29,9 @@
   function audioOf(x) {
     if (x.k === 'song') return (x.au.ogg && audio.canPlayType('audio/ogg; codecs="opus"')) ? B + x.au.ogg : (x.au.mp3 ? B + x.au.mp3 : null);
     if (x.a) return x.a;
-    if (x.ogg && audio.canPlayType('audio/ogg; codecs="opus"')) return B + 'audio/' + x.s + '.ogg';
-    if (x.mp3) return B + 'audio/' + x.s + '.mp3';
+    var v = x.v ? '?v=' + x.v : '';
+    if (x.ogg && audio.canPlayType('audio/ogg; codecs="opus"')) return B + 'audio/' + x.s + '.ogg' + v;
+    if (x.mp3) return B + 'audio/' + x.s + '.mp3' + v;
     return null;
   }
 

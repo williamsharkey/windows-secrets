@@ -195,6 +195,8 @@ def main():
                 for ext in ('mp3', 'ogg'):
                     f = os.path.join(prev, x['slug'] + '.' + ext)
                     if os.path.exists(f): copy(f, os.path.join(out, 'audio', x['slug'] + '.' + ext)); q[ext] = 1
+                if q.get('ogg') or q.get('mp3'):   # a short content hash, so a re-rendered clip gets a new URL
+                    import hashlib; q['v'] = hashlib.md5(open(os.path.join(prev, x['slug'] + ('.ogg' if q.get('ogg') else '.mp3')), 'rb').read()).hexdigest()[:8]
                 q['sec'] = mf.get('seconds')
                 if mf.get('phrase') and not q.get('ph'): q['ph'] = mf['phrase']   # what the preview plays (kits: from the manifest)
                 if mf.get('flags'): q['fl'] = mf['flags']
