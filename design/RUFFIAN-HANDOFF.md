@@ -37,6 +37,12 @@ Settings and sessions live in `%LOCALAPPDATA%\Ruffian\`.
   this computer with approval per write or command).
 - The desktop app is currently signed in with a different (personal) account. It must be signed in as
   **william@ruffian.ai** before the move (`ruf logout`, `ruf login`).
+- `ruf.exe` on Windows does not see WSL, and all the lanes run in WSL. Install the Linux `ruf` inside WSL
+  (Debian) as its own device for git credentials, remote and xd; or give WSL's git a project-bound `rgt_` token
+  from `/git/tokens` instead of a personal sign-in. `ruf --host` is local tool use with approvals, not a runner.
+
+Checked against ruffian `main` 9e6f3db (2026-11-16) and the deployed product branch; file references below are
+from those.
 
 **Agent lanes** run as Claude Code background subagents inside one coordinator session in WSL (Debian) on this PC.
 The owner will give you the coordinator's session id. Lanes and their state:
@@ -78,30 +84,53 @@ Lane rules (from real incidents; please make them project policy, e.g. in an AGE
 ## 4. Features Ruffian needs (P0 before the move, P1 soon after)
 
 **Following and resuming the agents from the desktop app**
-- P0: adopt an existing Claude Code session running in WSL on this PC into the desktop app (the terminal already
-  knows the ids), without restarting it: show its transcript, send it messages, see its background subagent lanes
-  and their notifications.
-- P0: a lanes board: one row per agent with owned folders, state, last message, last commit, and a send box.
-- P1: lane work moves from one shared checkout to one worktree per lane that pushes proposals to Ruffian git.
+- Today: `xd_adopt` (`docs/xd-sessions.md`, "Adopted sessions"; `tools/ruf/cli/xd_adopt.go`) lists a device's
+  Claude transcripts and their `subagents/agent-*.jsonl` read-only, live, including task notifications. Driving one
+  means `ruf xd start here claude --resume SID --after-pid PID`, which waits for the process to end, and that kills
+  the in-process background subagents (our lanes). It is behind `ruf xd on` and remote control.
+- P0 (no code): run the Linux `ruf` as a device inside WSL with `ruf xd on` and `ruf remote daemon`, so the
+  coordinator and every lane are followable read-only from desktop, web and iOS with no restart.
+- P0 (Ruffian): make `xd_adopt` and the desktop Agents page see WSL distros from the Windows app
+  (`\\wsl$\<distro>\home\*\.claude`, processes via `wsl.exe ps`); today `xdLiveClaude` returns nothing on
+  Windows and the Agents page reads only the Windows-side `~/.claude`.
+- P1 (Ruffian): send into an adopted session without a restart (today `xd-input` refuses). Until then, hand the
+  coordinator over only when no lanes are running.
+- P1: a lanes board built on coordd `/v1/lanes` and fleet events: one row per lane with owned paths, state, last
+  message, last commit and a send box. coordd lanes are separate `fleet launch --worktree` processes; today's
+  in-process lanes show only as xd subagent rows.
+- P1: at the next quiet point, move lanes to `fleet launch NAME BRIEF MODEL --worktree --host H` (one worktree per
+  lane, an event feed, budgets, and they survive a coordinator restart), with the coordinator under coord-run
+  (`coord init`) for the phone/web coordinator UI.
 
 **Hosting**
-- P0: project under william@ruffian.ai with Ruffian git as origin and a GitHub push mirror (old GitHub release URLs
-  must keep working forever). `ruf git-setup` + `git push ruf:<name>` is the starting point; all branches and tags.
-- P0: large files: keep binaries out of git in an artifact store (preferred), or LFS on the git daemon.
-- P0: artifact/release store for 1 GB files with range requests, checksums and permanent URLs, plus a GPL
-  source-archive download per release tag (DOSBox Pure is GPL).
-- P0: pages on ruffian.app with a per-project cross-origin-isolation switch (COOP/COEP/CORP) for the wasm pages,
-  large files served from the artifact store with range support, redirects, correct types (`.wasm`, `.opus`,
-  `.state`, `.jsdos`).
+- P0: the project under william@ruffian.ai. The first push to `ruf:NAME` from that login makes a private project
+  under the account: `git push ruf:windows-secrets --all` then `--tags` (the 130 MB pack is fine). An org (e.g.
+  `algorithmic`) can only be created by root today (`ruffian admin git-import FILE --org HANDLE=LOGIN`).
+- P0: the GitHub push mirror (`gitd/mirror.go`) needs root to add a `ROOT/mirrors` line and the `gitd-mirror`
+  credential; a project owner can't turn it on. Old GitHub release URLs must keep working forever.
+- P0: issues via the existing importer (`gitissues_import.go` + `devtools/gh-issues-export.py`).
+- P0: large files: LFS is missing (gitd is `git http-backend` only). Keep binaries out of git in an artifact store.
+- P0: artifact/release store: missing. The nearest code is `bigupload.go` (resumable, ranged, sealed; chat and
+  feed files only). Generalise it into a release store with 1 GB files, permanent public URLs, checksums, and a GPL
+  source-archive download per release tag (DOSBox Pure is GPL; gitd has no archive downloads).
+- P0: pages (`publish.go`): today 10 MiB a file, 25 MiB a publish, 1,000 files, 2 GiB an account (the refusal
+  message wrongly says 200 MiB, l.668); COOP only for Play games (`same-origin-allow-popups`); no COEP; no
+  redirects; `pageTypes` lacks `.opus`, `.state` and `.jsdos`. Needed: a per-project cross-origin-isolation switch
+  (COOP same-origin, COEP require-corp, CORP) for the wasm pages, large files served from the artifact store with
+  range support, redirects, and those types.
 - P1: roles (maintainer, release manager), project secrets released only to jobs (deploy keys).
 
 **Builds and Build TV**
-- P0: runners on machines the project provides: the owner's PC (WSL) and Mac first, reachable through
-  `ruf remote` devices, later a dedicated build box. Labels: linux, windows, macos, emulator, blender. Job claims,
-  log streaming, and a priority/"quiet window" control (timing tests need an otherwise idle machine).
-- P1: CI on proposals: fast tests, Windows and Mac builds, validators, cross-OS render hashes.
-- P1: Build TV panels that runners and lanes post to: progress bars (render queues), images (emulator
-  screenshots), audio clips (renders, previews), checklists (validators), hashes; hosts choose what goes public.
+- P0: runners on machines the project provides: the owner's PC (WSL) and Mac first, later a dedicated build box.
+  Interim with no new code: `ruf remote run` jobs (`tools/ruf/cli/remote_job.go`) on those devices with "Let agents
+  run jobs here" (the Linux/Windows containment is built but has never been run; test it first). Then a general
+  `ruf runner` on the devbuild request/approve/claim pattern (`docs/self-dev.md`), with labels (linux, windows,
+  macos, emulator, blender), a queue, log streaming, and a priority/"quiet window" control (timing tests need an
+  otherwise idle machine). Missing today.
+- P1: CI on proposals: fast tests, Windows and Mac builds, validators, cross-OS render hashes. Missing today.
+- P1: Build TV panels. Today a show displays a turn's live line and steps (`buildtv.go` `tvWorkOf`). New: panels
+  that runners and lanes post to for progress bars (render queues), images (emulator screenshots), audio clips
+  (renders, previews), checklists (validators) and hashes; hosts choose what goes public.
 
 **Repo work on this side (the lanes can do it once you say go)**
 - LICENSE (GPL-2.0-or-later), THIRD_PARTY.md, CONTRIBUTING.md, AGENTS.md (the lane rules).
@@ -111,12 +140,15 @@ Lane rules (from real incidents; please make them project policy, e.g. in an AGE
 
 ## 5. Suggested order
 
-1. Sign the desktop app in as william@ruffian.ai; create the project; `ruf git-setup`; push all branches and tags;
-   GitHub becomes a mirror.
-2. Session adoption + lanes board in the desktop app, so the running lanes move over without a restart.
-3. Pages pilot: `site/windows-secrets/`, then `site/sndwave1993/` home and packs (they fit today's limits).
-4. Repo hygiene (licences, AGENTS.md, config), then runners and the artifact store, then CI, then Build TV panels.
-5. Releases stay on GitHub until the artifact store exists; williamsharkey.com stays canonical until ruffian.app
+1. Sign the desktop app in as william@ruffian.ai; install ruf in WSL; `ruf git-setup`; push all branches and tags
+   (`git push ruf:windows-secrets --all`, `--tags`); root sets up the org (if wanted) and the GitHub mirror.
+2. WSL ruf device with `ruf xd on`, so the running coordinator and lanes are followable read-only. Then Ruffian
+   makes the Windows app see WSL sessions and lets it send into an adopted session.
+3. At a quiet point: move lanes to `fleet launch --worktree` and the coordinator under coord-run; then the lanes
+   board.
+4. Pages pilot: `site/windows-secrets/`, then `site/sndwave1993/` home and packs (they fit today's limits).
+5. Repo hygiene (licences, AGENTS.md, config), then runners and the artifact store, then CI, then Build TV panels.
+6. Releases stay on GitHub until the artifact store exists; williamsharkey.com stays canonical until ruffian.app
    serves pages fully, then redirects.
 
 ## 6. Decisions the owner still owns
