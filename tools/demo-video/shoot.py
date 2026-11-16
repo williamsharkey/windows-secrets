@@ -65,8 +65,9 @@ def pick_preset(disc_index, name, current_disc=None):
 
 
 class Scene:
-    def __init__(self, name, steps, notes=(), program=None, env=(), fps=30, end=None, bundle=''):
+    def __init__(self, name, steps, notes=(), program=None, env=(), fps=30, end=None, bundle='', realtime=False):
         self.bundle = bundle
+        self.realtime = realtime
         self.name, self.steps, self.notes, self.program, self.env, self.fps = name, steps, list(notes), program, list(env), fps
         self.end = end
 
@@ -86,11 +87,14 @@ def scenes():
     S = {}
     # 1. cold open: Windows resumes, the recorders assemble, Ding Piano plays (factory program 0)
     S['cold'] = Scene('cold', ['rec cap.bhrc 30', 'at 24', 'rec off'], phrase('ding', 0.5), program=0, end=24)
+    # 1b. the assembly as it happens (a real-time render: an offline one starts its audio after the machine is up)
+    S['cold_rt'] = Scene('cold_rt', ['rec cap.bhrc 30', 'at 24', 'rec off'], phrase('ding', 0.5), program=0, end=24, realtime=True)
     # 2. it is real: minimise the synth, Program Manager, Accessories, Sound Recorder, Help > About
     S['proof'] = Scene('proof', ['rec cap.bhrc 30', 'at 12', 'glide 600 300 0.6',
         *go(1010, 9, 0.8), 'wait 1.2', *go(38, 715, 0.8), 'wait 0.7', *go(63, 563, 0.3), 'wait 1.8',
         *go(71, 556, 0.7), 'click 71 556', 'wait 1.8', *go(447, 95, 0.6), 'wait 1.4',
-        *go(885, 80, 0.8), 'click 885 80', 'wait 2.2', 'key alt+h', 'wait 1.2', 'key a', 'wait 6',
+        *go(276, 148, 0.8), 'click 276 148',   # (1.5: icons 100 px apart; Sound Recorder wraps to the second row)
+        'wait 2.2', 'key alt+h', 'wait 1.2', 'key a', 'wait 6',
         *go(534, 245, 0.6), 'wait 1.5', 'rec off'], [(30.0, 60, 1, 0.1)], program=0, end=46)
     # 3. sound packs: Workgroup House Edition, the owner's top-rated
     st, nt, end = slots([(0, 'Granite Cloud', 'chords'), (0, 'Shaded Tremolo', 'chords'), (0, 'Shaded End', 'bass'),
@@ -131,12 +135,13 @@ def scenes():
                                *go(200, 167), 'wait 1', *go(735, 369), 'wait 2.5', 'shot s2', 'key esc', 'wait 1', *go(31, 613),
                                'at 60', 'shot s3', 'at 120', 'shot s4', 'at 130', *go(73, 613),
                                'at 175', 'shot s7', 'rec off'], [(165.0 - WARMUP, 60, 1, 0.1)], program=0, end=175,
-                      env=[r'BASILISK16_TEST_SONG_OPEN=C:\Users\willi\video-sw\songs\aquarium-level-three.song'])
+                      env=[r'BASILISK16_TEST_SONG_OPEN=C:\Users\willi\video-sw15f\songs\aquarium-level-three.song'])
     # 10. CITYPOP.EXE on the plugin's desktop (the 1.5 test build: SW15)
-    S['citypop'] = Scene('citypop', ['rec cap.bhrc 30', 'at 16', *go(8, 10), 'key n', 'wait 1.5', *go(37, 715), 'key r', 'wait 2',
-                                     *go(126, 232, 0.7), 'key enter', 'wait 3', 'shot c1', *go(308, 421, 0.6), 'at 60', 'shot c2', 'rec off'],
-                         [(55.0 - WARMUP, 60, 1, 0.1)], program=0, end=60,
-                         env=[r'BASILISK16_MYREC=C:\Users\willi\video-sw15\myrec'])
+    S['citypop'] = Scene('citypop', ['rec cap.bhrc 30', 'at 24', *go(8, 10), 'key n', 'wait 1.5', *go(37, 715), 'key r', 'wait 2',
+                                     *go(338, 236, 0.7), 'key enter',   # CITYPOP1993 (1.5: second row of the SNDWAVE1993 group)
+                                     'wait 3', 'shot c1', *go(308, 421, 0.6), 'at 68', 'shot c2', 'rec off'],
+                         [(63.0 - WARMUP, 60, 1, 0.1)], program=0, end=68, realtime=True,   # the album player plays only on a live host
+                         env=[r'BASILISK16_MYREC=C:\Users\willi\video-sw15f\myrec'])
     # explorations (screenshots only)
     S['xkit'] = Scene('xkit', ['at 14.5', *go(*TAB['library']), 'at 16'] + pick_preset(24, 'Echo Chamber Kit') +
                       ['wait 8', 'shot k1', *go(*TAB['main']), 'wait 1.5', 'shot k2', *go(*TAB['voices']), 'wait 1.5', 'shot k3',
@@ -148,7 +153,7 @@ def main():
     global PACKS
     ap = argparse.ArgumentParser()
     ap.add_argument('scene', nargs='+')
-    ap.add_argument('--sw', default='/mnt/c/Users/willi/video-sw93')
+    ap.add_argument('--sw', default='/mnt/c/Users/willi/video-sw15f')
     ap.add_argument('--bundle', default='SNDWAVE1993.vst3')
     ap.add_argument('--dry', action='store_true')
     a = ap.parse_args()
@@ -169,7 +174,7 @@ def main():
         open(os.path.join(out, 'script.txt'), 'w').write('\n'.join(sc.steps) + '\n')
         cmd = [os.path.join(a.sw, 'BasiliskHost.exe'), '--test', winsw + '\\' + a.bundle, '--tests', 'editor',
                '--midi', winsw + f'\\cap\\{name}\\score.mid', '--tail', f'{tail:.1f}', '--warmup', str(WARMUP),
-               '--editor-script-file', winsw + f'\\cap\\{name}\\script.txt', '--out-dir', winsw + f'\\cap\\{name}', '--editor-offline']
+               '--editor-script-file', winsw + f'\\cap\\{name}\\script.txt', '--out-dir', winsw + f'\\cap\\{name}'] + ([] if sc.realtime else ['--editor-offline'])
         if sc.program is not None: cmd += ['--program', str(sc.program)]
         for e in sc.env: cmd += ['--env', e]
         print(name, ':', len(sc.steps), 'steps,', len(notes), 'notes, render', round(WARMUP + score_len + tail, 1), 's', flush=True)

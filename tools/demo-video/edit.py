@@ -11,12 +11,12 @@ WEB0 = int(os.environ.get('WEB0', 0))   # the web capture's frame where the keys
 # where things happen in the captures (shoot.py's scripts)
 SRC = {
     'asm': 0.2, 'ding': 14.3,
-    'minimise': 12.6, 'sr_menu': 25.0, 'about': 28.6,
+    'minimise': 12.6, 'sr_menu': 29.4, 'about': 33.2,
     'lib': 14.6, 'granite': 22.6, 'tremolo': 38.4, 'shaded': 54.0, 'afterhours': 69.8, 'misty': 86.0,
     'rounded': 22.0, 'opal': 38.0, 'neon': 54.0, 'crystal': 70.0, 'loft': 86.0,
     'vibe': float(os.environ.get('VIBE', 25.8)), 'kit': 25.0, 'mines': 23.3, 'steps': 25.8, 'rec': 25.0, 'rec_play': 36.0,
-    'song_open': 15.0, 'song_render': 26.0, 'song_done': 118.0, 'song_play': float(os.environ.get('SONG_PLAY', 130.0)), 'song_start': 130.549,   # where the song's first sample lands in the capture
-    'citypop': 20.0, 'citypop_track': 25.867,   # (the live capture; track 1 starts here)
+    'song_open': 15.0, 'song_render': 26.0, 'song_done': 118.0, 'song_play': float(os.environ.get('SONG_PLAY', 130.0)), 'song_start': 130.528,   # where the song's first sample lands in the capture
+    'citypop': 27.6, 'citypop_track': 33.781,   # (the live capture; track 1 starts here)
 }
 
 SCR_X, SCR_Y = 88, 92   # compose.py's wide layout
@@ -194,10 +194,10 @@ def build(cut):
     ln, d = said('t_citypop') if spot else said('t_citypop', 't_citypop2')
     D = max(d + 1.2, 7.5)
     shot(3.5, cap('citypop', SRC['citypop'], WIDE), ln, host='side', tr=('iris', 0.7), mute=True, gest=[(0.6, 'smile', D - 0.8)],
-         over=[{'k': 'box', 'r': (SCR_X + 104, SCR_Y + 208, SCR_X + 150, SCR_Y + 256), 't': (0.3, 2.2)}])
+         over=[{'k': 'box', 'r': (SCR_X + 314, SCR_Y + 212, SCR_X + 362, SCR_Y + 262), 't': (0.3, 2.2)}])
     shot(D - 3.5, cap('citypop', SRC['citypop'] + 3.5, Z(515, 330)), host='right', mute=True, swoop=0.8,
          over=[{'k': 'super', 'text': 'CITYPOP1993', 'sub': 'an album made on it \u00b7 williamsharkey.com/citypop1993', 'x': 60, 'y': 120, 'size': 40},
-               {'k': 'super', 'text': 'CITYPOP1993.EXE: coming in 1.5', 'sub': "the album, on the plugin's own desktop (test build shown)", 'x': 60, 'y': 250, 'size': 28, 't': (0.6, 99)}])
+               {'k': 'super', 'text': 'CITYPOP1993.EXE', 'sub': "the album plays on the plugin's own Windows desktop (new in 1.5)", 'x': 60, 'y': 250, 'size': 28, 't': (0.6, 99)}])
     # 11. sign-off over the night desk, then the end card
     ln, d = said('t_anyway', 't_bye', pad=0.6)
     shot(max(d + 0.8, 4.5), {'k': 'seq', 'dir': 'blender/night_px', 'mark': 1, 'speed': 210 / (30 * max(d + 0.8, 4.5))}, ln, host='side', tr=('page', 0.7),

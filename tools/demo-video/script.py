@@ -47,7 +47,7 @@ LINES = [
      "and: \"it's free, at williamsharkey.com/sndwave1993. you can also try it in your browser.\""),
     ('t_web2', 'TEEN', "he made me say the website.", None),
     ('t_citypop', 'TEEN', "wait. ok. this part is actually kind of a vibe. it's city pop. I love city pop. he made a whole album on it.", None),
-    ('t_citypop2', 'TEEN', "it plays inside the plugin in the next version. lowkey I'm stealing it.", None),
+    ('t_citypop2', 'TEEN', "and it plays inside the plugin now. like, on its little desktop. lowkey I'm stealing it.", None),
     ('t_anyway', 'TEEN', "anyway.", None),
     ('t_bye', 'TEEN', "so yeah that's my family's technology. sources: my dad.", None),
     ('t_tag', 'TEEN', "sound wave nineteen ninety three. total sound solutions for globalized audio. that's the slogan. I didn't write it.",
