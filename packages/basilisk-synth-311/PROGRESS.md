@@ -2,6 +2,7 @@
 
 - **Round 5 (in progress): Preset Engine 2, DNA v3** (`design/PRESET-ENGINE-2.md`, branch `design/preset-engine-2`).
   One release, 1.3.0, when every phase is solid; features are announced to the coordinator when usable locally.
+- **SNDWAVE1993 1.5.0 is released**: https://github.com/williamsharkey/windows-secrets/releases/tag/sndwave1993-v1.5.0 (tag sndwave1993-v1.5.0 on 9ad4b85; Windows and Mac zips, emulator source, SHA256SUMS; the Windows zip downloaded back and checked). Still to do: `auval -strict` on the Mac once its AU registrar works again (log out or reboot); a fix, if needed, goes in the next batched release.
 - v1.2.1 is the release (basilisk-synth-311-v1.2.1): the fixes the sndrec demo renders found, below.
 - v1.2.0 (basilisk-synth-311-v1.2.0) was round 3; its record is further down.
 - v1.1.0 was basilisk-synth-311-v1.1.0, commit 948ce56.
