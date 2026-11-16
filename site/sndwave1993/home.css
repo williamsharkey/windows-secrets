@@ -125,3 +125,6 @@ figure { margin: 0; }
 .fcard p { font-size: 15px; }
 .fcard .fpx { margin-bottom: 8px; background: #000; border: 1px solid #000; justify-content: center; }
 .sha code { font-size: 12px; overflow-wrap: anywhere; word-break: break-all; }
+/* the Ensemble (beta) */
+.beta { font: 700 11px/1 "SW Sans", "DejaVu Sans", Verdana, sans-serif; letter-spacing: .12em; text-transform: uppercase; vertical-align: 6px; border: 1px solid currentColor; padding: 2px 5px; color: var(--bk-accent); font-style: normal; }
+.enspic { justify-content: center; margin: 4px 0 12px; }
