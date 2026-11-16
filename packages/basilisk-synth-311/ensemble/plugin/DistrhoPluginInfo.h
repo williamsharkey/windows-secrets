@@ -1,4 +1,4 @@
-// SNDWAVE1993 Ensemble (experiment, design/ENSEMBLE.md): one Windows 3.11, ten lanes, one MIDI channel each.
+// SNDWAVE1993 Ensemble (beta, design/ENSEMBLE.md): one Windows 3.11, sixteen lanes, one MIDI channel each.
 #ifndef DISTRHO_PLUGIN_INFO_H_INCLUDED
 #define DISTRHO_PLUGIN_INFO_H_INCLUDED
 
@@ -13,7 +13,7 @@
 #define DISTRHO_PLUGIN_IS_RT_SAFE 1
 #define DISTRHO_PLUGIN_IS_SYNTH 1
 #define DISTRHO_PLUGIN_NUM_INPUTS 0
-#define DISTRHO_PLUGIN_NUM_OUTPUTS 22   /* the mix, then each lane's own pair (post-fader) */
+#define DISTRHO_PLUGIN_NUM_OUTPUTS 34   /* the mix, then each lane's own pair (post-fader) */
 #define DISTRHO_PLUGIN_WANT_LATENCY 1
 #define DISTRHO_PLUGIN_WANT_PROGRAMS 0
 #define DISTRHO_PLUGIN_WANT_STATE 1

@@ -42,8 +42,8 @@ START_NAMESPACE_DISTRHO
 
 using namespace bsynth;
 
-static constexpr int NB = 10;          // lanes (ENSEMBLE.EXE's NB_LANES)
-static constexpr int kRecBudget = 130; // Sound Recorders for every lane together (Windows' USER heap holds about 165)
+static constexpr int NB = 16;          // lanes, one a MIDI channel (ENSEMBLE.EXE built with NB_LANES=16)
+static constexpr int kRecBudget = 120; // Sound Recorders for every lane together (Windows' USER heap holds about 165)
 // parameters: each lane's level (0..127), pan (-64..63), mute, solo; then the master gain
 enum { pLaneBase = 0, pPerLane = 4, pMaster = NB * pPerLane, pCount };
 
@@ -281,7 +281,7 @@ protected:
             const uint8_t *d = e.size > 4 ? e.dataExt : e.data;
             if (e.size < 2) continue;
             const int k = d[0] & 0x0F;
-            if (k >= NB) continue;   // channels 11-16: no lane
+            if (k >= NB) continue;
             const uint64_t at = (uint64_t)std::floor(anchor_ + (double)(hcount_ + e.frame) * ratio) + kLatency48;
             const uint8_t st = d[0] & 0xF0;
             Lane &L = lanes_[k];
@@ -516,7 +516,7 @@ private:
     {
         static const char *def[NB][2] = {{"rainy-loft", "Loft Tine Bright"}, {"rainy-loft", "Rubber Taxi"}, {"rainy-loft", "Couch Fort Lead"},
             {"rainy-loft", "Harbour Reed"}, {"rainy-loft", "Disco Clavinet"}, {"rainy-loft", "Daylight Strings"}, {"rainy-loft", "Vocoder Chorus"},
-            {"rainy-loft", "Party Horns"}, {"", ""}, {"rainy-loft", "Couch Disco"}};
+            {"rainy-loft", "Party Horns"}, {"", ""}, {"rainy-loft", "Couch Disco"}, {"", ""}, {"", ""}, {"", ""}, {"", ""}, {"", ""}, {"", ""}};
         for (int k = 0; k < NB; k++) {
             const int i = def[k][1][0] ? catFind(def[k][0], def[k][1]) : -1;
             if (i >= 0) { std::lock_guard<std::mutex> l(gCatMtx); setLane(k, gCat[i].pack, gCat[i].name, gCat[i].dna); }
