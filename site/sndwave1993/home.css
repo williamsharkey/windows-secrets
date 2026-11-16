@@ -123,3 +123,5 @@ figure { margin: 0; }
 .fcard { min-width: 0; border-top: 1px solid var(--bk-rule); padding-top: 10px; }
 .fcard img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border: 1px solid #000; margin-bottom: 8px; background: #000; }
 .fcard p { font-size: 15px; }
+.fcard .fpx { margin-bottom: 8px; background: #000; border: 1px solid #000; justify-content: center; }
+.sha code { font-size: 12px; overflow-wrap: anywhere; word-break: break-all; }
